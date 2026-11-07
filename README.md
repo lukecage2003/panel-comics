@@ -61,6 +61,93 @@ Une base IndexedDB dédiée, `panel-catalog`, organise la collection en **édite
 - **Retour arrière** (testé) : `Panel.catalog.rollback()` vide uniquement la base dérivée `panel-catalog`. Les sauvegardes, les instantanés et la collection ne sont pas touchés, et la migration automatique est désactivée (`panel_catalog_disabled`). `Panel.catalog.enable()` la relance. Pour revenir au code d'avant le lot 2.1, il suffit de revenir au commit `8b04cb3` : l'ancien code ignore simplement la base `panel-catalog`.
 - **Contrôle** : « Vérifier les données » (menu Plus) affiche l'état du catalogue et le nombre de doublons signalés. L'API de test est `Panel.catalog.{status, verify, read, sync, migrate}`.
 
+## 📅 Calendrier international, Pull List et Wishlist (Phase 2 · lot 2.4)
+
+### Modèle
+- **Publication** (donnée de catalogue, IndexedDB `panel-catalog` / `publications`, identifiant `pbc_…` stable). Elle contient :
+  - titre, série, numéro, variante, éditeur ;
+  - marché (`US`, `FR`, extensible), langue et format (single, album, TPB, hardcover, intégrale, omnibus, deluxe, kiosque, manga, autre) ;
+  - dates séparées : annoncée initialement, annoncée actuellement, confirmée (si connue) et dernière vérification ;
+  - historique des changements de date, avec la source et la date du constat ;
+  - couverture avec sa provenance, identifiants externes (Comic Vine, Metron, GCD, ISBN, UPC…) et sources ;
+  - lien vers le catalogue normalisé (`iss_…`, `var_…`).
+- **Une édition française et le numéro américain sont deux publications distinctes.** Le marché fait partie de l'identité. Elles sont reliées par une **relation éditoriale explicite** : traduit depuis, adaptation de, réédition de, compilation de, contient.
+  - Aucune relation n'est créée automatiquement.
+  - La fiche propose des suggestions (autre marché, titre proche), que l'utilisateur doit confirmer.
+- **Statuts calculés** : Annoncé, À venir (31 jours ou moins), Disponible, Reporté (dernier changement = report), Annulé, Date inconnue. Panel n'invente jamais de date.
+- **Exemplaire physique** : inchangé (lots 2.2 et 2.3). Un exemplaire créé depuis le calendrier garde `pubId`, et `pullId` s'il vient de la Pull List.
+- **Intention d'achat** :
+  - **Wishlist** : fiches existantes `isWishlist`, enrichies d'un objet `wish` (priorité, statut Souhaité / Recherche active / Trouvé / Abandonné, prix cible, dates, origine, publication liée). Les anciennes entrées reçoivent des valeurs par défaut à la lecture ; aucune fiche n'est réécrite.
+  - **Pull List** : IndexedDB `pulls`. Chaque entrée est un numéro précis, avec variante, quantité, statut (Prévu, Disponible, Récupéré, Annulé), historique, et `ownerId` du profil local.
+- **Préparation des comptes (phase 3)** : un profil local à identifiant stable (`usr_local_…`) est créé. Les données personnelles (pull list, wishlist, exemplaires) restent séparées du catalogue (publications) et reliées par identifiants. Aucun backend, aucun compte.
+
+### Moteur et connecteurs
+- **Architecture indépendante du fournisseur** : chaque connecteur récupère puis normalise ses données. Le moteur rapproche ensuite chaque publication de l'existant :
+  1. par identifiant externe ;
+  2. sinon par clé exacte (marché, éditeur, série, numéro, format, variante) ;
+  3. jamais par ressemblance. Un cas ambigu est créé à part et signalé comme doublon possible.
+- **Ce que le moteur détecte** : nouvelles publications, reports et avancées, annulations, rétablissements.
+- **Absence dans une réponse** : la publication est marquée « non revue », jamais annulée.
+- **Erreurs** : en cas d'erreur, rien n'est modifié. L'erreur est inscrite dans un journal de synchronisation (50 dernières entrées).
+- **Connecteurs réellement opérationnels** :
+
+  | Connecteur | Marchés | Fonctionnement | Limite |
+  |---|---|---|---|
+  | Comic Vine (API) | États-Unis | Actualisation **manuelle** (bouton) ou à l'ouverture d'une semaine non vue depuis 12 h ; éditeur lu via les volumes | Clé requise ; **usage non commercial uniquement** (conditions Comic Vine), 200 requêtes / ressource / heure ; dates non confirmées |
+  | Import contrôlé CSV / JSON | Tous | Planning éditeur, export d'un autre outil, export Panel | Données fournies par l'utilisateur |
+  | Saisie manuelle | Tous | Fiche publication | — |
+
+- **Aucune mise à jour automatique en arrière-plan.** Le calendrier affiche la date de la dernière actualisation. Hors ligne, il affiche les dernières données enregistrées.
+- **Sources étudiées et non intégrées** (novembre 2026) :
+  - **Metron** : API gratuite qui filtre par date de mise en vente. Elle demande un compte (identifiants), donc une autorisation est nécessaire avant de l'utiliser pour le calendrier.
+  - **Marvel API** : statut actuel non confirmé ; usage commercial soumis à l'accord de Marvel.
+  - **Sollicitations éditeurs, Lunar, PRH Comics** : sites web ou fichiers réservés aux libraires. Pas d'API publique, et le scraping est exclu.
+  - **BnF (SRU)** : Licence ouverte, réutilisation gratuite y compris commerciale. Les notices arrivent après le dépôt légal ; c'est donc une piste pour confirmer une date ou un ISBN, pas pour annoncer une sortie. Le service n'est pas appelable directement depuis le navigateur sans relais.
+  - **Electre, Dilicom** : données des livres « à paraître » en France, sous abonnement payant (exclu sans autorisation).
+  - **Sites Panini, Urban, Delcourt, Glénat** : plannings publiés en HTML, sans API ; exclus comme fondation (scraping fragile).
+  - **Conséquence** : le marché francophone est alimenté par import contrôlé et saisie manuelle.
+
+### Interface
+- **Vue « Calendrier & pull list »** :
+  - affichages : cartes de la semaine, calendrier mensuel (sur mobile, points de couleur et liste détaillée dessous), liste chronologique, regroupements par éditeur, par série ou par marché ;
+  - périodes : semaine, mois, 3 mois, toutes les dates ;
+  - filtres : marché, éditeur, format, statut, série ou titre, « ma pull list » ;
+  - date annoncée en pointillés, date confirmée en trait plein.
+- **Fiche publication** :
+  - dates et historique, sources et identifiants, relations, nombre d'exemplaires possédés ;
+  - actions : Pull List (variante, quantité), Wishlist, Collection, Modifier.
+- **Pull List** :
+  - ajout depuis le calendrier ou en saisie manuelle (la publication est créée si elle n'existe pas) ;
+  - modification de la variante et de la quantité, historique ;
+  - Récupéré : crée un exemplaire distinct par unité dans la collection, ou convertit l'entrée wishlist de la même publication. Une seconde demande ne crée rien ;
+  - → Wishlist ; Annuler / Rétablir (rien n'est supprimé) ;
+  - les « séries suivies » (★, ancienne pull list par série) sont conservées.
+- **Wishlist** : priorité, statut et prix cible modifiables dans la fiche. « Je l'ai acheté » garde la même fiche, au statut « Trouvé ». « Ajouter à la wishlist » depuis un exemplaire possédé crée une **nouvelle** entrée : l'exemplaire reste dans la collection, ce qui remplace l'ancien basculement qui le retirait.
+
+### Transitions
+- **Calendrier → Pull List**
+- **Catalogue ou calendrier → Wishlist** : sans doublon pour une même variante.
+- **Catalogue ou calendrier → Collection** : une entrée wishlist de la même publication est convertie.
+- **Wishlist → Collection**
+- **Pull List → Collection** : idempotente.
+- **Pull List → Wishlist** : la sélection est conservée, annulée, dans l'historique.
+- **Collection → Wishlist**
+
+Aucune transition ne supprime de donnée d'origine, et rien n'est fusionné quand l'identité n'est pas certaine.
+
+### Imports, exports, migration
+- **JSON (sauvegarde et export)** : bloc `releases` (publications, pull list, profil, état de synchronisation). La restauration fusionne ou remplace sans jamais supprimer, et ne crée pas de doublon.
+- **CSV collection** : colonnes Priorité wishlist, Statut wishlist et Prix cible (reconnues à l'import).
+- **CSV calendrier** : export et réimport sans doublon.
+- **Restauration** : l'historique des emplacements (`locationHistory`) est désormais conservé.
+- **LoCG, CLZ, XLSX** : inchangés.
+- **Migration** :
+  - IndexedDB `panel-catalog` passe en version 3 et ajoute deux magasins vides ;
+  - le schéma de migration du catalogue reste 2, donc aucune nouvelle migration n'est lancée ;
+  - aucune donnée existante n'est transformée ;
+  - copie du code avant le lot : `_backups/20261107-lot24-avant/`.
+- **API** : `Panel.releases.{upsert, edit, query, sync, importText, exportCsv, exportData, addRelation, suggest, pulls.*, wish.*}`.
+
 ## 📲 Application installable (PWA)
 
 Panel s'installe comme une application (icône d'accueil, plein écran, hors ligne) sur téléphone, tablette et ordinateur.
@@ -97,7 +184,7 @@ node serve.js
 Fonctions de suivi de collection au niveau des gestionnaires de référence (League of Comic Geeks, CLZ), 100 % locales :
 
 - **Séries & complétion** : chaque série possédée avec sa barre de complétion et ses numéros manquants (`#3, #5–6`). Grille des numéros (possédé / lu / wishlist / manquant) ; un clic sur un manquant l'ajoute à la wishlist, ou tous d'un coup. Bornes « du #… au # » réglables par série (runs démarrant au #300, total connu de la série).
-- **Pull list & sorties du mercredi** : les sorties de la semaine via la date de mise en vente Comic Vine (`store_date`), navigation semaine par semaine, filtre « ma pull list seulement ». Chaque sortie passe en wishlist ou en « acheté » d'un clic.
+- **Pull list & sorties** : remplacées par le calendrier international du lot 2.4 (voir « Calendrier international, Pull List et Wishlist »).
 - **Wishlist séparée** : les exemplaires recherchés ne gonflent plus le nombre ni la valeur de la collection.
 - **Suivi financier réel** : prix de couverture, prix payé, date d'achat, valeur estimée → investi, plus-value en $ et en %.
 - **Lecture & notes** : statut lu / non lu et note de 1 à 5 étoiles par exemplaire, modifiables depuis l'inspecteur ; filtre lus / non lus.
@@ -264,6 +351,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Calendrier international` (publications US/FR et relations explicites, connecteur simulé, import CSV/JSON, reports, annulations, dates inconnues, historique, Pull List, Wishlist, transitions sans doublon, sauvegarde/restauration, vues, redémarrage hors ligne)
 - `✓ PASS - Emplacements` (4 niveaux, migration sûre et idempotente, valeurs ambiguës, affectation complète/partielle, déplacements, suppression sans perte, comptage, recherche, JSON/CSV, redémarrage hors ligne)
 - `✓ PASS - Exemplaires et variantes` (normalisation état/grading/slab/signature/achat, regroupement par variante, saisie structurée, restauration JSON fidèle)
 - `✓ PASS - Catalogue normalisé` (migration additive vérifiée fiche par fiche, provenance, doublons signalés, idempotence, synchro incrémentale, retour arrière, durabilité IndexedDB, export LoCG réel si présent)

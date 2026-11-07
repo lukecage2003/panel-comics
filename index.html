@@ -1262,6 +1262,90 @@
     .comic-poster { background: #E7EAE9; }
     .comic-poster-gradient { display: none !important; }
     .comic-badges-strip { top: 0 !important; left: 0 !important; right: 0 !important; padding: 0 !important; justify-content: space-between !important; align-items: flex-start !important; }
+    .rel-filters { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 0 0 10px; }
+    .rel-filters-actions { display: flex; flex-wrap: wrap; gap: 6px; margin-left: auto; }
+    .rel-sel { width: auto; max-width: 190px; min-width: 0; font-size: 12px; padding: 5px 8px; }
+    .rel-mini { font-size: 12px; padding: 4px 9px; }
+    .rel-note { font-size: 12px; color: var(--muted); }
+    .rel-date { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+    .rel-date.is-announced { border: 1px dashed var(--muted); color: var(--ink-dim); }
+    .rel-date.is-confirmed { border: 1px solid var(--cyan); background: var(--tint-cyan); color: var(--ink); }
+    .rel-date.is-unknown { border: 1px dotted var(--line); color: var(--muted); }
+    .rel-market { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .5px; padding: 1px 5px; border-radius: 3px; background: var(--ink); color: var(--bg, #fff); }
+    .rel-status { display: inline-block; font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 999px; border: 1px solid var(--line); color: var(--ink-dim); white-space: nowrap; }
+    .rel-status.st-available { border-color: var(--cyan); color: var(--ink); }
+    .rel-status.st-delayed { border-color: var(--orange); color: var(--orange); }
+    .rel-status.st-cancelled { border-color: var(--red); color: var(--red); text-decoration: line-through; }
+    .rel-status.st-upcoming { border-color: var(--gold); color: var(--gold); }
+    .rel-src { font-size: 10px; color: var(--muted); }
+    .rel-card-meta { display: flex; gap: 4px; align-items: center; flex-wrap: wrap; margin-bottom: 3px; }
+    .rel-card-sub { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--muted); }
+    .release-card .comic-caption .rel-date { margin: 3px 0 2px; }
+    .rel-alt { display: block; }
+    .rel-row, .pull-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 6px 4px; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .rel-row-date { min-width: 128px; }
+    .rel-row-title { flex: 1 1 200px; min-width: 0; text-align: left; background: none; border: 0; padding: 0; color: var(--ink); font: inherit; font-weight: 700; cursor: pointer; }
+    .rel-row-title small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+    .rel-group { font-size: 13px; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin: 14px 0 4px; }
+    .rel-cal { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px; }
+    .rel-cal-head { font-size: 11px; font-weight: 700; color: var(--muted); text-align: center; padding: 2px 0; }
+    .rel-cal-day { min-height: 74px; border: 1px solid var(--line); border-radius: 4px; padding: 3px; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .rel-cal-day.is-out { opacity: .45; }
+    .rel-cal-day.is-today { border-color: var(--gold); }
+    .rel-cal-num { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .rel-cal-item { display: block; width: 100%; text-align: left; font-size: 11px; line-height: 1.25; padding: 1px 3px; border: 1px dashed var(--line); border-radius: 3px; background: none; color: var(--ink); cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rel-cal-item.is-confirmed { border-style: solid; border-color: var(--cyan); }
+    .rel-cal-item.st-cancelled { text-decoration: line-through; color: var(--muted); }
+    .rel-cal-more { font-size: 11px; color: var(--muted); }
+    .rel-cal-list { display: none; margin-top: 10px; }
+    #pubModalBody h3.rel-group { font-family: inherit; font-size: 13px; font-weight: 700; letter-spacing: .6px; margin: 14px 0 4px; }
+    .pull-panel { border: 1px solid var(--line); border-radius: 6px; padding: 6px 10px; margin-bottom: 8px; }
+    .pull-panel > summary { cursor: pointer; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: var(--gold); }
+    .pull-add { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 8px 0; }
+    .pull-add .field-input { width: auto; min-width: 0; font-size: 12px; padding: 5px 8px; }
+    .pull-add #pullManSeries { flex: 1 1 180px; }
+    .pull-variant { width: 110px !important; font-size: 12px; padding: 4px 6px; }
+    .pull-qty { width: 56px !important; font-size: 12px; padding: 4px 6px; }
+    .pull-status { font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; border: 1px solid var(--line); white-space: nowrap; }
+    .pull-status.ps-available { border-color: var(--cyan); background: var(--tint-cyan); }
+    .pull-status.ps-picked { border-color: var(--lime, var(--cyan)); color: var(--ink); }
+    .pull-status.ps-cancelled { color: var(--muted); }
+    .pull-hist { flex-basis: 100%; font-size: 12px; color: var(--muted); }
+    .pull-hist summary, .pull-done > summary { cursor: pointer; font-size: 12px; color: var(--muted); }
+    .pull-hist ul, .pub-hist { margin: 4px 0 0 18px; padding: 0; font-size: 12px; }
+    .pub-sheet { display: flex; gap: 14px; flex-wrap: wrap; }
+    .pub-cover { width: 120px; max-width: 32%; border-radius: 4px; align-self: flex-start; }
+    .pub-main { flex: 1 1 280px; min-width: 0; }
+    .pub-line { font-size: 13px; margin: 6px 0; }
+    .pub-dates { font-size: 12px; border-collapse: collapse; margin: 6px 0; }
+    .pub-dates th { text-align: left; font-weight: 600; color: var(--muted); padding: 2px 10px 2px 0; }
+    .pub-dates td { font-variant-numeric: tabular-nums; }
+    .pub-actions { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-top: 8px; }
+    .pub-actions .field-input { font-size: 12px; padding: 5px 8px; }
+    .pub-rel { display: flex; align-items: center; gap: 6px; font-size: 13px; margin: 3px 0; }
+    .pub-rel > span { color: var(--muted); }
+    .pub-rel-add { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0; }
+    .pub-rel-add .field-input { width: auto; flex: 1 1 160px; font-size: 12px; padding: 5px 8px; }
+    .pub-rel-results { flex-basis: 100%; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+    .linklike { background: none; border: 0; padding: 0; color: var(--ink); text-decoration: underline; cursor: pointer; font: inherit; text-align: left; }
+    .pub-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+    .pub-form label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; font-weight: 600; min-width: 0; }
+    .pub-form .pub-check { flex-direction: row; align-items: center; gap: 6px; }
+    .pub-form .rel-note, .pub-form .modal-btns { grid-column: 1 / -1; }
+    .wish-box { display: flex; flex-wrap: wrap; gap: 8px; align-items: end; border-top: 1px solid var(--border); padding: 10px 0; font-size: 12px; }
+    .wish-box label { display: flex; flex-direction: column; gap: 3px; font-weight: 600; }
+    .wish-box .field-input { font-size: 12px; padding: 4px 6px; width: auto; }
+    @media (max-width: 640px) {
+      .pub-form { grid-template-columns: minmax(0, 1fr); }
+      .rel-filters-actions { margin-left: 0; }
+      .rel-cal-day { min-height: 44px; }
+      .rel-cal-item { font-size: 0; height: 6px; padding: 0; border-width: 0; background: var(--gold); pointer-events: none; }
+      .rel-cal-item.is-confirmed { background: var(--cyan); }
+      .rel-cal-more { font-size: 10px; }
+      .rel-cal-list { display: block; }
+      #singlesReleasesView .week-nav { flex-wrap: wrap; }
+      .rel-row-date { min-width: 0; }
+    }
     .loc-cascade { margin: 4px 0 10px; }
     .loc-cascade > label { display: block; font-weight: 700; margin-bottom: 4px; }
     .loc-cascade-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
@@ -1437,7 +1521,7 @@
           <span class="nav-badge" id="badgeSeriesIncomplete">0</span>
         </button>
         <button class="nav-btn" id="navSinglesReleases">
-          <div class="nav-btn-content"><span class="icon">★</span> Pull list & sorties</div>
+          <div class="nav-btn-content"><span class="icon">★</span> Calendrier & pull list</div>
           <span class="nav-badge" id="badgePullCount">0</span>
         </button>
         <button class="nav-btn" id="navSinglesWishlist">
@@ -1543,7 +1627,7 @@
       <nav class="filter-tabs-bar singles-subnav" id="singlesSubnav" aria-label="Vues de la collection">
         <button class="tab-btn active" data-sview="collection">Collection</button>
         <button class="tab-btn" data-sview="series">Séries</button>
-        <button class="tab-btn" data-sview="releases">★ Sorties</button>
+        <button class="tab-btn" data-sview="releases">★ Calendrier</button>
         <button class="tab-btn" data-sview="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
         <button class="tab-btn" data-sview="stats">Stats</button>
       </nav>
@@ -1608,28 +1692,42 @@
         <div class="series-track-grid" id="seriesTrackGrid"></div>
       </div>
 
-      <!-- ===== VUE : PULL LIST & SORTIES ===== -->
+      <!-- ===== VUE : CALENDRIER INTERNATIONAL & PULL LIST ===== -->
       <div id="singlesReleasesView" hidden>
         <div class="section-head">
           <div>
-            <p>Sorties du mercredi en comic shop (date de mise en vente Comic Vine). Ajoutez des séries à votre pull list avec ★ pour les repérer, puis passez-les en wishlist ou en « acheté » d'un clic.</p>
+            <p>Calendrier des sorties États-Unis et francophones. <span class="rel-date is-announced">Annoncé</span> = date annoncée, <span class="rel-date is-confirmed">Sorti le</span> = date confirmée. <span id="relSyncInfo" class="rel-note"></span></p>
           </div>
           <div class="toolbar-row">
             <div class="week-nav">
-              <button class="btn secondary" id="releasesPrevWeekBtn" aria-label="Semaine précédente">←</button>
+              <button class="btn secondary" id="releasesPrevWeekBtn" aria-label="Période précédente">←</button>
               <span class="week-label" id="releasesWeekLabel">—</span>
-              <button class="btn secondary" id="releasesNextWeekBtn" aria-label="Semaine suivante">→</button>
-              <button class="btn ghost" id="releasesThisWeekBtn" style="font-size: 12px">Cette semaine</button>
+              <button class="btn secondary" id="releasesNextWeekBtn" aria-label="Période suivante">→</button>
+              <button class="btn ghost" id="releasesThisWeekBtn" style="font-size: 12px">Aujourd'hui</button>
             </div>
-            <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer">
-              <input type="checkbox" id="releasesPullOnly" style="accent-color:var(--gold)"> Ma pull list seulement
-            </label>
-            <input class="field-input" id="releasesSearch" type="search" placeholder="Filtrer…" style="width:150px">
+            <select class="field-input rel-sel" id="relPeriod" aria-label="Période"><option value="week">Semaine</option><option value="month">Mois</option><option value="quarter">3 mois</option><option value="all">Toutes les dates</option></select>
+            <select class="field-input rel-sel" id="relMode" aria-label="Affichage"><option value="grid">Cartes</option><option value="month">Calendrier mensuel</option><option value="list">Liste chronologique</option><option value="publisher">Par éditeur</option><option value="series">Par série</option><option value="market">Par marché</option></select>
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">★ Ma pull list</span>
-          <input class="field-input" id="pullAddInput" placeholder="Ajouter une série (ex : Absolute Batman)" style="width:260px">
+        <div class="rel-filters">
+          <select class="field-input rel-sel" id="relMarket" aria-label="Marché"></select>
+          <select class="field-input rel-sel" id="relPublisher" aria-label="Éditeur"></select>
+          <select class="field-input rel-sel" id="relFormat" aria-label="Type de publication"></select>
+          <select class="field-input rel-sel" id="relStatus" aria-label="Statut"></select>
+          <input class="field-input" id="releasesSearch" type="search" placeholder="Série ou titre…" style="width:150px" aria-label="Filtrer par série ou titre">
+          <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer"><input type="checkbox" id="releasesPullOnly" style="accent-color:var(--gold)"> Ma pull list seulement</label>
+          <span class="rel-filters-actions">
+            <button class="btn secondary rel-mini" id="relSyncBtn">Actualiser (Comic Vine)</button>
+            <button class="btn secondary rel-mini" id="relAddPubBtn">+ Publication</button>
+            <button class="btn secondary rel-mini" id="relImportBtn">Importer un calendrier</button>
+            <button class="btn ghost rel-mini" id="relExportBtn">Exporter (CSV)</button>
+            <input type="file" id="relImportFile" accept=".csv,.json,.txt,text/csv,application/json" hidden>
+          </span>
+        </div>
+        <details class="pull-panel" id="pullPanel" open><summary>Ma Pull List <span id="pullPanelCount"></span></summary><div id="pullPanelBody"></div></details>
+        <div style="display:flex;gap:8px;align-items:center;margin:10px 0 8px;flex-wrap:wrap">
+          <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">★ Séries suivies</span>
+          <input class="field-input" id="pullAddInput" placeholder="Suivre une série (ex : Absolute Batman)" style="width:260px">
           <button class="btn secondary" id="pullAddBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Suivre</button>
         </div>
         <div class="pull-chips" id="pullListChips"></div>
@@ -2279,6 +2377,7 @@
       </div>
     </div>
 
+    <div id="inspectWishBox" class="wish-box" hidden></div>
     <!-- Actions -->
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:12px">
       <div style="display:flex;gap:6px">
@@ -2296,6 +2395,15 @@
 <!-- ==========================================================================
      MODALE PARAMÈTRES & CLÉS API (COMIC VINE, MARVEL, THÈMES)
      ========================================================================== -->
+<div class="modal-backdrop" id="pubModal">
+  <div class="modal-box" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;gap:8px">
+      <h2 id="pubModalTitle">Publication</h2>
+      <button class="btn-icon" id="closePubModalBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
+    </div>
+    <div id="pubModalBody"></div>
+  </div>
+</div>
 <div class="modal-backdrop" id="locationsModal">
   <div class="modal-box" style="max-width:760px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -4575,6 +4683,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Retour arrière : Panel.catalog.rollback() vide uniquement cette base dérivée.
   // ==========================================================================
   const CATALOG_SCHEMA = 2; // 2 : exemplaires normalisés (état, grading, slab, signature, achat)
+  const CATALOG_DB_VERSION = 3; // 3 : magasins « publications » et « pulls » (lot 2.4), sans effet sur la migration
   const CATALOG_ENTITY_STORES = ['publishers', 'series', 'issues', 'variants', 'copies'];
   const CATALOG_DISABLED_KEY = 'panel_catalog_disabled';
   let catalogDbPromise = null;
@@ -4583,7 +4692,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     catalogDbPromise = new Promise(resolve => {
       if (!window.indexedDB) { resolve(null); return; }
       let req;
-      try { req = indexedDB.open('panel-catalog', CATALOG_SCHEMA); } catch (_) { resolve(null); return; }
+      try { req = indexedDB.open('panel-catalog', CATALOG_DB_VERSION); } catch (_) { resolve(null); return; }
       req.onupgradeneeded = e => {
         const db = e.target.result;
         const mk = (name, idx) => {
@@ -4596,6 +4705,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         mk('issues', [['seriesId', 'seriesId']]);
         mk('variants', [['issueId', 'issueId']]);
         mk('copies', [['variantId', 'variantId'], ['legacyId', 'legacyId']]);
+        mk('publications', [['market', 'market']]);
+        mk('pulls', [['pubId', 'pubId']]);
         if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
         if (!db.objectStoreNames.contains('backups')) db.createObjectStore('backups', { keyPath: 'id' });
       };
@@ -4682,7 +4793,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const CAT_ISSUE_FIELDS = ['issue', 'title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType', 'keyNote', 'keyNotes'];
   const CAT_VARIANT_FIELDS = ['variant', 'coverUrl', 'coverMeta', 'coverHistory', 'coverLookup', 'fandomLookup', 'upc', 'barcode', 'isbn', 'printing', 'comicVineId', 'metronId', 'gcdId', 'coverSource', 'coverArtist', 'ratio'];
   const CAT_FIELDS = new Set([...CAT_SERIES_FIELDS, ...CAT_ISSUE_FIELDS, ...CAT_VARIANT_FIELDS]);
-  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency', 'locationId', 'locationAt', 'locationHistory', 'room', 'furniture']);
+  const COPY_FIELDS = new Set(['wish', 'pubId', 'pullId', 'condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency', 'locationId', 'locationAt', 'locationHistory', 'room', 'furniture']);
   const splitLegacySingle = s => {
     const catalogFields = {}, personal = {}, extra = {};
     Object.keys(s || {}).forEach(k => {
@@ -6438,15 +6549,34 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Bouton Wishlist : bascule wishlist <-> possédé
     const wishBtn = $('inspectWishlistToggleBtn');
     if (wishBtn) {
-      wishBtn.textContent = item.isWishlist ? 'Je l\'ai acheté' : 'Passer en wishlist';
+      // Wishlist → Collection : même fiche, statut « Trouvé ». Collection → Wishlist : nouvelle entrée, l'exemplaire reste possédé.
+      wishBtn.textContent = item.isWishlist ? 'Je l\'ai acheté' : 'Ajouter à la wishlist';
+      wishBtn.title = item.isWishlist ? 'Passe cette fiche dans la collection' : 'Crée une entrée wishlist (autre exemplaire ou variante) ; cet exemplaire reste dans la collection';
       wishBtn.onclick = () => {
-        item.isWishlist = !item.isWishlist;
-        if (!item.isWishlist && !item.purchaseDate) item.purchaseDate = new Date().toISOString().slice(0, 10);
-        persistSingles();
-        renderSinglesCollection();
-        openSingleInspector(item);
-        showToast(item.isWishlist ? 'Placé dans votre wishlist.' : 'Ajouté à votre collection !');
+        if (item.isWishlist) {
+          wishToCollection(item);
+          renderSinglesCollection();
+          openSingleInspector(item);
+          showToast('Ajouté à votre collection !');
+        } else {
+          const r = collectionToWishlist(item);
+          renderSinglesCollection();
+          showToast(r.duplicate ? 'Cette variante est déjà dans votre wishlist.' : 'Ajouté à la wishlist ; votre exemplaire reste dans la collection.');
+        }
       };
+    }
+    const wishBox = $('inspectWishBox');
+    if (wishBox) {
+      wishBox.hidden = !item.isWishlist;
+      if (item.isWishlist) {
+        const w = wishOf(item);
+        const opt = (obj, cur) => Object.entries(obj).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + l + '</option>').join('');
+        wishBox.innerHTML = '<label>Priorité<select class="field-input" data-w="priority">' + opt(WISH_PRIORITY, w.priority) + '</select></label>' +
+          '<label>Statut<select class="field-input" data-w="status">' + opt(WISH_STATUS, w.status) + '</select></label>' +
+          '<label>Prix cible ($)<input class="field-input" data-w="targetPrice" type="number" min="0" step="0.01" style="width:90px" value="' + (w.targetPrice ?? '') + '"></label>' +
+          '<span class="rel-note">Ajouté le ' + (w.addedAt ? new Date(w.addedAt).toLocaleDateString('fr-FR') : '—') + (w.updatedAt ? ' · modifié le ' + new Date(w.updatedAt).toLocaleDateString('fr-FR') : '') + (w.from ? ' · depuis ' + escapeHtml(w.from) : '') + '</span>';
+        wishBox.querySelectorAll('[data-w]').forEach(el => { el.onchange = () => { setWish(item, { [el.dataset.w]: el.value }); renderSinglesCollection(); }; });
+      }
     }
 
     // Bouton Supprimer (avec annulation possible)
@@ -6548,7 +6678,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const titles = {
       collection: ['Ma collection', 'Inventaire physique : singles, variantes, grading et rangement'],
       series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
-      releases: ['Pull list & sorties', 'Les nouveautés du mercredi pour les séries que vous suivez'],
+      releases: ['Calendrier & pull list', 'Sorties américaines et francophones, reports, annulations et votre pull list'],
       stats: ['Statistiques', 'Valeur, investissement et composition de votre collection']
     };
     if ($('mainTitleHeading') && titles[view]) {
@@ -6778,7 +6908,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
             '<strong style="color:var(--gold);font-size: 12px" title="' + escapeHtml(VALUE_SOURCE_LABELS[item.valueSource] || 'Valeur') + '">' + valuePrefix(item) + money(value) + '</strong>' +
           '</div>' +
           '<div class="comic-caption-row" style="font-size: 12px;color:var(--muted)">' +
-            (item.isWishlist ? '<span style="color:var(--orange)">Recherché</span>'
+            (item.isWishlist ? '<span style="color:var(--orange)">' + escapeHtml(wishLabel(item)) + '</span>'
               : '<button class="read-dot ' + (item.isRead ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (item.isRead ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
             (item.rating ? '<span class="stars">' + starsText(item.rating) + '</span>' : '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + escapeHtml(locationOf(item).text) + '">' + escapeHtml(locationOf(item).text) + '</span>') +
           '</div>' +
@@ -7028,7 +7158,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ==========================================================================
-  // PULL LIST & SORTIES HEBDOMADAIRES (Comic Vine store_date)
+  // PUBLICATIONS, CALENDRIER INTERNATIONAL DES SORTIES, PULL LIST ET WISHLIST (Phase 2, lot 2.4)
+  // - Publication = donnée de catalogue (IndexedDB panel-catalog / publications), indépendante de tout fournisseur.
+  // - Pull List = donnée personnelle (IndexedDB panel-catalog / pulls), reliée aux publications par identifiant.
+  // - Wishlist = fiches existantes marquées isWishlist, enrichies d'un objet « wish » (aucun exemplaire possédé créé).
+  // - Connecteurs : Comic Vine (API, marché US, actualisation manuelle ou à l'ouverture), import contrôlé CSV/JSON
+  //   (tous marchés), saisie manuelle. Aucune donnée n'est présentée comme synchronisée si elle ne l'est pas.
   // ==========================================================================
   const startOfWeek = d => {
     const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
@@ -7037,69 +7172,1111 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return x;
   };
   const isoDate = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-  let releasesWeekStart = startOfWeek(new Date());
-  const releasesCache = {};
-  let releasesState = { status: 'idle', items: [], error: '' };
+  const REL_SCHEMA = 1;
+  const REL_MARKETS = { US: { label: 'États-Unis', lang: 'en' }, FR: { label: 'Francophone', lang: 'fr' } };
+  const REL_PUBLISHERS = [
+    ['Marvel', 'US', ['marvel comics', 'marvel worldwide']], ['DC Comics', 'US', ['dc', 'dc entertainment']],
+    ['Image Comics', 'US', ['image']], ['Dark Horse', 'US', ['dark horse comics']], ['IDW Publishing', 'US', ['idw']],
+    ['BOOM! Studios', 'US', ['boom studios', 'boom']], ['Dynamite', 'US', ['dynamite entertainment']], ['Oni Press', 'US', ['oni']],
+    ['Titan Comics', 'US', ['titan']], ['Mad Cave Studios', 'US', ['mad cave']], ['Skybound', 'US', ['skybound entertainment']],
+    ['Valiant', 'US', ['valiant entertainment']], ['Archie Comics', 'US', ['archie']], ['AWA Studios', 'US', ['awa']],
+    ['Ahoy Comics', 'US', ['ahoy']], ['Vault Comics', 'US', ['vault']], ['Mad Cave', 'US', []],
+    ['Panini Comics', 'FR', ['panini', 'panini france', 'panini comics france']], ['Urban Comics', 'FR', ['urban']],
+    ['Delcourt', 'FR', ['delcourt comics', 'editions delcourt']], ['Glénat', 'FR', ['glenat comics', 'editions glenat']],
+    ['Bliss Comics', 'FR', ['bliss']], ['HiComics', 'FR', ['hi comics']], ['Komics Initiative', 'FR', []], ['Vestron', 'FR', []],
+    ['Les Humanoïdes Associés', 'FR', ['humanoides associes', 'les humanoides associes']], ['Dargaud', 'FR', []], ['Dupuis', 'FR', []],
+    ['Casterman', 'FR', []], ['Ankama', 'FR', ['ankama editions']], ['Kana', 'FR', []], ['Kurokawa', 'FR', []]
+  ];
+  const REL_FORMATS = { single: 'Single issue', album: 'Album', tpb: 'TPB / recueil', hc: 'Hardcover', integrale: 'Intégrale', omnibus: 'Omnibus', deluxe: 'Deluxe', kiosque: 'Kiosque / magazine', manga: 'Manga', other: 'Autre' };
+  const REL_STATUS = { announced: 'Annoncé', upcoming: 'À venir', available: 'Disponible', delayed: 'Reporté', cancelled: 'Annulé', unknown: 'Date inconnue' };
+  const REL_RELATIONS = { translated_from: 'Traduit depuis', adaptation_of: 'Adaptation de', reprint_of: 'Réédition de', collects: 'Compilation de', contains: 'Contient' };
+  const REL_INVERSE = { translated_from: 'Traduit en', adaptation_of: 'Adapté en', reprint_of: 'Réédité dans', collects: 'Compilé dans', contains: 'Contenu dans' };
+  const PULL_STATUS = { planned: 'Prévu', available: 'Disponible', picked: 'Récupéré', cancelled: 'Annulé' };
+  const WISH_STATUS = { wanted: 'Souhaité', searching: 'Recherche active', found: 'Trouvé', abandoned: 'Abandonné' };
+  const WISH_PRIORITY = { high: 'Haute', normal: 'Normale', low: 'Basse' };
 
-  const fetchWeeklyReleases = async weekStart => {
-    const key = getCvKey();
-    if (!cvAvailable()) throw new Error('Clé Comic Vine manquante (Paramètres).');
-    const end = new Date(weekStart);
-    end.setDate(end.getDate() + 6);
-    const range = isoDate(weekStart) + '|' + isoDate(end);
-    const all = [];
-    for (let page = 0; page < 6; page++) {
-      const url = 'https://comicvine.gamespot.com/api/issues/?api_key=' + encodeURIComponent(key) +
-        '&filter=store_date:' + encodeURIComponent(range) +
-        '&sort=name:asc&limit=100&offset=' + (page * 100) +
-        '&field_list=id,name,issue_number,volume,image,store_date,cover_date,site_detail_url';
-      const data = await fetchComicVineJsonp(url, 12000);
-      if (!data || data.status_code !== 1) throw new Error((data && data.error) || 'Réponse Comic Vine invalide');
-      const rows = data.results || [];
-      rows.forEach(r => all.push({
-        id: r.id,
-        volume: (r.volume && r.volume.name) || 'Comic',
-        issue: r.issue_number || '',
-        title: r.name || '',
-        cover: (r.image && (r.image.medium_url || r.image.small_url || r.image.original_url)) || '',
-        storeDate: r.store_date || '',
-        url: r.site_detail_url || ''
-      }));
-      if (rows.length < 100 || all.length >= (data.number_of_total_results || 0)) break;
-    }
-    return all;
+  const relPubs = new Map(), relPulls = new Map();
+  let relMeta = { key: 'releases', schema: REL_SCHEMA, profile: null, sync: {}, ranges: {}, log: [], cvVolPub: {} };
+  let relLoadPromise = null, relIdx = null, relFetchOverride = null;
+  const relNow = () => new Date().toISOString();
+  const relStr = (v, max = 200) => (v === null || v === undefined) ? '' : String(v).trim().slice(0, max);
+  const relKeyNorm = h => catNorm(h).replace(/ /g, '');
+  const relPut = async (store, recs) => {
+    const list = (recs || []).filter(Boolean);
+    const db = await openCatalogDb();
+    if (!db || !db.objectStoreNames.contains(store)) return false;
+    if (list.length) await idbWrite(db, [store], tx => list.forEach(r => tx.objectStore(store).put(JSON.parse(JSON.stringify(r)))));
+    return true;
+  };
+  const relSaveMeta = async () => {
+    const db = await openCatalogDb();
+    if (db) await idbWrite(db, ['meta'], tx => tx.objectStore('meta').put(JSON.parse(JSON.stringify(relMeta))));
+  };
+  const loadReleaseData = (force) => {
+    if (relLoadPromise && !force) return relLoadPromise;
+    relLoadPromise = (async () => {
+      const db = await openCatalogDb();
+      if (db && db.objectStoreNames.contains('publications')) {
+        const pubs = await idbAll(db, 'publications'), pulls = await idbAll(db, 'pulls');
+        relPubs.clear(); relPulls.clear();
+        pubs.forEach(p => p && p.id && relPubs.set(p.id, p));
+        pulls.forEach(p => p && p.id && relPulls.set(p.id, p));
+        const m = await idbGet(db, 'meta', 'releases');
+        if (m) relMeta = Object.assign({ sync: {}, ranges: {}, log: [], cvVolPub: {} }, m);
+      }
+      relIdx = null;
+      if (!relMeta.profile) {
+        // Profil local : identifiant stable qui servira de propriétaire lors de l'ajout des comptes (phase 3)
+        relMeta.profile = { id: 'usr_local_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8), kind: 'local', createdAt: relNow() };
+        try { await relSaveMeta(); } catch (_) {}
+      }
+      return true;
+    })();
+    return relLoadPromise;
   };
 
-  const loadReleasesForWeek = async () => {
-    const wk = isoDate(releasesWeekStart);
+  // ---------- Normalisation
+  const relDate = v => {
+    const s = relStr(v, 40);
+    let m = s.match(/^(\d{4})-(\d{2})-(\d{2})/), y, mo, d;
+    if (m) { y = +m[1]; mo = +m[2]; d = +m[3]; }
+    else if ((m = s.match(/^(\d{1,2})[\/.](\d{1,2})[\/.](\d{4})$/))) { y = +m[3]; mo = +m[2]; d = +m[1]; }
+    else return null;
+    const dt = new Date(Date.UTC(y, mo - 1, d));
+    if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d || y < 1900 || y > 2200) return null;
+    return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+  };
+  const relPublisher = name => {
+    const raw = relStr(name, 100);
+    const k = catNorm(raw);
+    if (!k) return { name: '', market: '' };
+    const hit = REL_PUBLISHERS.find(([n, , al]) => catNorm(n) === k || al.includes(k));
+    return hit ? { name: hit[0], market: hit[1] } : { name: raw, market: '' };
+  };
+  const relMarket = v => {
+    const k = catNorm(v);
+    if (!k) return '';
+    if (/^(us|usa|etats unis|united states|americain|amerique)$/.test(k)) return 'US';
+    if (/^(fr|france|francophone|belgique|suisse|quebec|fra)$/.test(k)) return 'FR';
+    return /^[a-z]{2,3}$/.test(k) ? k.toUpperCase() : '';
+  };
+  const relFormat = v => {
+    const k = catNorm(v);
+    if (!k) return 'single';
+    if (REL_FORMATS[k]) return k;
+    if (/integrale/.test(k)) return 'integrale';
+    if (/omnibus/.test(k)) return 'omnibus';
+    if (/deluxe|absolute edition/.test(k)) return 'deluxe';
+    if (/manga/.test(k)) return 'manga';
+    if (/kiosque|magazine/.test(k)) return 'kiosque';
+    if (/hardcover|\bhc\b|relie|cartonne/.test(k)) return 'hc';
+    if (/tpb|trade|paperback|recueil|softcover|broche/.test(k)) return 'tpb';
+    if (/album/.test(k)) return 'album';
+    if (/single|issue|comic|fascicule|numero/.test(k)) return 'single';
+    return 'other';
+  };
+  const REL_EXT_KEYS = ['comicvine', 'metron', 'gcd', 'isbn', 'upc', 'locg', 'clz'];
+  const relExtIds = obj => {
+    const out = {};
+    if (obj && typeof obj === 'object') REL_EXT_KEYS.forEach(k => {
+      let v = relStr(obj[k], 60);
+      if (k === 'isbn' || k === 'upc') v = v.replace(/[^0-9Xx]/g, '').toUpperCase();
+      if (v) out[k] = v;
+    });
+    return out;
+  };
+  const relSafeUrl = u => { const s = relStr(u, 600); return /^https:\/\//i.test(s) ? s : ''; };
+  const relNormalize = (raw, src) => {
+    raw = raw || {};
+    const pub = relPublisher(raw.publisher);
+    const market = relMarket(raw.market) || pub.market || (src && src.market) || '';
+    const statusTxt = catNorm(raw.status);
+    const date = relDate(raw.date);
+    const actual = relDate(raw.actualDate) || (/(^| )(paru|sorti|released|confirme)/.test(statusTxt) && date ? date : null);
+    return {
+      id: relStr(raw.id, 80),
+      series: relStr(raw.series || raw.title, 200),
+      title: relStr(raw.title, 200),
+      issue: relStr(raw.issue, 20).replace(/^#\s*/, ''),
+      variant: relStr(raw.variant, 120),
+      publisher: pub.name,
+      market,
+      language: relStr(raw.language, 12).toLowerCase() || (REL_MARKETS[market] || {}).lang || '',
+      format: relFormat(raw.format),
+      date: date || actual,
+      initialDate: relDate(raw.initialDate),
+      actual,
+      cancelled: /annul|cancel/.test(statusTxt) ? true : (raw.cancelled === true ? true : (raw.cancelled === false ? false : undefined)),
+      cover: isSafeImageUrl(raw.cover) ? String(raw.cover) : '',
+      url: relSafeUrl(raw.url),
+      externalIds: relExtIds(raw.externalIds || raw)
+    };
+  };
+  const relNatural = n => [n.market, catNorm(n.publisher), catNorm(n.series), catNorm(n.issue), n.format, catNorm(n.variant)].join('|');
+  const relIndex = () => {
+    if (relIdx) return relIdx;
+    const ext = new Map(), nat = new Map();
+    relPubs.forEach(p => {
+      Object.entries(p.externalIds || {}).forEach(([k, v]) => ext.set(k + ':' + v, p.id));
+      const key = relNatural(p);
+      nat.set(key, (nat.get(key) || []).concat(p.id));
+    });
+    relIdx = { ext, nat };
+    return relIdx;
+  };
+  const relFind = n => {
+    if (n.id && relPubs.has(n.id)) return { pub: relPubs.get(n.id) };
+    const idx = relIndex();
+    for (const [k, v] of Object.entries(n.externalIds || {})) {
+      const id = idx.ext.get(k + ':' + v);
+      if (id && relPubs.has(id)) return { pub: relPubs.get(id) };
+    }
+    const list = (idx.nat.get(relNatural(n)) || []).filter(id => relPubs.has(id));
+    if (list.length === 1) return { pub: relPubs.get(list[0]) };
+    return list.length > 1 ? { ambiguous: list } : {};
+  };
+  const relPushHistory = (p, h) => { p.dateHistory = (p.dateHistory || []).concat([h]).slice(-60); };
+
+  // Ajoute ou met à jour une publication. Ne jamais inventer de date ; les informations saisies à la main ne sont pas écrasées.
+  const relUpsert = (raw, src) => {
+    src = src || { source: 'manual' };
+    const n = relNormalize(raw, src);
+    if (!n.series) return { action: 'rejected', error: 'Série ou titre manquant' };
+    const at = src.at || relNow(), source = src.source || 'manual';
+    const found = relFind(n);
+    let p = found.pub;
+    if (!p) {
+      const firstExt = Object.entries(n.externalIds)[0];
+      const base = 'pbc_' + stableHash(firstExt ? firstExt[0] + ':' + firstExt[1] : relNatural(n));
+      let id = base, k = 0;
+      while (relPubs.has(id)) id = base + '_' + (++k);
+      const ids = catalogIdsOf({ publisher: n.publisher, series: n.series, issue: n.issue ? '#' + n.issue : '', variant: n.variant });
+      p = {
+        id, kind: 'publication', schema: REL_SCHEMA, title: n.title, series: n.series, issue: n.issue, variant: n.variant,
+        publisher: n.publisher, publisherId: ids.pubId, market: n.market, language: n.language, format: n.format,
+        dates: { initial: n.initialDate || n.date, current: n.date, actual: n.actual, lastVerified: at },
+        cancelled: n.cancelled === true, dateHistory: [], cover: n.cover ? { url: n.cover, source } : null,
+        externalIds: n.externalIds, sources: [{ source, at, ref: n.url || relStr(src.ref, 300) }], relations: [],
+        origin: source, url: n.url, catalog: { seriesId: ids.seriesId, issueId: ids.issueId, variantId: ids.variantId },
+        createdAt: at, updatedAt: at
+      };
+      if (found.ambiguous) p.possibleDuplicates = found.ambiguous.slice(0, 10);
+      if (p.dates.initial) relPushHistory(p, { at, source, from: null, to: p.dates.initial, kind: 'announced' });
+      if (n.initialDate && n.date && n.initialDate !== n.date) relPushHistory(p, { at, source, from: n.initialDate, to: n.date, kind: n.date > n.initialDate ? 'postponed' : 'advanced' });
+      if (p.cancelled) relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'cancelled' });
+      relPubs.set(id, p);
+      relIdx = null;
+      return { action: 'added', pub: p, changes: ['added'] };
+    }
+    const changes = [];
+    if (n.date && n.date !== p.dates.current) {
+      const kind = !p.dates.current ? 'announced' : n.date > p.dates.current ? 'postponed' : 'advanced';
+      relPushHistory(p, { at, source, from: p.dates.current || null, to: n.date, kind });
+      p.dates.current = n.date;
+      if (!p.dates.initial) p.dates.initial = n.date;
+      changes.push(kind);
+    }
+    if (n.actual && p.dates.actual !== n.actual) { p.dates.actual = n.actual; changes.push('confirmed'); }
+    if (n.cancelled === true && !p.cancelled) { p.cancelled = true; relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'cancelled' }); changes.push('cancelled'); }
+    else if (n.cancelled === false && p.cancelled) { p.cancelled = false; relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'reinstated' }); changes.push('reinstated'); }
+    ['title', 'publisher', 'language', 'url'].forEach(k => { if (!p[k] && n[k]) { p[k] = n[k]; changes.push('info'); } });
+    if (n.publisher && !p.market && n.market) { p.market = n.market; changes.push('info'); }
+    if (n.cover && (!p.cover || (p.cover.source === source && p.cover.url !== n.cover))) { p.cover = { url: n.cover, source }; changes.push('cover'); }
+    Object.entries(n.externalIds).forEach(([k, v]) => { if (!p.externalIds[k]) { p.externalIds[k] = v; changes.push('ids'); relIdx = null; } });
+    const se = (p.sources || (p.sources = [])).find(x => x.source === source);
+    if (se) se.at = at; else p.sources.push({ source, at, ref: n.url || relStr(src.ref, 300) });
+    p.dates.lastVerified = at;
+    if (p.unseenSince && source !== 'manual') delete p.unseenSince;
+    if (changes.length) p.updatedAt = at;
+    const dateKinds = ['postponed', 'advanced', 'announced'];
+    const action = changes.includes('cancelled') ? 'cancelled' : changes.some(c => dateKinds.includes(c)) ? 'dateChanged' : changes.length ? 'updated' : 'unchanged';
+    return { action, pub: p, changes };
+  };
+
+  const relToday = () => isoDate(new Date());
+  const relStatusOf = (p, today = relToday()) => {
+    if (!p) return 'unknown';
+    if (p.cancelled) return 'cancelled';
+    const d = p.dates && (p.dates.actual || p.dates.current);
+    if (!d) return 'unknown';
+    if (p.dates.actual || d <= today) return 'available';
+    const last = (p.dateHistory || []).slice().reverse().find(h => h.kind === 'postponed' || h.kind === 'advanced');
+    if (last && last.kind === 'postponed') return 'delayed';
+    return (new Date(d) - new Date(today)) / 86400000 <= 31 ? 'upcoming' : 'announced';
+  };
+  const relNumLabel = p => !p.issue ? '' : (['single', 'kiosque'].includes(p.format) ? '#' + p.issue : 'T. ' + p.issue);
+  const relLabel = p => [p.series, relNumLabel(p)].filter(Boolean).join(' ') + (p.variant ? ' · ' + p.variant : '');
+  const relFmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR') : '';
+  const relSourceLabel = s => ({ comicvine: 'Comic Vine', import: 'Import', manual: 'Saisie', backup: 'Sauvegarde' })[s] || s || '—';
+
+  // ---------- Édition manuelle (la saisie de l'utilisateur prime)
+  const relEdit = async (id, patch) => {
+    await loadReleaseData();
+    const p = relPubs.get(id);
+    if (!p) return { ok: false, error: 'Publication introuvable' };
+    const at = relNow();
+    const next = Object.assign({}, p);
+    if (patch.series !== undefined) next.series = relStr(patch.series, 200);
+    if (!next.series) return { ok: false, error: 'La série est obligatoire.' };
+    if (patch.issue !== undefined) next.issue = relStr(patch.issue, 20).replace(/^#\s*/, '');
+    if (patch.title !== undefined) next.title = relStr(patch.title, 200);
+    if (patch.variant !== undefined) next.variant = relStr(patch.variant, 120);
+    if (patch.publisher !== undefined) { const pb = relPublisher(patch.publisher); next.publisher = pb.name; if (!patch.market && pb.market && !p.market) next.market = pb.market; }
+    if (patch.market !== undefined) next.market = relMarket(patch.market);
+    if (patch.language !== undefined) next.language = relStr(patch.language, 12).toLowerCase();
+    if (patch.format !== undefined) next.format = relFormat(patch.format);
+    const clash = relIndex().nat.get(relNatural(next));
+    if (clash && clash.some(x => x !== id)) return { ok: false, error: 'Une publication identique existe déjà (même marché, éditeur, série, numéro, format et variante).' };
+    Object.assign(p, { series: next.series, issue: next.issue, title: next.title, variant: next.variant, publisher: next.publisher, market: next.market, language: next.language, format: next.format });
+    p.publisherId = catalogIdsOf({ publisher: p.publisher }).pubId;
+    const ids = catalogIdsOf({ publisher: p.publisher, series: p.series, issue: p.issue ? '#' + p.issue : '', variant: p.variant });
+    p.catalog = { seriesId: ids.seriesId, issueId: ids.issueId, variantId: ids.variantId };
+    if (patch.date !== undefined) {
+      const d = relDate(patch.date);
+      if (d && d !== p.dates.current) { relPushHistory(p, { at, source: 'manual', from: p.dates.current || null, to: d, kind: !p.dates.current ? 'announced' : d > p.dates.current ? 'postponed' : 'advanced' }); p.dates.current = d; if (!p.dates.initial) p.dates.initial = d; }
+      else if (!d && patch.date === '' && p.dates.current) { relPushHistory(p, { at, source: 'manual', from: p.dates.current, to: null, kind: 'unknown' }); p.dates.current = null; }
+    }
+    if (patch.actual !== undefined) p.dates.actual = relDate(patch.actual);
+    if (patch.cancelled !== undefined && !!patch.cancelled !== !!p.cancelled) { p.cancelled = !!patch.cancelled; relPushHistory(p, { at, source: 'manual', from: p.dates.current, to: p.dates.current, kind: p.cancelled ? 'cancelled' : 'reinstated' }); }
+    if (patch.cover !== undefined) p.cover = isSafeImageUrl(patch.cover) ? { url: String(patch.cover), source: 'manual' } : p.cover;
+    if (patch.externalIds) { Object.assign(p.externalIds, relExtIds(patch.externalIds)); }
+    p.dates.lastVerified = at;
+    p.updatedAt = at;
+    p.manualEdit = at;
+    relIdx = null;
+    await relPut('publications', [p]);
+    return { ok: true, pub: p };
+  };
+
+  // ---------- Relations éditoriales explicites (jamais créées automatiquement)
+  const relAddRelation = async (fromId, type, toId) => {
+    await loadReleaseData();
+    const a = relPubs.get(fromId), b = relPubs.get(toId);
+    if (!a || !b) return { ok: false, error: 'Publication introuvable' };
+    if (!REL_RELATIONS[type]) return { ok: false, error: 'Type de relation inconnu' };
+    if (fromId === toId) return { ok: false, error: 'Une publication ne peut pas être reliée à elle-même' };
+    a.relations = a.relations || [];
+    if (a.relations.some(r => r.type === type && r.to === toId)) return { ok: true, duplicate: true };
+    a.relations.push({ type, to: toId, source: 'manual', at: relNow() });
+    a.updatedAt = relNow();
+    await relPut('publications', [a]);
+    return { ok: true };
+  };
+  const relRemoveRelation = async (fromId, type, toId) => {
+    await loadReleaseData();
+    const a = relPubs.get(fromId);
+    if (!a) return { ok: false };
+    const before = (a.relations || []).length;
+    a.relations = (a.relations || []).filter(r => !(r.type === type && r.to === toId));
+    if (a.relations.length !== before) { a.updatedAt = relNow(); await relPut('publications', [a]); }
+    return { ok: true, removed: before - a.relations.length };
+  };
+  const relRelationsOf = id => {
+    const out = [];
+    const p = relPubs.get(id);
+    (p && p.relations || []).forEach(r => out.push({ dir: 'out', type: r.type, label: REL_RELATIONS[r.type], other: relPubs.get(r.to), otherId: r.to, from: id, to: r.to }));
+    relPubs.forEach(q => (q.relations || []).forEach(r => { if (r.to === id) out.push({ dir: 'in', type: r.type, label: REL_INVERSE[r.type], other: q, otherId: q.id, from: q.id, to: id }); }));
+    return out;
+  };
+  // Suggestions de correspondance entre marchés : affichées pour confirmation, jamais enregistrées seules
+  const relSuggest = id => {
+    const p = relPubs.get(id);
+    if (!p) return [];
+    const tok = s => new Set(catNorm(String(s || '').replace(/\(\s*\d{4}\s*\)/g, '')).split(' ').filter(w => w.length > 2 && !['the', 'les', 'des', 'tome', 'vol'].includes(w)));
+    const a = tok(p.series);
+    if (!a.size) return [];
+    const linked = new Set(relRelationsOf(id).map(r => r.otherId));
+    const out = [];
+    relPubs.forEach(q => {
+      if (q.id === id || linked.has(q.id) || q.market === p.market) return;
+      const b = tok(q.series);
+      const inter = [...a].filter(w => b.has(w)).length;
+      const score = inter / Math.max(a.size, b.size || 1);
+      if (score >= 0.5) out.push({ pub: q, score: Math.round(score * 100) / 100 });
+    });
+    return out.sort((x, y) => y.score - x.score).slice(0, 8);
+  };
+
+  // ---------- Connecteurs (indépendants du modèle interne)
+  const cvVolumePublishers = async (volIds) => {
+    const key = getCvKey();
+    const missing = [...new Set(volIds)].filter(v => v && !(v in (relMeta.cvVolPub || {})));
+    for (let i = 0; i < missing.length; i += 100) {
+      const chunk = missing.slice(i, i + 100);
+      const url = 'https://comicvine.gamespot.com/api/volumes/?api_key=' + encodeURIComponent(key) + '&filter=id:' + chunk.join('|') + '&limit=100&field_list=id,publisher';
+      try {
+        const data = await fetchComicVineJsonp(url, 12000);
+        (data && data.results || []).forEach(v => { relMeta.cvVolPub[v.id] = (v.publisher && v.publisher.name) || ''; });
+      } catch (_) { /* éditeur laissé vide : jamais deviné */ }
+    }
+  };
+  const RELEASE_CONNECTORS = {
+    comicvine: {
+      id: 'comicvine', label: 'Comic Vine', markets: ['US'], kind: 'api', automated: true,
+      needs: 'Clé Comic Vine (Paramètres) ou relais local Panel',
+      terms: 'Usage non commercial uniquement selon les conditions Comic Vine ; 200 requêtes par ressource et par heure ; lien vers Comic Vine requis.',
+      available: () => cvAvailable(),
+      fetchRange: async (from, to) => {
+        const key = getCvKey();
+        const all = [];
+        for (let page = 0; page < 10; page++) {
+          const url = 'https://comicvine.gamespot.com/api/issues/?api_key=' + encodeURIComponent(key) +
+            '&filter=store_date:' + encodeURIComponent(from + '|' + to) + '&sort=store_date:asc&limit=100&offset=' + (page * 100) +
+            '&field_list=id,name,issue_number,volume,image,store_date,site_detail_url';
+          const data = await fetchComicVineJsonp(url, 12000);
+          if (!data || data.status_code !== 1) throw new Error((data && data.error) || 'Réponse Comic Vine invalide');
+          const rows = data.results || [];
+          rows.forEach(r => all.push({
+            id: r.id, volumeId: r.volume && r.volume.id, volume: (r.volume && r.volume.name) || 'Comic', issue: r.issue_number || '', title: r.name || '',
+            cover: (r.image && (r.image.medium_url || r.image.small_url || r.image.original_url)) || '', storeDate: r.store_date || '', url: r.site_detail_url || ''
+          }));
+          if (rows.length < 100 || all.length >= (data.number_of_total_results || 0)) break;
+        }
+        await cvVolumePublishers(all.map(r => r.volumeId));
+        all.forEach(r => { r.publisher = (relMeta.cvVolPub || {})[r.volumeId] || ''; });
+        return all;
+      },
+      normalize: r => ({ series: r.volume, issue: r.issue, title: r.title, date: r.storeDate, cover: r.cover, url: r.url, publisher: r.publisher || '', market: 'US', language: 'en', format: 'single', externalIds: { comicvine: String(r.id) } })
+    },
+    import: { id: 'import', label: 'Import contrôlé (CSV / JSON)', markets: ['*'], kind: 'import', automated: false, available: () => true, terms: 'Données fournies par l\'utilisateur (planning éditeur, export d\'un autre outil).' },
+    manual: { id: 'manual', label: 'Saisie manuelle', markets: ['*'], kind: 'manual', automated: false, available: () => true, terms: '—' }
+  };
+  const relLog = entry => {
+    relMeta.log = [entry].concat(relMeta.log || []).slice(0, 50);
+  };
+  // Synchronisation d'une période avec un connecteur : récupération complète d'abord, puis intégration.
+  // En cas d'erreur rien n'est modifié. Une publication absente de la réponse n'est jamais déclarée annulée.
+  const syncReleases = async (connectorId, from, to) => {
+    await loadReleaseData();
+    const c = RELEASE_CONNECTORS[connectorId];
+    const at = relNow();
+    const entry = { id: 'sync_' + Date.now().toString(36), connector: connectorId, from, to, at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, unseen: 0, errors: [] };
+    if (!c || !c.fetchRange) { entry.status = 'error'; entry.errors.push('Ce connecteur ne récupère pas de données automatiquement.'); }
+    else if (!relFetchOverride && !c.available()) { entry.status = 'unavailable'; entry.errors.push('Non configuré : ' + c.needs + '.'); }
+    else {
+      let raw = null;
+      try { raw = relFetchOverride ? await relFetchOverride(connectorId, from, to) : await c.fetchRange(from, to); }
+      catch (e) { entry.status = 'error'; entry.errors.push(String(e && e.message || e)); }
+      if (raw) {
+        const touched = new Map(), seen = new Set();
+        raw.forEach(r => {
+          entry.fetched++;
+          const res = relUpsert(c.normalize(r), { source: connectorId, at, ref: r.url || '' });
+          if (res.action === 'rejected') { entry.rejected++; return; }
+          seen.add(res.pub.id); touched.set(res.pub.id, res.pub);
+          if (res.action === 'added') entry.added++;
+          else if (res.action === 'cancelled') entry.cancelled++;
+          else if (res.action === 'unchanged') entry.unchanged++;
+          else entry.changed++;
+        });
+        relPubs.forEach(p => {
+          if (seen.has(p.id) || p.cancelled || p.unseenSince || !p.dates.current || p.dates.current < from || p.dates.current > to) return;
+          if (!(p.sources || []).some(s => s.source === connectorId)) return;
+          p.unseenSince = at; touched.set(p.id, p); entry.unseen++;
+        });
+        try { await relPut('publications', [...touched.values()]); } catch (e) { entry.status = 'error'; entry.errors.push('Écriture IndexedDB : ' + (e && e.message || e)); }
+      }
+    }
+    const prev = (relMeta.sync || {})[connectorId] || {};
+    relMeta.sync = Object.assign({}, relMeta.sync, { [connectorId]: { lastAt: at, lastStatus: entry.status, lastRange: [from, to], lastError: entry.errors[0] || '', lastOkAt: entry.status === 'ok' ? at : (prev.lastOkAt || null) } });
+    if (entry.status === 'ok') relMeta.ranges = Object.assign({}, relMeta.ranges, { [connectorId + ':' + from + ':' + to]: at });
+    relLog(entry);
+    try { await relSaveMeta(); } catch (_) {}
+    return entry;
+  };
+
+  // ---------- Import contrôlé (CSV ou JSON) et export
+  const REL_CSV = {
+    id: ['id', 'identifiant'], market: ['marche', 'market', 'territoire', 'pays'], publisher: ['editeur', 'publisher'],
+    series: ['serie', 'series', 'titreserie', 'seriestitle', 'seriesname'], issue: ['numero', 'issue', 'no', 'tome', 'issuenumber', 'num'],
+    title: ['titre', 'title', 'name', 'nom'], variant: ['variante', 'variant'], format: ['format', 'type', 'typepublication', 'typedepublication'],
+    language: ['langue', 'language'], initialDate: ['dateannonceeinitiale', 'initialdate', 'dateinitiale'],
+    date: ['dateannoncee', 'date', 'datesortie', 'datedesortie', 'releasedate', 'storedate', 'parution', 'dateparution', 'onsaledate', 'datedeparution'],
+    actualDate: ['dateconfirmee', 'confirmeddate', 'actualdate', 'datereelle'], status: ['statut', 'status'],
+    isbn: ['isbn', 'ean', 'isbn13'], upc: ['upc', 'barcode', 'codebarres'], comicvine: ['comicvine', 'comicvineid', 'cvid'],
+    metron: ['metron', 'metronid'], gcd: ['gcd', 'gcdid'], cover: ['couverture', 'cover', 'coverurl', 'image'], url: ['url', 'lien', 'link']
+  };
+  const relRowsFromCsv = text => {
+    const parsed = parseCsvText(text);
+    const map = {};
+    parsed.headers.forEach((h, i) => { const k = relKeyNorm(h); Object.entries(REL_CSV).forEach(([f, al]) => { if (map[f] === undefined && al.includes(k)) map[f] = i; }); });
+    if (map.series === undefined && map.title === undefined) throw new Error('Colonne « Série » ou « Titre » introuvable.');
+    return parsed.rows.map(r => {
+      const g = f => map[f] === undefined ? '' : String(r[map[f]] || '').trim();
+      return { id: g('id'), market: g('market'), publisher: g('publisher'), series: g('series') || g('title'), issue: g('issue'), title: g('series') ? g('title') : '', variant: g('variant'),
+        format: g('format'), language: g('language'), initialDate: g('initialDate'), date: g('date'), actualDate: g('actualDate'), status: g('status'),
+        isbn: g('isbn'), upc: g('upc'), comicvine: g('comicvine'), metron: g('metron'), gcd: g('gcd'), cover: g('cover'), url: g('url') };
+    });
+  };
+  const importReleaseRows = async (rows, label) => {
+    await loadReleaseData();
+    const at = relNow();
+    const entry = { id: 'imp_' + Date.now().toString(36), connector: 'import', label: relStr(label, 120), at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, errors: [] };
+    const touched = new Map();
+    (rows || []).slice(0, 20000).forEach((r, i) => {
+      entry.fetched++;
+      const res = relUpsert(r, { source: 'import', at, ref: label || '' });
+      if (res.action === 'rejected') { entry.rejected++; if (entry.errors.length < 20) entry.errors.push('Ligne ' + (i + 2) + ' : ' + res.error); return; }
+      touched.set(res.pub.id, res.pub);
+      if (res.action === 'added') entry.added++;
+      else if (res.action === 'cancelled') entry.cancelled++;
+      else if (res.action === 'unchanged') entry.unchanged++;
+      else entry.changed++;
+    });
+    await relPut('publications', [...touched.values()]);
+    relLog(entry);
+    try { await relSaveMeta(); } catch (_) {}
+    return entry;
+  };
+  const importReleaseText = (text, name) => {
+    const t = String(text || '').trim();
+    if (/^[\[{]/.test(t)) {
+      const d = JSON.parse(t);
+      const list = Array.isArray(d) ? d : Array.isArray(d.publications) ? d.publications : d.releases && Array.isArray(d.releases.publications) ? d.releases.publications : null;
+      if (!list) throw new Error('JSON sans liste de publications.');
+      return importReleaseRows(list.map(p => p && p.dates ? Object.assign({}, p, { date: p.dates.current, actualDate: p.dates.actual, initialDate: p.dates.initial, status: p.cancelled ? 'annulé' : '', cover: p.cover && p.cover.url }) : p), name);
+    }
+    return importReleaseRows(relRowsFromCsv(t), name);
+  };
+  const REL_CSV_OUT = ['id', 'marche', 'editeur', 'serie', 'numero', 'titre', 'variante', 'format', 'langue', 'date_annoncee_initiale', 'date_annoncee', 'date_confirmee', 'statut', 'isbn', 'upc', 'comicvine', 'metron', 'gcd', 'couverture', 'url', 'sources', 'derniere_verification'];
+  const exportReleasesCsv = (list) => {
+    const rows = (list || [...relPubs.values()]).map(p => [p.id, p.market, p.publisher, p.series, p.issue, p.title, p.variant, p.format, p.language,
+      p.dates.initial || '', p.dates.current || '', p.dates.actual || '', REL_STATUS[relStatusOf(p)], p.externalIds.isbn || '', p.externalIds.upc || '',
+      p.externalIds.comicvine || '', p.externalIds.metron || '', p.externalIds.gcd || '', (p.cover && p.cover.url) || '', p.url || '',
+      (p.sources || []).map(s => s.source).join(' '), p.dates.lastVerified || ''].map(csvCell).join(','));
+    return [REL_CSV_OUT.join(','), ...rows].join('\r\n');
+  };
+  const exportReleaseData = () => ({
+    schema: REL_SCHEMA, exportedAt: relNow(), profile: relMeta.profile,
+    publications: JSON.parse(JSON.stringify([...relPubs.values()])), pulls: JSON.parse(JSON.stringify([...relPulls.values()])),
+    sync: JSON.parse(JSON.stringify(relMeta.sync || {}))
+  });
+  // Sauvegarde externe = données non fiables : seules des fiches bien formées sont retenues
+  const sanitizeReleaseData = d => {
+    if (!d || typeof d !== 'object') return null;
+    const clean = (list, re, max) => (Array.isArray(list) ? list : []).filter(x => x && typeof x === 'object' && typeof x.id === 'string' && re.test(x.id)).slice(0, max).map(x => {
+      const j = JSON.stringify(x);
+      return j.length <= 100000 ? JSON.parse(j) : null;
+    }).filter(Boolean);
+    const pubs = clean(d.publications, /^pbc_[a-z0-9_]{1,40}$/i, 50000).filter(p => typeof p.series === 'string' && p.series && p.dates && typeof p.dates === 'object').map(p => {
+      p.externalIds = relExtIds(p.externalIds); p.relations = Array.isArray(p.relations) ? p.relations.filter(r => r && REL_RELATIONS[r.type] && typeof r.to === 'string') : [];
+      p.dateHistory = Array.isArray(p.dateHistory) ? p.dateHistory.slice(-60) : []; p.sources = Array.isArray(p.sources) ? p.sources.slice(0, 20) : [];
+      p.cover = p.cover && isSafeImageUrl(p.cover.url) ? { url: String(p.cover.url), source: relStr(p.cover.source, 40) } : null;
+      ['initial', 'current', 'actual'].forEach(k => { p.dates[k] = relDate(p.dates[k]); });
+      p.format = relFormat(p.format); p.cancelled = !!p.cancelled;
+      return p;
+    });
+    const pulls = clean(d.pulls, /^pl_[a-z0-9_]{1,40}$/i, 50000).filter(p => typeof p.pubId === 'string').map(p => {
+      p.status = PULL_STATUS[p.status] && p.status !== 'available' ? p.status : 'planned';
+      p.quantity = Math.max(1, Math.min(99, parseInt(p.quantity, 10) || 1));
+      p.history = Array.isArray(p.history) ? p.history.slice(-100) : []; p.copyIds = Array.isArray(p.copyIds) ? p.copyIds.filter(x => typeof x === 'string') : [];
+      return p;
+    });
+    return { schema: REL_SCHEMA, publications: pubs, pulls, profile: d.profile && typeof d.profile.id === 'string' ? { id: relStr(d.profile.id, 80), kind: 'local', createdAt: relStr(d.profile.createdAt, 40) } : null };
+  };
+  // Fusion (défaut) : ajoute ce qui manque. Remplacement : la version de la sauvegarde l'emporte. Rien n'est jamais supprimé.
+  const mergeReleaseData = (d, mode) => {
+    if (!d) return { added: 0, replaced: 0, undo: () => {} };
+    const prevPubs = new Map(relPubs), prevPulls = new Map(relPulls);
+    let added = 0, replaced = 0;
+    const tp = [], tl = [];
+    d.publications.forEach(p => { const cur = relPubs.get(p.id); if (!cur) { relPubs.set(p.id, p); tp.push(p); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(p)) { relPubs.set(p.id, p); tp.push(p); replaced++; } });
+    d.pulls.forEach(p => { const cur = relPulls.get(p.id); if (!cur) { relPulls.set(p.id, p); tl.push(p); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(p)) { relPulls.set(p.id, p); tl.push(p); replaced++; } });
+    relIdx = null;
+    const write = Promise.all([relPut('publications', tp), relPut('pulls', tl)]).catch(() => false);
+    return {
+      added, replaced, write,
+      undo: () => {
+        relPubs.clear(); prevPubs.forEach((v, k) => relPubs.set(k, v)); relPulls.clear(); prevPulls.forEach((v, k) => relPulls.set(k, v)); relIdx = null;
+        relPut('publications', tp.map(p => prevPubs.get(p.id))); relPut('pulls', tl.map(p => prevPulls.get(p.id)));
+      }
+    };
+  };
+
+  // ---------- Exemplaires créés depuis une publication (Collection) et Wishlist structurée
+  const relMakeSingle = (p, opts = {}) => {
+    const today = isoDate(new Date());
+    const year = parseInt(String(p.dates.actual || p.dates.current || '').slice(0, 4), 10) || null;
+    const item = {
+      id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+      series: p.series, issue: p.issue ? '#' + p.issue : '#1', publisher: p.publisher || 'Autre / Indé', variant: opts.variant || p.variant || 'Cover A',
+      keyType: (checkKeyIssueInfo(p.series, String(p.issue || ''), year) || {}).tier || 'none', condition: 'NM 9.4 (Near Mint)',
+      coverPrice: null, estValue: null, purchasePrice: null, purchaseDate: opts.wish ? '' : today,
+      box: '', divider: '', location: '', isProtected: false, isWishlist: !!opts.wish, isRead: false, rating: 0,
+      notes: p.title && p.title !== p.series ? 'Titre : ' + p.title : '', coverUrl: p.cover && isSafeImageUrl(p.cover.url) ? p.cover.url : '',
+      coverYear: year, pubId: p.id, addedAt: relNow()
+    };
+    if (p.externalIds.comicvine) item.comicVineId = Number(p.externalIds.comicvine) || p.externalIds.comicvine;
+    if (opts.pullId) item.pullId = opts.pullId;
+    if (opts.wish) item.wish = { status: 'wanted', priority: opts.priority || 'normal', targetPrice: numOrNull(opts.targetPrice), addedAt: item.addedAt, updatedAt: item.addedAt, pubId: p.id, variantWanted: opts.variant || '', from: opts.from || 'catalogue' };
+    applyAutoValuation(item);
+    return item;
+  };
+  const wishOf = s => {
+    const w = s && s.wish && typeof s.wish === 'object' ? s.wish : {};
+    return { status: WISH_STATUS[w.status] ? w.status : 'wanted', priority: WISH_PRIORITY[w.priority] ? w.priority : 'normal', targetPrice: numOrNull(w.targetPrice),
+      addedAt: w.addedAt || (s && s.addedAt) || '', updatedAt: w.updatedAt || '', pubId: w.pubId || (s && s.pubId) || '', variantWanted: w.variantWanted || '', from: w.from || '' };
+  };
+  const wishLabel = s => { const w = wishOf(s); return WISH_STATUS[w.status] + (w.priority === 'high' ? ' · prioritaire' : ''); };
+  const setWish = (s, patch) => {
+    if (!s || !s.isWishlist) return false;
+    const w = wishOf(s);
+    if (patch.status && WISH_STATUS[patch.status]) w.status = patch.status;
+    if (patch.priority && WISH_PRIORITY[patch.priority]) w.priority = patch.priority;
+    if (patch.targetPrice !== undefined) w.targetPrice = numOrNull(patch.targetPrice);
+    if (patch.variantWanted !== undefined) w.variantWanted = relStr(patch.variantWanted, 120);
+    w.updatedAt = relNow();
+    s.wish = w;
+    persistSingles();
+    return true;
+  };
+  const sameVariantWish = s => physicalSingles.find(x => x !== s && x.isWishlist && catalogIdsOf(x).variantId === catalogIdsOf(s).variantId);
+  // Catalogue ou calendrier → Wishlist (aucun doublon pour une même variante)
+  const addPubToWishlist = (pubId, opts = {}) => {
+    const p = relPubs.get(pubId);
+    if (!p) return { ok: false, error: 'Publication introuvable' };
+    const item = relMakeSingle(p, Object.assign({}, opts, { wish: true }));
+    const dup = physicalSingles.find(x => x.isWishlist && (x.pubId === p.id && (!opts.variant || catNorm(x.variant) === catNorm(item.variant)) || catalogIdsOf(x).variantId === catalogIdsOf(item).variantId));
+    if (dup) return { ok: true, duplicate: true, item: dup };
+    physicalSingles.unshift(item);
+    persistSingles();
+    return { ok: true, item };
+  };
+  // Catalogue ou calendrier → Collection : une fiche wishlist de la même publication est convertie plutôt que dupliquée
+  const addPubToCollection = (pubId, opts = {}) => {
+    const p = relPubs.get(pubId);
+    if (!p) return { ok: false, error: 'Publication introuvable' };
+    const w = physicalSingles.find(x => x.isWishlist && (x.pubId === p.id || wishOf(x).pubId === p.id));
+    if (w) { wishToCollection(w); return { ok: true, converted: true, item: w }; }
+    const item = relMakeSingle(p, opts);
+    physicalSingles.unshift(item);
+    persistSingles();
+    return { ok: true, item };
+  };
+  // Wishlist → Collection : la fiche est conservée (même identifiant), son statut wishlist passe à « Trouvé »
+  const wishToCollection = s => {
+    if (!s || !s.isWishlist) return false;
+    s.wish = Object.assign(wishOf(s), { status: 'found', updatedAt: relNow(), convertedAt: relNow() });
+    s.isWishlist = false;
+    if (!s.purchaseDate) s.purchaseDate = isoDate(new Date());
+    persistSingles();
+    return true;
+  };
+  // Collection → Wishlist : nouvelle entrée ; l'exemplaire possédé reste intact
+  const collectionToWishlist = (s, opts = {}) => {
+    if (!s || s.isWishlist) return { ok: false };
+    const keep = ['series', 'issue', 'publisher', 'variant', 'keyType', 'coverUrl', 'comicVineId', 'coverYear', 'pubId', 'coverPrice'];
+    const item = { id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), condition: 'NM 9.4 (Near Mint)', estValue: null, purchasePrice: null, purchaseDate: '',
+      box: '', divider: '', location: '', isProtected: false, isWishlist: true, isRead: false, rating: 0, notes: '', addedAt: relNow() };
+    keep.forEach(k => { if (s[k] !== undefined) item[k] = s[k]; });
+    if (opts.variant) item.variant = relStr(opts.variant, 120);
+    const dup = sameVariantWish(item);
+    if (dup) return { ok: true, duplicate: true, item: dup };
+    item.wish = { status: 'wanted', priority: opts.priority || 'normal', targetPrice: numOrNull(opts.targetPrice), addedAt: item.addedAt, updatedAt: item.addedAt, pubId: s.pubId || '', variantWanted: opts.variant || '', from: 'collection', sourceCopyId: s.id };
+    applyAutoValuation(item);
+    physicalSingles.unshift(item);
+    persistSingles();
+    return { ok: true, item };
+  };
+
+  // ---------- Pull List (par numéro, reliée au calendrier)
+  const pullStatusOf = pl => {
+    if (!pl) return 'planned';
+    if (pl.status === 'picked' || pl.status === 'cancelled') return pl.status;
+    return relStatusOf(relPubs.get(pl.pubId)) === 'available' ? 'available' : 'planned';
+  };
+  const pullHist = (pl, action, detail) => {
+    const at = relNow();
+    pl.history = (pl.history || []).concat([{ at, action, detail: relStr(detail, 300) }]).slice(-100);
+    pl.updatedAt = at;
+  };
+  const pullRef = p => ({ series: p.series, issue: p.issue, title: p.title, publisher: p.publisher, market: p.market, format: p.format, variant: p.variant });
+  const activePull = (pubId, variant) => [...relPulls.values()].find(x => x.pubId === pubId && catNorm(x.variant) === catNorm(variant || '') && (x.status === 'planned' || x.status === 'available'));
+  const addPull = async (pubId, opts = {}) => {
+    await loadReleaseData();
+    const p = relPubs.get(pubId);
+    if (!p) return { ok: false, error: 'Publication introuvable' };
+    const variant = relStr(opts.variant, 120);
+    const dup = activePull(pubId, variant);
+    if (dup) return { ok: true, duplicate: true, pull: dup };
+    const at = relNow();
+    const pl = { id: 'pl_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), ownerId: (relMeta.profile || {}).id || 'local', pubId, ref: pullRef(p), variant,
+      quantity: Math.max(1, Math.min(99, parseInt(opts.quantity, 10) || 1)), status: 'planned', notes: relStr(opts.notes, 500), history: [], copyIds: [], createdAt: at, updatedAt: at };
+    pullHist(pl, 'added', (opts.from ? 'Depuis ' + opts.from + ' · ' : '') + 'quantité ' + pl.quantity + (variant ? ' · variante ' + variant : ''));
+    relPulls.set(pl.id, pl);
+    await relPut('pulls', [pl]);
+    return { ok: true, pull: pl };
+  };
+  // Publication absente du calendrier : créée en saisie manuelle (date inconnue si non fournie), puis ajoutée
+  const addManualPull = async (raw, opts = {}) => {
+    await loadReleaseData();
+    const res = relUpsert(raw, { source: 'manual' });
+    if (res.action === 'rejected') return { ok: false, error: res.error };
+    await relPut('publications', [res.pub]);
+    return Object.assign(await addPull(res.pub.id, Object.assign({ from: 'saisie manuelle' }, opts)), { pubCreated: res.action === 'added' });
+  };
+  const updatePull = async (id, patch) => {
+    await loadReleaseData();
+    const pl = relPulls.get(id);
+    if (!pl) return { ok: false };
+    const parts = [];
+    if (patch.quantity !== undefined) { const q = Math.max(1, Math.min(99, parseInt(patch.quantity, 10) || 1)); if (q !== pl.quantity) { parts.push('quantité ' + pl.quantity + ' → ' + q); pl.quantity = q; } }
+    if (patch.variant !== undefined) { const v = relStr(patch.variant, 120); if (v !== pl.variant) { parts.push('variante « ' + (pl.variant || '—') + ' » → « ' + (v || '—') + ' »'); pl.variant = v; } }
+    if (patch.notes !== undefined) { const n = relStr(patch.notes, 500); if (n !== pl.notes) { parts.push('notes'); pl.notes = n; } }
+    if (!parts.length) return { ok: true, unchanged: true };
+    pullHist(pl, 'edited', parts.join(', '));
+    await relPut('pulls', [pl]);
+    return { ok: true, pull: pl };
+  };
+  const cancelPull = async (id, reason) => {
+    await loadReleaseData();
+    const pl = relPulls.get(id);
+    if (!pl || pl.status === 'picked' || pl.status === 'cancelled') return { ok: false };
+    pl.status = 'cancelled';
+    pullHist(pl, 'cancelled', reason || 'Sélection annulée');
+    await relPut('pulls', [pl]);
+    return { ok: true, pull: pl };
+  };
+  const reactivatePull = async id => {
+    await loadReleaseData();
+    const pl = relPulls.get(id);
+    if (!pl || pl.status !== 'cancelled') return { ok: false };
+    if (activePull(pl.pubId, pl.variant)) return { ok: false, error: 'Une sélection active existe déjà pour ce numéro.' };
+    pl.status = 'planned';
+    pullHist(pl, 'reactivated', 'Sélection rétablie');
+    await relPut('pulls', [pl]);
+    return { ok: true, pull: pl };
+  };
+  // Pull List → Collection : crée un exemplaire distinct par unité ; une seconde demande ne crée rien
+  const pickUpPull = async id => {
+    await loadReleaseData();
+    const pl = relPulls.get(id);
+    if (!pl) return { ok: false, error: 'Sélection introuvable' };
+    if (pl.status === 'picked') return { ok: true, duplicate: true, copies: (pl.copyIds || []).filter(cid => physicalSingles.some(s => s.id === cid)) };
+    if (pl.status === 'cancelled') return { ok: false, error: 'Sélection annulée : rétablissez-la d\'abord.' };
+    const p = relPubs.get(pl.pubId);
+    if (!p) return { ok: false, error: 'Publication introuvable' };
+    const ids = [];
+    let converted = 0;
+    const w = physicalSingles.find(x => x.isWishlist && (x.pubId === p.id || wishOf(x).pubId === p.id));
+    if (w) { w.pullId = pl.id; wishToCollection(w); ids.push(w.id); converted = 1; }
+    for (let i = ids.length; i < pl.quantity; i++) {
+      const item = relMakeSingle(p, { variant: pl.variant, pullId: pl.id });
+      item.id += '_' + i;
+      physicalSingles.unshift(item);
+      ids.push(item.id);
+    }
+    persistSingles();
+    pl.status = 'picked';
+    pl.pickedAt = relNow();
+    pl.copyIds = ids;
+    pullHist(pl, 'picked', ids.length + ' exemplaire(s) dans la collection' + (converted ? ' (dont 1 venu de la wishlist)' : ''));
+    await relPut('pulls', [pl]);
+    return { ok: true, copies: ids, converted };
+  };
+  // Pull List → Wishlist : la sélection est conservée (annulée, avec historique), une entrée wishlist est créée
+  const pullToWishlist = async id => {
+    await loadReleaseData();
+    const pl = relPulls.get(id);
+    if (!pl || pl.status === 'picked') return { ok: false };
+    const r = await addPubToWishlist(pl.pubId, { variant: pl.variant, from: 'pull list' });
+    if (!r.ok) return r;
+    if (pl.status !== 'cancelled') { pl.status = 'cancelled'; pullHist(pl, 'moved-to-wishlist', 'Placé en wishlist'); await relPut('pulls', [pl]); }
+    return Object.assign({ pull: pl }, r);
+  };
+
+  // ---------- Interface du calendrier
+  const relView = { mode: 'grid', period: 'week', anchor: startOfWeek(new Date()), market: '', publisher: '', format: '', status: '', syncing: false };
+  let releasesWeekStart = relView.anchor; // compatibilité (navigation existante)
+  const relRange = () => {
+    const a = relView.anchor;
+    if (relView.period === 'all') return null;
+    if (relView.period === 'week') { const s = startOfWeek(a), e = new Date(s); e.setDate(e.getDate() + 6); return [isoDate(s), isoDate(e)]; }
+    const s = new Date(a.getFullYear(), a.getMonth(), 1);
+    const e = new Date(a.getFullYear(), a.getMonth() + (relView.period === 'quarter' ? 3 : 1), 0);
+    return [isoDate(s), isoDate(e)];
+  };
+  const relShift = dir => {
+    const a = relView.anchor;
+    relView.anchor = relView.period === 'week' ? new Date(a.getFullYear(), a.getMonth(), a.getDate() + 7 * dir)
+      : new Date(a.getFullYear(), a.getMonth() + (relView.period === 'quarter' ? 3 : 1) * dir, 1);
+    releasesWeekStart = relView.anchor;
+  };
+  const relPulledIds = () => new Set([...relPulls.values()].filter(x => x.status === 'planned' || x.status === 'available').map(x => x.pubId));
+  const relQuery = (opts = {}) => {
+    const range = opts.range === undefined ? relRange() : opts.range;
+    const q = catNorm(opts.q !== undefined ? opts.q : (($('releasesSearch') && $('releasesSearch').value) || ''));
+    const pullOnly = opts.pullOnly !== undefined ? opts.pullOnly : !!($('releasesPullOnly') && $('releasesPullOnly').checked);
+    const market = opts.market !== undefined ? opts.market : relView.market, publisher = opts.publisher !== undefined ? opts.publisher : relView.publisher;
+    const format = opts.format !== undefined ? opts.format : relView.format, status = opts.status !== undefined ? opts.status : relView.status;
+    const pulled = relPulledIds(), today = relToday();
+    return [...relPubs.values()].filter(p => {
+      const d = p.dates.current;
+      if (range) { if (!d || d < range[0] || d > range[1]) return false; }
+      if (market && p.market !== market) return false;
+      if (publisher && p.publisher !== publisher) return false;
+      if (format && p.format !== format) return false;
+      if (status && relStatusOf(p, today) !== status) return false;
+      if (q && !catNorm(p.series + ' ' + p.title + ' ' + p.publisher).includes(q)) return false;
+      if (pullOnly && !(isPulled(p.series) || pulled.has(p.id))) return false;
+      return true;
+    }).sort((a, b) => (a.dates.current || '9999').localeCompare(b.dates.current || '9999') || a.series.localeCompare(b.series, 'fr') || (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
+  };
+  const relDateBadge = p => {
+    if (p.dates.actual) return '<span class="rel-date is-confirmed" title="Date de sortie confirmée">Sorti le ' + relFmtDate(p.dates.actual) + '</span>';
+    if (!p.dates.current) return '<span class="rel-date is-unknown">Date inconnue</span>';
+    return '<span class="rel-date is-announced" title="Date annoncée, non confirmée">' + (p.dates.current < relToday() ? 'Prévu le ' : 'Annoncé · ') + relFmtDate(p.dates.current) + '</span>';
+  };
+  const relStatusPill = p => { const st = relStatusOf(p); return '<span class="rel-status st-' + st + '">' + REL_STATUS[st] + '</span>'; };
+  const relMarketBadge = p => '<span class="rel-market">' + escapeHtml(p.market || '?') + '</span>';
+  const relSyncInfoText = () => {
+    const s = (relMeta.sync || {}).comicvine;
+    const parts = [];
+    if (!cvAvailable()) parts.push('Comic Vine non configuré : le calendrier affiche uniquement les publications importées ou saisies.');
+    else parts.push(s && s.lastOkAt ? 'Comic Vine actualisé le ' + new Date(s.lastOkAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + (s.lastStatus !== 'ok' ? ' (dernier essai : ' + (s.lastError || s.lastStatus) + ')' : '') : 'Comic Vine : jamais actualisé.');
+    parts.push('Actualisation manuelle ou à l\'ouverture de la semaine ; aucune mise à jour automatique en arrière-plan.');
+    if (!navigator.onLine) parts.push('Hors ligne : dernières données enregistrées.');
+    parts.push(relPubs.size + ' publication(s) enregistrée(s).');
+    return parts.join(' ');
+  };
+  const renderReleasesWeekLabel = () => {
+    const el = $('releasesWeekLabel');
+    if (!el) return;
+    const r = relRange(), f = d => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    if (!r) el.textContent = 'Toutes les dates';
+    else if (relView.period === 'week') {
+      const wed = new Date(r[0] + 'T12:00:00'); wed.setDate(wed.getDate() + 2);
+      el.textContent = `Semaine du ${f(r[0])} au ${f(r[1])} ${r[1].slice(0, 4)} · NCBD mer. ${wed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+    } else if (relView.period === 'month') el.textContent = new Date(r[0] + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+    else el.textContent = f(r[0]) + ' → ' + f(r[1]) + ' ' + r[1].slice(0, 4);
+  };
+  const relFillSelect = (id, options, current) => {
+    const el = $(id);
+    if (!el) return;
+    const html = options.map(([v, l]) => '<option value="' + escapeHtml(v) + '"' + (v === current ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('');
+    if (el.innerHTML !== html) el.innerHTML = html;
+  };
+  const relActions = (p, pulled) => '<div class="comic-card-action-bar">' +
+    '<button class="card-action-btn" data-pull title="Suivre toute la série" style="color:' + (isPulled(p.series) ? 'var(--gold)' : 'inherit') + '">★</button>' +
+    '<button class="card-action-btn" data-pulladd title="Ajouter ce numéro à la Pull List">' + (pulled ? '✓ Pull' : '+ Pull') + '</button>' +
+    '<button class="card-action-btn" data-wish ' + (ownsIssue(p.series, p.issue) ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wish</button>' +
+    '<button class="card-action-btn" data-buy style="color:var(--lime);font-weight:700" ' + ((o => o && !o.isWishlist)(ownsIssue(p.series, p.issue)) ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Acheté</button>' +
+    '</div>';
+  const relRowHtml = (p, pulled) => '<div class="rel-row" data-id="' + escapeHtml(p.id) + '">' +
+    '<span class="rel-row-date">' + relDateBadge(p) + '</span>' + relMarketBadge(p) +
+    '<button class="rel-row-title" data-open>' + escapeHtml(relLabel(p)) + '<small>' + escapeHtml([p.publisher, REL_FORMATS[p.format]].filter(Boolean).join(' · ')) + '</small></button>' +
+    relStatusPill(p) +
+    '<button class="btn secondary rel-mini" data-pulladd>' + (pulled ? '✓ Pull' : '+ Pull') + '</button></div>';
+  const renderReleasesGrid = () => {
+    const gridEl = $('releasesGrid');
+    if (!gridEl) return;
     renderReleasesWeekLabel();
-    if (releasesCache[wk]) {
-      releasesState = { status: 'ok', items: releasesCache[wk], error: '' };
-      renderReleasesGrid();
+    if ($('relSyncInfo')) $('relSyncInfo').textContent = relView.syncing ? 'Actualisation Comic Vine en cours…' : relSyncInfoText();
+    const pubsAll = [...relPubs.values()];
+    const markets = [...new Set(pubsAll.map(p => p.market).filter(Boolean).concat(Object.keys(REL_MARKETS)))];
+    relFillSelect('relMarket', [['', 'Tous les marchés']].concat(markets.map(m => [m, (REL_MARKETS[m] || {}).label || m])), relView.market);
+    const pubs = [...new Set(pubsAll.filter(p => !relView.market || p.market === relView.market).map(p => p.publisher).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+    relFillSelect('relPublisher', [['', 'Tous les éditeurs']].concat(pubs.map(x => [x, x])), relView.publisher);
+    relFillSelect('relFormat', [['', 'Tous les formats']].concat(Object.entries(REL_FORMATS)), relView.format);
+    relFillSelect('relStatus', [['', 'Tous les statuts']].concat(Object.entries(REL_STATUS)), relView.status);
+    if ($('relMode')) $('relMode').value = relView.mode;
+    if ($('relPeriod')) $('relPeriod').value = relView.period;
+    if ($('relSyncBtn')) { $('relSyncBtn').disabled = !cvAvailable() || relView.syncing; $('relSyncBtn').title = cvAvailable() ? 'Récupérer les sorties américaines de la période (Comic Vine)' : 'Clé Comic Vine absente (Paramètres)'; }
+    renderPullPanel();
+    const range = relRange();
+    const items = relQuery({ range: relView.mode === 'month' && range ? [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))] : range });
+    const pulled = relPulledIds();
+    const undated = range ? relQuery({ range: null }).filter(p => !p.dates.current).length : 0;
+    gridEl.className = relView.mode === 'grid' ? 'comics-grid' : 'rel-alt rel-mode-' + relView.mode;
+    if (!items.length) {
+      const pullOnly = $('releasesPullOnly') && $('releasesPullOnly').checked;
+      gridEl.innerHTML = '<div class="notice-box">' + (pullOnly ? 'Aucune sortie sur cette période pour votre pull list.' : 'Aucune publication sur cette période.') +
+        (cvAvailable() ? '' : ' Importez un calendrier (CSV ou JSON) ou ajoutez une publication.') + (undated ? '<br>' + undated + ' publication(s) sans date : période « Toutes les dates ».' : '') + '</div>';
       return;
     }
-    releasesState = { status: 'loading', items: [], error: '' };
-    renderReleasesGrid();
-    try {
-      const items = await fetchWeeklyReleases(releasesWeekStart);
-      releasesCache[wk] = items;
-      if (isoDate(releasesWeekStart) !== wk) return; // l'utilisateur a changé de semaine entre-temps
-      releasesState = { status: 'ok', items, error: '' };
-    } catch (e) {
-      if (isoDate(releasesWeekStart) !== wk) return;
-      releasesState = { status: 'error', items: [], error: e.message || String(e) };
+    const wire = () => gridEl.querySelectorAll('[data-id]').forEach(el => {
+      const p = relPubs.get(el.dataset.id);
+      if (!p) return;
+      const on = (sel, fn) => el.querySelectorAll(sel).forEach(b => { b.onclick = ev => { ev.stopPropagation(); fn(); }; });
+      on('[data-open]', () => openPubSheet(p.id));
+      on('[data-pull]', () => { togglePull(p.series); renderSinglesCollection(); });
+      on('[data-pulladd]', async () => { const r = await addPull(p.id, { from: 'calendrier' }); showToast(r.duplicate ? 'Déjà dans votre Pull List.' : relLabel(p) + ' ajouté à la Pull List.'); renderSinglesCollection(); });
+      on('[data-wish]', async () => { const r = await addPubToWishlist(p.id, { from: 'calendrier' }); showToast(r.duplicate ? 'Déjà dans votre wishlist.' : relLabel(p) + ' ajouté à la wishlist.'); renderSinglesCollection(); });
+      on('[data-buy]', async () => {
+        const r = await addPubToCollection(p.id);
+        renderSinglesCollection();
+        if (r.converted) showToast(relLabel(p) + ' passé de la wishlist à la collection.');
+        else if (r.item) showToastAction(relLabel(p) + ' ajouté à la collection.', 'Saisir le prix', () => editSingleIssue(r.item));
+      });
+      if (el.classList.contains('release-card')) el.onclick = ev => { if (!ev.target.closest('button')) openPubSheet(p.id); };
+    });
+    if (relView.mode === 'grid') {
+      const pulledCount = items.filter(p => isPulled(p.series) || pulled.has(p.id)).length;
+      gridEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${items.length} publication(s)${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
+        items.map(p => {
+          const isP = isPulled(p.series) || pulled.has(p.id), owned = ownsIssue(p.series, p.issue);
+          const s = { series: p.series, issue: relNumLabel(p), coverUrl: p.cover ? p.cover.url : '' };
+          return '<article class="comic-card release-card' + (isP ? ' pulled' : '') + '" data-id="' + escapeHtml(p.id) + '" tabindex="0">' +
+            '<div class="comic-poster">' + coverImgTag(s) + '<div class="comic-poster-gradient"></div>' +
+              (owned ? '<span class="release-flag owned">' + (owned.isWishlist ? '<svg class=ic aria-hidden=true><use href=#ic-heart /></svg> WISHLIST' : '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> POSSÉDÉ') + '</span>' : '') +
+            '</div>' +
+            '<div class="comic-caption">' +
+              '<div class="rel-card-meta">' + relMarketBadge(p) + relStatusPill(p) + '<span class="rel-src">' + escapeHtml(relSourceLabel(p.origin)) + '</span></div>' +
+              '<b>' + escapeHtml(p.series) + ' ' + escapeHtml(relNumLabel(p)) + '</b>' +
+              '<small class="rel-card-sub">' + escapeHtml([p.publisher, p.format !== 'single' ? REL_FORMATS[p.format] : '', p.title && p.title !== p.series ? p.title : ''].filter(Boolean).join(' · ')) + '</small>' +
+              relDateBadge(p) + relActions(p, pulled.has(p.id)) +
+            '</div></article>';
+        }).join('');
+    } else if (relView.mode === 'month') {
+      const first = new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1);
+      const start = startOfWeek(first), last = new Date(first.getFullYear(), first.getMonth() + 1, 0);
+      const byDay = {};
+      items.forEach(p => { (byDay[p.dates.current] = byDay[p.dates.current] || []).push(p); });
+      let html = '<div class="rel-cal">' + ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'].map(d => '<div class="rel-cal-head">' + d + '</div>').join('');
+      for (let d = new Date(start); d <= last || d.getDay() !== 1; d.setDate(d.getDate() + 1)) {
+        const k = isoDate(d), list = byDay[k] || [], inMonth = d.getMonth() === first.getMonth();
+        html += '<div class="rel-cal-day' + (inMonth ? '' : ' is-out') + (k === relToday() ? ' is-today' : '') + '"><span class="rel-cal-num">' + d.getDate() + '</span>' +
+          list.slice(0, 4).map(p => '<div data-id="' + escapeHtml(p.id) + '"><button class="rel-cal-item' + (p.dates.actual ? ' is-confirmed' : '') + ' st-' + relStatusOf(p) + '" data-open title="' + escapeHtml(relLabel(p) + ' · ' + (p.publisher || '') + ' · ' + REL_STATUS[relStatusOf(p)]) + '">' + escapeHtml(p.market + ' · ' + relLabel(p)) + '</button></div>').join('') +
+          (list.length > 4 ? '<span class="rel-cal-more">+' + (list.length - 4) + '</span>' : '') + '</div>';
+        if (d > last && d.getDay() === 0) break;
+      }
+      gridEl.innerHTML = html + '</div><div class="rel-cal-list">' + items.map(p => relRowHtml(p, pulled.has(p.id))).join('') + '</div>' + (undated ? '<p class="rel-note">' + undated + ' publication(s) sans date ne figurent pas dans le calendrier.</p>' : '');
+    } else {
+      const groupKey = { list: () => '', publisher: p => p.publisher || 'Éditeur inconnu', series: p => p.series, market: p => (REL_MARKETS[p.market] || {}).label || p.market || 'Marché inconnu' }[relView.mode] || (() => '');
+      const groups = new Map();
+      items.forEach(p => { const k = groupKey(p); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(p); });
+      const keys = [...groups.keys()].sort((a, b) => a.localeCompare(b, 'fr'));
+      gridEl.innerHTML = keys.map(k => (k ? '<h3 class="rel-group">' + escapeHtml(k) + ' <small>' + groups.get(k).length + '</small></h3>' : '') + groups.get(k).map(p => relRowHtml(p, pulled.has(p.id))).join('')).join('');
     }
+    wire();
+  };
+  const ownsIssue = (series, issue) => {
+    const k = normSeries(series);
+    const n = issueNumber(issue);
+    return physicalSingles.find(s => normSeries(s.series) === k && issueNumber(s) === n) || null;
+  };
+  const relSyncCurrent = async (quiet) => {
+    let range = relRange();
+    if (!range || relView.period === 'quarter') range = [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))];
+    relView.syncing = true;
     renderReleasesGrid();
+    const r = await syncReleases('comicvine', range[0], range[1]);
+    relView.syncing = false;
+    if (!quiet || r.status !== 'ok') showToast(r.status === 'ok' ? `Comic Vine : ${r.fetched} sortie(s), ${r.added} nouvelle(s), ${r.changed} modifiée(s).` : 'Actualisation impossible : ' + (r.errors[0] || r.status));
+    renderReleasesGrid();
+    return r;
+  };
+  // Ouverture de la vue : données locales immédiatement ; actualisation Comic Vine si la période n'a pas été vue depuis 12 h
+  const loadReleasesForWeek = async () => {
+    await loadReleaseData();
+    renderReleasesGrid();
+    const range = relRange();
+    if (!range || navigator.webdriver || !navigator.onLine || !cvAvailable() || relView.syncing || relView.period !== 'week') return;
+    const seen = (relMeta.ranges || {})['comicvine:' + range[0] + ':' + range[1]];
+    if (seen && Date.now() - new Date(seen).getTime() < 12 * 3600000) return;
+    await relSyncCurrent(true);
   };
 
-  const renderReleasesWeekLabel = () => {
-    const end = new Date(releasesWeekStart);
-    end.setDate(end.getDate() + 6);
-    const wed = new Date(releasesWeekStart);
-    wed.setDate(wed.getDate() + 2);
-    const f = d => d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
-    if ($('releasesWeekLabel')) $('releasesWeekLabel').textContent = `Semaine du ${f(releasesWeekStart)} au ${f(end)} ${end.getFullYear()} · NCBD mer. ${f(wed)}`;
+  // ---------- Pull List : panneau
+  const renderPullPanel = () => {
+    const body = $('pullPanelBody');
+    if (!body) return;
+    const all = [...relPulls.values()];
+    const active = all.filter(x => x.status === 'planned' || x.status === 'available');
+    const done = all.filter(x => !(x.status === 'planned' || x.status === 'available'));
+    if ($('pullPanelCount')) $('pullPanelCount').textContent = active.length ? '(' + active.length + ' en cours)' : '';
+    const dateOf = pl => { const p = relPubs.get(pl.pubId); return p && p.dates.current || '9999'; };
+    const row = pl => {
+      const p = relPubs.get(pl.pubId) || { series: pl.ref.series, issue: pl.ref.issue, dates: {}, format: pl.ref.format || 'single', externalIds: {} };
+      const st = pullStatusOf(pl), delayed = relPubs.get(pl.pubId) && relStatusOf(p) === 'delayed', isActive = st === 'planned' || st === 'available';
+      return '<div class="pull-row" data-pl="' + escapeHtml(pl.id) + '">' +
+        '<button class="rel-row-title" data-open>' + escapeHtml(relLabel(p)) + '<small>' + escapeHtml([p.publisher, p.market].filter(Boolean).join(' · ')) + '</small></button>' +
+        (p.dates ? relDateBadge(p) : '') +
+        '<span class="pull-status ps-' + st + '">' + PULL_STATUS[st] + (delayed && isActive ? ' · reporté' : '') + '</span>' +
+        (isActive ? '<input class="field-input pull-variant" data-f="variant" value="' + escapeHtml(pl.variant || '') + '" placeholder="Variante" aria-label="Variante">' +
+          '<input class="field-input pull-qty" data-f="quantity" type="number" min="1" max="99" value="' + pl.quantity + '" aria-label="Quantité">' +
+          '<button class="btn rel-mini" data-act="pick">Récupéré</button><button class="btn secondary rel-mini" data-act="wish">→ Wishlist</button><button class="btn ghost rel-mini" data-act="cancel">Annuler</button>'
+          : (pl.status === 'cancelled' ? '<button class="btn secondary rel-mini" data-act="reactivate">Rétablir</button>' : '<span class="rel-note">×' + pl.quantity + (pl.variant ? ' · ' + escapeHtml(pl.variant) : '') + '</span>')) +
+        '<details class="pull-hist"><summary>Historique</summary><ul>' + (pl.history || []).slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + ' — ' + h.detail) + '</li>').join('') + '</ul></details>' +
+        '</div>';
+    };
+    body.innerHTML = '<div class="pull-add">' +
+      '<input class="field-input" id="pullManSeries" placeholder="Série (si absente du calendrier)"><input class="field-input" id="pullManIssue" placeholder="N°" style="width:60px">' +
+      '<input class="field-input" id="pullManPublisher" placeholder="Éditeur" style="width:130px"><select class="field-input" id="pullManMarket" aria-label="Marché"><option value="">Marché</option>' + Object.entries(REL_MARKETS).map(([k, m]) => '<option value="' + k + '">' + m.label + '</option>').join('') + '</select>' +
+      '<input class="field-input" id="pullManDate" type="date" aria-label="Date annoncée (facultative)"><button class="btn secondary rel-mini" id="pullManAdd">+ Ajouter</button></div>' +
+      (active.length ? active.sort((a, b) => dateOf(a).localeCompare(dateOf(b))).map(row).join('') : '<p class="rel-note">Aucun numéro en attente. Ajoutez-en depuis le calendrier (« + Pull ») ou ci-dessus.</p>') +
+      (done.length ? '<details class="pull-done"><summary>Récupérés et annulés (' + done.length + ')</summary>' + done.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).map(row).join('') + '</details>' : '');
+    body.querySelectorAll('[data-pl]').forEach(el => {
+      const id = el.dataset.pl, pl = relPulls.get(id);
+      const o = el.querySelector('[data-open]');
+      if (o) o.onclick = () => relPubs.get(pl.pubId) && openPubSheet(pl.pubId);
+      el.querySelectorAll('[data-f]').forEach(inp => { inp.onchange = async () => { await updatePull(id, { [inp.dataset.f]: inp.value }); renderPullPanel(); }; });
+      el.querySelectorAll('[data-act]').forEach(b => {
+        b.onclick = async () => {
+          const act = b.dataset.act;
+          let r;
+          if (act === 'pick') { r = await pickUpPull(id); showToast(r.ok ? (r.duplicate ? 'Déjà récupéré : aucun exemplaire ajouté.' : r.copies.length + ' exemplaire(s) ajouté(s) à la collection.') : r.error); }
+          else if (act === 'wish') { r = await pullToWishlist(id); showToast(r.ok ? (r.duplicate ? 'Déjà dans la wishlist ; sélection annulée.' : 'Placé dans la wishlist.') : 'Impossible.'); }
+          else if (act === 'cancel') { r = await cancelPull(id); showToast('Sélection annulée (conservée dans l\'historique).'); }
+          else if (act === 'reactivate') { r = await reactivatePull(id); if (!r.ok && r.error) showToast(r.error); }
+          renderSinglesCollection();
+        };
+      });
+    });
+    const add = $('pullManAdd');
+    if (add) add.onclick = async () => {
+      const series = $('pullManSeries').value.trim();
+      if (!series) { showToast('Indiquez au moins la série.'); return; }
+      const r = await addManualPull({ series, issue: $('pullManIssue').value, publisher: $('pullManPublisher').value, market: $('pullManMarket').value, date: $('pullManDate').value });
+      showToast(!r.ok ? r.error : r.duplicate ? 'Déjà dans votre Pull List.' : 'Ajouté à la Pull List' + (r.pubCreated ? ' (publication créée en saisie manuelle).' : '.'));
+      renderSinglesCollection();
+    };
   };
+
+  // ---------- Fiche publication (consultation, modification, relations, transitions)
+  let relSheetId = null;
+  const openPubSheet = (id, edit) => {
+    const m = $('pubModal');
+    if (!m) return;
+    relSheetId = id || null;
+    renderPubSheet(!!edit || !id);
+    m.classList.add('open');
+  };
+  const relCopiesOf = p => physicalSingles.filter(s => s.pubId === p.id || (p.catalog && catalogIdsOf(s).issueId === p.catalog.issueId));
+  const renderPubSheet = (edit) => {
+    const body = $('pubModalBody');
+    if (!body) return;
+    const p = relSheetId ? relPubs.get(relSheetId) : null;
+    if ($('pubModalTitle')) $('pubModalTitle').textContent = p ? relLabel(p) : 'Nouvelle publication';
+    if (edit) {
+      const v = k => escapeHtml(p ? (k.includes('.') ? (k.split('.').reduce((o, x) => o && o[x], p) || '') : (p[k] || '')) : '');
+      const opt = (obj, cur) => Object.entries(obj).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + escapeHtml(typeof l === 'string' ? l : l.label) + '</option>').join('');
+      body.innerHTML = '<form id="pubForm" class="pub-form">' +
+        '<label>Série *<input class="field-input" name="series" required value="' + v('series') + '"></label>' +
+        '<label>Numéro / tome<input class="field-input" name="issue" value="' + v('issue') + '"></label>' +
+        '<label>Titre<input class="field-input" name="title" value="' + v('title') + '"></label>' +
+        '<label>Variante<input class="field-input" name="variant" value="' + v('variant') + '"></label>' +
+        '<label>Éditeur<input class="field-input" name="publisher" list="pubPublisherList" value="' + v('publisher') + '"></label>' +
+        '<datalist id="pubPublisherList">' + REL_PUBLISHERS.map(x => '<option value="' + escapeHtml(x[0]) + '">').join('') + '</datalist>' +
+        '<label>Marché<select class="field-input" name="market"><option value="">—</option>' + opt(REL_MARKETS, p ? p.market : '') + '</select></label>' +
+        '<label>Langue<input class="field-input" name="language" value="' + v('language') + '" placeholder="fr, en…"></label>' +
+        '<label>Format<select class="field-input" name="format">' + opt(REL_FORMATS, p ? p.format : 'single') + '</select></label>' +
+        '<label>Date annoncée<input class="field-input" type="date" name="date" value="' + v('dates.current') + '"></label>' +
+        '<label>Date de sortie confirmée<input class="field-input" type="date" name="actual" value="' + v('dates.actual') + '"></label>' +
+        '<label>ISBN / EAN<input class="field-input" name="isbn" value="' + v('externalIds.isbn') + '"></label>' +
+        '<label>UPC<input class="field-input" name="upc" value="' + v('externalIds.upc') + '"></label>' +
+        '<label>Couverture (URL https)<input class="field-input" name="cover" value="' + v('cover.url') + '"></label>' +
+        '<label class="pub-check"><input type="checkbox" name="cancelled"' + (p && p.cancelled ? ' checked' : '') + '> Publication annulée</label>' +
+        '<p class="rel-note">Laissez la date vide si elle n\'est pas connue : Panel n\'invente jamais de date.</p>' +
+        '<div class="modal-btns"><button type="button" class="btn secondary" id="pubCancelEdit">Annuler</button><button type="submit" class="btn">Enregistrer</button></div></form>';
+      $('pubCancelEdit').onclick = () => p ? renderPubSheet(false) : $('pubModal').classList.remove('open');
+      $('pubForm').onsubmit = async ev => {
+        ev.preventDefault();
+        const f = Object.fromEntries(new FormData(ev.target).entries());
+        const ext = { isbn: f.isbn, upc: f.upc };
+        let r;
+        if (p) r = await relEdit(p.id, { series: f.series, issue: f.issue, title: f.title, variant: f.variant, publisher: f.publisher, market: f.market, language: f.language, format: f.format, date: f.date, actual: f.actual, cover: f.cover, cancelled: !!f.cancelled, externalIds: ext });
+        else {
+          await loadReleaseData();
+          const res = relUpsert({ series: f.series, issue: f.issue, title: f.title, variant: f.variant, publisher: f.publisher, market: f.market, language: f.language, format: f.format, date: f.date, actualDate: f.actual, cover: f.cover, cancelled: f.cancelled ? true : undefined, isbn: f.isbn, upc: f.upc }, { source: 'manual' });
+          if (res.action === 'rejected') r = { ok: false, error: res.error };
+          else { await relPut('publications', [res.pub]); r = { ok: true, pub: res.pub }; if (res.action !== 'added') showToast('Cette publication existait déjà : fiche existante ouverte.'); }
+        }
+        if (!r.ok) { showToast(r.error); return; }
+        relSheetId = r.pub.id;
+        renderPubSheet(false);
+        renderSinglesCollection();
+      };
+      return;
+    }
+    if (!p) { body.innerHTML = '<p>Publication introuvable.</p>'; return; }
+    const rels = relRelationsOf(p.id), sugg = relSuggest(p.id), copies = relCopiesOf(p);
+    const kindTxt = { announced: 'annoncée', postponed: 'reportée', advanced: 'avancée', cancelled: 'annulée', reinstated: 'rétablie', unknown: 'date retirée' };
+    const ext = Object.entries(p.externalIds || {});
+    body.innerHTML = '<div class="pub-sheet">' +
+      (p.cover ? '<img class="pub-cover" src="' + escapeHtml(p.cover.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') +
+      '<div class="pub-main">' +
+        '<div class="rel-card-meta">' + relMarketBadge(p) + relStatusPill(p) + '<span class="rel-src">' + escapeHtml(REL_FORMATS[p.format]) + '</span></div>' +
+        '<p class="pub-line">' + escapeHtml([p.publisher || 'Éditeur inconnu', (REL_MARKETS[p.market] || {}).label || p.market, p.language].filter(Boolean).join(' · ')) + (p.title && p.title !== p.series ? '<br><i>' + escapeHtml(p.title) + '</i>' : '') + '</p>' +
+        '<table class="pub-dates"><tr><th>Date annoncée initialement</th><td>' + (relFmtDate(p.dates.initial) || '—') + '</td></tr>' +
+          '<tr><th>Date annoncée actuelle</th><td>' + (relFmtDate(p.dates.current) || 'inconnue') + '</td></tr>' +
+          '<tr><th>Date de sortie confirmée</th><td>' + (relFmtDate(p.dates.actual) || 'non confirmée') + '</td></tr>' +
+          '<tr><th>Dernière vérification</th><td>' + (p.dates.lastVerified ? new Date(p.dates.lastVerified).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—') + '</td></tr></table>' +
+        (p.unseenSince ? '<p class="rel-note">Absente de la dernière actualisation ' + escapeHtml(relSourceLabel((p.sources[0] || {}).source)) + ' (' + new Date(p.unseenSince).toLocaleDateString('fr-FR') + ') : statut inchangé, à vérifier.</p>' : '') +
+        (p.possibleDuplicates ? '<p class="rel-note">Doublon possible signalé à la création (non fusionné).</p>' : '') +
+        '<p class="pub-line">Dans votre collection : <b>' + copies.filter(s => !s.isWishlist).length + '</b> exemplaire(s) · wishlist : ' + copies.filter(s => s.isWishlist).length + '</p>' +
+        '<div class="pub-actions"><input class="field-input" id="pubActVariant" placeholder="Variante" style="width:120px"><input class="field-input" id="pubActQty" type="number" min="1" max="99" value="1" style="width:60px" aria-label="Quantité">' +
+          '<button class="btn" id="pubToPull">+ Pull List</button><button class="btn secondary" id="pubToWish">Wishlist</button><button class="btn secondary" id="pubToCollection">Collection</button><button class="btn ghost" id="pubEdit">Modifier</button></div>' +
+      '</div></div>' +
+      '<h3 class="rel-group">Historique des dates</h3>' + ((p.dateHistory || []).length ? '<ul class="pub-hist">' + p.dateHistory.slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleDateString('fr-FR') + ' — ' + (kindTxt[h.kind] || h.kind) + (h.from && h.to && h.from !== h.to ? ' : ' + relFmtDate(h.from) + ' → ' + relFmtDate(h.to) : h.to ? ' : ' + relFmtDate(h.to) : '') + ' (source : ' + relSourceLabel(h.source) + ')') + '</li>').join('') + '</ul>' : '<p class="rel-note">Aucun changement enregistré.</p>') +
+      '<h3 class="rel-group">Sources et identifiants</h3><p class="pub-line">' + (p.sources || []).map(s => escapeHtml(relSourceLabel(s.source) + ' (' + new Date(s.at).toLocaleDateString('fr-FR') + ')')).join(' · ') +
+        (ext.length ? '<br>' + ext.map(([k, v]) => escapeHtml(k + ' : ' + v)).join(' · ') : '') + (p.url ? '<br><a href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener noreferrer">Fiche source</a>' : '') +
+        (p.cover ? '<br>Couverture : ' + escapeHtml(relSourceLabel(p.cover.source)) : '') + '</p>' +
+      '<h3 class="rel-group">Relations éditoriales</h3>' +
+      (rels.length ? rels.map(r => '<div class="pub-rel"><span>' + escapeHtml(r.label) + '</span> <button class="linklike" data-goto="' + escapeHtml(r.otherId) + '">' + escapeHtml(r.other ? relLabel(r.other) + ' (' + (r.other.market || '?') + ')' : r.otherId) + '</button>' +
+        ' <button class="btn-icon" data-unrel="' + escapeHtml(r.from + '|' + r.type + '|' + r.to) + '" aria-label="Retirer la relation"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button></div>').join('') : '<p class="rel-note">Aucune relation. Les correspondances entre éditions ne sont jamais créées automatiquement.</p>') +
+      '<div class="pub-rel-add"><select class="field-input" id="pubRelType">' + Object.entries(REL_RELATIONS).map(([k, l]) => '<option value="' + k + '">' + l + '</option>').join('') + '</select>' +
+        '<input class="field-input" id="pubRelSearch" placeholder="Chercher la publication liée…"><div id="pubRelResults" class="pub-rel-results"></div></div>' +
+      (sugg.length ? '<p class="rel-note">Suggestions à vérifier (autre marché, titre proche) — rien n\'est relié sans votre choix :</p>' + sugg.map(s => '<div class="pub-rel"><button class="linklike" data-pick="' + escapeHtml(s.pub.id) + '">' + escapeHtml(relLabel(s.pub) + ' · ' + (s.pub.publisher || '') + ' (' + (s.pub.market || '?') + ')') + '</button></div>').join('') : '');
+    const qtyVar = () => ({ variant: $('pubActVariant').value, quantity: $('pubActQty').value });
+    $('pubToPull').onclick = async () => { const r = await addPull(p.id, Object.assign(qtyVar(), { from: 'fiche publication' })); showToast(r.duplicate ? 'Déjà dans votre Pull List.' : 'Ajouté à la Pull List.'); renderSinglesCollection(); };
+    $('pubToWish').onclick = async () => { const r = await addPubToWishlist(p.id, { variant: $('pubActVariant').value, from: 'fiche publication' }); showToast(r.duplicate ? 'Déjà dans la wishlist.' : 'Ajouté à la wishlist.'); renderSinglesCollection(); renderPubSheet(false); };
+    $('pubToCollection').onclick = async () => {
+      const n = Math.max(1, Math.min(99, parseInt($('pubActQty').value, 10) || 1));
+      let made = 0;
+      for (let i = 0; i < n; i++) { const r = await addPubToCollection(p.id, { variant: $('pubActVariant').value }); if (r.ok) made++; }
+      showToast(made + ' exemplaire(s) ajouté(s) à la collection.');
+      renderSinglesCollection(); renderPubSheet(false);
+    };
+    $('pubEdit').onclick = () => renderPubSheet(true);
+    body.querySelectorAll('[data-goto]').forEach(b => { b.onclick = () => { relSheetId = b.dataset.goto; renderPubSheet(false); }; });
+    body.querySelectorAll('[data-unrel]').forEach(b => { b.onclick = async () => { const [f, t, to] = b.dataset.unrel.split('|'); await relRemoveRelation(f, t, to); renderPubSheet(false); }; });
+    const link = async toId => { const r = await relAddRelation(p.id, $('pubRelType').value, toId); if (!r.ok) showToast(r.error); else showToast(r.duplicate ? 'Relation déjà présente.' : 'Relation ajoutée.'); renderPubSheet(false); };
+    body.querySelectorAll('[data-pick]').forEach(b => { b.onclick = () => link(b.dataset.pick); });
+    $('pubRelSearch').oninput = () => {
+      const q = catNorm($('pubRelSearch').value);
+      const res = q.length < 2 ? [] : [...relPubs.values()].filter(x => x.id !== p.id && catNorm(x.series + ' ' + x.title + ' ' + x.publisher).includes(q)).slice(0, 12);
+      $('pubRelResults').innerHTML = res.map(x => '<button class="linklike" data-link="' + escapeHtml(x.id) + '">' + escapeHtml(relLabel(x) + ' · ' + (x.publisher || '') + ' (' + (x.market || '?') + ')') + '</button>').join('');
+      $('pubRelResults').querySelectorAll('[data-link]').forEach(b => { b.onclick = () => link(b.dataset.link); });
+    };
+  };
+
+  const wireReleaseControls = () => {
+    const rerender = () => renderReleasesGrid();
+    const shift = dir => { relShift(dir); loadReleasesForWeek(); };
+    if ($('releasesPrevWeekBtn')) $('releasesPrevWeekBtn').onclick = () => shift(-1);
+    if ($('releasesNextWeekBtn')) $('releasesNextWeekBtn').onclick = () => shift(1);
+    if ($('releasesThisWeekBtn')) $('releasesThisWeekBtn').onclick = () => { relView.anchor = relView.period === 'week' ? startOfWeek(new Date()) : new Date(); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
+    if ($('releasesPullOnly')) $('releasesPullOnly').onchange = rerender;
+    if ($('releasesSearch')) $('releasesSearch').oninput = rerender;
+    [['relMarket', 'market'], ['relPublisher', 'publisher'], ['relFormat', 'format'], ['relStatus', 'status']].forEach(([id, k]) => { if ($(id)) $(id).onchange = e => { relView[k] = e.target.value; if (k === 'market') relView.publisher = ''; rerender(); }; });
+    if ($('relMode')) $('relMode').onchange = e => { relView.mode = e.target.value; if (relView.mode === 'month' && relView.period === 'week') relView.period = 'month'; rerender(); };
+    if ($('relPeriod')) $('relPeriod').onchange = e => { relView.period = e.target.value; if (relView.period === 'week') relView.anchor = startOfWeek(relView.anchor); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
+    if ($('relSyncBtn')) $('relSyncBtn').onclick = () => relSyncCurrent(false);
+    if ($('relAddPubBtn')) $('relAddPubBtn').onclick = () => openPubSheet(null, true);
+    if ($('relImportBtn')) $('relImportBtn').onclick = () => $('relImportFile').click();
+    if ($('relImportFile')) $('relImportFile').onchange = async e => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      if (file.size > 20 * 1024 * 1024) { showToast('Fichier trop volumineux (20 Mo maximum).'); return; }
+      try {
+        const r = await importReleaseText(await file.text(), file.name);
+        showToast(`Import « ${file.name} » : ${r.added} nouvelle(s), ${r.changed} modifiée(s), ${r.cancelled} annulée(s), ${r.unchanged} inchangée(s)` + (r.rejected ? `, ${r.rejected} ligne(s) ignorée(s)` : '') + '.');
+      } catch (err) { showToast('Import impossible : ' + (err.message || err)); }
+      renderReleasesGrid();
+    };
+    if ($('relExportBtn')) $('relExportBtn').onclick = () => {
+      const blob = new Blob(['﻿' + exportReleasesCsv()], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'panel_calendrier_' + relToday() + '.csv';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    };
+    if ($('closePubModalBtn')) $('closePubModalBtn').onclick = () => $('pubModal').classList.remove('open');
+  };
+  const initReleases = () => { loadReleaseData().then(() => { if (activeSinglesView === 'releases') renderReleasesGrid(); }).catch(() => {}); };
 
   const renderPullChips = () => {
     const host = $('pullListChips');
@@ -7114,89 +8291,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         if (m) { m.pull = false; saveSeriesMeta(); showToast(`${m.name} retiré de la pull list`); }
         renderSinglesCollection();
       };
-    });
-  };
-
-  const ownsIssue = (series, issue) => {
-    const k = normSeries(series);
-    const n = issueNumber(issue);
-    return physicalSingles.find(s => normSeries(s.series) === k && issueNumber(s) === n) || null;
-  };
-
-  const renderReleasesGrid = () => {
-    const gridEl = $('releasesGrid');
-    if (!gridEl) return;
-    renderReleasesWeekLabel();
-    if (releasesState.status === 'loading') { gridEl.innerHTML = '<div class="notice-box">Chargement des sorties depuis Comic Vine…</div>'; return; }
-    if (releasesState.status === 'error') {
-      gridEl.innerHTML = '<div class="notice-box">Impossible de charger les sorties : ' + escapeHtml(releasesState.error) + '<br><button class="btn secondary" style="margin-top:10px" id="releasesRetryBtn">Réessayer</button></div>';
-      $('releasesRetryBtn').onclick = () => { delete releasesCache[isoDate(releasesWeekStart)]; loadReleasesForWeek(); };
-      return;
-    }
-    if (releasesState.status !== 'ok') { gridEl.innerHTML = ''; return; }
-
-    const pullOnly = $('releasesPullOnly') && $('releasesPullOnly').checked;
-    const q = (($('releasesSearch') && $('releasesSearch').value) || '').trim().toLowerCase();
-    let items = releasesState.items.map(r => ({ ...r, pulled: isPulled(r.volume), owned: ownsIssue(r.volume, r.issue) }));
-    if (pullOnly) items = items.filter(r => r.pulled);
-    if (q) items = items.filter(r => (r.volume + ' ' + r.title).toLowerCase().includes(q));
-    items.sort((a, b) => (b.pulled - a.pulled) || a.volume.localeCompare(b.volume, 'fr') || (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
-
-    if (!items.length) {
-      gridEl.innerHTML = '<div class="notice-box">' + (pullOnly ? 'Aucune sortie cette semaine pour les séries de votre pull list.' : 'Aucune sortie trouvée pour cette semaine.') + '</div>';
-      return;
-    }
-    const pulledCount = items.filter(r => r.pulled).length;
-    gridEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${items.length} sortie(s)${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}</div>` +
-      items.map((r, i) => {
-        const s = { series: r.volume, issue: '#' + r.issue, coverUrl: r.cover };
-        return '<article class="comic-card release-card' + (r.pulled ? ' pulled' : '') + '" data-i="' + i + '">' +
-          '<div class="comic-poster">' + coverImgTag(s) + '<div class="comic-poster-gradient"></div>' +
-            (r.owned ? '<span class="release-flag owned">' + (r.owned.isWishlist ? '<svg class=ic aria-hidden=true><use href=#ic-heart /></svg> WISHLIST' : '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> POSSÉDÉ') + '</span>' : r.pulled ? '<span class="release-flag pull">★ PULL</span>' : '') +
-          '</div>' +
-          '<div class="comic-caption">' +
-            '<b>' + escapeHtml(r.volume) + ' #' + escapeHtml(r.issue) + '</b>' +
-            '<small style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block">' + escapeHtml(r.title || (r.storeDate ? new Date(r.storeDate).toLocaleDateString('fr-FR') : '')) + '</small>' +
-            '<div class="comic-card-action-bar">' +
-              '<button class="card-action-btn" data-pull title="Suivre la série" style="color:' + (r.pulled ? 'var(--gold)' : 'inherit') + '">★</button>' +
-              '<button class="card-action-btn" data-wish ' + (r.owned ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wish</button>' +
-              '<button class="card-action-btn" data-buy style="color:var(--lime);font-weight:700" ' + (r.owned && !r.owned.isWishlist ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Acheté</button>' +
-            '</div>' +
-          '</div>' +
-        '</article>';
-      }).join('');
-
-    gridEl.querySelectorAll('.release-card').forEach(card => {
-      const r = items[Number(card.dataset.i)];
-      const addFromRelease = asWish => {
-        const existing = ownsIssue(r.volume, r.issue);
-        if (existing && existing.isWishlist && !asWish) {
-          existing.isWishlist = false;
-          existing.purchaseDate = isoDate(new Date());
-          persistSingles();
-          renderSinglesCollection();
-          showToast(`${r.volume} #${r.issue} passé de la wishlist à la collection.`);
-          return;
-        }
-        const item = {
-          id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
-          series: r.volume, issue: '#' + r.issue, publisher: 'Autre / Indé', variant: 'Cover A',
-          keyType: (checkKeyIssueInfo(r.volume, String(r.issue), parseInt(String(r.storeDate || '').slice(0, 4), 10) || null) || {}).tier || 'none', condition: 'NM 9.4 (Near Mint)',
-          coverPrice: null, estValue: null, purchasePrice: null, purchaseDate: asWish ? '' : isoDate(new Date()),
-          box: '', divider: '', location: '', isProtected: false, isWishlist: asWish, isRead: false, rating: 0,
-          notes: r.title ? 'Titre : ' + r.title : '', coverUrl: isSafeImageUrl(r.cover) ? r.cover : '', comicVineId: r.id, coverYear: parseInt(String(r.storeDate || '').slice(0, 4), 10) || null,
-          addedAt: new Date().toISOString()
-        };
-        applyAutoValuation(item);
-        physicalSingles.unshift(item);
-        persistSingles();
-        renderSinglesCollection();
-        if (asWish) showToast(`${r.volume} #${r.issue} ajouté à la wishlist.`);
-        else showToastAction(`${r.volume} #${r.issue} ajouté à la collection.`, 'Saisir le prix', () => editSingleIssue(item));
-      };
-      card.querySelector('[data-pull]').onclick = () => { togglePull(r.volume); renderSinglesCollection(); };
-      card.querySelector('[data-wish]').onclick = () => addFromRelease(true);
-      card.querySelector('[data-buy]').onclick = () => addFromRelease(false);
     });
   };
 
@@ -7366,6 +8460,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     { key: 'rating', label: 'Note', aliases: ['rating', 'myrating', 'stars', 'score', 'note'] },
     { key: 'signedBy', label: 'Dédicacé par', aliases: ['signedby', 'signed', 'signature', 'signatures'] },
     { key: 'keyInfo', label: 'Info key issue', aliases: ['key', 'keycategory', 'keyreason', 'keyinfo', 'keycomments', 'keyissue', 'keynotes'] },
+    { key: 'wishPriority', label: 'Priorité wishlist', aliases: ['prioritewishlist', 'wishlistpriority', 'wishpriority', 'priorite', 'priority'] },
+    { key: 'wishStatus', label: 'Statut wishlist', aliases: ['statutwishlist', 'wishliststatus', 'wishstatus'] },
+    { key: 'targetPrice', label: 'Prix cible', aliases: ['prixcible', 'targetprice', 'maxprice', 'prixmax'] },
     { key: 'room', label: 'Pièce', aliases: ['room', 'piece', 'salle'] },
     { key: 'furniture', label: 'Meuble', aliases: ['furniture', 'meuble', 'shelf', 'shelving', 'bookcase', 'etagere', 'bibliotheque'] },
     { key: 'divider', label: 'Séparateur', aliases: ['divider', 'separateur', 'intercalaire'] },
@@ -7602,6 +8699,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           estValue: value,
           coverYear,
           box: box.slice(0, 100), divider: String(get('divider') || '').slice(0, 100), location: (box + (get('divider') ? ' · ' + get('divider') : '')).slice(0, 200),
+          ...(isWishlist && (get('wishPriority') || get('wishStatus') || get('targetPrice')) ? { wish: {
+            priority: /haut|high|urgent/i.test(get('wishPriority')) ? 'high' : /bas|low/i.test(get('wishPriority')) ? 'low' : 'normal',
+            status: /abandon/i.test(get('wishStatus')) ? 'abandoned' : /trouv|found/i.test(get('wishStatus')) ? 'found' : /recherche|search|active/i.test(get('wishStatus')) ? 'searching' : 'wanted',
+            targetPrice: parseMoney(get('targetPrice')), addedAt: new Date().toISOString(), updatedAt: new Date().toISOString(), from: 'import' } } : {}),
           ...(get('room') ? { room: String(get('room')).slice(0, 80) } : {}), ...(get('furniture') ? { furniture: String(get('furniture')).slice(0, 80) } : {}),
           isProtected: false,
           isWishlist,
@@ -8550,12 +9651,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Pièce', 'Meuble', 'Boîte', 'Séparateur', 'Notes', 'Date ajout'];
+    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Priorité wishlist', 'Statut wishlist', 'Prix cible ($)', 'Pièce', 'Meuble', 'Boîte', 'Séparateur', 'Notes', 'Date ajout'];
     const rows = physicalSingles.map(s => [
       s.series, s.issue, s.publisher, s.variant, s.keyType || 'none', s.condition,
       numOrNull(s.coverPrice) ?? '', numOrNull(s.purchasePrice) ?? '', s.purchaseDate || '', numOrNull(s.estValue) ?? '',
       ({ auto: 'Cote auto', market: 'Marché (' + (s.marketSource || 'vente') + ')', manual: 'Saisie' })[s.valueSource] || '', s.coverYear || '',
       s.isRead ? 'Oui' : 'Non', s.rating || '', s.isProtected ? 'Oui' : 'Non', s.isWishlist ? 'Oui' : 'Non',
+      ...(w => s.isWishlist ? [WISH_PRIORITY[w.priority], WISH_STATUS[w.status], w.targetPrice ?? ''] : ['', '', ''])(wishOf(s)),
       ...(c => [c.room, c.furniture, c.box, c.divider])(locExportColumns(s)), s.notes || '', s.addedAt || ''
     ].map(csvCell));
 
@@ -8575,7 +9677,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations() };
+    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations(), releases: exportReleaseData() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -8619,13 +9721,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       updatedAt: raw.updatedAt ? str(raw.updatedAt, 40) : undefined
     };
     // Champs non listés ci-dessus : conservés s'ils sont simples (texte, nombre, booléen) ou d'un type connu et sûr
-    const KEEP_OBJECTS = new Set(['coverMeta', 'valuation', 'coverLookup', 'fandomLookup']);
+    const KEEP_OBJECTS = new Set(['coverMeta', 'valuation', 'coverLookup', 'fandomLookup', 'wish']);
     Object.keys(raw).forEach(k => {
       if (k in out || /^__|^(constructor|prototype)$/.test(k)) return;
       const v = raw[k];
       if (typeof v === 'string') out[k] = v.slice(0, 2000);
       else if ((typeof v === 'number' && Number.isFinite(v)) || typeof v === 'boolean') out[k] = v;
       else if (k === 'coverHistory' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object' && isSafeImageUrl(h.url)).slice(-5).map(h => JSON.parse(JSON.stringify(h)));
+      else if (k === 'locationHistory' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object').slice(-10).map(h => ({ nodeId: str(h.nodeId, 80), path: str(h.path, 400), at: str(h.at, 40) }));
       else if (k === 'tags' && Array.isArray(v)) out[k] = v.filter(t => typeof t === 'string').map(t => t.slice(0, 60)).slice(0, 50);
       else if (KEEP_OBJECTS.has(k) && v && typeof v === 'object' && !Array.isArray(v)) { const j = JSON.stringify(v); if (j.length <= 20000) out[k] = JSON.parse(j); }
     });
@@ -8647,7 +9750,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (list.length && !items.length) throw new Error('Aucune fiche lisible dans la sauvegarde (fichier corrompu ?).');
     const seriesMetaIn = d.seriesMeta && typeof d.seriesMeta === 'object' && !Array.isArray(d.seriesMeta) ? d.seriesMeta : null;
     const digitalKeys = ['folders', 'bookmarks', 'theories', 'readingPositions'].filter(k => d[k] !== undefined);
-    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys, locations: sanitizeLocDoc(d.locations) };
+    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys, locations: sanitizeLocDoc(d.locations), releases: sanitizeReleaseData(d.releases) };
   };
 
   // Applique une sauvegarde validée. mode « merge » (défaut) : ajoute ce qui manque, ne modifie rien d'existant.
@@ -8658,6 +9761,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const snapId = await snapshotSingles(mode === 'replace' ? 'Avant remplacement par une sauvegarde' : 'Avant fusion d\'une sauvegarde');
     if (!snapId && !opts.allowWithoutSnapshot) throw new Error('Instantané de sécurité impossible (stockage indisponible) : restauration annulée, rien n\'a été modifié.');
     const prevSingles = physicalSingles, prevMeta = seriesMeta, prevLocDoc = JSON.parse(JSON.stringify(locDoc));
+    let relMerged = null;
     clearTimeout(locSyncTimer);
     try {
       let added = 0, conflicts = 0;
@@ -8684,6 +9788,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       saveSeriesMeta();
       // Emplacements de la sauvegarde : ajoutés (fusion) ou rétablis (remplacement) ; aucun emplacement actuel supprimé
       if (payload.locations) mergeLocDoc(payload.locations, mode);
+      // Calendrier et pull list : ajoutés (fusion) ou rétablis (remplacement) ; rien n'est supprimé
+      if (payload.releases) relMerged = mergeReleaseData(payload.releases, mode);
       // Vérification : ce qui est relu doit correspondre à ce qui vient d'être écrit
       const back = JSON.parse(localStorage.getItem('panel_physical_singles') || '[]');
       if (!opts.persist && back.length !== physicalSingles.length) throw new Error('Écriture incomplète du stockage local.');
@@ -8692,6 +9798,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       physicalSingles = prevSingles;
       seriesMeta = prevMeta;
       locDoc = prevLocDoc; locInvalidate(); saveLocDoc();
+      if (relMerged) relMerged.undo();
       try { persistSingles(); saveSeriesMeta(); } catch (_) {}
       return { ok: false, mode, error: String(err.message || err), snapshotId: snapId, rolledBack: true };
     }
@@ -9314,15 +10421,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('seriesTrackSort').onchange = renderSeriesTracker;
     $('seriesTrackIncompleteOnly').onchange = renderSeriesTracker;
 
-    const shiftWeek = days => {
-      releasesWeekStart = new Date(releasesWeekStart.getFullYear(), releasesWeekStart.getMonth(), releasesWeekStart.getDate() + days);
-      loadReleasesForWeek();
-    };
-    $('releasesPrevWeekBtn').onclick = () => shiftWeek(-7);
-    $('releasesNextWeekBtn').onclick = () => shiftWeek(7);
-    $('releasesThisWeekBtn').onclick = () => { releasesWeekStart = startOfWeek(new Date()); loadReleasesForWeek(); };
-    $('releasesPullOnly').onchange = renderReleasesGrid;
-    $('releasesSearch').oninput = renderReleasesGrid;
+    wireReleaseControls();
     const addPullFromInput = () => {
       const name = $('pullAddInput').value.trim();
       if (!name) return;
@@ -9605,6 +10704,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         physicalSingles,
         seriesMeta,
         locations: exportLocations(),
+        releases: exportReleaseData(),
         exportedAt: new Date().toISOString()
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -9786,7 +10886,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // Démarrage
   bindEvents();
   renderSinglesCollection();
-  recoverSinglesFromIdb().then(() => { initLocations(); if (!navigator.webdriver) setTimeout(initCatalog, 1500); });
+  recoverSinglesFromIdb().then(() => { initLocations(); initReleases(); if (!navigator.webdriver) setTimeout(initCatalog, 1500); });
   initPwa();
   handleLaunchParams();
   if (coverJobOptions.active && !navigator.webdriver) setTimeout(() => { if (coverJobOptions.active) runCoverJob(); }, 4000);
@@ -9846,7 +10946,31 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     removeSingleWithUndo,
     renderStatsDashboard,
     renderReleasesGrid,
-    setReleasesForTest: items => { releasesState = { status: 'ok', items, error: '' }; renderReleasesGrid(); },
+    setReleasesForTest: items => {
+      const at = new Date().toISOString();
+      items.forEach(r => relUpsert(RELEASE_CONNECTORS.comicvine.normalize(r), { source: 'comicvine', at }));
+      relPut('publications', [...relPubs.values()]);
+      const d = items[0] && relDate(items[0].storeDate);
+      relView.period = 'week'; relView.mode = 'grid'; relView.market = ''; relView.publisher = ''; relView.format = ''; relView.status = '';
+      if (d) { relView.anchor = startOfWeek(new Date(d + 'T12:00:00')); releasesWeekStart = relView.anchor; }
+      renderReleasesGrid();
+    },
+    releases: {
+      ready: () => loadReleaseData(),
+      reloadFromDb: () => loadReleaseData(true),
+      upsert: async (raw, source) => { await loadReleaseData(); const r = relUpsert(raw, { source: source || 'manual' }); if (r.pub) await relPut('publications', [r.pub]); return r; },
+      edit: relEdit, get: id => relPubs.get(id) || null, all: () => [...relPubs.values()], query: opts => relQuery(opts || {}),
+      statusOf: (p, today) => relStatusOf(typeof p === 'string' ? relPubs.get(p) : p, today),
+      addRelation: relAddRelation, removeRelation: relRemoveRelation, relationsOf: relRelationsOf, suggest: relSuggest,
+      connectors: () => Object.values(RELEASE_CONNECTORS).map(c => ({ id: c.id, label: c.label, markets: c.markets, kind: c.kind, automated: c.automated, available: c.available(), terms: c.terms })),
+      sync: syncReleases, setFetchForTest: fn => { relFetchOverride = fn || null; },
+      importRows: importReleaseRows, importText: importReleaseText, exportCsv: list => exportReleasesCsv(list), exportData: exportReleaseData,
+      sanitize: sanitizeReleaseData, merge: mergeReleaseData, log: () => (relMeta.log || []).slice(), meta: () => JSON.parse(JSON.stringify(relMeta)),
+      profile: () => relMeta.profile, view: patch => { Object.assign(relView, patch || {}); if (patch && patch.anchor) releasesWeekStart = relView.anchor; renderReleasesGrid(); return Object.assign({}, relView); },
+      openSheet: openPubSheet,
+      pulls: { add: addPull, addManual: addManualPull, update: updatePull, cancel: cancelPull, reactivate: reactivatePull, pickUp: pickUpPull, toWishlist: pullToWishlist, all: () => [...relPulls.values()], get: id => relPulls.get(id) || null, statusOf: pl => pullStatusOf(typeof pl === 'string' ? relPulls.get(pl) : pl) },
+      wish: { of: wishOf, set: setWish, toCollection: wishToCollection, fromCollection: collectionToWishlist, addPub: async (id, o) => { await loadReleaseData(); return addPubToWishlist(id, o); }, addPubToCollection: async (id, o) => { await loadReleaseData(); return addPubToCollection(id, o); } }
+    },
     exportSinglesToCsv,
     sanitizeImportedSingle,
     placeholderCover,

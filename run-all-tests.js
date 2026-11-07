@@ -1839,6 +1839,229 @@ const waitForCdp = async () => {
         ok: !!t26a && ['migration', 'ambiguous', 'backupExists', 'idempotent', 'create', 'assign', 'partial', 'modify', 'moveBox', 'counts', 'search', 'filter', 'rename', 'safeDelete', 'form', 'restore', 'csv', 'offlineOps', 'idbRecovery', 'restart', 'cleanup'].every(k => t26[k] === true)
       });
 
+
+      // ------------------------------------------------------------------
+      // TEST 27 : Publications, calendrier international, Pull List, Wishlist (lot 2.4)
+      // ------------------------------------------------------------------
+      console.log('\n[TEST 27] Publications, calendrier, Pull List, Wishlist, sauvegardes, redémarrage hors ligne...');
+      const t27a = await evalExpr(`Promise.race([(async () => {
+        const P = window.Panel, R = P.releases;
+        await R.ready();
+        localStorage.setItem('panel_test27_saved', JSON.stringify({ singles: P.getPhysicalSingles() }));
+        const r = {}, pubIds = new Set(), plIds = new Set();
+        const track = p => { if (p && p.id) pubIds.add(p.id); return p; };
+        const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const plus = n => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
+        window.__t27 = '1 publications';
+        const us = track((await R.upsert({ series: 'T27 Saga', issue: '1', publisher: 'Image', format: 'single', date: plus(20), upc: '75960620000100111' }, 'manual')).pub);
+        const fr = track((await R.upsert({ series: 'T27 Saga', issue: '1', publisher: 'Urban Comics', format: 'album', date: plus(60), isbn: '978-2-36577-000-1' }, 'manual')).pub);
+        r.create = us.market === 'US' && us.publisher === 'Image Comics' && fr.market === 'FR' && fr.language === 'fr' && fr.format === 'album' && us.externalIds.upc === '75960620000100111' && fr.externalIds.isbn === '9782365770001' && us.id !== fr.id;
+        const again = await R.upsert({ series: 't27 saga', issue: '#1', publisher: 'Image Comics', date: plus(20) }, 'manual');
+        r.noDup = again.pub.id === us.id && again.action === 'unchanged';
+        const usB = track((await R.upsert({ series: 'T27 Saga', issue: '1', publisher: 'Image', variant: 'Cover B', date: plus(20) }, 'manual')).pub);
+        r.variants = usB.id !== us.id && usB.variant === 'Cover B';
+        r.provenance = us.origin === 'manual' && us.sources[0].source === 'manual' && !!us.dates.lastVerified;
+        window.__t27 = '2 relations';
+        const sugg = R.suggest(fr.id);
+        r.noAutoRelation = R.relationsOf(fr.id).length === 0 && sugg.some(x => x.pub.id === us.id);
+        await R.addRelation(fr.id, 'translated_from', us.id);
+        r.relations = R.relationsOf(us.id).length === 1 && R.relationsOf(us.id)[0].label === 'Traduit en' && R.relationsOf(fr.id)[0].label === 'Traduit depuis' &&
+          (await R.addRelation(fr.id, 'translated_from', us.id)).duplicate === true && (await R.addRelation(fr.id, 'collects', fr.id)).ok === false;
+        r.edit = (await R.edit(fr.id, { title: 'T27 Saga, tome 1' })).ok && R.get(fr.id).title === 'T27 Saga, tome 1';
+        r.editClash = (await R.edit(usB.id, { variant: '' })).ok === false && R.get(usB.id).variant === 'Cover B';
+        window.__t27 = '3 connecteur';
+        let rows = [{ id: 9900001, volumeId: 1, volume: 'T27 Hero', issue: '5', title: '', cover: '', storeDate: plus(10), url: 'https://comicvine.gamespot.com/t27/', publisher: 'Marvel' },
+          { id: 9900002, volumeId: 2, volume: 'T27 Other', issue: '1', title: '', cover: '', storeDate: plus(12), url: '', publisher: 'DC Comics' }];
+        R.setFetchForTest(async () => rows);
+        const s1 = await R.sync('comicvine', plus(1), plus(40));
+        const hero = track(R.all().find(p => p.externalIds.comicvine === '9900001'));
+        track(R.all().find(p => p.externalIds.comicvine === '9900002'));
+        r.calImport = s1.status === 'ok' && s1.added === 2 && hero.market === 'US' && hero.publisher === 'Marvel' && hero.format === 'single' && hero.dates.current === plus(10) && hero.dates.actual === null && R.statusOf(hero) === 'upcoming';
+        const s2 = await R.sync('comicvine', plus(1), plus(40));
+        r.calDedup = s2.added === 0 && s2.unchanged === 2 && R.all().filter(p => p.externalIds.comicvine === '9900001').length === 1;
+        rows = [Object.assign({}, rows[0], { storeDate: plus(24) })];
+        const s3 = await R.sync('comicvine', plus(1), plus(40));
+        const other = R.all().find(p => p.externalIds.comicvine === '9900002');
+        r.postponed = s3.changed === 1 && hero.dates.initial === plus(10) && hero.dates.current === plus(24) && R.statusOf(hero) === 'delayed' &&
+          hero.dateHistory.some(h => h.kind === 'postponed' && h.from === plus(10) && h.to === plus(24) && h.source === 'comicvine');
+        r.absenceNotCancel = !other.cancelled && !!other.unseenSince && R.statusOf(other) !== 'cancelled';
+        R.setFetchForTest(async () => { throw new Error('réseau simulé'); });
+        const before = JSON.stringify(R.get(hero.id));
+        const s4 = await R.sync('comicvine', plus(1), plus(40));
+        r.syncError = s4.status === 'error' && JSON.stringify(R.get(hero.id)) === before && R.meta().sync.comicvine.lastStatus === 'error' && R.log()[0].errors[0].includes('réseau simulé');
+        R.setFetchForTest(null);
+        r.connectors = R.connectors().some(c => c.id === 'comicvine' && c.automated && /non commercial/.test(c.terms)) && R.connectors().some(c => c.id === 'import' && !c.automated);
+        window.__t27 = '4 import CSV';
+        const csv = 'marche;editeur;serie;numero;format;date_annoncee_initiale;date_annoncee;statut;isbn\\nFR;Panini;T27 Spider;3;album;' + plus(30) + ';' + plus(45) + ';;9782809400003\\n;Delcourt;T27 Annule;1;tpb;;' + plus(50) + ';Annulé;\\n;Glénat;T27 Sans Date;2;album;;;;\\n;;;;tpb;;;;';
+        const imp = await R.importText(csv, 't27.csv');
+        const spider = track(R.all().find(p => p.series === 'T27 Spider')), ann = track(R.all().find(p => p.series === 'T27 Annule')), nod = track(R.all().find(p => p.series === 'T27 Sans Date'));
+        r.csvImport = imp.added === 3 && imp.rejected === 1 && spider.market === 'FR' && spider.publisher === 'Panini Comics' && spider.dates.initial === plus(30) && spider.dates.current === plus(45) &&
+          R.statusOf(spider) === 'delayed' && ann.market === 'FR' && ann.cancelled === true && R.statusOf(ann) === 'cancelled' && ann.dateHistory.some(h => h.kind === 'cancelled');
+        r.unknownDate = !!nod && nod.dates.current === null && nod.dates.initial === null && R.statusOf(nod) === 'unknown';
+        const imp2 = await R.importText(csv, 't27.csv');
+        r.csvNoDup = imp2.added === 0 && imp2.unchanged === 3;
+        const imp3 = await R.importText(R.exportCsv([spider, ann, nod, hero]), 'export.csv');
+        r.csvRoundTrip = imp3.added === 0 && imp3.fetched === 4 && imp3.unchanged === 4;
+        const jsonImp = await R.importText(JSON.stringify({ publications: [R.get(fr.id)] }), 'x.json');
+        r.jsonNoDup = jsonImp.added === 0 && jsonImp.unchanged === 1;
+        const past = track((await R.upsert({ series: 'T27 Old', issue: '2', publisher: 'Marvel', date: plus(-10) }, 'manual')).pub);
+        r.available = R.statusOf(past) === 'available';
+        await R.edit(past.id, { actual: plus(-9) });
+        r.confirmed = R.get(past.id).dates.actual === plus(-9);
+        window.__t27 = '5 pull list';
+        const pl1 = await R.pulls.add(hero.id, { quantity: 2, variant: 'Cover A' }); plIds.add(pl1.pull.id);
+        const plDup = await R.pulls.add(hero.id, { variant: 'cover a' });
+        r.pullAdd = pl1.ok && plDup.duplicate === true && plDup.pull.id === pl1.pull.id && R.pulls.statusOf(pl1.pull) === 'planned' && pl1.pull.ownerId === R.profile().id;
+        await R.pulls.update(pl1.pull.id, { quantity: 3 });
+        r.pullEdit = R.pulls.get(pl1.pull.id).quantity === 3 && R.pulls.get(pl1.pull.id).history.some(h => h.action === 'edited');
+        const plPast = await R.pulls.add(past.id, {}); plIds.add(plPast.pull.id);
+        r.pullAvailable = R.pulls.statusOf(plPast.pull) === 'available';
+        const n0 = P.getPhysicalSingles().length;
+        const pick = await R.pulls.pickUp(pl1.pull.id);
+        const copies = P.getPhysicalSingles().filter(s => s.pullId === pl1.pull.id);
+        r.pickUp = pick.ok && pick.copies.length === 3 && copies.length === 3 && new Set(copies.map(c => c.id)).size === 3 &&
+          copies.every(c => !c.isWishlist && c.pubId === hero.id && c.series === 'T27 Hero' && c.issue === '#5' && c.variant === 'Cover A') && R.pulls.statusOf(pl1.pull.id) === 'picked';
+        const pick2 = await R.pulls.pickUp(pl1.pull.id);
+        r.pickNoDup = pick2.duplicate === true && P.getPhysicalSingles().length === n0 + 3;
+        await R.pulls.cancel(plPast.pull.id);
+        const c1 = R.pulls.statusOf(plPast.pull.id);
+        await R.pulls.reactivate(plPast.pull.id);
+        r.pullCancel = c1 === 'cancelled' && R.pulls.statusOf(plPast.pull.id) === 'available' && R.pulls.get(plPast.pull.id).history.map(h => h.action).join(',') === 'added,cancelled,reactivated';
+        const man = await R.pulls.addManual({ series: 'T27 Inédit', issue: '1', publisher: 'Urban Comics' }); plIds.add(man.pull.id); track(R.get(man.pull.pubId));
+        r.pullManual = man.ok && man.pubCreated === true && R.get(man.pull.pubId).market === 'FR' && R.get(man.pull.pubId).dates.current === null && R.pulls.statusOf(man.pull) === 'planned';
+        const toW = await R.pulls.toWishlist(man.pull.id);
+        const wItem = P.getPhysicalSingles().find(s => s.isWishlist && s.pubId === man.pull.pubId);
+        r.pullToWish = toW.ok && !!wItem && R.pulls.statusOf(man.pull.id) === 'cancelled' && R.pulls.get(man.pull.id).history.some(h => h.action === 'moved-to-wishlist') && R.wish.of(wItem).status === 'wanted';
+        const plW = await R.pulls.add(man.pull.pubId, {}); plIds.add(plW.pull.id);
+        const pkW = await R.pulls.pickUp(plW.pull.id);
+        r.pickConvertsWish = pkW.converted === 1 && pkW.copies[0] === wItem.id && !wItem.isWishlist && R.wish.of(wItem).status === 'found' && P.getPhysicalSingles().filter(s => s.pubId === man.pull.pubId).length === 1;
+        window.__t27 = '6 wishlist';
+        const wa = await R.wish.addPub(spider.id, { priority: 'high' });
+        const wb = await R.wish.addPub(spider.id, {});
+        R.wish.set(wa.item, { status: 'searching', targetPrice: '12.5' });
+        r.wishAdd = wa.ok && wb.duplicate === true && wa.item.isWishlist && R.wish.of(wa.item).priority === 'high' && R.wish.of(wa.item).status === 'searching' && R.wish.of(wa.item).targetPrice === 12.5 && !!R.wish.of(wa.item).updatedAt;
+        r.wishNotOwned = P.getPhysicalSingles().filter(s => s.series === 'T27 Spider').length === 1 && !P.getPhysicalSingles().some(s => s.series === 'T27 Spider' && !s.isWishlist);
+        P.setPhysicalSingles([{ id: 't27legacy', series: 'T27 Legacy', issue: '#1', publisher: 'DC Comics', variant: 'Cover A', condition: 'NM 9.4 (Near Mint)', isWishlist: true, addedAt: '2025-01-01T00:00:00Z' }].concat(P.getPhysicalSingles()));
+        const lg = P.getPhysicalSingles().find(s => s.id === 't27legacy');
+        r.wishLegacy = R.wish.of(lg).status === 'wanted' && R.wish.of(lg).priority === 'normal' && R.wish.of(lg).addedAt === '2025-01-01T00:00:00Z' && lg.wish === undefined;
+        R.wish.toCollection(lg);
+        r.wishToCollection = !lg.isWishlist && lg.id === 't27legacy' && R.wish.of(lg).status === 'found' && !!lg.purchaseDate;
+        const ownedBefore = JSON.stringify(lg);
+        const cw = R.wish.fromCollection(lg, { variant: 'Cover B' });
+        const cw2 = R.wish.fromCollection(lg, { variant: 'Cover B' });
+        r.collectionToWish = cw.ok && cw.item.id !== 't27legacy' && cw.item.isWishlist && cw.item.variant === 'Cover B' && cw.item.wish.sourceCopyId === 't27legacy' && JSON.stringify(lg) === ownedBefore && cw2.duplicate === true;
+        r.collectionLink = P.catalog.idsOf(copies[0]).issueId === hero.catalog.issueId;
+        window.__t27 = '7 sauvegarde';
+        const backup = { format: 'panel-backup', version: 3, physicalSingles: P.getPhysicalSingles(), seriesMeta: P.getSeriesMeta(), releases: R.exportData() };
+        const payload = P.validateBackupPayload(JSON.parse(JSON.stringify(backup)));
+        r.exportData = payload.releases.publications.some(p => p.id === hero.id) && payload.releases.pulls.some(p => p.id === pl1.pull.id) &&
+          payload.releases.publications.find(p => p.id === fr.id).relations.length === 1 && payload.items.find(s => s.id === wa.item.id).wish.priority === 'high';
+        const evil = R.sanitize({ publications: [{ id: 'pbc_x', series: 'Z', dates: {}, cover: { url: 'javascript:alert(1)' } }, { id: '../x', series: 'Y', dates: {} }], pulls: [{ id: 'pl_x', pubId: 'pbc_x', quantity: 500, status: 'hack' }] });
+        r.sanitize = evil.publications.length === 1 && evil.publications[0].cover === null && evil.pulls[0].quantity === 99 && evil.pulls[0].status === 'planned';
+        const m1 = R.merge(payload.releases, 'merge');
+        await m1.write;
+        r.mergeNoDup = m1.added === 0 && m1.replaced === 0;
+        window.__t27 = '8 interface';
+        P.showSinglesView('releases');
+        document.getElementById('releasesSearch').value = 'T27';
+        document.getElementById('releasesPullOnly').checked = false;
+        R.view({ mode: 'grid', period: 'all', market: '', publisher: '', format: '', status: '' });
+        const g = document.getElementById('releasesGrid');
+        r.uiGrid = g.querySelectorAll('.release-card').length >= 9 && !!g.querySelector('.rel-date.is-announced') && !!g.querySelector('.rel-date.is-confirmed') && !!g.querySelector('.rel-date.is-unknown') && !!g.querySelector('.rel-status.st-delayed');
+        R.view({ mode: 'month', period: 'month', anchor: new Date(plus(24) + 'T12:00:00') });
+        r.uiMonth = !!g.querySelector('.rel-cal') && [...g.querySelectorAll('.rel-cal-item')].some(b => b.textContent.includes('T27 Hero'));
+        const modesOk = ['list', 'publisher', 'series', 'market'].every(mode => { R.view({ mode, period: 'all' }); return g.querySelectorAll('.rel-row').length >= 9 && (mode === 'list' || g.querySelectorAll('.rel-group').length >= 2); });
+        R.view({ mode: 'list', period: 'all', market: 'FR' });
+        const frRows = [...g.querySelectorAll('.rel-row')];
+        r.uiViews = modesOk && frRows.length >= 4 && frRows.every(x => R.get(x.dataset.id).market === 'FR');
+        R.view({ mode: 'list', period: 'all', market: '', status: 'cancelled' });
+        r.uiStatusFilter = g.querySelectorAll('.rel-row').length === 1;
+        R.view({ status: '', mode: 'grid', period: 'week' });
+        R.openSheet(fr.id);
+        const sheet = document.getElementById('pubModalBody');
+        r.uiSheet = document.getElementById('pubModal').classList.contains('open') && sheet.textContent.includes('Traduit depuis') && sheet.textContent.includes('Date annoncée initialement');
+        R.openSheet(hero.id);
+        r.uiHistory = sheet.textContent.includes('reportée');
+        document.getElementById('pubModal').classList.remove('open');
+        r.uiPullPanel = document.querySelectorAll('#pullPanelBody .pull-row').length >= 4 && document.getElementById('relSyncInfo').textContent.length > 20;
+        document.getElementById('releasesSearch').value = '';
+        P.showSinglesView('collection');
+        P.openSingleInspector(wa.item);
+        r.uiWishBox = !document.getElementById('inspectWishBox').hidden && document.querySelector('#inspectWishBox [data-w="priority"]').value === 'high' && document.getElementById('inspectWishlistToggleBtn').textContent.includes('acheté');
+        P.openSingleInspector(lg);
+        r.uiOwnedBtn = document.getElementById('inspectWishBox').hidden && document.getElementById('inspectWishlistToggleBtn').textContent.includes('Ajouter à la wishlist');
+        document.getElementById('singleIssueInspectorModal').classList.remove('open');
+        await new Promise(res => setTimeout(res, 300));
+        r._expect = { hero: hero.id, pl1: pl1.pull.id, fr: fr.id, pubs: [...pubIds], pulls: [...plIds] };
+        return r;
+      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t27 }), 60000))])`);
+      console.log('Résultat Test 27 (a):', JSON.stringify(t27a));
+      // Redémarrage hors ligne : publications, historique et pull list relus depuis IndexedDB
+      let t27b = {};
+      try {
+        await send('Network.enable');
+        await send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+        await send('Page.reload', { ignoreCache: false });
+        for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.releases) && document.readyState === "complete"')) break; }
+        t27b = await evalExpr(`(async () => {
+          const P = window.Panel, R = P.releases, exp = ${JSON.stringify((t27a && t27a._expect) || {})};
+          await R.ready();
+          const hero = R.get(exp.hero), pl = R.pulls.get(exp.pl1), fr = R.get(exp.fr);
+          P.showSinglesView('releases');
+          R.view({ mode: 'list', period: 'all' });
+          const offlineInfo = document.getElementById('relSyncInfo').textContent;
+          return { restart: !!hero && hero.dates.current !== hero.dates.initial && hero.dateHistory.some(h => h.kind === 'postponed') && !!pl && pl.status === 'picked' && pl.copyIds.length === 3 &&
+            !!fr && fr.relations.length === 1 && P.getPhysicalSingles().filter(s => s.pullId === exp.pl1).length === 3,
+            offlineView: /Hors ligne/.test(offlineInfo) && document.querySelectorAll('#releasesGrid .rel-row').length >= 9 };
+        })()`);
+      } finally {
+        await send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+      }
+      // Restauration : les publications et la pull list retirées de la base sont reconstruites depuis la sauvegarde, sans doublon
+      const t27c = await evalExpr(`(async () => {
+        const P = window.Panel, R = P.releases, exp = ${JSON.stringify((t27a && t27a._expect) || {})};
+        const out = {};
+        const rawDel = () => new Promise(res => {
+          const q = indexedDB.open('panel-catalog');
+          q.onsuccess = () => { const db = q.result; const tx = db.transaction(['publications', 'pulls'], 'readwrite');
+            (exp.pubs || []).forEach(id => tx.objectStore('publications').delete(id)); (exp.pulls || []).forEach(id => tx.objectStore('pulls').delete(id));
+            tx.oncomplete = () => { db.close(); res(true); }; tx.onerror = () => { db.close(); res(false); }; };
+          q.onerror = () => res(false);
+        });
+        try {
+          await R.ready();
+          const backup = JSON.parse(JSON.stringify({ format: 'panel-backup', version: 3, physicalSingles: P.getPhysicalSingles(), seriesMeta: P.getSeriesMeta(), releases: R.exportData() }));
+          await rawDel(); await R.reloadFromDb();
+          const gone = !R.get(exp.hero) && !R.pulls.get(exp.pl1);
+          const res1 = await P.applyBackupRestore(P.validateBackupPayload(backup), { mode: 'merge' });
+          await new Promise(r => setTimeout(r, 400));
+          await R.reloadFromDb();
+          const back = !!R.get(exp.hero) && R.get(exp.hero).dateHistory.length >= 2 && R.pulls.get(exp.pl1).status === 'picked' && R.get(exp.fr).relations.length === 1;
+          const count = R.all().length;
+          const res2 = await P.applyBackupRestore(P.validateBackupPayload(backup), { mode: 'merge' });
+          out.restore = gone && res1.ok && back && res2.ok && R.all().length === count;
+        } catch (e) { out.restore = false; out._err = String(e && e.message || e); }
+        // Nettoyage : collection d'origine et base du profil de test rétablies
+        const saved = JSON.parse(localStorage.getItem('panel_test27_saved') || 'null');
+        if (saved) P.setPhysicalSingles(saved.singles);
+        localStorage.removeItem('panel_test27_saved');
+        await rawDel(); await R.reloadFromDb();
+        out.cleanup = !!saved && !R.get(exp.hero) && P.getPhysicalSingles().length === saved.singles.length;
+        return out;
+      })()`);
+      const t27 = Object.assign({}, t27a, t27b, t27c);
+      delete t27._expect;
+      console.log('Résultat Test 27:', JSON.stringify(t27));
+      const t27keys = ['create', 'noDup', 'variants', 'provenance', 'noAutoRelation', 'relations', 'edit', 'editClash', 'calImport', 'calDedup', 'postponed', 'absenceNotCancel', 'syncError', 'connectors',
+        'csvImport', 'unknownDate', 'csvNoDup', 'csvRoundTrip', 'jsonNoDup', 'available', 'confirmed', 'pullAdd', 'pullEdit', 'pullAvailable', 'pickUp', 'pickNoDup', 'pullCancel', 'pullManual',
+        'pullToWish', 'pickConvertsWish', 'wishAdd', 'wishNotOwned', 'wishLegacy', 'wishToCollection', 'collectionToWish', 'collectionLink', 'exportData', 'sanitize', 'mergeNoDup',
+        'uiGrid', 'uiMonth', 'uiViews', 'uiStatusFilter', 'uiSheet', 'uiHistory', 'uiPullPanel', 'uiWishBox', 'uiOwnedBtn', 'restart', 'offlineView', 'restore', 'cleanup'];
+      const t27fail = t27keys.filter(k => t27[k] !== true);
+      if (t27fail.length) console.log('Test 27 — vérifications en échec :', t27fail.join(', '));
+      testResults.push({
+        test: 'Calendrier international : publications US/FR et relations, connecteur et import contrôlé, reports/annulations/historique, Pull List, Wishlist, transitions sans doublon, sauvegarde, hors ligne',
+        ok: !!t27a && t27fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
