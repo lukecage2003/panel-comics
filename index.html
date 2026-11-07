@@ -4323,24 +4323,40 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const starsText = r => r ? '★'.repeat(r) + '☆'.repeat(5 - r) : '';
 
-  // Persistance : localStorage (source principale) + miroir IndexedDB (copie de secours)
-  const mirrorSinglesToIdb = async () => {
+  // Persistance : localStorage + IndexedDB, reliés par un numéro de révision. Si localStorage échoue (plein),
+  // IndexedDB garde la version la plus récente et elle est reprise au démarrage (au lieu d'être écrasée).
+  let singlesRev = Number(localStorage.getItem('panel_singles_rev')) || 0;
+  const mirrorSinglesToIdb = async rev => {
     try {
       const db = await dbReady;
       if (!db || !db.objectStoreNames.contains('singles')) return;
-      const tx = db.transaction('singles', 'readwrite');
-      const st = tx.objectStore('singles');
-      st.clear();
-      physicalSingles.forEach(s => st.put(s));
+      const snapshot = physicalSingles.slice();
+      // IndexedDB indexe par identifiant : les fiches sans identifiant ou en double ne peuvent pas y être copiées fidèlement
+      const keyedIds = new Set();
+      const keyed = snapshot.filter(x => x && x.id !== undefined && x.id !== null && x.id !== '' && !keyedIds.has(x.id) && keyedIds.add(x.id));
+      await new Promise((res, rej) => {
+        const tx = db.transaction('singles', 'readwrite');
+        const st = tx.objectStore('singles');
+        st.clear();
+        keyed.forEach(x => st.put(x));
+        tx.oncomplete = res;
+        tx.onerror = () => rej(tx.error);
+        tx.onabort = () => rej(tx.error);
+      });
+      const cdb = await openCatalogDb();
+      if (cdb) await idbWrite(cdb, ['meta'], t => t.objectStore('meta').put({ key: 'singlesMirror', rev: rev || singlesRev, count: keyed.length, total: snapshot.length, complete: keyed.length === snapshot.length, order: keyed.map(x => x.id), at: new Date().toISOString() }));
     } catch (e) { console.warn('Miroir IndexedDB indisponible', e); }
   };
   const persistSingles = () => {
+    singlesRev = Math.max(Date.now(), singlesRev + 1);
     try {
       localStorage.setItem('panel_physical_singles', JSON.stringify(physicalSingles));
+      localStorage.setItem('panel_singles_rev', String(singlesRev));
     } catch (e) {
-      showToast('Stockage local plein : exportez une sauvegarde JSON.');
+      showToast('Stockage local plein : la collection reste enregistrée dans IndexedDB. Exportez une sauvegarde JSON.');
     }
-    mirrorSinglesToIdb();
+    mirrorSinglesToIdb(singlesRev);
+    scheduleCatalogSync();
   };
   // Instantané complet (copie profonde) avant toute modification par lot ; les 8 derniers sont conservés
   const SNAPSHOT_KEEP = 8;
@@ -4376,23 +4392,450 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return true;
   };
 
+  const readIdbSingles = async () => {
+    const db = await dbReady;
+    if (!db || !db.objectStoreNames.contains('singles')) return [];
+    return new Promise(res => {
+      const req = db.transaction('singles', 'readonly').objectStore('singles').getAll();
+      req.onsuccess = () => res(req.result || []);
+      req.onerror = () => res([]);
+    });
+  };
   const recoverSinglesFromIdb = async () => {
-    if (physicalSingles.length) { mirrorSinglesToIdb(); return; }
     try {
-      const db = await dbReady;
-      if (!db || !db.objectStoreNames.contains('singles')) return;
-      const items = await new Promise(res => {
-        const req = db.transaction('singles', 'readonly').objectStore('singles').getAll();
-        req.onsuccess = () => res(req.result || []);
-        req.onerror = () => res([]);
-      });
-      if (items.length) {
-        physicalSingles = items;
-        try { localStorage.setItem('panel_physical_singles', JSON.stringify(physicalSingles)); } catch (_) {}
-        renderSinglesCollection();
-        showToast(items.length + ' single(s) restauré(s) depuis la copie de secours.');
+      const cdb = await openCatalogDb();
+      const mirror = cdb ? await idbGet(cdb, 'meta', 'singlesMirror') : null;
+      const lsRev = Number(localStorage.getItem('panel_singles_rev')) || 0;
+      // Une copie IndexedDB n'est reprise que si elle est complète (aucune fiche sans identifiant ou en double)
+      const idbNewer = !!(mirror && mirror.rev > lsRev && mirror.complete !== false);
+      if (physicalSingles.length && !idbNewer) { mirrorSinglesToIdb(lsRev); return { source: 'localStorage' }; }
+      let items = await readIdbSingles();
+      if (!items.length) return { source: 'aucune' };
+      // Copie incomplète (écriture interrompue) : on ne la reprend pas
+      if (mirror && mirror.count !== items.length) { if (physicalSingles.length) mirrorSinglesToIdb(lsRev); return { source: 'localStorage', mirrorIncomplete: true }; }
+      if (mirror && Array.isArray(mirror.order)) {
+        const pos = new Map(mirror.order.map((id, i) => [id, i]));
+        items = items.slice().sort((a, b) => (pos.has(a.id) ? pos.get(a.id) : 1e9) - (pos.has(b.id) ? pos.get(b.id) : 1e9));
       }
-    } catch (e) {}
+      if (physicalSingles.length) await snapshotSingles('Avant reprise de la copie IndexedDB plus récente');
+      const replaced = physicalSingles.length;
+      physicalSingles = items;
+      if (mirror) singlesRev = Math.max(singlesRev, mirror.rev);
+      try {
+        localStorage.setItem('panel_physical_singles', JSON.stringify(physicalSingles));
+        localStorage.setItem('panel_singles_rev', String(singlesRev));
+      } catch (_) {}
+      renderSinglesCollection();
+      showToast(replaced ? 'Collection reprise depuis IndexedDB (version plus récente que le stockage local).' : items.length + ' single(s) restauré(s) depuis la copie de secours.');
+      return { source: 'indexeddb', count: items.length, replaced };
+    } catch (e) { return { source: 'erreur', error: e.message }; }
+  };
+
+  // ==========================================================================
+  // MOTEUR DE COLLECTION — CATALOGUE NORMALISÉ (Phase 2, lot 2.1)
+  // Base IndexedDB dédiée « panel-catalog » : éditeurs → séries → numéros → variantes, et exemplaires
+  // personnels reliés au catalogue. Construit à partir de la collection existante, qui reste intacte
+  // (aucun champ ajouté ni modifié). Identifiants déterministes → migration idempotente. Chaque
+  // exemplaire conserve de quoi reconstruire exactement sa fiche d'origine (vérifié fiche par fiche).
+  // Retour arrière : Panel.catalog.rollback() vide uniquement cette base dérivée.
+  // ==========================================================================
+  const CATALOG_SCHEMA = 1;
+  const CATALOG_ENTITY_STORES = ['publishers', 'series', 'issues', 'variants', 'copies'];
+  const CATALOG_DISABLED_KEY = 'panel_catalog_disabled';
+  let catalogDbPromise = null;
+  const openCatalogDb = () => {
+    if (catalogDbPromise) return catalogDbPromise;
+    catalogDbPromise = new Promise(resolve => {
+      if (!window.indexedDB) { resolve(null); return; }
+      let req;
+      try { req = indexedDB.open('panel-catalog', CATALOG_SCHEMA); } catch (_) { resolve(null); return; }
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        const mk = (name, idx) => {
+          if (db.objectStoreNames.contains(name)) return;
+          const st = db.createObjectStore(name, { keyPath: 'id' });
+          (idx || []).forEach(([n, k]) => st.createIndex(n, k, { unique: false }));
+        };
+        mk('publishers');
+        mk('series', [['publisherId', 'publisherId']]);
+        mk('issues', [['seriesId', 'seriesId']]);
+        mk('variants', [['issueId', 'issueId']]);
+        mk('copies', [['variantId', 'variantId'], ['legacyId', 'legacyId']]);
+        if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
+        if (!db.objectStoreNames.contains('backups')) db.createObjectStore('backups', { keyPath: 'id' });
+      };
+      req.onsuccess = () => {
+        const db = req.result;
+        db.onversionchange = () => { db.close(); catalogDbPromise = null; };
+        resolve(db);
+      };
+      req.onerror = () => { catalogDbPromise = null; resolve(null); };
+      req.onblocked = () => { catalogDbPromise = null; resolve(null); };
+    });
+    return catalogDbPromise;
+  };
+  const idbAll = (db, store) => new Promise(res => {
+    try { const r = db.transaction(store, 'readonly').objectStore(store).getAll(); r.onsuccess = () => res(r.result || []); r.onerror = () => res([]); } catch (_) { res([]); }
+  });
+  const idbGet = (db, store, key) => new Promise(res => {
+    try { const r = db.transaction(store, 'readonly').objectStore(store).get(key); r.onsuccess = () => res(r.result || null); r.onerror = () => res(null); } catch (_) { res(null); }
+  });
+  const idbWrite = (db, stores, fn) => new Promise((res, rej) => {
+    let tx;
+    try { tx = db.transaction(stores, 'readwrite'); fn(tx); } catch (e) { rej(e); return; }
+    tx.oncomplete = () => res(true);
+    tx.onerror = () => rej(tx.error || new Error('Écriture IndexedDB impossible'));
+    tx.onabort = () => rej(tx.error || new Error('Transaction IndexedDB annulée'));
+  });
+
+  // Empreintes stables (ordre des clés indifférent) et identifiants déterministes
+  const stableJson = v => {
+    if (v === null || v === undefined) return 'null';
+    if (typeof v !== 'object') return JSON.stringify(v);
+    if (Array.isArray(v)) return '[' + v.map(stableJson).join(',') + ']';
+    return '{' + Object.keys(v).filter(k => v[k] !== undefined).sort().map(k => JSON.stringify(k) + ':' + stableJson(v[k])).join(',') + '}';
+  };
+  const stableHash = str => {
+    let h1 = 0x811c9dc5, h2 = 0x9747b28c;
+    for (let i = 0; i < str.length; i++) {
+      const c = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ c, 16777619);
+      h2 = Math.imul(h2 ^ c, 2246822519);
+    }
+    return (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
+  };
+  const catNorm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  const catYearOf = name => { const m = String(name || '').match(/\((1[89]\d{2}|20\d{2})(?:\s*-[^)]*)?\)/); return m ? Number(m[1]) : null; };
+  const catVolumeOf = (name, vol) => {
+    const m = String(name || '').match(/\bvol(?:ume)?\.?\s*(\d+)\b/i);
+    if (m) return Number(m[1]);
+    const n = parseInt(vol, 10);
+    return Number.isFinite(n) ? n : null;
+  };
+  const catIssueKey = (issue, variant) => {
+    const raw = String(issue == null ? '' : issue).trim().replace(/^#\s*/, '');
+    if (!raw) return 'hs ' + (catNorm(variant) || 'sans numero');
+    const m = raw.replace(',', '.').match(/^(-?\d+(?:\.\d+)?)(.*)$/);
+    if (m) { const tail = catNorm(m[2]); return String(parseFloat(m[1])) + (tail ? ' ' + tail : ''); }
+    return catNorm(raw);
+  };
+  const DEFAULT_VARIANT_RE = /^(cover a|couverture a|regular|regular cover|standard|standard cover|main|main cover|a|edition standard|edition reguliere)$/;
+  const catVariantKey = (variant, issue) => {
+    if (!String(issue == null ? '' : issue).trim().replace(/^#\s*/, '')) return 'edition'; // recueil sans numéro : la mention décrit l'édition elle-même
+    const k = catNorm(variant);
+    return !k || DEFAULT_VARIANT_RE.test(k) ? 'cover a' : k;
+  };
+
+  // Répartition des champs d'une fiche : catalogue (partagé) / exemplaire (personnel) / autres (conservés tels quels)
+  const CAT_SERIES_FIELDS = ['series', 'publisher', 'volume'];
+  const CAT_ISSUE_FIELDS = ['issue', 'title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType', 'keyNote', 'keyNotes'];
+  const CAT_VARIANT_FIELDS = ['variant', 'coverUrl', 'coverMeta', 'coverHistory', 'coverLookup', 'fandomLookup', 'upc', 'barcode', 'isbn', 'printing', 'comicVineId', 'metronId', 'gcdId', 'coverSource', 'coverArtist', 'ratio'];
+  const CAT_FIELDS = new Set([...CAT_SERIES_FIELDS, ...CAT_ISSUE_FIELDS, ...CAT_VARIANT_FIELDS]);
+  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity']);
+  const splitLegacySingle = s => {
+    const catalogFields = {}, personal = {}, extra = {};
+    Object.keys(s || {}).forEach(k => {
+      if (k === 'id' || s[k] === undefined) return;
+      if (CAT_FIELDS.has(k)) catalogFields[k] = s[k];
+      else if (COPY_FIELDS.has(k)) personal[k] = s[k];
+      else extra[k] = s[k];
+    });
+    return { catalogFields, personal, extra };
+  };
+  // Reconstruction exacte de la fiche d'origine à partir d'un exemplaire (sert à la vérification et au retour arrière)
+  const legacyBaseId = s => (s && s.id !== undefined && s.id !== null && s.id !== '') ? String(s.id) : 'sans-id-' + stableHash([s && s.series, s && s.issue, s && s.variant, s && s.publisher, s && s.addedAt].map(x => String(x == null ? '' : x)).join('|'));
+  const copyToLegacy = c => {
+    const out = {};
+    if (c.legacyHasId) out.id = c.legacyIdRaw !== undefined ? c.legacyIdRaw : c.legacyId;
+    Object.assign(out, c.catalogFields || {}, c.personal || {}, c.extra || {});
+    return out;
+  };
+
+  // Construction pure du modèle normalisé (aucune écriture) ; prev = entités déjà stockées (dates conservées)
+  const buildCatalogModel = (singles, meta, prev, now) => {
+    now = now || new Date().toISOString();
+    prev = prev || {};
+    const out = { publishers: new Map(), series: new Map(), issues: new Map(), variants: new Map(), copies: new Map() };
+    const anomalies = [];
+    const addExt = (ent, provider, value, from) => {
+      if (value === undefined || value === null || value === '' || typeof value === 'object') return;
+      const v = String(value).trim();
+      if (!v) return;
+      if (!ent.externalIds.some(x => x.provider === provider && x.value === v)) ent.externalIds.push({ provider, value: v, from });
+    };
+    const noteConflict = (ent, field, value) => {
+      if (value === undefined || value === null || value === '') return;
+      if (ent[field] === undefined || ent[field] === null || ent[field] === '') { ent[field] = value; return; }
+      if (stableJson(ent[field]) === stableJson(value)) return;
+      let c = ent.conflicts.find(x => x.field === field);
+      if (!c) { c = { field, values: [ent[field]] }; ent.conflicts.push(c); }
+      if (!c.values.some(v => stableJson(v) === stableJson(value))) c.values.push(value);
+    };
+    const seenIds = new Map();
+    (singles || []).forEach((s, index) => {
+      if (!s || typeof s !== 'object') { anomalies.push({ type: 'fiche-invalide', index }); return; }
+      const legacyHasId = s.id !== undefined && s.id !== null && s.id !== '';
+      const baseId = legacyBaseId(s);
+      if (!legacyHasId) anomalies.push({ type: 'fiche-sans-identifiant', index });
+      const occ = seenIds.get(baseId) || 0;
+      seenIds.set(baseId, occ + 1);
+      if (occ) anomalies.push({ type: 'identifiant-en-double', legacyId: baseId, occurrence: occ });
+      const from = baseId + (occ ? '~' + occ : '');
+
+      const pubName = String(s.publisher || '').trim() || 'Éditeur inconnu';
+      const pubId = 'pub_' + stableHash(catNorm(pubName) || 'inconnu');
+      if (!out.publishers.has(pubId)) out.publishers.set(pubId, { id: pubId, name: pubName, normName: catNorm(pubName), aliases: [], externalIds: [], conflicts: [], provenance: { origin: 'collection', firstLegacyId: from } });
+      const pub = out.publishers.get(pubId);
+      if (pubName !== pub.name && !pub.aliases.includes(pubName)) pub.aliases.push(pubName);
+
+      const seriesName = String(s.series || '').trim() || 'Comic sans titre';
+      const year = catYearOf(seriesName);
+      const volume = catVolumeOf(seriesName, s.volume);
+      const seriesId = 'ser_' + stableHash([pubId, normSeries(seriesName), year || '', volume || ''].join('|'));
+      if (!out.series.has(seriesId)) {
+        out.series.set(seriesId, {
+          id: seriesId, publisherId: pubId, name: seriesName, title: seriesName.replace(/\s*\((1[89]\d{2}|20\d{2})(?:\s*-[^)]*)?\)\s*/g, ' ').trim(),
+          normName: normSeries(seriesName), startYear: year, volume, pull: !!(meta && meta[normSeries(seriesName)] && meta[normSeries(seriesName)].pull),
+          aliases: [], externalIds: [], conflicts: [], provenance: { origin: 'collection', firstLegacyId: from }
+        });
+      }
+      const ser = out.series.get(seriesId);
+      if (seriesName !== ser.name && !ser.aliases.includes(seriesName)) ser.aliases.push(seriesName);
+
+      const issueKey = catIssueKey(s.issue, s.variant);
+      const issueId = 'iss_' + stableHash(seriesId + '|' + issueKey);
+      if (!out.issues.has(issueId)) {
+        out.issues.set(issueId, {
+          id: issueId, seriesId, publisherId: pubId, number: String(s.issue == null ? '' : s.issue), numberKey: issueKey,
+          isCollected: issueKey.startsWith('hs '), externalIds: [], conflicts: [], provenance: { origin: 'collection', firstLegacyId: from }
+        });
+      }
+      const iss = out.issues.get(issueId);
+      ['title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType'].forEach(f => noteConflict(iss, f, s[f]));
+
+      const variantKey = catVariantKey(s.variant, s.issue);
+      const variantId = 'var_' + stableHash(issueId + '|' + variantKey);
+      if (!out.variants.has(variantId)) {
+        out.variants.set(variantId, {
+          id: variantId, issueId, seriesId, publisherId: pubId, name: String(s.variant || '').trim() || 'Cover A', variantKey,
+          covers: [], externalIds: [], conflicts: [], provenance: { origin: 'collection', firstLegacyId: from }
+        });
+      }
+      const vr = out.variants.get(variantId);
+      noteConflict(vr, 'printing', s.printing);
+      addExt(vr, 'upc', s.upc, from); addExt(vr, 'upc', s.barcode, from); addExt(vr, 'isbn', s.isbn, from);
+      addExt(vr, 'comicvine', s.comicVineId, from); addExt(vr, 'metron', s.metronId, from); addExt(vr, 'gcd', s.gcdId, from);
+      const cov = String(s.coverUrl || '').trim();
+      if (/^https?:\/\//i.test(cov) && !vr.covers.some(c => c.url === cov)) {
+        const cm = s.coverMeta && typeof s.coverMeta === 'object' ? s.coverMeta : null;
+        vr.covers.push({ url: cov, provider: (cm && (cm.source || cm.provider)) || s.coverSource || 'inconnu', from, meta: cm || null });
+      }
+
+      const { catalogFields, personal, extra } = splitLegacySingle(s);
+      const copyId = 'cpy_' + stableHash(from);
+      out.copies.set(copyId, {
+        id: copyId, legacyId: baseId, legacyIdRaw: legacyHasId ? s.id : undefined, legacyOccurrence: occ, legacyHasId, publisherId: pubId, seriesId, issueId, variantId,
+        status: s.isWishlist ? 'wishlist' : 'owned', personal, catalogFields, extra, legacyHash: stableHash(stableJson(s)), deletedAt: null
+      });
+    });
+
+    // Dates : création conservée, modification seulement si le contenu change ; entités absentes conservées (catalogue indépendant)
+    const result = {};
+    CATALOG_ENTITY_STORES.forEach(store => {
+      const prevMap = new Map((prev[store] || []).map(e => [e.id, e]));
+      const list = [];
+      out[store].forEach(e => {
+        const contentHash = stableHash(stableJson(e));
+        const p = prevMap.get(e.id);
+        list.push(Object.assign(e, {
+          schema: CATALOG_SCHEMA, contentHash,
+          createdAt: (p && p.createdAt) || now,
+          updatedAt: p && p.contentHash === contentHash ? p.updatedAt : now
+        }));
+        prevMap.delete(e.id);
+      });
+      prevMap.forEach(p => {
+        if (store === 'copies' && !p.deletedAt) list.push(Object.assign({}, p, { deletedAt: now, updatedAt: now, contentHash: stableHash(stableJson(Object.assign({}, p, { deletedAt: 'x' }))) }));
+        else list.push(p);
+      });
+      result[store] = list;
+    });
+    result.anomalies = anomalies;
+    result.duplicates = detectCatalogDuplicates(result);
+    return result;
+  };
+
+  // Doublons probables : signalés, jamais fusionnés automatiquement
+  const detectCatalogDuplicates = m => {
+    const dups = [];
+    const group = (arr, keyFn) => { const g = new Map(); arr.forEach(x => { const k = keyFn(x); if (!k) return; if (!g.has(k)) g.set(k, []); g.get(k).push(x); }); return [...g.values()].filter(v => v.length > 1); };
+    const PUB_NOISE = /\b(comics?|publishing|publications?|entertainment|editions?|inc|llc|group|press|the)\b/g;
+    group(m.publishers, p => p.normName.replace(PUB_NOISE, ' ').replace(/\s+/g, ' ').trim())
+      .forEach(v => dups.push({ type: 'editeurs-proches', ids: v.map(x => x.id), label: v.map(x => x.name).join(' / '), confidence: 'moyenne' }));
+    group(m.series, s => s.normName + '|' + (s.startYear || '') + '|' + (s.volume || ''))
+      .filter(v => new Set(v.map(x => x.publisherId)).size > 1)
+      .forEach(v => dups.push({ type: 'serie-sous-plusieurs-editeurs', ids: v.map(x => x.id), label: v[0].name, confidence: 'moyenne' }));
+    const pubFamily = new Map(m.publishers.map(p => [p.id, p.normName.replace(PUB_NOISE, ' ').replace(/\s+/g, ' ').trim() || p.normName]));
+    group(m.series, s => (pubFamily.get(s.publisherId) || s.publisherId) + '|' + s.normName).forEach(v => {
+      if (v.some(x => !x.startYear) && v.some(x => x.startYear)) dups.push({ type: 'serie-annee-manquante', ids: v.map(x => x.id), label: v.map(x => x.name).join(' / '), confidence: 'faible' });
+    });
+    const byExt = new Map();
+    m.variants.forEach(vr => (vr.externalIds || []).forEach(e => {
+      if (!['upc', 'comicvine', 'metron', 'gcd', 'isbn'].includes(e.provider)) return;
+      const k = e.provider + ':' + e.value;
+      if (!byExt.has(k)) byExt.set(k, new Set());
+      byExt.get(k).add(vr.id);
+    }));
+    byExt.forEach((ids, k) => { if (ids.size > 1) dups.push({ type: 'identifiant-externe-partage', ids: [...ids], label: k, confidence: k.startsWith('upc:') ? 'haute' : 'moyenne' }); });
+    const VAR_NOISE = /\b(cover|couverture|variant|variante|edition|ed)\b/g;
+    group(m.variants, v => v.issueId + '|' + v.variantKey.replace(VAR_NOISE, ' ').replace(/\s+/g, ' ').trim())
+      .forEach(v => dups.push({ type: 'variantes-proches', ids: v.map(x => x.id), label: v.map(x => x.name).join(' / '), confidence: 'faible' }));
+    return dups;
+  };
+
+  // Écriture différentielle (seules les entités modifiées sont réécrites) — file sérialisée
+  let catalogQueue = Promise.resolve();
+  const catalogSerial = fn => { const p = catalogQueue.then(fn, fn); catalogQueue = p.catch(() => {}); return p; };
+  const catalogDisabled = () => localStorage.getItem(CATALOG_DISABLED_KEY) === '1';
+  const readCatalog = async db => {
+    const out = {};
+    for (const s of CATALOG_ENTITY_STORES) out[s] = await idbAll(db, s);
+    return out;
+  };
+  const syncCatalogNow = (opts = {}) => catalogSerial(async () => {
+    const db = await openCatalogDb();
+    if (!db) return { ok: false, error: 'IndexedDB indisponible' };
+    const singles = opts.singles || physicalSingles;
+    const prev = await readCatalog(db);
+    const now = new Date().toISOString();
+    const model = buildCatalogModel(singles, seriesMeta, prev, now);
+    const prevHash = {};
+    CATALOG_ENTITY_STORES.forEach(s => { prevHash[s] = new Map(prev[s].map(e => [e.id, e.contentHash])); });
+    const counts = { written: 0 };
+    await idbWrite(db, [...CATALOG_ENTITY_STORES, 'meta'], tx => {
+      CATALOG_ENTITY_STORES.forEach(s => {
+        const st = tx.objectStore(s);
+        model[s].forEach(e => { if (prevHash[s].get(e.id) !== e.contentHash) { st.put(e); counts.written++; } });
+      });
+      tx.objectStore('meta').put({
+        key: 'state', schema: CATALOG_SCHEMA, lastSyncAt: now, reason: opts.reason || 'sync', legacyCount: singles.length,
+        counts: Object.fromEntries(CATALOG_ENTITY_STORES.map(s => [s, model[s].filter(e => !e.deletedAt).length])),
+        duplicates: model.duplicates, anomalies: model.anomalies
+      });
+    });
+    return { ok: true, written: counts.written, duplicates: model.duplicates.length, anomalies: model.anomalies.length };
+  });
+
+  // Vérification d'intégrité : chaque fiche ↔ exactement un exemplaire qui la reconstruit à l'identique ; références complètes
+  const verifyCatalog = async (singles) => {
+    singles = singles || physicalSingles;
+    const db = await openCatalogDb();
+    if (!db) return { ok: false, errors: ['IndexedDB indisponible'] };
+    const c = await readCatalog(db);
+    const errors = [];
+    const live = c.copies.filter(x => !x.deletedAt);
+    const byFrom = new Map(live.map(x => [x.legacyId + (x.legacyOccurrence ? '~' + x.legacyOccurrence : ''), x]));
+    const seen = new Map();
+    singles.forEach((s, index) => {
+      const base = legacyBaseId(s);
+      const occ = seen.get(base) || 0;
+      seen.set(base, occ + 1);
+      const cp = byFrom.get(base + (occ ? '~' + occ : ''));
+      if (!cp) { errors.push('Exemplaire manquant pour la fiche ' + base); return; }
+      if (stableJson(copyToLegacy(cp)) !== stableJson(s)) errors.push('Reconstruction différente pour la fiche ' + base);
+    });
+    if (live.length !== singles.length) errors.push('Nombre d\'exemplaires (' + live.length + ') différent du nombre de fiches (' + singles.length + ')');
+    const ids = s => new Set(c[s].map(e => e.id));
+    const pubs = ids('publishers'), sers = ids('series'), isss = ids('issues'), vars = ids('variants');
+    c.series.forEach(e => { if (!pubs.has(e.publisherId)) errors.push('Série sans éditeur : ' + e.id); });
+    c.issues.forEach(e => { if (!sers.has(e.seriesId)) errors.push('Numéro sans série : ' + e.id); });
+    c.variants.forEach(e => { if (!isss.has(e.issueId)) errors.push('Variante sans numéro : ' + e.id); });
+    live.forEach(e => { if (!vars.has(e.variantId) || !isss.has(e.issueId) || !sers.has(e.seriesId) || !pubs.has(e.publisherId)) errors.push('Exemplaire mal relié : ' + e.id); });
+    const state = await idbGet(db, 'meta', 'state');
+    return {
+      ok: errors.length === 0, errors: errors.slice(0, 50), errorCount: errors.length, legacyCount: singles.length, copies: live.length,
+      publishers: c.publishers.length, series: c.series.length, issues: c.issues.length, variants: c.variants.length,
+      duplicates: state ? state.duplicates : [], anomalies: state ? state.anomalies : []
+    };
+  };
+
+  // Migration initiale : sauvegarde complète + instantané, construction, vérification ; échec → retour arrière automatique
+  const CATALOG_BACKUPS_KEEP = 3;
+  const migrateCatalog = (opts = {}) => (async () => {
+    if (catalogDisabled() && !opts.force) return { ok: false, skipped: 'désactivé (retour arrière effectué)' };
+    const db = await openCatalogDb();
+    if (!db) return { ok: false, error: 'IndexedDB indisponible' };
+    const prevMig = await idbGet(db, 'meta', 'migration');
+    if (prevMig && prevMig.status === 'ok' && prevMig.schema === CATALOG_SCHEMA && !opts.force) {
+      const r = await syncCatalogNow({ reason: 'reprise' });
+      return Object.assign({ ok: true, already: true }, r);
+    }
+    const startedAt = new Date().toISOString();
+    const legacyBefore = stableHash(stableJson(physicalSingles));
+    const backupId = 'bk_' + Date.now();
+    const rawLs = k => localStorage.getItem(k);
+    await idbWrite(db, ['backups'], tx => tx.objectStore('backups').put({
+      id: backupId, at: startedAt, reason: 'Avant migration du catalogue (lot 2.1)', format: 'panel-backup', version: 3,
+      physicalSingles: JSON.parse(JSON.stringify(physicalSingles)), seriesMeta: JSON.parse(JSON.stringify(seriesMeta || {})),
+      raw: { panel_upc_editions: rawLs('panel_upc_editions'), panel_custom_upc_db: rawLs('panel_custom_upc_db'), panel_value_snapshots: rawLs('panel_value_snapshots'), panel_scan_queue: rawLs('panel_scan_queue') },
+      ...readStoredDigitalData()
+    }));
+    const backups = (await idbAll(db, 'backups')).sort((a, b) => b.at.localeCompare(a.at));
+    if (backups.length > CATALOG_BACKUPS_KEEP) await idbWrite(db, ['backups'], tx => backups.slice(CATALOG_BACKUPS_KEEP).forEach(b => tx.objectStore('backups').delete(b.id)));
+    const snapshotId = await snapshotSingles('Avant migration du catalogue (lot 2.1)');
+    let sync, verify;
+    try {
+      sync = await syncCatalogNow({ reason: 'migration' });
+      verify = await verifyCatalog();
+    } catch (e) { verify = { ok: false, errors: [e.message || String(e)] }; }
+    const legacyUntouched = stableHash(stableJson(physicalSingles)) === legacyBefore;
+    const ok = !!(verify && verify.ok && legacyUntouched);
+    if (!ok) await clearCatalogEntities(db);
+    catalogMigrated = ok;
+    const record = {
+      key: 'migration', schema: CATALOG_SCHEMA, status: ok ? 'ok' : 'failed', startedAt, finishedAt: new Date().toISOString(), backupId, snapshotId,
+      legacyCount: physicalSingles.length, legacyUntouched, counts: verify && { publishers: verify.publishers, series: verify.series, issues: verify.issues, variants: verify.variants, copies: verify.copies },
+      duplicates: verify && verify.duplicates ? verify.duplicates.length : 0, errors: verify ? verify.errors : []
+    };
+    await idbWrite(db, ['meta'], tx => tx.objectStore('meta').put(record));
+    return Object.assign({ ok }, record, { sync });
+  })();
+  const clearCatalogEntities = db => idbWrite(db, [...CATALOG_ENTITY_STORES, 'meta'], tx => {
+    CATALOG_ENTITY_STORES.forEach(s => tx.objectStore(s).clear());
+    tx.objectStore('meta').delete('state');
+  });
+  // Retour arrière : vide uniquement le catalogue dérivé ; la collection, ses sauvegardes et instantanés ne sont pas touchés
+  const rollbackCatalog = () => catalogSerial(async () => {
+    const db = await openCatalogDb();
+    if (!db) return { ok: false, error: 'IndexedDB indisponible' };
+    const before = stableHash(stableJson(physicalSingles));
+    await clearCatalogEntities(db);
+    await idbWrite(db, ['meta'], tx => tx.objectStore('meta').put({ key: 'migration', schema: CATALOG_SCHEMA, status: 'rolled-back', at: new Date().toISOString() }));
+    localStorage.setItem(CATALOG_DISABLED_KEY, '1');
+    catalogMigrated = false;
+    clearTimeout(catalogSyncTimer);
+    return { ok: true, legacyUntouched: stableHash(stableJson(physicalSingles)) === before, legacyCount: physicalSingles.length };
+  });
+  const enableCatalog = () => { localStorage.removeItem(CATALOG_DISABLED_KEY); return migrateCatalog({ force: true }); };
+  const catalogStatus = async () => {
+    const db = await openCatalogDb();
+    if (!db) return { available: false };
+    return { available: true, disabled: catalogDisabled(), migration: await idbGet(db, 'meta', 'migration'), state: await idbGet(db, 'meta', 'state'), backups: (await idbAll(db, 'backups')).map(b => ({ id: b.id, at: b.at, count: (b.physicalSingles || []).length })) };
+  };
+  // Synchronisation incrémentale après chaque enregistrement de la collection (si la migration a réussi)
+  let catalogSyncTimer = null;
+  let catalogMigrated = false;
+  const scheduleCatalogSync = () => {
+    if (!catalogMigrated || catalogDisabled()) return;
+    clearTimeout(catalogSyncTimer);
+    catalogSyncTimer = setTimeout(() => { syncCatalogNow({ reason: 'modification' }).catch(e => console.warn('Synchronisation du catalogue impossible', e)); }, 800);
+  };
+  const initCatalog = async () => {
+    try {
+      const r = await migrateCatalog();
+      catalogMigrated = !!(r && r.ok);
+      if (r && r.status === 'failed') console.warn('Migration du catalogue annulée (collection intacte)', r.errors);
+    } catch (e) { console.warn('Catalogue indisponible', e); }
   };
 
   // Réduction des photos avant stockage (une photo de téléphone saturerait localStorage)
@@ -8128,9 +8571,20 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
 
     // Vérification d'intégrité : lecture seule. Ne supprime ni la collection ni les données numériques conservées.
-    $('cleanDbBtn').onclick = () => {
+    $('cleanDbBtn').onclick = async () => {
       const r = checkDataIntegrity();
-      alert('Vérification terminée (aucune donnée modifiée)\n\n' +
+      let cat = '';
+      try {
+        const st = await catalogStatus();
+        if (st.available) {
+          const v = st.disabled || !st.migration ? null : await verifyCatalog();
+          cat = '• Catalogue normalisé : ' + (st.disabled ? 'désactivé (retour arrière effectué)' : !v ? 'pas encore construit'
+            : v.ok ? 'vérifié — ' + v.publishers + ' éditeur(s), ' + v.series + ' série(s), ' + v.issues + ' numéro(s), ' + v.variants + ' variante(s), ' + v.copies + ' exemplaire(s)'
+            : 'écart détecté (' + v.errorCount + '), la collection reste la référence') + '\n' +
+            (v ? '• Doublons probables signalés (jamais fusionnés) : ' + (v.duplicates || []).length + '\n' : '');
+        }
+      } catch (_) {}
+      alert('Vérification terminée (aucune donnée modifiée)\n\n' + cat +
         '• Collection : ' + r.singles + ' exemplaire(s)\n' +
         '• Identifiants en double : ' + r.duplicateIds + '\n' +
         '• Fiches sans titre de série : ' + r.noSeries + '\n' +
@@ -8348,7 +8802,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // Démarrage
   bindEvents();
   renderSinglesCollection();
-  recoverSinglesFromIdb();
+  recoverSinglesFromIdb().then(() => { if (!navigator.webdriver) setTimeout(initCatalog, 1500); });
   initPwa();
   handleLaunchParams();
   if (coverJobOptions.active && !navigator.webdriver) setTimeout(() => { if (coverJobOptions.active) runCoverJob(); }, 4000);
@@ -8455,6 +8909,19 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     validateBackupPayload,
     applyBackupRestore,
     checkDataIntegrity,
+    recoverSinglesFromIdb,
+    catalog: {
+      migrate: migrateCatalog,
+      sync: syncCatalogNow,
+      verify: verifyCatalog,
+      rollback: rollbackCatalog,
+      enable: enableCatalog,
+      status: catalogStatus,
+      read: async () => { const db = await openCatalogDb(); return db ? readCatalog(db) : null; },
+      build: buildCatalogModel,
+      copyToLegacy,
+      isActive: () => catalogMigrated && !catalogDisabled()
+    },
     countStoredDigitalFiles,
     exportStoredDigitalArchive,
     readStoredDigitalData,
@@ -8464,6 +8931,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     marketLinks,
     getValueSnapshots,
     openComicVineSearchModal: q => openCvSearch(q),
+    // Test uniquement : remplace la liste en mémoire sans rien enregistrer (simule un démarrage)
+    setSinglesInMemoryForTest: list => { physicalSingles = list; },
     setPhysicalSingles: list => {
       physicalSingles = list;
       persistSingles();

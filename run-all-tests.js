@@ -1395,6 +1395,133 @@ const waitForCdp = async () => {
         ok: !!t23 && ['helper', 'globalSearch', 'cvModal', 'noExecution'].every(k => t23[k] === true)
       });
 
+      // ==========================================
+      // TEST 24 : Catalogue normalisé (lot 2.1) — migration additive, intégrité, idempotence, retour arrière, durabilité IndexedDB
+      // ==========================================
+      console.log('\n[TEST 24] Catalogue normalisé : migration, vérification, idempotence, retour arrière, durabilité...');
+      const locgPath = 'C:/Users/tadeo/Downloads/ComicGeeks-2026-11-04-14-34-02.xlsx';
+      const locgB64 = fs.existsSync(locgPath) ? fs.readFileSync(locgPath).toString('base64') : '';
+      const t24 = await evalExpr(`(async (locgB64) => {
+        const P = window.Panel;
+        const C = P.catalog;
+        const r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const savedSingles = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const H = 'https://covers.example.test/';
+        const base = { condition: 'NM 9.4 (Near Mint)', keyType: 'none', isRead: false, rating: 0, isWishlist: false, notes: '', addedAt: '2026-01-01T00:00:00Z' };
+        const fixture = [
+          { ...base, id: 'f1', series: 'Absolute Batman (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover A', coverUrl: H + 'ab1.jpg', coverMeta: { source: 'fandom', exact: true }, upc: '76194138470100111', purchasePrice: 4.99, purchaseDate: '2024-10-09', box: 'Boîte 1', divider: 'A', location: 'Bureau', valueHistory: [{ at: '2025-01-01', v: 12 }], estValue: 12, valueSource: 'auto' },
+          { ...base, id: 'f2', series: 'Absolute Batman (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover A', condition: 'CGC 9.8', notes: 'second exemplaire', box: 'Boîte 2' },
+          { ...base, id: 'f3', series: 'Absolute Batman (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover J Jim Lee Foil Virgin Variant', coverUrl: H + 'ab1-j.jpg', coverMeta: { source: 'comicvine' }, comicVineId: '4000-101' },
+          { ...base, id: 'f4', series: 'Absolute Batman (2024)', issue: '#2', publisher: 'DC', variant: '', isWishlist: true },
+          { ...base, id: 'f5', series: 'Absolute Batman (2025)', issue: '', publisher: 'DC Comics', variant: 'Tome 1: Le Zoo HC', coverPrice: 20 },
+          { ...base, id: 12345, series: 'Spawn', issue: '#300', publisher: 'Image Comics', variant: 'Cover A', upc: '70985300000330011', customFoo: { keep: [1, 2] } },
+          { ...base, id: 'f7', series: 'Spawn (1992)', issue: '#1.5', publisher: 'Image', variant: 'Regular', upc: '70985300000330011' },
+          { ...base, id: 'f8', series: 'X-Men (2024)', issue: 'Annual #1', publisher: 'Marvel', variant: 'Cover A', coverUrl: 'data:image/jpeg;base64,AAAA', signedBy: 'Artiste', metronId: 'm-77' },
+          { ...base, id: 'f8', series: 'X-Men (2024)', issue: '#1', publisher: 'Marvel', variant: 'Cover A' },
+          { ...base, series: 'Sans Identifiant', issue: '#1', publisher: '', variant: 'Cover A' }
+        ];
+        const pullBefore = !!(P.getSeriesMeta()['absolute batman'] && P.getSeriesMeta()['absolute batman'].pull);
+        P.togglePull('Absolute Batman (2024)', true);
+        P.setPhysicalSingles(JSON.parse(JSON.stringify(fixture)));
+        await wait(300);
+        const legacyJson = JSON.stringify(P.getPhysicalSingles());
+        // 1. Migration complète sur données représentatives
+        await C.rollback();
+        const m = await C.enable();
+        const v = await C.verify();
+        const cat = await C.read();
+        r.migration = m.ok === true && m.status === 'ok' && !!m.backupId && !!m.snapshotId && m.legacyUntouched === true;
+        r.verify = v.ok === true && v.copies === fixture.length && v.legacyCount === fixture.length;
+        r.normalized = cat.publishers.length === 6 && cat.copies.length === 10 &&
+          cat.variants.some(x => x.name === 'Cover J Jim Lee Foil Virgin Variant') &&
+          cat.copies.filter(x => x.variantId === cat.copies.find(c => c.legacyId === 'f1').variantId).length === 2;
+        const ab1 = cat.variants.find(x => x.covers.some(c => c.url === H + 'ab1.jpg'));
+        r.provenance = !!ab1 && ab1.covers[0].provider === 'fandom' && ab1.externalIds.some(e => e.provider === 'upc' && e.value === '76194138470100111') &&
+          cat.variants.some(x => x.externalIds.some(e => e.provider === 'comicvine' && e.value === '4000-101')) &&
+          cat.variants.some(x => x.externalIds.some(e => e.provider === 'metron' && e.value === 'm-77')) &&
+          !cat.variants.some(x => x.covers.some(c => /^data:/.test(c.url)));
+        r.copyFields = (() => { const c = cat.copies.find(x => x.legacyId === 'f1'); return !!c && c.personal.purchasePrice === 4.99 && c.personal.box === 'Boîte 1' && c.personal.location === 'Bureau' && c.personal.valueHistory.length === 1 && c.status === 'owned'; })() &&
+          cat.copies.find(x => x.legacyId === 'f4').status === 'wishlist' && cat.copies.find(x => x.legacyId === '12345').extra.customFoo.keep[1] === 2;
+        r.timestamps = cat.copies.every(x => x.createdAt && x.updatedAt && x.id.startsWith('cpy_')) && cat.series.every(x => x.createdAt && x.updatedAt);
+        r.pull = cat.series.some(x => x.name === 'Absolute Batman (2024)' && x.pull === true);
+        const st = await C.status();
+        const types = new Set((st.state.duplicates || []).map(d => d.type));
+        r.duplicatesFlagged = types.has('editeurs-proches') && types.has('identifiant-externe-partage') && types.has('serie-annee-manquante');
+        r.anomalies = (st.state.anomalies || []).some(a => a.type === 'identifiant-en-double') && (st.state.anomalies || []).some(a => a.type === 'fiche-sans-identifiant');
+        r.backup = st.backups.some(b => b.id === m.backupId && b.count === fixture.length);
+        r.legacyUntouched = JSON.stringify(P.getPhysicalSingles()) === legacyJson;
+        // 2. Idempotence : relancer ne crée rien et ne change pas les dates
+        const stamp = new Map(cat.variants.map(x => [x.id, x.updatedAt]));
+        await wait(20);
+        const m2 = await C.migrate({ force: true });
+        const cat2 = await C.read();
+        r.idempotent = m2.ok && CATALOG_COUNT(cat2) === CATALOG_COUNT(cat) && cat2.variants.every(x => stamp.get(x.id) === x.updatedAt);
+        function CATALOG_COUNT(c) { return ['publishers', 'series', 'issues', 'variants', 'copies'].map(k => c[k].length).join('/'); }
+        // 3. Synchronisation incrémentale : une modification, une suppression (pierre tombale, pas d'effacement)
+        const list = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        list.find(x => x.id === 'f2').notes = 'modifié';
+        const removed = list.splice(list.findIndex(x => x.id === 'f7'), 1);
+        P.setPhysicalSingles(list);
+        await C.sync();
+        const cat3 = await C.read();
+        const before = new Map(cat2.copies.map(x => [x.legacyId + '~' + x.legacyOccurrence, x.updatedAt]));
+        const changed = cat3.copies.filter(x => before.get(x.legacyId + '~' + x.legacyOccurrence) !== x.updatedAt).map(x => x.legacyId).sort();
+        r.changedCopies = changed;
+        r.incremental = changed.join(',') === 'f2,f7' && cat3.copies.find(x => x.legacyId === 'f7').deletedAt && cat3.variants.length === cat2.variants.length && (await C.verify()).ok;
+        // 4. Retour arrière : seul le catalogue dérivé est vidé ; collection intacte ; plus de migration automatique
+        const listJson = JSON.stringify(P.getPhysicalSingles());
+        const rb = await C.rollback();
+        const catRb = await C.read();
+        const skip = await C.migrate();
+        r.rollback = rb.ok && rb.legacyUntouched && CATALOG_COUNT(catRb) === '0/0/0/0/0' && JSON.stringify(P.getPhysicalSingles()) === listJson && !!skip.skipped && (await C.status()).backups.length >= 1;
+        const again = await C.enable();
+        r.reEnable = again.ok && (await C.verify()).ok;
+        // 5. Durabilité : localStorage plein → IndexedDB garde la version récente et la reprend au démarrage
+        const seenIds = new Set();
+        const clean = JSON.parse(JSON.stringify(P.getPhysicalSingles())).filter(x => x.id !== undefined && !seenIds.has(x.id) && seenIds.add(x.id));
+        P.setPhysicalSingles(clean);
+        await wait(400);
+        const newer = JSON.parse(JSON.stringify(clean));
+        const realSet = Storage.prototype.setItem;
+        Storage.prototype.setItem = function (k, val) { if (k === 'panel_physical_singles') throw new DOMException('quota', 'QuotaExceededError'); return realSet.call(this, k, val); };
+        newer.unshift({ ...base, id: 'f-new', series: 'Nouveauté', issue: '#1', publisher: 'DC Comics', variant: 'Cover A' });
+        try { P.setPhysicalSingles(newer); } finally { Storage.prototype.setItem = realSet; }
+        await wait(500);
+        const stale = JSON.parse(localStorage.getItem('panel_physical_singles'));
+        P.setSinglesInMemoryForTest(stale);
+        const rec = await P.recoverSinglesFromIdb();
+        const after = P.getPhysicalSingles();
+        r.durability = !stale.some(x => x.id === 'f-new') && rec.source === 'indexeddb' && after[0].id === 'f-new' && after.length === stale.length + 1 &&
+          JSON.parse(localStorage.getItem('panel_physical_singles')).length === after.length;
+        r.durabilityDetail = { rec, staleLen: stale.length, afterLen: after.length, first: after[0] && after[0].id, lsLen: JSON.parse(localStorage.getItem('panel_physical_singles')).length, staleHasNew: stale.some(x => x.id === 'f-new') };
+        const rec2 = await P.recoverSinglesFromIdb();
+        r.durabilityStable = rec2.source === 'localStorage';
+        // 6. Données réelles : export League of Comic Geeks de l'utilisateur (lecture seule, résultats chiffrés uniquement)
+        if (locgB64) {
+          const bin = atob(locgB64); const buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+          const parsed = await P.parseXlsxBuffer(buf.buffer);
+          const conv = P.convertCsvRows(parsed, P.detectCsvMapping(parsed.headers), { source: P.detectCsvSource(parsed.headers) });
+          P.setPhysicalSingles(conv.items);
+          const t0 = performance.now();
+          const mr = await C.migrate({ force: true });
+          const vr = await C.verify();
+          r.realLocg = { rows: parsed.rows.length, singles: conv.items.length, ok: mr.ok && vr.ok, copies: vr.copies, publishers: vr.publishers, series: vr.series, issues: vr.issues, variants: vr.variants, duplicates: (vr.duplicates || []).length, ms: Math.round(performance.now() - t0) };
+          r.realOk = r.realLocg.ok && vr.copies === conv.items.length;
+        } else { r.realLocg = 'fichier absent (ignoré)'; r.realOk = true; }
+        // Nettoyage : collection du profil de test restaurée, catalogue resynchronisé
+        P.setPhysicalSingles(savedSingles);
+        P.togglePull('Absolute Batman (2024)', pullBefore);
+        await C.migrate({ force: true });
+        r.cleanup = (await C.verify()).ok;
+        return r;
+      })(` + JSON.stringify(locgB64) + `)`);
+      console.log('Résultat Test 24:', JSON.stringify(t24));
+      testResults.push({
+        test: 'Catalogue normalisé : migration additive vérifiée, provenance, doublons signalés, idempotence, synchro, retour arrière, durabilité IndexedDB, export LoCG réel',
+        ok: !!t24 && ['migration', 'verify', 'normalized', 'provenance', 'copyFields', 'timestamps', 'pull', 'duplicatesFlagged', 'anomalies', 'backup', 'legacyUntouched', 'idempotent', 'incremental', 'rollback', 'reEnable', 'durability', 'durabilityStable', 'realOk', 'cleanup'].every(k => t24[k] === true)
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

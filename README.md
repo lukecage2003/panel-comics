@@ -8,6 +8,33 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 
 ---
 
+## 📌 État du projet (mis à jour le 7 novembre 2026)
+
+- **Vision** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
+- **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
+- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lot 2.1 (catalogue normalisé).
+- **En attente de validation** : lots 2.2 à 2.7 de la Phase 2.
+- **Tests** : `node run-all-tests.js` (Edge sans interface), 23 tests.
+- **Problèmes connus** : les fiches sans identifiant ou en double ne peuvent pas être recopiées fidèlement dans IndexedDB ; pour elles, la reprise automatique de la copie IndexedDB ne s'applique pas (« Vérifier les données » les signale).
+- **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
+
+## 🗂️ Catalogue normalisé (Phase 2 · lot 2.1)
+
+Une base IndexedDB dédiée, `panel-catalog`, organise la collection en **éditeurs → séries → numéros → variantes**. Les **exemplaires** personnels sont reliés à ces entrées.
+
+- **Indépendant des fournisseurs** : les identifiants internes (`pub_…`, `ser_…`, `iss_…`, `var_…`, `cpy_…`) sont calculés à partir des données de la collection. Les identifiants externes (code-barres, ISBN, Comic Vine, Metron, GCD) et la provenance des couvertures sont conservés un par un, avec la fiche d'où ils viennent.
+- **Exemplaires** : chacun garde ses données personnelles (état, achat, valeur et historique, emplacement, wishlist, lu, note, signature, notes), les valeurs de catalogue de sa fiche et les champs inconnus. La fiche d'origine peut donc être reconstruite à l'identique.
+- **Synchronisation future** : chaque entité porte `createdAt` et `updatedAt`. `updatedAt` ne change que si le contenu change. Une fiche supprimée laisse une pierre tombale (`deletedAt`) au lieu d'un effacement, et les entrées du catalogue sont conservées.
+- **Migration** (automatique au démarrage, puis synchronisée après chaque enregistrement) :
+  - Elle ne fait qu'ajouter : **la collection existante n'est ni modifiée ni réécrite**.
+  - Avant migration : une sauvegarde complète (dans `panel-catalog`, 3 conservées) et un instantané.
+  - Après migration, une vérification fiche par fiche : nombre d'entrées, reconstruction identique, références complètes. En cas d'échec, le catalogue est vidé automatiquement et la collection reste la référence.
+  - Elle est idempotente : la relancer ne crée aucun doublon et ne change aucune date.
+- **Doublons probables** : éditeurs proches, série sous plusieurs éditeurs, année manquante, identifiant externe partagé, variantes proches. Ils sont **signalés, jamais fusionnés**. Les fiches sans identifiant ou en double sont signalées comme anomalies.
+- **Durabilité** : localStorage et IndexedDB partagent un numéro de révision. Si localStorage est plein, la version la plus récente reste dans IndexedDB et elle est reprise au démarrage, après un instantané.
+- **Retour arrière** (testé) : `Panel.catalog.rollback()` vide uniquement la base dérivée `panel-catalog`. Les sauvegardes, les instantanés et la collection ne sont pas touchés, et la migration automatique est désactivée (`panel_catalog_disabled`). `Panel.catalog.enable()` la relance. Pour revenir au code d'avant le lot 2.1, il suffit de revenir au commit `8b04cb3` : l'ancien code ignore simplement la base `panel-catalog`.
+- **Contrôle** : « Vérifier les données » (menu Plus) affiche l'état du catalogue et le nombre de doublons signalés. L'API de test est `Panel.catalog.{status, verify, read, sync, migrate}`.
+
 ## 📲 Application installable (PWA)
 
 Panel s'installe comme une application (icône d'accueil, plein écran, hors ligne) sur téléphone, tablette et ordinateur.
@@ -211,6 +238,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Catalogue normalisé` (migration additive vérifiée fiche par fiche, provenance, doublons signalés, idempotence, synchro incrémentale, retour arrière, durabilité IndexedDB, export LoCG réel si présent)
 - `✓ PASS - Collector Pro : valeurs, wishlist exclue, anti-XSS, import sûr`
 - `✓ PASS - Séries & complétion, pull list, sorties, stats, annulation, vue liste`
 - `✓ PASS - Import CSV CLZ / League of Comic Geeks / tableur FR` (formats, conversions, doublons, assistant, annulation)
