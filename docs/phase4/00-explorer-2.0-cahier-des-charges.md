@@ -4,7 +4,8 @@
 > Document fourni par l'utilisateur le 7 novembre 2026. Il définit la **Phase 4**, qui commence après la Phase 3.
 >
 > **Révision 2 (7 novembre 2026) : correction architecturale « séparation stricte Collection / Explorer »** demandée par l'utilisateur. La section 0 et les passages marqués « *Révision 2* » ont été ajoutés ; le reste du texte d'origine est inchangé. En cas de contradiction, la section 0 et le document [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) font foi.
-> Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md).
+> **Révision 3 (7 novembre 2026) : finalisation architecturale** : décisions A3, A5, A6 et A7 de l'utilisateur, contrats S1 à S6 détaillés, domaine Community indépendant (passages marqués « *Révision 3* »).
+> Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md). Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
 **Produit :** Panel by Primestone  
 **Module :** Explorer 2.0  
@@ -24,7 +25,13 @@
 - Explorer et Collection sont deux modules **fonctionnellement indépendants**. Explorer n'est pas une extension de Collection ; Collection n'est pas une dépendance d'Explorer.
 - **Collection** reste seule responsable : comics, exemplaires, éditions et variantes possédés, état et grading, emplacements, acquisitions et historique d'achat, wishlist, Pull List, statistiques de collection, progression personnelle liée à la lecture et aux possessions.
 - **Explorer** est responsable de la découverte : catalogue éditorial, événements, guides, Key Issues, classements, tendances, sorties et calendrier éditorial, actualités, séries, personnages, équipes, créateurs, éditeurs, recommandations, images éditoriales, contributions.
-- Explorer fonctionne pour un utilisateur **sans collection** et pour un **visiteur non connecté**.
+- Explorer fonctionne **sans collection, sans compte et sans connexion** (contenus publics mis en cache localement, dans une base distincte des données personnelles). Collection fonctionne **sans Explorer**.
+- *Révision 3* — décisions de l'utilisateur :
+  - **A3** : la progression personnelle de lecture relève du domaine personnel **Lecture**, dont Collection garde provisoirement la responsabilité pour les données existantes. Explorer ne l'affiche que via S1, de façon facultative, et n'en devient jamais propriétaire.
+  - **A5** : les **sorties éditoriales** relèvent d'Explorer ; la Pull List reste à Collection. Le changement de navigation de Collection est documenté séparément et ne sera fait qu'après validation explicite.
+  - **A6** : Explorer a sa **propre entrée dans la navigation principale** et n'est plus une sous-fonction de Collection (documenté, non implémenté).
+  - **A7** : la catégorie « Ma collection » est **retirée** de la recherche native d'Explorer ; la recherche dans l'inventaire reste à Collection.
+- *Révision 3* : **Community** sera un domaine indépendant (schéma `community` réservé), ni intégré à Explorer ni à Collection.
 - Services communs autorisés : catalogue canonique, identifiants stables, référentiel éditeurs et séries, infrastructure d'images (R2), authentification, services backend, recherche. **Partager l'infrastructure ne signifie pas partager la responsabilité.**
 - Explorer ne lit pas les données internes de Collection. Toute interaction passe par les **contrats S1 à S6** de [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) (lecture personnelle facultative, commandes initiées par l'utilisateur, agrégats anonymes, registre d'images, catalogue canonique, identité).
 - Les lots Explorer 2.0 ne modifient **aucune** fonctionnalité, interface, donnée ou modèle de Collection, et n'effectuent aucune migration destructive.
@@ -546,6 +553,8 @@ Le système doit limiter :
 
 # 7. MODULE SORTIES
 
+*Révision 3* (décision A5) : les sorties éditoriales relèvent d'Explorer. La Pull List reste dans Collection ; depuis une sortie, l'ajout à la Pull List passe par S2 et l'indication « dans ma Pull List » par S1.
+
 Calendrier :
 - Sorties de la semaine.
 - Sorties du mois.
@@ -577,7 +586,7 @@ Enrichissements :
 - Guides par période éditoriale.
 - Guides officiels Panel.
 - Guides communautaires validés.
-- Progression personnelle (*Révision 2* : donnée personnelle, affichée via le contrat S1 ; voir la décision A3).
+- Progression personnelle (*Révision 3*, décision A3 : domaine personnel Lecture ; affichée uniquement via S1, de façon facultative ; écrite via S2 ; jamais propriété d'Explorer).
 
 Les couvertures doivent être reliées aux entrées du catalogue, et non importées séparément à chaque création de guide.
 
@@ -656,7 +665,7 @@ L'architecture frontend doit être déterminée après inspection du repository 
 
 Ne pas recréer les tables déjà existantes dans le catalogue.
 
-*Révision 2* : les tables éditoriales et média vivent dans les schémas `catalog`, `editorial`, `media` et `community`, **séparés** du schéma personnel `app` (Collection). Aucune jointure entre tables personnelles et éditoriales pour l'affichage d'Explorer. Les guides du lot 2.6 existent localement (magasin `editorial`) : `reading_guides` et `guide_entries` en seront la version serveur.
+*Révision 2* : les tables éditoriales et média vivent dans les schémas `catalog`, `editorial`, `media` et `signals` (agrégats), **séparés** du schéma personnel `app` (Collection et Lecture). *Révision 3* : `community` est réservé au futur domaine Community. Aucune jointure entre tables personnelles et éditoriales pour l'affichage d'Explorer. Les guides du lot 2.6 existent localement (magasin `editorial`) : `reading_guides` et `guide_entries` en seront la version serveur.
 
 Tables éditoriales possibles :
 - events.
@@ -997,7 +1006,8 @@ Stabiliser les comptes, la synchronisation, les sauvegardes, les permissions et 
 
 ### Lot 4.9 — Explorer Home et recherche
 
-- Nouvelle page d'accueil, dans une **section et une navigation propres** à Explorer (décision A6).
+- Nouvelle page d'accueil, dans une **section et une entrée de navigation principale propres** à Explorer (décision A6), selon [`03-changement-navigation.md`](03-changement-navigation.md), **après validation explicite** des changements N1 à N5.
+- Retrait de la catégorie « Ma collection » de la recherche native d'Explorer (décision A7).
 - Réacheminement des couplages du lot 2.6 par les contrats S1 et S2, sans changement fonctionnel pour Collection.
 - Cartes illustrées.
 - Sections.

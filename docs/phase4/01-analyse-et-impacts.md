@@ -2,7 +2,7 @@
 
 Rédigé le 7 novembre 2026, à la réception du [cahier des charges Explorer 2.0](00-explorer-2.0-cahier-des-charges.md). **Aucun lot de la Phase 4 n'est commencé.** Le lot 4.1 (audit et architecture) approfondira ces éléments.
 
-> *Révision 2* : la séparation Collection / Explorer est définie dans [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md), qui prime sur ce document.
+> *Révision 3* : la séparation Collection / Explorer, les décisions A3, A5, A6 et A7 et les contrats S1 à S6 sont définis dans [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md), qui prime sur ce document. Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
 Légende : **[Fait]** · **[Doc]** · **[Hyp.]** · **[Reco.]** · **[À valider]** (voir [`../phase3/README.md`](../phase3/README.md)).
 
@@ -13,6 +13,7 @@ Légende : **[Fait]** · **[Doc]** · **[Hyp.]** · **[Reco.]** · **[À valider
 | Stockage des images | **Cloudflare R2** (API compatible S3), pas Supabase Storage | `avatar_path` (profil) et les couvertures manuelles volumineuses (`04` § 1) iront aussi, à terme, dans le registre média et sur R2 ; rien n'est stocké en Phase 3 |
 | Ordre des phases | Phase 3 (comptes, synchronisation, sauvegardes, permissions) **avant** Explorer 2.0 | Feuille de route : Phase 4 = Explorer 2.0, lots 4.1 à 4.11 |
 | Gestion éditoriale | Hybride : automatisation, validation humaine, contributions | Il faut des **rôles serveur** (§ 3) |
+| Séparation des modules | Collection et Explorer indépendants ; décisions A3 (progression = domaine Lecture), A5 (sorties = Explorer), A6 (entrée de navigation propre), A7 (pas de recherche « Ma collection » dans Explorer) | Voir [`02`](02-frontieres-collection-explorer.md) et [`03`](03-changement-navigation.md) |
 
 ## 2. Point de tension principal : catalogue partagé et licences
 Le dossier de Phase 3 recommandait de **ne pas** synchroniser ni partager le catalogue et les publications, car la licence Comic Vine relevée au lot 2.5 est **non commerciale** **[Fait]**. Explorer 2.0 suppose au contraire un **catalogue serveur commun** (événements, Key Issues, séries, créateurs, sorties) et un **fonds d'images** stocké sur R2.
@@ -28,7 +29,7 @@ Conséquence **[Reco.]** : le lot 4.1 doit commencer par une **matrice de droits
 | Prérequis | Lot de Phase 3 | Détail |
 |---|---|---|
 | **Rôles et permissions serveur** (`admin`, `editor`, `moderator`) | **3.3** | Table `app.staff_roles(user_id, role, granted_by, granted_at)`, fonction `app.has_role(role)` (`security definer`, `search_path=''`), RLS ; attribution manuelle seulement (pas d'interface publique). **Un rôle ne donne aucun accès aux données personnelles** (`app.*`), ce que des tests doivent prouver |
-| **Schémas réservés** | **3.1** | `app` = données personnelles ; `catalog`, `editorial` et `media` réservés à la Phase 4 et **non créés** en Phase 3. Le banc de tests doit savoir appliquer des migrations multi-schémas |
+| **Schémas réservés** | **3.1** | `app` = données personnelles (Collection, Lecture, profil) ; `catalog`, `editorial`, `media` et `signals` réservés à la Phase 4, `community` au futur domaine Community, tous Phase 4 et **non créés** en Phase 3. Le banc de tests doit savoir appliquer des migrations multi-schémas |
 | **Journal des modifications** générique | 3.6 | Le patron de `sync_conflicts` et du journal d'administration servira à `change_history` et `media_audit_logs` |
 | **Consentement pour les signaux communautaires** | 3.6 | Via le service d'agrégation dédié uniquement (contrat S3). Les classements communautaires (§ 6.2) agrègent collections et wishlists, aujourd'hui « privées par défaut ». Il faut décider (et faire valider) si l'agrégation anonyme est couverte par le contrat ou exige un réglage explicite ; seuil minimal d'agrégation (k-anonymat, par exemple ≥ 10 utilisateurs) **[Reco.]** |
 | **Identifiants canoniques** | 3.4 | Les identifiants clients (`s_…`) restent personnels. Le catalogue serveur aura ses propres identifiants (`uuid`), Un rapprochement facultatif `catalog_issue_id` pourra être ajouté **plus tard, de façon additive, à l'initiative de Collection et proposé à l'utilisateur** (contrat S5) ; il ne fait pas partie des lots Explorer |

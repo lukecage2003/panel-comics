@@ -9,7 +9,7 @@ Statut : **conception à valider**. Ce document est le cœur technique de la Pha
 | Séries suivies (`seriesMeta`) | `series_follows` | **Oui** | Préférence de suivi personnelle |
 | Emplacements (`locDoc.nodes`) | `locations` | **Oui** | Organisation personnelle, déjà avec pierres tombales |
 | Pull List par numéro (`pulls`) | `pulls` | **Oui** | Personnelle. Les champs de référence (série, numéro, date) sont copiés ; la publication n'est pas transférée |
-| Progression de lecture (`readprog`) | `reading_progress` | **Oui** | Personnelle |
+| Progression de lecture (`readprog`) | `reading_progress` | **Oui** | Personnelle : domaine Lecture, sous la responsabilité provisoire de Collection (décision A3) ; jamais propriété d'Explorer |
 | Guides créés ou importés par l'utilisateur (`editorial`, `origin ≠ seed` ou `editedAt`) | `user_guides` | Oui (lot 3.4, facultatif) | Personnels |
 | Préférences (thème, vue, sons, haptique, lecture) | `user_settings.prefs` | **Oui** | Confort multi-appareil |
 | Profil local | lié à `auth.users` | Liaison seulement | |
