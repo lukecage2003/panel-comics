@@ -8,13 +8,14 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 
 ---
 
-## 📌 État du projet (mis à jour le 7 novembre 2026)
+## 📌 État du projet (mis à jour le 7 novembre 2026, clôture de la Phase 2)
 
 - **Vision** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
 - **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
-- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lots 2.1 à 2.5 (le lot 2.5 « sources de données, provenance, import contrôlé » est validé).
-- **En cours jusqu'à validation** : lot 2.6 (Explorer et guides de lecture), livré et en attente de validation.
-- **Feuille de route** : lot 2.7 de la Phase 2 (non commencé). Préparé mais non activé dans le lot 2.6 : actualités (source ou CMS à choisir), images sous licence pour les guides, vérification des éditions VF, autres guides.
+- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), **Phase 2 clôturée** : lots 2.1 à 2.6 validés (le lot 2.6 « Explorer & guides de lecture » a été validé le 7 novembre 2026 après huit contrôles fonctionnels, commit `fe19e3c`). Historique détaillé : [`docs/HISTORIQUE-LOTS.md`](docs/HISTORIQUE-LOTS.md).
+- **En cours** : préparation de la Phase 3 (comptes, profils, synchronisation local-first). Conception livrée dans [`docs/phase3/`](docs/phase3/), en attente de validation ; aucun code de la Phase 3 n'est écrit.
+- **Feuille de route** : [`docs/ROADMAP.md`](docs/ROADMAP.md). Le lot 2.7 un temps envisagé n'a pas été réalisé : la Phase 2 se clôt au lot 2.6.
+- **Limites connues conservées de la Phase 2** : le guide King in Black est une démonstration non exhaustive ; les sources d'images sous licence restent à identifier ; les correspondances VO/VF sont en partie non vérifiées ; les actualités ne sont pas activées (pas de source ni de CMS) ; ReadingOrders.com, Comic Compass et French Comics Reading Order n'ont pas été consultés.
 - **Tests** : `node run-all-tests.js` (Edge sans interface), 28 tests.
 - **Points de vigilance** : les fiches sans identifiant ou en double sont signalées (`Panel.catalog.idReport()` propose un identifiant de remplacement, sans rien appliquer). Les entrées de catalogue sans exemplaire sont conservées, et les exemplaires supprimés gardent une pierre tombale. Les instantanés de collection restent limités aux 8 derniers (comportement antérieur).
 - **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
@@ -222,7 +223,7 @@ Le Journal garde les 50 dernières opérations : actualisations, imports, annula
 
 ## 🧭 Explorer et guides de lecture (Phase 2 · lot 2.6)
 
-Accès : entrée **Explorer & guides** du rail latéral, ou onglet **Explorer** de la barre des vues (mobile compris). Le lot est livré et **en cours jusqu'à validation**.
+Accès : entrée **Explorer & guides** du rail latéral, ou onglet **Explorer** de la barre des vues (mobile compris). Le lot est **validé** (7 novembre 2026, commit `fe19e3c`).
 
 ### Page Explorer
 - **Recherche globale** : une seule saisie couvre les guides et événements (titres VO/VF et alias, par exemple « Le Roi en Noir »), les publications du calendrier, la collection (titre, numéro, ISBN, UPC), les séries, les personnages, les créateurs, les éditeurs, ainsi que les éditions et recueils. Les résultats sont groupés par catégorie, avec un filtre par catégorie et un état vide explicite. Les recherches validées sont mémorisées localement (`panel_explorer_recent`, 8 au plus). Il n'y a pas de moteur séparé : la recherche s'appuie sur `catNorm` et sur les données déjà chargées.
