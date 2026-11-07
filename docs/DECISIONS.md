@@ -14,6 +14,7 @@ Décisions d'architecture et de produit, dans l'ordre chronologique. Une décisi
 | Cahier des charges Explorer 2.0 | [`phase4/00-explorer-2.0-cahier-des-charges.md`](phase4/00-explorer-2.0-cahier-des-charges.md), révision 5 | Texte d'origine et révisions 2 à 4 (passages marqués ; historique Git) |
 | Ordre des lots et dépendances | [`phase4/08-plan-execution.md`](phase4/08-plan-execution.md) | Vue d'ensemble de `phase3/06-roadmap-phase3.md` (contenu des lots toujours valable) |
 | Phase 3 (conception) | [`phase3/`](phase3/README.md) | — |
+| Plan directeur 2.0 (audit global, audit financier, produit, backlog P0 à P3) | [`directeur/`](README.md) (index central `docs/README.md`) ; modèle financier : [`directeur/02-audit-financier.md`](directeur/02-audit-financier.md) | — |
 | Fonctionnalités validées du lot 2.6 | Code `fe19e3c`, [`HISTORIQUE-LOTS.md`](HISTORIQUE-LOTS.md) | — |
 
 En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le cahier des charges, qui prime sur l'analyse `01`.
@@ -48,4 +49,7 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |
 | R2 | Compte, domaine, workers, Cloudflare Images, plafond | [`07`](phase4/07-architecture-images-r2.md) § 11 |
 | Phase 3 | Région, formule, SMTP, hébergement, stockage sécurisé Android, `allowBackup`, CAPTCHA | [`phase3/02-architecture-cible.md`](phase3/02-architecture-cible.md) |
+| G-F | Insertion des lots F0, F1 et L1 dans le plan | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 2 et 4 |
+| F-D1 à F-D6 | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
+| U-D1 à U-D3 | Place de la Lecture et des Finances dans la navigation, identité d'œuvre | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | Juridique | Liste de [`phase3/05`](phase3/05-sauvegardes-confidentialite.md) § 4.4, droits des sources, consentement S3 | — |

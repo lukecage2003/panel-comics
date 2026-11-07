@@ -12,6 +12,9 @@ Mise à jour : 7 novembre 2026. Historique détaillé : [`HISTORIQUE-LOTS.md`](H
 | 4 | **Explorer 2.0** : catalogue éditorial multi-éditeurs, Key Issues, classements, système central d'images (Cloudflare R2), administration et contributions (lots 4.1 à 4.11) | **Spécifiée** ([cahier des charges](phase4/00-explorer-2.0-cahier-des-charges.md), [analyse](phase4/01-analyse-et-impacts.md)), non commencée |
 | 5 | **Community** : domaine social indépendant (publications, discussions, profils communautaires) | Frontières réservées ; non planifiée |
 
+## Plan directeur 2.0 (7 novembre 2026)
+Audit global et financier, backlog P0 à P3 : [`directeur/04-backlog-feuille-de-route-decisions.md`](directeur/04-backlog-feuille-de-route-decisions.md). Proposition **à valider (G-F)** : lot **F0** (correctifs des calculs financiers, sans migration) avant le lot 3.1, puis **F1** (frais, devises, lots, sorties) et **L1** (lecture par œuvre) après le lot 3.1b. Aucun de ces lots n'est lancé.
+
 ## Phase 3 — lots proposés
 Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 
