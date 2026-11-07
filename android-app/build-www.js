@@ -12,8 +12,6 @@ const CACHE = path.join(__dirname, 'vendor-cache');
 const LOCK = path.join(__dirname, 'vendor.lock.json');
 
 const VENDOR = [
-  { url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', out: 'vendor/pdf.min.js' },
-  { url: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', out: 'vendor/pdf.worker.min.js' },
   { url: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', out: 'vendor/jszip.min.js' },
   { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js', out: 'vendor/zxing/iife/reader/index.js' },
   { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/reader/zxing_reader.wasm', out: 'vendor/zxing/reader/zxing_reader.wasm' }
@@ -49,8 +47,6 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
     if (!html.includes(from)) throw new Error('Motif absent de index.html : ' + from);
     html = html.split(from).join(to);
   };
-  swap('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js', 'vendor/pdf.min.js');
-  swap('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js', 'vendor/pdf.worker.min.js');
   swap('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', 'vendor/jszip.min.js');
   swap("'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/iife/reader/index.js'", "'vendor/zxing/iife/reader/index.js'");
   swap("'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/reader/'", "new URL('vendor/zxing/reader/', location.href).href");

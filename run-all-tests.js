@@ -304,144 +304,52 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Recherche Globale & Comic Vine', ok: t7.menuVisible && t7.menuHasComicVine && t7.cvModalOpen });
 
       // ==========================================
-      // TEST 8 : Moteur de Lecture, Modes, Volet d'Étude & Annotations
+      // TEST 8 : Retrait du numérique — interface absente, données conservées intactes, archive ZIP
       // ==========================================
-      console.log('\n[TEST 8] Module Lecteur Panel (Modes, Volet d\'Étude, Notes & Annotations)...');
+      console.log('\n[TEST 8] Retrait du numérique (interface absente, données conservées, archive ZIP)...');
       const t8 = await evalExpr(`(async () => {
-        // 1. Simuler l'import d'un comic numérique (planche image)
-        const canvas = document.createElement('canvas');
-        canvas.width = 100;
-        canvas.height = 150;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#112233';
-        ctx.fillRect(0, 0, 100, 150);
-        const testBlob = await new Promise(r => canvas.toBlob(r, 'image/jpeg'));
-        const testFile = new File([testBlob], 'Detective_Comics_027.jpg', { type: 'image/jpeg' });
-
-        await window.Panel.importDigitalFiles([testFile]);
-        const pages = window.Panel.getAllPages();
-        const importedRecord = pages.find(p => p.name === 'Detective_Comics_027.jpg') || pages[0];
-        const hasImported = !!importedRecord;
-
-        // 2. Ouvrir le lecteur avec ce comic
-        await window.Panel.openReader(importedRecord);
-        const readerModal = document.getElementById('readerModal');
-        const readerOpen = readerModal.classList.contains('open');
-
-        // 3. Tester le changement de mode d'affichage
-        const displaySelect = document.getElementById('readerDisplayModeSelect');
-        displaySelect.value = 'double';
-        displaySelect.dispatchEvent(new Event('change'));
-        const isDouble = document.getElementById('readerContentFrame').classList.contains('double-page') || displaySelect.value === 'double';
-
-        displaySelect.value = 'scroll';
-        displaySelect.dispatchEvent(new Event('change'));
-        const isScroll = document.getElementById('readerStage').classList.contains('mode-scroll');
-
-        // 4. Tester l'ajustement en largeur
-        const fitSelect = document.getElementById('readerFitSelect');
-        fitSelect.value = 'width';
-        fitSelect.dispatchEvent(new Event('change'));
-        const isFitWidth = document.getElementById('readerStage').classList.contains('fit-width');
-
-        // 5. Tester l'ouverture du Volet d'Étude et l'ajout d'une note
-        const studyDrawerBtn = document.getElementById('readerStudyDrawerBtn');
-        studyDrawerBtn.click();
-        const studyDrawer = document.getElementById('readerStudyDrawer');
-        const drawerOpen = studyDrawer.classList.contains('open');
-
-        // Onglet Notes
-        const notesTabBtn = document.querySelector('.study-tab-btn[data-study-tab="notes"]');
-        if (notesTabBtn) notesTabBtn.click();
-
-        document.getElementById('studyNoteTitleInput').value = 'Première apparition';
-        document.getElementById('studyNoteTagSelect').value = 'character';
-        document.getElementById('studyNoteBodyInput').value = 'Batman fait ses débuts dans ce numéro historique.';
-        document.getElementById('saveStudyNoteBtn').click();
-
-        const savedNotes = JSON.parse(localStorage.getItem('panel_comic_notes') || '[]');
-        const noteFound = savedNotes.some(n => n.title === 'Première apparition');
-
-        // 6. Tester les annotations vectorielles
-        const annotateBtn = document.getElementById('readerAnnotateBtn');
-        annotateBtn.click();
-        const annotToolbarOpen = document.getElementById('readerAnnotationToolbar').classList.contains('active');
-        const annotClose = document.getElementById('annotCloseToolbarBtn');
-        if (annotClose) annotClose.click();
-
-        // Fermer le volet et le lecteur
-        document.getElementById('closeStudyDrawerBtn').click();
-        document.getElementById('closeReaderBtn').click();
-        const readerClosed = !readerModal.classList.contains('open');
-
-        return {
-          hasImported,
-          readerOpen,
-          isDouble,
-          isScroll,
-          isFitWidth,
-          drawerOpen,
-          noteFound,
-          annotToolbarOpen,
-          readerClosed
-        };
+        const P = window.Panel;
+        const r = {};
+        // Interface : plus de lecteur, de bibliothèque numérique ni de bouton « Lire »
+        const absent = ['readerModal', 'importModal', 'digitalViewSection', 'navDigitalBlock', 'switchDigital', 'inspectReadBtn', 'mobAll', 'folderModal'];
+        r.uiRemoved = absent.every(id => !document.getElementById(id)) && !document.querySelector('[data-read], [data-read-cv]') && !window.pdfjsLib && !P.openReader && !P.importDigitalFiles;
+        r.collectionHome = !document.getElementById('singlesViewSection').hidden && document.querySelectorAll('.mobile-dock-btn').length === 4;
+        // Données numériques existantes : une fiche IndexedDB « pages » + des clés localStorage de test
+        const KEYS = ['panel_folders', 'panel_bookmarks', 'panel_theories', 'panel_reading_positions', 'panel_comic_notes', 'panel_comic_annotations'];
+        const saved = {};
+        KEYS.forEach(k => { saved[k] = localStorage.getItem(k); });
+        const seed = { panel_bookmarks: '[{"id":"bk-t8","comicId":"t8-rec","page":3}]', panel_reading_positions: '{"t8-rec":3}', panel_comic_notes: '[{"id":"n-t8","comicId":"t8-rec","body":"note"}]' };
+        Object.entries(seed).forEach(([k, v]) => localStorage.setItem(k, v));
+        const db = await new Promise(res => { const q = indexedDB.open('panel-library', 3); q.onsuccess = () => res(q.result); q.onerror = () => res(null); });
+        const tx = (mode, fn) => new Promise(res => { const t = db.transaction('pages', mode); const out = fn(t.objectStore('pages')); t.oncomplete = () => res(out && out.result); t.onerror = () => res(null); });
+        await tx('readwrite', st => st.put({ id: 't8-rec', name: 'Test Comic 001.cbz', seriesTitle: 'Test Comic', issueLabel: '#1', file: new Blob(['PK-test-contenu'], { type: 'application/zip' }) }));
+        const countBefore = await tx('readonly', st => st.count());
+        const snapBefore = KEYS.map(k => localStorage.getItem(k)).join('|');
+        // Actions courantes de l'app : vérification, rendu de la collection, rafraîchissement des boutons
+        P.checkDataIntegrity && P.checkDataIntegrity();
+        document.getElementById('mobSeries').click();
+        document.getElementById('mobSingles').click();
+        await new Promise(res => setTimeout(res, 300));
+        r.dataPreserved = (await tx('readonly', st => st.count())) === countBefore && KEYS.map(k => localStorage.getItem(k)).join('|') === snapBefore;
+        r.inBackup = JSON.stringify(P.readStoredDigitalData().bookmarks) === seed.panel_bookmarks && P.readStoredDigitalData().readingPositions['t8-rec'] === 3;
+        // Archive ZIP des fichiers conservés
+        const arc = await P.exportStoredDigitalArchive({ download: false });
+        const zip = arc && await JSZip.loadAsync(arc.blob);
+        const meta = zip && JSON.parse(await zip.file('donnees-numeriques.json').async('string'));
+        r.archive = !!zip && !!zip.file('fichiers/Test Comic 001.cbz') && (await zip.file('fichiers/Test Comic 001.cbz').async('string')) === 'PK-test-contenu' && meta.files.some(x => x.id === 't8-rec' && !('file' in x)) && meta.comicNotes[0].id === 'n-t8';
+        r.archiveReadOnly = (await tx('readonly', st => st.count())) === countBefore;
+        await new Promise(res => setTimeout(res, 50));
+        r.buttonShown = [...document.querySelectorAll('.digital-archive-btn')].length === 2;
+        // Nettoyage : uniquement la fiche et les valeurs créées par ce test
+        await tx('readwrite', st => st.delete('t8-rec'));
+        KEYS.forEach(k => { if (saved[k] == null) localStorage.removeItem(k); else localStorage.setItem(k, saved[k]); });
+        db.close();
+        return r;
       })()`);
       console.log('Résultat Test 8:', t8);
       testResults.push({
-        test: 'Panel Reader (Import, Double/Scroll, Fit, Volet Étude, Notes, Annotations)',
-        ok: t8 && t8.hasImported && t8.readerOpen && t8.isDouble && t8.isScroll && t8.isFitWidth && t8.drawerOpen && t8.noteFound && t8.annotToolbarOpen && t8.readerClosed
-      });
-
-      // ==========================================
-      // TEST 9 : Import de Numéros (Catalogue) & Pont Single vers Reader
-      // ==========================================
-      console.log('\n[TEST 9] Import de Numéros (Catalogue) & Pont Single vers Reader...');
-      const t9 = await evalExpr(`(async () => {
-        // 1. Tester les onglets de la modale d'import
-        const importBtn = document.getElementById('importModalOpenBtn');
-        importBtn.click();
-        const tabCatalog = document.getElementById('importTabCatalogBtn');
-        const tabFiles = document.getElementById('importTabFilesBtn');
-        tabCatalog.click();
-        const catalogVisible = document.getElementById('importViewCatalog').style.display !== 'none';
-        tabFiles.click();
-        const filesVisible = document.getElementById('importViewFiles').style.display !== 'none';
-        document.getElementById('closeImportModalBtn').click();
-
-        // 2. Tester l'import et la lecture directe d'un numéro de single issue
-        const initialPagesCount = window.Panel.getAllPages().length;
-        await window.Panel.openSingleIssueAsReaderRecord({
-          series: 'Moon Knight',
-          issue: '1',
-          publisher: 'Marvel',
-          coverUrl: 'https://static.wikia.nocookie.net/marveldatabase/images/d/de/Ultimate_Spider-Man_Vol_1_1.jpg'
-        });
-
-        const readerModal = document.getElementById('readerModal');
-        const readerOpenedWithIssue = readerModal.classList.contains('open');
-        const pagesAfterIssue = window.Panel.getAllPages();
-        const issueImported = pagesAfterIssue.some(p => p.seriesKey === 'Moon Knight');
-
-        // Fermer le reader
-        document.getElementById('closeReaderBtn').click();
-        const readerClosedAfter = !readerModal.classList.contains('open');
-
-        // 3. Vérifier le bouton "Lire ce numéro" dans l'inspecteur
-        const inspectReadBtnExists = !!document.getElementById('inspectReadBtn');
-
-        return {
-          catalogVisible,
-          filesVisible,
-          readerOpenedWithIssue,
-          issueImported,
-          readerClosedAfter,
-          inspectReadBtnExists
-        };
-      })()`);
-      console.log('Résultat Test 9:', t9);
-      testResults.push({
-        test: 'Import Numéros & Pont Single vers Reader',
-        ok: t9 && t9.catalogVisible && t9.filesVisible && t9.readerOpenedWithIssue && t9.issueImported && t9.readerClosedAfter && t9.inspectReadBtnExists
+        test: 'Numérique retiré de l’interface, données numériques conservées et exportables',
+        ok: !!t8 && ['uiRemoved', 'collectionHome', 'dataPreserved', 'inBackup', 'archive', 'archiveReadOnly', 'buttonShown'].every(k => t8[k] === true)
       });
 
       // ==========================================
@@ -818,6 +726,7 @@ const waitForCdp = async () => {
           return { status_code: 101, error: 'Object Not Found' };
         };
         P.resetCvStateForTest();
+        const prevCvKey = localStorage.getItem('panel_comicvine_key'); localStorage.setItem('panel_comicvine_key', 'test-key');
         P.setCvFetcherForTest(fake, 0);
         P.resetFandomStateForTest();
         P.setFandomFetcherForTest(async () => ({ query: { pages: [] } }), 0);
@@ -849,7 +758,7 @@ const waitForCdp = async () => {
           c7: st('c7') === 'found',
           domUpdated: !!domImg && /ab1-jimlee/.test(decodeURIComponent(domImg.src)),
           calls: JSON.stringify(calls),
-          phase: P.getCoverJob().phase
+          phase: P.getCoverJob().phase, jobError: P.getCoverJob().error || ''
         };
 
         // Quota local plein : pause automatique, aucune requête, reprise programmée
@@ -869,6 +778,7 @@ const waitForCdp = async () => {
         res.serverLimit = P.getCoverJob().phase === 'quota' && !(L('r1').coverLookup);
         P.pauseCoverJob();
         P.resetCvStateForTest();
+        if (prevCvKey == null) localStorage.removeItem('panel_comicvine_key'); else localStorage.setItem('panel_comicvine_key', prevCvKey);
         res.inactive = JSON.parse(localStorage.getItem('panel_cover_job')).active === false;
         return res;
       })()`);
@@ -950,6 +860,7 @@ const waitForCdp = async () => {
           return { query: { pages: [] } };
         }, 0);
         P.resetCvStateForTest();
+        const prevCvKey = localStorage.getItem('panel_comicvine_key'); localStorage.setItem('panel_comicvine_key', 'test-key');
         P.setCvFetcherForTest(async url => {
           calls.cv++;
           const u = decodeURIComponent(url);
@@ -985,7 +896,7 @@ const waitForCdp = async () => {
           f7ambiguous: M('f7').source === 'comicvine' && M('f7').confidence === 'standard',
           f8: M('f8').source === 'fandom',
           m1marvel: M('m1').source === 'fandom' && /Brooks/.test(L('m1').coverUrl),
-          phase: P.getCoverJob().phase,
+          phase: P.getCoverJob().phase, jobError: P.getCoverJob().error || '',
           cvCalls: calls.cv,
           fandomCalls: calls.fandom
         };
@@ -1013,6 +924,7 @@ const waitForCdp = async () => {
         res.formNoFake = (await P.fetchComicCoversAndDetails('Totally Unknown Title Zzz', '#1', 'Boom! Studios')).length === 0;
         P.resetFandomStateForTest();
         P.resetCvStateForTest();
+        if (prevCvKey == null) localStorage.removeItem('panel_comicvine_key'); else localStorage.setItem('panel_comicvine_key', prevCvKey);
         return res;
       })()`);
       console.log('Résultat Test 18:', t18);
@@ -1070,7 +982,7 @@ const waitForCdp = async () => {
         await send2('Page.reload', { ignoreCache: false });
         await new Promise(r => setTimeout(r, 1500));
         const offlineLoaded = await waitPanel();
-        const offline = await ev2(`({ loaded: !!window.Panel, pill: !document.getElementById('offlinePill').hidden, pdfjs: !!window.pdfjsLib, jszip: !!window.JSZip })`);
+        const offline = await ev2(`({ loaded: !!window.Panel, pill: !document.getElementById('offlinePill').hidden, noPdfjs: !window.pdfjsLib, jszip: !!window.JSZip })`);
         await send2('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
         // Raccourci d'icône : ?view=series ouvre la vue et nettoie l'URL
         await send2('Page.navigate', { url: 'http://localhost:8099/?view=series' });
@@ -1088,7 +1000,7 @@ const waitForCdp = async () => {
         test: 'PWA (manifest, icônes, service worker, hors ligne, raccourcis)',
         ok: !!t17 && !t17.error && t17.first.manifestLink && t17.first.name === 'Panel' && t17.first.display === 'standalone' && t17.first.iconsOk && t17.first.maskable &&
           t17.first.shortcuts === 4 && t17.first.swActive && t17.first.backupBlocked && t17.second.controlled && t17.second.shellCached && t17.second.libsCached &&
-          t17.offlineLoaded && t17.offline.loaded && t17.offline.pill && t17.offline.pdfjs && t17.offline.jszip && t17.shortcut.seriesVisible && t17.shortcut.cleanUrl
+          t17.offlineLoaded && t17.offline.loaded && t17.offline.pill && t17.offline.noPdfjs && t17.offline.jszip && t17.shortcut.seriesVisible && t17.shortcut.cleanUrl
       });
 
       // ==========================================
@@ -1462,7 +1374,7 @@ const waitForCdp = async () => {
         gs.value = ''; gs.dispatchEvent(new Event('input', { bubbles: true }));
         // 2. Recherche Comic Vine : réponse d'API piégée
         P.setCvFetcherForTest(async () => ({ status_code: 1, results: [{ id: 9, name: evilTxt, issue_number: '1', volume: { name: 'Vol ' + evilTxt, id: 3 }, image: { medium_url: evilUrl, super_url: evilUrl }, cover_date: '2024-01-01' }] }), 0);
-        localStorage.setItem('panel_comicvine_key', 'test-key');
+        const prevCvKey = localStorage.getItem('panel_comicvine_key'); localStorage.setItem('panel_comicvine_key', 'test-key');
         document.getElementById('openComicVineSearchModalBtn').click();
         const cvIn = document.getElementById('cvSearchInput');
         cvIn.value = 'Batman';
@@ -1471,7 +1383,7 @@ const waitForCdp = async () => {
         const modal = document.getElementById('comicVineSearchModal');
         r.cvModal = !!modal && !modal.querySelector('[onerror*="__xss"]') && !modal.innerHTML.includes('<img src=x');
         modal && modal.classList.remove('open');
-        localStorage.removeItem('panel_comicvine_key');
+        if (prevCvKey == null) localStorage.removeItem('panel_comicvine_key'); else localStorage.setItem('panel_comicvine_key', prevCvKey);
         await new Promise(res => setTimeout(res, 200));
         r.noExecution = window.__xss === 0;
         P.resetCvStateForTest();

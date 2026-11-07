@@ -1,7 +1,7 @@
 {
-  "name": "Panel — Comics Reader & Collection",
+  "name": "Panel by Primestone",
   "short_name": "Panel",
-  "description": "Lecteur de comics numériques et gestionnaire de collection physique : scan de code-barres, séries, pull list, cote et sorties de la semaine.",
+  "description": "Gestionnaire de collection de comics physiques : scan de code-barres, séries, pull list, cote et sorties de la semaine.",
   "lang": "fr",
   "dir": "ltr",
   "id": "./",

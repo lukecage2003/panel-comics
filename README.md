@@ -1,8 +1,10 @@
-# Panel — Comics Reader & Single Issues Collector (Master Edition)
+# Panel by Primestone — Collect. Discover. Connect.
 
-Application personnelle haut de gamme, 100% locale, sans serveur requis, combinant :
-1. **Bibliothèque Numérique** : Lecteur immersif haute performance pour fichiers PDF, CBZ, CBR, ZIP et images.
-2. **Collection Physique de Singles US & Comics** : Gestionnaire d'inventaire complet avec scanner de code-barres UPC / ISBN, scanner visuel de couvertures par empreinte perceptuelle (dHash 64-bit), hiérarchie physique de boîtes et séparateurs, détection automatique des doublons, estimation de valeur et grading.
+Application 100% locale, sans serveur requis, centrée sur la collection de comics physiques.
+
+> **Partie numérique retirée (Phase 1, nov. 2026).** Panel ne lit plus et n'importe plus de fichiers PDF / CBZ / CBR. Les fichiers et données déjà stockés (IndexedDB « pages », marque-pages, notes, annotations, positions de lecture, dossiers) sont **conservés intacts** : ils restent dans les sauvegardes JSON et s'exportent en archive ZIP via « Anciens fichiers numériques » (barre latérale ou menu Plus, visible seulement s'il en existe).
+
+**Collection Physique de Singles US & Comics** : Gestionnaire d'inventaire complet avec scanner de code-barres UPC / ISBN, scanner visuel de couvertures par empreinte perceptuelle (dHash 64-bit), hiérarchie physique de boîtes et séparateurs, détection automatique des doublons, estimation de valeur et grading.
 
 ---
 
@@ -17,8 +19,8 @@ Panel s'installe comme une application (icône d'accueil, plein écran, hors lig
 | Hébergé en **HTTPS** (Netlify, Vercel, GitHub Pages…) | oui, y compris téléphone | oui | oui |
 
 - **Fichiers** : `manifest.webmanifest` (nom, couleurs, icônes dont une « maskable » Android, 4 raccourcis : Scanner, Collection, Sorties, Séries), `sw.js` (service worker), `icons/`, `serve.js` (serveur local sans dépendance, qui ne sert que les fichiers de l'app).
-- **Hors ligne** : l'app, PDF.js, JSZip, le lecteur de codes-barres et les polices sont mis en cache ; la collection (localStorage + IndexedDB) reste disponible. Comic Vine et les couvertures restent en ligne uniquement ; un indicateur « Hors ligne » s'affiche et la récupération des couvertures reprend au retour du réseau.
-- **Mises à jour** : à chaque nouvelle version, Panel propose « Recharger » (jamais de rechargement surprise en pleine lecture).
+- **Hors ligne** : l'app, JSZip, le lecteur de codes-barres et les polices sont mis en cache ; la collection (localStorage + IndexedDB) reste disponible. Comic Vine et les couvertures restent en ligne uniquement ; un indicateur « Hors ligne » s'affiche et la récupération des couvertures reprend au retour du réseau.
+- **Mises à jour** : à chaque nouvelle version, Panel propose « Recharger » (jamais de rechargement surprise en pleine saisie).
 - **Installation** : bouton « 📲 Installer l'application » (sidebar, paramètres) et bandeau masquable ; sur iPhone, le bandeau indique Partager → « Sur l'écran d'accueil ».
 - **Stockage persistant** demandé une fois l'app installée (le navigateur ne purgera pas la collection) ; usage et quota visibles dans ⚙️ Paramètres.
 - **Mobile** : zones sûres (encoche, barre d'accueil), barre d'actions compacte, onglets de collection.
@@ -30,7 +32,7 @@ node serve.js
 
 ## 🤖 Application Android (APK)
 `android-app/` emballe Panel avec Capacitor 8.5 (source unique : `index.html`, copié à chaque construction).
-- **Hors ligne** : PDF.js, JSZip et le lecteur zxing-wasm sont embarqués (empreintes SHA-256 vérifiées, `vendor.lock.json`).
+- **Hors ligne** : JSZip (import Excel) et le lecteur zxing-wasm sont embarqués (empreintes SHA-256 vérifiées, `vendor.lock.json`).
 - **Scanner** : caméra du téléphone (autorisation Android au premier scan).
 - **Metron et GCD sans le PC** : le relais est intégré à l'app (HTTP natif, mêmes quotas et caches que `serve.js`). Identifiants Metron dans ⚙️ Paramètres, vérifiés avant d'être gardés sur le téléphone.
 - **Exports et sauvegardes** : feuille de partage Android (Drive, e-mail, fichiers…). **Bouton retour** : ferme la fenêtre ouverte.
@@ -208,8 +210,7 @@ node run-all-tests.js
 - `✓ PASS - Modale Reconnaissance Visuelle` (Cycle de vie, rotation canvas 90°, réinitialisation)
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
-- `✓ PASS - Panel Reader` (Import, double page / défilement, ajustement, volet d'étude, notes, annotations)
-- `✓ PASS - Import Numéros & Pont Single vers Reader`
+- `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
 - `✓ PASS - Collector Pro : valeurs, wishlist exclue, anti-XSS, import sûr`
 - `✓ PASS - Séries & complétion, pull list, sorties, stats, annulation, vue liste`
 - `✓ PASS - Import CSV CLZ / League of Comic Geeks / tableur FR` (formats, conversions, doublons, assistant, annulation)

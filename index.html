@@ -11,11 +11,10 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <meta name="description" content="Panel — Bibliothèque numérique (PDF, CBZ) et Gestionnaire de Collection Physique de Single Issues (Scanner code-barres UPC, Cover Variants, Grading, Key Issues)." />
-  <title>Panel — Comics Reader & Single Issues Collector</title>
+  <meta name="description" content="Panel by Primestone — Collect. Discover. Connect. Gestionnaire de collection de comics physiques : scanner de codes-barres, variantes, grading, key issues, wishlist." />
+  <title>Panel by Primestone — Collect. Discover. Connect.</title>
 
-  <!-- Moteurs 100% locaux : PDF.js & JSZip (lecteur de codes-barres zxing-wasm chargé à l'ouverture du scanner) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- JSZip : lecture des fichiers Excel (.xlsx) importés ; le lecteur de codes-barres zxing-wasm est chargé à l'ouverture du scanner -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
   <link rel="preload" href="fonts/barlow-condensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
 
@@ -1891,48 +1890,8 @@
       <span>panel</span>
     </div>
 
-    <!-- MODULE SWITCHER -->
-    <div class="module-switcher">
-      <button class="module-switch-btn active" id="switchDigital">
-        <span><svg class=ic aria-hidden=true><use href=#ic-book /></svg></span> Numérique
-      </button>
-      <button class="module-switch-btn" id="switchSingles">
-        <span><svg class=ic aria-hidden=true><use href=#ic-tag /></svg></span> Singles US
-      </button>
-    </div>
-
-    <!-- NAVIGATION NUMÉRIQUE -->
-    <div id="navDigitalBlock">
-      <div class="nav-label">Bibliothèque</div>
-      <nav class="nav-list">
-        <button class="nav-btn active" id="navAllComics">
-          <div class="nav-btn-content"><span class="icon">▦</span> Tous les comics</div>
-          <span class="nav-badge" id="badgeAll">0</span>
-        </button>
-        <button class="nav-btn" id="navReadingComics">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-book /></svg></span> En cours</div>
-          <span class="nav-badge" id="badgeReading">0</span>
-        </button>
-        <button class="nav-btn" id="navUnreadComics">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-sparkle /></svg></span> À lire</div>
-          <span class="nav-badge" id="badgeUnread">0</span>
-        </button>
-        <button class="nav-btn" id="navCompletedComics">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-check /></svg></span> Terminés</div>
-          <span class="nav-badge" id="badgeCompleted">0</span>
-        </button>
-        <button class="nav-btn" id="navBookmarks">
-          <div class="nav-btn-content"><span class="icon">◆</span> Pages repérées</div>
-          <span class="nav-badge" id="badgeBookmarks">0</span>
-        </button>
-        <button class="nav-btn" id="navFolders">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-folder /></svg></span> Dossiers & Arcs</div>
-        </button>
-      </nav>
-    </div>
-
     <!-- NAVIGATION COLLECTION PHYSIQUE SINGLES -->
-    <div id="navSinglesBlock" hidden>
+    <div id="navSinglesBlock">
       <div class="nav-label">Collection Physique</div>
       <nav class="nav-list">
         <button class="nav-btn active" id="navAllSingles">
@@ -1980,6 +1939,7 @@
         <button class="btn secondary" id="restoreJsonBtn" style="font-size: 11px;padding:5px 8px;flex:1">Restaurer</button>
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
+      <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
       <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 11px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
       <button class="btn" id="installAppBtn" hidden style="font-size: 11px;padding:6px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
     </div>
@@ -1991,7 +1951,7 @@
     <header class="topbar">
       <div class="topbar-title">
         <h1 id="mainTitleHeading">Ma Bibliothèque</h1><span class="offline-pill" id="offlinePill" hidden title="Votre collection reste disponible ; Comic Vine et les couvertures reviendront avec la connexion">● Hors ligne</span>
-        <span id="mainTitleSub">Vos comics numériques et scans de planches</span>
+        <span id="mainTitleSub">Gestionnaire d’inventaire physique avec scan de codes-barres UPC</span>
       </div>
 
       <div class="top-actions">
@@ -2020,11 +1980,12 @@
         <button class="btn secondary" id="cleanDbBtn" title="Vérifier l'intégrité de la collection (ne supprime rien)" style="font-size:11.5px;padding:8px 12px">
           <span><svg class=ic aria-hidden=true><use href=#ic-shield /></svg></span> Vérifier les données
         </button>
+        <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveMenuBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><span><svg class=ic aria-hidden=true><use href=#ic-download /></svg></span> Anciens fichiers numériques</button>
           </div>
         </details>
 
-        <button class="btn" id="importModalOpenBtn">
-          <span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Importer
+        <button class="btn" id="importModalOpenBtn" title="Importer une collection (CSV, Excel .xlsx) ou une sauvegarde Panel">
+          <span><svg class=ic aria-hidden=true><use href=#ic-upload /></svg></span> Importer
         </button>
 
         <button class="btn secondary" id="openSettingsBtnTop" title="Paramètres & Clés API" style="font-size:12px;padding:8px 11px">
@@ -2042,84 +2003,9 @@
     </div>
 
     <!-- SECTION NUMÉRIQUE (READING & DIGITAL) -->
-    <section id="digitalViewSection">
-      <!-- HERO BANNER DYNAMIQUE -->
-      <section class="hero-banner" id="heroBanner">
-        <div class="hero-info">
-          <div class="hero-eyebrow" id="heroEyebrow">VOTRE BIBLIOTHÈQUE</div>
-          <h2 id="heroHeading">Lisez. Reliez.<br><em>Théorisez.</em></h2>
-          <p id="heroDescription">Importez des comics pour commencer votre collection.</p>
-          <div class="hero-actions" id="heroActions">
-            <button class="btn" id="heroPrimaryBtn"><span><svg class=ic aria-hidden=true><use href=#ic-play /></svg></span> Commencer une lecture</button>
-            <button class="btn secondary" id="heroSecondaryBtn"><span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Ajouter des fichiers</button>
-          </div>
-        </div>
-
-        <div class="hero-preview" id="heroPreview">
-          <div class="hero-preview-placeholder">Aucune lecture</div>
-        </div>
-      </section>
-
-      <!-- ONGLETS DE STATUT NUMÉRIQUE -->
-      <div class="filter-tabs-bar" id="statusTabsBar">
-        <button class="tab-btn active" data-tab="all">Tous <span class="tab-counter" id="tabCountAll">0</span></button>
-        <button class="tab-btn" data-tab="reading"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> En cours <span class="tab-counter" id="tabCountReading">0</span></button>
-        <button class="tab-btn" data-tab="unread"><svg class=ic aria-hidden=true><use href=#ic-sparkle /></svg> À lire <span class="tab-counter" id="tabCountUnread">0</span></button>
-        <button class="tab-btn" data-tab="completed"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lus <span class="tab-counter" id="tabCountCompleted">0</span></button>
-      </div>
-
-      <!-- FILTRE PAR ÉDITEUR NUMÉRIQUE -->
-      <div class="filter-tabs-bar" id="publisherStrip" style="margin-bottom:20px"></div>
-
-      <!-- DOSSIERS & ARCS -->
-      <section class="folders-section" id="foldersSection" style="margin-bottom:26px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-          <div>
-            <h2 style="font:700 17px 'Barlow Condensed'">Dossiers & Univers</h2>
-            <span style="font-size:11px;color:var(--muted)">Classez vos séries numériques</span>
-          </div>
-          <button class="btn secondary" id="createFolderBtn" style="font-size:11px;padding:5px 10px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Nouveau dossier</button>
-        </div>
-        <div class="comics-grid" id="foldersGrid" style="grid-template-columns:repeat(auto-fill, minmax(180px, 1fr));gap:12px"></div>
-      </section>
-
-      <!-- GRILLE DES SÉRIES NUMÉRIQUES -->
-      <section id="seriesSection">
-        <div class="comics-grid" id="seriesGrid"></div>
-      </section>
-
-      <!-- DÉTAIL D'UNE SÉRIE NUMÉRIQUE -->
-      <section id="seriesDetailSection" hidden>
-        <div style="display:flex;justify-content:space-between;align-items:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:20px;flex-wrap:wrap;gap:12px">
-          <div>
-            <button class="btn ghost" id="backToSeriesBtn" style="font-size:11px;padding:3px 8px;margin-bottom:6px">← Retour aux séries</button>
-            <h2 id="detailSeriesTitle" style="font:700 22px 'Barlow Condensed'">Titre de la série</h2>
-            <span id="detailSeriesSubtitle" style="font-size:11.5px;color:var(--muted)">0 numéros</span>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn secondary" id="renameSeriesBtn">✎ Renommer</button>
-            <button class="btn" id="detailAddIssuesBtn"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter des numéros</button>
-          </div>
-        </div>
-
-        <div class="comics-grid" id="issuesGrid"></div>
-
-        <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin:24px 0" id="issuePagination">
-          <button class="btn secondary" id="prevIssuesPageBtn">← Précédent</button>
-          <span style="font-size:11.5px;color:var(--muted)" id="issuesPageText">Page 1 / 1</span>
-          <button class="btn secondary" id="nextIssuesPageBtn">Suivant →</button>
-        </div>
-      </section>
-
-      <!-- PAGES REPÉRÉES -->
-      <section id="bookmarksSection" style="margin-top:34px">
-        <h2 style="font:700 18px 'Barlow Condensed';margin-bottom:12px">Pages repérées (Bookmarks)</h2>
-        <div class="comics-grid" id="bookmarksGrid" style="grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));gap:12px"></div>
-      </section>
-    </section>
 
     <!-- SECTION COLLECTION PHYSIQUE SINGLES US (LEAGUE OF COMIC GEEKS STYLE) -->
-    <section id="singlesViewSection" hidden>
+    <section id="singlesViewSection">
       <nav class="filter-tabs-bar singles-subnav" id="singlesSubnav" aria-label="Vues de la collection">
         <button class="tab-btn active" data-sview="collection">Collection</button>
         <button class="tab-btn" data-sview="series">Séries</button>
@@ -2342,21 +2228,21 @@
 
 <!-- BARRE MOBILE INFERIEURE -->
 <nav class="mobile-dock">
-  <button class="mobile-dock-btn active" id="mobAll">
-    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-book /></svg></span>
-    <span>Numérique</span>
-  </button>
   <button class="mobile-dock-btn" id="mobSingles">
-    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg></span>
-    <span>Singles US</span>
+    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-books /></svg></span>
+    <span>Collection</span>
+  </button>
+  <button class="mobile-dock-btn" id="mobSeries">
+    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-layers /></svg></span>
+    <span>Séries</span>
   </button>
   <button class="mobile-dock-btn" id="mobScan">
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span>
-    <span>Scanner</span>
+    <span>Scan</span>
   </button>
-  <button class="mobile-dock-btn" id="mobBookmarks">
-    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg></span>
-    <span>Repères</span>
+  <button class="mobile-dock-btn" id="mobWishlist">
+    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg></span>
+    <span>Wishlist</span>
   </button>
 </nav>
 
@@ -2821,7 +2707,6 @@
       <div style="display:flex;gap:6px">
         <button class="btn secondary" id="inspectCloseBtn">Fermer</button>
         <button class="btn secondary" id="inspectEditBtn"><svg class=ic aria-hidden=true><use href=#ic-pencil /></svg> Modifier</button>
-        <button class="btn" id="inspectReadBtn" style="background:var(--lime);color:var(--ink);font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lire ce numéro</button>
       </div>
     </div>
   </div>
@@ -2929,86 +2814,6 @@
 <!-- ==========================================================================
      AUTRES MODALES
      ========================================================================== -->
-<!-- MODALE IMPORT NUMERIQUE -->
-<div class="modal-backdrop" id="importModal">
-  <div class="modal-box" style="max-width:560px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h3 style="margin:0">Importer des comics</h3>
-      <button class="btn-icon" id="closeImportModalTopBtn" onclick="document.getElementById('importModal').classList.remove('open')"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
-    </div>
-
-    <!-- Onglets de la modale d'import -->
-    <div style="display:flex;gap:6px;border-bottom:1px solid var(--border);padding-bottom:10px;margin-bottom:14px">
-      <button type="button" class="tab-btn active" id="importTabFilesBtn"><svg class=ic aria-hidden=true><use href=#ic-folder /></svg> Fichiers &amp; Dossiers</button>
-      <button type="button" class="tab-btn" id="importTabCatalogBtn"><svg class=ic aria-hidden=true><use href=#ic-globe /></svg> Catalogue Comic Vine (Par Numéros)</button>
-    </div>
-
-    <!-- VUE 1 : FICHIERS & DOSSIERS LOCAUX -->
-    <div id="importViewFiles">
-      <p style="font-size:12px;color:var(--ink-dim);margin-bottom:12px">Glissez-déposez vos fichiers <strong>PDF</strong>, vos archives <strong>CBZ / CBR / ZIP</strong> ou vos dossiers d'<strong>images</strong>.</p>
-      <div class="form-row">
-        <label for="importPublisherSelect">Éditeur / Univers</label>
-        <select id="importPublisherSelect">
-          <option value="Tous">Auto-détection / Tous les éditeurs</option>
-          <option value="Marvel">Marvel</option>
-          <option value="DC Comics">DC Comics</option>
-          <option value="Image Comics">Image Comics</option>
-          <option value="Dark Horse">Dark Horse</option>
-          <option value="Manga">Manga / Shonen / Seinen</option>
-          <option value="Autre / indépendant">Autre / indépendant</option>
-        </select>
-      </div>
-      <div class="form-row">
-        <label for="importFolderSelect">Dossier de destination</label>
-        <select id="importFolderSelect"></select>
-      </div>
-      <div class="dropzone-area" id="fileDropzone" style="cursor:pointer" title="Cliquez pour sélectionner vos fichiers">
-        <div style="font-size:32px;color:var(--lime);margin-bottom:4px">▤</div>
-        <strong style="font-size:14px">Déposez vos comics ou dossiers ici</strong>
-        <span style="font-size:11.5px;color:var(--muted);margin-top:2px">PDF, CBZ, CBR, ZIP ou images (cliquez pour parcourir)</span>
-        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:center">
-          <button type="button" class="btn" id="selectFilesBtn"><svg class=ic aria-hidden=true><use href=#ic-file /></svg> Choisir des fichiers</button>
-          <button type="button" class="btn secondary" id="selectFolderBtn"><svg class=ic aria-hidden=true><use href=#ic-folder /></svg> Choisir un dossier entier</button>
-        </div>
-        <input type="file" id="fileInput" accept=".pdf,.cbz,.cbr,.zip,.rar,.tar,.cbt,.jpg,.jpeg,.png,.webp,.avif,application/pdf,application/zip,application/x-zip-compressed,image/*,*/*" multiple style="display:none">
-        <input type="file" id="folderInput" webkitdirectory directory multiple style="display:none">
-      </div>
-      <div id="importLoadingStatus" style="display:none;margin-top:10px;padding:8px;background:rgba(0, 163, 218, 0.08);border:1px solid var(--cyan-line);border-radius:6px;text-align:center;color:var(--lime);font-size:12px;font-weight:600">
-        ⟳ Traitement et indexation en cours...
-      </div>
-    </div>
-
-    <!-- VUE 2 : CATALOGUE COMIC VINE (PAR NUMÉROS) -->
-    <div id="importViewCatalog" style="display:none">
-      <p style="font-size:12px;color:var(--ink-dim);margin-bottom:12px">Recherchez n'importe quel numéro de comic américain (Marvel, DC, Image, Indé) pour l'importer instantanément dans votre bibliothèque de lecture avec sa couverture officielle.</p>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <input id="importCatalogSearchInput" placeholder="Ex: Amazing Spider-Man 300, Batman 1, Spawn 1..." style="flex:1">
-        <button type="button" class="btn" id="importCatalogSearchBtn"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Rechercher</button>
-      </div>
-      <div id="importCatalogStatus" style="font-size:11px;color:var(--muted);margin-bottom:8px">Tapez un titre ou numéro et lancez la recherche.</div>
-      <div id="importCatalogResultsList" style="display:grid;grid-template-columns:1fr;gap:8px;max-height:300px;overflow-y:auto;padding-right:4px"></div>
-    </div>
-
-    <div class="modal-btns" style="margin-top:16px">
-      <button class="btn secondary" id="closeImportModalBtn">Fermer</button>
-    </div>
-  </div>
-</div>
-
-<!-- MODALE NOUVEAU DOSSIER -->
-<div class="modal-backdrop" id="folderModal">
-  <div class="modal-box">
-    <h3>Nouveau dossier numérique</h3>
-    <div class="form-row">
-      <label for="folderNameInput">Nom du dossier</label>
-      <input id="folderNameInput" placeholder="Ex: Batman - New 52, Secret Wars..." maxlength="60">
-    </div>
-    <div class="modal-btns">
-      <button class="btn secondary" id="cancelFolderBtn">Annuler</button>
-      <button class="btn" id="confirmFolderBtn">Créer</button>
-    </div>
-  </div>
-</div>
 
 <!-- ==========================================================================
      MODALE DE RECHERCHE EN DIRECT COMIC VINE (LEAGUE OF COMIC GEEKS STYLE)
@@ -3045,188 +2850,6 @@
 </div>
 
 <!-- LECTEUR IMMERSIF FULLSCREEN MASTER -->
-<div class="reader-modal" id="readerModal">
-  <header class="reader-top-bar" id="readerTopBar">
-    <div style="display:flex;align-items:center;gap:10px;min-width:0">
-      <button class="btn-icon" id="closeReaderBtn" title="Fermer le lecteur (Échap)">←</button>
-      <span style="font:600 13px 'Barlow Condensed';white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px" id="readerComicTitle">Lecture</span>
-      <select id="readerJumpSelect" title="Sauter à un autre numéro de la série" style="max-width:130px;font-size:11px;padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--ink)"></select>
-    </div>
-
-    <!-- SCRUBBER & PROGRESSION -->
-    <div style="display:flex;align-items:center;gap:8px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px">
-      <button class="btn-icon" id="scrubPrevBtn" style="width:24px;height:24px" title="Page précédente (Flèche gauche)">‹</button>
-      <span style="font-size:11.5px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink-dim);min-width:68px;text-align:center" id="readerPageCounter">1 / 1</span>
-      <input style="width:clamp(70px,10vw,140px);accent-color:var(--lime);cursor:pointer" id="readerPageSlider" type="range" min="1" max="1" value="1" title="Glisser pour parcourir les pages">
-      <button class="btn-icon" id="scrubNextBtn" style="width:24px;height:24px" title="Page suivante (Flèche droite)">›</button>
-    </div>
-
-    <!-- COMMANDES D'AFFICHAGE & OUTILS D'ÉTUDE -->
-    <div style="display:flex;align-items:center;gap:6px">
-      <!-- Sélecteur de mode d'affichage -->
-      <select id="readerDisplayModeSelect" title="Mode d'affichage des planches" style="font-size:11px;padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--ink)">
-        <option value="single"> Page unique</option>
-        <option value="double"> Double page</option>
-        <option value="scroll"> Défilement continu</option>
-      </select>
-
-      <!-- Sélecteur d'ajustement -->
-      <select id="readerFitSelect" title="Ajustement de l'image" style="font-size:11px;padding:4px 8px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;color:var(--ink)">
-        <option value="best">⤢ Ajuster page entière</option>
-        <option value="width"> Ajuster largeur</option>
-        <option value="height"> Ajuster hauteur</option>
-      </select>
-
-      <!-- Sens de lecture Manga -->
-      <button class="btn-icon" id="readerMangaBtn" title="Inverser le sens de lecture (Manga Droite à Gauche - M)">⇄</button>
-
-      <!-- Lecture guidée case par case -->
-      <button class="btn-icon" id="readerGuidedBtn" title="Lecture guidée par zone / quadrant (G)">⊞</button>
-
-      <!-- Surligneur / Annotations visuelles -->
-      <button class="btn-icon" id="readerAnnotateBtn" title="Annoter / Surligner la planche (A)">✎</button>
-
-      <!-- Contrôles de zoom manuel -->
-      <div style="display:flex;align-items:center;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:2px 4px;gap:2px">
-        <button class="btn-icon" id="readerZoomOutBtn" style="width:22px;height:22px;font-size:13px" title="Zoom arrière (-)">−</button>
-        <span id="readerZoomLevelText" style="font-size: 11px;font-weight:700;min-width:32px;text-align:center;color:var(--ink-dim)">100%</span>
-        <button class="btn-icon" id="readerZoomInBtn" style="width:22px;height:22px;font-size:13px" title="Zoom avant (+)">+</button>
-        <button class="btn-icon" id="readerZoomResetBtn" style="width:22px;height:22px;font-size: 11px" title="Réinitialiser zoom (0)">0</button>
-      </div>
-
-      <!-- Rotation & Contraste -->
-      <button class="btn-icon" id="readerRotateBtn" title="Pivoter de 90° (R)">⤾</button>
-      <button class="btn-icon" id="readerContrastBtn" title="Filtre Sépia / Nuit profonde (C)">◐</button>
-      <button class="btn-icon" id="readerBookmarkBtn" title="Repérer cette planche (B)">◇</button>
-
-      <!-- Volet d'étude rétractable -->
-      <button class="btn-icon" id="readerStudyDrawerBtn" style="border-color:var(--cyan-line);color:var(--lime)" title="Ouvrir le volet d'étude : Miniatures, Notes & Repères (S)"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg></button>
-
-      <!-- Plein écran -->
-      <button class="btn-icon" id="readerFullscreenBtn" title="Plein écran (F)">⛶</button>
-    </div>
-  </header>
-
-  <!-- SCÈNE CENTRALE DE LECTURE -->
-  <div class="reader-stage" id="readerStage">
-    <button class="reader-side-arrow prev" id="readerPrevBtn" aria-label="Page précédente">‹</button>
-    <div class="reader-content-frame" id="readerContentFrame"></div>
-    <button class="reader-side-arrow next" id="readerNextBtn" aria-label="Page suivante">›</button>
-  </div>
-
-  <!-- BARRE FLOTTANTE D'ANNOTATIONS D'ÉTUDE -->
-  <div class="reader-annotation-toolbar" id="readerAnnotationToolbar">
-    <span style="font-size:11px;font-weight:700;color:var(--lime);margin-right:4px">✎ Mode Annotation :</span>
-    <button type="button" class="btn-icon active" id="annotToolHighlighter" style="color:var(--lime)" title="Surligneur vert citron"></button>
-    <button type="button" class="btn-icon" id="annotToolPen" style="color:var(--red)" title="Crayon rouge"></button>
-    <button type="button" class="btn-icon" id="annotToolEraser" title="Gomme"></button>
-    <button type="button" class="btn-icon" id="annotToolClear" title="Effacer tous les tracés de cette page"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>
-    <button type="button" class="btn secondary" id="annotCloseToolbarBtn" style="font-size: 11px;padding:3px 8px;margin-left:4px">Terminer</button>
-  </div>
-
-  <!-- VOLET LATÉRAL D'ÉTUDE RÉTRACTABLE (STUDY DRAWER) -->
-  <aside class="reader-study-drawer" id="readerStudyDrawer">
-    <div class="study-drawer-header">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span style="color:var(--lime);font-size:16px"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg></span>
-        <b style="font-size:13.5px;color:var(--ink)">Étude & Analyse</b>
-      </div>
-      <button class="modal-close-btn" id="closeStudyDrawerBtn" title="Fermer le volet (Échap)"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
-    </div>
-
-    <!-- ONGLETS DU VOLET -->
-    <div class="study-drawer-tabs">
-      <button class="study-tab-btn active" data-study-tab="pages"><svg class=ic aria-hidden=true><use href=#ic-file /></svg> Planches (<span id="drawerPagesCount">0</span>)</button>
-      <button class="study-tab-btn" data-study-tab="bookmarks"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg> Repères (<span id="drawerBookmarksCount">0</span>)</button>
-      <button class="study-tab-btn" data-study-tab="notes">Notes (<span id="drawerNotesCount">0</span>)</button>
-      <button class="study-tab-btn" data-study-tab="info">Guide</button>
-    </div>
-
-    <!-- CONTENU DU VOLET -->
-    <div class="study-drawer-body">
-      <!-- VUE 1 : MINIATURES DES PLANCHES -->
-      <div id="studyViewPages">
-        <p style="font-size:11.5px;color:var(--muted);margin-bottom:12px">Cliquez sur une miniature pour naviguer immédiatement vers cette planche.</p>
-        <div class="study-thumbnails-grid" id="studyThumbnailsGrid"></div>
-      </div>
-
-      <!-- VUE 2 : MARQUE-PAGES -->
-      <div id="studyViewBookmarks" hidden>
-        <p style="font-size:11.5px;color:var(--muted);margin-bottom:12px">Planches mémorisées pour ce comic :</p>
-        <div id="studyBookmarksList"></div>
-      </div>
-
-      <!-- VUE 3 : NOTES D'ÉTUDE -->
-      <div id="studyViewNotes" hidden>
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:12px;margin-bottom:16px">
-          <b style="font-size:12px;color:var(--lime);display:block;margin-bottom:8px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter une note d'étude</b>
-          <div class="form-row" style="margin-bottom:8px">
-            <label style="font-size: 11px" for="studyNotePageInput">Planche associée</label>
-            <input type="number" id="studyNotePageInput" min="1" value="1" style="font-size:11px;padding:5px 8px">
-          </div>
-          <div class="form-row" style="margin-bottom:8px">
-            <label style="font-size: 11px" for="studyNoteTitleInput">Titre de la note</label>
-            <input id="studyNoteTitleInput" placeholder="Ex: Révélation identité, composition..." style="font-size:11px;padding:5px 8px">
-          </div>
-          <div class="form-row" style="margin-bottom:8px">
-            <label style="font-size: 11px" for="studyNoteTagSelect">Thématique</label>
-            <select id="studyNoteTagSelect" style="font-size:11px;padding:5px 8px">
-              <option value="Général">Général</option>
-              <option value="Scénario">Scénario & Intrigue</option>
-              <option value="Dessin">Dessin & Anatomie</option>
-              <option value="Lettrage">Lettrage & Phylactères</option>
-              <option value="Continuité">Continuité & Références</option>
-              <option value="Easter Egg">Easter Egg</option>
-            </select>
-          </div>
-          <div class="form-row" style="margin-bottom:10px">
-            <label style="font-size: 11px" for="studyNoteBodyInput">Observations / Analyse</label>
-            <textarea id="studyNoteBodyInput" rows="3" placeholder="Notez vos remarques d'étude sur cette planche..." style="font-size:11px;padding:6px 8px;width:100%;box-sizing:border-box"></textarea>
-          </div>
-          <button type="button" class="btn" id="saveStudyNoteBtn" style="font-size:11px;width:100%;justify-content:center">Enregistrer la note</button>
-        </div>
-
-        <div id="studyNotesList"></div>
-      </div>
-
-      <!-- VUE 4 : GUIDE DES RACCOURCIS & INFOS -->
-      <div id="studyViewInfo" hidden>
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:14px;margin-bottom:14px">
-          <b style="font-size:12.5px;color:var(--ink);display:block;margin-bottom:6px" id="studyFileInfoTitle">Comic en cours</b>
-          <div id="studyFileInfoDetails" style="font-size:11px;color:var(--muted);line-height:1.6"></div>
-        </div>
-
-        <b style="font-size:12px;color:var(--ink);display:block;margin-bottom:8px">Raccourcis Clavier</b>
-        <div style="font-size:11px;color:var(--muted);line-height:1.7;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:10px">
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">→</kbd> ou <kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">Espace</kbd> : Page suivante</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">←</kbd> : Page précédente</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">F</kbd> : Plein écran</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">D</kbd> : Double page (Couverture isolée)</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">M</kbd> : Inverser sens Manga (RTL)</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">G</kbd> : Lecture guidée (Case par case)</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">S</kbd> : Ouvrir/Fermer le volet d'étude</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">B</kbd> : Repérer la planche (Marque-page)</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">A</kbd> : Mode Annotation / Surligneur</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">+</kbd> / <kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">−</kbd> / <kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">0</kbd> : Zoom et réinitialisation</div>
-          <div><kbd style="background:var(--bg-card);padding:2px 5px;border-radius:3px;color:var(--lime)">Échap</kbd> : Fermer panneau ou quitter</div>
-        </div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- BARRE BASSE -->
-  <footer class="reader-bottom-bar" id="readerBottomBar">
-    <div style="display:flex;align-items:center;gap:12px">
-      <span style="font-size:11px;color:var(--muted)">Cliquez au centre pour afficher/masquer l'interface · ‹ › pour tourner</span>
-      <span style="font-size:11px;color:var(--lime);font-weight:700" id="readerProgressPercentBadge">0%</span>
-    </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn ghost" id="readerStudyDrawerBottomBtn" style="font-size:11px;padding:4px 10px;border-color:var(--border)"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg> Notes & Miniatures</button>
-      <button class="btn ghost" id="markFinishedBtn" style="font-size:11px;padding:4px 10px">Marquer comme Lu <svg class=ic aria-hidden=true><use href=#ic-check /></svg></button>
-      <button class="btn ghost" id="readerDownloadBtn" style="font-size:11px;padding:4px 10px">Télécharger ↓</button>
-    </div>
-  </footer>
-</div>
 
 <!-- TOAST -->
 <div class="modal-backdrop" id="csvImportModal">
@@ -3308,13 +2931,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const $ = id => document.getElementById(id);
   const $$ = sel => document.querySelectorAll(sel);
 
-  if (window.pdfjsLib) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-  }
-
   // ÉTAT DE L'APPLICATION
-  let activeModule = 'digital';
-  let allPages = [];
+  let activeModule = 'singles';
   let physicalSingles = (() => {
     try {
       const v = JSON.parse(localStorage.getItem('panel_physical_singles') || '[]');
@@ -3325,47 +2943,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
   })();
 
-  let currentReadingPages = [];
-  let currentIndex = 0;
-  let currentPdfPage = 1;
-  let activeFolder = 'default_folder';
-  let activePublisher = 'Tous';
-  let activeTabFilter = 'all';
   let activeSingleFilter = 'all';
-  let selectedSeriesKey = null;
-  let issuePage = 0;
-  const issuesPerPage = 12;
 
   // Options du lecteur & Moteur d'Étude
-  let currentPdfDoc = null;
-  let currentTotalPages = 1;
-  let readerZoom = 1;
-  let readerPanX = 0;
-  let readerPanY = 0;
-  let isDraggingPage = false;
-  let dragStartX = 0;
-  let dragStartY = 0;
-  let readerRotation = 0;
-  let readerContrast = 0;
-  let readerDisplayMode = localStorage.getItem('panel_reader_display_mode') || 'single';
-  let readerFitMode = localStorage.getItem('panel_reader_fit_mode') || 'best';
-  let readerIsMangaMode = localStorage.getItem('panel_reader_manga_mode') === 'true';
-  let readerIsDoublePage = readerDisplayMode === 'double';
-  let readerIsGuidedMode = false;
-  let readerGuidedQuadrant = 0;
-  let readerIsAnnotating = false;
-  let readerAnnotTool = 'highlighter';
-  let comicNotes = JSON.parse(localStorage.getItem('panel_comic_notes') || '[]');
-  let comicAnnotations = JSON.parse(localStorage.getItem('panel_comic_annotations') || '{}');
-  let hudHideTimeout = null;
 
-  let pdfCache = new Map();
-  let zipCache = new Map();
 
-  let folders = JSON.parse(localStorage.getItem('panel_folders') || 'null') || [{ id: 'default_folder', name: 'Ma bibliothèque' }];
-  let bookmarks = JSON.parse(localStorage.getItem('panel_bookmarks') || '[]');
-  let theories = JSON.parse(localStorage.getItem('panel_theories') || '[]');
-  let readingPositions = JSON.parse(localStorage.getItem('panel_reading_positions') || '{}');
 
   // Scanner de code-barres instance & Variantes
   let selectedVariantIndex = 0;
@@ -3427,29 +3009,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     req.onerror = () => resolve(null);
   });
 
-  const persistPages = async items => {
-    const db = await dbReady;
-    if (!db) return false;
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction('pages', 'readwrite');
-      const store = tx.objectStore('pages');
-      items.forEach(p => store.put(p));
-      tx.oncomplete = () => resolve(true);
-      tx.onerror = () => reject(tx.error);
-    });
-  };
 
-  const deletePagesFromDb = async ids => {
-    const db = await dbReady;
-    if (!db) return false;
-    return new Promise((resolve, reject) => {
-      const tx = db.transaction('pages', 'readwrite');
-      const store = tx.objectStore('pages');
-      ids.forEach(id => store.delete(id));
-      tx.oncomplete = () => resolve(true);
-      tx.onerror = () => reject(tx.error);
-    });
-  };
 
   const showToast = text => {
     const el = $('toastPopup');
@@ -3458,15 +3018,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     clearTimeout(el._t);
     el._t = setTimeout(() => el.classList.remove('show'), 2400);
   };
-
-  const isComicCompleted = p => p && p.readStatus === 'completed';
-  const isComicInProgress = p => {
-    if (!p) return false;
-    if (isComicCompleted(p)) return false;
-    const pos = Number(readingPositions[p.id]) || 0;
-    return (pos > 1) || (p.readStatus === 'reading' && pos >= 1);
-  };
-  const isComicUnread = p => p && !isComicCompleted(p) && !isComicInProgress(p);
 
   // Ancien « nettoyage des orphelins » : il effaçait positions de lecture et marque-pages dès que la
   // bibliothèque paraissait vide (base indisponible, chargement en retard…). Désactivé : rien n'est supprimé.
@@ -5889,49 +5440,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // OUVERTURE OU CONVERSION D'UN SINGLE ISSUE EN FICHE DE LECTURE NUMÉRIQUE
-  const openSingleIssueAsReaderRecord = async item => {
-    if (!item) return;
-    const cleanSeries = (item.series || 'Comic').trim();
-    const cleanIssue = String(item.issue || '1').replace(/[^0-9]/g, '') || '1';
-
-    // Chercher si ce numéro existe déjà dans la bibliothèque numérique
-    let record = allPages.find(p =>
-      p.seriesKey.toLowerCase() === cleanSeries.toLowerCase() &&
-      (String(p.order) === cleanIssue || String(p.issueKey) === cleanIssue)
-    );
-
-    if (!record) {
-      // Créer une entrée de lecture complète avec la couverture officielle
-      const recordId = `p_cv_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
-      record = {
-        id: recordId,
-        name: `${cleanSeries} #${cleanIssue}`,
-        type: 'image/jpeg',
-        size: 0,
-        blob: null,
-        file: null,
-        signature: `default_folder|${cleanSeries.toLowerCase()}_${cleanIssue}|0`,
-        relativePath: `${cleanSeries} #${cleanIssue}`,
-        folderId: 'default_folder',
-        publisher: item.publisher || 'Autre / Indé',
-        seriesKey: cleanSeries,
-        seriesTitle: cleanSeries,
-        issueKey: cleanIssue,
-        issueLabel: `Issue #${cleanIssue}`,
-        order: Number(cleanIssue) || 1,
-        format: 'IMAGE',
-        readStatus: 'unread',
-        url: coverFor(item)
-      };
-      allPages.push(record);
-      try {
-        await persistPages([record]);
-      } catch (e) {}
-      renderLibrary();
-    }
-
-    await openReader(record);
-  };
 
   // OUVERTURE DE L'INSPECTEUR DE SINGLE
   const openSingleInspector = item => {
@@ -6076,14 +5584,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       $('singleIssueInspectorModal').classList.remove('open');
       editSingleIssue(item);
     };
-
-    // Bouton Lire
-    if ($('inspectReadBtn')) {
-      $('inspectReadBtn').onclick = async () => {
-        $('singleIssueInspectorModal').classList.remove('open');
-        await openSingleIssueAsReaderRecord(item);
-      };
-    }
 
     $('singleIssueInspectorModal').classList.add('open');
   };
@@ -6274,7 +5774,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     el.onkeydown = e => { if (e.key === 'Enter') openSingleInspector(item); };
     const on = (sel, fn) => { const b = el.querySelector(sel); if (b) b.onclick = e => { e.stopPropagation(); fn(); }; };
     on('[data-inspect]', () => openSingleInspector(item));
-    on('[data-read]', () => openSingleIssueAsReaderRecord(item));
     on('[data-edit]', () => editSingleIssue(item));
     on('[data-del]', () => removeSingleWithUndo(item));
     on('[data-toggle-read]', () => { item.isRead = !item.isRead; persistSingles(); renderSinglesCollection(); });
@@ -6401,7 +5900,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '</div>' +
           '<div class="comic-card-action-bar">' +
             '<button class="card-action-btn" data-inspect>Inspecter</button>' +
-            '<button class="card-action-btn" data-read style="color:var(--lime);font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lire</button>' +
             '<button class="card-action-btn" data-edit title="Modifier" aria-label="Modifier"><svg class=ic aria-hidden=true><use href=#ic-pencil /></svg></button>' +
             '<button class="card-action-btn danger" data-del title="Retirer" aria-label="Retirer"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>' +
           '</div>' +
@@ -7377,6 +6875,68 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       : '<p class="stat-sub">Aucune ligne exploitable avec cette correspondance de colonnes.</p>';
   };
 
+  // Données de l'ancienne bibliothèque numérique : conservées intactes dans le stockage local,
+  // relues telles quelles pour rester présentes dans les sauvegardes (jamais modifiées ni effacées)
+  const DIGITAL_LS_KEYS = { folders: 'panel_folders', bookmarks: 'panel_bookmarks', theories: 'panel_theories', readingPositions: 'panel_reading_positions', comicNotes: 'panel_comic_notes', comicAnnotations: 'panel_comic_annotations' };
+  const readStoredDigitalData = () => {
+    const out = {};
+    Object.entries(DIGITAL_LS_KEYS).forEach(([k, key]) => {
+      const raw = localStorage.getItem(key);
+      if (raw == null) return;
+      try { out[k] = JSON.parse(raw); } catch (_) { out[k + 'Raw'] = raw; }
+    });
+    return out;
+  };
+
+  // Archive des anciens fichiers numériques (lecture seule de l'IndexedDB « pages ») :
+  // ZIP des PDF/CBZ stockés + métadonnées + marque-pages, notes, annotations et positions. Ne modifie ni n'efface rien.
+  const readStoredDigitalRecords = async () => {
+    const db = await dbReady;
+    if (!db || !db.objectStoreNames.contains('pages')) return [];
+    return new Promise(res => {
+      try {
+        const r = db.transaction('pages', 'readonly').objectStore('pages').getAll();
+        r.onsuccess = () => res(r.result || []);
+        r.onerror = () => res([]);
+      } catch (_) { res([]); }
+    });
+  };
+  const countStoredDigitalFiles = async () => (await readStoredDigitalRecords()).length;
+  const exportStoredDigitalArchive = async ({ download = true } = {}) => {
+    if (!window.JSZip) { showToast('Export impossible : JSZip n’est pas chargé.'); return null; }
+    const records = await readStoredDigitalRecords();
+    const zip = new JSZip();
+    const used = new Set();
+    const files = [];
+    let bytes = 0;
+    records.forEach((r, i) => {
+      const blob = r.file || r.blob;
+      const meta = {};
+      Object.keys(r).forEach(k => { if (!(r[k] instanceof Blob)) meta[k] = r[k]; });
+      let name = String(r.name || (r.file && r.file.name) || ('comic-' + (i + 1))).replace(/[\/:*?"<>|\u0000-\u001f]+/g, '_').slice(0, 150) || ('comic-' + (i + 1));
+      if (used.has(name.toLowerCase())) { const dot = name.lastIndexOf('.'); name = (dot > 0 ? name.slice(0, dot) : name) + ' (' + (i + 1) + ')' + (dot > 0 ? name.slice(dot) : ''); }
+      used.add(name.toLowerCase());
+      if (blob instanceof Blob) { zip.file('fichiers/' + name, blob); bytes += blob.size; }
+      files.push(Object.assign(meta, { archiveName: blob instanceof Blob ? 'fichiers/' + name : null }));
+    });
+    zip.file('donnees-numeriques.json', JSON.stringify({ format: 'panel-digital-archive', version: 1, exportedAt: new Date().toISOString(), files, ...readStoredDigitalData() }, null, 2));
+    const out = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
+    if (download) {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(out);
+      a.download = 'panel_archive_numerique_' + new Date().toISOString().slice(0, 10) + '.zip';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 60000);
+      showToast('Archive exportée : ' + files.length + ' fichier(s). Vos données restent conservées dans l’application.');
+    }
+    return { files: files.length, bytes, blob: out };
+  };
+  const refreshDigitalArchiveButtons = async () => {
+    const n = await countStoredDigitalFiles();
+    const hasMeta = Object.keys(readStoredDigitalData()).length > 0 && (n > 0 || ['panel_bookmarks', 'panel_comic_notes', 'panel_comic_annotations', 'panel_reading_positions'].some(k => { const v = localStorage.getItem(k); return v && v !== '[]' && v !== '{}'; }));
+    document.querySelectorAll('.digital-archive-btn').forEach(b => { b.hidden = !(n > 0 || hasMeta); });
+  };
+
   const readCsvFile = async file => {
     if (!file) return;
     if (file.size > 15 * 1024 * 1024) { showToast('Fichier trop volumineux (15 Mo max).'); return; }
@@ -8316,1620 +7876,78 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // ==========================================================================
   // Noms de fichiers de comics : « Absolute Batman 001 (2024) (Digital) (Zone-Empire).cbz »,
   // « Batman #135.pdf », « Saga v01 - Chapter 3.cbr », « 001.cbz » dans un dossier « Invincible (2003) »
-  const parseComicFileName = (fileName, dirName = '') => {
-    const raw = String(fileName || '').replace(/\.[^.]{2,5}$/, '');
-    let t = raw.replace(/_/g, ' ');
-    const years = [...t.matchAll(/\((\d{4})\)/g)].map(m => +m[1]).filter(y => y > 1900 && y < 2100);
-    t = t.replace(/\([^)]*\)|\[[^\]]*\]|\{[^}]*\}/g, ' ').replace(/\s+/g, ' ').trim();
-    t = t.replace(/\s+(?:of|sur|\/)\s*\d+\s*$/i, '').trim();                                   // « 3 of 6 »
-    let series = t, issue = '';
-    const m = t.match(/^(.*?)[\s.-]*(?:#|\bissue\s*|\bno\.?\s*|\bn°\s*|\bch(?:apter|apitre)?\.?\s*|\btome\s*|\bt\.?\s?(?=\d)|\bvol(?:ume)?\.?\s*|\bv(?=\d))?(\d{1,4}(?:\.\d+)?[a-z]?)\s*$/i);
-    if (m && m[2] && !(m[1] === '' && years.length === 0 && !dirName)) { series = m[1].replace(/[\s.:-]+$/, '').trim(); issue = m[2].replace(/^0+(?=\d)/, ''); }
-    const dir = String(dirName || '').split(/[\\/]/).filter(Boolean).pop() || '';
-    const dirParsed = dir ? dir.replace(/_/g, ' ').replace(/\[[^\]]*\]/g, '').replace(/\s+/g, ' ').trim() : '';
-    if (!series || /^\d+$/.test(series)) {                                                     // « 001.cbz » : la série vient du dossier
-      series = dirParsed.replace(/\((\d{4})\)/, '').trim() || series || 'Comic';
-      const dy = (dirParsed.match(/\((\d{4})\)/) || [])[1];
-      if (dy && !years.length) years.push(+dy);
-    }
-    // Année absente du nom : celle du dossier parent (« Absolute Flash (2025) / Absolute Flash 05 »)
-    if (!years.length) { const py = String(dirName || '').match(/\((\d{4})\)/g); if (py) years.push(+py[py.length - 1].slice(1, 5)); }
-    const year = years[0] || null;
-    series = series.replace(/\s+/g, ' ').replace(/^[-–\s]+|[-–\s]+$/g, '') || 'Comic';
-    return { series, issue, year, display: year ? series + ' (' + year + ')' : series };
-  };
 
-  const parseDigitalComic = (file, publisher) => {
-    const rawName = file.name || '';
-    const base = rawName.replace(/\.[^.]+$/, '');
-    const isCbz = /\.(cbz|zip|cbr|rar)$/i.test(rawName);
-    const isPdf = /\.pdf$/i.test(rawName) || (file.type === 'application/pdf');
 
-    // Détection automatique de l'éditeur selon les mots-clés
-    let autoPub = publisher;
-    if (!autoPub || autoPub === 'Autre / indépendant' || autoPub === 'Tous') {
-      if (/batman|superman|flash|wonder[ _-]*woman|green[ _-]*lantern|justice[ _-]*league|nightwing|catwoman|joker|harley|titans|swamp[ _-]*thing|hellblazer/i.test(base)) autoPub = 'DC Comics';
-      else if (/spider[ _-]*man|x[ _-]*men|avengers|iron[ _-]*man|thor|hulk|wolverine|deadpool|daredevil|captain[ _-]*america|fantastic[ _-]*four|secret[ _-]*wars|black[ _-]*panther|carnage|venom/i.test(base)) autoPub = 'Marvel';
-      else if (/spawn|saga|invincible|department[ _-]*of[ _-]*truth|radiant[ _-]*black|monstress|walking[ _-]*dead|geiger|void[ _-]*rivals/i.test(base)) autoPub = 'Image Comics';
-      else if (/hellboy|black[ _-]*hammer|sin[ _-]*city|b\.p\.r\.d\.|umbrella[ _-]*academy/i.test(base)) autoPub = 'Dark Horse';
-      else if (/one[ _-]*piece|naruto|bleach|jujutsu|berserk|chainsaw|dragon[ _-]*ball|attack[ _-]*on[ _-]*titan|manga/i.test(base)) autoPub = 'Manga';
-      else autoPub = 'Autre / indépendant';
-    }
 
-    // Extraction robuste du titre de série et du numéro (nom du fichier, sinon nom du dossier)
-    const relDir = String(file.webkitRelativePath || file.panelDir || '').split('/').slice(0, -1).join('/');
-    const pn = parseComicFileName(rawName, relDir);
-    if (pn.issue || relDir) {
-      return {
-        seriesTitle: pn.display, seriesKey: pn.display, issueKey: pn.issue || '1', order: parseFloat(pn.issue) || 1,
-        format: isCbz ? 'CBZ' : (isPdf ? 'PDF' : 'IMAGE'), issueLabel: pn.issue ? `#${pn.issue}` : 'Numéro unique',
-        publisher: autoPub, year: pn.year
-      };
-    }
-    const cleanBase = base.replace(/\[[^\]]+\]/g, '').trim();
-    const m = cleanBase.match(/^(.+?)[ _-]+(?:Issue|Tome|Vol|v|Ch|Chapter|#)?[ _-]*#?(\d+)(?:\s*\(([^)]+)\))?$/i) ||
-              cleanBase.match(/^(.+?)\s+#?(\d+)$/i);
 
-    let seriesTitle = cleanBase;
-    let issueNum = '1';
 
-    if (m) {
-      seriesTitle = m[1].replace(/[_-]+/g, ' ').trim();
-      issueNum = m[2];
-      if (m[3] && !seriesTitle.includes(m[3])) {
-        seriesTitle += ` (${m[3]})`;
-      }
-    } else {
-      seriesTitle = cleanBase.replace(/[_-]+/g, ' ').trim();
-    }
-
-    return {
-      seriesTitle: seriesTitle || 'Comic',
-      seriesKey: seriesTitle || 'Comic',
-      issueKey: issueNum || '1',
-      order: Number(issueNum) || 1,
-      format: isCbz ? 'CBZ' : (isPdf ? 'PDF' : 'IMAGE'),
-      issueLabel: `Issue #${issueNum || '1'}`,
-      publisher: autoPub
-    };
-  };
-
-  const getPdf = async record => {
-    if (!window.pdfjsLib) throw new Error('PDF.js non disponible');
-    if (pdfCache.has(record.id)) return pdfCache.get(record.id);
-    const file = record.file || record.blob;
-    if (!file) throw new Error('Fichier PDF introuvable');
-    const data = await file.arrayBuffer();
-    const doc = await pdfjsLib.getDocument({ data, disableAutoFetch: true, disableStream: true }).promise;
-    pdfCache.set(record.id, doc);
-    return doc;
-  };
-
-  const drawPdfPage = async (record, canvas, pageNum, maxW, maxH, zoom = 1, rotation = 0) => {
-    const doc = await getPdf(record);
-    const page = await doc.getPage(pageNum);
-    const base = page.getViewport({ scale: 1, rotation });
-    const scale = Math.min(maxW / base.width, maxH / base.height) * zoom;
-    const viewport = page.getViewport({ scale, rotation });
-    const ratio = Math.min(window.devicePixelRatio || 1, 2.5);
-
-    canvas.width = Math.floor(viewport.width * ratio);
-    canvas.height = Math.floor(viewport.height * ratio);
-    canvas.style.width = `${Math.floor(viewport.width)}px`;
-    canvas.style.height = `${Math.floor(viewport.height)}px`;
-
-    const ctx = canvas.getContext('2d');
-    await page.render({
-      canvasContext: ctx,
-      viewport,
-      transform: ratio === 1 ? null : [ratio, 0, 0, ratio, 0, 0]
-    }).promise;
-    return doc.numPages;
-  };
-
-  const getCbzEntries = async record => {
-    if (zipCache.has(record.id)) return zipCache.get(record.id);
-    if (!window.JSZip) throw new Error('JSZip non disponible');
-    const file = record.file || record.blob;
-    if (!file) throw new Error('Archive introuvable');
-    let zip;
-    try {
-      zip = await JSZip.loadAsync(file);
-    } catch (err) {
-      if (/\.(cbr|rar)$/i.test(record.name || (record.file && record.file.name) || '')) {
-        throw new Error('Archive CBR compressée au format RAR propriétaire. Les archives RAR doivent être renommées en .cbz (si ZIP) ou converties en ZIP/PDF pour être lues directement.');
-      }
-      throw err;
-    }
-    const entries = [];
-    zip.forEach((path, entry) => {
-      if (!entry.dir && !path.includes('__MACOSX') && !path.startsWith('.') && /\.(jpe?g|png|webp|gif|avif|bmp)$/i.test(path)) {
-        entries.push(entry);
-      }
-    });
-    entries.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
-    if (!entries.length) throw new Error('Aucune image lisible trouvée dans l\'archive');
-    zipCache.set(record.id, entries);
-    return entries;
-  };
-
-  const getCbzPageUrl = async (record, pageNum) => {
-    const entries = await getCbzEntries(record);
-    if (!entries.length) throw new Error('Aucune image dans l’archive CBZ');
-    const idx = Math.max(0, Math.min(pageNum - 1, entries.length - 1));
-    const blob = await entries[idx].async('blob');
-    return URL.createObjectURL(blob);
-  };
 
   // Dessin « object-fit: cover » : la couverture remplit le cadre sans être déformée
-  const drawCoverFit = (ctx, img, w, h) => {
-    const iw = img.naturalWidth || img.width, ih = img.naturalHeight || img.height;
-    if (!iw || !ih) return;
-    const s = Math.max(w / iw, h / ih);
-    const dw = iw * s, dh = ih * s;
-    ctx.drawImage(img, (w - dw) / 2, (h - dh) / 2, dw, dh);
-  };
-  const drawCoverFallback = (record, canvas, w, h) => {
-    const ctx = canvas.getContext('2d');
-    canvas.width = w; canvas.height = h;
-    ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#00A3DA'; ctx.fillRect(0, 0, w, 18);
-    ctx.fillStyle = '#161616'; ctx.font = '800 22px "Barlow Condensed", sans-serif'; ctx.textAlign = 'center';
-    const words = String(record.seriesKey || record.format || 'Comic').toUpperCase().split(/\s+/);
-    let line = '', y = h / 2 - 20;
-    words.forEach(wd => { if ((line + ' ' + wd).trim().length > 14) { ctx.fillText(line.trim(), w / 2, y); y += 24; line = wd; } else line += ' ' + wd; });
-    ctx.fillText(line.trim(), w / 2, y);
-    ctx.fillStyle = '#161616'; ctx.fillRect(w - 70, h - 46, 62, 38);
-    ctx.fillStyle = '#FFFFFF'; ctx.font = '800 24px "Barlow Condensed", sans-serif';
-    ctx.fillText(String(record.issueKey ? '#' + record.issueKey : record.format || ''), w - 39, h - 18);
-  };
   // File d'attente : 2 couvertures générées à la fois, l'interface reste fluide sur un gros dossier
-  const thumbQueue = { running: 0, waiting: [] };
-  const queueThumb = job => new Promise(resolve => {
-    const run = async () => { thumbQueue.running++; try { resolve(await job()); } catch (_) { resolve(null); } finally { thumbQueue.running--; const n = thumbQueue.waiting.shift(); if (n) n(); } };
-    if (thumbQueue.running < 2) run(); else thumbQueue.waiting.push(run);
-  });
   // Vignette 300×450 (JPEG) enregistrée avec le comic : générée une seule fois
-  const ensureThumb = record => {
-    if (record.thumb) return Promise.resolve(record.thumb);
-    if (record._thumbPending) return record._thumbPending;
-    record._thumbPending = queueThumb(async () => {
-      const W = 300, H = 450;
-      const c = document.createElement('canvas');
-      if (record.format === 'PDF') {
-        const tmp = document.createElement('canvas');
-        await drawPdfPage(record, tmp, 1, W * 1.3, H * 1.3, 1);
-        c.width = W; c.height = H;
-        drawCoverFit(c.getContext('2d'), tmp, W, H);
-      } else {
-        const url = record.format === 'CBZ' ? await getCbzPageUrl(record, 1) : (record.url || '');
-        if (!url) return null;
-        const img = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url; });
-        c.width = W; c.height = H;
-        drawCoverFit(c.getContext('2d'), img, W, H);
-        if (record.format === 'CBZ') URL.revokeObjectURL(url);
-      }
-      record.thumb = c.toDataURL('image/jpeg', 0.82);
-      try { await persistPages([record]); } catch (_) {}
-      return record.thumb;
-    }).finally(() => { delete record._thumbPending; });
-    return record._thumbPending;
-  };
-  const renderCover = (record, canvas, w, h) => {
-    if (!record || !canvas) return;
-    ensureThumb(record).then(thumb => {
-      if (!thumb) { drawCoverFallback(record, canvas, w, h); return; }
-      const img = new Image();
-      img.onload = () => { canvas.width = w; canvas.height = h; drawCoverFit(canvas.getContext('2d'), img, w, h); };
-      img.onerror = () => drawCoverFallback(record, canvas, w, h);
-      img.src = thumb;
-    }).catch(() => drawCoverFallback(record, canvas, w, h));
-  };
 
   // Restauration IndexedDB & Auto-Nettoyage
-  const restoreAll = async () => {
-    const db = await dbReady;
-    if (!db) return;
-    const req = db.transaction('pages', 'readonly').objectStore('pages').getAll();
-    req.onsuccess = async () => {
-      const rawRecords = req.result || [];
-      const idsToDelete = [];
-      const seenSignatures = new Set();
-      const validRecords = [];
 
-      for (const r of rawRecords) {
-        const fileObj = r.file || r.blob;
-        const name = (r.name || (r.file ? r.file.name : '') || (r.seriesTitle ? `${r.seriesTitle} #${r.issueKey || '1'}` : '')).trim();
-        const size = fileObj ? fileObj.size : (r.size || 0);
-        const isMockBlackPanther = /black[ _-]*panther/i.test(name) || /black[ _-]*panther/i.test(r.seriesKey || '');
-        const isEmptyOrCorrupt = !fileObj || size <= 50;
 
-        if (isEmptyOrCorrupt || (isMockBlackPanther && size < 500)) {
-          idsToDelete.push(r.id);
-          continue;
-        }
 
-        const signature = r.signature || `${r.folderId || 'default'}|${name.toLowerCase()}|${size}`;
-        if (seenSignatures.has(signature)) {
-          idsToDelete.push(r.id);
-          continue;
-        }
-        seenSignatures.add(signature);
-        validRecords.push(r);
-      }
 
-      // Les enregistrements jugés illisibles ne sont plus supprimés automatiquement : ils sont seulement ignorés à l'affichage.
 
-      allPages = validRecords.map(r => {
-        const fileObj = r.file || r.blob;
-        const name = (r.name || (r.file ? r.file.name : '') || `${r.seriesKey || 'Comic'} #${r.issueKey || '1'}`).trim();
-        const type = r.type || (fileObj ? fileObj.type : '') || (/\.pdf$/i.test(name) ? 'application/pdf' : 'application/zip');
-        const file = (fileObj instanceof File) ? fileObj : new File([fileObj], name, { type });
-        const meta = parseDigitalComic(file, r.publisher);
-        const objectUrl = fileObj ? URL.createObjectURL(fileObj) : '';
-        return {
-          id: r.id,
-          name,
-          type,
-          blob: fileObj,
-          size: fileObj ? fileObj.size : 0,
-          signature: r.signature || `${r.folderId}|${name.toLowerCase()}|${fileObj.size}`,
-          relativePath: r.relativePath || name,
-          folderId: r.folderId || 'default_folder',
-          publisher: r.publisher || meta.publisher,
-          issueKey: r.issueKey || meta.issueKey,
-          seriesKey: r.seriesKey || meta.seriesKey,
-          seriesTitle: r.seriesTitle || meta.seriesTitle,
-          issueLabel: r.issueLabel || meta.issueLabel,
-          order: r.order ?? meta.order,
-          format: meta.format,
-          readStatus: r.readStatus || 'unread',
-          file,
-          url: objectUrl
-        };
-      });
 
-      cleanOrphanData();
-      renderFolders();
-      renderPublisherStrip();
-      renderLibrary();
-      renderBookmarks();
-      renderSinglesCollection();
-    };
-  };
 
-  const updateCounters = () => {
-    const total = allPages.length;
-    const reading = allPages.filter(isComicInProgress).length;
-    const unread = allPages.filter(isComicUnread).length;
-    const completed = allPages.filter(isComicCompleted).length;
 
-    $('badgeAll').textContent = total;
-    $('badgeReading').textContent = reading;
-    $('badgeUnread').textContent = unread;
-    $('badgeCompleted').textContent = completed;
-    $('badgeBookmarks').textContent = bookmarks.length;
-
-    $('tabCountAll').textContent = total;
-    $('tabCountReading').textContent = reading;
-    $('tabCountUnread').textContent = unread;
-    $('tabCountCompleted').textContent = completed;
-  };
-
-  const updateHeroBanner = () => {
-    const preview = $('heroPreview');
-    preview.innerHTML = '';
-    const inProgressList = allPages.filter(isComicInProgress);
-    const inProgress = inProgressList[0];
-
-    if (inProgress) {
-      const curPage = readingPositions[inProgress.id] || 1;
-      $('heroEyebrow').textContent = 'REPRENDRE LA LECTURE';
-      $('heroHeading').innerHTML = `Continuer :<br><em>${inProgress.seriesKey}</em>`;
-      $('heroDescription').textContent = `${inProgress.issueLabel} · Planche n° ${curPage}. Reprenez en un clic.`;
-      $('heroPrimaryBtn').innerHTML = '<span><svg class=ic aria-hidden=true><use href=#ic-play /></svg></span> Reprendre la lecture';
-      $('heroPrimaryBtn').onclick = () => openReader(inProgress, curPage);
-
-      if (inProgress.format === 'IMAGE' || (inProgress.file && inProgress.file.type && inProgress.file.type.startsWith('image/'))) {
-        const img = document.createElement('img');
-        img.src = inProgress.url;
-        preview.appendChild(img);
-      } else {
-        const canvas = document.createElement('canvas');
-        preview.appendChild(canvas);
-        renderCover(inProgress, canvas, 240, 360);
-      }
-    } else {
-      $('heroEyebrow').textContent = 'VOTRE COLLECTION';
-      $('heroHeading').innerHTML = `Lisez. Reliez.<br><em>Théorisez.</em>`;
-      if (allPages.length > 0) {
-        $('heroDescription').textContent = `${allPages.length} comic${allPages.length > 1 ? 's' : ''} dans votre bibliothèque. Cliquez ci-dessous pour commencer votre lecture.`;
-        $('heroPrimaryBtn').innerHTML = '<span><svg class=ic aria-hidden=true><use href=#ic-play /></svg></span> Commencer à lire';
-        $('heroPrimaryBtn').onclick = () => openReader(allPages[0], 1);
-
-        const firstComic = allPages[0];
-        if (firstComic.format === 'IMAGE' || (firstComic.file && firstComic.file.type && firstComic.file.type.startsWith('image/'))) {
-          const img = document.createElement('img');
-          img.src = firstComic.url;
-          preview.appendChild(img);
-        } else {
-          const canvas = document.createElement('canvas');
-          preview.appendChild(canvas);
-          renderCover(firstComic, canvas, 240, 360);
-        }
-      } else {
-        $('heroDescription').textContent = 'Ajoutez vos comics en PDF, CBZ ou images brutes pour commencer votre collection.';
-        $('heroPrimaryBtn').innerHTML = '<span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Importer un comic';
-        $('heroPrimaryBtn').onclick = () => $('importModal').classList.add('open');
-        preview.innerHTML = '<div class="hero-preview-placeholder">Aucun comic</div>';
-      }
-    }
-  };
-
-  const renderPublisherStrip = () => {
-    const strip = $('publisherStrip');
-    strip.innerHTML = '<span style="font-size:11px;font-weight:700;color:var(--muted);margin-right:6px">Éditeur :</span>';
-    const publishers = ['Tous', 'Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'Manga', 'Autre / indépendant'];
-    allPages.forEach(p => { if (p.publisher && !publishers.includes(p.publisher)) publishers.push(p.publisher); });
-
-    publishers.forEach(pub => {
-      const btn = document.createElement('button');
-      btn.className = `tab-btn ${activePublisher === pub ? 'active' : ''}`;
-      btn.textContent = pub;
-      btn.onclick = () => {
-        activePublisher = pub;
-        selectedSeriesKey = null;
-        renderPublisherStrip();
-        renderLibrary();
-      };
-      strip.appendChild(btn);
-    });
-  };
-
-  const renderFolders = () => {
-    const grid = $('foldersGrid');
-    grid.innerHTML = '';
-
-    const allCount = allPages.length;
-    const allCard = document.createElement('div');
-    allCard.className = `comic-card ${activeFolder === 'all' ? 'active' : ''}`;
-    allCard.style.padding = '12px';
-    allCard.innerHTML = `
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:13px;font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-books /></svg> Tous les dossiers</span>
-        <span class="status-pill unread">${allCount}</span>
-      </div>
-      <span style="font-size: 11px;color:var(--muted)">Voir toute la bibliothèque</span>
-    `;
-    allCard.onclick = () => {
-      activeFolder = 'all';
-      selectedSeriesKey = null;
-      renderFolders();
-      renderLibrary();
-      showToast('Tous les dossiers');
-    };
-    grid.appendChild(allCard);
-
-    folders.forEach(f => {
-      const folderItems = allPages.filter(p => p.folderId === f.id);
-      const card = document.createElement('div');
-      card.className = `comic-card ${activeFolder === f.id ? 'active' : ''}`;
-      card.style.padding = '12px';
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:13px;font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-folder /></svg> ${f.name}</span>
-          <span class="status-pill unread">${folderItems.length}</span>
-        </div>
-        <span style="font-size: 11px;color:var(--muted)">Cliquez pour ouvrir ce dossier</span>
-      `;
-      card.onclick = () => {
-        activeFolder = f.id;
-        selectedSeriesKey = null;
-        renderFolders();
-        renderLibrary();
-        showToast(`Dossier « ${f.name} »`);
-      };
-      grid.appendChild(card);
-    });
-
-    $('importFolderSelect').innerHTML = folders.map(f => `<option value="${f.id}">${f.name}</option>`).join('');
-    if (activeFolder !== 'all') $('importFolderSelect').value = activeFolder;
-  };
-
-  const getFilteredItems = items => {
-    if (activeTabFilter === 'reading') return items.filter(isComicInProgress);
-    if (activeTabFilter === 'unread') return items.filter(isComicUnread);
-    if (activeTabFilter === 'completed') return items.filter(isComicCompleted);
-    return items;
-  };
-
-  const getSortedSeriesItems = (seriesKey, publisher = activePublisher, folderId = activeFolder) => {
-    return allPages
-      .filter(p => p.seriesKey === seriesKey && (publisher === 'Tous' || p.publisher === publisher) && (!folderId || folderId === 'all' || p.folderId === folderId))
-      .sort((a, b) => a.order - b.order || (a.name || (a.file ? a.file.name : '')).localeCompare(b.name || (b.file ? b.file.name : ''), undefined, { numeric: true }));
-  };
-
-  const renderLibrary = () => {
-    updateCounters();
-    updateHeroBanner();
-
-    if (selectedSeriesKey) {
-      $('seriesSection').hidden = true;
-      $('seriesDetailSection').hidden = false;
-      renderSeriesDetail();
-      return;
-    }
-
-    $('seriesSection').hidden = false;
-    $('seriesDetailSection').hidden = true;
-
-    const grid = $('seriesGrid');
-    grid.innerHTML = '';
-
-    const currentComics = allPages.filter(p => {
-      const matchFolder = !activeFolder || activeFolder === 'all' || p.folderId === activeFolder;
-      const matchPub = !activePublisher || activePublisher === 'Tous' || p.publisher === activePublisher;
-      return matchFolder && matchPub;
-    });
-    const filteredComics = getFilteredItems(currentComics);
-
-    const seriesMap = new Map();
-    filteredComics.forEach(c => {
-      if (!seriesMap.has(c.seriesKey)) seriesMap.set(c.seriesKey, []);
-      seriesMap.get(c.seriesKey).push(c);
-    });
-
-    if (!seriesMap.size) {
-      grid.innerHTML = `
-        <div class="empty-box">
-          <div class="empty-box-icon">▦</div>
-          <h3>Aucun comic numérique dans cette vue</h3>
-          <p>Glissez-déposez un fichier <strong>PDF, CBZ ou image</strong> sur l'écran ou cliquez sur le bouton ci-dessous.</p>
-          <button class="btn" onclick="document.getElementById('importModalOpenBtn').click()"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Importer des comics</button>
-        </div>
-      `;
-      return;
-    }
-
-    [...seriesMap.entries()].sort((a, b) => a[0].localeCompare(b[0])).forEach(([key, items]) => {
-      const coverRecord = items[0];
-      const completedCount = items.filter(isComicCompleted).length;
-      const inProgCount = items.filter(isComicInProgress).length;
-      const progress = Math.round((completedCount / items.length) * 100);
-
-      const card = document.createElement('article');
-      card.className = 'comic-card';
-      card.innerHTML = `
-        <div class="comic-poster">
-          <div class="comic-poster-gradient"></div>
-          <div class="comic-badges-strip">
-            <span class="issue-box">${items.length}</span>
-            <span class="status-pill ${progress === 100 ? 'completed' : inProgCount > 0 ? 'reading' : 'unread'}">
-              ${progress === 100 ? 'Lu' : inProgCount > 0 ? `${inProgCount} en cours` : 'À lire'}
-            </span>
-          </div>
-        </div>
-        <div class="comic-caption">
-          <b>${escapeHtml(key)}</b>
-          <div class="comic-caption-row">
-            <span>${items.length} numéro${items.length > 1 ? 's' : ''}</span>
-            <span>${completedCount} lu${completedCount > 1 ? 's' : ''}</span>
-          </div>
-          <div class="progress-line-wrap">
-            <div class="progress-line-fill" style="width:${progress}%"></div>
-          </div>
-          <div class="comic-card-action-bar">
-            <button class="card-action-btn" data-open>Ouvrir</button>
-            <button class="card-action-btn danger" data-del title="Supprimer cette série"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>
-          </div>
-        </div>
-      `;
-
-      const poster = card.querySelector('.comic-poster');
-      if (coverRecord.format === 'IMAGE' || (coverRecord.file && coverRecord.file.type && coverRecord.file.type.startsWith('image/'))) {
-        const img = document.createElement('img');
-        img.src = coverRecord.url;
-        poster.prepend(img);
-      } else {
-        const canvas = document.createElement('canvas');
-        poster.prepend(canvas);
-        renderCover(coverRecord, canvas, 240, 360);
-      }
-
-      card.onclick = () => {
-        selectedSeriesKey = key;
-        issuePage = 0;
-        renderLibrary();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      };
-
-      const openBtn = card.querySelector('[data-open]');
-      if (openBtn) {
-        openBtn.onclick = e => {
-          e.stopPropagation();
-          if (items.length === 1) {
-            openReader(items[0]);
-          } else {
-            selectedSeriesKey = key;
-            issuePage = 0;
-            renderLibrary();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        };
-      }
-
-      card.querySelector('[data-del]').onclick = async e => {
-        e.stopPropagation();
-        if (confirm(`Voulez-vous supprimer toute la série « ${key} » (${items.length} numéros) ?`)) {
-          const ids = items.map(p => p.id);
-          await deletePagesFromDb(ids);
-          allPages = allPages.filter(p => !ids.includes(p.id));
-          cleanOrphanData();
-          renderLibrary();
-          showToast(`Série « ${key} » supprimée.`);
-        }
-      };
-
-      grid.appendChild(card);
-    });
-  };
-
-  const renderSeriesDetail = () => {
-    const grid = $('issuesGrid');
-    grid.innerHTML = '';
-
-    const seriesItems = getSortedSeriesItems(selectedSeriesKey);
-    const filteredIssues = getFilteredItems(seriesItems);
-
-    $('detailSeriesTitle').textContent = selectedSeriesKey;
-    $('detailSeriesSubtitle').textContent = `${seriesItems.length} numéro${seriesItems.length > 1 ? 's' : ''} · ${activePublisher}`;
-
-    const start = issuePage * issuesPerPage;
-    const pageItems = filteredIssues.slice(start, start + issuesPerPage);
-
-    pageItems.forEach(record => {
-      const card = document.createElement('article');
-      card.className = 'comic-card';
-      const isCompleted = isComicCompleted(record);
-      const isInProg = isComicInProgress(record);
-      const curPage = readingPositions[record.id] || 1;
-
-      card.innerHTML = `
-        <div class="comic-poster">
-          <div class="comic-poster-gradient"></div>
-          <div class="comic-badges-strip">
-            <span class="format-pill">${record.format}</span>
-            <span class="status-pill ${isCompleted ? 'completed' : isInProg ? 'reading' : 'unread'}">
-              ${isCompleted ? 'Lu' : isInProg ? `P. ${curPage}` : 'À lire'}
-            </span>
-          </div>
-        </div>
-        <div class="comic-caption">
-          <b>${escapeHtml(record.issueLabel)}</b>
-          <div class="comic-caption-row">
-            <small>${record.format}</small>
-            ${!record.file ? '<button class="card-action-btn" data-link-file style="color:var(--lime);font-size: 11px;padding:2px 6px"><svg class=ic aria-hidden=true><use href=#ic-clip /></svg> Lier fichier</button>' : ''}
-            <button class="card-action-btn" data-toggle-read>
-              ${isCompleted ? 'Marquer non lu' : 'Marquer lu'}
-            </button>
-            <button class="card-action-btn danger" data-del-issue title="Supprimer ce numéro"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>
-          </div>
-        </div>
-      `;
-
-      const poster = card.querySelector('.comic-poster');
-      if (record.format === 'IMAGE' || (record.file && record.file.type && record.file.type.startsWith('image/')) || (!record.file && record.url)) {
-        const img = document.createElement('img');
-        img.src = record.url;
-        poster.prepend(img);
-      } else {
-        const canvas = document.createElement('canvas');
-        poster.prepend(canvas);
-        renderCover(record, canvas, 240, 360);
-      }
-
-      card.querySelector('[data-toggle-read]').onclick = async e => {
-        e.stopPropagation();
-        if (record.readStatus === 'completed') {
-          record.readStatus = 'unread';
-          delete readingPositions[record.id];
-        } else {
-          record.readStatus = 'completed';
-        }
-        localStorage.setItem('panel_reading_positions', JSON.stringify(readingPositions));
-        await persistPages([record]);
-        renderSeriesDetail();
-        updateCounters();
-        showToast(`Statut mis à jour : ${record.issueLabel}`);
-      };
-
-      card.querySelector('[data-del-issue]').onclick = async e => {
-        e.stopPropagation();
-        if (confirm(`Supprimer le numéro « ${record.issueLabel} » ?`)) {
-          await deletePagesFromDb([record.id]);
-          allPages = allPages.filter(p => p.id !== record.id);
-          delete readingPositions[record.id];
-          cleanOrphanData();
-          renderSeriesDetail();
-          updateCounters();
-          showToast(`Numéro supprimé.`);
-        }
-      };
-
-      const linkBtn = card.querySelector('[data-link-file]');
-      if (linkBtn) {
-        linkBtn.onclick = e => {
-          e.stopPropagation();
-          const fi = document.createElement('input');
-          fi.type = 'file';
-          fi.accept = '.pdf,.cbz,.cbr,.zip,.rar,image/*';
-          fi.onchange = async ev => {
-            if (ev.target.files && ev.target.files.length) {
-              const f = ev.target.files[0];
-              const meta = parseDigitalComic(f, record.publisher);
-              record.file = f;
-              record.blob = f;
-              record.format = meta.format;
-              record.size = f.size;
-              record.url = URL.createObjectURL(f);
-              await persistPages([record]);
-              renderSeriesDetail();
-              showToast(`Fichier « ${f.name} » associé !`);
-            }
-          };
-          fi.click();
-        };
-      }
-
-      card.onclick = () => openReader(record);
-      grid.appendChild(card);
-    });
-
-    const maxPages = Math.ceil(filteredIssues.length / issuesPerPage) || 1;
-    $('issuesPageText').textContent = `Page ${issuePage + 1} / ${maxPages}`;
-    $('prevIssuesPageBtn').disabled = issuePage <= 0;
-    $('nextIssuesPageBtn').disabled = issuePage >= maxPages - 1;
-    $('issuePagination').hidden = filteredIssues.length <= issuesPerPage;
-  };
 
   // ==========================================================================
   // MOTEUR LECTEUR IMMERSIF MASTER & MODULE D'ÉTUDE
   // ==========================================================================
 
-  const getComicTotalPages = async record => {
-    if (!record) return 1;
-    if (record.format === 'PDF') {
-      try {
-        const doc = await getPdf(record);
-        return doc.numPages;
-      } catch (e) {
-        return 1;
-      }
-    } else if (record.format === 'CBZ') {
-      try {
-        const entries = await getCbzEntries(record);
-        return entries.length || 1;
-      } catch (e) {
-        return 1;
-      }
-    }
-    return 1;
-  };
 
-  const openReader = async (recordOrId, startPage = null) => {
-    let record = recordOrId;
-    if (typeof recordOrId === 'string') {
-      record = allPages.find(p => p.id === recordOrId);
-    }
-    if (!record) {
-      showToast('Comic introuvable pour la lecture');
-      return;
-    }
 
-    currentReadingPages = getSortedSeriesItems(record.seriesKey, 'Tous', 'all');
-    if (!currentReadingPages.length) currentReadingPages = [record];
-    currentIndex = currentReadingPages.findIndex(p => p.id === record.id);
-    if (currentIndex < 0) currentIndex = 0;
 
-    currentPdfPage = startPage ? Number(startPage) : (Number(readingPositions[record.id]) || 1);
-    readerZoom = 1;
-    readerPanX = 0;
-    readerPanY = 0;
-    readerRotation = 0;
-    readerIsGuidedMode = false;
-    readerGuidedQuadrant = 0;
-    readerIsAnnotating = false;
 
-    $('readerModal').classList.add('open');
-    document.body.style.overflow = 'hidden';
 
-    await renderReaderView();
-  };
 
-  const closeReader = () => {
-    $('readerModal').classList.remove('open');
-    closeStudyDrawer();
-    closeAnnotationToolbar();
-    document.body.style.overflow = '';
-    renderLibrary();
-  };
 
-  const updateReaderZoom = () => {
-    const frame = $('readerContentFrame');
-    const stage = $('readerStage');
-    if ($('readerZoomLevelText')) $('readerZoomLevelText').textContent = `${Math.round(readerZoom * 100)}%`;
 
-    if (readerZoom > 1.05) {
-      stage.classList.add('pan-active');
-    } else {
-      stage.classList.remove('pan-active', 'panning');
-      readerPanX = 0;
-      readerPanY = 0;
-    }
 
-    if (!readerIsGuidedMode) {
-      frame.style.transform = `scale(${readerZoom}) translate(${readerPanX}px, ${readerPanY}px)`;
-    }
-  };
 
-  const applyGuidedTransform = () => {
-    const frame = $('readerContentFrame');
-    if (!readerIsGuidedMode) {
-      updateReaderZoom();
-      return;
-    }
 
-    const q = readerGuidedQuadrant;
-    const ltrCoords = [
-      { x: '25%', y: '25%' },
-      { x: '-25%', y: '25%' },
-      { x: '25%', y: '-25%' },
-      { x: '-25%', y: '-25%' }
-    ];
-    const rtlCoords = [
-      { x: '-25%', y: '25%' },
-      { x: '25%', y: '25%' },
-      { x: '-25%', y: '-25%' },
-      { x: '25%', y: '-25%' }
-    ];
 
-    const c = readerIsMangaMode ? rtlCoords[q] : ltrCoords[q];
-    frame.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
-    frame.style.transform = `scale(1.9) translate(${c.x}, ${c.y})`;
-  };
 
-  const nextGuidedStep = () => {
-    if (readerGuidedQuadrant < 3) {
-      readerGuidedQuadrant++;
-      applyGuidedTransform();
-    } else {
-      readerGuidedQuadrant = 0;
-      stepPage(true);
-    }
-  };
 
-  const prevGuidedStep = () => {
-    if (readerGuidedQuadrant > 0) {
-      readerGuidedQuadrant--;
-      applyGuidedTransform();
-    } else {
-      readerGuidedQuadrant = 3;
-      stepPage(false);
-    }
-  };
 
-  const renderReaderView = async () => {
-    const frame = $('readerContentFrame');
-    const stage = $('readerStage');
-    frame.innerHTML = '';
 
-    const current = currentReadingPages[currentIndex];
-    if (!current) return;
 
-    currentTotalPages = await getComicTotalPages(current);
-    currentPdfPage = Math.min(Math.max(1, currentPdfPage), currentTotalPages);
 
-    $('readerComicTitle').textContent = `${current.seriesKey} · ${current.issueLabel}`;
 
-    const jump = $('readerJumpSelect');
-    if (jump) {
-      jump.innerHTML = currentReadingPages.map((p, i) => `<option value="${i}">${p.issueLabel}</option>`).join('');
-      jump.value = String(currentIndex);
-    }
-
-    // Sélecteurs de modes
-    if ($('readerDisplayModeSelect')) $('readerDisplayModeSelect').value = readerDisplayMode;
-    if ($('readerFitSelect')) $('readerFitSelect').value = readerFitMode;
-    if ($('readerMangaBtn')) $('readerMangaBtn').style.color = readerIsMangaMode ? 'var(--lime)' : '';
-    if ($('readerGuidedBtn')) $('readerGuidedBtn').style.color = readerIsGuidedMode ? 'var(--lime)' : '';
-    if ($('readerAnnotateBtn')) $('readerAnnotateBtn').style.color = readerIsAnnotating ? 'var(--lime)' : '';
-
-    stage.classList.remove('fit-width', 'fit-height', 'mode-scroll');
-    if (readerFitMode === 'width') stage.classList.add('fit-width');
-    if (readerFitMode === 'height') stage.classList.add('fit-height');
-    if (readerDisplayMode === 'scroll') stage.classList.add('mode-scroll');
-
-    // Pages à afficher
-    let pagesToRender = [];
-    if (readerDisplayMode === 'scroll') {
-      for (let p = 1; p <= currentTotalPages; p++) pagesToRender.push(p);
-    } else if (readerDisplayMode === 'double') {
-      frame.className = 'reader-content-frame double-page';
-      if (currentPdfPage === 1) {
-        pagesToRender = [1];
-      } else {
-        const pairStart = (currentPdfPage % 2 === 0) ? currentPdfPage : currentPdfPage - 1;
-        pagesToRender = [pairStart];
-        if (pairStart + 1 <= currentTotalPages) pagesToRender.push(pairStart + 1);
-        if (readerIsMangaMode && pagesToRender.length > 1) pagesToRender.reverse();
-      }
-    } else {
-      frame.className = 'reader-content-frame';
-      pagesToRender = [currentPdfPage];
-    }
-
-    if (current.format === 'PDF') {
-      try {
-        currentPdfDoc = await getPdf(current);
-        for (const pNum of pagesToRender) {
-          const wrap = document.createElement('div');
-          wrap.className = 'reader-element-wrap';
-          wrap.dataset.pageNum = pNum;
-
-          const canvas = document.createElement('canvas');
-          canvas.className = 'reader-element';
-          wrap.appendChild(canvas);
-
-          const annotCanvas = document.createElement('canvas');
-          annotCanvas.className = 'reader-annotation-canvas';
-          wrap.appendChild(annotCanvas);
-
-          frame.appendChild(wrap);
-
-          const maxW = (readerDisplayMode === 'double' && pagesToRender.length > 1)
-            ? (window.innerWidth / 2 - 30)
-            : (window.innerWidth - 80);
-          await drawPdfPage(current, canvas, pNum, maxW, window.innerHeight - 140, 1, readerRotation);
-
-          annotCanvas.width = canvas.width;
-          annotCanvas.height = canvas.height;
-          attachAnnotationListeners(annotCanvas, current.signature, pNum);
-          drawSavedAnnotations(annotCanvas, current.signature, pNum);
-        }
-      } catch (err) {
-        frame.innerHTML = `<div class="empty-box"><h3>Erreur de lecture PDF</h3><p>${escapeHtml(err.message)}</p></div>`;
-      }
-    } else if (current.format === 'CBZ') {
-      try {
-        for (const pNum of pagesToRender) {
-          const wrap = document.createElement('div');
-          wrap.className = 'reader-element-wrap';
-          wrap.dataset.pageNum = pNum;
-
-          const imgUrl = await getCbzPageUrl(current, pNum);
-          const img = document.createElement('img');
-          img.className = 'reader-element';
-          img.src = imgUrl;
-          if (readerRotation !== 0) img.style.transform = `rotate(${readerRotation}deg)`;
-          wrap.appendChild(img);
-
-          const annotCanvas = document.createElement('canvas');
-          annotCanvas.className = 'reader-annotation-canvas';
-          wrap.appendChild(annotCanvas);
-
-          img.onload = () => {
-            annotCanvas.width = img.naturalWidth || img.clientWidth || 800;
-            annotCanvas.height = img.naturalHeight || img.clientHeight || 1200;
-            attachAnnotationListeners(annotCanvas, current.signature, pNum);
-            drawSavedAnnotations(annotCanvas, current.signature, pNum);
-          };
-
-          frame.appendChild(wrap);
-        }
-      } catch (err) {
-        frame.innerHTML = `<div class="empty-box"><h3>Erreur CBZ</h3><p>${escapeHtml(err.message)}</p></div>`;
-      }
-    } else {
-      const wrap = document.createElement('div');
-      wrap.className = 'reader-element-wrap';
-      wrap.dataset.pageNum = 1;
-      const img = document.createElement('img');
-      img.className = 'reader-element';
-      img.src = current.url;
-      if (readerRotation !== 0) img.style.transform = `rotate(${readerRotation}deg)`;
-      wrap.appendChild(img);
-
-      const annotCanvas = document.createElement('canvas');
-      annotCanvas.className = 'reader-annotation-canvas';
-      wrap.appendChild(annotCanvas);
-
-      img.onload = () => {
-        annotCanvas.width = img.naturalWidth || img.clientWidth || 800;
-        annotCanvas.height = img.naturalHeight || img.clientHeight || 1200;
-        attachAnnotationListeners(annotCanvas, current.signature, 1);
-        drawSavedAnnotations(annotCanvas, current.signature, 1);
-      };
-
-      frame.appendChild(wrap);
-
-      if (!current.file) {
-        const linkBanner = document.createElement('div');
-        linkBanner.style.cssText = 'margin:16px auto;padding:12px 18px;background:#FFFFFF;border:1px dashed #9AA3A0;border-radius:8px;text-align:center;max-width:540px';
-        linkBanner.innerHTML = `
-          <div style="font-size:12px;color:var(--lime);font-weight:700;margin-bottom:4px"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Couverture &amp; Fiche officielle chargée</div>
-          <p style="font-size:11px;color:var(--muted);margin:0 0 10px 0">Ce numéro provient du catalogue mondial. Vous pouvez l'annoter et l'étudier, ou lui associer un fichier CBZ ou PDF pour feuilleter toutes ses planches intérieures.</p>
-          <button type="button" class="btn" id="readerBannerAttachBtn" style="font-size:11px;padding:5px 12px"><svg class=ic aria-hidden=true><use href=#ic-clip /></svg> Lier un fichier CBZ ou PDF</button>
-        `;
-        frame.appendChild(linkBanner);
-
-        const btn = linkBanner.querySelector('#readerBannerAttachBtn');
-        if (btn) {
-          btn.onclick = () => {
-            const fi = document.createElement('input');
-            fi.type = 'file';
-            fi.accept = '.pdf,.cbz,.cbr,.zip,.rar,image/*';
-            fi.onchange = async ev => {
-              if (ev.target.files && ev.target.files.length) {
-                const f = ev.target.files[0];
-                const meta = parseDigitalComic(f, current.publisher);
-                current.file = f;
-                current.blob = f;
-                current.format = meta.format;
-                current.size = f.size;
-                current.name = f.name;
-                current.url = URL.createObjectURL(f);
-                await persistPages([current]);
-                showToast(`Fichier « ${f.name} » associé au comic !`);
-                await renderReaderView();
-              }
-            };
-            fi.click();
-          };
-        }
-      }
-    }
-
-    $('readerPageCounter').textContent = `${currentPdfPage} / ${currentTotalPages}`;
-    $('readerPageSlider').max = currentTotalPages;
-    $('readerPageSlider').value = currentPdfPage;
-
-    const pct = Math.round((currentPdfPage / currentTotalPages) * 100);
-    if ($('readerProgressPercentBadge')) $('readerProgressPercentBadge').textContent = `${pct}%`;
-
-    readingPositions[current.id] = currentPdfPage;
-    localStorage.setItem('panel_reading_positions', JSON.stringify(readingPositions));
-
-    if (currentPdfPage >= currentTotalPages) {
-      current.readStatus = 'completed';
-      persistPages([current]).catch(() => {});
-    } else if (currentPdfPage > 1 && current.readStatus === 'unread') {
-      current.readStatus = 'reading';
-      persistPages([current]).catch(() => {});
-    }
-
-    updateBookmarkButton();
-    updateReaderZoom();
-    applyGuidedTransform();
-    refreshStudyDrawerContent();
-    updateCounters();
-  };
-
-  const attachAnnotationListeners = (canvas, signature, pageNum) => {
-    const key = `${signature}_${pageNum}`;
-    let isDrawing = false;
-    let lastX = 0, lastY = 0;
-
-    const getPos = e => {
-      const rect = canvas.getBoundingClientRect();
-      const scaleX = canvas.width / rect.width;
-      const scaleY = canvas.height / rect.height;
-      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-      return {
-        x: (clientX - rect.left) * scaleX,
-        y: (clientY - rect.top) * scaleY
-      };
-    };
-
-    const startDraw = e => {
-      if (!readerIsAnnotating) return;
-      e.preventDefault();
-      isDrawing = true;
-      const pos = getPos(e);
-      lastX = pos.x;
-      lastY = pos.y;
-    };
-
-    const draw = e => {
-      if (!isDrawing || !readerIsAnnotating) return;
-      e.preventDefault();
-      const pos = getPos(e);
-      const ctx = canvas.getContext('2d');
-
-      ctx.save();
-      if (readerAnnotTool === 'highlighter') {
-        ctx.strokeStyle = 'rgba(43, 217, 101, 0.38)';
-        ctx.lineWidth = 22;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-      } else if (readerAnnotTool === 'pen') {
-        ctx.strokeStyle = '#ff4757';
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
-      } else if (readerAnnotTool === 'eraser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = 28;
-        ctx.lineCap = 'round';
-      }
-
-      ctx.beginPath();
-      ctx.moveTo(lastX, lastY);
-      ctx.lineTo(pos.x, pos.y);
-      ctx.stroke();
-      ctx.restore();
-
-      if (!comicAnnotations[key]) comicAnnotations[key] = [];
-      comicAnnotations[key].push({
-        tool: readerAnnotTool,
-        x1: Math.round(lastX),
-        y1: Math.round(lastY),
-        x2: Math.round(pos.x),
-        y2: Math.round(pos.y)
-      });
-
-      lastX = pos.x;
-      lastY = pos.y;
-    };
-
-    const endDraw = e => {
-      if (!isDrawing) return;
-      isDrawing = false;
-      localStorage.setItem('panel_comic_annotations', JSON.stringify(comicAnnotations));
-    };
-
-    canvas.onmousedown = startDraw;
-    canvas.onmousemove = draw;
-    canvas.onmouseup = endDraw;
-    canvas.onmouseleave = endDraw;
-
-    canvas.ontouchstart = startDraw;
-    canvas.ontouchmove = draw;
-    canvas.ontouchend = endDraw;
-  };
-
-  const drawSavedAnnotations = (canvas, signature, pageNum) => {
-    const key = `${signature}_${pageNum}`;
-    const segments = comicAnnotations[key] || [];
-    if (!segments.length) return;
-
-    const ctx = canvas.getContext('2d');
-    segments.forEach(seg => {
-      ctx.save();
-      if (seg.tool === 'highlighter') {
-        ctx.strokeStyle = 'rgba(43, 217, 101, 0.38)';
-        ctx.lineWidth = 22;
-        ctx.lineCap = 'round';
-      } else if (seg.tool === 'pen') {
-        ctx.strokeStyle = '#ff4757';
-        ctx.lineWidth = 3.5;
-        ctx.lineCap = 'round';
-      } else if (seg.tool === 'eraser') {
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.lineWidth = 28;
-      }
-      ctx.beginPath();
-      ctx.moveTo(seg.x1, seg.y1);
-      ctx.lineTo(seg.x2, seg.y2);
-      ctx.stroke();
-      ctx.restore();
-    });
-  };
-
-  const openStudyDrawer = (tab = 'pages') => {
-    const drawer = $('readerStudyDrawer');
-    if (drawer) {
-      drawer.classList.add('open');
-      switchStudyDrawerTab(tab);
-    }
-  };
-
-  const closeStudyDrawer = () => {
-    const drawer = $('readerStudyDrawer');
-    if (drawer) drawer.classList.remove('open');
-  };
-
-  const switchStudyDrawerTab = tab => {
-    $$('.study-tab-btn').forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.studyTab === tab);
-    });
-    if ($('studyViewPages')) $('studyViewPages').hidden = (tab !== 'pages');
-    if ($('studyViewBookmarks')) $('studyViewBookmarks').hidden = (tab !== 'bookmarks');
-    if ($('studyViewNotes')) $('studyViewNotes').hidden = (tab !== 'notes');
-    if ($('studyViewInfo')) $('studyViewInfo').hidden = (tab !== 'info');
-    refreshStudyDrawerContent();
-  };
-
-  const refreshStudyDrawerContent = async () => {
-    const current = currentReadingPages[currentIndex];
-    if (!current) return;
-
-    const curBookmarks = bookmarks.filter(b => b.signature === current.signature);
-    const curNotes = comicNotes.filter(n => n.signature === current.signature);
-    if ($('drawerPagesCount')) $('drawerPagesCount').textContent = currentTotalPages;
-    if ($('drawerBookmarksCount')) $('drawerBookmarksCount').textContent = curBookmarks.length;
-    if ($('drawerNotesCount')) $('drawerNotesCount').textContent = curNotes.length;
-
-    // 1. Grille de miniatures des planches
-    const grid = $('studyThumbnailsGrid');
-    if (grid && !$('studyViewPages').hidden) {
-      grid.innerHTML = '';
-      for (let pNum = 1; pNum <= currentTotalPages; pNum++) {
-        const card = document.createElement('div');
-        card.className = `study-thumb-card ${pNum === currentPdfPage ? 'active' : ''}`;
-        card.innerHTML = `
-          <div class="study-thumb-preview">P. ${pNum}</div>
-          <div class="study-thumb-footer">Planche ${pNum}</div>
-        `;
-        card.onclick = () => {
-          currentPdfPage = pNum;
-          renderReaderView();
-          if (window.innerWidth < 768) closeStudyDrawer();
-        };
-        grid.appendChild(card);
-      }
-    }
-
-    // 2. Marque-pages
-    const bmList = $('studyBookmarksList');
-    if (bmList && !$('studyViewBookmarks').hidden) {
-      bmList.innerHTML = '';
-      if (!curBookmarks.length) {
-        bmList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0">Aucun repère pour ce comic.<br>Appuyez sur <kbd style="color:var(--lime)">B</kbd> ou sur ◇ pour en ajouter un.</div>';
-      } else {
-        curBookmarks.forEach(bm => {
-          const item = document.createElement('div');
-          item.className = 'study-note-card';
-          item.innerHTML = `
-            <div class="study-note-header">
-              <span style="font-size:12px;font-weight:700;color:var(--lime)">Planche n° ${bm.page}</span>
-              <button class="card-action-btn danger" style="padding:2px 6px" data-del-bm><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
-            </div>
-            <div style="font-size:11px;color:var(--muted)">Mémorisée le ${bm.date || 'Récemment'}</div>
-          `;
-          item.onclick = () => {
-            currentPdfPage = Number(bm.page);
-            renderReaderView();
-          };
-          item.querySelector('[data-del-bm]').onclick = e => {
-            e.stopPropagation();
-            bookmarks = bookmarks.filter(b => b !== bm);
-            localStorage.setItem('panel_bookmarks', JSON.stringify(bookmarks));
-            updateBookmarkButton();
-            renderBookmarks();
-            refreshStudyDrawerContent();
-            showToast('Repère supprimé.');
-          };
-          bmList.appendChild(item);
-        });
-      }
-    }
-
-    // 3. Notes d'étude
-    const notesList = $('studyNotesList');
-    if (notesList && !$('studyViewNotes').hidden) {
-      notesList.innerHTML = '';
-      if ($('studyNotePageInput')) $('studyNotePageInput').value = currentPdfPage;
-      if (!curNotes.length) {
-        notesList.innerHTML = '<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px 0">Aucune note enregistrée sur ce comic. Remplissez le formulaire ci-dessus pour ajouter votre première analyse.</div>';
-      } else {
-        curNotes.forEach(note => {
-          const nCard = document.createElement('div');
-          nCard.className = 'study-note-card';
-          nCard.innerHTML = `
-            <div class="study-note-header">
-              <span class="study-note-tag">${escapeHtml(note.tag || 'Général')}</span>
-              <span style="font-size:11px;color:var(--lime);cursor:pointer;font-weight:700" title="Aller à la page">P. ${note.page} →</span>
-              <button class="card-action-btn danger" style="padding:2px 6px;margin-left:auto" data-del-note><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
-            </div>
-            <b style="font-size:12px;color:var(--ink);display:block;margin-bottom:4px">${escapeHtml(note.title)}</b>
-            <p style="font-size:11.5px;color:var(--muted);line-height:1.5;margin:0;white-space:pre-wrap">${escapeHtml(note.body)}</p>
-            <small style="font-size: 11px;color:var(--muted);display:block;margin-top:6px">${new Date(note.createdAt).toLocaleDateString('fr-FR')} ${new Date(note.createdAt).toLocaleTimeString('fr-FR', {hour:'2-digit',minute:'2-digit'})}</small>
-          `;
-          nCard.querySelector('[title="Aller à la page"]').onclick = () => {
-            currentPdfPage = Number(note.page);
-            renderReaderView();
-          };
-          nCard.querySelector('[data-del-note]').onclick = () => {
-            comicNotes = comicNotes.filter(n => n.id !== note.id);
-            localStorage.setItem('panel_comic_notes', JSON.stringify(comicNotes));
-            refreshStudyDrawerContent();
-            showToast('Note supprimée.');
-          };
-          notesList.appendChild(nCard);
-        });
-      }
-    }
-
-    // 4. Guide & Infos fichier
-    if ($('studyFileInfoTitle')) $('studyFileInfoTitle').textContent = `${current.seriesKey} · ${current.issueLabel}`;
-    if ($('studyFileInfoDetails')) {
-      const sizeStr = current.size ? `${(current.size / (1024 * 1024)).toFixed(1)} Mo` : 'Fichier local';
-      $('studyFileInfoDetails').innerHTML = `
-        <div>Format : <strong>${current.format}</strong></div>
-        <div>Total des planches : <strong>${currentTotalPages}</strong></div>
-        <div>Progression actuelle : <strong>${Math.round((currentPdfPage / currentTotalPages) * 100)}% (Planche ${currentPdfPage})</strong></div>
-        <div>Taille du fichier : <strong>${sizeStr}</strong></div>
-        <div>Éditeur : <strong>${current.publisher || 'Non spécifié'}</strong></div>
-      `;
-    }
-  };
-
-  const toggleAnnotationMode = () => {
-    readerIsAnnotating = !readerIsAnnotating;
-    const stage = $('readerStage');
-    const toolbar = $('readerAnnotationToolbar');
-    const btn = $('readerAnnotateBtn');
-
-    if (readerIsAnnotating) {
-      stage.classList.add('annotating');
-      toolbar.classList.add('active');
-      if (btn) btn.style.color = 'var(--lime)';
-      showToast('Mode Annotation activé (Surlignez ou dessinez)');
-    } else {
-      stage.classList.remove('annotating');
-      toolbar.classList.remove('active');
-      if (btn) btn.style.color = '';
-      showToast('Mode Annotation fermé');
-    }
-  };
-
-  const closeAnnotationToolbar = () => {
-    if (readerIsAnnotating) toggleAnnotationMode();
-  };
-
-  const updateBookmarkButton = () => {
-    const current = currentReadingPages[currentIndex];
-    if (!current) return;
-    const isBookmarked = bookmarks.some(b => b.signature === current.signature && Number(b.page) === currentPdfPage);
-    const btn = $('readerBookmarkBtn');
-    if (btn) {
-      btn.textContent = isBookmarked ? '◆' : '◇';
-      btn.style.color = isBookmarked ? 'var(--lime)' : '';
-    }
-  };
-
-  const toggleBookmark = () => {
-    const current = currentReadingPages[currentIndex];
-    if (!current) return;
-    const idx = bookmarks.findIndex(b => b.signature === current.signature && Number(b.page) === currentPdfPage);
-
-    if (idx >= 0) {
-      bookmarks.splice(idx, 1);
-      showToast('Repère retiré.');
-    } else {
-      bookmarks.unshift({
-        id: `bm_${Date.now()}`,
-        signature: current.signature,
-        seriesKey: current.seriesKey,
-        issueLabel: current.issueLabel,
-        page: currentPdfPage,
-        date: new Date().toLocaleDateString('fr-FR')
-      });
-      showToast(`Planche n° ${currentPdfPage} repérée !`);
-    }
-
-    localStorage.setItem('panel_bookmarks', JSON.stringify(bookmarks));
-    updateBookmarkButton();
-    renderBookmarks();
-    refreshStudyDrawerContent();
-    updateCounters();
-  };
-
-  const renderBookmarks = () => {
-    const grid = $('bookmarksGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
-    if (!bookmarks.length) {
-      grid.innerHTML = '<div class="empty-box" style="grid-column:1/-1"><h3>Aucun repère</h3><p>Dans le lecteur, appuyez sur la touche B ou sur ◇ pour mémoriser une planche.</p></div>';
-      return;
-    }
-    bookmarks.forEach(bm => {
-      const card = document.createElement('div');
-      card.className = 'comic-card';
-      card.style.padding = '12px 14px';
-      card.innerHTML = `
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <div style="display:flex;align-items:center;gap:10px">
-            <span style="color:var(--lime);font-size:16px">◆</span>
-            <div>
-              <b style="font-size:12.5px">${escapeHtml(bm.seriesKey)} · ${escapeHtml(bm.issueLabel)}</b><br>
-              <small style="color:var(--muted)">Planche n° ${bm.page} · ${bm.date || ''}</small>
-            </div>
-          </div>
-          <button class="card-action-btn danger" data-del-bm><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
-        </div>
-      `;
-      card.onclick = () => {
-        const record = allPages.find(p => p.signature === bm.signature);
-        if (record) openReader(record, bm.page);
-        else showToast('Comic introuvable');
-      };
-      card.querySelector('[data-del-bm]').onclick = e => {
-        e.stopPropagation();
-        bookmarks = bookmarks.filter(b => b !== bm);
-        localStorage.setItem('panel_bookmarks', JSON.stringify(bookmarks));
-        renderBookmarks();
-        updateBookmarkButton();
-        refreshStudyDrawerContent();
-        updateCounters();
-        showToast('Repère supprimé.');
-      };
-      grid.appendChild(card);
-    });
-  };
-
-  const stepPage = forward => {
-    const current = currentReadingPages[currentIndex];
-    if (!current) return;
-    const max = currentTotalPages || 1;
-    let step = 1;
-
-    if (readerDisplayMode === 'double') {
-      if (forward && currentPdfPage === 1) {
-        step = 1;
-      } else if (!forward && currentPdfPage <= 3) {
-        step = 1;
-      } else {
-        step = 2;
-      }
-    }
-
-    const actuallyForward = readerIsMangaMode ? !forward : forward;
-
-    if (actuallyForward) {
-      if (currentPdfPage + step <= max) {
-        currentPdfPage += step;
-        renderReaderView();
-      } else if (currentPdfPage < max) {
-        currentPdfPage = max;
-        renderReaderView();
-      } else if (currentIndex < currentReadingPages.length - 1) {
-        currentIndex++;
-        currentPdfPage = 1;
-        renderReaderView();
-        showToast(`Numéro suivant : ${currentReadingPages[currentIndex].issueLabel}`);
-      }
-    } else {
-      if (currentPdfPage - step >= 1) {
-        currentPdfPage -= step;
-        renderReaderView();
-      } else if (currentPdfPage > 1) {
-        currentPdfPage = 1;
-        renderReaderView();
-      } else if (currentIndex > 0) {
-        currentIndex--;
-        currentPdfPage = 1;
-        renderReaderView();
-        showToast(`Numéro précédent : ${currentReadingPages[currentIndex].issueLabel}`);
-      }
-    }
-  };
 
   // EXTRACTION RÉCURSIVE DE FICHIERS (SUPPORT DES DOSSIERS GLISSÉS-DÉPOSÉS)
-  const extractFilesFromDataTransfer = async dataTransfer => {
-    const files = [];
-    if (!dataTransfer) return files;
-
-    // Traverse FileSystemEntry si supporté par le navigateur (Chrome, Edge, Firefox, Safari)
-    if (dataTransfer.items && dataTransfer.items.length > 0 && typeof dataTransfer.items[0].webkitGetAsEntry === 'function') {
-      const traverseEntry = async entry => {
-        if (!entry) return;
-        if (entry.isFile) {
-          try {
-            const file = await new Promise((resolve, reject) => entry.file(resolve, reject));
-            if (file) files.push(file);
-          } catch (e) {}
-        } else if (entry.isDirectory) {
-          try {
-            const reader = entry.createReader();
-            const readEntries = async () => {
-              const batch = await new Promise((resolve, reject) => reader.readEntries(resolve, reject));
-              if (batch && batch.length > 0) {
-                for (const child of batch) {
-                  await traverseEntry(child);
-                }
-                await readEntries();
-              }
-            };
-            await readEntries();
-          } catch (e) {}
-        }
-      };
-
-      const entries = [];
-      for (let i = 0; i < dataTransfer.items.length; i++) {
-        const item = dataTransfer.items[i];
-        if (item.kind === 'file') {
-          const entry = item.webkitGetAsEntry();
-          if (entry) entries.push(entry);
-        }
-      }
-      for (const entry of entries) {
-        await traverseEntry(entry);
-      }
-      if (files.length > 0) return files;
-    }
-
-    if (dataTransfer.files && dataTransfer.files.length > 0) {
-      return Array.from(dataTransfer.files);
-    }
-    return files;
-  };
 
   // Panneau de progression (non bloquant) : l'import d'un dossier entier continue pendant la navigation
-  const importPanel = () => {
-    let p = $('digitalImportPanel');
-    if (!p) {
-      p = document.createElement('section');
-      p.id = 'digitalImportPanel';
-      p.className = 'import-panel';
-      p.setAttribute('role', 'status');
-      p.setAttribute('aria-live', 'polite');
-      document.body.appendChild(p);
-    }
-    return p;
-  };
-  const renderImportPanel = st => {
-    const p = importPanel();
-    const pct = st.total ? Math.round((st.done / st.total) * 100) : 0;
-    p.hidden = false;
-    p.innerHTML =
-      '<header><b>' + (st.finished ? 'Import terminé' : 'Import en cours') + '</b><span>' + st.done + ' / ' + st.total + '</span>' +
-      (st.finished ? '<button type="button" class="btn-icon" data-close aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>' : '') + '</header>' +
-      '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div></div>' +
-      (st.finished
-        ? '<ul>' +
-            '<li><b>' + st.added + '</b> comic(s) ajouté(s)' + (st.series.size ? ' dans <b>' + st.series.size + '</b> série(s)' : '') + '</li>' +
-            (st.grouped ? '<li><b>' + st.grouped + '</b> dossier(s) d\'images assemblé(s) en un comic chacun</li>' : '') +
-            (st.duplicates ? '<li><b>' + st.duplicates + '</b> déjà présent(s), ignoré(s)</li>' : '') +
-            (st.unsupported ? '<li><b>' + st.unsupported + '</b> fichier(s) non pris en charge (formats : PDF, CBZ, ZIP, images)</li>' : '') +
-            (st.errors.length ? '<li class="err"><b>' + st.errors.length + '</b> erreur(s) : ' + escapeHtml(st.errors.slice(0, 3).join(' · ')) + '</li>' : '') +
-          '</ul>'
-        : '<p>' + escapeHtml(st.current || '') + '</p>');
-    const c = p.querySelector('[data-close]');
-    if (c) c.onclick = () => { p.hidden = true; };
-  };
 
-  const DIGITAL_RE = /\.(pdf|cbz|cbr|zip|rar|tar|cbt|png|jpe?g|webp|avif|bmp|gif)$/i;
-  const IMAGE_RE = /\.(png|jpe?g|webp|avif|bmp|gif)$/i;
 
-  const importDigitalFiles = async files => {
-    if (!files || !files.length) return;
-    const statusEl = $('importLoadingStatus');
-    const all = [...files];
-    const list = all.filter(f => (f.type && (f.type.startsWith('image/') || f.type === 'application/pdf')) || DIGITAL_RE.test(f.name));
-    if (!list.length) { showToast('Format non supporté. Choisissez des fichiers PDF, CBZ, CBR, ZIP ou images.'); return; }
-
-    const folderId = $('importFolderSelect') ? ($('importFolderSelect').value || (activeFolder !== 'all' ? activeFolder : 'default_folder')) : 'default_folder';
-    let chosenPublisher = $('importPublisherSelect') ? $('importPublisherSelect').value : 'Tous';
-    if (!chosenPublisher || chosenPublisher === 'Tous') chosenPublisher = activePublisher;
-    if (chosenPublisher === 'Tous') chosenPublisher = 'Autre / indépendant';
-
-    // Dossiers de planches : les images d'un même dossier forment UN comic (archive CBZ assemblée, sans recompression)
-    const dirOf = f => String(f.webkitRelativePath || '').split('/').slice(0, -1).join('/');
-    const imageGroups = new Map();
-    list.forEach(f => { const d = dirOf(f); if (d && IMAGE_RE.test(f.name)) { if (!imageGroups.has(d)) imageGroups.set(d, []); imageGroups.get(d).push(f); } });
-    const units = [];
-    const groupedFiles = new Set();
-    imageGroups.forEach((imgs, d) => { if (imgs.length >= 2) { units.push({ kind: 'group', dir: d, files: imgs }); imgs.forEach(x => groupedFiles.add(x)); } });
-    list.forEach(f => { if (!groupedFiles.has(f)) units.push({ kind: 'file', file: f }); });
-    units.sort((a, b) => (a.kind === 'group' ? a.dir : (a.file.webkitRelativePath || a.file.name)).localeCompare(b.kind === 'group' ? b.dir : (b.file.webkitRelativePath || b.file.name), undefined, { numeric: true, sensitivity: 'base' }));
-
-    const known = new Set(allPages.map(p => p.signature));
-    const st = { total: units.length, done: 0, added: 0, duplicates: 0, unsupported: all.length - list.length, grouped: 0, errors: [], series: new Set(), current: '', finished: false };
-    const big = units.length > 3;
-    if (big) { $('importModal').classList.remove('open'); renderImportPanel(st); }
-    else if (statusEl) { statusEl.style.display = 'block'; statusEl.textContent = 'Traitement de ' + units.length + ' fichier(s)…'; }
-
-    const saved = [];
-    let batch = [];
-    const flush = async () => { if (!batch.length) return; const b = batch; batch = []; try { await persistPages(b); } catch (e) { console.warn('Persistance IndexedDB différée:', e); } };
-
-    for (let i = 0; i < units.length; i++) {
-      const u = units[i];
-      let file = u.file;
-      st.current = u.kind === 'group' ? u.dir.split('/').pop() + ' (' + u.files.length + ' pages)' : (file.webkitRelativePath || file.name);
-      if (big && (i % 2 === 0 || i === units.length - 1)) renderImportPanel(st);
-      try {
-        if (u.kind === 'group') {
-          if (!window.JSZip) throw new Error('JSZip indisponible');
-          const zip = new JSZip();
-          u.files.slice().sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true })).forEach((img, k) => zip.file(String(k + 1).padStart(4, '0') + '-' + img.name, img));
-          const blob = await zip.generateAsync({ type: 'blob', compression: 'STORE' });
-          const dirName = u.dir.split('/').pop();
-          file = new File([blob], dirName + '.cbz', { type: 'application/zip' });
-          try { file.panelDir = u.dir.split('/').slice(0, -1).join('/'); } catch (_) {}
-          st.grouped++;
-        }
-        const signature = folderId + '|' + (u.kind === 'group' ? 'dir:' + u.dir.toLowerCase() + '|' + u.files.length : file.name.toLowerCase() + '|' + file.size);
-        if (known.has(signature)) { st.duplicates++; continue; }
-        known.add(signature);
-        const meta = parseDigitalComic(file, chosenPublisher);
-        let url = '';
-        try { url = URL.createObjectURL(file); } catch (e) { url = ''; }
-        const record = {
-          id: 'p_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7) + '_' + i,
-          signature, name: file.name,
-          type: file.type || (/\.pdf$/i.test(file.name) ? 'application/pdf' : 'application/zip'),
-          size: file.size, blob: file, file,
-          relativePath: u.kind === 'group' ? u.dir : (file.webkitRelativePath || file.name),
-          folderId, ...meta, readStatus: 'unread', url
-        };
-        saved.push(record);
-        allPages.push(record);
-        batch.push(record);
-        st.added++;
-        st.series.add(record.seriesKey);
-        if (batch.length >= 10) await flush();
-      } catch (err) {
-        st.errors.push((u.kind === 'group' ? u.dir : file.name) + ' : ' + (err.message || err));
-      } finally {
-        st.done++;
-      }
-      if (big) await new Promise(r => setTimeout(r, 0));
-    }
-    await flush();
-
-    if (statusEl) statusEl.style.display = 'none';
-    $('importModal').classList.remove('open');
-    activeFolder = folderId;
-    activePublisher = 'Tous';
-    selectedSeriesKey = st.series.size === 1 ? [...st.series][0] : null;
-    issuePage = 0;
-    renderFolders();
-    renderPublisherStrip();
-    renderLibrary();
-    st.finished = true;
-    st.current = '';
-    if (big) renderImportPanel(st);
-    showToast(st.added
-      ? st.added + ' comic' + (st.added > 1 ? 's' : '') + ' importé' + (st.added > 1 ? 's' : '') + (st.duplicates ? ' · ' + st.duplicates + ' déjà présent(s)' : '')
-      : (st.duplicates ? 'Déjà dans la bibliothèque : rien de nouveau à importer.' : 'Aucun comic importé.'));
-    return { added: st.added, duplicates: st.duplicates, grouped: st.grouped, errors: st.errors, series: [...st.series] };
-  };
 
   // ATTACHEMENT DES ÉVÉNEMENTS
   const bindEvents = () => {
-    const switchModule = mod => {
-      activeModule = mod;
-      $('switchDigital').classList.toggle('active', mod === 'digital');
-      $('switchSingles').classList.toggle('active', mod === 'singles');
-      $('navDigitalBlock').hidden = (mod !== 'digital');
-      $('navSinglesBlock').hidden = (mod !== 'singles');
-      $('digitalViewSection').hidden = (mod !== 'digital');
-      $('singlesViewSection').hidden = (mod !== 'singles');
-
-      if (mod === 'digital') {
-        $('mainTitleHeading').textContent = 'Ma Bibliothèque Numérique';
-        $('mainTitleSub').textContent = 'Vos comics, mangas et BD au format PDF, CBZ et images';
-        $('mobAll').classList.add('active');
-        $('mobSingles').classList.remove('active');
-        renderLibrary();
-      } else {
-        $('mainTitleHeading').textContent = 'Ma Collection de Singles US';
-        $('mainTitleSub').textContent = 'Gestionnaire d’inventaire physique avec scan de codes-barres UPC';
-        $('mobAll').classList.remove('active');
-        $('mobSingles').classList.add('active');
-        showSinglesView(activeSinglesView);
-      }
+    // Module unique : la collection physique (la bibliothèque numérique a été retirée de l'interface)
+    const switchModule = () => {
+      activeModule = 'singles';
+      $('navSinglesBlock').hidden = false;
+      $('singlesViewSection').hidden = false;
+      $('mainTitleHeading').textContent = 'Ma Collection de Singles US';
+      $('mainTitleSub').textContent = 'Gestionnaire d’inventaire physique avec scan de codes-barres UPC';
+      ['mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.remove('active')); $('mobSingles').classList.add('active');
+      showSinglesView(activeSinglesView);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
-    $('switchDigital').onclick = () => switchModule('digital');
-    $('switchSingles').onclick = () => switchModule('singles');
-    $('mobAll').onclick = () => switchModule('digital');
     $('mobSingles').onclick = () => switchModule('singles');
+    const setDockActive = id => ['mobSingles', 'mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.toggle('active', b === id));
+    $('mobSeries').onclick = () => { $('navSinglesSeries').click(); setDockActive('mobSeries'); };
+    $('mobWishlist').onclick = () => { $('navSinglesWishlist').click(); setDockActive('mobWishlist'); };
+    // « Importer » : collection (CSV/Excel) ; la sauvegarde JSON reste dans Outils et Paramètres
+    $('importModalOpenBtn').onclick = openCsvImportModal;
+    document.querySelectorAll('.digital-archive-btn').forEach(b => { b.onclick = () => exportStoredDigitalArchive(); });
+    refreshDigitalArchiveButtons();
 
     // Scanner de code-barres & Reconnaissance Visuelle (Section 5 & 6)
     $('openScannerBtn').onclick = startBarcodeScanner;
@@ -10169,37 +8187,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         });
       }
 
-      // Entrée 3 : Comics numériques locaux
-      const matchDigital = allPages.filter(p => {
-        const full = (p.seriesTitle + ' ' + p.issueLabel + ' ' + (p.publisher || '')).toLowerCase();
-        return full.includes(qLower);
-      }).slice(0, 5);
-
-      if (matchDigital.length > 0) {
-        const headerD = document.createElement('div');
-        headerD.style.cssText = 'font-size: 11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:6px 8px 2px';
-        headerD.textContent = 'Bibliothèque Numérique (' + matchDigital.length + ')';
-        menu.appendChild(headerD);
-
-        matchDigital.forEach(p => {
-          const row = document.createElement('div');
-          row.className = 'search-row';
-          row.innerHTML = 
-            '<div class="search-row-icon" style="background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:14px;border-radius:3px"><svg class=ic aria-hidden=true><use href=#ic-book /></svg></div>' +
-            '<div style="flex:1;min-width:0">' +
-              '<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(p.seriesTitle) + ' ' + escapeHtml(p.issueLabel) + '</div>' +
-              '<div style="font-size: 11px;color:var(--muted)">' + escapeHtml(p.publisher || 'Numérique') + ' · ' + p.format + '</div>' +
-            '</div>';
-          row.onclick = () => {
-            menu.hidden = true;
-            switchModule('digital');
-            openReader(p.id, 1);
-          };
-          menu.appendChild(row);
-        });
-      }
-
-      if (matchSingles.length === 0 && matchDigital.length === 0) {
+      if (matchSingles.length === 0) {
         const hint = document.createElement('div');
         hint.style.cssText = 'padding:8px 10px;font-size:11px;color:var(--muted);text-align:center';
         hint.innerHTML = 'Aucun comics local trouvé.<br><span style="color:var(--lime)">Appuyez sur Entrée pour rechercher « ' + escapeHtml(q) + ' » sur Comic Vine</span>';
@@ -10266,26 +8254,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
             '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:cover;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.volume) + ' #' + escapeHtml(item.issue) + '</div>' +
-              '<div style="font-size:11px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + (item.title || 'Édition Régulière') + '</div>' +
+              '<div style="font-size:11px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +
               '<div style="font-size: 11px;color:var(--muted);margin-top:3px">' + (item.date ? item.date.slice(0, 4) : '') + ' · <strong>' + item.variantsCount + ' variante(s)</strong></div>' +
               '<div style="display:flex;gap:6px;margin-top:6px">' +
-                '<button type="button" class="btn" data-read-cv style="padding:4px 8px;font-size:11px;background:var(--lime);color:var(--ink);font-weight:700;flex:1"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lire</button>' +
-                '<button type="button" class="btn secondary" data-single-cv style="padding:4px 8px;font-size:11px;flex:1"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Single</button>' +
+                '<button type="button" class="btn secondary" data-single-cv style="padding:4px 8px;font-size:11px;flex:1"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Ajouter à la collection</button>' +
               '</div>' +
             '</div>';
-
-          card.querySelector('[data-read-cv]').onclick = async () => {
-            $('comicVineSearchModal').classList.remove('open');
-            switchModule('digital');
-            await openSingleIssueAsReaderRecord({
-              series: item.volume,
-              issue: item.issue,
-              publisher: 'Marvel',
-              coverUrl: item.cover,
-              variant: 'Cover A'
-            });
-            showToast(`« ${item.volume} #${item.issue} » ouvert pour lecture !`);
-          };
 
           card.querySelector('[data-single-cv]').onclick = () => {
             openSingleIssueFromComicVineResult(item);
@@ -10668,36 +8642,6 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       document.body.className = 'theme-' + savedTheme;
     }
 
-    // Navigation Numérique
-    const setNav = (tab, btnId) => {
-      activeTabFilter = tab;
-      selectedSeriesKey = null;
-      $$('.nav-btn').forEach(b => b.classList.remove('active'));
-      $$('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
-      if ($(btnId)) $(btnId).classList.add('active');
-      renderLibrary();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-
-    $('navAllComics').onclick = () => setNav('all', 'navAllComics');
-    $('navReadingComics').onclick = () => setNav('reading', 'navReadingComics');
-    $('navUnreadComics').onclick = () => setNav('unread', 'navUnreadComics');
-    $('navCompletedComics').onclick = () => setNav('completed', 'navCompletedComics');
-    $('navBookmarks').onclick = () => $('bookmarksSection').scrollIntoView({ behavior: 'smooth' });
-    $('mobBookmarks').onclick = $('navBookmarks').onclick;
-    $('navFolders').onclick = () => $('foldersSection').scrollIntoView({ behavior: 'smooth' });
-
-    $('statusTabsBar').onclick = e => {
-      const btn = e.target.closest('button[data-tab]');
-      if (!btn) return;
-      setNav(btn.dataset.tab, null);
-    };
-
-    $('importModalOpenBtn').onclick = () => $('importModal').classList.add('open');
-    $('heroSecondaryBtn').onclick = () => $('importModal').classList.add('open');
-    $('detailAddIssuesBtn').onclick = () => $('importModal').classList.add('open');
-
-    // Nettoyage complet
     // Vérification d'intégrité : lecture seule. Ne supprime ni la collection ni les données numériques conservées.
     $('cleanDbBtn').onclick = () => {
       const r = checkDataIntegrity();
@@ -10710,150 +8654,24 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         (r.duplicateIds || r.noSeries ? 'Corrigez ces fiches à la main depuis la collection.' : 'Tout est cohérent.'));
     };
 
-    $('backToSeriesBtn').onclick = () => {
-      selectedSeriesKey = null;
-      renderLibrary();
-    };
 
-    $('prevIssuesPageBtn').onclick = () => { if (issuePage > 0) { issuePage--; renderSeriesDetail(); } };
-    $('nextIssuesPageBtn').onclick = () => { issuePage++; renderSeriesDetail(); };
 
     // Onglets de la modale d'importation
-    if ($('importTabFilesBtn')) {
-      $('importTabFilesBtn').onclick = () => {
-        $('importTabFilesBtn').classList.add('active');
-        $('importTabCatalogBtn').classList.remove('active');
-        $('importViewFiles').style.display = 'block';
-        $('importViewCatalog').style.display = 'none';
-      };
-    }
-    if ($('importTabCatalogBtn')) {
-      $('importTabCatalogBtn').onclick = () => {
-        $('importTabCatalogBtn').classList.add('active');
-        $('importTabFilesBtn').classList.remove('active');
-        $('importViewFiles').style.display = 'none';
-        $('importViewCatalog').style.display = 'block';
-        setTimeout(() => $('importCatalogSearchInput').focus(), 120);
-      };
-    }
 
     // Recherche de numéros dans le catalogue mondial depuis la modale d'import
-    const runImportCatalogSearch = async () => {
-      const q = $('importCatalogSearchInput').value.trim();
-      if (!q) { showToast('Veuillez saisir un titre ou un numéro de comic.'); return; }
-      const statusEl = $('importCatalogStatus');
-      const listEl = $('importCatalogResultsList');
-      statusEl.textContent = 'Recherche en cours sur Comic Vine...';
-      listEl.innerHTML = '<div style="text-align:center;padding:15px;color:var(--muted)">Interrogation du catalogue mondial...</div>';
 
-      try {
-        const hits = await searchComicVineIssuesList(q);
-        if (!hits || !hits.length) {
-          statusEl.textContent = `Aucun comic trouvé pour « ${q} ».`;
-          listEl.innerHTML = '<div style="text-align:center;padding:15px;color:var(--muted)">Aucun résultat. Essayez par exemple : Amazing Spider-Man 300, Batman 1, Spawn 1...</div>';
-          return;
-        }
-
-        statusEl.textContent = `${hits.length} numéro(s) trouvé(s) ! Cliquez sur « Importer pour lire » :`;
-        listEl.innerHTML = '';
-
-        hits.forEach(item => {
-          const card = document.createElement('div');
-          card.style.cssText = 'display:flex;gap:10px;background:#131a11;border:1px solid #232d1e;border-radius:8px;padding:8px;align-items:center';
-          card.innerHTML = `
-            <img src="${safeImgSrc(item.cover)}" style="width:48px;height:72px;object-fit:cover;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility='hidden'">
-            <div style="flex:1;min-width:0">
-              <div style="font-weight:700;font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(item.volume)} #${escapeHtml(item.issue)}</div>
-              <div style="font-size:11px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(item.title || 'Édition standard')}</div>
-              <div style="font-size: 11px;color:var(--muted);margin-top:2px">${item.date ? item.date.slice(0, 4) : ''} · ${item.variantsCount} variante(s)</div>
-              <div style="display:flex;gap:6px;margin-top:6px">
-                <button type="button" class="btn" data-import-read style="padding:4px 8px;font-size:11px;background:var(--lime);color:var(--ink);font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Importer pour lire</button>
-                <button type="button" class="btn secondary" data-import-single style="padding:4px 8px;font-size:11px"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Single</button>
-              </div>
-            </div>
-          `;
-
-          card.querySelector('[data-import-read]').onclick = async () => {
-            $('importModal').classList.remove('open');
-            switchModule('digital');
-            await openSingleIssueAsReaderRecord({
-              series: item.volume,
-              issue: item.issue,
-              publisher: item.publisher || 'Marvel',
-              coverUrl: item.cover,
-              variant: 'Cover A'
-            });
-            showToast(`« ${item.volume} #${item.issue} » importé dans votre bibliothèque !`);
-          };
-
-          card.querySelector('[data-import-single]').onclick = () => {
-            $('importModal').classList.remove('open');
-            openSingleIssueFromComicVineResult(item);
-          };
-
-          listEl.appendChild(card);
-        });
-      } catch (err) {
-        statusEl.textContent = 'Erreur lors de la recherche : ' + err.message;
-        listEl.innerHTML = '';
-      }
-    };
-
-    if ($('importCatalogSearchBtn')) $('importCatalogSearchBtn').onclick = runImportCatalogSearch;
-    if ($('importCatalogSearchInput')) {
-      $('importCatalogSearchInput').onkeydown = e => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-          runImportCatalogSearch();
-        }
-      };
-    }
 
     // Glisser-déposer sur la zone d'import
-    const dz = $('fileDropzone');
-    if (dz) {
-      dz.ondragover = e => { e.preventDefault(); };
-      dz.ondrop = async e => {
-        e.preventDefault();
-        const files = await extractFilesFromDataTransfer(e.dataTransfer);
-        if (files && files.length) await importDigitalFiles(files);
-      };
-      // Permettre de cliquer n'importe où dans la boîte dropzone
-      dz.onclick = e => {
-        if (e.target.id === 'selectFolderBtn') return;
-        $('fileInput').click();
-      };
-    }
-    $('selectFilesBtn').onclick = e => { e.stopPropagation(); $('fileInput').click(); };
-    $('selectFolderBtn').onclick = e => { e.stopPropagation(); $('folderInput').click(); };
-    $('fileInput').onchange = async e => {
-      if (e.target.files && e.target.files.length) {
-        const files = Array.from(e.target.files);
-        e.target.value = '';
-        await importDigitalFiles(files);
-      }
-    };
-    $('folderInput').onchange = async e => {
-      if (e.target.files && e.target.files.length) {
-        const files = Array.from(e.target.files);
-        e.target.value = '';
-        await importDigitalFiles(files);
-      }
-    };
-    $('closeImportModalBtn').onclick = () => $('importModal').classList.remove('open');
 
     // Glisser-déposer global sur toute la fenêtre du navigateur (avec récursion dans les dossiers)
     window.addEventListener('dragover', e => { e.preventDefault(); });
-    window.addEventListener('drop', async e => {
+    window.addEventListener('drop', e => {
       e.preventDefault();
-      const files = await extractFilesFromDataTransfer(e.dataTransfer);
-      if (files && files.length > 0) {
-        const hasComics = files.some(f => /\.(pdf|cbz|cbr|zip|rar|tar|cbt|png|jpe?g|webp|avif|bmp)$/i.test(f.name) || (f.type && (f.type.startsWith('image/') || f.type === 'application/pdf')));
-        if (hasComics) {
-          switchModule('digital');
-          await importDigitalFiles(files);
-        }
-      }
+      const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+      if (!file) return;
+      if (/.(csv|tsv|txt|xlsx|xls)$/i.test(file.name)) { openCsvImportModal(); readCsvFile(file); return; }
+      if (/.json$/i.test(file.name)) { readBackupFile(file); return; }
+      showToast('Déposez un fichier de collection (.csv, .xlsx) ou une sauvegarde Panel (.json).');
     });
 
     // Sauvegarde & Export JSON
@@ -10861,10 +8679,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const data = {
         format: 'panel-backup',
         version: 3,
-        folders,
-        bookmarks,
-        theories,
-        readingPositions,
+        ...readStoredDigitalData(),
         physicalSingles,
         seriesMeta,
         exportedAt: new Date().toISOString()
@@ -10887,296 +8702,37 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     // ==========================================
     // CONTRÔLES DU LECTEUR & MODULE D'ÉTUDE
     // ==========================================
-    $('closeReaderBtn').onclick = closeReader;
-    $('readerJumpSelect').onchange = e => {
-      currentIndex = Number(e.target.value) || 0;
-      currentPdfPage = 1;
-      renderReaderView();
-    };
 
-    $('readerNextBtn').onclick = () => { if (readerIsGuidedMode) nextGuidedStep(); else stepPage(true); };
-    $('scrubNextBtn').onclick = () => { if (readerIsGuidedMode) nextGuidedStep(); else stepPage(true); };
-    $('readerPrevBtn').onclick = () => { if (readerIsGuidedMode) prevGuidedStep(); else stepPage(false); };
-    $('scrubPrevBtn').onclick = () => { if (readerIsGuidedMode) prevGuidedStep(); else stepPage(false); };
 
-    $('readerPageSlider').oninput = e => {
-      currentPdfPage = Number(e.target.value);
-      renderReaderView();
-    };
 
-    if ($('readerDisplayModeSelect')) {
-      $('readerDisplayModeSelect').onchange = e => {
-        readerDisplayMode = e.target.value;
-        readerIsDoublePage = (readerDisplayMode === 'double');
-        localStorage.setItem('panel_reader_display_mode', readerDisplayMode);
-        renderReaderView();
-        showToast(readerDisplayMode === 'double' ? 'Mode Double Planche' : (readerDisplayMode === 'scroll' ? 'Défilement Continu' : 'Page Unique'));
-      };
-    }
 
-    if ($('readerFitSelect')) {
-      $('readerFitSelect').onchange = e => {
-        readerFitMode = e.target.value;
-        localStorage.setItem('panel_reader_fit_mode', readerFitMode);
-        renderReaderView();
-        showToast(readerFitMode === 'width' ? 'Ajusté en Largeur' : (readerFitMode === 'height' ? 'Ajusté en Hauteur' : 'Page Entière'));
-      };
-    }
 
-    $('readerMangaBtn').onclick = () => {
-      readerIsMangaMode = !readerIsMangaMode;
-      localStorage.setItem('panel_reader_manga_mode', String(readerIsMangaMode));
-      $('readerMangaBtn').style.color = readerIsMangaMode ? 'var(--lime)' : '';
-      showToast(readerIsMangaMode ? 'Sens Manga : Droite à Gauche ⇄' : 'Sens Standard : Gauche à Droite ⇄');
-      renderReaderView();
-    };
 
-    if ($('readerGuidedBtn')) {
-      $('readerGuidedBtn').onclick = () => {
-        readerIsGuidedMode = !readerIsGuidedMode;
-        readerGuidedQuadrant = 0;
-        $('readerGuidedBtn').style.color = readerIsGuidedMode ? 'var(--lime)' : '';
-        showToast(readerIsGuidedMode ? 'Lecture guidée active (Case par case)' : 'Lecture standard');
-        applyGuidedTransform();
-      };
-    }
 
-    if ($('readerAnnotateBtn')) $('readerAnnotateBtn').onclick = toggleAnnotationMode;
 
     // Palette d'outils d'annotation
-    const updateAnnotToolbar = () => {
-      if ($('annotToolHighlighter')) $('annotToolHighlighter').classList.toggle('active', readerAnnotTool === 'highlighter');
-      if ($('annotToolPen')) $('annotToolPen').classList.toggle('active', readerAnnotTool === 'pen');
-      if ($('annotToolEraser')) $('annotToolEraser').classList.toggle('active', readerAnnotTool === 'eraser');
-    };
-    if ($('annotToolHighlighter')) $('annotToolHighlighter').onclick = () => { readerAnnotTool = 'highlighter'; updateAnnotToolbar(); };
-    if ($('annotToolPen')) $('annotToolPen').onclick = () => { readerAnnotTool = 'pen'; updateAnnotToolbar(); };
-    if ($('annotToolEraser')) $('annotToolEraser').onclick = () => { readerAnnotTool = 'eraser'; updateAnnotToolbar(); };
-    if ($('annotToolClear')) {
-      $('annotToolClear').onclick = () => {
-        const cur = currentReadingPages[currentIndex];
-        if (!cur) return;
-        delete comicAnnotations[`${cur.signature}_${currentPdfPage}`];
-        localStorage.setItem('panel_comic_annotations', JSON.stringify(comicAnnotations));
-        renderReaderView();
-        showToast('Annotations de cette planche effacées.');
-      };
-    }
-    if ($('annotCloseToolbarBtn')) $('annotCloseToolbarBtn').onclick = closeAnnotationToolbar;
 
     // Zoom manuel
-    if ($('readerZoomInBtn')) {
-      $('readerZoomInBtn').onclick = () => {
-        readerZoom = Math.min(3.0, +(readerZoom + 0.25).toFixed(2));
-        updateReaderZoom();
-      };
-    }
-    if ($('readerZoomOutBtn')) {
-      $('readerZoomOutBtn').onclick = () => {
-        readerZoom = Math.max(0.5, +(readerZoom - 0.25).toFixed(2));
-        updateReaderZoom();
-      };
-    }
-    if ($('readerZoomResetBtn')) {
-      $('readerZoomResetBtn').onclick = () => {
-        readerZoom = 1.0;
-        readerPanX = 0;
-        readerPanY = 0;
-        updateReaderZoom();
-      };
-    }
 
-    $('readerRotateBtn').onclick = () => {
-      readerRotation = (readerRotation + 90) % 360;
-      renderReaderView();
-    };
 
-    $('readerContrastBtn').onclick = () => {
-      readerContrast = (readerContrast + 1) % 3;
-      const st = $('readerStage');
-      st.classList.remove('contrast-sepia', 'contrast-night');
-      if (readerContrast === 1) st.classList.add('contrast-sepia');
-      if (readerContrast === 2) st.classList.add('contrast-night');
-      showToast(readerContrast === 1 ? 'Contraste Sépia' : readerContrast === 2 ? 'Contraste Nuit' : 'Contraste Normal');
-    };
 
-    $('readerBookmarkBtn').onclick = toggleBookmark;
 
     // Volet d'étude
-    if ($('readerStudyDrawerBtn')) $('readerStudyDrawerBtn').onclick = () => openStudyDrawer('pages');
-    if ($('readerStudyDrawerBottomBtn')) $('readerStudyDrawerBottomBtn').onclick = () => openStudyDrawer('notes');
-    if ($('closeStudyDrawerBtn')) $('closeStudyDrawerBtn').onclick = closeStudyDrawer;
 
-    $$('.study-tab-btn').forEach(btn => {
-      btn.onclick = () => switchStudyDrawerTab(btn.dataset.studyTab);
-    });
 
-    if ($('saveStudyNoteBtn')) {
-      $('saveStudyNoteBtn').onclick = () => {
-        const cur = currentReadingPages[currentIndex];
-        if (!cur) return;
-        const title = $('studyNoteTitleInput').value.trim();
-        const body = $('studyNoteBodyInput').value.trim();
-        const page = Number($('studyNotePageInput').value) || currentPdfPage;
-        const tag = $('studyNoteTagSelect').value;
-        if (!title && !body) { showToast('Veuillez renseigner un titre ou une observation.'); return; }
-
-        comicNotes.unshift({
-          id: `note_${Date.now()}`,
-          signature: cur.signature,
-          seriesKey: cur.seriesKey,
-          issueLabel: cur.issueLabel,
-          page,
-          title: title || `Note planche ${page}`,
-          tag,
-          body,
-          createdAt: new Date().toISOString()
-        });
-        localStorage.setItem('panel_comic_notes', JSON.stringify(comicNotes));
-        $('studyNoteTitleInput').value = '';
-        $('studyNoteBodyInput').value = '';
-        refreshStudyDrawerContent();
-        showToast('Note d\'étude enregistrée !');
-      };
-    }
 
     // Déplacement interactif dans l'image (Pan / Drag)
-    const stage = $('readerStage');
-    stage.addEventListener('mousedown', e => {
-      if (readerZoom <= 1.05 || readerIsAnnotating || e.target.closest('button, select, input, .reader-study-drawer, .reader-annotation-toolbar')) return;
-      isDraggingPage = true;
-      dragStartX = e.clientX - readerPanX;
-      dragStartY = e.clientY - readerPanY;
-      stage.classList.add('panning');
-    });
-    window.addEventListener('mousemove', e => {
-      if (!isDraggingPage) return;
-      readerPanX = e.clientX - dragStartX;
-      readerPanY = e.clientY - dragStartY;
-      updateReaderZoom();
-    });
-    window.addEventListener('mouseup', () => {
-      if (isDraggingPage) {
-        isDraggingPage = false;
-        stage.classList.remove('panning');
-      }
-    });
 
     // Auto-masquage HUD
-    const resetHudTimer = () => {
-      const modal = $('readerModal');
-      if (!modal || !modal.classList.contains('open')) return;
-      modal.classList.remove('hud-hidden');
-      clearTimeout(hudHideTimeout);
-      if (!readerIsAnnotating && !$('readerStudyDrawer').classList.contains('open')) {
-        hudHideTimeout = setTimeout(() => {
-          modal.classList.add('hud-hidden');
-        }, 3500);
-      }
-    };
-    $('readerModal').addEventListener('mousemove', resetHudTimer);
 
-    $('readerStage').addEventListener('click', e => {
-      if (e.target.closest('.reader-side-arrow') || e.target.closest('button, select, input, .reader-study-drawer, .reader-annotation-toolbar')) return;
-      $('readerModal').classList.toggle('hud-hidden');
-    });
 
-    $('readerFullscreenBtn').onclick = () => {
-      if (!document.fullscreenElement) $('readerModal').requestFullscreen().catch(() => {});
-      else document.exitFullscreen().catch(() => {});
-    };
 
-    $('markFinishedBtn').onclick = async () => {
-      const cur = currentReadingPages[currentIndex];
-      if (!cur) return;
-      cur.readStatus = 'completed';
-      await persistPages([cur]);
-      showToast(`${cur.issueLabel} marqué comme Lu `);
-      closeReader();
-    };
 
-    $('readerDownloadBtn').onclick = () => {
-      const cur = currentReadingPages[currentIndex];
-      if (!cur) return;
-      const a = document.createElement('a');
-      a.href = cur.url;
-      a.download = cur.file.name;
-      a.click();
-    };
 
     let touchX = 0, touchY = 0;
-    $('readerStage').addEventListener('touchstart', e => {
-      touchX = e.changedTouches[0].clientX;
-      touchY = e.changedTouches[0].clientY;
-    }, { passive: true });
 
-    $('readerStage').addEventListener('touchend', e => {
-      if (readerZoom > 1.05 || readerIsAnnotating) return;
-      const dx = e.changedTouches[0].clientX - touchX;
-      const dy = e.changedTouches[0].clientY - touchY;
-      // Tap (sans glisser) : bord gauche = page précédente, bord droit = suivante, centre = afficher/masquer les barres
-      if (Math.abs(dx) < 10 && Math.abs(dy) < 10 && !e.target.closest('button, a, input, select, .reader-annotation-toolbar, .reader-study-drawer')) {
-        const w = window.innerWidth;
-        const x = e.changedTouches[0].clientX;
-        if (x < w * 0.28) { if (readerIsGuidedMode) prevGuidedStep(); else stepPage(false); }
-        else if (x > w * 0.72) { if (readerIsGuidedMode) nextGuidedStep(); else stepPage(true); }
-        else $('readerModal').classList.toggle('reader-immersive');
-        return;
-      }
-      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 38) {
-        if (dx < 0) { if (readerIsGuidedMode) nextGuidedStep(); else stepPage(true); }
-        else { if (readerIsGuidedMode) prevGuidedStep(); else stepPage(false); }
-      }
-    }, { passive: true });
 
     // Raccourcis clavier complets
-    document.addEventListener('keydown', e => {
-      const isReaderOpen = $('readerModal').classList.contains('open');
-
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        $('globalSearch').focus();
-        return;
-      }
-
-      if (e.key === 'Escape') {
-        if (readerIsAnnotating) { closeAnnotationToolbar(); return; }
-        if ($('readerStudyDrawer').classList.contains('open')) { closeStudyDrawer(); return; }
-        if (document.fullscreenElement) { document.exitFullscreen().catch(() => {}); return; }
-        if (isReaderOpen) { closeReader(); return; }
-        if ($('barcodeScannerModal').classList.contains('open')) stopBarcodeScanner();
-        $$('.modal-backdrop').forEach(m => m.classList.remove('open'));
-        return;
-      }
-
-      if (isReaderOpen) {
-        // Ignorer les raccourcis de lecture si l'utilisateur est dans un champ de texte
-        if (e.target.matches('input, textarea, select')) return;
-
-        if (e.key === 'ArrowRight' || e.key === ' ') {
-          e.preventDefault();
-          if (readerIsGuidedMode) nextGuidedStep(); else stepPage(true);
-        }
-        if (e.key === 'ArrowLeft') {
-          e.preventDefault();
-          if (readerIsGuidedMode) prevGuidedStep(); else stepPage(false);
-        }
-        if (e.key.toLowerCase() === 'b') { toggleBookmark(); }
-        if (e.key.toLowerCase() === 'f') { $('readerFullscreenBtn').click(); }
-        if (e.key.toLowerCase() === 's') {
-          if ($('readerStudyDrawer').classList.contains('open')) closeStudyDrawer();
-          else openStudyDrawer('pages');
-        }
-        if (e.key.toLowerCase() === 'm') { $('readerMangaBtn').click(); }
-        if (e.key.toLowerCase() === 'g') { if ($('readerGuidedBtn')) $('readerGuidedBtn').click(); }
-        if (e.key.toLowerCase() === 'a') { toggleAnnotationMode(); }
-        if (e.key === '+' || e.key === '=') { if ($('readerZoomInBtn')) $('readerZoomInBtn').click(); }
-        if (e.key === '-' || e.key === '_') { if ($('readerZoomOutBtn')) $('readerZoomOutBtn').click(); }
-        if (e.key === '0') { if ($('readerZoomResetBtn')) $('readerZoomResetBtn').click(); }
-        if (e.key.toLowerCase() === 'r') { $('readerRotateBtn').click(); }
-        if (e.key.toLowerCase() === 'c') { $('readerContrastBtn').click(); }
-      }
-    });
   };
 
   // ==========================================================================
@@ -11294,12 +8850,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const params = new URLSearchParams(location.search);
     const view = params.get('view');
     const action = params.get('action');
-    // Accueil : la collection physique (sauf préférence « numérique » enregistrée)
-    if (!view && !action) {
-      if ($('switchSingles') && activeModule !== 'singles' && localStorage.getItem('panel_home') !== 'digital') $('switchSingles').click();
-      return;
-    }
-    if ($('switchSingles') && activeModule !== 'singles') $('switchSingles').click();
+    // Accueil : la collection physique
+    if ($('mobSingles')) $('mobSingles').click();
+    if (!view && !action) return;
     if (view === 'wishlist') { if ($('navSinglesWishlist')) $('navSinglesWishlist').click(); }
     else if (['collection', 'series', 'releases', 'stats'].includes(view)) showSinglesView(view);
     if (action === 'scan') setTimeout(() => startBarcodeScanner(), 400);
@@ -11309,7 +8862,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
 
   // Démarrage
   bindEvents();
-  restoreAll();
+  renderSinglesCollection();
   recoverSinglesFromIdb();
   initPwa();
   handleLaunchParams();
@@ -11337,11 +8890,6 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     searchComicVineApi,
     saveSingleIssue,
     renderSinglesCollection,
-    openReader,
-    importDigitalFiles,
-    openSingleIssueAsReaderRecord,
-    extractFilesFromDataTransfer,
-    getAllPages: () => allPages,
     getPhysicalSingles: () => physicalSingles,
     showSinglesView,
     buildSeriesIndex,
@@ -11422,8 +8970,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     validateBackupPayload,
     applyBackupRestore,
     checkDataIntegrity,
-    parseComicFileName,
-    ensureThumb,
+    countStoredDigitalFiles,
+    exportStoredDigitalArchive,
+    readStoredDigitalData,
     applyAutoValuation,
     recordMarketValue,
     revalueCollection,
