@@ -37,6 +37,8 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | 07/11/2026 | D-13 (B1) | Sauvegardes indépendantes par domaine (Collection, Lecture, Explorer, puis Community) ; anciennes sauvegardes toujours lisibles | Utilisateur (principe) | Principe en vigueur ; format non implémenté |
 | 07/11/2026 | D-14 (S1) | Personnalisation facultative : activée par défaut pour les connectés, indisponible pour les visiteurs, désactivable, sans accès direct ni accès administrateur | Utilisateur | En vigueur ; cas des utilisateurs locaux (P1) à valider |
 | 07/11/2026 | D-15 | Community = domaine indépendant futur | Utilisateur | En vigueur |
+| 07/11/2026 | D-17 (G-F) | Lots F0, F1 et L1 intégrés à la feuille de route ([`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 2) ; **F0 autorisé** ; F1 et L1 intégrés mais **non autorisés à démarrer** ; 3.1b suspendu jusqu'à approbation explicite | Utilisateur | En vigueur |
+| 07/11/2026 | D-18 | **Prix de couverture et prix d'achat restent deux informations distinctes.** À l'ajout d'un comic, le prix de couverture **préremplit** le champ prix d'achat (modifiable) ; le prix d'achat enregistré est le montant réellement payé et seul lui sert à l'investissement ; jamais de conversion automatique en arrière-plan ni de confusion dans les calculs ; une donnée financière inconnue reste inconnue (ni couverture, ni zéro) | Utilisateur | En vigueur |
 | 07/11/2026 | D-16 | Seuil k ≥ 10 pour S3 : **proposition**, pas une garantie d'anonymat | Utilisateur | À valider juridiquement et techniquement |
 
 ## Décisions en attente
@@ -49,7 +51,6 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |
 | R2 | Compte, domaine, workers, Cloudflare Images, plafond | [`07`](phase4/07-architecture-images-r2.md) § 11 |
 | Phase 3 | Région, formule, SMTP, hébergement, stockage sécurisé Android, `allowBackup`, CAPTCHA | [`phase3/02-architecture-cible.md`](phase3/02-architecture-cible.md) |
-| G-F | Insertion des lots F0, F1 et L1 dans le plan | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 2 et 4 |
-| F-D1 à F-D6 | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
+| F-D1, F-D2, F-D3, F-D4, F-D5, F-D6 (F-D2 et F-D4 explicitement ouvertes) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | U-D1 à U-D3 | Place de la Lecture et des Finances dans la navigation, identité d'œuvre | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | Juridique | Liste de [`phase3/05`](phase3/05-sauvegardes-confidentialite.md) § 4.4, droits des sources, consentement S3 | — |

@@ -45,7 +45,7 @@ Les numéros de ligne renvoient à `index.html`.
 | B-22 | Estimations anciennes | Signal à 180 jours (F-D3) | Collection | F0 | Signal visible |
 | B-23 | Navigation (A6) | Selon N1 à N5, M-A à M-E, U-D1 | Tous | Décisions | Explorer présent dans le dock mobile |
 | B-24 | Wishlist « $0 estimés » (F-12) | Même logique que B-02 | Collection | F0 | « — » si aucune valeur |
-| B-25 | Revue UX au navigateur (bureau 1280 px, mobile 375 px) | Liste des écarts réels | Tous | — | Rapport avec captures |
+| B-25 | Revue UX au navigateur (bureau, mobile 375 px) | Faite au lot F0. Écart constaté, **antérieur à F0** : sur mobile, le formulaire d'ajout déborde horizontalement (497 px pour 340 px visibles : sélecteur d'état, bouton Photo) ; sur mobile, les sous-lignes des statistiques (couverture) sont masquées | Tous | — | Correctif à planifier (P2) |
 
 ### P3
 | # | Sujet | Dépendances |
@@ -58,7 +58,7 @@ Les numéros de ligne renvoient à `index.html`.
 ## 2. Feuille de route
 | Étape | Lots | Statut |
 |---|---|---|
-| 1. Corrections avant de continuer | **F0** (B-01 à B-06, B-24, B-25) | Proposé ; **à placer avant le lot 3.1** : sans migration ni changement de format, il ne gêne pas 3.1 |
+| 1. Corrections avant de continuer | **F0** (B-01 à B-06, B-24, B-25) | **Approuvé (D-17), livré le 8 novembre 2026, en attente de validation** ; ajout de D-18 (préremplissage du prix d'achat) |
 | 2. Conception et finition | Décisions F-D1 à F-D6, U-D1 à U-D3 ; N et M ; B-20 à B-22 | En attente |
 | 3. Architecture | **3.1** → **3.1b** (B-07, B-15, B-17 si M1 à M4 tranchées), dans l'ordre de [`phase4/08`](../phase4/08-plan-execution.md) | Lot 3.1 suspendu ; reprise seulement sur votre instruction |
 | 4. Développement fonctionnel | **F1** (B-10 à B-14) après 3.1b, pour que le fournisseur Collection de B1 sauvegarde d'emblée les nouveaux champs ; **L1** (B-16) après 3.1b ; puis 3.2 à 3.7, puis 4.1 à 4.11 | Proposé |

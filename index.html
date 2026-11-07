@@ -1898,8 +1898,8 @@
         </div>
         <div class="single-stat-pill">
           <span>Investi</span>
-          <strong id="statSinglesInvested">$0.00</strong>
-          <small class="stat-sub">prix payés</small>
+          <strong id="statSinglesInvested">—</strong>
+          <small class="stat-sub" id="statSinglesInvestedSub">prix payés</small>
         </div>
         <div class="single-stat-pill">
           <span>Plus-value</span>
@@ -2376,6 +2376,7 @@
       <div class="form-row">
         <label for="singleConditionSelect">Condition / Grading</label>
         <select id="singleConditionSelect">
+          <option value="">État non renseigné</option>
           <optgroup label="Non gradé (estimation)">
             <option value="NM/M 9.8">NM/M 9.8 (Quasi parfait)</option>
             <option value="NM+ 9.6">NM+ 9.6</option>
@@ -2443,13 +2444,14 @@
       </div>
       <div class="form-row">
         <label for="singleEstValueInput">Valeur estimée actuelle ($)</label>
-        <input id="singleEstValueInput" type="number" step="0.01" min="0" placeholder="Vide = prix de couverture">
+        <input id="singleEstValueInput" type="number" step="0.01" min="0" placeholder="Vide = cote automatique">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-row">
         <label for="singlePurchasePriceInput">Prix payé ($)</label>
-        <input id="singlePurchasePriceInput" type="number" step="0.01" min="0" placeholder="Vide = prix de couverture">
+        <input id="singlePurchasePriceInput" type="number" step="0.01" min="0" placeholder="Montant réellement payé">
+        <small id="purchasePrefillHint" class="stat-sub" hidden>Prérempli avec le prix de couverture : remplacez-le par le montant réellement payé.</small>
       </div>
       <div class="form-row">
         <label for="singlePurchaseDateInput">Date d'achat</label>
@@ -3698,7 +3700,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const item = {
         id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
         series: e.series, issue: e.issue || (parsed.issueNum ? '#' + parsed.issueNum : ''), publisher: e.publisher || parsed.publisher, variant: e.variant || 'Cover A',
-        keyType: (checkKeyIssueInfo(e.series, e.issue, e.coverYear) || {}).tier || 'none', condition: 'NM 9.4 (Near Mint)',
+        keyType: (checkKeyIssueInfo(e.series, e.issue, e.coverYear) || {}).tier || 'none', condition: '',
         coverPrice: numOrNull(e.coverPrice), estValue: null, purchaseDate: new Date().toISOString().slice(0, 10), isRead: false, rating: 0,
         box: 'Boîte Scan Rapide', divider: '', location: 'Boîte Scan Rapide', isProtected: true, isWishlist: false, notes: '',
         coverUrl: e.coverUrl || '', coverYear: e.coverYear || null, barcode: parsed.raw, addedAt: new Date().toISOString()
@@ -4685,7 +4687,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     $('singleSeriesInput').value = series || '';
     $('quickCoverSearchInput').value = series || '';
     if ($('singleYearInput')) $('singleYearInput').value = year || '';
-    if (parsed && parsed.exact && numOrNull(parsed.exact.coverPrice) !== null) $('singleCoverPriceInput').value = parsed.exact.coverPrice;
+    if (parsed && parsed.exact && numOrNull(parsed.exact.coverPrice) !== null) { $('singleCoverPriceInput').value = parsed.exact.coverPrice; syncPurchasePrefill(); }
 
     if (series) {
       const keyHit = checkKeyIssueInfo(series, issue, year);
@@ -4724,7 +4726,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     })) : [];
     if (metron && metron.found === 'exact') {
       const price = parseFloat(metron.edition.price || metron.issue.editions[0].price);
-      if (Number.isFinite(price)) $('singleCoverPriceInput').value = price;
+      if (Number.isFinite(price)) { $('singleCoverPriceInput').value = price; syncPurchasePrefill(); }
       renderCoverVariantsSelector(metronCards);
       if (statusEl) statusEl.textContent = 'Édition identifiée par Metron (code complet) : « ' + metron.edition.name + ' »' + (metronCards.length > 1 ? ' · ' + metronCards.length + ' couvertures de ce numéro' : '');
       return;
@@ -4737,7 +4739,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ambiguous = false;
       variant = ed.variant;
       $('singleVariantNameInput').value = variant;
-      if (ed.price !== null) $('singleCoverPriceInput').value = ed.price;
+      if (ed.price !== null) { $('singleCoverPriceInput').value = ed.price; syncPurchasePrefill(); }
       if (sourceTag) sourceTag.textContent = 'Édition identifiée (GCD)';
     }
     let vars = await fetchComicCoversAndDetails(series, issue, publisher, { variant: ambiguous ? '' : (variant || 'Cover A'), year });
@@ -4802,7 +4804,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const n = parseFloat(v);
     return Number.isFinite(n) ? n : null;
   };
-  const money = n => '$' + (Number(n) || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  // Lot F0 : une valeur inconnue s'affiche « — », jamais « 0.00 ». Devise inchangée tant que F-D2 est ouverte.
+  const money = n => { const v = numOrNull(n); return v === null ? '—' : '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
+  const pctText = p => p === null || p === undefined || !Number.isFinite(p) ? '—' : (p >= 0 ? '+' : '') + p.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + ' %';
   const issueNumber = s => {
     const raw = typeof s === 'object' && s !== null ? s.issue : s;
     const m = String(raw == null ? '' : raw).replace(',', '.').match(/-?\d+(\.\d+)?/);
@@ -4814,8 +4818,52 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const isGradedCondition = c => /\b(cgc|cbcs|pgx)\b/i.test(c || '');
   const isOwned = s => !s.isWishlist;
-  const paidOf = s => numOrNull(s.purchasePrice) ?? numOrNull(s.coverPrice) ?? 0;
-  const valueOf = s => numOrNull(s.estValue) ?? numOrNull(s.coverPrice) ?? 0;
+  const descNullLast = (x, y) => x === null && y === null ? 0 : x === null ? 1 : y === null ? -1 : y - x;
+  // FINANCES (lot F0) — une donnée inconnue reste inconnue : jamais remplacée par le prix de couverture ni par zéro.
+  // Prix de couverture et prix d'achat sont deux informations distinctes (décision D-18) : seul le prix payé compte dans l'investissement.
+  const paidOf = s => numOrNull(s && s.purchasePrice);   // montant réellement payé ; null = inconnu ; 0 = gratuit
+  const valueOf = s => numOrNull(s && s.estValue);       // valeur estimée retenue ; null = inconnue
+  const toCents = n => Math.round(n * 100);
+  const sumKnown = (list, fn) => {
+    let cents = 0, n = 0;
+    list.forEach(s => { const v = fn(s); if (v !== null && v !== undefined && Number.isFinite(v)) { cents += toCents(v); n++; } });
+    return { total: cents / 100, n, unknown: list.length - n };
+  };
+  const gainOf = s => { const p = paidOf(s), v = valueOf(s); return p === null || v === null ? null : (toCents(v) - toCents(p)) / 100; };
+  const gainPct = (gain, cost) => gain === null || cost === null || !(cost > 0) ? null : Math.round((gain / cost) * 10000) / 100;
+  const valueSourceOf = s => ['auto', 'market', 'manual'].includes(s && s.valueSource) ? s.valueSource : 'manual';
+  const conditionKnown = s => !!String((s && s.condition) || '').trim();
+  const financeSummary = list => {
+    const owned = (list || []).filter(s => s && isOwned(s));
+    const value = sumKnown(owned, valueOf);
+    const cost = sumKnown(owned, paidOf);
+    const both = owned.filter(s => paidOf(s) !== null && valueOf(s) !== null);
+    const bCost = sumKnown(both, paidOf).total, bValue = sumKnown(both, valueOf).total;
+    const gain = both.length ? (toCents(bValue) - toCents(bCost)) / 100 : null;
+    const src = { market: 0, manual: 0, auto: 0 }, srcN = { market: 0, manual: 0, auto: 0 };
+    let lo = 0, hi = 0;
+    owned.forEach(s => {
+      const v = valueOf(s);
+      if (v === null) return;
+      const k = valueSourceOf(s);
+      src[k] += toCents(v); srcN[k]++;
+      if (k === 'auto') {
+        const l = numOrNull(s.valuation && s.valuation.low), h = numOrNull(s.valuation && s.valuation.high);
+        lo += toCents(l === null ? v : l); hi += toCents(h === null ? v : h);
+      }
+    });
+    const pctOf = n => owned.length ? Math.round((n / owned.length) * 100) : null;
+    return {
+      ownedCount: owned.length,
+      value: value.total, valueKnown: value.n, valueUnknown: value.unknown,
+      invested: cost.total, costKnown: cost.n, costUnknown: cost.unknown,
+      gainBase: both.length, gainCost: bCost, gainValue: bValue, gain, gainPct: gainPct(gain, bCost),
+      bySource: { market: src.market / 100, manual: src.manual / 100, auto: src.auto / 100 }, countBySource: srcN,
+      autoLow: lo / 100, autoHigh: hi / 100,
+      coverageCost: pctOf(cost.n), coverageValue: pctOf(value.n), coverageBoth: pctOf(both.length),
+      conditionUnknown: owned.filter(s => !conditionKnown(s)).length
+    };
+  };
   const normSeries = str => (str || '').toLowerCase()
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/\(\s*\d{4}\s*\)/g, '').replace(/\bvol(ume)?\.?\s*\d+\b/g, '')
@@ -6293,10 +6341,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       factors.push({ label: m === 2.5 ? 'Dédicace certifiée (CGC Signature Series)' : 'Dédicace non certifiée', value: '×' + m });
     }
 
+    const condUnknown = !gradeScore(cond);
     const g = gradeScore(cond) || 9.4;
     const gm = gradeMultiplier(g);
     mult *= gm;
-    factors.push({ label: `Grade ${g.toFixed(1)}`, value: '×' + gm.toFixed(2) });
+    factors.push({ label: condUnknown ? 'État non renseigné : hypothèse NM 9.4 (à compléter)' : `Grade ${g.toFixed(1)}`, value: '×' + gm.toFixed(2) });
 
     let value = base * mult;
     if (graded) {
@@ -6307,7 +6356,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     value = roundValue(value);
 
     let confidence = 'moyenne';
-    if (!hasYear || keyType === 'major' || (hasYear && year < 1985) || ratio || signed) confidence = 'faible';
+    if (!hasYear || keyType === 'major' || (hasYear && year < 1985) || ratio || signed || condUnknown) confidence = 'faible';
     const spread = confidence === 'faible' ? [0.55, 1.8] : [0.75, 1.35];
     return {
       value,
@@ -6390,7 +6439,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     revalueRunning = true;
     try {
       const targets = physicalSingles.filter(s => s.valueSource !== 'market' && (includeManual || s.valueSource !== 'manual'));
-      const before = physicalSingles.filter(isOwned).reduce((a, s) => a + valueOf(s), 0);
+      const before = sumKnown(physicalSingles.filter(isOwned), valueOf).total;
       let yearsFound = 0;
       if (fetchYears) {
         const missing = targets.filter(s => !s.coverYear).slice(0, 40);
@@ -6403,7 +6452,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       targets.forEach(s => applyAutoValuation(s, true));
       persistSingles();
       renderSinglesCollection();
-      const after = physicalSingles.filter(isOwned).reduce((a, s) => a + valueOf(s), 0);
+      const after = sumKnown(physicalSingles.filter(isOwned), valueOf).total;
       return { count: targets.length, yearsFound, before, after };
     } finally {
       revalueRunning = false;
@@ -6411,13 +6460,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // Instantané quotidien de la valeur de la collection (pour la courbe d'évolution)
-  const recordValueSnapshot = (value, invested, count) => {
+  // Méthode 2 (lot F0) : seules les valeurs et les prix payés connus. Un relevé de l'ancienne méthode (sans « m ») n'est jamais réécrit.
+  const recordValueSnapshot = fin => {
     try {
       const snaps = JSON.parse(localStorage.getItem('panel_value_snapshots') || '{}') || {};
       const today = new Date().toISOString().slice(0, 10);
       const cur = snaps[today];
-      if (cur && Math.abs(cur.v - value) < 0.01 && cur.n === count) return;
-      snaps[today] = { v: Math.round(value * 100) / 100, i: Math.round(invested * 100) / 100, n: count };
+      if (cur && !cur.m) return;
+      if (cur && Math.abs(cur.v - fin.value) < 0.01 && Math.abs((cur.i || 0) - fin.invested) < 0.01 && cur.n === fin.ownedCount && cur.nv === fin.valueKnown && cur.ni === fin.costKnown) return;
+      snaps[today] = { v: fin.value, i: fin.invested, n: fin.ownedCount, m: 2, nv: fin.valueKnown, ni: fin.costKnown };
       const keys = Object.keys(snaps).sort();
       while (keys.length > 400) delete snaps[keys.shift()];
       localStorage.setItem('panel_value_snapshots', JSON.stringify(snaps));
@@ -6510,11 +6561,34 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     else if (id === 'singleGradingCompanySelect' || id === 'singleGradeInput') syncConditionFromGrading();
   });
 
+  // Décision D-18 : à l'AJOUT, le prix de couverture préremplit le prix d'achat, visible et modifiable.
+  // Le prix de couverture n'est jamais modifié ; une saisie de l'utilisateur n'est jamais écrasée ; rien en modification de fiche.
+  const setPurchasePrefill = on => {
+    const pp = $('singlePurchasePriceInput');
+    if (pp) pp.dataset.prefilled = on ? '1' : '';
+    if ($('purchasePrefillHint')) $('purchasePrefillHint').hidden = !on;
+  };
+  const syncPurchasePrefill = () => {
+    const pp = $('singlePurchasePriceInput'), cp = $('singleCoverPriceInput');
+    if (!pp || !cp || editingSingleId) return;
+    if (pp.value !== '' && pp.dataset.prefilled !== '1') return;
+    const c = numOrNull(cp.value);
+    pp.value = c === null ? '' : String(c);
+    setPurchasePrefill(c !== null);
+  };
+  document.addEventListener('input', e => {
+    const id = e.target && e.target.id;
+    if (id === 'singleCoverPriceInput') syncPurchasePrefill();
+    else if (id === 'singlePurchasePriceInput') setPurchasePrefill(false);
+  });
+
   // Réinitialise les champs étendus du formulaire (aucune valeur inventée)
   const resetExtendedSingleFields = () => {
     fillStructuredCopyFields(null);
     if ($('singleEstValueInput')) $('singleEstValueInput').value = '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = '';
+    setPurchasePrefill(false);
+    syncPurchasePrefill();
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = new Date().toISOString().slice(0, 10);
     if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = false;
     renderStarInput($('singleRatingInput'), 0);
@@ -6571,7 +6645,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const condition = $('singleConditionSelect').value;
     const coverPrice = numOrNull($('singleCoverPriceInput').value);
     const estValue = numOrNull($('singleEstValueInput').value);
-    const purchasePrice = numOrNull($('singlePurchasePriceInput') && $('singlePurchasePriceInput').value);
+    // Un préremplissage non confirmé n'est pas enregistré sur une fiche de wishlist (pas encore achetée)
+    const purchasePrice = $('singleWishlistCheckbox').checked && $('singlePurchasePriceInput') && $('singlePurchasePriceInput').dataset.prefilled === '1'
+      ? null : numOrNull($('singlePurchasePriceInput') && $('singlePurchasePriceInput').value);
     const purchaseDate = ($('singlePurchaseDateInput') && $('singlePurchaseDateInput').value) || '';
     const isRead = !!($('singleReadCheckbox') && $('singleReadCheckbox').checked);
     const rating = Number($('singleRatingInput') && $('singleRatingInput').dataset.value) || 0;
@@ -6725,7 +6801,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       openSingleInspector(item);
       showToast('Couverture précédente restaurée.');
     };
-    $('inspectConditionBadge').textContent = item.condition || 'NM 9.4';
+    $('inspectConditionBadge').textContent = item.condition || 'État non renseigné';
     $('inspectProtectedText').textContent = item.isProtected ? 'Protégé (Bag & Board)' : 'Non protégé';
 
     const keyBadge = $('inspectKeyBadge');
@@ -6738,7 +6814,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     const paid = paidOf(item);
     const eVal = valueOf(item);
-    $('inspectCoverPrice').textContent = money(paid);
+    $('inspectCoverPrice').textContent = paid === null ? 'Non renseigné' : money(paid);
     $('inspectEstValue').textContent = money(eVal);
     if ($('inspectPurchaseMeta')) {
       const parts = [];
@@ -6756,13 +6832,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       cpBox.querySelectorAll('[data-copy-idx]').forEach(b => { b.onclick = () => { const t = same[Number(b.dataset.copyIdx)]; if (t && t !== item) openSingleInspector(t); }; });
     }
 
-    const diff = eVal - paid;
-    const pct = paid > 0 ? ((diff / paid) * 100).toFixed(0) : '0';
+    const diff = gainOf(item);
+    const pct = gainPct(diff, paid);
     const profitEl = $('inspectProfitBadge');
     if (profitEl) {
       profitEl.textContent = item.isWishlist ? 'En wishlist — pas encore possédé'
-        : diff >= 0 ? ('+' + money(diff) + ' (+' + pct + ' %)') : ('-' + money(Math.abs(diff)) + ' (' + pct + ' %)');
-      profitEl.style.color = item.isWishlist ? 'var(--orange)' : diff >= 0 ? 'var(--cyan)' : 'var(--red)';
+        : diff === null ? 'Plus-value non calculable : ' + (paid === null ? 'prix payé inconnu' : 'valeur inconnue')
+        : (diff >= 0 ? '+' : '-') + money(Math.abs(diff)) + (pct === null ? '' : ' (' + pctText(pct) + ')');
+      profitEl.style.color = item.isWishlist ? 'var(--orange)' : diff === null ? 'var(--muted)' : diff >= 0 ? 'var(--cyan)' : 'var(--red)';
     }
 
     const srcBadge = $('inspectValueSourceBadge');
@@ -6895,11 +6972,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (item.condition && ![...condSel.options].some(o => o.value === item.condition)) {
       condSel.add(new Option(item.condition, item.condition));
     }
-    condSel.value = item.condition || 'NM 9.4 (Near Mint)';
+    condSel.value = item.condition || '';
     fillStructuredCopyFields(item);
     $('singleCoverPriceInput').value = numOrNull(item.coverPrice) ?? '';
     $('singleEstValueInput').value = numOrNull(item.estValue) ?? '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = numOrNull(item.purchasePrice) ?? '';
+    setPurchasePrefill(false);
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = item.purchaseDate || '';
     if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = !!item.isRead;
     renderStarInput($('singleRatingInput'), item.rating || 0);
@@ -6978,31 +7056,31 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const updateSinglesStats = () => {
     const owned = physicalSingles.filter(isOwned);
     const wish = physicalSingles.filter(s => !isOwned(s));
-    const totalValue = owned.reduce((a, s) => a + valueOf(s), 0);
-    const priced = owned.filter(s => numOrNull(s.purchasePrice) !== null || numOrNull(s.coverPrice) !== null);
-    const invested = priced.reduce((a, s) => a + paidOf(s), 0);
-    const gain = priced.reduce((a, s) => a + valueOf(s), 0) - invested;
-    recordValueSnapshot(totalValue, invested, owned.length);
+    const fin = financeSummary(physicalSingles);
+    recordValueSnapshot(fin);
     const series = buildSeriesIndex();
     const ownedSeries = series.filter(g => g.ownedCount > 0);
 
     $('statSinglesCount').textContent = owned.length;
-    $('statSinglesValue').textContent = money(totalValue);
-    if ($('statSinglesInvested')) $('statSinglesInvested').textContent = priced.length ? money(invested) : '—';
+    $('statSinglesValue').textContent = fin.valueKnown ? money(fin.value) : '—';
+    $('statSinglesValue').title = fin.valueKnown ? 'Marché ' + money(fin.bySource.market) + ' · saisie ' + money(fin.bySource.manual) + ' · cote auto ≈ ' + money(fin.bySource.auto) +
+      (fin.countBySource.auto ? ' (fourchette ' + money(fin.autoLow) + ' – ' + money(fin.autoHigh) + ')' : '') + (fin.valueUnknown ? ' · ' + fin.valueUnknown + ' ex. sans valeur' : '') : 'Aucune valeur connue';
+    if ($('statSinglesInvested')) $('statSinglesInvested').textContent = fin.costKnown ? money(fin.invested) : '—';
+    if ($('statSinglesInvestedSub')) $('statSinglesInvestedSub').textContent = fin.costUnknown ? 'prix payés · ' + fin.costUnknown + ' inconnu(s)' : 'prix payés';
     if ($('statSinglesGain')) {
-      $('statSinglesGain').textContent = priced.length ? (gain >= 0 ? '+' : '-') + money(Math.abs(gain)) : '—';
-      $('statSinglesGain').className = !priced.length ? '' : gain >= 0 ? 'gain-pos' : 'gain-neg';
+      $('statSinglesGain').textContent = fin.gain === null ? '—' : (fin.gain >= 0 ? '+' : '-') + money(Math.abs(fin.gain));
+      $('statSinglesGain').className = fin.gain === null ? '' : fin.gain >= 0 ? 'gain-pos' : 'gain-neg';
     }
     if ($('statSinglesGainPct')) {
-      $('statSinglesGainPct').textContent = !priced.length ? 'aucun prix payé saisi'
-        : (invested > 0 ? (gain >= 0 ? '+' : '') + ((gain / invested) * 100).toFixed(1) + ' %' : '—') + (priced.length < owned.length ? ' · sur ' + priced.length + ' ex. avec prix' : '');
+      $('statSinglesGainPct').textContent = !fin.gainBase ? 'prix payé et valeur à renseigner'
+        : pctText(fin.gainPct) + (fin.gainBase < fin.ownedCount ? ' · sur ' + fin.gainBase + ' ex. sur ' + fin.ownedCount : '');
     }
     $('statSinglesSeries').textContent = ownedSeries.length;
     if ($('statSinglesCompleteSub')) $('statSinglesCompleteSub').textContent = ownedSeries.filter(g => g.isRun && g.missing.length === 0).length + ' runs complets';
     if ($('statSinglesReadSub')) $('statSinglesReadSub').textContent = owned.filter(s => s.isRead).length + ' lus';
-    if ($('statSinglesGradedSub')) $('statSinglesGradedSub').textContent = owned.filter(s => isGradedCondition(s.condition)).length + ' gradés';
+    if ($('statSinglesGradedSub')) $('statSinglesGradedSub').textContent = (fin.valueUnknown ? fin.valueUnknown + ' sans valeur · ' : '') + owned.filter(s => isGradedCondition(s.condition)).length + ' gradés';
     if ($('statSinglesWishlist')) $('statSinglesWishlist').textContent = wish.length;
-    if ($('statSinglesWishlistSub')) $('statSinglesWishlistSub').textContent = money(wish.reduce((a, s) => a + valueOf(s), 0)) + ' estimés';
+    if ($('statSinglesWishlistSub')) { const wv = sumKnown(wish, valueOf); $('statSinglesWishlistSub').textContent = wv.n ? money(wv.total) + ' estimés' + (wv.unknown ? ' (' + wv.unknown + ' sans valeur)' : '') : 'valeur inconnue'; }
 
     $('badgeSinglesTotal').textContent = owned.length;
     if ($('badgeWishlist')) $('badgeWishlist').textContent = wish.length;
@@ -7056,10 +7134,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         return c || ((issueNumber(a) || 0) - (issueNumber(b) || 0));
       }
       case 'issue': return (issueNumber(a) || 0) - (issueNumber(b) || 0);
-      case 'value_desc': return valueOf(b) - valueOf(a);
+      case 'value_desc': return descNullLast(valueOf(a), valueOf(b));
       case 'grade': return gradeScore(b.condition) - gradeScore(a.condition) || (isGradedCondition(b.condition) - isGradedCondition(a.condition));
       case 'rating': return (b.rating || 0) - (a.rating || 0);
-      case 'gain': return (valueOf(b) - paidOf(b)) - (valueOf(a) - paidOf(a));
+      case 'gain': return descNullLast(gainOf(a), gainOf(b));
       default: return new Date(b.addedAt || 0) - new Date(a.addedAt || 0);
     }
   });
@@ -7097,8 +7175,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const visible = filtered.slice(0, singlesRenderLimit);
 
     if ($('boxCountSummary')) {
-      const v = filtered.reduce((a, s) => a + valueOf(s), 0);
-      $('boxCountSummary').textContent = `${filtered.length} exemplaire(s) affiché(s) · ${money(v)}`;
+      const v = sumKnown(filtered, valueOf);
+      $('boxCountSummary').textContent = `${filtered.length} exemplaire(s) affiché(s) · ${v.n ? money(v.total) : 'valeur inconnue'}` + (v.n && v.unknown ? ` (${v.unknown} sans valeur)` : '');
     }
 
     // Bannière d'ajout instantané si recherche active
@@ -7148,7 +7226,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const copiesTag = nCopies > 1 ? '<span class="copies-badge" title="' + nCopies + ' exemplaires de cette variante">×' + nCopies + '</span>' : '';
       const key = keyLabel(item);
       const value = valueOf(item);
-      const condShort = (item.condition || 'NM 9.4').split(' ').slice(0, graded ? 2 : 2).join(' ').replace(/\(.*$/, '').trim();
+      const condShort = item.condition ? item.condition.split(' ').slice(0, 2).join(' ').replace(/\(.*$/, '').trim() : 'État ?';
 
       if (singlesViewMode === 'list') {
         const row = document.createElement('div');
@@ -7263,7 +7341,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         name: meta.name || g.name,
         owned, wish, ownedNums, wishNums, start, end, missing, completion,
         ownedCount: owned.length,
-        value: owned.reduce((a, s) => a + valueOf(s), 0),
+        value: (r => r.n ? r.total : null)(sumKnown(owned, valueOf)),
         readCount: owned.filter(s => s.isRead).length,
         cover: sortedOwned[0] || g.items[0],
         pulled: isPulled(g.name),
@@ -7291,7 +7369,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const item = {
       id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
       series: seriesName, issue: '#' + n, publisher: publisher || 'Autre / Indé', variant: 'Cover A',
-      keyType: (checkKeyIssueInfo(seriesName, String(n)) || {}).tier || 'none', condition: 'NM 9.4 (Near Mint)',
+      keyType: (checkKeyIssueInfo(seriesName, String(n)) || {}).tier || 'none', condition: '',
       coverPrice: null, estValue: null, box: '', divider: '', location: '',
       isProtected: false, isWishlist: true, isRead: false, rating: 0, notes: '', coverUrl: '',
       addedAt: new Date().toISOString()
@@ -7400,7 +7478,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (sort === 'title') return a.name.localeCompare(b.name, 'fr');
       if (sort === 'completion') return b.completion - a.completion;
       if (sort === 'count') return b.ownedCount - a.ownedCount;
-      if (sort === 'value') return b.value - a.value;
+      if (sort === 'value') return descNullLast(a.value, b.value);
       return (b.isRun - a.isRun) || b.missing.length - a.missing.length || a.name.localeCompare(b.name, 'fr');
     });
 
@@ -8614,7 +8692,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const item = {
       id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
       series: p.series, issue: p.issue ? '#' + p.issue : '#1', publisher: p.publisher || 'Autre / Indé', variant: opts.variant || p.variant || 'Cover A',
-      keyType: (checkKeyIssueInfo(p.series, String(p.issue || ''), year) || {}).tier || 'none', condition: 'NM 9.4 (Near Mint)',
+      keyType: (checkKeyIssueInfo(p.series, String(p.issue || ''), year) || {}).tier || 'none', condition: '',
       coverPrice: null, estValue: null, purchasePrice: null, purchaseDate: opts.wish ? '' : today,
       box: '', divider: '', location: '', isProtected: false, isWishlist: !!opts.wish, isRead: false, rating: 0,
       notes: p.title && p.title !== p.series ? 'Titre : ' + p.title : '', coverUrl: p.cover && isSafeImageUrl(p.cover.url) ? p.cover.url : '',
@@ -8680,7 +8758,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const collectionToWishlist = (s, opts = {}) => {
     if (!s || s.isWishlist) return { ok: false };
     const keep = ['series', 'issue', 'publisher', 'variant', 'keyType', 'coverUrl', 'comicVineId', 'coverYear', 'pubId', 'coverPrice'];
-    const item = { id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), condition: 'NM 9.4 (Near Mint)', estValue: null, purchasePrice: null, purchaseDate: '',
+    const item = { id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), condition: '', estValue: null, purchasePrice: null, purchaseDate: '',
       box: '', divider: '', location: '', isProtected: false, isWishlist: true, isRead: false, rating: 0, notes: '', addedAt: relNow() };
     keep.forEach(k => { if (s[k] !== undefined) item[k] = s[k]; });
     if (opts.variant) item.variant = relStr(opts.variant, 120);
@@ -10047,26 +10125,26 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     // Valeur par éditeur
     const pubColors = { 'Marvel': '#e62429', 'DC Comics': '#0078f0', 'Image Comics': '#f39c12', 'Dark Horse': '#9b59b6' };
-    const byPub = Object.entries(groupBy(owned, s => s.publisher)).map(([k, l]) => ({ label: k, v: l.reduce((a, s) => a + valueOf(s), 0), n: l.length, color: pubColors[k] }))
+    const byPub = Object.entries(groupBy(owned, s => s.publisher)).map(([k, l]) => ({ label: k, v: sumKnown(l, valueOf).total, n: l.length, color: pubColors[k] }))
       .sort((a, b) => b.v - a.v).slice(0, 8);
 
     // Top 10 valeur
-    const top = owned.slice().sort((a, b) => valueOf(b) - valueOf(a)).slice(0, 10);
+    const top = owned.filter(s => valueOf(s) !== null).sort((a, b) => valueOf(b) - valueOf(a)).slice(0, 10);
 
     // Meilleures plus-values
-    const gains = owned.filter(s => numOrNull(s.purchasePrice) !== null || numOrNull(s.coverPrice) !== null).map(s => ({ s, g: valueOf(s) - paidOf(s) })).filter(x => x.g > 0).sort((a, b) => b.g - a.g).slice(0, 5);
+    const gains = owned.map(s => ({ s, g: gainOf(s) })).filter(x => x.g !== null && x.g > 0).sort((a, b) => b.g - a.g).slice(0, 5);
 
     // Ajouts sur 12 mois
     const now = new Date();
     const months = [];
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''), n: 0, spent: 0 });
+      months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''), n: 0, spent: 0, unknown: 0 });
     }
     owned.forEach(s => {
       const d = new Date(s.purchaseDate || s.addedAt || 0);
       const m = months.find(x => x.key === d.getFullYear() + '-' + d.getMonth());
-      if (m) { m.n++; m.spent += paidOf(s); }
+      if (m) { m.n++; const p = paidOf(s); if (p === null) m.unknown++; else m.spent = (toCents(m.spent) + toCents(p)) / 100; }
     });
     const maxN = Math.max(...months.map(m => m.n), 1);
 
@@ -10076,7 +10154,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       { label: '9.6 – 10', test: s => !isGradedCondition(s.condition) && gradeScore(s.condition) >= 9.6 },
       { label: '9.0 – 9.4', test: s => !isGradedCondition(s.condition) && gradeScore(s.condition) >= 9.0 && gradeScore(s.condition) < 9.6 },
       { label: '6.0 – 8.5', test: s => !isGradedCondition(s.condition) && gradeScore(s.condition) >= 6 && gradeScore(s.condition) < 9 },
-      { label: '< 6.0', test: s => !isGradedCondition(s.condition) && gradeScore(s.condition) < 6 }
+      { label: '< 6.0', test: s => conditionKnown(s) && !isGradedCondition(s.condition) && gradeScore(s.condition) < 6 },
+      { label: 'État non renseigné', test: s => !conditionKnown(s) }
     ].map(b => ({ label: b.label, v: owned.filter(b.test).length }));
 
     const byBox = Object.entries(groupBy(owned, s => { const r = locationOf(s); const up = r.path.filter(n => n.level !== 'divider'); return up.length ? up.map(n => n.name).join(' > ') : (r.text || 'Non rangé'); })).map(([k, l]) => ({ label: k, v: l.length })).sort((a, b) => b.v - a.v).slice(0, 8);
@@ -10086,7 +10165,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const avgRating = rated.length ? rated.reduce((a, s) => a + s.rating, 0) / rated.length : 0;
     const keys = owned.filter(s => s.keyType && s.keyType !== 'none').length;
     const protectedN = owned.filter(s => s.isProtected).length;
-    const totalValue = owned.reduce((a, s) => a + valueOf(s), 0);
+    const fin = financeSummary(physicalSingles);
 
     const topItem = (s, i, right) => `<div class="top-item" data-id="${escapeHtml(s.id)}"><span class="rank">${i + 1}</span>${coverImgTag(s)}<span style="min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(s.series)} ${escapeHtml(s.issue)}</b><small style="color:var(--muted)">${escapeHtml(s.condition || '')}</small></span>${right}</div>`;
 
@@ -10099,33 +10178,52 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     } else {
       const W = 300, H = 110;
       const vs = snaps.map(p => p.v), is = snaps.map(p => p.i || 0);
+      const firstNew = snaps.findIndex(p => p.m === 2);
       const max = Math.max(...vs, ...is, 1), min = Math.min(...vs, ...is, 0);
       const x = i => (i / (snaps.length - 1)) * W;
       const y = v => H - ((v - min) / (max - min || 1)) * (H - 10) - 5;
       const pts = arr => arr.map((v, i) => x(i).toFixed(1) + ',' + y(v).toFixed(1)).join(' ');
-      const first = snaps[0], last = snaps[snaps.length - 1];
-      const delta = last.v - first.v;
+      const last = snaps[snaps.length - 1];
+      // Comparaison seulement entre relevés de la même méthode
+      const first = snaps.find(p => (p.m || 1) === (last.m || 1));
+      const delta = first === last ? null : last.v - first.v;
+      const oldPart = firstNew === -1 ? vs : vs.slice(0, firstNew + 1);
+      const newPart = firstNew === -1 ? [] : vs.slice(firstNew);
       evo = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" height="' + H + '" preserveAspectRatio="none" role="img" aria-label="Évolution de la valeur de la collection">' +
         '<polyline points="' + pts(is) + '" fill="none" stroke="var(--muted-dark)" stroke-width="1.5" stroke-dasharray="4 3" vector-effect="non-scaling-stroke"/>' +
-        '<polyline points="' + pts(vs) + '" fill="none" stroke="var(--lime)" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>' +
+        (firstNew === 0 ? '' : '<polyline points="' + pts(oldPart) + '" fill="none" stroke="var(--lime)" stroke-width="2" stroke-opacity="0.35" vector-effect="non-scaling-stroke"/>') +
+        (newPart.length ? '<polyline points="' + newPart.map((v, j) => x(j + firstNew).toFixed(1) + ',' + y(v).toFixed(1)).join(' ') + '" fill="none" stroke="var(--lime)" stroke-width="2" vector-effect="non-scaling-stroke"/>' : '') + '</svg>' +
         '<p class="stat-sub" style="margin-top:6px">' + frDate(first.date) + ' → ' + frDate(last.date) + ' : ' + money(first.v) + ' → ' + money(last.v) +
-        ' <b class="' + (delta >= 0 ? 'gain-pos' : 'gain-neg') + '">(' + (delta >= 0 ? '+' : '-') + money(Math.abs(delta)) + ')</b> · pointillés : investi</p>';
+        (delta === null ? '' : ' <b class="' + (delta >= 0 ? 'gain-pos' : 'gain-neg') + '">(' + (delta >= 0 ? '+' : '-') + money(Math.abs(delta)) + ')</b>') + ' · pointillés : investi</p>' +
+        (firstNew !== 0 ? '<p class="stat-sub">Trait clair : relevés de l\'ancienne méthode, où les valeurs et prix inconnus étaient remplacés par le prix de couverture ; ils sont conservés tels quels.</p>' : '');
     }
-    const srcCounts = { auto: 0, market: 0, manual: 0 };
-    owned.forEach(o => { const k = o.valueSource || (numOrNull(o.estValue) !== null ? 'manual' : 'auto'); srcCounts[k] = (srcCounts[k] || 0) + 1; });
+    const srcCounts = fin.countBySource;
     const sourcesCard = '<div class="stats-card"><h3>Sources des cotes</h3>' + hbars([
       { label: 'Marché confirmé', v: srcCounts.market, color: 'var(--cyan)' },
       { label: 'Cote auto', v: srcCounts.auto, color: 'var(--lime)' },
-      { label: 'Valeur saisie', v: srcCounts.manual, color: 'var(--muted)' }
-    ], r => r.v + ' ex.') + '<p class="stat-sub" style="margin-top:8px">Confirmez les plus grosses pièces avec « eBay vendus » dans leur fiche.</p></div>';
+      { label: 'Valeur saisie', v: srcCounts.manual, color: 'var(--muted)' },
+      { label: 'Sans valeur', v: fin.valueUnknown, color: 'var(--muted-dark)' }
+    ], r => r.v + ' ex.') +
+      '<p class="stat-sub" style="margin-top:8px">Marché ' + money(fin.bySource.market) + ' · saisie ' + money(fin.bySource.manual) + ' · cote auto ≈ ' + money(fin.bySource.auto) +
+      (srcCounts.auto ? ' (fourchette ' + money(fin.autoLow) + ' – ' + money(fin.autoHigh) + ')' : '') + '. La cote auto est une estimation, pas un prix de vente.</p>' +
+      '<p class="stat-sub">Confirmez les plus grosses pièces avec « eBay vendus » dans leur fiche.</p></div>';
+    const coverageCard = '<div class="stats-card"><h3>Données financières</h3>' + hbars([
+      { label: 'Prix payé connu', v: fin.costKnown, color: 'var(--cyan)' },
+      { label: 'Prix payé inconnu', v: fin.costUnknown, color: 'var(--muted-dark)' },
+      { label: 'Valeur connue', v: fin.valueKnown, color: 'var(--lime)' },
+      { label: 'Valeur inconnue', v: fin.valueUnknown, color: 'var(--muted-dark)' },
+      { label: 'État non renseigné', v: fin.conditionUnknown, color: 'var(--orange)' }
+    ], r => r.v + ' ex.') +
+      '<p class="stat-sub" style="margin-top:8px">Plus-value calculée sur ' + fin.gainBase + ' ex. sur ' + fin.ownedCount + ' (prix payé et valeur connus)' +
+      (fin.gainBase ? ' : ' + (fin.gain >= 0 ? '+' : '-') + money(Math.abs(fin.gain)) + ' (' + pctText(fin.gainPct) + ')' : '') + '. Une donnée inconnue n\'est jamais remplacée par le prix de couverture ni par zéro.</p></div>';
 
     host.innerHTML =
-      '<div class="stats-card"><h3>Évolution de la valeur</h3>' + evo + '</div>' + sourcesCard +
+      '<div class="stats-card"><h3>Évolution de la valeur</h3>' + evo + '</div>' + sourcesCard + coverageCard +
       '<div class="stats-card"><h3>Valeur par éditeur</h3>' + hbars(byPub, r => money(r.v)) + '</div>' +
       '<div class="stats-card"><h3>Les 10 plus précieux</h3><div class="top-list">' + top.map((s, i) => topItem(s, i, `<b style="color:var(--gold)">${money(valueOf(s))}</b>`)).join('') + '</div></div>' +
       '<div class="stats-card"><h3>Achats sur 12 mois</h3><div class="month-chart">' +
-        months.map(m => `<div class="month-col" title="${m.n} exemplaire(s) · ${money(m.spent)}"><b style="font-size: 12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / maxN) * 85}%"></div><span>${m.label}</span></div>`).join('') +
-        '</div><p class="stat-sub" style="margin-top:8px">Dépensé sur 12 mois : ' + money(months.reduce((a, m) => a + m.spent, 0)) + ' (date d\'achat, sinon date d\'ajout)</p></div>' +
+        months.map(m => `<div class="month-col" title="${m.n} exemplaire(s) · ${money(m.spent)}${m.unknown ? ' · ' + m.unknown + ' au prix inconnu' : ''}"><b style="font-size: 12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / maxN) * 85}%"></div><span>${m.label}</span></div>`).join('') +
+        '</div><p class="stat-sub" style="margin-top:8px">Dépensé sur 12 mois (prix payés connus) : ' + money(months.reduce((a, m) => (toCents(a) + toCents(m.spent)) / 100, 0)) + ((u => u ? ' · ' + u + ' achat(s) au prix inconnu' : '')(months.reduce((a, m) => a + m.unknown, 0))) + ' (date d\'achat, sinon date d\'ajout)</p></div>' +
       '<div class="stats-card"><h3>Meilleures plus-values</h3><div class="top-list">' + (gains.length ? gains.map((x, i) => topItem(x.s, i, `<b class="gain-pos">+${money(x.g)}</b>`)).join('') : '<p class="stat-sub">Renseignez prix payé et valeur estimée pour suivre vos plus-values.</p>') + '</div></div>' +
       '<div class="stats-card"><h3>État & grading</h3>' + hbars(gradeBuckets, r => r.v + ' ex.') + '</div>' +
       '<div class="stats-card"><h3>Rangement par boîte</h3>' + hbars(byBox, r => r.v + ' ex.') + '</div>' +
@@ -10135,7 +10233,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         { label: 'Key issues', v: keys, color: 'var(--gold)' },
         { label: 'Protégés', v: protectedN }
       ], r => r.v + ' ex.') +
-      '<p class="stat-sub" style="margin-top:8px">Valeur moyenne : ' + money(totalValue / owned.length) + (rated.length ? ' · note moyenne ' + avgRating.toFixed(1) + ' / 5 (' + rated.length + ' notés)' : '') + '</p></div>';
+      '<p class="stat-sub" style="margin-top:8px">Valeur moyenne (ex. cotés) : ' + (fin.valueKnown ? money(fin.value / fin.valueKnown) : '—') + (rated.length ? ' · note moyenne ' + avgRating.toFixed(1) + ' / 5 (' + rated.length + ' notés)' : '') + '</p></div>';
 
     host.querySelectorAll('.top-item').forEach(el => {
       el.onclick = () => { const s = physicalSingles.find(x => x.id === el.dataset.id); if (s) openSingleInspector(s); };
@@ -10293,7 +10391,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     const companyMatch = `${companyRaw || ''} ${txt}`.match(/\b(cgc|cbcs|pgx)\b/i);
     const slabbed = !!companyMatch || /slab|graded|grad[ée]/i.test(String(slabRaw || ''));
-    if (g === null) return { condition: 'NM 9.4 (Near Mint)', gradeKnown: false, slabUnknownCompany: false };
+    if (g === null) return { condition: '', gradeKnown: false, slabUnknownCompany: false };
     const keys = Object.keys(GRADE_LABELS).map(Number);
     const snapped = keys.reduce((best, k) => Math.abs(k - g) < Math.abs(best - g) ? k : best, keys[0]);
     if (companyMatch) return { condition: `${companyMatch[1].toUpperCase()} ${snapped.toFixed(1)} (Certifié)`, gradeKnown: true, slabUnknownCompany: false };
@@ -11434,7 +11532,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       publisher: str(raw.publisher, 80) || 'Autre / Indé',
       variant: str(raw.variant, 120) || 'Cover A',
       keyType: ['none', 'major', 'minor', 'ratio', 'signed'].includes(raw.keyType) ? raw.keyType : 'none',
-      condition: str(raw.condition, 60) || 'NM 9.4 (Near Mint)',
+      condition: str(raw.condition, 60),
       coverPrice: numOrNull(raw.coverPrice), estValue: numOrNull(raw.estValue), purchasePrice: numOrNull(raw.purchasePrice),
       purchaseDate: /^\d{4}-\d{2}-\d{2}$/.test(raw.purchaseDate || '') ? raw.purchaseDate : '',
       box: str(raw.box, 100), divider: str(raw.divider, 100), location: str(raw.location, 200),
@@ -11768,7 +11866,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('singlePublisherInput').value = 'Marvel';
       $('singleVariantNameInput').value = 'Cover A (Régulière)';
       $('singleKeyTypeSelect').value = 'none';
-      $('singleConditionSelect').value = 'NM 9.4 (Near Mint)';
+      $('singleConditionSelect').value = '';
       $('singleCoverPriceInput').value = '';
       resetExtendedSingleFields();
       if ($('singleBoxInput')) $('singleBoxInput').value = '';
@@ -11863,7 +11961,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           const ed = await identifyEditionByBarcode(sp, q, parseInt(($('singleYearInput') && $('singleYearInput').value) || '', 10) || null);
           if (ed && ed.exact) {
             $('singleVariantNameInput').value = ed.variant;
-            if (ed.price !== null) $('singleCoverPriceInput').value = ed.price;
+            if (ed.price !== null) { $('singleCoverPriceInput').value = ed.price; syncPurchasePrefill(); }
             const ranked = await fetchComicCoversAndDetails(q, issue, pub, { variant: ed.variant });
             renderCoverVariantsSelector(ranked);
             if (statusEl) statusEl.textContent = 'Édition identifiée par le code complet (GCD) : « ' + ed.variant + ' »';
@@ -12837,6 +12935,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     revalueCollection,
     marketLinks,
     getValueSnapshots,
+    financeSummary, gainOf, gainPct, pctText, money, paidOf, valueOf,
+    editSingleIssue,
     openComicVineSearchModal: q => openCvSearch(q),
     // Test uniquement : remplace la liste en mémoire sans rien enregistrer (simule un démarrage)
     setSinglesInMemoryForTest: list => { physicalSingles = list; },

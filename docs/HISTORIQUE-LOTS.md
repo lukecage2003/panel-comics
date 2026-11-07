@@ -49,6 +49,16 @@ L'utilisateur a réalisé huit contrôles fonctionnels, tous satisfaisants :
 - **ReadingOrders.com, Comic Compass et French Comics Reading Order** n'ont pas été consultés.
 - La clé Comic Vine reste à renouveler. La signature Android de publication, l'option `allowBackup` et la purge des anciennes clés Marvel/Vision sont toujours en attente de décision.
 
+## Plan directeur 2.0 — lot F0 : correctifs des calculs financiers
+Autorisé le 7 novembre 2026 (décision D-17), **livré le 8 novembre 2026, en attente de validation**. Spécification : [`directeur/02-audit-financier.md`](directeur/02-audit-financier.md) et backlog B-01 à B-06, B-24, B-25 de [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md).
+- **Aucune substitution** : un prix payé inconnu n'est plus remplacé par le prix de couverture ; une valeur inconnue n'est plus remplacée par le prix de couverture ni par 0. Les totaux portent sur les données connues, avec leur couverture (« 1 inconnu(s) », « sur N ex. sur M »).
+- Affichage « — » pour une valeur inconnue (au lieu de « $0.00 ») ; sommes en centimes ; pourcentages au format français.
+- Valeur totale ventilée par source (marché, saisie, cote auto avec sa fourchette) ; carte « Données financières » au tableau de bord.
+- Plus d'état « NM 9.4 » inventé à la création (sorties, wishlist, scan continu, séries, import CSV sans état, restauration JSON) ; option « État non renseigné » ; la cote auto signale l'hypothèse et passe en confiance faible.
+- **D-18** : à l'ajout, le prix de couverture préremplit le prix d'achat (visible, modifiable, jamais en arrière-plan) ; non enregistré sur une fiche de wishlist ; aucun préremplissage en modification.
+- Instantanés de valeur : nouveaux relevés « méthode 2 » ; les anciens relevés sont conservés tels quels et affichés comme « ancienne méthode ».
+- Aucune donnée existante modifiée, aucune migration ; devise inchangée (F-D2 ouverte). Test 30 ajouté (30 vérifications) ; suite complète 29/29.
+
 ## Phase 3 — Comptes, profils et synchronisation local-first
 Conception livrée le 7 novembre 2026 (voir [`phase3/`](phase3/), commit `93f15db`). Le lot 3.1 a été lancé par l'utilisateur le 7 novembre 2026, puis suspendu le même jour avant toute modification de code (copies de sécurité `*.backup.20261107-lot31` créées, non versionnées), pour intégrer la correction « séparation stricte Collection / Explorer ».
 

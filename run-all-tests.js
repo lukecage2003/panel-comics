@@ -2535,6 +2535,149 @@ const waitForCdp = async () => {
         test: 'Explorer & guides de lecture : base v4 additive, King in Black sourcé, validation, rapprochements exacts, progression personnelle, recherche, pages, filtres, XSS, éditeur, import/export, sauvegarde, redémarrage',
         ok: !!t29a && t29fail.length === 0
       });
+      // ------------------------------------------------------------------
+      // TEST 30 : Finances de la collection (lot F0)
+      // ------------------------------------------------------------------
+      console.log('\n[TEST 30] Finances : aucune substitution, cas particuliers, préremplissage du prix d\'achat, historique conservé...');
+      const t30 = await evalExpr(`(async () => {
+        const P = window.Panel, r = {};
+        const savedSingles = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const savedSnaps = localStorage.getItem('panel_value_snapshots');
+        const savedRaw = localStorage.getItem('panel_physical_singles');
+        const tick = () => new Promise(res => setTimeout(res, 60));
+        const txt = id => document.getElementById(id).textContent;
+        try {
+          const base = { publisher: 'DC Comics', variant: 'Cover A', keyType: 'none', condition: 'NM 9.4 (Near Mint)', coverUrl: '', addedAt: '2026-01-01T00:00:00Z', isWishlist: false };
+          const S = o => Object.assign({}, base, o);
+          // T-F1 : coût 28 (25 + 3 de frais, saisi comme prix payé en F0), valeur 40
+          r.f1 = P.gainOf(S({ purchasePrice: 28, estValue: 40 })) === 12 && P.gainPct(12, 28) === 42.86 && P.pctText(42.86) === '+42,86 %';
+          // T-F2 : prix payé inconnu, couverture 4,99 : jamais compté comme investi
+          const f2 = P.financeSummary([S({ coverPrice: 4.99, purchasePrice: null, estValue: 12, valueSource: 'manual' })]);
+          r.f2 = f2.invested === 0 && f2.costKnown === 0 && f2.costUnknown === 1 && f2.gain === null && f2.value === 12 && P.paidOf({ coverPrice: 4.99 }) === null;
+          // T-F3 : prix payé 30, aucune valeur : pas de perte fictive
+          const f3 = P.financeSummary([S({ purchasePrice: 30, estValue: null, coverPrice: 3.99 })]);
+          r.f3 = f3.value === 0 && f3.valueKnown === 0 && f3.valueUnknown === 1 && f3.gain === null && f3.invested === 30 && P.valueOf({ coverPrice: 3.99 }) === null;
+          // T-F4 : gratuit
+          const f4 = P.financeSummary([S({ purchasePrice: 0, estValue: 10, valueSource: 'manual' })]);
+          r.f4 = f4.invested === 0 && f4.costKnown === 1 && f4.gain === 10 && f4.gainPct === null && P.pctText(f4.gainPct) === '—';
+          // Moins-value
+          r.loss = P.gainOf(S({ purchasePrice: 20, estValue: 15 })) === -5 && P.gainPct(-5, 20) === -25 && P.pctText(-25) === '-25 %';
+          // T-F8 : inconnu affiché « — »
+          r.f8 = P.money(null) === '—' && P.money(undefined) === '—' && P.money('') === '—' && P.money(NaN) === '—' && P.money(0) === '$0.00' && P.money(3.5) === '$3.50';
+          // T-F10 : ventilation par source, fourchette, wishlist exclue
+          const fm = P.financeSummary([
+            S({ estValue: 100, valueSource: 'market', purchasePrice: 50 }), S({ estValue: 20.1, valueSource: 'manual' }),
+            S({ estValue: 7.2, valueSource: 'auto', valuation: { low: 5.4, high: 9.7 } }), S({ estValue: null }), S({ isWishlist: true, estValue: 500, purchasePrice: 1 })
+          ]);
+          r.f10 = fm.ownedCount === 4 && fm.value === 127.3 && Math.round((fm.bySource.market + fm.bySource.manual + fm.bySource.auto) * 100) === 12730 &&
+            fm.autoLow === 5.4 && fm.autoHigh === 9.7 && fm.valueUnknown === 1 && fm.gainBase === 1 && fm.gain === 50 && fm.gainPct === 100 && fm.costUnknown === 3 && fm.coverageCost === 25;
+          r.cents = P.financeSummary([S({ estValue: 0.1 }), S({ estValue: 0.2 })]).value === 0.3;
+          r.empty = (e => e.ownedCount === 0 && e.gain === null && e.gainPct === null && e.coverageCost === null)(P.financeSummary([]));
+          // Interface : statistiques
+          P.setPhysicalSingles([
+            S({ id: 'f30a', series: 'F30 Book', issue: '#1', coverPrice: 4.99, purchasePrice: null, estValue: 12, valueSource: 'manual' }),
+            S({ id: 'f30b', series: 'F30 Book', issue: '#2', coverPrice: null, purchasePrice: 30, estValue: null }),
+            S({ id: 'f30c', series: 'F30 Book', issue: '#3', coverPrice: 3.99, purchasePrice: 28, estValue: 40, valueSource: 'manual' })
+          ]);
+          P.showSinglesView('collection');
+          r.uiStats = txt('statSinglesValue') === '$52.00' && txt('statSinglesInvested') === '$58.00' && txt('statSinglesGain') === '+$12.00' &&
+            txt('statSinglesGainPct').includes('+42,86 %') && txt('statSinglesGainPct').includes('sur 1 ex. sur 3') && txt('statSinglesInvestedSub').includes('1 inconnu') && txt('statSinglesGradedSub').includes('1 sans valeur');
+          r.uiList = !document.getElementById('singlesGrid').innerHTML.includes('NaN') && txt('boxCountSummary').includes('1 sans valeur');
+          // Inspecteur
+          P.openSingleInspector(P.getPhysicalSingles().find(s => s.id === 'f30a'));
+          r.uiInspector = txt('inspectCoverPrice') === 'Non renseigné' && txt('inspectProfitBadge').includes('prix payé inconnu');
+          P.openSingleInspector(P.getPhysicalSingles().find(s => s.id === 'f30b'));
+          r.uiInspector2 = txt('inspectEstValue') === '—' && txt('inspectProfitBadge').includes('valeur inconnue');
+          P.openSingleInspector(P.getPhysicalSingles().find(s => s.id === 'f30c'));
+          r.uiInspector3 = txt('inspectProfitBadge').includes('+$12.00') && txt('inspectProfitBadge').includes('+42,86 %');
+          document.getElementById('singleIssueInspectorModal').classList.remove('open');
+          // Données existantes intactes : le calcul n'écrit rien
+          const fp = JSON.stringify(P.getPhysicalSingles());
+          P.financeSummary(P.getPhysicalSingles()); P.renderStatsDashboard();
+          r.noMutation = JSON.stringify(P.getPhysicalSingles()) === fp && P.getPhysicalSingles().find(s => s.id === 'f30a').purchasePrice === null && P.getPhysicalSingles().find(s => s.id === 'f30b').estValue === null;
+          // Instantanés : un relevé de l'ancienne méthode n'est jamais réécrit ; les nouveaux portent m: 2
+          const today = new Date().toISOString().slice(0, 10);
+          localStorage.setItem('panel_value_snapshots', JSON.stringify({ '2026-01-01': { v: 10, i: 5, n: 1 }, [today]: { v: 999, i: 1, n: 7 } }));
+          const raw1 = localStorage.getItem('panel_value_snapshots');
+          P.setPhysicalSingles(P.getPhysicalSingles());
+          r.snapOldKept = localStorage.getItem('panel_value_snapshots') === raw1;
+          localStorage.setItem('panel_value_snapshots', JSON.stringify({ '2026-01-01': { v: 10, i: 5, n: 1 } }));
+          P.setPhysicalSingles(P.getPhysicalSingles());
+          const sn = JSON.parse(localStorage.getItem('panel_value_snapshots'));
+          r.snapNew = JSON.stringify(sn['2026-01-01']) === JSON.stringify({ v: 10, i: 5, n: 1 }) && !!sn[today] && sn[today].m === 2 && sn[today].v === 52 && sn[today].i === 58 && sn[today].nv === 2 && sn[today].ni === 2 && sn[today].n === 3;
+          // Tableau de bord
+          P.showSinglesView('stats'); P.renderStatsDashboard();
+          const dash = document.getElementById('statsDashboard') ? txt('statsDashboard') : document.body.textContent;
+          r.dashboard = dash.includes('Données financières') && dash.includes('Sans valeur') && dash.includes('ancienne méthode') && dash.includes('Plus-value calculée sur 1 ex. sur 3') && dash.includes('État non renseigné') && !dash.includes('NaN');
+          P.showSinglesView('collection');
+          // État inconnu : plus de NM 9.4 inventé ; hypothèse affichée dans la cote
+          r.condImport = P.sanitizeImportedSingle({ series: 'X' }).condition === '' && P.sanitizeImportedSingle({ series: 'X', condition: 'VF 8.0 (Very Fine)' }).condition === 'VF 8.0 (Very Fine)';
+          const eu = P.estimateComicValue({ series: 'F30 Book', issue: '#1', condition: '', coverPrice: 3.99, coverYear: 2024 });
+          const ek = P.estimateComicValue({ series: 'F30 Book', issue: '#1', condition: 'NM 9.4 (Near Mint)', coverPrice: 3.99, coverYear: 2024 });
+          r.condAuto = eu.confidence === 'faible' && eu.factors.some(f => /non renseigné/.test(f.label)) && eu.value === ek.value;
+          // D-18 : préremplissage du prix d'achat à l'ajout, visible et modifiable ; couverture inchangée
+          document.getElementById('addSingleModalOpenBtn').click();
+          const cp = document.getElementById('singleCoverPriceInput'), pp = document.getElementById('singlePurchasePriceInput'), hint = document.getElementById('purchasePrefillHint');
+          const fire = el => el.dispatchEvent(new Event('input', { bubbles: true }));
+          r.formBlank = pp.value === '' && hint.hidden && document.getElementById('singleConditionSelect').value === '';
+          cp.value = '4.99'; fire(cp);
+          r.prefill = pp.value === '4.99' && !hint.hidden && cp.value === '4.99';
+          cp.value = '5.99'; fire(cp);
+          r.prefillFollows = pp.value === '5.99';
+          cp.value = ''; fire(cp);
+          r.prefillCleared = pp.value === '' && hint.hidden;
+          cp.value = '4.99'; fire(cp);
+          pp.value = '3'; fire(pp);
+          cp.value = '6.99'; fire(cp);
+          r.userWins = pp.value === '3' && hint.hidden && cp.value === '6.99';
+          document.getElementById('singleSeriesInput').value = 'F30 Prefill';
+          document.getElementById('singleIssueInput').value = '#7';
+          document.getElementById('singleWishlistCheckbox').checked = false;
+          document.getElementById('saveSingleToCollectionBtn').click();
+          await tick();
+          const saved = P.getPhysicalSingles().find(s => s.series === 'F30 Prefill');
+          r.savedPaid = !!saved && saved.purchasePrice === 3 && saved.coverPrice === 6.99 && saved.condition === '';
+          // Prérempli et accepté tel quel : le montant validé par l'utilisateur est enregistré comme prix payé
+          document.getElementById('addSingleModalOpenBtn').click();
+          cp.value = '4.99'; fire(cp);
+          document.getElementById('singleSeriesInput').value = 'F30 Prefill';
+          document.getElementById('singleIssueInput').value = '#8';
+          document.getElementById('saveSingleToCollectionBtn').click();
+          await tick();
+          const accepted = P.getPhysicalSingles().find(s => s.series === 'F30 Prefill' && s.issue === '#8');
+          r.savedAccepted = !!accepted && accepted.purchasePrice === 4.99 && accepted.coverPrice === 4.99;
+          // Fiche de wishlist : le préremplissage non confirmé n'est pas enregistré
+          document.getElementById('addSingleModalOpenBtn').click();
+          cp.value = '4.99'; fire(cp);
+          document.getElementById('singleSeriesInput').value = 'F30 Wish';
+          document.getElementById('singleIssueInput').value = '#1';
+          document.getElementById('singleWishlistCheckbox').checked = true;
+          document.getElementById('saveSingleToCollectionBtn').click();
+          await tick();
+          const w = P.getPhysicalSingles().find(s => s.series === 'F30 Wish');
+          r.wishNoPaid = !!w && w.isWishlist && w.purchasePrice === null && w.coverPrice === 4.99;
+          // Modification d'une fiche au prix inconnu : aucun préremplissage
+          await P.editSingleIssue(P.getPhysicalSingles().find(s => s.id === 'f30a'));
+          cp.value = '7.99'; fire(cp);
+          r.editNoPrefill = pp.value === '' && hint.hidden && P.getPhysicalSingles().find(s => s.id === 'f30a').purchasePrice === null;
+          document.getElementById('singleIssueDetailModal').classList.remove('open');
+          document.getElementById('singleWishlistCheckbox').checked = false;
+        } finally {
+          P.setPhysicalSingles(savedSingles);
+          if (savedSnaps === null) localStorage.removeItem('panel_value_snapshots'); else localStorage.setItem('panel_value_snapshots', savedSnaps);
+        }
+        r.restored = localStorage.getItem('panel_value_snapshots') === savedSnaps && JSON.stringify(P.getPhysicalSingles()) === JSON.stringify(savedSingles) && (savedRaw === null || !!localStorage.getItem('panel_physical_singles'));
+        return r;
+      })()`);
+      console.log('Résultat Test 30:', JSON.stringify(t30));
+      const t30keys = ['f1', 'f2', 'f3', 'f4', 'loss', 'f8', 'f10', 'cents', 'empty', 'uiStats', 'uiList', 'uiInspector', 'uiInspector2', 'uiInspector3', 'noMutation', 'snapOldKept', 'snapNew',
+        'dashboard', 'condImport', 'condAuto', 'formBlank', 'prefill', 'prefillFollows', 'prefillCleared', 'userWins', 'savedPaid', 'savedAccepted', 'wishNoPaid', 'editNoPrefill', 'restored'];
+      const t30fail = t30keys.filter(k => !t30 || t30[k] !== true);
+      if (t30fail.length) console.log('Test 30 — vérifications en échec :', t30fail.join(', '));
+      testResults.push({
+        test: 'Finances (lot F0) : aucune substitution par le prix de couverture ou zéro, inconnu affiché « — », ventilation par source, couverture, gratuit, moins-value, préremplissage du prix d\'achat (D-18), historique ancien conservé',
+        ok: !!t30 && t30fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
