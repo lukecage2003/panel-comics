@@ -2660,8 +2660,21 @@ const waitForCdp = async () => {
           await P.editSingleIssue(P.getPhysicalSingles().find(s => s.id === 'f30a'));
           cp.value = '7.99'; fire(cp);
           r.editNoPrefill = pp.value === '' && hint.hidden && P.getPhysicalSingles().find(s => s.id === 'f30a').purchasePrice === null;
-          document.getElementById('singleIssueDetailModal').classList.remove('open');
+          // Bouton explicite « = prix de couverture » (aussi en modification) : rien n'est enregistré sans validation
+          const btn = document.getElementById('purchaseFromCoverBtn');
+          r.editBtn = !btn.hidden && pp.value === '';
+          btn.click();
+          r.editBtnFill = pp.value === '7.99' && !hint.hidden && btn.hidden && P.getPhysicalSingles().find(s => s.id === 'f30a').purchasePrice === null;
+                    document.getElementById('singleIssueDetailModal').classList.remove('open');
           document.getElementById('singleWishlistCheckbox').checked = false;
+          // Ajouts rapides (wishlist → collection → wishlist) : aucune valeur financière inventée, couverture conservée
+          P.setPhysicalSingles([S({ id: 'f30w', series: 'F30 Quick', issue: '#1', isWishlist: true, coverPrice: 4.99, purchasePrice: null, estValue: null })]);
+          await P.releases.ready();
+          const qw = P.getPhysicalSingles().find(s => s.id === 'f30w');
+          P.releases.wish.toCollection(qw);
+          r.quickWish = !qw.isWishlist && qw.purchasePrice === null && qw.coverPrice === 4.99;
+          const back = P.releases.wish.fromCollection(qw, {});
+          r.quickToWish = !!back.ok && !!back.item && back.item.purchasePrice === null && back.item.coverPrice === 4.99 && back.item.condition === '';
         } finally {
           P.setPhysicalSingles(savedSingles);
           if (savedSnaps === null) localStorage.removeItem('panel_value_snapshots'); else localStorage.setItem('panel_value_snapshots', savedSnaps);
@@ -2671,7 +2684,7 @@ const waitForCdp = async () => {
       })()`);
       console.log('Résultat Test 30:', JSON.stringify(t30));
       const t30keys = ['f1', 'f2', 'f3', 'f4', 'loss', 'f8', 'f10', 'cents', 'empty', 'uiStats', 'uiList', 'uiInspector', 'uiInspector2', 'uiInspector3', 'noMutation', 'snapOldKept', 'snapNew',
-        'dashboard', 'condImport', 'condAuto', 'formBlank', 'prefill', 'prefillFollows', 'prefillCleared', 'userWins', 'savedPaid', 'savedAccepted', 'wishNoPaid', 'editNoPrefill', 'restored'];
+        'dashboard', 'condImport', 'condAuto', 'formBlank', 'prefill', 'prefillFollows', 'prefillCleared', 'userWins', 'savedPaid', 'savedAccepted', 'wishNoPaid', 'editNoPrefill', 'editBtn', 'editBtnFill', 'quickWish', 'quickToWish', 'restored'];
       const t30fail = t30keys.filter(k => !t30 || t30[k] !== true);
       if (t30fail.length) console.log('Test 30 — vérifications en échec :', t30fail.join(', '));
       testResults.push({

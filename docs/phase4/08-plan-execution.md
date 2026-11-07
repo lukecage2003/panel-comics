@@ -87,7 +87,7 @@ Contenu de [`../phase3/06-roadmap-phase3.md`](../phase3/06-roadmap-phase3.md), a
 | Migration des données | 3.4 | Migration en sept étapes, vérifiée ([`../phase3/04-synchronisation.md`](../phase3/04-synchronisation.md) § 6) |
 | Synchronisation, conflits | 3.4, 3.5 | Aucune perte silencieuse |
 | Sécurité, permissions | 3.1, 3.2, 3.3, 3.6 | RLS, CSP, rôles sans accès personnel |
-| Non-régression | Tous | 28 tests existants + nouveaux, toujours au vert |
+| Non-régression | Tous | 29 tests existants (28 + test 30 du lot F0) + nouveaux, toujours au vert |
 | Retour arrière | Tous | Copies de sécurité, commits locaux, aucune opération destructive |
 
 ## 3. Phase 4 — Explorer 2.0
@@ -111,13 +111,15 @@ Contenu de [`../phase3/06-roadmap-phase3.md`](../phase3/06-roadmap-phase3.md), a
 - Implémentation : pas avant la fin de la Phase 3 et le lot 4.10.
 
 ## 5. Critères d'acceptation pour reprendre le lot 3.1
-| # | Critère | Statut au 7 novembre 2026 |
+Mise à jour du 8 novembre 2026 : **le lot 3.1 ne peut pas reprendre tant que G1 n'est pas validé**. Rappel : le lot 3.1 porte sur les fondations backend (migrations, PGlite, RLS) ; la séparation des domaines côté client est le lot 3.1b ([préparation](../directeur/05-preparation-lot-3.1b.md)).
+
+| # | Critère | Statut au 8 novembre 2026 |
 |---|---|---|
-| G1 | Documents d'architecture cohérents et validés par l'utilisateur (frontières, contrats, B1, images, navigation, périmètre comics) | Rédigés ; **validation attendue** |
-| G2 | Décision sur le lot 3.1b (création, contenu, place dans le plan) | **À valider** |
+| G1 | Documents d'architecture cohérents et validés par l'utilisateur (frontières, contrats, B1, images, navigation, périmètre comics) Rédigés ; **validation attendue — bloquant** |
+| G2 | Décision sur le lot 3.1b (création, contenu, place dans le plan) | Placement approuvé (D-17) ; implémentation **suspendue** jusqu'à approbation explicite |
 | G3 | Décision P1 (utilisateurs locaux et S1) — nécessaire avant 3.1b, pas avant 3.1 | **À valider** |
-| G4 | Arbre Git propre, suite de tests à 28/28 avant de commencer | Arbre propre ; dernière exécution à 28/28 (commit `93f15db`, code inchangé depuis) ; à relancer au démarrage |
-| G5 | Copies de sécurité `*.backup.20261107-lot31` présentes | Présentes |
+| G4 | Arbre Git propre, suite de tests au vert avant de commencer | 29/29 le 8 novembre 2026 (finition F0) ; arbre propre après le commit de cette mission ; à relancer au démarrage |
+| G5 | Copies de sécurité `*.backup.20261107-lot31` présentes | Présentes (plus les copies `*.backup.20261107-f0`) |
 | G6 | Aucun engagement financier ni compte cloud requis par le lot 3.1 | Conforme |
 | G7 | Prompt du lot 3.1 mis à jour (champ `domain`, schémas réservés, documents à lire) | Fait dans [`../phase3/08-lot-3.1-prompt.md`](../phase3/08-lot-3.1-prompt.md) |
 

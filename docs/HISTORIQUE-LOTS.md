@@ -58,6 +58,11 @@ Autorisé le 7 novembre 2026 (décision D-17), **livré le 8 novembre 2026, en a
 - **D-18** : à l'ajout, le prix de couverture préremplit le prix d'achat (visible, modifiable, jamais en arrière-plan) ; non enregistré sur une fiche de wishlist ; aucun préremplissage en modification.
 - Instantanés de valeur : nouveaux relevés « méthode 2 » ; les anciens relevés sont conservés tels quels et affichés comme « ancienne méthode ».
 - Aucune donnée existante modifiée, aucune migration ; devise inchangée (F-D2 ouverte). Test 30 ajouté (30 vérifications) ; suite complète 29/29.
+- **Finition F0 (8 novembre 2026)** :
+  - ajouts rapides vérifiés (sorties, Pull List, wishlist ↔ collection, scan continu, séries) : aucun n'invente de prix payé ; les publications n'ont pas de prix de couverture, donc le prix payé reste inconnu ;
+  - bouton explicite « = prix de couverture » dans le formulaire, visible seulement si le prix payé est vide et la couverture connue, y compris en modification (rien n'est enregistré sans validation) ;
+  - formulaire d'exemplaire sans débordement horizontal à 320, 360, 390 et 430 px (champs, sélecteurs et boutons accessibles ; bureau inchangé) ;
+  - test 30 étendu à 34 vérifications ; suite complète 29/29 ; `sw.js` en `panel-2026-11-08-f0b`.
 
 ## Phase 3 — Comptes, profils et synchronisation local-first
 Conception livrée le 7 novembre 2026 (voir [`phase3/`](phase3/), commit `93f15db`). Le lot 3.1 a été lancé par l'utilisateur le 7 novembre 2026, puis suspendu le même jour avant toute modification de code (copies de sécurité `*.backup.20261107-lot31` créées, non versionnées), pour intégrer la correction « séparation stricte Collection / Explorer ».

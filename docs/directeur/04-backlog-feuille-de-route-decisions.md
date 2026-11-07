@@ -45,7 +45,8 @@ Les numéros de ligne renvoient à `index.html`.
 | B-22 | Estimations anciennes | Signal à 180 jours (F-D3) | Collection | F0 | Signal visible |
 | B-23 | Navigation (A6) | Selon N1 à N5, M-A à M-E, U-D1 | Tous | Décisions | Explorer présent dans le dock mobile |
 | B-24 | Wishlist « $0 estimés » (F-12) | Même logique que B-02 | Collection | F0 | « — » si aucune valeur |
-| B-25 | Revue UX au navigateur (bureau, mobile 375 px) | Faite au lot F0. Écart constaté, **antérieur à F0** : sur mobile, le formulaire d'ajout déborde horizontalement (497 px pour 340 px visibles : sélecteur d'état, bouton Photo) ; sur mobile, les sous-lignes des statistiques (couverture) sont masquées | Tous | — | Correctif à planifier (P2) |
+| B-25 | Revue UX au navigateur (bureau, mobile) | Faite. Débordement du formulaire d'ajout **corrigé** (finition F0, vérifié à 320, 360, 390 et 430 px). Reste : sur mobile, les sous-lignes des statistiques (couverture des données) sont masquées | Collection | — | Reste à traiter en P2 (B-26) |
+| B-26 | Sous-lignes des statistiques masquées sur mobile | Afficher la couverture (« N inconnus ») dans un format compact ou au toucher | Collection | — | Couverture visible à 375 px |
 
 ### P3
 | # | Sujet | Dépendances |

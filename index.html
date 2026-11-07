@@ -1389,6 +1389,15 @@
     .grading-details { margin: 4px 0 10px; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6px 10px; }
     .grading-details summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
     .grading-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+    /* Lot F0 : le formulaire d'exemplaire tient dans l'écran dès 320 px (aucun défilement horizontal) */
+    #singleIssueDetailModal .modal-box { box-sizing: border-box; max-width: 100%; }
+    #singleIssueDetailModal .modal-box [style*="grid-template-columns"] > *, #singleIssueDetailModal .modal-box .grading-grid > * { min-width: 0; }
+    #singleIssueDetailModal .modal-box input:not([type=checkbox]):not([type=radio]), #singleIssueDetailModal .modal-box select, #singleIssueDetailModal .modal-box textarea { min-width: 0; max-width: 100%; box-sizing: border-box; }
+    #singleIssueDetailModal .modal-box div[style*="display:flex"] { flex-wrap: wrap; }
+    #singleIssueDetailModal .modal-box div[style*="display:flex"] > input { flex: 1 1 140px; }
+    #singleIssueDetailModal .modal-btns { flex-wrap: wrap; }
+    #singleIssueDetailModal .modal-btns > .btn { flex: 1 1 auto; }
+    .purchase-helpers { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: 4px; }
     .inspect-copies { margin-top: 8px; font-size: 13px; }
     .inspect-copies .inspect-copy-detail { color: var(--ink); }
     .inspect-copies-title { font-weight: 700; margin: 10px 0 4px; }
@@ -2451,7 +2460,10 @@
       <div class="form-row">
         <label for="singlePurchasePriceInput">Prix payé ($)</label>
         <input id="singlePurchasePriceInput" type="number" step="0.01" min="0" placeholder="Montant réellement payé">
-        <small id="purchasePrefillHint" class="stat-sub" hidden>Prérempli avec le prix de couverture : remplacez-le par le montant réellement payé.</small>
+        <div class="purchase-helpers">
+          <small id="purchasePrefillHint" class="stat-sub" hidden>Prérempli avec le prix de couverture : remplacez-le par le montant réellement payé.</small>
+          <button type="button" class="btn-link" id="purchaseFromCoverBtn" hidden title="Reprendre le prix de couverture comme prix payé (modifiable)">= prix de couverture</button>
+        </div>
       </div>
       <div class="form-row">
         <label for="singlePurchaseDateInput">Date d'achat</label>
@@ -6563,15 +6575,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   // Décision D-18 : à l'AJOUT, le prix de couverture préremplit le prix d'achat, visible et modifiable.
   // Le prix de couverture n'est jamais modifié ; une saisie de l'utilisateur n'est jamais écrasée ; rien en modification de fiche.
+  // Bouton « = prix de couverture » : visible seulement si le prix payé est vide et la couverture connue (action explicite, aussi en modification)
+  const refreshPurchaseHelpers = () => {
+    const pp = $('singlePurchasePriceInput'), cp = $('singleCoverPriceInput'), btn = $('purchaseFromCoverBtn');
+    if (btn && pp && cp) btn.hidden = !(pp.value === '' && numOrNull(cp.value) !== null);
+  };
   const setPurchasePrefill = on => {
     const pp = $('singlePurchasePriceInput');
     if (pp) pp.dataset.prefilled = on ? '1' : '';
     if ($('purchasePrefillHint')) $('purchasePrefillHint').hidden = !on;
+    refreshPurchaseHelpers();
   };
   const syncPurchasePrefill = () => {
     const pp = $('singlePurchasePriceInput'), cp = $('singleCoverPriceInput');
-    if (!pp || !cp || editingSingleId) return;
-    if (pp.value !== '' && pp.dataset.prefilled !== '1') return;
+    if (!pp || !cp || editingSingleId) { refreshPurchaseHelpers(); return; }
+    if (pp.value !== '' && pp.dataset.prefilled !== '1') { refreshPurchaseHelpers(); return; }
     const c = numOrNull(cp.value);
     pp.value = c === null ? '' : String(c);
     setPurchasePrefill(c !== null);
@@ -6580,6 +6598,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const id = e.target && e.target.id;
     if (id === 'singleCoverPriceInput') syncPurchasePrefill();
     else if (id === 'singlePurchasePriceInput') setPurchasePrefill(false);
+  });
+  document.addEventListener('click', e => {
+    if (!e.target || e.target.id !== 'purchaseFromCoverBtn') return;
+    const pp = $('singlePurchasePriceInput'), c = numOrNull($('singleCoverPriceInput') && $('singleCoverPriceInput').value);
+    if (!pp || c === null || pp.value !== '') return;
+    pp.value = String(c);
+    setPurchasePrefill(true);
+    pp.focus();
   });
 
   // Réinitialise les champs étendus du formulaire (aucune valeur inventée)

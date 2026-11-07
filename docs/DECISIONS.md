@@ -51,6 +51,8 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |
 | R2 | Compte, domaine, workers, Cloudflare Images, plafond | [`07`](phase4/07-architecture-images-r2.md) § 11 |
 | Phase 3 | Région, formule, SMTP, hébergement, stockage sécurisé Android, `allowBackup`, CAPTCHA | [`phase3/02-architecture-cible.md`](phase3/02-architecture-cible.md) |
-| F-D1, F-D2, F-D3, F-D4, F-D5, F-D6 (F-D2 et F-D4 explicitement ouvertes) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
+| F-D1, F-D2, F-D3, F-D4, F-D5, F-D6 (F-D2 et F-D4 explicitement ouvertes) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 ; options F-D2 : [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.4 |
+| L-D1 à L-D3 | Stockage de la lecture, migration de `isRead`, conflit de notes | [`directeur/06`](directeur/06-specifications-F1-L1.md) § B.7 |
+| 3.1b, G1 | Lancement du lot 3.1b ; validation des documents d'architecture (condition de reprise du lot 3.1) | [`directeur/05`](directeur/05-preparation-lot-3.1b.md) ; [`phase4/08`](phase4/08-plan-execution.md) § 5 |
 | U-D1 à U-D3 | Place de la Lecture et des Finances dans la navigation, identité d'œuvre | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | Juridique | Liste de [`phase3/05`](phase3/05-sauvegardes-confidentialite.md) § 4.4, droits des sources, consentement S3 | — |
