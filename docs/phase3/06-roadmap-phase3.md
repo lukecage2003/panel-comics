@@ -60,7 +60,7 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 ## Lot 3.3 — Profils, préférences, appareils
 - **Objectifs** : profil minimal, préférences synchronisées, liste des appareils.
 - **Périmètre fonctionnel** : nom affiché, langue, marché préféré ; préférences (thème, vue, sons, haptique, lecture) ; liste des appareils avec révocation ; confidentialité « tout privé ».
-- **Périmètre technique** : `profiles`, `user_settings`, `devices` ; premier usage réel de `sync_push`/`sync_pull` sur une seule entité simple (`user_settings`).
+- **Périmètre technique** : `profiles`, `user_settings`, `devices` ; **rôles serveur** `app.staff_roles` et `app.has_role()` (prérequis d'Explorer 2.0, voir [`../phase4/01-analyse-et-impacts.md`](../phase4/01-analyse-et-impacts.md) § 3), attribués manuellement ; premier usage réel de `sync_push`/`sync_pull` sur une seule entité simple (`user_settings`).
 - **Dépendances** : 3.2.
 - **Changements de données** : préférences locales copiées dans `user_settings` ; localStorage conservé.
 - **Risques** : boucle d'écriture entre appareils (préférences) → HLC et comparaison de valeur.
@@ -122,7 +122,7 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 - **Validation utilisateur** : export, suppression d'un compte de test, lecture des documents.
 
 ## Lot 3.7 — Validation complète et préparation de la Phase 4
-- **Objectifs** : stabiliser sur le Web et Android, bêta fermée.
+- **Objectifs** : stabiliser sur le Web et Android, bêta fermée ; remettre à la Phase 4 (Explorer 2.0) une base comptes, permissions et sauvegardes stable.
 - **Périmètre** : tests de bout en bout sur les deux plateformes ; performances ; accessibilité des nouveaux écrans ; build Android signé ; observabilité minimale (erreurs de synchronisation) ; liste des sujets de la Phase 4 (communauté, profils publics).
 - **Dépendances** : 3.1 à 3.6.
 - **Risques** : différences de WebView ; mises à jour de l'application avec une outbox non vide.
