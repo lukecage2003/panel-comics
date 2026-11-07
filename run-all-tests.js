@@ -1469,6 +1469,12 @@ const waitForCdp = async () => {
         const changed = cat3.copies.filter(x => before.get(x.legacyId + '~' + x.legacyOccurrence) !== x.updatedAt).map(x => x.legacyId).sort();
         r.changedCopies = changed;
         r.incremental = changed.join(',') === 'f2,f7' && cat3.copies.find(x => x.legacyId === 'f7').deletedAt && cat3.variants.length === cat2.variants.length && (await C.verify()).ok;
+        // 3b. Réapparition : la fiche supprimée revient → même exemplaire, pierre tombale levée, date de création conservée
+        const tomb = cat3.copies.find(x => x.legacyId === 'f7');
+        P.setPhysicalSingles(P.getPhysicalSingles().concat(removed));
+        await C.sync();
+        const revived = (await C.read()).copies.find(x => x.legacyId === 'f7');
+        r.tombstoneRevival = !!revived && revived.id === tomb.id && revived.deletedAt === null && revived.createdAt === tomb.createdAt && (await C.verify()).ok;
         // 4. Retour arrière : seul le catalogue dérivé est vidé ; collection intacte ; plus de migration automatique
         const listJson = JSON.stringify(P.getPhysicalSingles());
         const rb = await C.rollback();
@@ -1497,6 +1503,40 @@ const waitForCdp = async () => {
         r.durabilityDetail = { rec, staleLen: stale.length, afterLen: after.length, first: after[0] && after[0].id, lsLen: JSON.parse(localStorage.getItem('panel_physical_singles')).length, staleHasNew: stale.some(x => x.id === 'f-new') };
         const rec2 = await P.recoverSinglesFromIdb();
         r.durabilityStable = rec2.source === 'localStorage';
+        // 5b. Sécurisation : copie complète (fiches sans identifiant / en double), coupure, échec de migration, sauvegardes
+        const rawDb = () => new Promise((res, rej) => { const q = indexedDB.open('panel-catalog'); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+        const rawGet = async (store, key) => { const d = await rawDb(); return new Promise(res => { const q = d.transaction(store).objectStore(store).get(key); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); };
+        const rawPut = async (store, val) => { const d = await rawDb(); return new Promise(res => { const t = d.transaction(store, 'readwrite'); t.objectStore(store).put(val); t.oncomplete = () => res(true); t.onerror = () => res(false); }); };
+        const bk = await rawGet('backups', m.backupId);
+        r.backupContent = !!bk && JSON.stringify(bk.physicalSingles) === legacyJson && Array.isArray(bk.physicalSingles);
+        const dirty = JSON.parse(legacyJson);
+        P.setPhysicalSingles(dirty);
+        await wait(400);
+        r.idReport = (() => { const ir = C.idReport(); return ir.affected === 2 && ir.items.some(x => x.reason === 'identifiant-en-double' && x.id === 'f8') && ir.items.some(x => x.reason === 'sans-identifiant') && ir.applied === false; })();
+        const dirtyNewer = [{ ...base, id: 'f-new2', series: 'Nouveauté', issue: '#2', publisher: 'DC Comics', variant: 'Cover A' }].concat(JSON.parse(legacyJson));
+        Storage.prototype.setItem = function (k, val) { if (k === 'panel_physical_singles') throw new DOMException('quota', 'QuotaExceededError'); return realSet.call(this, k, val); };
+        try { P.setPhysicalSingles(dirtyNewer); } finally { Storage.prototype.setItem = realSet; }
+        await wait(500);
+        P.setSinglesInMemoryForTest(JSON.parse(localStorage.getItem('panel_physical_singles')));
+        const recD = await P.recoverSinglesFromIdb();
+        r.completeRecovery = recD.source === 'indexeddb' && recD.complete === true && JSON.stringify(P.getPhysicalSingles()) === JSON.stringify(dirtyNewer);
+        // Coupure simulée : copie IndexedDB tronquée (total ≠ nombre de fiches) → ignorée, collection locale conservée
+        const fullRec = await rawGet('meta', 'singlesFull');
+        await rawPut('meta', Object.assign({}, fullRec, { rev: fullRec.rev + 1000, items: fullRec.items.slice(0, 3) }));
+        const beforeCut = JSON.stringify(P.getPhysicalSingles());
+        const recCut = await P.recoverSinglesFromIdb();
+        r.interrupted = recCut.source !== 'indexeddb' && JSON.stringify(P.getPhysicalSingles()) === beforeCut;
+        P.setPhysicalSingles(JSON.parse(legacyJson));
+        await wait(400);
+        // Échec de migration forcé : collection intacte, catalogue vidé, pas de nouvelle tentative automatique
+        const bkCount0 = (await C.status()).backups.length;
+        const legacyNow = JSON.stringify(P.getPhysicalSingles());
+        const fail = await C.migrate({ force: true, simulateFailure: true });
+        const catFail = await C.read();
+        const retry = await C.migrate();
+        r.migrationFailure = fail.ok === false && fail.status === 'failed' && CATALOG_COUNT(catFail) === '0/0/0/0/0' && JSON.stringify(P.getPhysicalSingles()) === legacyNow && !!retry.skipped;
+        const recovered = await C.migrate({ force: true });
+        r.backupsKept = recovered.ok && (await C.status()).backups.length === bkCount0 + 2;
         // 6. Données réelles : export League of Comic Geeks de l'utilisateur (lecture seule, résultats chiffrés uniquement)
         if (locgB64) {
           const bin = atob(locgB64); const buf = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
@@ -1519,7 +1559,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 24:', JSON.stringify(t24));
       testResults.push({
         test: 'Catalogue normalisé : migration additive vérifiée, provenance, doublons signalés, idempotence, synchro, retour arrière, durabilité IndexedDB, export LoCG réel',
-        ok: !!t24 && ['migration', 'verify', 'normalized', 'provenance', 'copyFields', 'timestamps', 'pull', 'duplicatesFlagged', 'anomalies', 'backup', 'legacyUntouched', 'idempotent', 'incremental', 'rollback', 'reEnable', 'durability', 'durabilityStable', 'realOk', 'cleanup'].every(k => t24[k] === true)
+        ok: !!t24 && ['migration', 'verify', 'normalized', 'provenance', 'copyFields', 'timestamps', 'pull', 'duplicatesFlagged', 'anomalies', 'backup', 'legacyUntouched', 'idempotent', 'incremental', 'rollback', 'reEnable', 'durability', 'durabilityStable', 'tombstoneRevival', 'backupContent', 'idReport', 'completeRecovery', 'interrupted', 'migrationFailure', 'backupsKept', 'realOk', 'cleanup'].every(k => t24[k] === true)
       });
 
       console.log('\n==========================================');

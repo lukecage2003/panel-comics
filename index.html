@@ -4331,7 +4331,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const db = await dbReady;
       if (!db || !db.objectStoreNames.contains('singles')) return;
       const snapshot = physicalSingles.slice();
-      // IndexedDB indexe par identifiant : les fiches sans identifiant ou en double ne peuvent pas y être copiées fidèlement
+      // Copie complète et atomique : toute la liste (y compris fiches sans identifiant ou en double) et sa révision
+      // sont écrites dans un seul enregistrement → jamais de copie à moitié écrite ni de révision sans données.
+      const cdb0 = await openCatalogDb();
+      if (cdb0) await idbWrite(cdb0, ['meta'], t => t.objectStore('meta').put({ key: 'singlesFull', rev: rev || singlesRev, total: snapshot.length, items: snapshot, at: new Date().toISOString() }));
+      // Ancienne copie par identifiant (conservée pour compatibilité) : fiches sans identifiant ou en double exclues
       const keyedIds = new Set();
       const keyed = snapshot.filter(x => x && x.id !== undefined && x.id !== null && x.id !== '' && !keyedIds.has(x.id) && keyedIds.add(x.id));
       await new Promise((res, rej) => {
@@ -4404,8 +4408,22 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const recoverSinglesFromIdb = async () => {
     try {
       const cdb = await openCatalogDb();
-      const mirror = cdb ? await idbGet(cdb, 'meta', 'singlesMirror') : null;
+      const full = cdb ? await idbGet(cdb, 'meta', 'singlesFull') : null;
       const lsRev = Number(localStorage.getItem('panel_singles_rev')) || 0;
+      if (full && Array.isArray(full.items) && full.items.length === full.total && (full.rev > lsRev || !physicalSingles.length) && full.items.length) {
+        if (physicalSingles.length) await snapshotSingles('Avant reprise de la copie IndexedDB plus récente');
+        const replaced = physicalSingles.length;
+        physicalSingles = full.items;
+        singlesRev = Math.max(singlesRev, full.rev);
+        try {
+          localStorage.setItem('panel_physical_singles', JSON.stringify(physicalSingles));
+          localStorage.setItem('panel_singles_rev', String(singlesRev));
+        } catch (_) {}
+        renderSinglesCollection();
+        showToast(replaced ? 'Collection reprise depuis IndexedDB (version plus récente que le stockage local).' : full.items.length + ' single(s) restauré(s) depuis la copie de secours.');
+        return { source: 'indexeddb', count: full.items.length, replaced, complete: true };
+      }
+      const mirror = cdb ? await idbGet(cdb, 'meta', 'singlesMirror') : null;
       // Une copie IndexedDB n'est reprise que si elle est complète (aucune fiche sans identifiant ou en double)
       const idbNewer = !!(mirror && mirror.rev > lsRev && mirror.complete !== false);
       if (physicalSingles.length && !idbNewer) { mirrorSinglesToIdb(lsRev); return { source: 'localStorage' }; }
@@ -4760,7 +4778,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // Migration initiale : sauvegarde complète + instantané, construction, vérification ; échec → retour arrière automatique
-  const CATALOG_BACKUPS_KEEP = 3;
   const migrateCatalog = (opts = {}) => (async () => {
     if (catalogDisabled() && !opts.force) return { ok: false, skipped: 'désactivé (retour arrière effectué)' };
     const db = await openCatalogDb();
@@ -4770,8 +4787,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const r = await syncCatalogNow({ reason: 'reprise' });
       return Object.assign({ ok: true, already: true }, r);
     }
-    const startedAt = new Date().toISOString();
     const legacyBefore = stableHash(stableJson(physicalSingles));
+    if (prevMig && prevMig.status === 'failed' && prevMig.legacyHash === legacyBefore && !opts.force) return { ok: false, skipped: 'échec déjà constaté sur cette collection', errors: prevMig.errors };
+    const startedAt = new Date().toISOString();
     const backupId = 'bk_' + Date.now();
     const rawLs = k => localStorage.getItem(k);
     await idbWrite(db, ['backups'], tx => tx.objectStore('backups').put({
@@ -4780,13 +4798,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       raw: { panel_upc_editions: rawLs('panel_upc_editions'), panel_custom_upc_db: rawLs('panel_custom_upc_db'), panel_value_snapshots: rawLs('panel_value_snapshots'), panel_scan_queue: rawLs('panel_scan_queue') },
       ...readStoredDigitalData()
     }));
-    const backups = (await idbAll(db, 'backups')).sort((a, b) => b.at.localeCompare(a.at));
-    if (backups.length > CATALOG_BACKUPS_KEEP) await idbWrite(db, ['backups'], tx => backups.slice(CATALOG_BACKUPS_KEEP).forEach(b => tx.objectStore('backups').delete(b.id)));
     const snapshotId = await snapshotSingles('Avant migration du catalogue (lot 2.1)');
     let sync, verify;
     try {
       sync = await syncCatalogNow({ reason: 'migration' });
       verify = await verifyCatalog();
+      if (opts.simulateFailure) throw new Error('Échec simulé (test)');
     } catch (e) { verify = { ok: false, errors: [e.message || String(e)] }; }
     const legacyUntouched = stableHash(stableJson(physicalSingles)) === legacyBefore;
     const ok = !!(verify && verify.ok && legacyUntouched);
@@ -4794,7 +4811,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     catalogMigrated = ok;
     const record = {
       key: 'migration', schema: CATALOG_SCHEMA, status: ok ? 'ok' : 'failed', startedAt, finishedAt: new Date().toISOString(), backupId, snapshotId,
-      legacyCount: physicalSingles.length, legacyUntouched, counts: verify && { publishers: verify.publishers, series: verify.series, issues: verify.issues, variants: verify.variants, copies: verify.copies },
+      legacyCount: physicalSingles.length, legacyHash: legacyBefore, legacyUntouched, counts: verify && { publishers: verify.publishers, series: verify.series, issues: verify.issues, variants: verify.variants, copies: verify.copies },
       duplicates: verify && verify.duplicates ? verify.duplicates.length : 0, errors: verify ? verify.errors : []
     };
     await idbWrite(db, ['meta'], tx => tx.objectStore('meta').put(record));
@@ -4816,6 +4833,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     clearTimeout(catalogSyncTimer);
     return { ok: true, legacyUntouched: stableHash(stableJson(physicalSingles)) === before, legacyCount: physicalSingles.length };
   });
+  const idRepairReport = (list = physicalSingles) => {
+    const seen = new Map(), items = [];
+    list.forEach((x, index) => {
+      const has = x && x.id !== undefined && x.id !== null && x.id !== '';
+      const key = has ? String(x.id) : null;
+      const reason = !has ? 'sans-identifiant' : seen.has(key) ? 'identifiant-en-double' : null;
+      if (has && !seen.has(key)) seen.set(key, index);
+      if (reason) items.push({ index, reason, id: has ? x.id : null, firstIndex: has ? seen.get(key) : null, series: x && x.series, issue: x && x.issue, proposedId: 's_rep_' + stableHash(stableJson(x) + '|' + index) });
+    });
+    return { total: list.length, affected: items.length, items, applied: false };
+  };
   const enableCatalog = () => { localStorage.removeItem(CATALOG_DISABLED_KEY); return migrateCatalog({ force: true }); };
   const catalogStatus = async () => {
     const db = await openCatalogDb();
@@ -8920,6 +8948,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       read: async () => { const db = await openCatalogDb(); return db ? readCatalog(db) : null; },
       build: buildCatalogModel,
       copyToLegacy,
+      idReport: () => idRepairReport(),
       isActive: () => catalogMigrated && !catalogDisabled()
     },
     countStoredDigitalFiles,

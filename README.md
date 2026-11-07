@@ -15,7 +15,7 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 - **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lot 2.1 (catalogue normalisé).
 - **En attente de validation** : lots 2.2 à 2.7 de la Phase 2.
 - **Tests** : `node run-all-tests.js` (Edge sans interface), 23 tests.
-- **Problèmes connus** : les fiches sans identifiant ou en double ne peuvent pas être recopiées fidèlement dans IndexedDB ; pour elles, la reprise automatique de la copie IndexedDB ne s'applique pas (« Vérifier les données » les signale).
+- **Points de vigilance** : les fiches sans identifiant ou en double sont signalées (`Panel.catalog.idReport()` propose un identifiant de remplacement, sans rien appliquer). Les entrées de catalogue sans exemplaire sont conservées, et les exemplaires supprimés gardent une pierre tombale. Les instantanés de collection restent limités aux 8 derniers (comportement antérieur).
 - **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
 
 ## 🗂️ Catalogue normalisé (Phase 2 · lot 2.1)
@@ -31,7 +31,8 @@ Une base IndexedDB dédiée, `panel-catalog`, organise la collection en **édite
   - Après migration, une vérification fiche par fiche : nombre d'entrées, reconstruction identique, références complètes. En cas d'échec, le catalogue est vidé automatiquement et la collection reste la référence.
   - Elle est idempotente : la relancer ne crée aucun doublon et ne change aucune date.
 - **Doublons probables** : éditeurs proches, série sous plusieurs éditeurs, année manquante, identifiant externe partagé, variantes proches. Ils sont **signalés, jamais fusionnés**. Les fiches sans identifiant ou en double sont signalées comme anomalies.
-- **Durabilité** : localStorage et IndexedDB partagent un numéro de révision. Si localStorage est plein, la version la plus récente reste dans IndexedDB et elle est reprise au démarrage, après un instantané.
+- **Durabilité** : localStorage et IndexedDB partagent un numéro de révision. La liste complète (fiches sans identifiant ou en double comprises) et sa révision sont écrites en un seul enregistrement IndexedDB (`panel-catalog` / `meta` / `singlesFull`), ce qui exclut toute copie à moitié écrite. Si localStorage est plein, cette version plus récente est reprise au démarrage, après un instantané. Une copie tronquée est ignorée.
+- **Échec de migration** : la collection n'est pas touchée et le catalogue est vidé. Aucune nouvelle tentative automatique n'a lieu tant que la collection n'a pas changé (`Panel.catalog.enable()` force une nouvelle tentative). Les sauvegardes `panel-catalog.backups` ne sont jamais supprimées automatiquement.
 - **Retour arrière** (testé) : `Panel.catalog.rollback()` vide uniquement la base dérivée `panel-catalog`. Les sauvegardes, les instantanés et la collection ne sont pas touchés, et la migration automatique est désactivée (`panel_catalog_disabled`). `Panel.catalog.enable()` la relance. Pour revenir au code d'avant le lot 2.1, il suffit de revenir au commit `8b04cb3` : l'ancien code ignore simplement la base `panel-catalog`.
 - **Contrôle** : « Vérifier les données » (menu Plus) affiche l'état du catalogue et le nombre de doublons signalés. L'API de test est `Panel.catalog.{status, verify, read, sync, migrate}`.
 
