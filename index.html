@@ -68,9 +68,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     
     body {
-      background: radial-gradient(circle at 85% -10%, rgba(0, 163, 218, 0.05) 0%, transparent 40%),
-                  radial-gradient(circle at 10% 25%, rgba(0, 163, 218, 0.03) 0%, transparent 35%),
-                  var(--bg);
+      background: var(--bg);
       color: var(--ink);
       font-family: var(--font-ui);
       min-height: 100vh;
@@ -138,37 +136,8 @@
       transform: rotate(-6deg);
     }
 
-    /* MODULE SWITCHER IN SIDEBAR */
-    .module-switcher {
-      display: flex;
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 3px;
-      gap: 3px;
-    }
-    .module-switch-btn {
-      flex: 1;
-      padding: 7px 10px;
-      font-size: 11.5px;
-      font-weight: 700;
-      border-radius: 6px;
-      color: var(--muted);
-      text-align: center;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-    .module-switch-btn.active {
-      background: var(--bg-card);
-      color: var(--lime);
-      box-shadow: 0 2px 8px rgba(22, 22, 22, 0.1);
-    }
-
     .nav-label {
-      font-size: 11px;
+      font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 1.8px;
       color: var(--muted-dark);
@@ -204,7 +173,7 @@
     }
     .nav-btn.active .icon { color: var(--lime); }
     .nav-badge {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 99px;
@@ -223,8 +192,8 @@
       flex-direction: column;
       gap: 8px;
     }
-    .sidebar-footer span { font-size: 11px; font-weight: 700; color: var(--ink); }
-    .sidebar-footer p { font-size: 11px; color: var(--muted); line-height: 1.4; }
+    .sidebar-footer span { font-size: 12px; font-weight: 700; color: var(--ink); }
+    .sidebar-footer p { font-size: 12px; color: var(--muted); line-height: 1.4; }
 
     /* ==========================================================================
        ZONE CENTRALE
@@ -273,7 +242,7 @@
     .search-input { width: 100%; font-size: 12px; color: var(--ink); }
     .search-input::placeholder { color: var(--muted); }
     .kbd-tag {
-      font-size: 11px;
+      font-size: 12px;
       background: var(--bg-card);
       border: 1px solid var(--cyan-line);
       color: var(--muted);
@@ -322,7 +291,7 @@
     }
     .search-row-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
     .search-row-info b { font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .search-row-info small { font-size: 11px; color: var(--muted); }
+    .search-row-info small { font-size: 12px; color: var(--muted); }
 
     /* BOUTONS */
     .btn {
@@ -376,98 +345,6 @@
     }
     .btn-icon:hover { background: var(--bg-card); border-color: var(--cyan-line); color: var(--lime); }
 
-    /* HERO BANNER */
-    .hero-banner {
-      background: linear-gradient(110deg, var(--bg-card) 0%, var(--bg-card) 55%, var(--bg-card) 100%);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: 26px clamp(18px, 4vw, 40px);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 24px;
-      margin-bottom: 24px;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-sm);
-    }
-    .hero-banner::before {
-      content: "";
-      position: absolute;
-      top: -120px;
-      right: 15%;
-      width: 420px;
-      height: 420px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(0, 163, 218, 0.08) 0%, transparent 65%);
-      pointer-events: none;
-    }
-    .hero-info { max-width: 520px; z-index: 2; }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--lime);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 8px;
-    }
-    .hero-eyebrow::before {
-      content: "";
-      width: 14px;
-      height: 2px;
-      background: var(--lime);
-      border-radius: 2px;
-    }
-    .hero-info h2 {
-      font: 700 clamp(24px, 3.4vw, 38px) / 1.1 var(--font-display);
-      letter-spacing: -1px;
-      margin-bottom: 8px;
-    }
-    .hero-info h2 em {
-      font-style: normal;
-      color: var(--lime);
-      text-shadow: none;
-    }
-    .hero-info p {
-      font-size: 12.5px;
-      color: var(--ink-dim);
-      line-height: 1.5;
-      margin-bottom: 18px;
-      max-width: 440px;
-    }
-    .hero-actions { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
-
-    .hero-preview {
-      width: 125px;
-      aspect-ratio: 2/3;
-      border-radius: var(--radius-md);
-      overflow: hidden;
-      background: var(--bg-card);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow-md);
-      transform: perspective(600px) rotateY(-8deg) rotateX(3deg);
-      transition: transform 0.35s var(--ease);
-      flex-shrink: 0;
-      z-index: 2;
-      position: relative;
-    }
-    .hero-preview:hover { transform: perspective(600px) rotateY(0deg) scale(1.05); }
-    .hero-preview img, .hero-preview canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .hero-preview-placeholder {
-      width: 100%;
-      height: 100%;
-      display: grid;
-      place-items: center;
-      text-align: center;
-      padding: 10px;
-      font-size: 11px;
-      color: var(--muted);
-      background: var(--bg-card);
-    }
-
     /* STATS STRIP FOR SINGLES */
     .singles-stats-bar {
       display: grid;
@@ -485,7 +362,7 @@
       gap: 2px;
     }
     .single-stat-pill span {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 1px;
@@ -533,12 +410,6 @@
       color: var(--lime);
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
     }
-    .tab-counter {
-      font-size: 11px;
-      background: rgba(22, 22, 22, 0.075);
-      padding: 1px 6px;
-      border-radius: 99px;
-    }
 
     /* COMICS GRID */
     .comics-grid {
@@ -562,7 +433,7 @@
     .comic-card:hover {
       transform: translateY(-5px);
       border-color: var(--cyan-line);
-      box-shadow: var(--shadow-md), 0 0 20px rgba(0, 163, 218, 0.18);
+      box-shadow: var(--shadow-md);
     }
 
     .comic-poster {
@@ -604,7 +475,7 @@
       z-index: 2;
     }
     .format-pill {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.6px;
       padding: 3px 6px;
@@ -615,7 +486,7 @@
       border: 1px solid var(--line);
     }
     .status-pill {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       padding: 3px 7px;
       border-radius: 99px;
@@ -648,21 +519,9 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 11px;
+      font-size: 12px;
       color: var(--muted);
       margin-top: 2px;
-    }
-    .progress-line-wrap {
-      height: 3px;
-      background: var(--bg-card);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 5px;
-    }
-    .progress-line-fill {
-      height: 100%;
-      background: linear-gradient(90deg, var(--lime), var(--cyan-fill));
-      border-radius: 3px;
     }
 
     .comic-card-action-bar {
@@ -674,7 +533,7 @@
       border-top: 1px solid var(--line);
     }
     .card-action-btn {
-      font-size: 11px;
+      font-size: 12px;
       padding: 3px 6px;
       border-radius: 4px;
       background: var(--bg-card);
@@ -698,7 +557,7 @@
       margin: 16px 0;
     }
     .empty-box-icon { font-size: 32px; color: var(--muted-dark); }
-    .empty-box h3 { font: 600 16px var(--font-display); color: var(--ink); }
+    .empty-box h2, .empty-box h3 { font: 600 16px var(--font-display); color: var(--ink); }
     .empty-box p { font-size: 12px; max-width: 380px; line-height: 1.5; }
 
     /* ==========================================================================
@@ -724,17 +583,17 @@
     .scan-cam-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; padding: 22px; text-align: center; color: var(--muted); gap: 6px; }
     .scan-cam-error span { font-size: 32px; }
     .scan-cam-error b { color: var(--ink); font-size: 13px; }
-    .scan-cam-error small { font-size: 11px; max-width: 300px; line-height: 1.45; }
-    .scan-hint { flex-shrink: 0; margin-top: 6px; font-size: 11.5px; line-height: 1.45; padding: 6px 10px; border-radius: 6px; background: var(--bg-card); color: var(--ink); border: 1px solid var(--line); }
+    .scan-cam-error small { font-size: 12px; max-width: 300px; line-height: 1.45; }
+    .scan-hint { flex-shrink: 0; margin-top: 6px; font-size: 12px; line-height: 1.45; padding: 6px 10px; border-radius: 6px; background: var(--bg-card); color: var(--ink); border: 1px solid var(--line); }
     .scan-hint[data-tone="warn"] { border-color: var(--yellow-line); color: var(--lime); }
     #continuousScanBanner[data-tone="warn"] { background: var(--bg-card) !important; border-color: var(--yellow-line) !important; color: var(--lime) !important; }
     #scannerTorchBtn.active, #scannerZoomBtn.active { border-color: var(--lime); color: var(--lime); }
     .scan-queue { flex-shrink: 0; margin-bottom: 8px; border: 1px solid var(--yellow-line); border-radius: var(--radius-sm); background: var(--bg-card); padding: 6px; max-height: 190px; overflow-y: auto; }
-    .scan-queue-head { display: flex; align-items: baseline; gap: 8px; font-size: 11.5px; color: var(--lime); padding: 2px 4px 6px; }
-    .scan-queue-head span { color: var(--muted); font-size: 11px; flex: 1; }
+    .scan-queue-head { display: flex; align-items: baseline; gap: 8px; font-size: 12px; color: var(--lime); padding: 2px 4px 6px; }
+    .scan-queue-head span { color: var(--muted); font-size: 12px; flex: 1; }
     .scan-queue-row { display: grid; grid-template-columns: 1fr auto; width: 100%; text-align: left; background: var(--bg-card); border: 1px solid var(--line); border-radius: 6px; padding: 6px 8px; margin-top: 4px; color: var(--ink); cursor: pointer; font: inherit; font-size: 12px; }
-    .scan-queue-row small { grid-column: 1; color: var(--muted); font-size: 11px; }
-    .scan-queue-row em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; color: var(--lime); font-size: 11px; }
+    .scan-queue-row small { grid-column: 1; color: var(--muted); font-size: 12px; }
+    .scan-queue-row em { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-style: normal; color: var(--lime); font-size: 12px; }
 
     /* COVER VARIANTS SELECTOR */
     .variants-selector-grid {
@@ -760,7 +619,7 @@
     .variant-cover-card:hover { transform: scale(1.03); border-color: var(--lime); }
     .variant-cover-card.selected {
       border-color: var(--lime);
-      box-shadow: 0 0 16px var(--lime-glow);
+      box-shadow: 3px 3px 0 var(--key);
     }
     .variant-cover-card .variant-label {
       position: absolute;
@@ -768,7 +627,7 @@
       left: 0;
       right: 0;
       background: rgba(22, 22, 22, 0.42);
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       padding: 4px;
       text-align: center;
@@ -785,14 +644,14 @@
       border-radius: 50%;
       display: grid;
       place-items: center;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       display: none;
     }
     .variant-cover-card.selected .variant-check-badge { display: grid; }
     .variant-src-badge {
       position: absolute; top: 5px; left: 5px; max-width: calc(100% - 34px);
-      font-size: 11px; font-weight: 700; padding: 2px 5px; border-radius: 4px;
+      font-size: 12px; font-weight: 700; padding: 2px 5px; border-radius: 4px;
       background: rgba(22, 22, 22, 0.42); color: var(--ink); border: 1px solid var(--cyan-line);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
     }
@@ -801,10 +660,10 @@
     .variant-src-badge.src-metron { color: var(--purple); border-color: var(--cyan-line); }
     .variant-src-badge.src-manual { color: var(--lime); border-color: var(--cyan-line); }
     .variant-empty-note { grid-column: 1 / -1; font-size: 12px; color: var(--muted); line-height: 1.5; padding: 10px; border: 1px dashed var(--cyan-line); border-radius: var(--radius-sm); }
-    .inspect-cover-source { font-size: 11px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+    .inspect-cover-source { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
     .snapshot-box { margin-top: 10px; padding: 8px 10px; background: var(--bg-card); border-radius: 6px; }
     .snapshot-list { margin-top: 6px; display: grid; gap: 4px; max-height: 170px; overflow-y: auto; }
-    .snapshot-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 11px; padding: 5px 8px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 5px; }
+    .snapshot-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; padding: 5px 8px; background: var(--bg-card); border: 1px solid var(--line); border-radius: 5px; }
     .snapshot-row span { color: var(--muted); }
     .snapshot-row b { color: var(--ink); font-weight: 600; }
     .btn-link { background: none; border: 0; padding: 0; color: var(--lime); font: inherit; text-decoration: underline; cursor: pointer; }
@@ -829,24 +688,6 @@
       --lime: #a29bfe;
       --lime-glow: rgba(162, 155, 254, 0.28);
       --lime-dark: #201b2e;
-    }
-
-    /* CHIPS HEROES & INSPECTEUR SINGLES */
-    .hero-chip {
-      background: var(--bg-card);
-      border: 1px solid var(--cyan-line);
-      border-radius: var(--radius-pill);
-      padding: 4px 10px;
-      font-size: 11px;
-      color: var(--ink-dim);
-      cursor: pointer;
-      transition: var(--transition);
-      white-space: nowrap;
-    }
-    .hero-chip:hover {
-      background: var(--bg-card);
-      border-color: var(--lime);
-      color: var(--lime);
     }
     .inspector-grid {
       display: grid;
@@ -939,7 +780,7 @@
       border: 1px solid var(--cyan-line);
     }
     .confidence-badge {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 800;
       padding: 2px 8px;
       border-radius: var(--radius-pill);
@@ -997,312 +838,6 @@
       display: none;
     }
 
-    /* LECTEUR IMMERSIF */
-    .reader-modal {
-      position: fixed;
-      inset: 0;
-      background: var(--bg);
-      z-index: 100;
-      display: none;
-      flex-direction: column;
-      user-select: none;
-    }
-    .reader-modal.open { display: flex; }
-
-    .reader-top-bar, .reader-bottom-bar {
-      height: 58px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 clamp(10px, 2.5vw, 24px);
-      background: rgba(22, 22, 22, 0.42);
-      backdrop-filter: blur(24px);
-      border-bottom: 1px solid var(--border);
-      z-index: 10;
-      flex-shrink: 0;
-      transition: transform 0.25s var(--ease), opacity 0.25s var(--ease);
-    }
-    .reader-bottom-bar { border-bottom: none; border-top: 1px solid var(--border); }
-    .reader-modal.hud-hidden .reader-top-bar { transform: translateY(-100%); opacity: 0; pointer-events: none; }
-    .reader-modal.hud-hidden .reader-bottom-bar { transform: translateY(100%); opacity: 0; pointer-events: none; }
-
-    .reader-stage {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: auto;
-      padding: 12px;
-    }
-    .reader-stage.contrast-sepia { filter: sepia(0.3) contrast(1.05); background: var(--bg-card); }
-    .reader-stage.contrast-night { filter: invert(0.9) hue-rotate(180deg); background: var(--bg); }
-
-    .reader-content-frame {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      max-width: 100%;
-      max-height: 100%;
-    }
-    .reader-content-frame.double-page { gap: 8px; }
-
-    .reader-element {
-      max-width: calc(100vw - 80px);
-      max-height: calc(100vh - 140px);
-      object-fit: contain;
-      border-radius: 4px;
-      box-shadow: 0 16px 50px rgba(22, 22, 22, 0.14);
-      display: block;
-    }
-    .reader-content-frame.double-page .reader-element {
-      max-width: calc(50vw - 48px);
-    }
-
-    .reader-side-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 44px;
-      height: 64px;
-      background: rgba(22, 22, 22, 0.42);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      display: grid;
-      place-items: center;
-      font-size: 22px;
-      color: var(--ink);
-      z-index: 5;
-    }
-    .reader-side-arrow:hover { background: var(--lime); color: var(--ink); }
-    .reader-side-arrow.prev { left: 14px; }
-    .reader-side-arrow.next { right: 14px; }
-    .reader-side-arrow:disabled { opacity: 0.15; pointer-events: none; }
-
-    /* NOUVEAUX MODES D'AFFICHAGE DU LECTEUR */
-    .reader-stage.fit-width .reader-element {
-      width: min(100%, 1150px);
-      max-width: 100%;
-      height: auto;
-      max-height: none;
-    }
-    .reader-stage.fit-height .reader-element {
-      height: calc(100vh - 130px);
-      max-height: calc(100vh - 130px);
-      width: auto;
-      max-width: none;
-    }
-    .reader-stage.mode-scroll {
-      display: block;
-      overflow-y: auto;
-      padding: 30px 10px;
-    }
-    .reader-stage.mode-scroll .reader-content-frame {
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-      align-items: center;
-      max-width: 950px;
-      margin: 0 auto;
-    }
-    .reader-stage.mode-scroll .reader-element {
-      width: min(100%, 950px);
-      max-width: 100%;
-      height: auto;
-      max-height: none;
-      box-shadow: 0 10px 40px rgba(22, 22, 22, 0.14);
-    }
-    .reader-stage.pan-active {
-      cursor: grab;
-    }
-    .reader-stage.pan-active.panning {
-      cursor: grabbing;
-    }
-    .reader-element-wrap {
-      position: relative;
-      display: inline-block;
-      line-height: 0;
-    }
-    .reader-annotation-canvas {
-      position: absolute;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 4;
-      pointer-events: none;
-    }
-    .annotating .reader-annotation-canvas {
-      pointer-events: auto;
-      cursor: crosshair;
-    }
-
-    /* BARRE FLOTTANTE D'ANNOTATION */
-    .reader-annotation-toolbar {
-      position: absolute;
-      bottom: 74px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(22, 22, 22, 0.42);
-      border: 1px solid var(--border-bright);
-      box-shadow: 0 10px 30px rgba(22, 22, 22, 0.14);
-      border-radius: 30px;
-      padding: 6px 14px;
-      display: none;
-      align-items: center;
-      gap: 10px;
-      z-index: 15;
-      backdrop-filter: blur(16px);
-    }
-    .reader-annotation-toolbar.active {
-      display: flex;
-    }
-
-    /* VOLET D'ÉTUDE RÉTRACTABLE (STUDY DRAWER) */
-    .reader-study-drawer {
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      width: 420px;
-      max-width: 90vw;
-      background: rgba(22, 22, 22, 0.42);
-      backdrop-filter: blur(28px);
-      border-left: 1px solid var(--border);
-      z-index: 25;
-      display: flex;
-      flex-direction: column;
-      transform: translateX(100%);
-      transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: -10px 0 40px rgba(22, 22, 22, 0.14);
-    }
-    .reader-study-drawer.open {
-      transform: translateX(0);
-    }
-    .study-drawer-header {
-      height: 58px;
-      padding: 0 18px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .study-drawer-tabs {
-      display: flex;
-      padding: 8px 12px;
-      gap: 6px;
-      border-bottom: 1px solid var(--border);
-      background: rgba(22, 22, 22, 0.42);
-      flex-shrink: 0;
-      overflow-x: auto;
-    }
-    .study-tab-btn {
-      padding: 6px 10px;
-      font-size: 11.5px;
-      font-weight: 600;
-      background: transparent;
-      border: 1px solid transparent;
-      border-radius: 6px;
-      color: var(--muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-    .study-tab-btn:hover {
-      color: var(--ink);
-      background: rgba(22, 22, 22, 0.03);
-    }
-    .study-tab-btn.active {
-      color: var(--lime);
-      background: rgba(0, 163, 218, 0.10);
-      border-color: rgba(0, 163, 218, 0.35);
-    }
-    .study-drawer-body {
-      flex: 1;
-      overflow-y: auto;
-      padding: 16px;
-    }
-
-    /* MINIATURES DANS LE VOLET D'ÉTUDE */
-    .study-thumbnails-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(95px, 1fr));
-      gap: 10px;
-    }
-    .study-thumb-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.15s ease;
-      position: relative;
-    }
-    .study-thumb-card:hover {
-      border-color: var(--lime);
-      transform: translateY(-2px);
-    }
-    .study-thumb-card.active {
-      border-color: var(--lime);
-      box-shadow: 0 0 0 2px rgba(0, 163, 218, 0.18);
-    }
-    .study-thumb-preview {
-      width: 100%;
-      height: 130px;
-      background: var(--bg-card);
-      display: grid;
-      place-items: center;
-      font-size: 11px;
-      color: var(--muted);
-      overflow: hidden;
-    }
-    .study-thumb-preview img, .study-thumb-preview canvas {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .study-thumb-footer {
-      padding: 5px;
-      text-align: center;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--ink-dim);
-      background: var(--bg-card);
-    }
-
-    /* NOTES D'ÉTUDE */
-    .study-note-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      margin-bottom: 10px;
-      transition: border-color 0.15s ease;
-    }
-    .study-note-card:hover {
-      border-color: var(--border-bright);
-    }
-    .study-note-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-    }
-    .study-note-tag {
-      font-size: 11px;
-      font-weight: 700;
-      padding: 2px 7px;
-      border-radius: 4px;
-      background: rgba(0, 163, 218, 0.15);
-      color: var(--lime);
-      border: 1px solid rgba(0, 163, 218, 0.35);
-    }
-
     /* MODALES */
     .modal-backdrop {
       position: fixed;
@@ -1329,25 +864,11 @@
       flex-direction: column;
       gap: 14px;
     }
-    .modal-box h3 { font: 700 20px var(--font-display); letter-spacing: -0.6px; }
+    .modal-box h2, .modal-box h3 { font: 700 20px var(--font-display); letter-spacing: -0.6px; }
     .modal-box p { font-size: 12px; color: var(--ink-dim); line-height: 1.5; }
 
-    .dropzone-area {
-      border: 2px dashed var(--cyan-line);
-      border-radius: var(--radius-md);
-      background: rgba(22, 22, 22, 0.42);
-      padding: 24px 16px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 9px;
-      cursor: pointer;
-    }
-    .dropzone-area:hover { border-color: var(--lime); background: rgba(0, 163, 218, 0.05); }
-
     .form-row { display: flex; flex-direction: column; gap: 5px; }
-    .form-row label { font-size: 11px; font-weight: 700; color: var(--ink-dim); }
+    .form-row label { font-size: 12px; font-weight: 700; color: var(--ink-dim); }
     .form-row input, .form-row select, .form-row textarea {
       background: var(--bg-card);
       border: 1px solid var(--border-focus);
@@ -1376,7 +897,7 @@
       border-radius: var(--radius-pill);
       font-size: 12px;
       font-weight: 700;
-      box-shadow: 0 10px 30px rgba(22, 22, 22, 0.14), 0 0 20px var(--lime-glow);
+      box-shadow: 0 10px 30px rgba(22, 22, 22, 0.14);
       transition: all 0.25s var(--ease);
       z-index: 200;
       white-space: nowrap;
@@ -1403,7 +924,7 @@
       flex-direction: column;
       align-items: center;
       gap: 3px;
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 600;
       color: var(--muted);
       padding: 6px 10px;
@@ -1423,10 +944,7 @@
       .mobile-dock { display: flex; }
       main { padding: 16px 12px 86px; }
       .singles-stats-bar { grid-template-columns: repeat(2, 1fr); }
-      .hero-banner { padding: 20px 16px; flex-direction: column; align-items: flex-start; }
-      .hero-preview { display: none; }
       .comics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .reader-side-arrow { width: 32px; height: 48px; font-size: 16px; }
     }
     /* ==========================================================================
        COLLECTOR PRO — Séries, Pull List, Sorties, Statistiques, Vue Liste
@@ -1441,22 +959,22 @@
       .singles-subnav { display: flex; position: sticky; top: 0; z-index: 25; background: var(--bg); padding: 8px 0; margin-bottom: 12px; }
     }
     .valuation-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: end; }
-    .valuation-hint { font-size: 11px; color: var(--muted); margin: 4px 0 10px; line-height: 1.45; }
-    .value-source { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.3px; }
+    .valuation-hint { font-size: 12px; color: var(--muted); margin: 4px 0 10px; line-height: 1.45; }
+    .value-source { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 99px; letter-spacing: 0.3px; }
     .value-source.auto { background: rgba(0, 163, 218, 0.10); color: var(--lime); }
     .value-source.market { background: rgba(0, 163, 218, 0.14); color: var(--cyan); }
     .value-source.manual { background: rgba(22, 22, 22, 0.036); color: var(--ink-dim); }
     .value-source-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-    .value-factors { margin-top: 6px; font-size: 11px; color: var(--ink-dim); }
+    .value-factors { margin-top: 6px; font-size: 12px; color: var(--ink-dim); }
     .value-factors summary { cursor: pointer; color: var(--muted); }
     .value-factors ul { list-style: none; margin-top: 4px; display: flex; flex-direction: column; gap: 2px; }
     .value-factors li { display: flex; justify-content: space-between; gap: 8px; }
     .value-factors li b { color: var(--ink); font-variant-numeric: tabular-nums; white-space: nowrap; }
     .market-actions { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-    .market-actions .btn, .market-entry .btn { font-size: 11px; padding: 5px 9px; }
+    .market-actions .btn, .market-entry .btn { font-size: 12px; padding: 5px 9px; }
     .market-entry { display: grid; grid-template-columns: minmax(70px, 1fr) minmax(90px, 1.2fr) auto; gap: 6px; margin-top: 6px; }
-    .market-entry .field-input { min-height: 30px; padding: 5px 8px; font-size: 11px; width: 100%; }
-    .value-history { margin-top: 6px; font-size: 11px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; max-height: 92px; overflow-y: auto; }
+    .market-entry .field-input { min-height: 30px; padding: 5px 8px; font-size: 12px; width: 100%; }
+    .value-history { margin-top: 6px; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; max-height: 92px; overflow-y: auto; }
     .value-history div { display: flex; justify-content: space-between; gap: 8px; }
     .value-history b { color: var(--ink-dim); font-variant-numeric: tabular-nums; }
     .csv-steps { font-size: 12px; color: var(--ink-dim); line-height: 1.55; display: grid; gap: 10px; margin-bottom: 12px; }
@@ -1464,19 +982,19 @@
     .csv-drop { border: 2px dashed var(--border-focus); border-radius: var(--radius-md); padding: 26px 16px; text-align: center; color: var(--muted); font-size: 12.5px; cursor: pointer; transition: var(--transition); }
     .csv-drop:hover, .csv-drop.drag { border-color: var(--lime); background: var(--lime-dark); color: var(--ink); }
     .csv-map-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 6px 12px; max-height: 230px; overflow-y: auto; padding-right: 4px; margin: 10px 0; }
-    .csv-map-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: center; font-size: 11px; color: var(--muted); }
-    .csv-map-row .field-input { min-height: 28px; padding: 4px 6px; font-size: 11px; width: 100%; }
+    .csv-map-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: center; font-size: 12px; color: var(--muted); }
+    .csv-map-row .field-input { min-height: 28px; padding: 4px 6px; font-size: 12px; width: 100%; }
     .csv-map-row .field-input.mapped { border-color: var(--cyan-line); color: var(--lime); }
-    .csv-preview { width: 100%; border-collapse: collapse; font-size: 11px; margin-top: 6px; }
-    .csv-preview th { text-align: left; color: var(--muted); font-weight: 700; text-transform: uppercase; font-size: 11px; letter-spacing: 0.6px; padding: 4px 6px; border-bottom: 1px solid var(--border); }
+    .csv-preview { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+    .csv-preview th { text-align: left; color: var(--muted); font-weight: 700; text-transform: uppercase; font-size: 12px; letter-spacing: 0.6px; padding: 4px 6px; border-bottom: 1px solid var(--border); }
     .csv-preview td { padding: 5px 6px; border-bottom: 1px solid var(--line); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 160px; }
-    .csv-options { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 11.5px; margin: 8px 0; }
+    .csv-options { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 12px; margin: 8px 0; }
     .csv-options label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
     .cover-job-bar { display: grid; grid-template-columns: 1fr auto; gap: 8px 14px; align-items: center; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; margin-bottom: 16px; font-size: 12px; color: var(--ink-dim); }
     .cover-job-text b { color: var(--ink); }
     .cover-job-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
-    .cover-job-actions .btn { font-size: 11.5px; padding: 6px 12px; }
-    .cover-opt { display: flex; gap: 5px; align-items: center; font-size: 11px; color: var(--muted); cursor: pointer; }
+    .cover-job-actions .btn { font-size: 12px; padding: 6px 12px; }
+    .cover-opt { display: flex; gap: 5px; align-items: center; font-size: 12px; color: var(--muted); cursor: pointer; }
     @media (max-width: 720px) { .cover-job-bar { grid-template-columns: 1fr; } .cover-job-actions { justify-content: flex-start; } }
     /* PWA : encoches, barre d'accueil, mode application */
     @media (max-width: 720px) {
@@ -1498,12 +1016,12 @@
     .pwa-banner { display: flex; align-items: center; gap: 10px; background: linear-gradient(135deg, var(--bg-card), var(--bg-card)); border: 1px solid var(--cyan-line); border-radius: var(--radius-sm); padding: 10px 12px; margin-bottom: 14px; font-size: 12px; color: var(--ink-dim); }
     .pwa-banner img { width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0; }
     .pwa-banner b { color: var(--ink); }
-    .pwa-banner .btn { font-size: 11.5px; padding: 6px 12px; margin-left: auto; white-space: nowrap; }
+    .pwa-banner .btn { font-size: 12px; padding: 6px 12px; margin-left: auto; white-space: nowrap; }
     .pwa-banner .pwa-close { color: var(--muted); font-size: 14px; padding: 4px 6px; }
-    .offline-pill { display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; font-size: 11px; font-weight: 700; color: var(--orange); background: rgba(255, 229, 0, 0.22); border: 1px solid var(--line); padding: 2px 8px; border-radius: 99px; vertical-align: middle; }
-    .pwa-settings { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 11.5px; color: var(--ink-dim); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
+    .offline-pill { display: inline-flex; align-items: center; gap: 5px; margin-left: 8px; font-size: 12px; font-weight: 700; color: var(--orange); background: rgba(255, 229, 0, 0.22); border: 1px solid var(--line); padding: 2px 8px; border-radius: 99px; vertical-align: middle; }
+    .pwa-settings { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12px; color: var(--ink-dim); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
     .pwa-settings b { color: var(--ink); }
-    .stat-sub { font-size: 11px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .stat-sub { font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
     .gain-pos { color: var(--cyan) !important; }
     .gain-neg { color: var(--red) !important; }
 
@@ -1532,19 +1050,19 @@
     .single-row .row-title small, .single-row .row-dim { color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .single-row .row-num { text-align: right; font-variant-numeric: tabular-nums; }
     .single-row .row-actions { display: flex; gap: 4px; justify-content: flex-end; }
-    .list-head { background: transparent; border-color: transparent; cursor: default; font-size: 11px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding-top: 0; padding-bottom: 0; }
+    .list-head { background: transparent; border-color: transparent; cursor: default; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding-top: 0; padding-bottom: 0; }
     .list-head:hover { background: transparent; border-color: transparent; }
     @media (max-width: 860px) {
       .single-row { grid-template-columns: 44px minmax(0, 1fr) 80px 70px; }
       .single-row .hide-sm { display: none; }
     }
 
-    .read-dot { white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
+    .read-dot { white-space: nowrap; flex-shrink: 0; display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 700; padding: 2px 7px; border-radius: 99px; }
     .read-dot.read { background: rgba(0, 163, 218, 0.12); color: var(--cyan); }
     .read-dot.unread { background: rgba(22, 22, 22, 0.03); color: var(--muted); }
-    .wish-ribbon { position: absolute; top: 8px; right: 8px; z-index: 3; background: var(--orange); color: var(--ink); font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 99px; letter-spacing: 0.4px; }
+    .wish-ribbon { position: absolute; top: 8px; right: 8px; z-index: 3; background: var(--orange); color: var(--ink); font-size: 12px; font-weight: 800; padding: 2px 7px; border-radius: 99px; letter-spacing: 0.4px; }
     .comic-card.is-wish .comic-poster img { filter: grayscale(0.65) brightness(0.75); }
-    .stars { color: var(--gold); letter-spacing: 1px; font-size: 11px; }
+    .stars { color: var(--gold); letter-spacing: 1px; font-size: 12px; }
     .star-input { display: inline-flex; gap: 2px; }
     .star-input button { font-size: 18px; color: var(--muted-dark); padding: 0 1px; line-height: 1; }
     .star-input button.on { color: var(--gold); }
@@ -1559,10 +1077,10 @@
     .series-track-card:hover { border-color: var(--cyan-line); background: var(--bg-card); }
     .series-track-card img { width: 64px; height: 96px; object-fit: cover; border-radius: 6px; background: var(--bg-card); }
     .series-track-card h3 { font: 700 14.5px var(--font-display); margin-bottom: 2px; display: flex; align-items: center; gap: 6px; }
-    .series-track-meta { font-size: 11px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
+    .series-track-meta { font-size: 12px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; }
     .progress-track { height: 6px; border-radius: 99px; background: var(--bg-card); overflow: hidden; margin: 8px 0 6px; }
     .progress-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--lime)); border-radius: 99px; transition: width 0.4s var(--ease); }
-    .missing-line { font-size: 11px; color: var(--orange); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .missing-line { font-size: 12px; color: var(--orange); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .missing-line.complete { color: var(--cyan); }
     .missing-line.sparse { color: var(--muted); }
     .pull-star { font-size: 15px; color: var(--muted-dark); line-height: 1; padding: 2px; border-radius: 4px; }
@@ -1580,19 +1098,19 @@
     .issue-chip.wish { background: var(--tint-yellow); border-color: var(--yellow-line); color: var(--orange); }
     .issue-chip.missing { border-style: dashed; }
     .issue-chip.missing:hover { border-color: var(--orange); color: var(--orange); }
-    .chip-legend { display: flex; gap: 14px; font-size: 11px; color: var(--muted); flex-wrap: wrap; margin-top: 10px; }
+    .chip-legend { display: flex; gap: 14px; font-size: 12px; color: var(--muted); flex-wrap: wrap; margin-top: 10px; }
     .chip-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; border: 1px solid var(--border); }
 
     /* Sorties & pull list */
     .week-nav { display: flex; align-items: center; gap: 6px; }
     .week-label { font: 600 13px var(--font-display); min-width: 210px; text-align: center; font-variant-numeric: tabular-nums; }
     .pull-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 16px; }
-    .pull-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid #D9BE00; color: var(--gold); border-radius: 99px; padding: 4px 6px 4px 11px; font-size: 11.5px; font-weight: 600; }
+    .pull-chip { display: inline-flex; align-items: center; gap: 6px; background: var(--bg-card); border: 1px solid #D9BE00; color: var(--gold); border-radius: 99px; padding: 4px 6px 4px 11px; font-size: 12px; font-weight: 600; }
     .pull-chip button { color: var(--muted); font-size: 12px; width: 18px; height: 18px; border-radius: 50%; }
     .pull-chip button:hover { background: rgba(229, 0, 126, 0.14); color: var(--red); }
     .release-card .comic-caption small { color: var(--muted); }
     .release-card.pulled { border-color: var(--yellow-line); box-shadow: 0 0 0 1px rgba(22, 22, 22, 0.08); }
-    .release-flag { position: absolute; top: 8px; left: 8px; z-index: 3; font-size: 11px; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
+    .release-flag { position: absolute; top: 8px; left: 8px; z-index: 3; font-size: 12px; font-weight: 800; padding: 2px 7px; border-radius: 99px; }
     .release-flag.pull { background: var(--gold); color: var(--ink); }
     .release-flag.owned { background: var(--cyan); color: var(--ink); }
     .notice-box { border: 1px dashed var(--border); border-radius: var(--radius-md); padding: 22px; text-align: center; color: var(--muted); font-size: 12.5px; grid-column: 1 / -1; }
@@ -1601,7 +1119,7 @@
     .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-bottom: 36px; }
     .stats-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px 18px; }
     .stats-card h3 { font: 700 13px var(--font-display); text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 12px; }
-    .hbar-row { display: grid; grid-template-columns: minmax(0, 120px) 1fr 74px; gap: 10px; align-items: center; font-size: 11.5px; margin-bottom: 7px; }
+    .hbar-row { display: grid; grid-template-columns: minmax(0, 120px) 1fr 74px; gap: 10px; align-items: center; font-size: 12px; margin-bottom: 7px; }
     .hbar-row span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim); }
     .hbar { height: 8px; background: var(--bg-card); border-radius: 99px; overflow: hidden; }
     .hbar > div { height: 100%; background: var(--lime); border-radius: 99px; }
@@ -1609,7 +1127,7 @@
     .month-chart { display: grid; grid-template-columns: repeat(12, 1fr); gap: 5px; align-items: end; height: 120px; }
     .month-col { display: flex; flex-direction: column; align-items: center; gap: 4px; height: 100%; justify-content: flex-end; }
     .month-col div { width: 100%; background: linear-gradient(180deg, var(--lime), var(--cyan-fill)); border-radius: 4px 4px 1px 1px; min-height: 2px; }
-    .month-col span { font-size: 11px; color: var(--muted); }
+    .month-col span { font-size: 12px; color: var(--muted); }
     .top-list { display: flex; flex-direction: column; gap: 2px; }
     .top-item { display: grid; grid-template-columns: 22px 34px 1fr auto; gap: 10px; align-items: center; font-size: 12px; cursor: pointer; padding: 3px; border-radius: 6px; }
     .top-item:hover { background: var(--bg-card); }
@@ -1671,7 +1189,7 @@
     .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--key); vertical-align: -1px; }
 
     /* Titres : condensé de presse */
-    h1, h2, h3, .topbar-title, .section-head h2, .modal-box h3, .stats-card h3, .brand, .hero-banner h1, .hero-banner h2 {
+    h1, h2, h3, .topbar-title, .section-head h2, .modal-box h2, .modal-box h3, .stats-card h3, .brand, .hero-banner h1, .hero-banner h2 {
       font-family: var(--font-display) !important;
       letter-spacing: 0;
     }
@@ -1693,9 +1211,6 @@
     .nav-btn:hover { background: rgba(255, 255, 255, 0.4); color: var(--key); }
     .nav-btn.active { background: #FFFFFF; border-color: var(--key); color: var(--key); font-weight: 700; box-shadow: none; }
     .nav-badge { background: var(--key) !important; color: #FFFFFF !important; border: 0 !important; font-weight: 700; border-radius: 3px !important; }
-    .module-switcher { background: rgba(255, 255, 255, 0.55) !important; border: 1.5px solid var(--key) !important; border-radius: 4px !important; padding: 2px !important; }
-    .module-switch-btn { color: var(--key) !important; border-radius: 2px !important; font-weight: 700 !important; opacity: 1 !important; background: transparent; }
-    .module-switch-btn.active { background: var(--key) !important; color: #FFFFFF !important; box-shadow: none !important; }
     .sidebar-footer { background: #FFFFFF !important; border: 1.5px solid var(--key) !important; border-radius: 4px !important; box-shadow: none !important; }
     .sidebar-footer * { color: var(--ink); }
 
@@ -1712,6 +1227,9 @@
     }
     .btn:hover { filter: none; background: color-mix(in srgb, var(--cyan-fill) 82%, #FFFFFF); transform: translateY(-1px); box-shadow: 0 2px 0 var(--key); }
     .btn:active { transform: translateY(0); box-shadow: none; }
+    /* Survol des boutons pleins : texte encre (contraste AA sur le cyan éclairci), même si une couleur est posée en ligne */
+    .btn:not(.secondary):not(.ghost):hover { color: var(--key) !important; }
+    input::placeholder, textarea::placeholder { color: var(--muted); opacity: 1; }
     .btn:not(.secondary):not(.ghost) { color: var(--key) !important; }
     .value-glow { text-shadow: none !important; }
     .btn.secondary { background: #FFFFFF; color: var(--ink); border: 1px solid var(--line-strong); }
@@ -1728,14 +1246,12 @@
     .tab-btn { background: #FFFFFF; border: 1px solid var(--line); color: var(--ink); border-radius: 999px; font-weight: 600; }
     .tab-btn:hover { border-color: var(--key); }
     .tab-btn.active { background: var(--key); border-color: var(--key); color: #FFFFFF; box-shadow: none; }
-    .tab-btn.active .tab-counter { background: #FFFFFF; color: var(--key); }
-    .tab-counter { background: var(--bg); color: var(--ink); border-radius: 3px; font-weight: 700; }
 
     /* Champs */
     input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=file]), select, textarea, .field-input {
       background: #FFFFFF; color: var(--ink); border: 1px solid var(--line-strong); border-radius: 4px;
     }
-    input::placeholder, textarea::placeholder { color: #6B7471; }
+    input::placeholder, textarea::placeholder { color: #626B68; opacity: 1; }
     input:focus, select:focus, textarea:focus { border-color: var(--key) !important; box-shadow: 0 0 0 3px var(--lime-glow) !important; outline: none; }
     input[type=checkbox], input[type=radio] { accent-color: var(--key) !important; }
 
@@ -1751,7 +1267,7 @@
       font-size: 22px; line-height: 1; padding: 5px 8px 4px; min-width: 34px; text-align: center;
       border-bottom-right-radius: 3px; letter-spacing: 0.01em;
     }
-    .status-pill { margin: 6px 6px 0 0; border-radius: 3px !important; font-weight: 700 !important; font-size: 11px !important; border: 1.5px solid var(--key) !important; color: var(--key) !important; padding: 2px 6px !important; background-color: #FFFFFF !important; }
+    .status-pill { margin: 6px 6px 0 0; border-radius: 3px !important; font-weight: 700 !important; font-size: 12px !important; border: 1.5px solid var(--key) !important; color: var(--key) !important; padding: 2px 6px !important; background-color: #FFFFFF !important; }
     .status-pill.key { background-color: var(--tint-magenta) !important; background-image: var(--dots-magenta) !important; background-size: 4px 4px !important; }
     .status-pill.cgc { background-color: var(--yellow-fill) !important; background-image: none !important; }
     .status-pill.key, .status-pill.cgc { text-shadow: 0 0 2px #FFFFFF, 0 0 2px #FFFFFF; }
@@ -1777,16 +1293,10 @@
     .single-stat-pill strong { font-family: var(--font-display); font-weight: 800; font-size: 30px; line-height: 1.05; color: var(--ink) !important; }
     .stats-card { background: #FFFFFF; border: 1px solid var(--line); border-radius: 4px; }
 
-    /* Encart d'accueil de la bibliothèque : aplat, trame jaune */
-    .hero-banner { background: #FFFFFF !important; border: 1.5px solid var(--key) !important; border-radius: 4px !important; box-shadow: none !important; }
-    .hero-banner::after { content: ""; position: absolute; right: 0; top: 0; bottom: 0; width: min(38%, 320px); background-color: var(--yellow-fill); background-image: radial-gradient(circle, rgba(229, 0, 126, 0.55) 22%, transparent 26%); background-size: 11px 11px; border-left: 1.5px solid var(--key); pointer-events: none; }
-    .hero-preview { position: relative; z-index: 1; }
-    .hero-eyebrow { display: none !important; }
-
     /* Fenêtres */
     .modal-backdrop { background: rgba(22, 22, 22, 0.42) !important; backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
     .modal-box { background: #FFFFFF !important; border: 2px solid var(--key) !important; border-radius: 6px !important; box-shadow: var(--shadow-lg) !important; color: var(--ink); }
-    .modal-box h3 { font-weight: 800; font-size: 24px; text-transform: uppercase; line-height: 1.05; }
+    .modal-box h2, .modal-box h3 { font-weight: 800; font-size: 24px; text-transform: uppercase; line-height: 1.05; }
     .notice-box, .duplicate-warning-box { border-radius: 4px !important; }
     .toast-popup { background: var(--key) !important; color: #FFFFFF !important; border: 0 !important; border-radius: 4px !important; box-shadow: var(--shadow-md) !important; }
     .search-results-menu { background: #FFFFFF !important; border: 1.5px solid var(--key) !important; border-radius: 4px !important; box-shadow: var(--shadow-lg) !important; }
@@ -1800,31 +1310,6 @@
     .mobile-dock-btn .ic { width: 22px; height: 22px; }
     #mobScan { background: var(--yellow-fill) !important; color: var(--key) !important; border: 2px solid var(--key) !important; border-radius: 50% !important; width: 58px; height: 58px; margin-top: -26px; justify-content: center; gap: 0 !important; font-size: 0 !important; box-shadow: 0 3px 0 var(--key) !important; }
     #mobScan .ic { width: 26px; height: 26px; stroke-width: 2.4; }
-
-    /* Lecteur : la page est la seule lumière */
-    .reader-modal { background: #1C1C1C !important; }
-    .reader-modal, .reader-top-bar, .reader-bottom-bar, .reader-study-drawer { --muted: #B9BDBB; --lime: #5CCBF0; --ink-dim: #DADDDB; }
-    .reader-top-bar, .reader-bottom-bar { background: #161616 !important; border-color: #2E2E2E !important; color: #F2F2F2 !important; }
-    .reader-top-bar *, .reader-bottom-bar * { color: inherit; }
-    .reader-top-bar .btn.secondary, .reader-bottom-bar .btn.secondary, .reader-top-bar .btn-icon, .reader-bottom-bar .btn-icon { background: #262626 !important; border-color: #3A3A3A !important; color: #F2F2F2 !important; }
-    .reader-stage { background: #1C1C1C !important; }
-    .reader-side-arrow { background: rgba(22, 22, 22, 0.6) !important; color: #FFFFFF !important; border-color: #3A3A3A !important; }
-
-    /* Panneau d'import (dossiers) */
-    .import-panel { position: fixed; right: 18px; bottom: 18px; z-index: 80; width: min(360px, calc(100vw - 32px)); background: #FFFFFF; border: 2px solid var(--key); border-radius: 6px; box-shadow: var(--shadow-lg); padding: 12px 14px; display: grid; gap: 8px; }
-    .import-panel header { display: flex; align-items: center; gap: 10px; }
-    .import-panel header b { font-family: var(--font-display); font-weight: 800; font-size: 18px; text-transform: uppercase; flex: 1; }
-    .import-panel header span { font-variant-numeric: tabular-nums; font-weight: 700; }
-    .import-panel .progress-track { height: 12px; }
-    .import-panel .progress-fill { height: 100%; transition: width 0.25s var(--ease); }
-    .import-panel p { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .import-panel ul { list-style: none; display: grid; gap: 4px; font-size: 12.5px; }
-    .import-panel li.err { color: var(--red); }
-    @media (max-width: 720px) { .import-panel { right: 16px; bottom: 76px; } }
-    /* Lecteur : mode immersif (tap au centre) */
-    .reader-modal.reader-immersive .reader-top-bar, .reader-modal.reader-immersive .reader-bottom-bar { opacity: 0; pointer-events: none; transform: translateY(var(--hide, -8px)); }
-    .reader-modal.reader-immersive .reader-bottom-bar { --hide: 8px; }
-    .reader-top-bar, .reader-bottom-bar { transition: opacity 0.2s var(--ease), transform 0.2s var(--ease); }
     .comic-poster > canvas, .comic-poster > img { width: 100%; height: 100%; object-fit: cover; display: block; }
 
     .restore-opt { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; }
@@ -1935,13 +1420,13 @@
       <span><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Stockage Local Privé</span>
       <p>Vos comics et inventaires physiques restent sécurisés dans ce navigateur.</p>
       <div style="display:flex;gap:6px;margin-top:4px">
-        <button class="btn secondary" id="backupJsonBtn" style="font-size: 11px;padding:5px 8px;flex:1">Export JSON</button>
-        <button class="btn secondary" id="restoreJsonBtn" style="font-size: 11px;padding:5px 8px;flex:1">Restaurer</button>
+        <button class="btn secondary" id="backupJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Export JSON</button>
+        <button class="btn secondary" id="restoreJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Restaurer</button>
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
-      <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 11px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
-      <button class="btn" id="installAppBtn" hidden style="font-size: 11px;padding:6px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
+      <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
+      <button class="btn" id="installAppBtn" hidden style="font-size: 12px;padding:6px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
     </div>
   </aside>
 
@@ -1950,7 +1435,7 @@
     <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-title">
-        <h1 id="mainTitleHeading">Ma Bibliothèque</h1><span class="offline-pill" id="offlinePill" hidden title="Votre collection reste disponible ; Comic Vine et les couvertures reviendront avec la connexion">● Hors ligne</span>
+        <h1 id="mainTitleHeading">Ma Collection de Singles US</h1><span class="offline-pill" id="offlinePill" hidden title="Votre collection reste disponible ; Comic Vine et les couvertures reviendront avec la connexion">● Hors ligne</span>
         <span id="mainTitleSub">Gestionnaire d’inventaire physique avec scan de codes-barres UPC</span>
       </div>
 
@@ -1974,10 +1459,10 @@
 <details class="menu-pop" id="topMoreMenu">
           <summary class="btn secondary" aria-label="Plus d'actions">Plus</summary>
           <div class="menu-list">
-        <button class="btn secondary" id="openCoverScannerBtn" title="Scanner la couverture d'un comic (Reconnaissance Visuelle)" style="font-size:11.5px;padding:8px 12px;border-color:var(--cyan-line);color:var(--lime)">
+        <button class="btn secondary" id="openCoverScannerBtn" title="Scanner la couverture d'un comic (Reconnaissance Visuelle)" style="font-size: 12px;padding:8px 12px;border-color:var(--cyan-line);color:var(--lime)">
           <span><svg class=ic aria-hidden=true><use href=#ic-camera /></svg></span> Scanner Couverture
         </button>
-        <button class="btn secondary" id="cleanDbBtn" title="Vérifier l'intégrité de la collection (ne supprime rien)" style="font-size:11.5px;padding:8px 12px">
+        <button class="btn secondary" id="cleanDbBtn" title="Vérifier l'intégrité de la collection (ne supprime rien)" style="font-size: 12px;padding:8px 12px">
           <span><svg class=ic aria-hidden=true><use href=#ic-shield /></svg></span> Vérifier les données
         </button>
         <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveMenuBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><span><svg class=ic aria-hidden=true><use href=#ic-download /></svg></span> Anciens fichiers numériques</button>
@@ -2085,7 +1570,7 @@
               <button class="btn secondary" id="releasesPrevWeekBtn" aria-label="Semaine précédente">←</button>
               <span class="week-label" id="releasesWeekLabel">—</span>
               <button class="btn secondary" id="releasesNextWeekBtn" aria-label="Semaine suivante">→</button>
-              <button class="btn ghost" id="releasesThisWeekBtn" style="font-size:11px">Cette semaine</button>
+              <button class="btn ghost" id="releasesThisWeekBtn" style="font-size: 12px">Cette semaine</button>
             </div>
             <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer">
               <input type="checkbox" id="releasesPullOnly" style="accent-color:var(--gold)"> Ma pull list seulement
@@ -2094,9 +1579,9 @@
           </div>
         </div>
         <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-          <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">★ Ma pull list</span>
+          <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px">★ Ma pull list</span>
           <input class="field-input" id="pullAddInput" placeholder="Ajouter une série (ex : Absolute Batman)" style="width:260px">
-          <button class="btn secondary" id="pullAddBtn" style="font-size:11.5px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Suivre</button>
+          <button class="btn secondary" id="pullAddBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Suivre</button>
         </div>
         <div class="pull-chips" id="pullListChips"></div>
         <div class="comics-grid" id="releasesGrid"></div>
@@ -2112,8 +1597,8 @@
         <!-- BARRE DE RÉPARTITION ÉDITEURS (COMIC GEEKS STYLE) -->
         <div id="publisherBreakdownCard" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 14px;margin-bottom:16px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:7px">
-            <span style="font-size: 11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)">Répartition de la Collection</span>
-            <span style="font-size:11px;color:var(--lime);font-weight:600" id="publisherBreakdownSummary">0 comics</span>
+            <span style="font-size: 12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted)">Répartition de la Collection</span>
+            <span style="font-size: 12px;color:var(--lime);font-weight:600" id="publisherBreakdownSummary">0 comics</span>
           </div>
           <div style="height:9px;border-radius:99px;display:flex;overflow:hidden;background:var(--bg-card)" id="publisherBreakdownBar">
             <div style="background:var(--magenta-fill);width:0%;transition:width 0.3s" id="barMarvel" title="Marvel"></div>
@@ -2122,7 +1607,7 @@
             <div style="background:var(--cyan-fill);width:0%;transition:width 0.3s" id="barDarkHorse" title="Dark Horse"></div>
             <div style="background:var(--lime);width:0%;transition:width 0.3s" id="barOther" title="Indés & Autres"></div>
           </div>
-          <div style="display:flex;gap:12px;margin-top:8px;font-size: 11px;flex-wrap:wrap" id="publisherLegend">
+          <div style="display:flex;gap:12px;margin-top:8px;font-size: 12px;flex-wrap:wrap" id="publisherLegend">
             <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--magenta-fill)"></span> Marvel <b id="pctMarvel" style="color:var(--ink)">0%</b></span>
             <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan-fill)"></span> DC Comics <b id="pctDC" style="color:var(--ink)">0%</b></span>
             <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--yellow-fill)"></span> Image <b id="pctImage" style="color:var(--ink)">0%</b></span>
@@ -2139,8 +1624,8 @@
 
       <!-- BANNIÈRE AJOUT INSTANTANÉ DEPUIS LA RECHERCHE -->
       <div id="singlesInstantAddBanner" style="display:none;background:var(--bg-card);border:1px dashed var(--cyan-line);border-radius:var(--radius-sm);padding:9px 14px;margin-bottom:14px;align-items:center;justify-content:space-between">
-        <span style="font-size:11.5px;color:var(--ink-dim)" id="instantAddPromptText">Introuvable dans votre collection physique ?</span>
-        <button class="btn" id="instantAddBtn" style="font-size:11px;padding:5px 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter à la collection</button>
+        <span style="font-size: 12px;color:var(--ink-dim)" id="instantAddPromptText">Introuvable dans votre collection physique ?</span>
+        <button class="btn" id="instantAddBtn" style="font-size: 12px;padding:5px 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter à la collection</button>
       </div>
 
       <!-- BARRE D'ACTIONS SINGLES -->
@@ -2212,11 +1697,11 @@
 
       <!-- FILTRE PAR BOÎTE PHYSIQUE & RANGEMENT (HIÉRARCHIE COLLECTION SECTION 8) -->
       <div class="box-filter-bar" id="singlesBoxFilterBar">
-        <span style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Rangement :</span>
-        <select id="boxFilterSelect" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size:11.5px;color:var(--ink)">
+        <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Rangement :</span>
+        <select id="boxFilterSelect" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size: 12px;color:var(--ink)">
           <option value="all">Toutes les Boîtes (Short & Long Boxes)</option>
         </select>
-        <span id="boxCountSummary" style="font-size:11px;color:var(--muted);margin-left:auto">0 comics</span>
+        <span id="boxCountSummary" style="font-size: 12px;color:var(--muted);margin-left:auto">0 comics</span>
       </div>
 
       <!-- GRILLE DES SINGLES US -->
@@ -2252,7 +1737,7 @@
 <div class="modal-backdrop" id="barcodeScannerModal">
   <div class="modal-box" style="max-width:440px">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3>Scanner un comic (UPC / ISBN)</h3>
+      <h2>Scanner un comic (UPC / ISBN)</h2>
       <button class="btn-icon" id="closeScannerModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
     <p>Cadrez tout le code-barres au dos du comic, <b>y compris les 5 petits chiffres à droite</b> : ils indiquent le numéro et l'édition. Les recueils se lisent par leur ISBN.</p>
@@ -2261,15 +1746,15 @@
     <div id="continuousScanBanner" style="display:none;background:var(--bg-card);border:1px solid var(--cyan-line);color:var(--lime);padding:8px 12px;border-radius:var(--radius-sm);margin-bottom:8px;font-size:12px;font-weight:700"></div>
 
     <!-- SÉLECTEUR DE CAMÉRA & STATUT -->
-    <div id="scannerStatusBadge" style="font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
+    <div id="scannerStatusBadge" style="font-size: 12px;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;justify-content:space-between">
       <span style="display:flex;align-items:center;gap:6px">
-        <span id="scannerStatusDot" style="color:var(--lime);font-size: 11px">●</span>
+        <span id="scannerStatusDot" style="color:var(--lime);font-size: 12px">●</span>
         <span id="scannerStatusText">Caméra prête</span>
       </span>
-      <span id="scannerFormatTag" style="font-size: 11px;color:var(--lime);background:var(--bg-card);padding:2px 6px;border-radius:4px">UPC + supplément · ISBN</span>
+      <span id="scannerFormatTag" style="font-size: 12px;color:var(--lime);background:var(--bg-card);padding:2px 6px;border-radius:4px">UPC + supplément · ISBN</span>
     </div>
 
-    <select id="scannerCameraSelect" style="display:none;margin-bottom:8px;font-size:11px;padding:6px 10px;width:100%;background:var(--bg-card);border:1px solid var(--line);color:var(--ink);border-radius:6px"></select>
+    <select id="scannerCameraSelect" style="display:none;margin-bottom:8px;font-size: 12px;padding:6px 10px;width:100%;background:var(--bg-card);border:1px solid var(--line);color:var(--ink);border-radius:6px"></select>
 
     <div id="scanQueueBox" class="scan-queue" hidden></div>
 
@@ -2281,20 +1766,20 @@
     <!-- CONTRÔLES COMPLÉMENTAIRES CAMÉRA -->
     <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px">
       <div style="display:flex;gap:6px">
-        <button type="button" class="btn secondary" id="scannerSwitchCamBtn" style="padding:4px 8px;font-size: 11px;display:none"><svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Changer objectif</button>
-        <button type="button" class="btn secondary" id="scannerTorchBtn" style="padding:4px 8px;font-size: 11px;display:none"><svg class=ic aria-hidden=true><use href=#ic-torch /></svg> Lampe</button>
-        <button type="button" class="btn secondary" id="scannerZoomBtn" style="padding:4px 8px;font-size: 11px;display:none"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Zoom ×2</button>
-        <button type="button" class="btn secondary" id="scannerPhotoBtn" style="padding:4px 8px;font-size: 11px"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> Depuis une photo</button>
+        <button type="button" class="btn secondary" id="scannerSwitchCamBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Changer objectif</button>
+        <button type="button" class="btn secondary" id="scannerTorchBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-torch /></svg> Lampe</button>
+        <button type="button" class="btn secondary" id="scannerZoomBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Zoom ×2</button>
+        <button type="button" class="btn secondary" id="scannerPhotoBtn" style="padding:4px 8px;font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> Depuis une photo</button>
         <input type="file" id="barcodePhotoInput" accept="image/*" style="display:none">
       </div>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
         <input type="checkbox" id="continuousScanToggle" style="accent-color:var(--lime);width:15px;height:15px">
-        <span style="font-size:11px;font-weight:700;color:var(--lime)"><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Mode Continu</span>
+        <span style="font-size: 12px;font-weight:700;color:var(--lime)"><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Mode Continu</span>
       </label>
     </div>
 
     <div style="display:flex;gap:6px;margin:8px 0">
-      <button class="btn secondary" id="switchToCoverScannerBtn" style="flex:1;font-size:11.5px;padding:7px;border-color:var(--cyan-line);color:var(--lime)">
+      <button class="btn secondary" id="switchToCoverScannerBtn" style="flex:1;font-size: 12px;padding:7px;border-color:var(--cyan-line);color:var(--lime)">
         <svg class=ic aria-hidden=true><use href=#ic-camera /></svg> Pas de code-barres ? Scanner la couverture
       </button>
       <input type="file" id="coverPhotoScanInput" accept="image/*" capture="environment" style="display:none">
@@ -2324,8 +1809,8 @@
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:22px"><svg class=ic aria-hidden=true><use href=#ic-camera /></svg></span>
         <div>
-          <h3 style="margin:0;font-size:16px">Reconnaissance Visuelle de Couverture</h3>
-          <span style="font-size:11px;color:var(--muted)">Identifie la série, le numéro et la variante exacte par photo</span>
+          <h2 style="margin:0;font-size:16px">Reconnaissance Visuelle de Couverture</h2>
+          <span style="font-size: 12px;color:var(--muted)">Identifie la série, le numéro et la variante exacte par photo</span>
         </div>
       </div>
       <button class="btn-icon" id="closeCoverScannerModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
@@ -2336,13 +1821,13 @@
       <div class="cover-scanner-canvas-wrap" id="coverScannerCanvasWrap">
         <video id="coverScannerVideo" autoplay playsinline style="display:none;max-width:100%;max-height:360px;border-radius:6px"></video>
         <canvas id="coverScannerCanvas" style="display:none"></canvas>
-        <img id="coverScannerPreviewImg" style="display:none" alt="Aperçu Couverture">
+        <img id="coverScannerPreviewImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" style="display:none" alt="Aperçu Couverture">
         
         <!-- Placeholder initial -->
         <div id="coverScannerPlaceholder" style="padding:28px 20px;text-align:center">
           <div style="font-size:40px;margin-bottom:8px"><svg class=ic aria-hidden=true><use href=#ic-book /></svg></div>
           <b style="color:var(--ink);font-size:14px">Photographiez ou importez votre couverture</b>
-          <p style="font-size:11.5px;color:var(--muted);max-width:340px;margin:6px auto 14px">
+          <p style="font-size: 12px;color:var(--muted);max-width:340px;margin:6px auto 14px">
             Prenez une photo de face de votre comic ou chargez une image. Notre algorithme analyse la composition, les couleurs et le titre pour retrouver le numéro et la variante exacte.
           </p>
           <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
@@ -2361,8 +1846,8 @@
     <!-- CONTRÔLES DE RECADRAGE & ROTATION -->
     <div class="cover-scan-controls-bar" id="coverScanControlsBar" style="display:none">
       <div style="display:flex;gap:6px;align-items:center">
-        <button type="button" class="btn secondary" id="rotateCoverBtn" title="Pivoter de 90°" style="padding:5px 10px;font-size:11px">⟲ Pivoter 90°</button>
-        <button type="button" class="btn secondary" id="retakeCoverBtn" style="padding:5px 10px;font-size:11px"><svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Reprendre</button>
+        <button type="button" class="btn secondary" id="rotateCoverBtn" title="Pivoter de 90°" style="padding:5px 10px;font-size: 12px">⟲ Pivoter 90°</button>
+        <button type="button" class="btn secondary" id="retakeCoverBtn" style="padding:5px 10px;font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Reprendre</button>
       </div>
       <div style="display:flex;gap:6px;align-items:center">
         <button type="button" class="btn accent-scan" id="runVisualRecognitionBtn" style="padding:6px 14px;font-size:12px">
@@ -2381,7 +1866,7 @@
     <div id="visualMatchesContainer" style="display:none;margin-top:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <b style="font-size:13px;color:var(--ink)">Couvertures & Variantes candidates</b>
-        <span id="visualMatchCountBadge" style="font-size:11px;color:var(--muted)">0 résultat</span>
+        <span id="visualMatchCountBadge" style="font-size: 12px;color:var(--muted)">0 résultat</span>
       </div>
       <div class="cover-matches-grid" id="coverMatchesGrid"></div>
     </div>
@@ -2398,14 +1883,14 @@
 <div class="modal-backdrop" id="singleIssueDetailModal">
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h3 id="singleModalTitle">Fiche du Single Issue</h3>
+      <h2 id="singleModalTitle">Fiche du Single Issue</h2>
       <button class="btn-icon" id="closeSingleDetailModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
 
     <!-- CODE BARRES DETECTE / INFOS DU SCAN -->
-    <div style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 12px;font-size:11.5px;color:var(--lime);display:flex;align-items:center;justify-content:space-between;gap:8px" id="decodedBarcodeBadge" hidden>
+    <div style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 12px;font-size: 12px;color:var(--lime);display:flex;align-items:center;justify-content:space-between;gap:8px" id="decodedBarcodeBadge" hidden>
       <span>Code détecté : <strong></strong></span>
-      <span id="barcodeSourceTag" style="font-size: 11px;background:var(--bg-card);padding:2px 7px;border-radius:4px;font-weight:700;color:var(--lime)">GS1 Direct Market</span>
+      <span id="barcodeSourceTag" style="font-size: 12px;background:var(--bg-card);padding:2px 7px;border-radius:4px;font-weight:700;color:var(--lime)">GS1 Direct Market</span>
     </div>
 
     <!-- RECHERCHE DIRECTE COMIC VINE DE COUVERTURES -->
@@ -2414,14 +1899,14 @@
         <input id="quickCoverSearchInput" placeholder="Rechercher sur Comic Vine (ex: Spawn 300, Batman 135, House of X 1...)" style="flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:12.5px;color:var(--ink)">
         <button class="btn accent-scan" id="quickCoverSearchBtn" style="padding:8px 14px;font-size:12px">Rechercher</button>
       </div>
-      <div id="coverSearchStatus" style="font-size:11px;color:var(--lime);margin-top:6px"></div>
+      <div id="coverSearchStatus" style="font-size: 12px;color:var(--lime);margin-top:6px"></div>
     </div>
 
     <!-- SÉLECTION VISUELLE DE LA COUVERTURE / VARIANTE -->
     <div class="form-row">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <label style="font-weight:700">Couvertures & Variantes officielles :</label>
-        <button class="btn ghost" id="liveSearchCoversOnlineBtn" style="font-size: 11px;padding:2px 6px;color:var(--lime)">
+        <button class="btn ghost" id="liveSearchCoversOnlineBtn" style="font-size: 12px;padding:2px 6px;color:var(--lime)">
           <svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Actualiser les covers
         </button>
       </div>
@@ -2429,9 +1914,9 @@
       
       <!-- UPLOAD DIRECT OU URL PHOTO PERSO -->
       <div style="display:flex;gap:6px;align-items:center;margin-top:4px">
-        <input id="customCoverUrlInput" placeholder="Ou collez l'URL d'une image de cover..." style="flex:1;font-size:11px">
-        <button class="btn secondary" id="applyCustomCoverBtn" style="font-size:11px;padding:6px 10px">Appliquer</button>
-        <button class="btn secondary" id="snapCoverPhotoBtn" title="Prendre en photo la couverture de votre comic physique" style="font-size:11px;padding:6px 10px">
+        <input id="customCoverUrlInput" placeholder="Ou collez l'URL d'une image de cover..." style="flex:1;font-size: 12px">
+        <button class="btn secondary" id="applyCustomCoverBtn" style="font-size: 12px;padding:6px 10px">Appliquer</button>
+        <button class="btn secondary" id="snapCoverPhotoBtn" title="Prendre en photo la couverture de votre comic physique" style="font-size: 12px;padding:6px 10px">
           <svg class=ic aria-hidden=true><use href=#ic-camera /></svg> Photo
         </button>
         <input type="file" id="coverPhotoFileInput" accept="image/*" capture="environment" style="display:none">
@@ -2550,12 +2035,12 @@
     <div class="duplicate-warning-box" id="duplicateWarningBox">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <b><svg class=ic aria-hidden=true><use href=#ic-alert /></svg> Exemplaire déjà présent dans votre collection</b>
-        <span id="duplicateWarningBadge" style="font-size: 11px;background:var(--tint-yellow);padding:2px 6px;border-radius:4px;color:var(--gold)">Doublon</span>
+        <span id="duplicateWarningBadge" style="font-size: 12px;background:var(--tint-yellow);padding:2px 6px;border-radius:4px;color:var(--gold)">Doublon</span>
       </div>
-      <p id="duplicateWarningText" style="margin:4px 0 8px;font-size:11.5px;line-height:1.4"></p>
+      <p id="duplicateWarningText" style="margin:4px 0 8px;font-size: 12px;line-height:1.4"></p>
       <div style="display:flex;gap:6px">
-        <button type="button" class="btn" id="dupKeepBothBtn" style="padding:4px 10px;font-size:11px">Ajouter comme 2e exemplaire (Double)</button>
-        <button type="button" class="btn secondary" id="dupOverwriteBtn" style="padding:4px 10px;font-size:11px">Mettre à jour l'existant</button>
+        <button type="button" class="btn" id="dupKeepBothBtn" style="padding:4px 10px;font-size: 12px">Ajouter comme 2e exemplaire (Double)</button>
+        <button type="button" class="btn secondary" id="dupOverwriteBtn" style="padding:4px 10px;font-size: 12px">Mettre à jour l'existant</button>
       </div>
     </div>
 
@@ -2578,18 +2063,18 @@
       <div style="display:flex;gap:18px;align-items:center">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="singleProtectedCheckbox" checked style="accent-color:var(--lime);width:15px;height:15px">
-          <span style="font-size:11.5px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-shield /></svg> Protégé (Bag & Board)</span>
+          <span style="font-size: 12px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-shield /></svg> Protégé (Bag & Board)</span>
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="singleWishlistCheckbox" style="accent-color:var(--orange);width:15px;height:15px">
-          <span style="font-size:11.5px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> En Wishlist (Recherché)</span>
+          <span style="font-size: 12px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> En Wishlist (Recherché)</span>
         </label>
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="singleReadCheckbox" style="accent-color:var(--cyan);width:15px;height:15px">
-          <span style="font-size:11.5px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu</span>
+          <span style="font-size: 12px;font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu</span>
         </label>
         <div style="display:flex;align-items:center;gap:6px;margin-left:auto">
-          <span style="font-size:11.5px;font-weight:600;color:var(--muted)">Ma note</span>
+          <span style="font-size: 12px;font-weight:600;color:var(--muted)">Ma note</span>
           <div class="star-input" id="singleRatingInput" data-value="0" role="radiogroup" aria-label="Note sur 5"></div>
         </div>
       </div>
@@ -2615,7 +2100,7 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="format-pill" id="inspectPublisherBadge" style="background:var(--bg-card);border-color:var(--cyan-line);color:var(--lime)">Marvel</span>
-        <h3 id="inspectTitle" style="font-size:18px;margin:0">Batman #1</h3>
+        <h2 id="inspectTitle" style="font-size:18px;margin:0">Batman #1</h2>
       </div>
       <button class="btn-icon" id="closeInspectorModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
@@ -2624,33 +2109,33 @@
       <!-- Aperçu Cover -->
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="aspect-ratio:2/3;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);position:relative;background:var(--bg-card)">
-          <img id="inspectCoverImg" src="" alt="Cover" style="width:100%;height:100%;object-fit:cover">
+          <img id="inspectCoverImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Cover" style="width:100%;height:100%;object-fit:cover">
           <div id="inspectKeyBadge" style="position:absolute;top:6px;left:6px" class="status-pill key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> KEY</div>
         </div>
-        <a id="inspectCoverDownloadBtn" class="btn secondary" style="font-size: 11px;padding:5px 8px;text-align:center" target="_blank" rel="noopener"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Plein écran</a>
+        <a id="inspectCoverDownloadBtn" class="btn secondary" style="font-size: 12px;padding:5px 8px;text-align:center" target="_blank" rel="noopener"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Plein écran</a>
       </div>
 
       <!-- Détails Métadonnées -->
       <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
         <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="color:var(--muted);font-size:11px">Variante</span>
+            <span style="color:var(--muted);font-size: 12px">Variante</span>
             <strong id="inspectVariantText" style="color:var(--ink)">Cover A</strong>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="color:var(--muted);font-size:11px">Condition</span>
+            <span style="color:var(--muted);font-size: 12px">Condition</span>
             <span id="inspectConditionBadge" class="format-pill" style="font-weight:700">NM 9.4</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="color:var(--muted);font-size:11px">Protection</span>
+            <span style="color:var(--muted);font-size: 12px">Protection</span>
             <span id="inspectProtectedText"><svg class=ic aria-hidden=true><use href=#ic-shield /></svg> Bag & Board</span>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="color:var(--muted);font-size:11px">Lecture</span>
+            <span style="color:var(--muted);font-size: 12px">Lecture</span>
             <button class="read-dot unread" id="inspectReadToggle" title="Basculer lu / non lu">Non lu</button>
           </div>
           <div style="display:flex;justify-content:space-between;align-items:center">
-            <span style="color:var(--muted);font-size:11px">Ma note</span>
+            <span style="color:var(--muted);font-size: 12px">Ma note</span>
             <div class="star-input" id="inspectRatingInput" data-value="0" role="radiogroup" aria-label="Note sur 5"></div>
           </div>
         </div>
@@ -2659,16 +2144,16 @@
         <div style="background:var(--bg-card);border:1px solid var(--cyan-line);border-radius:var(--radius-sm);padding:10px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
-              <span style="color:var(--muted);font-size: 11px;text-transform:uppercase">Prix payé</span>
+              <span style="color:var(--muted);font-size: 12px;text-transform:uppercase">Prix payé</span>
               <div id="inspectCoverPrice" style="font-weight:700;color:var(--ink);font-size:14px">$3.99</div>
-              <div id="inspectPurchaseMeta" style="font-size: 11px;color:var(--muted)"></div>
+              <div id="inspectPurchaseMeta" style="font-size: 12px;color:var(--muted)"></div>
             </div>
             <div style="text-align:right">
-              <span style="color:var(--gold);font-size: 11px;text-transform:uppercase">Valeur</span>
+              <span style="color:var(--gold);font-size: 12px;text-transform:uppercase">Valeur</span>
               <div id="inspectEstValue" style="font-weight:800;color:var(--gold);font-size:17px">$25.00</div>
             </div>
           </div>
-          <div id="inspectProfitBadge" style="margin-top:6px;font-size: 11px;font-weight:700;color:var(--cyan);text-align:right">+$21.01 (+526%)</div>
+          <div id="inspectProfitBadge" style="margin-top:6px;font-size: 12px;font-weight:700;color:var(--cyan);text-align:right">+$21.01 (+526%)</div>
           <div class="value-source-row"><span id="inspectValueSourceBadge" class="value-source auto">Cote auto</span><span id="inspectValueRange" class="stat-sub"></span></div>
           <details class="value-factors" id="inspectValueFactors"><summary>Détail du calcul</summary><ul id="inspectValueFactorsList"></ul></details>
           <div class="market-actions">
@@ -2687,13 +2172,13 @@
         </div>
 
         <div style="display:flex;flex-direction:column;gap:3px">
-          <span style="color:var(--muted);font-size:11px">Rangement Physique :</span>
+          <span style="color:var(--muted);font-size: 12px">Rangement Physique :</span>
           <strong id="inspectLocationText" style="color:var(--ink);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:5px 8px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Short Box 1</strong>
         </div>
 
         <div style="display:flex;flex-direction:column;gap:3px">
-          <span style="color:var(--muted);font-size:11px">Notes personnelles :</span>
-          <p id="inspectNotesText" style="color:var(--ink-dim);font-size:11.5px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:6px 8px;min-height:36px;white-space:pre-wrap">Aucune note</p>
+          <span style="color:var(--muted);font-size: 12px">Notes personnelles :</span>
+          <p id="inspectNotesText" style="color:var(--ink-dim);font-size: 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:6px 8px;min-height:36px;white-space:pre-wrap">Aucune note</p>
         </div>
       </div>
     </div>
@@ -2718,39 +2203,39 @@
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal-box" style="max-width:520px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h3>Paramètres & Clés API</h3>
+      <h2>Paramètres & Clés API</h2>
       <button class="btn-icon" id="closeSettingsModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
     <div class="pwa-settings" id="pwaSettingsBox">
       <div><b>Application</b> · <span id="pwaModeText">—</span></div>
       <div><b>Stockage</b> · <span id="pwaStorageText">—</span></div>
       <div style="color:var(--muted)">Chaque appareil garde sa propre collection : pour passer de l'ordinateur au téléphone, utilisez « Export JSON » puis « Restaurer », ou réimportez votre fichier CLZ / League of Comic Geeks.</div>
-      <button class="btn secondary" id="pwaSettingsInstallBtn" hidden style="align-self:flex-start;font-size:11px;padding:5px 10px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
+      <button class="btn secondary" id="pwaSettingsInstallBtn" hidden style="align-self:flex-start;font-size: 12px;padding:5px 10px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
     </div>
 
     <!-- CLÉS API COMIC VINE -->
     <div class="form-row">
       <label style="font-weight:700;color:var(--lime);display:flex;justify-content:space-between">
         <span><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Clé API Comic Vine</span>
-        <a href="https://comicvine.gamespot.com/api/" target="_blank" rel="noopener" style="font-size: 11px;color:var(--lime);text-decoration:underline">Documentation API</a>
+        <a href="https://comicvine.gamespot.com/api/" target="_blank" rel="noopener" style="font-size: 12px;color:var(--lime);text-decoration:underline">Documentation API</a>
       </label>
       <input id="settingComicVineApiKey" placeholder="Collez votre clé API Comic Vine...">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
-        <span id="comicVineStatusBadge" style="font-size:11px;color:var(--lime);font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Clé Comic Vine intégrée &amp; active</span>
-        <button type="button" id="testComicVineBtn" class="btn secondary" style="font-size: 11px;padding:3px 8px"><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Tester l'accès API</button>
+        <span id="comicVineStatusBadge" style="font-size: 12px;color:var(--lime);font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Clé Comic Vine intégrée &amp; active</span>
+        <button type="button" id="testComicVineBtn" class="btn secondary" style="font-size: 12px;padding:3px 8px"><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Tester l'accès API</button>
       </div>
-      <small style="color:var(--muted);font-size: 11px">Comic Vine est interrogé en direct (via JSONP client-side) pour récupérer les couvertures officielles, variantes, story arcs et crédits sans restriction.</small>
+      <small style="color:var(--muted);font-size: 12px">Comic Vine est interrogé en direct (via JSONP client-side) pour récupérer les couvertures officielles, variantes, story arcs et crédits sans restriction.</small>
     </div>
 
     <!-- PERSONNALISATION THÈME -->
     <div class="form-row" style="margin-top:10px">
       <label style="font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-palette /></svg> Couleur d'Accentuation :</label>
       <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap" id="themePickerRow">
-        <button type="button" class="btn secondary" data-theme="lime" style="font-size:11px;padding:6px 10px"><span class="swatch" style="background:#00A3DA"></span> Cyan</button>
-        <button type="button" class="btn secondary" data-theme="cyan" style="font-size:11px;padding:6px 10px"><span class="swatch" style="background:#FF52AE"></span> Magenta</button>
-        <button type="button" class="btn secondary" data-theme="gold" style="font-size:11px;padding:6px 10px"><span class="swatch" style="background:#FFE500"></span> Jaune</button>
-        <button type="button" class="btn secondary" data-theme="red" style="font-size:11px;padding:6px 10px"><span class="swatch" style="background:#FF6B6F"></span> Rouge</button>
-        <button type="button" class="btn secondary" data-theme="purple" style="font-size:11px;padding:6px 10px"><span class="swatch" style="background:#B9A3FF"></span> Violet</button>
+        <button type="button" class="btn secondary" data-theme="lime" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#00A3DA"></span> Cyan</button>
+        <button type="button" class="btn secondary" data-theme="cyan" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF52AE"></span> Magenta</button>
+        <button type="button" class="btn secondary" data-theme="gold" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FFE500"></span> Jaune</button>
+        <button type="button" class="btn secondary" data-theme="red" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF6B6F"></span> Rouge</button>
+        <button type="button" class="btn secondary" data-theme="purple" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#B9A3FF"></span> Violet</button>
       </div>
     </div>
 
@@ -2767,39 +2252,39 @@
     </div>
 
     <!-- CODES BARRES MÉMORISÉS -->
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size:11.5px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size: 12px">
       <span style="color:var(--muted)">Codes-barres appris (titres + éditions confirmées) : <strong id="learnedUpcCount" style="color:var(--ink)">0</strong></span>
-      <button class="btn secondary" id="resetLearnedUpcBtn" style="font-size: 11px;padding:3px 8px">Vider l'apprentissage</button>
+      <button class="btn secondary" id="resetLearnedUpcBtn" style="font-size: 12px;padding:3px 8px">Vider l'apprentissage</button>
     </div>
 
     <!-- METRON DANS L'APP ANDROID (identifiants gardés sur le téléphone) -->
     <div id="appMetronBox" class="snapshot-box" hidden>
-      <div style="font-size:11.5px;color:var(--muted);margin-bottom:6px">Metron (identification exacte des variantes au scan) : compte gratuit sur metron.cloud. Le <b>pseudo</b>, pas l'e-mail.</div>
+      <div style="font-size: 12px;color:var(--muted);margin-bottom:6px">Metron (identification exacte des variantes au scan) : compte gratuit sur metron.cloud. Le <b>pseudo</b>, pas l'e-mail.</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <input id="appMetronUser" placeholder="Pseudo Metron" autocomplete="username" autocapitalize="none" spellcheck="false" style="flex:1;min-width:120px;font-size:12px">
         <input id="appMetronPass" type="password" placeholder="Mot de passe" autocomplete="current-password" style="flex:1;min-width:120px;font-size:12px">
       </div>
       <div style="display:flex;gap:6px;margin-top:6px;align-items:center">
-        <button class="btn" id="appMetronSaveBtn" style="font-size:11px;padding:5px 10px">Vérifier et enregistrer</button>
-        <button class="btn secondary" id="appMetronForgetBtn" style="font-size:11px;padding:5px 10px">Oublier</button>
-        <span id="appMetronMsg" style="font-size:11px;color:var(--muted)"></span>
+        <button class="btn" id="appMetronSaveBtn" style="font-size: 12px;padding:5px 10px">Vérifier et enregistrer</button>
+        <button class="btn secondary" id="appMetronForgetBtn" style="font-size: 12px;padding:5px 10px">Oublier</button>
+        <span id="appMetronMsg" style="font-size: 12px;color:var(--muted)"></span>
       </div>
     </div>
 
     <!-- JOURNAL DES SCANS (MESURES) -->
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size:11.5px">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size: 12px">
       <span style="color:var(--muted)"><span id="metronStatusText">Metron : …</span> · Journal des scans : <strong id="scanJournalCount" style="color:var(--ink)">0</strong></span>
       <span style="display:flex;gap:6px">
-        <button class="btn secondary" id="exportScanJournalBtn" style="font-size: 11px;padding:3px 8px">Exporter (CSV)</button>
-        <button class="btn secondary" id="clearScanJournalBtn" style="font-size: 11px;padding:3px 8px">Vider</button>
+        <button class="btn secondary" id="exportScanJournalBtn" style="font-size: 12px;padding:3px 8px">Exporter (CSV)</button>
+        <button class="btn secondary" id="clearScanJournalBtn" style="font-size: 12px;padding:3px 8px">Vider</button>
       </span>
     </div>
 
     <!-- SAUVEGARDES AUTOMATIQUES (ROLLBACK) -->
     <div class="snapshot-box">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
-        <span style="font-size:11.5px;color:var(--muted)">Sauvegardes automatiques de la collection (avant chaque traitement par lot)</span>
-        <button class="btn secondary" id="snapshotNowBtn" style="font-size: 11px;padding:3px 8px">Sauvegarder maintenant</button>
+        <span style="font-size: 12px;color:var(--muted)">Sauvegardes automatiques de la collection (avant chaque traitement par lot)</span>
+        <button class="btn secondary" id="snapshotNowBtn" style="font-size: 12px;padding:3px 8px">Sauvegarder maintenant</button>
       </div>
       <div id="snapshotList" class="snapshot-list"></div>
     </div>
@@ -2824,8 +2309,8 @@
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:22px"><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span>
         <div>
-          <h3 style="font-size:16px;margin:0">Recherche Comic Vine en Direct</h3>
-          <small style="color:var(--muted);font-size:11px">Base de données officielle (League of Comic Geeks / CLZ)</small>
+          <h2 style="font-size:16px;margin:0">Recherche Comic Vine en Direct</h2>
+          <small style="color:var(--muted);font-size: 12px">Base de données officielle (League of Comic Geeks / CLZ)</small>
         </div>
       </div>
       <button class="modal-close-btn" id="closeComicVineModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
@@ -2840,7 +2325,7 @@
 
 
     <!-- Statut / loader -->
-    <div id="cvSearchStatus" style="font-size:11.5px;color:var(--lime);margin-top:10px;min-height:16px"></div>
+    <div id="cvSearchStatus" style="font-size: 12px;color:var(--lime);margin-top:10px;min-height:16px"></div>
 
     <!-- Grille de résultats -->
     <div id="cvSearchResultsList" style="flex:1;overflow-y:auto;margin-top:10px;display:grid;grid-template-columns:repeat(auto-fill, minmax(310px, 1fr));gap:10px;padding-right:4px">
@@ -2855,7 +2340,7 @@
 <div class="modal-backdrop" id="csvImportModal">
   <div class="modal-box" style="width:min(780px, 100%)">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3>Importer une collection (CLZ, League of Comic Geeks, CSV)</h3>
+      <h2>Importer une collection (CLZ, League of Comic Geeks, CSV)</h2>
       <button class="btn-icon" id="closeCsvImportModalBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
 
@@ -2872,7 +2357,7 @@
     <div id="csvImportStepMap" hidden>
       <p id="csvImportDetected" style="font-size:12px;color:var(--ink-dim)"></p>
       <details open style="margin-top:8px">
-        <summary style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;cursor:pointer">Correspondance des colonnes (détectée automatiquement)</summary>
+        <summary style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;cursor:pointer">Correspondance des colonnes (détectée automatiquement)</summary>
         <div class="csv-map-grid" id="csvImportMapping"></div>
       </details>
       <div class="csv-options">
@@ -2895,7 +2380,7 @@
 <div class="modal-backdrop" id="revalueModal">
   <div class="modal-box" style="max-width:500px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-      <h3><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Cote automatique de la collection</h3>
+      <h2><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Cote automatique de la collection</h2>
       <button class="btn-icon" id="closeRevalueModalBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
     <p id="revalueSummary" style="font-size:12px;color:var(--ink-dim);line-height:1.55;margin-bottom:10px"></p>
@@ -4304,9 +3789,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
             '</div>' +
           '</div>' +
           '<div style="font-weight:700;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(cand.volume) + ' #' + escapeHtml(cand.issue) + '</div>' +
-          '<div style="font-size: 11px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(cand.title || 'Variante Principale') + '</div>' +
-          '<div style="font-size: 11px;color:var(--muted)">' + (cand.date || '') + ' · ' + (cand.source || 'Comic Vine') + '</div>' +
-          '<button type="button" class="btn accent-scan" style="padding:4px 8px;font-size:11px;margin-top:4px"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Choisir cette variante</button>';
+          '<div style="font-size: 12px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(cand.title || 'Variante Principale') + '</div>' +
+          '<div style="font-size: 12px;color:var(--muted)">' + (cand.date || '') + ' · ' + (cand.source || 'Comic Vine') + '</div>' +
+          '<button type="button" class="btn accent-scan" style="padding:4px 8px;font-size: 12px;margin-top:4px"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Choisir cette variante</button>';
 
         card.querySelector('button').onclick = e => {
           e.stopPropagation();
@@ -5822,12 +5307,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       grid.innerHTML =
         '<div class="empty-box">' +
           '<div class="empty-box-icon">' + (isWishView ? '<svg class=ic aria-hidden=true><use href=#ic-heart /></svg>' : '<svg class=ic aria-hidden=true><use href=#ic-tag /></svg>') + '</div>' +
-          '<h3>' + (isWishView ? 'Votre wishlist est vide' : physicalSingles.length ? 'Aucun exemplaire ne correspond' : 'Votre collection commence ici') + '</h3>' +
+          '<h2>' + (isWishView ? 'Votre wishlist est vide' : physicalSingles.length ? 'Aucun exemplaire ne correspond' : 'Votre collection commence ici') + '</h2>' +
           '<p>' + (isWishView
             ? 'Ajoutez des numéros manquants depuis « Séries & complétion » ou depuis les sorties de la semaine.'
             : physicalSingles.length ? 'Modifiez les filtres, la boîte ou la recherche.' : 'Scannez le code-barres UPC/ISBN d\'un comic ou ajoutez-le manuellement avec sa variante.') + '</p>' +
           (isWishView || physicalSingles.length ? '' :
-          '<div style="display:flex;gap:8px;margin-top:6px">' +
+          '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px">' +
             '<button class="btn accent-scan" onclick="document.getElementById(\'quickScanBtn\').click()"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg> Scanner un code-barres</button>' +
             '<button class="btn" onclick="document.getElementById(\'addSingleModalOpenBtn\').click()"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter manuellement</button>' +
           '</div>') +
@@ -5891,9 +5376,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<b>' + escapeHtml(item.series) + '</b>' +
           '<div class="comic-caption-row">' +
             '<small style="color:var(--ink-dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.variant || '') + '</small>' +
-            '<strong style="color:var(--gold);font-size:11px" title="' + escapeHtml(VALUE_SOURCE_LABELS[item.valueSource] || 'Valeur') + '">' + valuePrefix(item) + money(value) + '</strong>' +
+            '<strong style="color:var(--gold);font-size: 12px" title="' + escapeHtml(VALUE_SOURCE_LABELS[item.valueSource] || 'Valeur') + '">' + valuePrefix(item) + money(value) + '</strong>' +
           '</div>' +
-          '<div class="comic-caption-row" style="font-size: 11px;color:var(--muted)">' +
+          '<div class="comic-caption-row" style="font-size: 12px;color:var(--muted)">' +
             (item.isWishlist ? '<span style="color:var(--orange)">Recherché</span>'
               : '<button class="read-dot ' + (item.isRead ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (item.isRead ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
             (item.rating ? '<span class="stars">' + starsText(item.rating) + '</span>' : '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.location || boxOf(item) || '') + '</span>') +
@@ -6035,18 +5520,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
             '<div class="series-track-meta"><span>' + escapeHtml(g.publisher || '') + '</span><span>' + g.ownedCount + ' possédé(s)</span><span>' + g.readCount + ' lu(s)</span><span>' + money(g.value) + '</span><span>' + g.completion + ' % complet</span></div>' +
           '</div>' +
           '<div class="toolbar-row">' +
-            '<label style="font-size:11px;color:var(--muted)">Du #</label><input class="field-input" type="number" min="0" id="seriesStartInput" value="' + g.start + '" style="width:70px">' +
-            '<label style="font-size:11px;color:var(--muted)">au #</label><input class="field-input" type="number" min="0" id="seriesTotalInput" value="' + g.end + '" style="width:76px" title="Dernier numéro paru (définit le total de la série)">' +
-            '<button class="btn secondary" id="seriesRangeSaveBtn" style="font-size:11px">Appliquer</button>' +
-            (g.missing.length ? '<button class="btn" id="seriesWishAllBtn" style="font-size:11px"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Tous les manquants en wishlist (' + g.missing.filter(n => !g.wishNums.has(n)).length + ')</button>' : '') +
+            '<label style="font-size: 12px;color:var(--muted)">Du #</label><input class="field-input" type="number" min="0" id="seriesStartInput" value="' + g.start + '" style="width:70px">' +
+            '<label style="font-size: 12px;color:var(--muted)">au #</label><input class="field-input" type="number" min="0" id="seriesTotalInput" value="' + g.end + '" style="width:76px" title="Dernier numéro paru (définit le total de la série)">' +
+            '<button class="btn secondary" id="seriesRangeSaveBtn" style="font-size: 12px">Appliquer</button>' +
+            (g.missing.length ? '<button class="btn" id="seriesWishAllBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Tous les manquants en wishlist (' + g.missing.filter(n => !g.wishNums.has(n)).length + ')</button>' : '') +
             '<button class="btn ghost" id="seriesDetailCloseBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>' +
           '</div>' +
         '</div>' +
         '<div class="progress-track"><div class="progress-fill" style="width:' + g.completion + '%"></div></div>' +
         '<div class="issue-chips">' + (chips.join('') || '<span style="color:var(--muted);font-size:12px">Aucun numéro entier à afficher.</span>') + '</div>' +
         '<div class="chip-legend"><span><i style="background:var(--lime-dark);border-color:var(--cyan-line)"></i>Possédé</span><span><i style="background:var(--bg-card);border-color:var(--cyan-line)"></i>Possédé & lu</span><span><i style="background:var(--tint-yellow);border-color:var(--yellow-line)"></i>Wishlist</span><span><i style="border-style:dashed"></i>Manquant</span></div>' +
-        (g.outliers.length ? '<p style="font-size:11px;color:var(--muted);margin-top:8px">Hors du run affiché : ' + compressRanges(g.outliers) + ' (numérotation legacy ou numéro isolé — élargissez la plage « du # au # » pour les inclure)</p>' : '') +
-        (extras.length ? '<p style="font-size:11px;color:var(--muted);margin-top:8px">Hors numérotation : ' + extras.map(s => escapeHtml(s.issue || s.variant)).join(', ') + '</p>' : '') +
+        (g.outliers.length ? '<p style="font-size: 12px;color:var(--muted);margin-top:8px">Hors du run affiché : ' + compressRanges(g.outliers) + ' (numérotation legacy ou numéro isolé — élargissez la plage « du # au # » pour les inclure)</p>' : '') +
+        (extras.length ? '<p style="font-size: 12px;color:var(--muted);margin-top:8px">Hors numérotation : ' + extras.map(s => escapeHtml(s.issue || s.variant)).join(', ') + '</p>' : '') +
       '</div>';
 
     host.querySelector('[data-pull]').onclick = () => { togglePull(g.name); renderSinglesCollection(); };
@@ -6412,7 +5897,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="stats-card"><h3>Valeur par éditeur</h3>' + hbars(byPub, r => money(r.v)) + '</div>' +
       '<div class="stats-card"><h3>Les 10 plus précieux</h3><div class="top-list">' + top.map((s, i) => topItem(s, i, `<b style="color:var(--gold)">${money(valueOf(s))}</b>`)).join('') + '</div></div>' +
       '<div class="stats-card"><h3>Achats sur 12 mois</h3><div class="month-chart">' +
-        months.map(m => `<div class="month-col" title="${m.n} exemplaire(s) · ${money(m.spent)}"><b style="font-size: 11px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / maxN) * 85}%"></div><span>${m.label}</span></div>`).join('') +
+        months.map(m => `<div class="month-col" title="${m.n} exemplaire(s) · ${money(m.spent)}"><b style="font-size: 12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / maxN) * 85}%"></div><span>${m.label}</span></div>`).join('') +
         '</div><p class="stat-sub" style="margin-top:8px">Dépensé sur 12 mois : ' + money(months.reduce((a, m) => a + m.spent, 0)) + ' (date d\'achat, sinon date d\'ajout)</p></div>' +
       '<div class="stats-card"><h3>Meilleures plus-values</h3><div class="top-list">' + (gains.length ? gains.map((x, i) => topItem(x.s, i, `<b class="gain-pos">+${money(x.g)}</b>`)).join('') : '<p class="stat-sub">Renseignez prix payé et valeur estimée pour suivre vos plus-values.</p>') + '</div></div>' +
       '<div class="stats-card"><h3>État & grading</h3>' + hbars(gradeBuckets, r => r.v + ' ex.') + '</div>' +
@@ -7801,7 +7286,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
     const when = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="restoreDialogTitle">' +
-      '<h3 id="restoreDialogTitle">Restaurer une sauvegarde</h3>' +
+      '<h2 id="restoreDialogTitle">Restaurer une sauvegarde</h2>' +
       '<p><b>' + escapeHtml(fileName || 'Sauvegarde') + '</b> · ' + escapeHtml(when) + '<br>' + payload.items.length + ' exemplaire(s) lisible(s)' +
         (payload.invalid.length ? ' · ' + payload.invalid.length + ' fiche(s) illisible(s) ignorée(s)' : '') + ' · collection actuelle : ' + physicalSingles.length + ' exemplaire(s).</p>' +
       '<label class="restore-opt"><input type="radio" name="restoreMode" value="merge" checked> <span><b>Fusionner (recommandé)</b><br><small>Ajoute les exemplaires absents. Rien d\'existant n\'est modifié ni supprimé.</small></span></label>' +
@@ -8148,9 +7633,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<div class="search-row-icon" style="background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:16px;border-radius:4px"><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></div>' +
         '<div style="flex:1;min-width:0">' +
           '<div style="font-weight:700;font-size:12px;color:var(--lime)">Rechercher « ' + escapeHtml(q) + ' » sur Comic Vine</div>' +
-          '<div style="font-size: 11px;color:var(--muted)">Base officielle complète (éditeurs, variantes, fiches)</div>' +
+          '<div style="font-size: 12px;color:var(--muted)">Base officielle complète (éditeurs, variantes, fiches)</div>' +
         '</div>' +
-        '<span style="font-size: 11px;color:var(--muted);background:var(--bg-card);padding:2px 6px;border-radius:4px">Entrée ↵</span>';
+        '<span style="font-size: 12px;color:var(--muted);background:var(--bg-card);padding:2px 6px;border-radius:4px">Entrée ↵</span>';
       cvRow.onclick = () => {
         menu.hidden = true;
         openComicVineSearchModal(q);
@@ -8165,7 +7650,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
 
       if (matchSingles.length > 0) {
         const headerS = document.createElement('div');
-        headerS.style.cssText = 'font-size: 11px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:4px 8px 2px';
+        headerS.style.cssText = 'font-size: 12px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;padding:4px 8px 2px';
         headerS.textContent = 'Singles US en Collection (' + matchSingles.length + ')';
         menu.appendChild(headerS);
 
@@ -8176,7 +7661,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
             '<img src="' + safeImgSrc(s.coverUrl) + '" class="search-row-icon" style="object-fit:cover;border-radius:3px" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(s.series) + ' ' + escapeHtml(s.issue) + '</div>' +
-              '<div style="font-size: 11px;color:var(--muted)">' + escapeHtml(s.publisher) + ' · ' + escapeHtml(s.variant || 'Cover A') + ' · <strong style="color:var(--gold)">$' + (s.estValue || 0).toFixed(2) + '</strong></div>' +
+              '<div style="font-size: 12px;color:var(--muted)">' + escapeHtml(s.publisher) + ' · ' + escapeHtml(s.variant || 'Cover A') + ' · <strong style="color:var(--gold)">$' + (s.estValue || 0).toFixed(2) + '</strong></div>' +
             '</div>';
           row.onclick = () => {
             menu.hidden = true;
@@ -8189,7 +7674,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
 
       if (matchSingles.length === 0) {
         const hint = document.createElement('div');
-        hint.style.cssText = 'padding:8px 10px;font-size:11px;color:var(--muted);text-align:center';
+        hint.style.cssText = 'padding:8px 10px;font-size: 12px;color:var(--muted);text-align:center';
         hint.innerHTML = 'Aucun comics local trouvé.<br><span style="color:var(--lime)">Appuyez sur Entrée pour rechercher « ' + escapeHtml(q) + ' » sur Comic Vine</span>';
         menu.appendChild(hint);
       }
@@ -8254,10 +7739,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
             '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:cover;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.volume) + ' #' + escapeHtml(item.issue) + '</div>' +
-              '<div style="font-size:11px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +
-              '<div style="font-size: 11px;color:var(--muted);margin-top:3px">' + (item.date ? item.date.slice(0, 4) : '') + ' · <strong>' + item.variantsCount + ' variante(s)</strong></div>' +
+              '<div style="font-size: 12px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +
+              '<div style="font-size: 12px;color:var(--muted);margin-top:3px">' + (item.date ? item.date.slice(0, 4) : '') + ' · <strong>' + item.variantsCount + ' variante(s)</strong></div>' +
               '<div style="display:flex;gap:6px;margin-top:6px">' +
-                '<button type="button" class="btn secondary" data-single-cv style="padding:4px 8px;font-size:11px;flex:1"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Ajouter à la collection</button>' +
+                '<button type="button" class="btn secondary" data-single-cv style="padding:4px 8px;font-size: 12px;flex:1"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Ajouter à la collection</button>' +
               '</div>' +
             '</div>';
 
