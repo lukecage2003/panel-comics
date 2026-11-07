@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-  <meta name="theme-color" content="#00A3DA" />
+  <meta name="theme-color" content="#111111" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Panel" />
@@ -1161,7 +1161,7 @@
     }
     /* Couleur d'accent choisie dans les Paramètres : l'encre qui tient le rail et les actions */
     body.theme-cyan { --lime: #B0005F; --lime-dark: #FCE6F2; --lime-glow: rgba(229, 0, 126, 0.16); --cyan-fill: #FF52AE; --cyan-line: #F4A3CF; }
-    body.theme-gold { --lime: #7A5E00; --lime-dark: #FFF8BF; --lime-glow: rgba(255, 229, 0, 0.25); --cyan-fill: #FFE500; --cyan-line: #E6CF00; }
+    body.theme-gold { --lime: #005F8C; --lime-dark: #DDF1F9; --lime-glow: rgba(0, 163, 218, 0.18); --cyan-fill: #00A3DA; --cyan-line: #7CCBE8; }
     body.theme-red { --lime: #B5122C; --lime-dark: #FDE5E8; --lime-glow: rgba(229, 36, 41, 0.16); --cyan-fill: #FF6B6F; --cyan-line: #F5A9AB; }
     body.theme-purple { --lime: #5B3BB0; --lime-dark: #ECE6FB; --lime-glow: rgba(91, 59, 176, 0.16); --cyan-fill: #B9A3FF; --cyan-line: #CFC1FA; }
 
@@ -1495,6 +1495,56 @@
     @media (prefers-reduced-motion: reduce) {
       .comic-card:hover, .btn:hover { transform: none; }
     }
+    /* ==========================================================================
+       DA PRIMESTONE — jaune et noir (novembre 2026)
+       Encre noire, jaune Primestone pour l'accent, gris neutres chauds. Les thèmes des
+       Paramètres ne changent que l'accent (--cyan-fill) ; le rail et les boutons restent noirs.
+       ========================================================================== */
+    :root {
+      --bg: #F3F2EE; --bg-surface: #F9F8F5; --bg-card: #FFFFFF; --bg-card-hover: #FFFBEA;
+      --border: #DAD8D0; --line: #DAD8D0; --line-strong: #A9A69B; --border-focus: #111111;
+      --ink: #111111; --ink-dim: #34332F; --muted: #5E5C55; --muted-dark: #8D8A80; --key: #111111;
+      --cyan-fill: #FFD400; --cyan-line: #E6BE00; --yellow-fill: #FFD400; --yellow-line: #E6BE00;
+      --lime: #111111; --lime-dark: #FFF4C2; --lime-glow: rgba(255, 212, 0, 0.35);
+      --tint-yellow: #FFF4C2; --gold: #7A5D00;
+      --rail: #111111; --rail-2: #1C1C1B; --rail-ink: #F3F2EE; --rail-muted: #9C9A92;
+    }
+    html, body { background: var(--bg); }
+    aside { background: var(--rail) !important; color: var(--rail-ink); border-right: 0 !important; }
+    aside .brand { color: #FFFFFF !important; }
+    aside .brandmark { background: var(--cyan-fill) !important; color: var(--rail) !important; }
+    aside .nav-label { color: var(--rail-muted) !important; }
+    aside .nav-btn { color: var(--rail-ink); border-color: transparent; }
+    aside .nav-btn .ic, aside .nav-btn .icon { color: var(--rail-muted); }
+    aside .nav-btn:hover { background: var(--rail-2); color: #FFFFFF; }
+    aside .nav-btn:hover .ic { color: #FFFFFF; }
+    aside .nav-btn.active { background: var(--cyan-fill); border-color: var(--cyan-fill); color: var(--rail); }
+    aside .nav-btn.active .ic, aside .nav-btn.active .icon { color: var(--rail); }
+    aside .nav-badge { background: var(--rail-2) !important; color: var(--rail-ink) !important; }
+    aside .nav-btn.active .nav-badge { background: var(--rail) !important; color: var(--cyan-fill) !important; }
+    aside .nav-btn:focus-visible { outline-color: var(--cyan-fill); }
+    .sidebar-footer { background: transparent !important; border: 0 !important; border-top: 1px solid #2A2A28 !important; border-radius: 0 !important; padding: 12px 2px 2px !important; gap: 6px !important; }
+    .sidebar-footer * { color: var(--rail-muted); }
+    .sidebar-footer .sidebar-footer-title { font-size: 11px; font-weight: 600; letter-spacing: .04em; color: var(--rail-muted); display: flex; align-items: center; gap: 6px; }
+    .sidebar-footer .btn, .sidebar-footer .btn.secondary { background: transparent !important; border: 1px solid #2E2E2C !important; color: var(--rail-ink) !important; font-weight: 600; box-shadow: none !important; }
+    .sidebar-footer .btn:hover { border-color: var(--rail-muted) !important; background: var(--rail-2) !important; transform: none; }
+    .sidebar-footer .btn .ic { color: var(--rail-muted); }
+    #installAppBtn { border-color: var(--cyan-fill) !important; color: var(--cyan-fill) !important; }
+    /* Boutons : action principale en noir, survol jaune */
+    .btn { background: var(--key); border: 1.5px solid var(--key); }
+    .btn:not(.secondary):not(.ghost) { color: #FFFFFF !important; }
+    .btn:not(.secondary):not(.ghost) .ic { color: var(--cyan-fill); }
+    .btn:hover { background: #2A2A28; box-shadow: 0 2px 0 var(--cyan-fill); }
+    .btn:not(.secondary):not(.ghost):hover { color: #FFFFFF !important; }
+    .btn.secondary { background: #FFFFFF; color: var(--ink); border: 1px solid var(--line-strong); }
+    .btn.secondary:hover { border-color: var(--key); background: #FFFFFF; box-shadow: none; }
+    .btn.ghost { background: transparent; border-color: transparent; color: var(--ink); }
+    .btn.accent-scan, .btn.scan-primary, #openScannerBtn { background: var(--yellow-fill) !important; color: var(--key) !important; }
+    .btn.accent-scan .ic, #openScannerBtn .ic { color: var(--key) !important; }
+    .tab-btn.active { background: var(--key); border-color: var(--key); color: var(--cyan-fill); }
+    input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px var(--lime-glow) !important; }
+    .mobile-dock-btn.active { color: var(--key); box-shadow: inset 0 -3px 0 var(--cyan-fill); }
+    .comic-card:hover { border-color: var(--key); }
   </style>
 </head>
 <body>
@@ -1550,8 +1600,7 @@
     </div>
 
     <div class="sidebar-footer">
-      <span><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Stockage Local Privé</span>
-      <p>Vos comics et inventaires physiques restent sécurisés dans ce navigateur.</p>
+      <span class="sidebar-footer-title" title="Vos comics et inventaires physiques restent sur cet appareil."><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Données sur cet appareil</span>
       <div style="display:flex;gap:6px;margin-top:4px">
         <button class="btn secondary" id="backupJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Export JSON</button>
         <button class="btn secondary" id="restoreJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Restaurer</button>
@@ -1748,18 +1797,18 @@
             <span style="font-size: 12px;color:var(--lime);font-weight:600" id="publisherBreakdownSummary">0 comics</span>
           </div>
           <div style="height:9px;border-radius:99px;display:flex;overflow:hidden;background:var(--bg-card)" id="publisherBreakdownBar">
-            <div style="background:var(--magenta-fill);width:0%;transition:width 0.3s" id="barMarvel" title="Marvel"></div>
-            <div style="background:var(--cyan-fill);width:0%;transition:width 0.3s" id="barDC" title="DC Comics"></div>
-            <div style="background:var(--yellow-fill);width:0%;transition:width 0.3s" id="barImage" title="Image Comics"></div>
-            <div style="background:var(--cyan-fill);width:0%;transition:width 0.3s" id="barDarkHorse" title="Dark Horse"></div>
-            <div style="background:var(--lime);width:0%;transition:width 0.3s" id="barOther" title="Indés & Autres"></div>
+            <div style="background:#111111;width:0%;transition:width 0.3s" id="barMarvel" title="Marvel"></div>
+            <div style="background:#FFD400;width:0%;transition:width 0.3s" id="barDC" title="DC Comics"></div>
+            <div style="background:#8D8A80;width:0%;transition:width 0.3s" id="barImage" title="Image Comics"></div>
+            <div style="background:#C9C6BB;width:0%;transition:width 0.3s" id="barDarkHorse" title="Dark Horse"></div>
+            <div style="background:#4A4945;width:0%;transition:width 0.3s" id="barOther" title="Indés & Autres"></div>
           </div>
           <div style="display:flex;gap:12px;margin-top:8px;font-size: 12px;flex-wrap:wrap" id="publisherLegend">
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--magenta-fill)"></span> Marvel <b id="pctMarvel" style="color:var(--ink)">0%</b></span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan-fill)"></span> DC Comics <b id="pctDC" style="color:var(--ink)">0%</b></span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--yellow-fill)"></span> Image <b id="pctImage" style="color:var(--ink)">0%</b></span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--cyan-fill)"></span> Dark Horse <b id="pctDarkHorse" style="color:var(--ink)">0%</b></span>
-            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:var(--lime)"></span> Indés / Autres <b id="pctOther" style="color:var(--ink)">0%</b></span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#111111"></span> Marvel <b id="pctMarvel" style="color:var(--ink)">0%</b></span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#FFD400"></span> DC Comics <b id="pctDC" style="color:var(--ink)">0%</b></span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#8D8A80"></span> Image <b id="pctImage" style="color:var(--ink)">0%</b></span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#C9C6BB"></span> Dark Horse <b id="pctDarkHorse" style="color:var(--ink)">0%</b></span>
+            <span style="display:flex;align-items:center;gap:4px"><span style="width:7px;height:7px;border-radius:50%;background:#4A4945"></span> Indés / Autres <b id="pctOther" style="color:var(--ink)">0%</b></span>
           </div>
         </div>
         <div class="stats-grid" id="statsDashboard"></div>
@@ -2455,9 +2504,9 @@
     <div class="form-row" style="margin-top:10px">
       <label style="font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-palette /></svg> Couleur d'Accentuation :</label>
       <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap" id="themePickerRow">
-        <button type="button" class="btn secondary" data-theme="lime" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#00A3DA"></span> Cyan</button>
+        <button type="button" class="btn secondary" data-theme="lime" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FFD400"></span> Primestone</button>
         <button type="button" class="btn secondary" data-theme="cyan" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF52AE"></span> Magenta</button>
-        <button type="button" class="btn secondary" data-theme="gold" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FFE500"></span> Jaune</button>
+        <button type="button" class="btn secondary" data-theme="gold" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#00A3DA"></span> Cyan</button>
         <button type="button" class="btn secondary" data-theme="red" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF6B6F"></span> Rouge</button>
         <button type="button" class="btn secondary" data-theme="purple" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#B9A3FF"></span> Violet</button>
       </div>
@@ -4497,7 +4546,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const title = lines.slice(0, 4).map((l, i) => `<text x="16" y="${92 + i * 24}" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="700" font-size="20" fill="#f5f7f2">${esc(l)}</text>`).join('');
     const hasNum = String(issue || '').trim() !== '';
     const num = hasNum ? esc(String(issue).replace(/^#?/, '#')) : 'RECUEIL';
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" viewBox="0 0 200 300"><defs><pattern id="d" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="2" fill="#E5007E"/></pattern></defs><rect width="200" height="300" fill="#FFFFFF"/><rect width="200" height="22" fill="#00A3DA"/><path d="M0 300 L200 190 L200 300 Z" fill="#FFE500"/><path d="M0 300 L200 190 L200 300 Z" fill="url(#d)"/>${title.replace(/fill="#f5f7f2"/g, 'fill="#161616"')}<rect x="${hasNum ? 128 : 104}" y="238" width="${hasNum ? 64 : 88}" height="52" fill="#161616"/><text x="${hasNum ? 160 : 148}" y="276" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="800" font-size="${hasNum ? 36 : 20}" fill="#FFFFFF">${num}</text></svg>`;
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="200" height="300" viewBox="0 0 200 300"><defs><pattern id="d" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.6" fill="#E9E6DA"/></pattern></defs><rect width="200" height="300" fill="#FFFFFF"/><rect width="200" height="22" fill="#111111"/><path d="M0 300 L200 190 L200 300 Z" fill="#FFD400"/><path d="M0 300 L200 190 L200 300 Z" fill="url(#d)"/>${title.replace(/fill="#f5f7f2"/g, 'fill="#161616"')}<rect x="${hasNum ? 128 : 104}" y="238" width="${hasNum ? 64 : 88}" height="52" fill="#161616"/><text x="${hasNum ? 160 : 148}" y="276" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="800" font-size="${hasNum ? 36 : 20}" fill="#FFFFFF">${num}</text></svg>`;
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   };
 

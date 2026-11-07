@@ -6,7 +6,19 @@ Système visuel **« Quadrichromie de kiosque »**, relevé dans le code livré 
 
 Panel ressemble à un présentoir de marchand de journaux : papier clair, quatre encres d'imprimerie (cyan, magenta, jaune, noir), titres condensés en capitales et trames Ben-Day. Les trames servent à marquer des états, pas à décorer. Usage visé : de jour, au bureau ou en boutique, autant sur ordinateur que sur téléphone. La collection physique est le seul module.
 
-## Couleurs (`:root`)
+## DA Primestone — jaune et noir (7 novembre 2026)
+
+Couche « DA PRIMESTONE », placée en fin de `<style>`. Elle remplace les valeurs du tableau ci-dessous pour le thème par défaut :
+- **Rail latéral** : noir `--rail #111111`, texte `--rail-ink #F3F2EE`, libellés `--rail-muted #9C9A92`. L'entrée active est jaune `--cyan-fill #FFD400` avec un texte noir.
+- **Boutons** : `.btn` est noir avec un texte blanc et une icône jaune. Le survol ajoute un filet jaune. `.btn.secondary` est blanc avec un filet gris. Le scanner reste jaune.
+- **Fond et filets** : papier neutre chaud `--bg #F3F2EE`, filets `--line #DAD8D0` / `--line-strong #A9A69B`. L'accent texte `--lime` passe au noir, avec la teinte jaune pâle `#FFF4C2`.
+- **Bloc stockage** (`.sidebar-footer`) : il n'y a plus d'encadré blanc. Il reste un filet supérieur, un titre discret « Données sur cet appareil » et des boutons fantômes. Les identifiants sont conservés.
+- **Répartition par éditeur** : nuances de noir, jaune et gris (`#111111`, `#FFD400`, `#8D8A80`, `#C9C6BB`, `#4A4945`).
+- **Couverture de remplacement** : bandeau noir et coin jaune.
+- **Barre du navigateur mobile** : `theme-color` vaut `#111111`.
+- **Accents au choix** : Primestone (par défaut), Magenta, Cyan (`theme-gold`), Rouge, Violet. Seul l'accent change ; le rail et les boutons restent noirs.
+
+## Couleurs historiques (`:root`, couche KIOSQUE)
 
 | Rôle | Jeton | Valeur |
 |---|---|---|
