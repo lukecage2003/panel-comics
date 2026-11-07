@@ -5,6 +5,7 @@
 >
 > **Révision 2 (7 novembre 2026) : correction architecturale « séparation stricte Collection / Explorer »** demandée par l'utilisateur. La section 0 et les passages marqués « *Révision 2* » ont été ajoutés ; le reste du texte d'origine est inchangé. En cas de contradiction, la section 0 et le document [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) font foi.
 > **Révision 3 (7 novembre 2026) : finalisation architecturale** : décisions A3, A5, A6 et A7 de l'utilisateur, contrats S1 à S6 détaillés, domaine Community indépendant (passages marqués « *Révision 3* »).
+> **Révision 4 (7 novembre 2026) : périmètre des Sorties** : comics uniquement, mangas japonais exclus (passages marqués « *Révision 4* » ; détail dans [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md)).
 > Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md). Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
 **Produit :** Panel by Primestone  
@@ -31,6 +32,7 @@
   - **A5** : les **sorties éditoriales** relèvent d'Explorer ; la Pull List reste à Collection. Le changement de navigation de Collection est documenté séparément et ne sera fait qu'après validation explicite.
   - **A6** : Explorer a sa **propre entrée dans la navigation principale** et n'est plus une sous-fonction de Collection (documenté, non implémenté).
   - **A7** : la catégorie « Ma collection » est **retirée** de la recherche native d'Explorer ; la recherche dans l'inventaire reste à Collection.
+- *Révision 4* : la fonctionnalité **Sorties** concerne **exclusivement les comics** (américains et internationaux du marché des comics, tous éditeurs). Les **mangas japonais** et leurs calendriers sont **exclus** des calendriers, classements, actualités et recommandations de sorties. Comics et mangas ne sont pas confondus. Voir [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md).
 - *Révision 3* : **Community** sera un domaine indépendant (schéma `community` réservé), ni intégré à Explorer ni à Collection.
 - Services communs autorisés : catalogue canonique, identifiants stables, référentiel éditeurs et séries, infrastructure d'images (R2), authentification, services backend, recherche. **Partager l'infrastructure ne signifie pas partager la responsabilité.**
 - Explorer ne lit pas les données internes de Collection. Toute interaction passe par les **contrats S1 à S6** de [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) (lecture personnelle facultative, commandes initiées par l'utilisateur, agrégats anonymes, registre d'images, catalogue canonique, identité).
@@ -75,7 +77,7 @@ Explorer comprend les modules suivants :
 2. Événements et crossovers.
 3. Key Issues.
 4. Classements et tendances.
-5. Sorties et calendrier.
+5. Sorties et calendrier (*Révision 4* : comics uniquement, mangas exclus).
 6. Guides de lecture.
 7. Univers et personnages.
 8. Séries et créateurs.
@@ -502,6 +504,8 @@ Distinguer deux systèmes indépendants.
 
 ## 6.1 Classements commerciaux
 
+*Révision 4* : les classements liés aux sorties et aux nouveautés ne contiennent que des comics ; aucune sortie manga.
+
 Données provenant de sources externes exploitables.
 
 Afficher :
@@ -552,6 +556,8 @@ Le système doit limiter :
 ---
 
 # 7. MODULE SORTIES
+
+*Révision 4* : périmètre **exclusivement comics** : comics américains et internationaux relevant du marché des comics, pour tous les éditeurs (Marvel, DC, Image Comics, Dark Horse, IDW, BOOM! Studios, Dynamite, Valiant, Archie, Skybound, Oni Press et indépendants). Les **mangas japonais** et leurs calendriers de publication sont **exclus**, ainsi que de tout classement, actualité ou recommandation de sorties. Chaque publication porte un champ `medium` (`comic`, `manga`, `unknown`) ; un éditeur mixte ne suffit jamais à classer une publication ; un doute exclut. Détail et cas limites : [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md).
 
 *Révision 3* (décision A5) : les sorties éditoriales relèvent d'Explorer. La Pull List reste dans Collection ; depuis une sortie, l'ajout à la Pull List passe par S2 et l'indication « dans ma Pull List » par S1.
 
@@ -1086,6 +1092,7 @@ Explorer 2.0 doit satisfaire les critères suivants :
 28. *Révision 2* : un rôle éditorial ou d'administration ne lit aucune donnée personnelle (tests RLS).
 29. *Révision 2* : les classements communautaires ne contiennent que des agrégats au-dessus du seuil d'anonymat.
 30. *Révision 2* : aucun import, classement ou tâche planifiée ne modifie une donnée de Collection (empreinte des données personnelles identique avant et après).
+31. *Révision 4* : aucune publication `manga` ou `unknown` n'apparaît dans les Sorties, ni dans les classements, actualités et recommandations de sorties (test sur un jeu contenant des mangas, des éditeurs mixtes et des cas limites).
 
 ---
 

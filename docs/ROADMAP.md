@@ -25,7 +25,7 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 | 3.7 | Validation Web + Android, bêta fermée | À faire |
 
 ## Phase 4 — Explorer 2.0
-Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans le [cahier des charges](phase4/00-explorer-2.0-cahier-des-charges.md) § 14. Prérequis : Phase 3 terminée. Règle structurante : **séparation stricte Collection / Explorer** ([frontières et contrats](phase4/02-frontieres-collection-explorer.md), révision 3) ; les lots Explorer ne modifient pas Collection. Décisions du 7 novembre 2026 : A3 (progression = domaine Lecture, via S1), A5 (sorties = Explorer), A6 (entrée de navigation propre, [changement documenté](phase4/03-changement-navigation.md), non implémenté), A7 (pas de recherche « Ma collection » dans Explorer). Community sera un domaine indépendant. Point bloquant identifié : les **droits des sources** (métadonnées et images) pour un catalogue partagé ([analyse](phase4/01-analyse-et-impacts.md) § 2).
+Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans le [cahier des charges](phase4/00-explorer-2.0-cahier-des-charges.md) § 14. Prérequis : Phase 3 terminée. Règle structurante : **séparation stricte Collection / Explorer** ([frontières et contrats](phase4/02-frontieres-collection-explorer.md), révision 3) ; les lots Explorer ne modifient pas Collection. Décisions du 7 novembre 2026 : A3 (progression = domaine Lecture, via S1), A5 (sorties = Explorer), A6 (entrée de navigation propre, [changement documenté](phase4/03-changement-navigation.md), non implémenté), A7 (pas de recherche « Ma collection » dans Explorer). Community sera un domaine indépendant. Les **Sorties** concernent exclusivement les comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Point bloquant identifié : les **droits des sources** (métadonnées et images) pour un catalogue partagé ([analyse](phase4/01-analyse-et-impacts.md) § 2).
 
 ## Backlog (hors lots planifiés)
 - Source d'actualités ou CMS (actualités non activées).
@@ -37,6 +37,7 @@ Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans 
 - Signature Android de publication ; réglage de `allowBackup` (prérequis du lot 3.2).
 - Purge des anciennes clés Marvel/Vision (**nécessite l'accord de l'utilisateur**).
 - Retrait des secrets des exports JSON par défaut (prévu au lot 3.2 ou 3.6).
+- Mise en conformité du calendrier actuel (lot 2.4) avec la règle « comics uniquement » (format `manga`, éditeurs Kana et Kurokawa) : lots 4.6 et 4.9, par masquage, sans suppression. Cas limites M1 à M4 (BD franco-belge, manhwa et manhua, manga non japonais, adaptations) **à trancher**.
 - Changement de navigation N1 à N5 (Explorer et Sorties hors du bloc Collection) : **en attente de validation explicite**.
 - Sauvegarde par fournisseurs de domaine (B1) : **en attente de validation** (touche le format de sauvegarde de Collection).
 - Le lot 2.7, envisagé à l'origine, n'a pas été réalisé ; ses sujets figurent ci-dessus.

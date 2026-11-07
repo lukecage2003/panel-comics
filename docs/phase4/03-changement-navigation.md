@@ -22,7 +22,7 @@ AJOUTER
 ```
 EXPLORER                              ← nouvelle entrée de la navigation principale (A6)
   Accueil Explorer
-  Sorties & calendrier                ← sorties éditoriales (A5)
+  Sorties & calendrier                ← sorties éditoriales de comics, mangas exclus (A5, [04])
   Guides · Événements · Key Issues · Classements · Séries · Personnages · Créateurs (Phase 4)
 COLLECTION PHYSIQUE                   ← inchangée, sauf le retrait de deux entrées
   Ma collection
@@ -34,7 +34,7 @@ AJOUTER                               ← inchangé
 ```
 - **Explorer** : section et conteneur propres (par exemple `#explorerSection`), routeur propre, hors de `#singlesViewSection`.
 - **Mobile** : une entrée Explorer dans la barre du bas. Le nombre de boutons (5) et la place de `mobScan` sont à valider : c'est un changement de l'interface mobile de Collection.
-- **Sorties** : la vue calendrier (publications, reports, annulations) passe dans Explorer. La **Pull List** reste dans Collection. Depuis une sortie, « Ajouter à ma Pull List » passe par S2 ; le badge « dans ma Pull List » par S1.
+- **Sorties** (comics uniquement, voir [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md)) : la vue calendrier (publications, reports, annulations) passe dans Explorer. La **Pull List** reste dans Collection. Depuis une sortie, « Ajouter à ma Pull List » passe par S2 ; le badge « dans ma Pull List » par S1.
 
 ## 3. Ce qui change dans Collection (à autoriser explicitement)
 | # | Changement | Type |

@@ -13,6 +13,7 @@ Légende : **[Fait]** · **[Doc]** · **[Hyp.]** · **[Reco.]** · **[À valider
 | Stockage des images | **Cloudflare R2** (API compatible S3), pas Supabase Storage | `avatar_path` (profil) et les couvertures manuelles volumineuses (`04` § 1) iront aussi, à terme, dans le registre média et sur R2 ; rien n'est stocké en Phase 3 |
 | Ordre des phases | Phase 3 (comptes, synchronisation, sauvegardes, permissions) **avant** Explorer 2.0 | Feuille de route : Phase 4 = Explorer 2.0, lots 4.1 à 4.11 |
 | Gestion éditoriale | Hybride : automatisation, validation humaine, contributions | Il faut des **rôles serveur** (§ 3) |
+| Périmètre des Sorties | **Comics uniquement**, mangas japonais exclus des calendriers, classements, actualités et recommandations de sorties | Voir [`04`](04-perimetre-sorties-comics.md) ; le calendrier actuel (lot 2.4) n'est pas conforme |
 | Séparation des modules | Collection et Explorer indépendants ; décisions A3 (progression = domaine Lecture), A5 (sorties = Explorer), A6 (entrée de navigation propre), A7 (pas de recherche « Ma collection » dans Explorer) | Voir [`02`](02-frontieres-collection-explorer.md) et [`03`](03-changement-navigation.md) |
 
 ## 2. Point de tension principal : catalogue partagé et licences
