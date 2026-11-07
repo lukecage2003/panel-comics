@@ -1562,6 +1562,86 @@ const waitForCdp = async () => {
         ok: !!t24 && ['migration', 'verify', 'normalized', 'provenance', 'copyFields', 'timestamps', 'pull', 'duplicatesFlagged', 'anomalies', 'backup', 'legacyUntouched', 'idempotent', 'incremental', 'rollback', 'reEnable', 'durability', 'durabilityStable', 'tombstoneRevival', 'backupContent', 'idReport', 'completeRecovery', 'interrupted', 'migrationFailure', 'backupsKept', 'realOk', 'cleanup'].every(k => t24[k] === true)
       });
 
+      // ==========================================
+      // TEST 25 : Exemplaires et variantes (lot 2.2) — normalisation, regroupement, saisie structurée, restauration fidèle
+      // ==========================================
+      console.log('\n[TEST 25] Exemplaires et variantes : normalisation, regroupement, saisie structurée...');
+      const t25 = await evalExpr(`(async () => {
+        const P = window.Panel, C = P.catalog, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const N = C.normalizeCopy;
+        const a = N({ condition: 'CGC 9.8 (Certifié)' });
+        const b = N({ condition: 'CGC Signature Series', notes: 'Signé par Jim Lee | Certificat slab n° 4123 | Acheté chez Convention' });
+        const c = N({ condition: 'NM 9.4 (Near Mint)', purchasePrice: '3.5', purchaseDate: '2025-02-01' });
+        const d = N({ condition: 'VF/NM 9.0', gradingCompany: 'cbcs', grade: '9,6', signedBy: 'Artiste', signatureAuth: 'JSA', store: 'Boutique', keyType: 'signed' });
+        const e = N({ condition: 'NM 9.4 (Near Mint)', notes: 'Slab (société de gradation non précisée)' });
+        r.normalize = a.grade.company === 'CGC' && a.grade.value === 9.8 && a.grade.slabbed && a.grade.labelType === 'universal' && !a.signature.signed &&
+          b.grade.labelType === 'signature' && b.signature.signed && b.signature.by === 'Jim Lee' && b.signature.authenticated === 'CGC Signature Series' && b.grade.certNumber === '4123' && b.purchase.store === 'Convention' && b.fromNotes.length === 3 &&
+          c.grade.scale === 'estime' && c.grade.label === 'NM' && c.grade.value === 9.4 && c.purchase.price === 3.5 && c.purchase.date === '2025-02-01' && c.purchase.currency === 'USD' &&
+          d.grade.company === 'CBCS' && d.grade.value === 9.6 && d.signature.by === 'Artiste' && d.signature.authenticated === 'JSA' && d.purchase.store === 'Boutique' &&
+          e.grade.slabbed && e.grade.company === null;
+        const base = { condition: 'NM 9.4 (Near Mint)', keyType: 'none', isWishlist: false, notes: '', addedAt: '2026-01-01T00:00:00Z', box: 'Boîte 1' };
+        const fixture = [
+          { ...base, id: 'g1', series: 'Groupe Test (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover A', purchasePrice: 4 },
+          { ...base, id: 'g2', series: 'Groupe Test (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Regular', condition: 'CGC 9.8 (Certifié)', box: 'Boîte 2' },
+          { ...base, id: 'g3', series: 'Groupe Test (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover B Virgin' },
+          { ...base, id: 'g4', series: 'Groupe Test (2024)', issue: '#1', publisher: 'DC Comics', variant: 'Cover A', isWishlist: true }
+        ];
+        P.setPhysicalSingles(JSON.parse(JSON.stringify(fixture)));
+        await wait(300);
+        const m = await C.migrate({ force: true });
+        const cat = await C.read();
+        r.catalog = m.ok && (await C.verify()).ok && cat.copies.filter(x => !x.deletedAt).every(x => x.normalized && x.normalized.grade && x.variantId === C.idsOf(C.copyToLegacy(x)).variantId) &&
+          cat.copies.find(x => x.legacyId === 'g2').normalized.grade.company === 'CGC' &&
+          new Set(cat.copies.filter(x => ['g1', 'g2', 'g4'].includes(x.legacyId)).map(x => x.variantId)).size === 1;
+        r.grouping = C.variantCopies(fixture[0]).length === 3 && C.variantCopies(fixture[2]).length === 1;
+        P.renderSinglesCollection();
+        await wait(100);
+        const el1 = document.querySelector('[data-sid="g1"]'), el3 = document.querySelector('[data-sid="g3"]'), el4 = document.querySelector('[data-sid="g4"]');
+        r.badge = !el1 || ((el1.innerHTML.includes('×2')) && (!el3 || !el3.innerHTML.includes('×')) && (!el4 || !el4.innerHTML.includes('×2')));
+        r.badgeSeen = !!el1;
+        P.openSingleInspector(P.getPhysicalSingles().find(x => x.id === 'g1'));
+        const box = document.getElementById('inspectCopiesBox');
+        r.inspector = !!box && box.textContent.includes('Exemplaires de cette variante (3)') && box.textContent.includes('CGC 9.8') && box.querySelectorAll('[data-copy-idx]').length === 3;
+        const modal = box && box.closest('.modal, .modal-overlay, [class*="modal"]');
+        if (modal) modal.classList.remove('open');
+        // Saisie structurée : société + note → liste « Condition » mise à jour ; enregistrement des champs
+        const $ = id => document.getElementById(id);
+        const fire = el => el.dispatchEvent(new Event('change', { bubbles: true }));
+        $('singleSeriesInput').value = 'Saisie Grading Test'; $('singleIssueInput').value = '#7'; $('singleVariantNameInput').value = 'Cover A';
+        $('singleGradingCompanySelect').value = 'CBCS'; fire($('singleGradingCompanySelect'));
+        $('singleGradeInput').value = '9.6'; fire($('singleGradeInput'));
+        const condAfter = $('singleConditionSelect').value;
+        $('singleLabelTypeSelect').value = 'signature'; $('singleCertNumberInput').value = 'C-77'; $('singleSignedByInput').value = 'Artiste';
+        $('singleSignatureAuthSelect').value = 'CBCS Verified'; $('singleStoreInput').value = 'Convention';
+        await P.saveSingleIssue();
+        await wait(200);
+        const ns = P.getPhysicalSingles().find(x => x.series === 'Saisie Grading Test');
+        r.form = condAfter === 'CBCS 9.6 (Certifié)' && !!ns && ns.condition === 'CBCS 9.6 (Certifié)' && ns.gradingCompany === 'CBCS' && ns.grade === 9.6 && ns.labelType === 'signature' &&
+          ns.certNumber === 'C-77' && ns.signedBy === 'Artiste' && ns.signatureAuth === 'CBCS Verified' && ns.store === 'Convention';
+        $('singleConditionSelect').value = 'VF 8.0 (Very Fine)'; fire($('singleConditionSelect'));
+        r.formSync = $('singleGradingCompanySelect').value === '' && $('singleGradeInput').value === '';
+        const plain = P.getPhysicalSingles().find(x => x.id === 'g3');
+        r.noExtraFields = !('gradingCompany' in plain) && !('signedBy' in plain) && !('store' in plain);
+        // Restauration JSON fidèle : provenance, codes et grading conservés ; valeurs dangereuses filtrées
+        const raw = { id: 'r1', series: 'Restauration', issue: '#1', coverUrl: 'https://covers.example.test/r1.jpg', coverMeta: { source: 'fandom', exact: true }, upc: '76194138470100111', metronId: 'm-1', gradingCompany: 'CGC', grade: 9.8, signedBy: 'X',
+          coverHistory: [{ url: 'javascript:alert(1)' }, { url: 'https://covers.example.test/old.jpg', at: '2025-01-01' }], tags: ['a', 3], evil: { nested: true }, fn: null };
+        const si = P.sanitizeImportedSingle(raw);
+        r.restore = si.coverMeta && si.coverMeta.source === 'fandom' && si.upc === raw.upc && si.metronId === 'm-1' && si.gradingCompany === 'CGC' && si.grade === 9.8 && si.signedBy === 'X' &&
+          si.coverHistory.length === 1 && si.tags.length === 1 && !('evil' in si) && !('fn' in si) && si.coverUrl === raw.coverUrl;
+        // Nettoyage
+        P.setPhysicalSingles(saved);
+        await C.migrate({ force: true });
+        r.cleanup = (await C.verify()).ok;
+        return r;
+      })()`);
+      console.log('Résultat Test 25:', JSON.stringify(t25));
+      testResults.push({
+        test: 'Exemplaires et variantes : état/grading/slab/signature/achat normalisés, regroupement par variante, saisie structurée, restauration JSON fidèle',
+        ok: !!t25 && ['normalize', 'catalog', 'grouping', 'badge', 'inspector', 'form', 'formSync', 'noExtraFields', 'restore', 'cleanup'].every(k => t25[k] === true)
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -1262,6 +1262,16 @@
     .comic-poster { background: #E7EAE9; }
     .comic-poster-gradient { display: none !important; }
     .comic-badges-strip { top: 0 !important; left: 0 !important; right: 0 !important; padding: 0 !important; justify-content: space-between !important; align-items: flex-start !important; }
+    .copies-badge { margin: 6px auto 0 6px; background: var(--key); color: #FFFFFF; font-weight: 800; font-size: 12px; line-height: 1; padding: 3px 6px; border-radius: 3px; font-variant-numeric: tabular-nums; }
+    .grading-details { margin: 4px 0 10px; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6px 10px; }
+    .grading-details summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+    .grading-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+    .inspect-copies { margin-top: 8px; font-size: 13px; }
+    .inspect-copies .inspect-copy-detail { color: var(--ink); }
+    .inspect-copies-title { font-weight: 700; margin: 10px 0 4px; }
+    .inspect-copies ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+    .inspect-copies li button { text-align: left; font-size: 13px; }
+    .inspect-copies li button[aria-current] { font-weight: 700; color: var(--ink); text-decoration: none; cursor: default; }
     .issue-box {
       background: var(--key); color: #FFFFFF; font-family: var(--font-display); font-weight: 800;
       font-size: 22px; line-height: 1; padding: 5px 8px 4px; min-width: 34px; text-align: center;
@@ -2001,6 +2011,36 @@
       </div>
     </div>
 
+    <details class="grading-details" id="singleGradingDetails">
+      <summary>Grading, slab et signature</summary>
+      <div class="grading-grid">
+        <div class="form-row">
+          <label for="singleGradingCompanySelect">Société de gradation</label>
+          <select id="singleGradingCompanySelect"><option value="">Aucune (non gradé)</option><option value="CGC">CGC</option><option value="CBCS">CBCS</option><option value="PGX">PGX</option><option value="EGS">EGS</option></select>
+        </div>
+        <div class="form-row">
+          <label for="singleGradeInput">Note du slab</label>
+          <input id="singleGradeInput" type="number" step="0.1" min="0.5" max="10" placeholder="ex : 9.8">
+        </div>
+        <div class="form-row">
+          <label for="singleLabelTypeSelect">Étiquette</label>
+          <select id="singleLabelTypeSelect"><option value="">—</option><option value="universal">Universal (bleue)</option><option value="signature">Signature Series (jaune)</option><option value="qualified">Qualified (verte)</option><option value="restored">Restored (violette)</option></select>
+        </div>
+        <div class="form-row">
+          <label for="singleCertNumberInput">N° de certificat</label>
+          <input id="singleCertNumberInput" maxlength="40" placeholder="ex : 4123456001">
+        </div>
+        <div class="form-row">
+          <label for="singleSignedByInput">Signé par</label>
+          <input id="singleSignedByInput" maxlength="120" placeholder="ex : Jim Lee">
+        </div>
+        <div class="form-row">
+          <label for="singleSignatureAuthSelect">Authentification</label>
+          <select id="singleSignatureAuthSelect"><option value="">Aucune</option><option>CGC Signature Series</option><option>CBCS Verified</option><option>PGX Signature</option><option>JSA</option><option>Beckett</option><option>PSA/DNA</option><option>Certificat éditeur</option><option>Témoin personnel</option></select>
+        </div>
+      </div>
+    </details>
+
     <!-- ÉTAT FINANCIER -->
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-row">
@@ -2021,6 +2061,10 @@
         <label for="singlePurchaseDateInput">Date d'achat</label>
         <input id="singlePurchaseDateInput" type="date">
       </div>
+    </div>
+    <div class="form-row">
+      <label for="singleStoreInput">Acheté chez</label>
+      <input id="singleStoreInput" maxlength="120" placeholder="ex : librairie, convention, eBay">
     </div>
     <div class="valuation-row">
       <div class="form-row" style="margin:0">
@@ -4457,7 +4501,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // exemplaire conserve de quoi reconstruire exactement sa fiche d'origine (vérifié fiche par fiche).
   // Retour arrière : Panel.catalog.rollback() vide uniquement cette base dérivée.
   // ==========================================================================
-  const CATALOG_SCHEMA = 1;
+  const CATALOG_SCHEMA = 2; // 2 : exemplaires normalisés (état, grading, slab, signature, achat)
   const CATALOG_ENTITY_STORES = ['publishers', 'series', 'issues', 'variants', 'copies'];
   const CATALOG_DISABLED_KEY = 'panel_catalog_disabled';
   let catalogDbPromise = null;
@@ -4544,12 +4588,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return !k || DEFAULT_VARIANT_RE.test(k) ? 'cover a' : k;
   };
 
+  // Identifiants déterministes d'une fiche dans le catalogue (même calcul pour la migration et pour l'affichage)
+  const catalogIdsOf = s => {
+    s = s || {};
+    const pubName = String(s.publisher || '').trim() || 'Éditeur inconnu';
+    const pubId = 'pub_' + stableHash(catNorm(pubName) || 'inconnu');
+    const seriesName = String(s.series || '').trim() || 'Comic sans titre';
+    const year = catYearOf(seriesName);
+    const volume = catVolumeOf(seriesName, s.volume);
+    const seriesId = 'ser_' + stableHash([pubId, normSeries(seriesName), year || '', volume || ''].join('|'));
+    const issueKey = catIssueKey(s.issue, s.variant);
+    const issueId = 'iss_' + stableHash(seriesId + '|' + issueKey);
+    const variantKey = catVariantKey(s.variant, s.issue);
+    const variantId = 'var_' + stableHash(issueId + '|' + variantKey);
+    return { pubName, pubId, seriesName, year, volume, seriesId, issueKey, issueId, variantKey, variantId };
+  };
+
   // Répartition des champs d'une fiche : catalogue (partagé) / exemplaire (personnel) / autres (conservés tels quels)
   const CAT_SERIES_FIELDS = ['series', 'publisher', 'volume'];
   const CAT_ISSUE_FIELDS = ['issue', 'title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType', 'keyNote', 'keyNotes'];
   const CAT_VARIANT_FIELDS = ['variant', 'coverUrl', 'coverMeta', 'coverHistory', 'coverLookup', 'fandomLookup', 'upc', 'barcode', 'isbn', 'printing', 'comicVineId', 'metronId', 'gcdId', 'coverSource', 'coverArtist', 'ratio'];
   const CAT_FIELDS = new Set([...CAT_SERIES_FIELDS, ...CAT_ISSUE_FIELDS, ...CAT_VARIANT_FIELDS]);
-  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity']);
+  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency']);
   const splitLegacySingle = s => {
     const catalogFields = {}, personal = {}, extra = {};
     Object.keys(s || {}).forEach(k => {
@@ -4560,6 +4620,56 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     });
     return { catalogFields, personal, extra };
   };
+  // État, grading, slab, signature et achat sous une forme unique. Lu depuis les champs explicites, puis depuis
+  // l'état texte (« CGC 9.8 (Certifié) ») et les mentions ajoutées aux notes par les imports (« Signé par … »).
+  const catGradeNum = v => { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return Number.isFinite(n) && n >= 0.5 && n <= 10 ? Math.round(n * 10) / 10 : null; };
+  const SIGNATURE_AUTHS = ['CGC Signature Series', 'CBCS Verified', 'PGX Signature', 'JSA', 'Beckett', 'PSA/DNA', 'Certificat éditeur', 'Témoin personnel'];
+  const LABEL_TYPES = { universal: 'Universal', signature: 'Signature Series', qualified: 'Qualified', restored: 'Restored' };
+  const normalizeCopyData = s => {
+    s = s || {};
+    const txt = v => String(v == null ? '' : v).trim();
+    const cond = txt(s.condition), notes = txt(s.notes);
+    const fromNotes = [];
+    const fromNote = (re, field) => { const m = notes.match(re); if (!m) return null; fromNotes.push(field); return m[1].trim(); };
+    const company = (txt(s.gradingCompany) || (cond.match(/\b(CGC|CBCS|PGX|EGS)\b/i) || [])[1] || '').toUpperCase() || null;
+    const value = catGradeNum(s.grade) ?? catGradeNum((cond.match(/(\d{1,2}(?:[.,]\d)?)/) || [])[1]);
+    const ss = /signature series/i.test(cond);
+    const slabFlag = s.slab === true || /^(oui|yes|true|1|slab)$/i.test(txt(s.slab));
+    const slabNote = /slab \(soci[ée]t[ée] de gradation non pr[ée]cis[ée]e\)/i.test(notes);
+    if (slabNote) fromNotes.push('slab');
+    const slabbed = !!company || slabFlag || slabNote;
+    const certNumber = txt(s.certNumber) || fromNote(/certificat(?: slab)? n[°o]\s*([A-Za-z0-9-]+)/i, 'certNumber');
+    const labelType = LABEL_TYPES[txt(s.labelType)] ? txt(s.labelType) : ss ? 'signature' : slabbed ? 'universal' : null;
+    const rawLabel = slabbed ? null : ((cond.match(/^([A-Z]{2}(?:[+-]|\/[A-Z]{1,2})?)(?=\s|$)/) || [])[1] || null);
+    const signedBy = txt(s.signedBy) || fromNote(/sign[ée] par\s+([^|]+)/i, 'signedBy');
+    const authenticated = txt(s.signatureAuth) || (labelType === 'signature' ? (company === 'CBCS' ? 'CBCS Verified' : company === 'PGX' ? 'PGX Signature' : 'CGC Signature Series') : null);
+    const store = txt(s.store) || fromNote(/achet[ée] chez\s+([^|]+)/i, 'store');
+    return {
+      grade: { value, scale: slabbed ? 'certifie' : value !== null ? 'estime' : 'inconnu', company, slabbed, labelType, certNumber: certNumber || null, label: rawLabel },
+      signature: { signed: !!signedBy || !!authenticated || s.keyType === 'signed', by: signedBy || null, authenticated: authenticated || null },
+      purchase: { price: numOrNull(s.purchasePrice), currency: txt(s.purchaseCurrency) || 'USD', date: txt(s.purchaseDate) || null, store: store || null },
+      quantity: Math.max(1, parseInt(s.quantity, 10) || 1),
+      fromNotes
+    };
+  };
+  const gradeText = n => {
+    const g = n.grade;
+    if (g.slabbed) return [g.company || 'Slab', g.value !== null ? g.value.toFixed(1) : '', g.labelType && g.labelType !== 'universal' ? LABEL_TYPES[g.labelType] : ''].filter(Boolean).join(' ');
+    return g.value !== null ? [g.label, g.value.toFixed(1)].filter(Boolean).join(' ') + ' (estimé)' : 'État non renseigné';
+  };
+  const copyDetailText = n => [
+    gradeText(n) + (n.grade.certNumber ? ' · certificat n° ' + n.grade.certNumber : ''),
+    n.signature.signed ? 'Signé' + (n.signature.by ? ' par ' + n.signature.by : '') + (n.signature.authenticated ? ' (' + n.signature.authenticated + ')' : '') : '',
+    n.purchase.price !== null ? 'payé ' + money(n.purchase.price) : '',
+    n.purchase.store ? 'acheté chez ' + n.purchase.store : ''
+  ].filter(Boolean).join(' · ');
+  // Exemplaires possédés par variante (calcul local, fonctionne aussi sans le catalogue)
+  const variantCopyCounts = () => {
+    const m = new Map();
+    physicalSingles.forEach(x => { if (!x || x.isWishlist) return; const k = catalogIdsOf(x).variantId; m.set(k, (m.get(k) || 0) + 1); });
+    return m;
+  };
+
   // Reconstruction exacte de la fiche d'origine à partir d'un exemplaire (sert à la vérification et au retour arrière)
   const legacyBaseId = s => (s && s.id !== undefined && s.id !== null && s.id !== '') ? String(s.id) : 'sans-id-' + stableHash([s && s.series, s && s.issue, s && s.variant, s && s.publisher, s && s.addedAt].map(x => String(x == null ? '' : x)).join('|'));
   const copyToLegacy = c => {
@@ -4600,16 +4710,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (occ) anomalies.push({ type: 'identifiant-en-double', legacyId: baseId, occurrence: occ });
       const from = baseId + (occ ? '~' + occ : '');
 
-      const pubName = String(s.publisher || '').trim() || 'Éditeur inconnu';
-      const pubId = 'pub_' + stableHash(catNorm(pubName) || 'inconnu');
+      const ids = catalogIdsOf(s);
+      const { pubName, pubId } = ids;
       if (!out.publishers.has(pubId)) out.publishers.set(pubId, { id: pubId, name: pubName, normName: catNorm(pubName), aliases: [], externalIds: [], conflicts: [], provenance: { origin: 'collection', firstLegacyId: from } });
       const pub = out.publishers.get(pubId);
       if (pubName !== pub.name && !pub.aliases.includes(pubName)) pub.aliases.push(pubName);
 
-      const seriesName = String(s.series || '').trim() || 'Comic sans titre';
-      const year = catYearOf(seriesName);
-      const volume = catVolumeOf(seriesName, s.volume);
-      const seriesId = 'ser_' + stableHash([pubId, normSeries(seriesName), year || '', volume || ''].join('|'));
+      const { seriesName, year, volume, seriesId } = ids;
       if (!out.series.has(seriesId)) {
         out.series.set(seriesId, {
           id: seriesId, publisherId: pubId, name: seriesName, title: seriesName.replace(/\s*\((1[89]\d{2}|20\d{2})(?:\s*-[^)]*)?\)\s*/g, ' ').trim(),
@@ -4620,8 +4727,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const ser = out.series.get(seriesId);
       if (seriesName !== ser.name && !ser.aliases.includes(seriesName)) ser.aliases.push(seriesName);
 
-      const issueKey = catIssueKey(s.issue, s.variant);
-      const issueId = 'iss_' + stableHash(seriesId + '|' + issueKey);
+      const { issueKey, issueId } = ids;
       if (!out.issues.has(issueId)) {
         out.issues.set(issueId, {
           id: issueId, seriesId, publisherId: pubId, number: String(s.issue == null ? '' : s.issue), numberKey: issueKey,
@@ -4631,8 +4737,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const iss = out.issues.get(issueId);
       ['title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType'].forEach(f => noteConflict(iss, f, s[f]));
 
-      const variantKey = catVariantKey(s.variant, s.issue);
-      const variantId = 'var_' + stableHash(issueId + '|' + variantKey);
+      const { variantKey, variantId } = ids;
       if (!out.variants.has(variantId)) {
         out.variants.set(variantId, {
           id: variantId, issueId, seriesId, publisherId: pubId, name: String(s.variant || '').trim() || 'Cover A', variantKey,
@@ -4653,7 +4758,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const copyId = 'cpy_' + stableHash(from);
       out.copies.set(copyId, {
         id: copyId, legacyId: baseId, legacyIdRaw: legacyHasId ? s.id : undefined, legacyOccurrence: occ, legacyHasId, publisherId: pubId, seriesId, issueId, variantId,
-        status: s.isWishlist ? 'wishlist' : 'owned', personal, catalogFields, extra, legacyHash: stableHash(stableJson(s)), deletedAt: null
+        status: s.isWishlist ? 'wishlist' : 'owned', personal, catalogFields, extra, normalized: normalizeCopyData(s), legacyHash: stableHash(stableJson(s)), deletedAt: null
       });
     });
 
@@ -5218,8 +5323,58 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
   };
 
+  // Champs structurés de l'exemplaire (grading, slab, signature, lieu d'achat)
+  const STRUCT_COPY_FIELDS = [['gradingCompany', 'singleGradingCompanySelect'], ['grade', 'singleGradeInput'], ['labelType', 'singleLabelTypeSelect'], ['certNumber', 'singleCertNumberInput'], ['signedBy', 'singleSignedByInput'], ['signatureAuth', 'singleSignatureAuthSelect'], ['store', 'singleStoreInput']];
+  const setSelectValue = (el, v) => { if (!el) return; v = v == null ? '' : String(v); if (v && el.tagName === 'SELECT' && ![...el.options].some(o => o.value === v)) el.add(new Option(v, v)); el.value = v; };
+  const fillStructuredCopyFields = item => {
+    const n = normalizeCopyData(item || {});
+    const vals = item ? {
+      gradingCompany: item.gradingCompany || n.grade.company || '',
+      grade: item.grade != null && item.grade !== '' ? item.grade : (n.grade.slabbed && n.grade.value !== null ? n.grade.value : ''),
+      labelType: item.labelType || (n.grade.labelType === 'signature' ? 'signature' : ''),
+      certNumber: n.grade.certNumber || '', signedBy: n.signature.by || '',
+      signatureAuth: n.signature.authenticated || '', store: n.purchase.store || ''
+    } : {};
+    STRUCT_COPY_FIELDS.forEach(([k, id]) => setSelectValue($(id), vals[k]));
+    const det = $('singleGradingDetails');
+    if (det) det.open = !!(vals.gradingCompany || vals.certNumber || vals.signedBy || vals.signatureAuth);
+  };
+  // Enregistre les champs saisis ; un champ vidé par l'utilisateur est retiré, les autres champs de la fiche ne sont pas touchés
+  const applyStructuredCopyFields = target => {
+    STRUCT_COPY_FIELDS.forEach(([k, id]) => {
+      const el = $(id);
+      if (!el) return;
+      let v = String(el.value || '').trim().slice(0, 120);
+      if (k === 'grade') v = v === '' ? '' : catGradeNum(v);
+      if (v === '' || v === null) { if (Object.prototype.hasOwnProperty.call(target, k)) delete target[k]; }
+      else target[k] = v;
+    });
+    return target;
+  };
+  // La liste « Condition / Grading » et les champs de gradation restent cohérents dans les deux sens
+  const syncGradingFromCondition = () => {
+    const cond = ($('singleConditionSelect') || {}).value || '';
+    const co = (cond.match(/\b(CGC|CBCS|PGX|EGS)\b/i) || [])[1];
+    setSelectValue($('singleGradingCompanySelect'), co ? co.toUpperCase() : '');
+    const g = co ? catGradeNum((cond.match(/(\d{1,2}(?:[.,]\d)?)/) || [])[1]) : null;
+    if ($('singleGradeInput')) $('singleGradeInput').value = g !== null ? g : '';
+    if (/signature series/i.test(cond)) setSelectValue($('singleLabelTypeSelect'), 'signature');
+  };
+  const syncConditionFromGrading = () => {
+    const co = ($('singleGradingCompanySelect') || {}).value || '';
+    const g = catGradeNum(($('singleGradeInput') || {}).value);
+    if (!co || g === null) return;
+    setSelectValue($('singleConditionSelect'), co + ' ' + g.toFixed(1) + ' (Certifié)');
+  };
+  document.addEventListener('change', e => {
+    const id = e.target && e.target.id;
+    if (id === 'singleConditionSelect') syncGradingFromCondition();
+    else if (id === 'singleGradingCompanySelect' || id === 'singleGradeInput') syncConditionFromGrading();
+  });
+
   // Réinitialise les champs étendus du formulaire (aucune valeur inventée)
   const resetExtendedSingleFields = () => {
+    fillStructuredCopyFields(null);
     if ($('singleEstValueInput')) $('singleEstValueInput').value = '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = '';
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = new Date().toISOString().slice(0, 10);
@@ -5351,6 +5506,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           notes: notes,
           updatedAt: new Date().toISOString()
         });
+        applyStructuredCopyFields(physicalSingles[idx]);
         withCover(physicalSingles[idx], prevItem);
         applyFormValuation(physicalSingles[idx], prevEst);
       }
@@ -5366,6 +5522,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         notes: notes,
         addedAt: new Date().toISOString()
       };
+      applyStructuredCopyFields(newSingle);
       withCover(newSingle, null);
       applyFormValuation(newSingle, null);
       physicalSingles.unshift(newSingle);
@@ -5440,6 +5597,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (numOrNull(item.coverPrice) !== null) parts.push('Couverture ' + money(item.coverPrice));
       if (item.purchaseDate) parts.push('acheté le ' + new Date(item.purchaseDate).toLocaleDateString('fr-FR'));
       $('inspectPurchaseMeta').textContent = parts.join(' · ');
+      let cpBox = $('inspectCopiesBox');
+      if (!cpBox) { cpBox = document.createElement('div'); cpBox.id = 'inspectCopiesBox'; cpBox.className = 'inspect-copies'; $('inspectPurchaseMeta').insertAdjacentElement('afterend', cpBox); }
+      const vid = catalogIdsOf(item).variantId;
+      const same = physicalSingles.filter(x => x && catalogIdsOf(x).variantId === vid);
+      const lineOf = x => [x === item ? 'Cet exemplaire' : '', x.isWishlist ? 'Wishlist' : '', copyDetailText(normalizeCopyData(x)), x.location || boxOf(x) || ''].filter(Boolean).join(' · ');
+      cpBox.innerHTML = '<div class="inspect-copy-detail">' + escapeHtml(copyDetailText(normalizeCopyData(item))) + '</div>' +
+        (same.length > 1 ? '<p class="inspect-copies-title">Exemplaires de cette variante (' + same.length + ')</p><ul>' +
+          same.map((x, i) => '<li><button type="button" class="btn-link" data-copy-idx="' + i + '"' + (x === item ? ' aria-current="true"' : '') + '>' + escapeHtml(lineOf(x)) + '</button></li>').join('') + '</ul>' : '');
+      cpBox.querySelectorAll('[data-copy-idx]').forEach(b => { b.onclick = () => { const t = same[Number(b.dataset.copyIdx)]; if (t && t !== item) openSingleInspector(t); }; });
     }
 
     const diff = eVal - paid;
@@ -5564,6 +5730,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       condSel.add(new Option(item.condition, item.condition));
     }
     condSel.value = item.condition || 'NM 9.4 (Near Mint)';
+    fillStructuredCopyFields(item);
     $('singleCoverPriceInput').value = numOrNull(item.coverPrice) ?? '';
     $('singleEstValueInput').value = numOrNull(item.estValue) ?? '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = numOrNull(item.purchasePrice) ?? '';
@@ -5800,8 +5967,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       frag.appendChild(head);
     }
 
+    const copyCounts = variantCopyCounts();
     visible.forEach(item => {
       const graded = isGradedCondition(item.condition);
+      const nCopies = item.isWishlist ? 0 : (copyCounts.get(catalogIdsOf(item).variantId) || 0);
+      const copiesTag = nCopies > 1 ? '<span class="copies-badge" title="' + nCopies + ' exemplaires de cette variante">×' + nCopies + '</span>' : '';
       const key = keyLabel(item);
       const value = valueOf(item);
       const condShort = (item.condition || 'NM 9.4').split(' ').slice(0, graded ? 2 : 2).join(' ').replace(/\(.*$/, '').trim();
@@ -5814,7 +5984,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         row.innerHTML =
           coverImgTag(item) +
           '<div class="row-title"><b>' + escapeHtml(item.series) + ' ' + escapeHtml(item.issue) + '</b>' +
-            '<small>' + escapeHtml(item.variant || '') + (key ? ' · ' + key : '') + (item.rating ? ' · <span class="stars">' + starsText(item.rating) + '</span>' : '') + '</small></div>' +
+            '<small>' + escapeHtml(item.variant || '') + (nCopies > 1 ? ' · ×' + nCopies + ' ex.' : '') + (key ? ' · ' + key : '') + (item.rating ? ' · <span class="stars">' + starsText(item.rating) + '</span>' : '') + '</small></div>' +
           '<span class="row-dim hide-sm">' + escapeHtml(condShort) + '</span>' +
           '<span class="row-dim hide-sm">' + escapeHtml(item.location || boxOf(item) || '—') + '</span>' +
           '<span class="row-num row-dim">' + (item.isWishlist ? '—' : money(paidOf(item))) + '</span>' +
@@ -5839,7 +6009,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<div class="comic-poster-gradient"></div>' +
           (item.isWishlist ? '<span class="wish-ribbon"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> WISHLIST</span>' : '') +
           '<div class="comic-badges-strip">' +
-            '<span class="issue-box">' + escapeHtml(item.issue || 'TP') + '</span>' +
+            '<span class="issue-box">' + escapeHtml(item.issue || 'TP') + '</span>' + copiesTag +
             '<span class="status-pill ' + (graded ? 'cgc' : key ? 'key' : 'unread') + '">' + escapeHtml(graded ? condShort : key || condShort) + '</span>' +
           '</div>' +
         '</div>' +
@@ -6662,6 +6832,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           variant: (variantRaw || 'Cover A').slice(0, 120),
           keyType,
           condition: gradeInfo.condition,
+          ...(signedBy && !csvTruthy(signedBy) ? { signedBy: String(signedBy).trim().slice(0, 120) } : {}),
+          ...(get('cert') ? { certNumber: String(get('cert')).trim().slice(0, 40) } : {}),
+          ...(get('store') ? { store: String(get('store')).trim().slice(0, 120) } : {}),
           coverPrice: parseMoney(get('coverPrice')),
           purchasePrice: parseMoney(get('purchasePrice')),
           purchaseDate,
@@ -7656,7 +7829,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const str = (v, max = 300) => (v === null || v === undefined) ? '' : String(v).slice(0, max);
     const series = str(raw.series, 200).trim();
     if (!series) return null;
-    return {
+    const out = {
       id: str(raw.id, 80) || ('s_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7)),
       series,
       issue: str(raw.issue, 20) || '#1',
@@ -7683,6 +7856,18 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       addedAt: str(raw.addedAt, 40) || new Date().toISOString(),
       updatedAt: raw.updatedAt ? str(raw.updatedAt, 40) : undefined
     };
+    // Champs non listés ci-dessus : conservés s'ils sont simples (texte, nombre, booléen) ou d'un type connu et sûr
+    const KEEP_OBJECTS = new Set(['coverMeta', 'valuation', 'coverLookup', 'fandomLookup']);
+    Object.keys(raw).forEach(k => {
+      if (k in out || /^__|^(constructor|prototype)$/.test(k)) return;
+      const v = raw[k];
+      if (typeof v === 'string') out[k] = v.slice(0, 2000);
+      else if ((typeof v === 'number' && Number.isFinite(v)) || typeof v === 'boolean') out[k] = v;
+      else if (k === 'coverHistory' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object' && isSafeImageUrl(h.url)).slice(-5).map(h => JSON.parse(JSON.stringify(h)));
+      else if (k === 'tags' && Array.isArray(v)) out[k] = v.filter(t => typeof t === 'string').map(t => t.slice(0, 60)).slice(0, 50);
+      else if (KEEP_OBJECTS.has(k) && v && typeof v === 'object' && !Array.isArray(v)) { const j = JSON.stringify(v); if (j.length <= 20000) out[k] = JSON.parse(j); }
+    });
+    return out;
   };
 
   // IMPORT JSON (accepte l'ancien format tableau et le nouveau format v2)
@@ -8856,6 +9041,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     searchComicVineIssuesList,
     searchComicVineApi,
     saveSingleIssue,
+    openSingleInspector,
     renderSinglesCollection,
     getPhysicalSingles: () => physicalSingles,
     showSinglesView,
@@ -8949,6 +9135,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       build: buildCatalogModel,
       copyToLegacy,
       idReport: () => idRepairReport(),
+      normalizeCopy: normalizeCopyData,
+      idsOf: catalogIdsOf,
+      variantCopies: item => { const v = catalogIdsOf(item).variantId; return physicalSingles.filter(x => x && catalogIdsOf(x).variantId === v); },
       isActive: () => catalogMigrated && !catalogDisabled()
     },
     countStoredDigitalFiles,

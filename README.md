@@ -32,6 +32,15 @@ Une base IndexedDB dédiée, `panel-catalog`, organise la collection en **édite
   - Elle est idempotente : la relancer ne crée aucun doublon et ne change aucune date.
 - **Doublons probables** : éditeurs proches, série sous plusieurs éditeurs, année manquante, identifiant externe partagé, variantes proches. Ils sont **signalés, jamais fusionnés**. Les fiches sans identifiant ou en double sont signalées comme anomalies.
 - **Durabilité** : localStorage et IndexedDB partagent un numéro de révision. La liste complète (fiches sans identifiant ou en double comprises) et sa révision sont écrites en un seul enregistrement IndexedDB (`panel-catalog` / `meta` / `singlesFull`), ce qui exclut toute copie à moitié écrite. Si localStorage est plein, cette version plus récente est reprise au démarrage, après un instantané. Une copie tronquée est ignorée.
+- **Exemplaires et variantes (lot 2.2)** : chaque exemplaire du catalogue porte une forme normalisée (`normalized`) :
+  - grading : note, estimée ou certifiée, société (CGC, CBCS, PGX ou EGS), slab, étiquette (Universal, Signature Series, Qualified ou Restored) et n° de certificat ;
+  - signature : signataire et authentification ;
+  - achat : prix, devise, date et lieu.
+
+  Ces valeurs sont lues dans les champs explicites, puis dans l'état texte, puis dans les mentions des notes laissées par les imports. La fiche d'origine n'est pas modifiée. Le schéma du catalogue passe à 2, et une migration avec sauvegarde est relancée une fois au démarrage.
+- **Regroupement** : les cartes et la liste affichent « ×N » quand une variante a plusieurs exemplaires possédés. La fiche détaillée liste tous les exemplaires de la même variante. Le calcul est local et fonctionne aussi après un retour arrière du catalogue.
+- **Saisie** : un bloc « Grading, slab et signature » et un champ « Acheté chez » complètent le formulaire. La liste « Condition / Grading » reste synchronisée avec la société et la note. Les nouveaux champs ne sont écrits que s'ils sont remplis. L'import CSV renseigne aussi `signedBy`, `certNumber` et `store`, sans retirer les notes.
+- **Restauration JSON fidèle** : les champs d'une fiche qui n'étaient pas listés sont désormais conservés lors d'une restauration. Auparavant, ils étaient perdus : provenance des couvertures, historique, codes-barres, identifiants Metron/GCD, grading. Seuls les valeurs simples et quelques objets connus et vérifiés sont repris.
 - **Échec de migration** : la collection n'est pas touchée et le catalogue est vidé. Aucune nouvelle tentative automatique n'a lieu tant que la collection n'a pas changé (`Panel.catalog.enable()` force une nouvelle tentative). Les sauvegardes `panel-catalog.backups` ne sont jamais supprimées automatiquement.
 - **Retour arrière** (testé) : `Panel.catalog.rollback()` vide uniquement la base dérivée `panel-catalog`. Les sauvegardes, les instantanés et la collection ne sont pas touchés, et la migration automatique est désactivée (`panel_catalog_disabled`). `Panel.catalog.enable()` la relance. Pour revenir au code d'avant le lot 2.1, il suffit de revenir au commit `8b04cb3` : l'ancien code ignore simplement la base `panel-catalog`.
 - **Contrôle** : « Vérifier les données » (menu Plus) affiche l'état du catalogue et le nombre de doublons signalés. L'API de test est `Panel.catalog.{status, verify, read, sync, migrate}`.
@@ -239,6 +248,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Exemplaires et variantes` (normalisation état/grading/slab/signature/achat, regroupement par variante, saisie structurée, restauration JSON fidèle)
 - `✓ PASS - Catalogue normalisé` (migration additive vérifiée fiche par fiche, provenance, doublons signalés, idempotence, synchro incrémentale, retour arrière, durabilité IndexedDB, export LoCG réel si présent)
 - `✓ PASS - Collector Pro : valeurs, wishlist exclue, anti-XSS, import sûr`
 - `✓ PASS - Séries & complétion, pull list, sorties, stats, annulation, vue liste`
