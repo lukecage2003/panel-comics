@@ -12,9 +12,9 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 
 - **Vision** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
 - **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
-- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lot 2.1 (catalogue normalisé).
-- **En attente de validation** : lots 2.2 à 2.7 de la Phase 2.
-- **Tests** : `node run-all-tests.js` (Edge sans interface), 23 tests.
+- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lots 2.1 à 2.4 ; lot 2.5 (sources de données, provenance, import contrôlé) livré, en attente de validation.
+- **En attente de validation** : lot 2.5, puis lots 2.6 et 2.7 de la Phase 2.
+- **Tests** : `node run-all-tests.js` (Edge sans interface), 27 tests.
 - **Points de vigilance** : les fiches sans identifiant ou en double sont signalées (`Panel.catalog.idReport()` propose un identifiant de remplacement, sans rien appliquer). Les entrées de catalogue sans exemplaire sont conservées, et les exemplaires supprimés gardent une pierre tombale. Les instantanés de collection restent limités aux 8 derniers (comportement antérieur).
 - **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
 
@@ -147,6 +147,77 @@ Aucune transition ne supprime de donnée d'origine, et rien n'est fusionné quan
   - aucune donnée existante n'est transformée ;
   - copie du code avant le lot : `_backups/20261107-lot24-avant/`.
 - **API** : `Panel.releases.{upsert, edit, query, sync, importText, exportCsv, exportData, addRelation, suggest, pulls.*, wish.*}`.
+
+## 🛰️ Sources de données, provenance et import contrôlé (Phase 2 · lot 2.5)
+
+Accès : bouton **Sources & données** dans le rail latéral, ou bouton **Importer un calendrier** du calendrier. Le panneau a cinq onglets : Sources, Importer, Conflits, Journal, Provenance.
+
+### Matrice des sources (relevé du 7 novembre 2026)
+États : **Fonctionne** · **Prêt — identifiants requis** · **Abonnement ou autorisation requis** · **Non disponible**. Les onze critères de chaque source (couverture, API, licence, usage commercial, coût, attribution, stockage, cache, images, limites, fiabilité) sont affichés dans l'onglet Sources et exposés par `Panel.data.sources()`.
+
+| Source | Marché | Type | État | Usage commercial |
+|---|---|---|---|---|
+| Comic Vine (API) | US | Base tierce | Prêt — clé requise (fonctionne avec clé) | Non commercial uniquement |
+| Import contrôlé CSV / JSON / XLSX | Tous | Import utilisateur | Fonctionne | Sous conditions (selon l'origine du fichier) |
+| Saisie manuelle | Tous | Saisie | Fonctionne | Compatible |
+| Metron (API) | US | Base tierce | Non disponible (compte requis, licence non vérifiée) | Informations insuffisantes |
+| Grand Comics Database | International | Base tierce | Non disponible pour le calendrier | Sous conditions (CC BY-SA 4.0, couvertures exclues) |
+| Marvel Comics API | US | Éditeur | Non disponible (statut du portail non confirmé) | Autorisation écrite |
+| Sites DC, Image, Dark Horse, IDW, BOOM!, Dynamite | US | Éditeur | Autorisation requise (aucune API, scraping exclu) | Autorisation écrite |
+| PRH Publisher Services (Marvel), Lunar (DC), Diamond / Universal | US | Distributeur | Autorisation requise (comptes libraires) | Autorisation écrite |
+| Sites Panini, Urban, Delcourt, Glénat | FR | Éditeur | Autorisation requise | Autorisation écrite |
+| BnF (SRU, data.bnf.fr) | FR | Base tierce | Non disponible (relais requis ; après parution seulement) | Compatible (Licence Ouverte, mention de la source) |
+| Electre Data Services | FR | Base tierce | Abonnement requis | Autorisation écrite (contrat) |
+| Dilicom (FEL) | FR | Distributeur | Abonnement professionnel requis | Autorisation écrite |
+| Open Library | International | Base tierce | Non disponible | Informations insuffisantes |
+| Google Books API | International | Base tierce | Non disponible | Autorisation écrite |
+| League of Comic Geeks, CLZ | US / International | Base tierce | Non disponible (export personnel importable) | Incompatible comme source |
+
+- **Stratégie retenue** : calendrier US par Comic Vine en usage personnel ; calendrier francophone et plannings éditeurs par import contrôlé et saisie. Les sources sous contrat (Electre, Dilicom, distributeurs, éditeurs) demandent un accord écrit avant toute intégration. La BnF est la seule source gratuite compatible commercialement, mais elle ne couvre que l'après-parution.
+- **Aucun connecteur fictif** : seuls Comic Vine, l'import et la saisie ont un connecteur. Les autres sources sont documentées, pas simulées.
+- **Activer / désactiver** : Comic Vine et l'import se désactivent dans l'onglet Sources. Une source désactivée n'est jamais interrogée, pas même par l'actualisation à l'ouverture d'une semaine.
+- **Édition commerciale** : `panelEdition = 'commercial'` bloque automatiquement les sources « non commercial », « autorisation écrite », « incompatible » et « informations insuffisantes ». L'édition actuelle est **personnelle**.
+- **Images** : les droits sur les métadonnées n'incluent pas les droits sur les couvertures. Chaque couverture garde sa source et une mention de droits ; une couverture manuelle n'est jamais remplacée par une source.
+
+### Provenance par champ
+- Chaque publication porte `prov[champ]`, avec : valeur, source, type de source (éditeur, distributeur, base tierce, import utilisateur, saisie manuelle, déduit), référence externe, date de récupération, date de dernière vérification, historique (20 valeurs), statut (vérifié / non vérifié) et confiance (élevée, moyenne, faible).
+- Champs suivis : titre, éditeur, langue, lien, date annoncée, date confirmée, couverture, ISBN, UPC et identifiants Comic Vine, Metron, GCD, LoCG et CLZ.
+- Une valeur confirmée par une seconde source passe en « vérifié » (`confirmedBy`).
+- Les fiches antérieures au lot 2.5 ne sont pas réécrites : leur provenance est déduite à l'affichage et marquée « antérieur (non tracé) ».
+
+### Conflits et doublons
+- **Priorité des valeurs** : saisie manuelle > éditeur > distributeur > base tierce = import utilisateur > déduit.
+- **Règles d'application** :
+  - une source moins fiable n'écrase jamais une valeur : elle ouvre un conflit ;
+  - une source corrige librement sa propre valeur ;
+  - une date peut être reportée par une source de même rang (cas d'un report d'éditeur) ;
+  - l'éditeur, qui fait partie de l'identité, n'est jamais modifié par une source.
+- **Résolution** (onglet Conflits ou fiche publication) : garder la valeur actuelle, prendre la valeur proposée, ou saisir une autre valeur. Une modification manuelle règle les conflits du champ concerné. Un même conflit n'est jamais ouvert deux fois.
+- **Rapprochement** : identifiant Panel, puis identifiant externe fiable (Comic Vine, Metron, GCD, LoCG, CLZ), puis ISBN / UPC, puis correspondance exacte (marché, éditeur, série, numéro, format, variante). Jamais par ressemblance de titre.
+- **Identifiants contradictoires** (deux fiches désignées) : rien n'est créé ni fusionné ; un conflit d'identité est ouvert.
+
+### Pipeline d'import
+1. Lecture : CSV (`;` ou `,`), JSON (liste, export Panel ou sauvegarde) ou XLSX (première feuille).
+2. Correspondance des colonnes, automatique puis modifiable. Une colonne non associée est conservée dans `extra`.
+3. Validation : série manquante, date illisible, marché ou éditeur inconnu, couverture non https, date absente. Aucune date n'est inventée.
+4. Aperçu ligne par ligne, sans rien écrire : nouvelle, mise à jour (avec le détail des champs), identique, conflit, doublon possible, doublon dans le fichier, invalide.
+5. Application, puis rapport (ajouts, mises à jour, inchangées, conflits, doublons, invalides, colonnes inconnues, erreurs). Un aperçu ne s'applique qu'une fois.
+6. Annulation sûre : un instantané est conservé (`meta/relimport_<id>`). L'annulation retire les fiches créées et restaure les fiches modifiées. Elle n'y touche pas si la fiche a été modifiée depuis, ou si elle est utilisée (pull list, exemplaire, relation).
+
+L'import alimente le catalogue des publications : calendrier, éditeurs, séries et relations. Il ne modifie jamais la collection, la wishlist ni la pull list.
+
+### Actualisation
+Aucune synchronisation périodique et aucun backend. Pour chaque source, l'onglet Sources affiche :
+- la dernière actualisation et son résultat (ajouts, modifications, conflits ou erreur) ;
+- le nombre de publications ;
+- les conflits ouverts.
+
+Le Journal garde les 50 dernières opérations : actualisations, imports, annulations, activations.
+
+### Sauvegarde et API
+- **Sauvegarde JSON** : le bloc `releases` contient la provenance, les champs inconnus, les conflits et le réglage des sources. À la restauration, les types de source invalides, les champs non suivis et les conflits mal formés sont écartés ; les conflits sont fusionnés sans doublon.
+- **API** : `Panel.data.{sources, setEnabled, edition, plan, apply, undo, imports, conflicts, resolve, provenance, stats, open}`.
+- **Sauvegarde du code avant le lot** : `_backups/20261107-da-lot25-avant/`.
 
 ## 📲 Application installable (PWA)
 
@@ -351,6 +422,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Sources & données` (matrice des sources, connecteurs activables, blocage en édition commerciale, provenance par champ, conflits sans écrasement silencieux, résolution, doublons par priorité, import CSV/JSON/XLSX avec aperçu, correspondance, rapport, annulation sûre, sauvegarde, redémarrage)
 - `✓ PASS - Calendrier international` (publications US/FR et relations explicites, connecteur simulé, import CSV/JSON, reports, annulations, dates inconnues, historique, Pull List, Wishlist, transitions sans doublon, sauvegarde/restauration, vues, redémarrage hors ligne)
 - `✓ PASS - Emplacements` (4 niveaux, migration sûre et idempotente, valeurs ambiguës, affectation complète/partielle, déplacements, suppression sans perte, comptage, recherche, JSON/CSV, redémarrage hors ligne)
 - `✓ PASS - Exemplaires et variantes` (normalisation état/grading/slab/signature/achat, regroupement par variante, saisie structurée, restauration JSON fidèle)

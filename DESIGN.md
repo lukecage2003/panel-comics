@@ -81,6 +81,7 @@ Il y a un sprite SVG inline unique : `<symbol id="ic-…">`, utilisé via `<svg 
 - **Menus** : `details.menu-pop` (« Plus », « Outils ») plutôt que des barres d'actions longues.
 - **Toasts** avec action d'annulation (`.toast-action`).
 - **Calendrier** : badges `.rel-market` (marché), `.rel-status` (statut ; reporté en orange, annulé barré) et `.rel-date` (pointillés = annoncée, trait plein cyan = confirmée). La grille `.rel-cal` compte 7 colonnes et passe en points de couleur avec une liste `.rel-cal-list` sous 640 px. Les lignes sont des `.rel-row` et `.pull-row`, la fiche est `#pubModal`, la wishlist structurée est `.wish-box`.
+- **Sources & données** : modale `#dataAdminModal` (`.da-box`), onglets `.da-tab` soulignés en jaune, tableaux `.da-table` dans `.da-wrap` (défilement horizontal interne sur mobile), badges `.da-badge` par état (vert = fonctionne, jaune = identifiants, orange = autorisation, gris = indisponible) et par usage commercial, conflits `.da-conflict` (filet gauche jaune), provenance `.pub-prov` dans la fiche publication.
 - **Emplacements** : `.loc-cascade` (4 listes Pièce → Meuble → Boîte → Séparateur, 2 colonnes sur mobile) et fenêtre `#locationsModal`, dont l'arbre `.loc-row` est indenté par `--depth`. Le nombre de comics est en `tabular-nums` ; « vide » est affiché en gris.
 
 ## Responsive

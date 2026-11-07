@@ -1545,6 +1545,47 @@
     input:focus, select:focus, textarea:focus { box-shadow: 0 0 0 3px var(--lime-glow) !important; }
     .mobile-dock-btn.active { color: var(--key); box-shadow: inset 0 -3px 0 var(--cyan-fill); }
     .comic-card:hover { border-color: var(--key); }
+    /* Sources & données (lot 2.5) */
+    .da-box { max-width: 1100px; width: min(1100px, calc(100vw - 32px)); }
+    .da-tabs { display: flex; flex-shrink: 0; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 12px; overflow-x: auto; overflow-y: hidden; }
+    #dataAdminBody { flex-shrink: 0; }
+    .da-tab { background: none; border: 0; border-bottom: 3px solid transparent; padding: 9px 12px; font: inherit; font-size: 14px; font-weight: 600; flex-shrink: 0; color: var(--muted); cursor: pointer; white-space: nowrap; }
+    .da-tab.active { color: var(--ink); border-bottom-color: var(--cyan-fill); }
+    .da-note { font-size: 12.5px; color: var(--muted); margin: 6px 0 10px; line-height: 1.45; }
+    .da-warn { color: #9A3B00; }
+    .da-h { margin: 18px 0 6px; font-size: 14px; }
+    .da-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+    .da-row label { display: flex; gap: 6px; align-items: center; font-size: 13px; }
+    .da-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .da-chip { display: inline-flex; gap: 6px; align-items: center; font-size: 12px; padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; background: #fff; }
+    .da-wrap { overflow-x: auto; max-width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+    .da-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .da-table th { text-align: left; font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); background: var(--bg-surface); padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+    .da-table td { padding: 7px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    .da-table tr:last-child td { border-bottom: 0; }
+    .da-table details summary { cursor: pointer; }
+    .da-dl { display: grid; grid-template-columns: 110px 1fr; gap: 3px 10px; margin: 8px 0 2px; font-size: 12px; min-width: 320px; }
+    .da-dl dt { color: var(--muted); }
+    .da-dl dd { margin: 0; }
+    .da-badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 7px; border-radius: 4px; border: 1px solid var(--line-strong); background: #fff; white-space: nowrap; }
+    .da-st-operational, .da-cl-commercial, .da-act-add { background: #E6F4EA; border-color: #8CC79E; color: #135C2A; }
+    .da-st-credentials, .da-cl-conditions, .da-act-update { background: #FFF4C2; border-color: #E6BE00; color: #5C4600; }
+    .da-st-authorization, .da-cl-written, .da-act-conflict, .da-act-ambiguous { background: #FFE9DA; border-color: #E8A06E; color: #8A3A00; }
+    .da-st-unavailable, .da-cl-unknown, .da-act-identical, .da-act-duplicate { background: #F0EFEA; border-color: #C9C6BB; color: #4A4945; }
+    .da-cl-noncommercial { background: #EDE7F6; border-color: #B39DDB; color: #4527A0; }
+    .da-cl-incompatible, .da-act-invalid { background: #FDE7E9; border-color: #E8A1A8; color: #A1122A; }
+    .da-switch { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+    .da-plan, .da-report { border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 10px 0; background: var(--bg-surface); }
+    .da-plan h4, .da-report h4 { margin: 0 0 6px; font-size: 14px; }
+    .da-plan details { margin: 8px 0; }
+    .da-errors { font-size: 12px; margin: 6px 0 0 18px; color: #8A3A00; }
+    .da-conflict { border: 1px solid var(--line); border-left: 3px solid var(--cyan-fill); border-radius: 8px; padding: 10px 12px; margin: 8px 0; background: #fff; }
+    .da-cf-head { font-size: 13px; margin-bottom: 6px; }
+    .da-cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 13px; }
+    .da-hits { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .pub-prov { margin: 10px 0; font-size: 13px; }
+    .pub-prov summary { cursor: pointer; font-weight: 600; }
+    @media (max-width: 640px) { .da-cf-grid { grid-template-columns: 1fr; } .da-box { width: calc(100vw - 16px); } }
   </style>
 </head>
 <body>
@@ -1607,6 +1648,7 @@
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
+      <button class="btn secondary" id="openDataAdminBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Sources & données</button>
       <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
       <button class="btn" id="installAppBtn" hidden style="font-size: 12px;padding:6px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
     </div>
@@ -2451,6 +2493,19 @@
       <button class="btn-icon" id="closePubModalBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
     <div id="pubModalBody"></div>
+  </div>
+</div>
+<div class="modal-backdrop" id="dataAdminModal">
+  <div class="modal-box da-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px">
+      <h2>Sources & données</h2>
+      <button class="btn-icon" id="closeDataAdminBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
+    </div>
+    <div class="da-tabs" role="tablist">
+      <button class="da-tab active" data-da-tab="sources">Sources</button><button class="da-tab" data-da-tab="import">Importer</button><button class="da-tab" data-da-tab="conflicts">Conflits</button><button class="da-tab" data-da-tab="log">Journal</button><button class="da-tab" data-da-tab="prov">Provenance</button>
+    </div>
+    <div id="dataAdminBody"></div>
+    <input type="file" id="daImportFile" accept=".csv,.json,.txt,.xlsx,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
   </div>
 </div>
 <div class="modal-backdrop" id="locationsModal">
@@ -7373,16 +7428,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     relIdx = { ext, nat };
     return relIdx;
   };
+  const REL_RELIABLE_IDS = ['comicvine', 'metron', 'gcd', 'locg', 'clz'], REL_CODE_IDS = ['isbn', 'upc'];
   const relFind = n => {
-    if (n.id && relPubs.has(n.id)) return { pub: relPubs.get(n.id) };
+    if (n.id && relPubs.has(n.id)) return { pub: relPubs.get(n.id), by: 'id' };
     const idx = relIndex();
-    for (const [k, v] of Object.entries(n.externalIds || {})) {
-      const id = idx.ext.get(k + ':' + v);
-      if (id && relPubs.has(id)) return { pub: relPubs.get(id) };
+    for (const group of [REL_RELIABLE_IDS, REL_CODE_IDS]) {
+      const hits = new Set();
+      group.forEach(k => { const v = (n.externalIds || {})[k]; const id = v && idx.ext.get(k + ':' + v); if (id && relPubs.has(id)) hits.add(id); });
+      if (hits.size > 1) return { ambiguous: [...hits], by: 'conflictingIds' };
+      if (hits.size === 1) return { pub: relPubs.get([...hits][0]), by: group === REL_RELIABLE_IDS ? 'externalId' : 'code' };
     }
     const list = (idx.nat.get(relNatural(n)) || []).filter(id => relPubs.has(id));
-    if (list.length === 1) return { pub: relPubs.get(list[0]) };
-    return list.length > 1 ? { ambiguous: list } : {};
+    if (list.length === 1) return { pub: relPubs.get(list[0]), by: 'exact' };
+    return list.length > 1 ? { ambiguous: list, by: 'exact' } : {};
   };
   const relPushHistory = (p, h) => { p.dateHistory = (p.dateHistory || []).concat([h]).slice(-60); };
 
@@ -7393,6 +7451,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!n.series) return { action: 'rejected', error: 'Série ou titre manquant' };
     const at = src.at || relNow(), source = src.source || 'manual';
     const found = relFind(n);
+    if (found.by === 'conflictingIds') {
+      const first = relPubs.get(found.ambiguous[0]);
+      const c = relAddConflict(first, 'identity', Object.entries(n.externalIds).map(([k, v]) => k + ' ' + v).join(', ') + ' → ' + found.ambiguous.join(', '), src, at, { candidates: found.ambiguous.slice(0, 10) });
+      return { action: 'conflict', error: 'Identifiants externes contradictoires : plusieurs fiches correspondent, rien n\'est fusionné.', conflicts: [c], candidates: found.ambiguous };
+    }
     let p = found.pub;
     if (!p) {
       const firstExt = Object.entries(n.externalIds)[0];
@@ -7413,25 +7476,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (p.dates.initial) relPushHistory(p, { at, source, from: null, to: p.dates.initial, kind: 'announced' });
       if (n.initialDate && n.date && n.initialDate !== n.date) relPushHistory(p, { at, source, from: n.initialDate, to: n.date, kind: n.date > n.initialDate ? 'postponed' : 'advanced' });
       if (p.cancelled) relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'cancelled' });
+      if (p.cover) p.cover.rights = srcImageRights(source);
+      PROV_FIELDS.forEach(f => { const v = fieldGet(p, f); if (v) provRecord(p, f, v, src, at); });
+      const ex0 = relCleanExtra((raw || {}).extra);
+      if (ex0) p.extra = ex0;
       relPubs.set(id, p);
       relIdx = null;
-      return { action: 'added', pub: p, changes: ['added'] };
+      return { action: 'added', pub: p, changes: ['added'], conflicts: [] };
     }
-    const changes = [];
-    if (n.date && n.date !== p.dates.current) {
-      const kind = !p.dates.current ? 'announced' : n.date > p.dates.current ? 'postponed' : 'advanced';
-      relPushHistory(p, { at, source, from: p.dates.current || null, to: n.date, kind });
-      p.dates.current = n.date;
-      if (!p.dates.initial) p.dates.initial = n.date;
-      changes.push(kind);
-    }
-    if (n.actual && p.dates.actual !== n.actual) { p.dates.actual = n.actual; changes.push('confirmed'); }
+    const changes = [], conflicts = [];
+    relApplyField(p, 'date', n.date, src, at, changes, conflicts);
+    relApplyField(p, 'actual', n.actual, src, at, changes, conflicts);
     if (n.cancelled === true && !p.cancelled) { p.cancelled = true; relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'cancelled' }); changes.push('cancelled'); }
     else if (n.cancelled === false && p.cancelled) { p.cancelled = false; relPushHistory(p, { at, source, from: p.dates.current, to: p.dates.current, kind: 'reinstated' }); changes.push('reinstated'); }
-    ['title', 'publisher', 'language', 'url'].forEach(k => { if (!p[k] && n[k]) { p[k] = n[k]; changes.push('info'); } });
+    ['title', 'publisher', 'language', 'url'].forEach(k => relApplyField(p, k, n[k], src, at, changes, conflicts));
     if (n.publisher && !p.market && n.market) { p.market = n.market; changes.push('info'); }
-    if (n.cover && (!p.cover || (p.cover.source === source && p.cover.url !== n.cover))) { p.cover = { url: n.cover, source }; changes.push('cover'); }
-    Object.entries(n.externalIds).forEach(([k, v]) => { if (!p.externalIds[k]) { p.externalIds[k] = v; changes.push('ids'); relIdx = null; } });
+    relApplyField(p, 'cover', n.cover, src, at, changes, conflicts);
+    Object.entries(n.externalIds).forEach(([k, v]) => relApplyField(p, k, v, src, at, changes, conflicts));
+    const ex1 = relCleanExtra((raw || {}).extra);
+    if (ex1) { p.extra = Object.assign({}, p.extra || {}, ex1); changes.push('extra'); }
     const se = (p.sources || (p.sources = [])).find(x => x.source === source);
     if (se) se.at = at; else p.sources.push({ source, at, ref: n.url || relStr(src.ref, 300) });
     p.dates.lastVerified = at;
@@ -7439,7 +7502,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (changes.length) p.updatedAt = at;
     const dateKinds = ['postponed', 'advanced', 'announced'];
     const action = changes.includes('cancelled') ? 'cancelled' : changes.some(c => dateKinds.includes(c)) ? 'dateChanged' : changes.length ? 'updated' : 'unchanged';
-    return { action, pub: p, changes };
+    return { action, pub: p, changes, conflicts };
   };
 
   const relToday = () => isoDate(new Date());
@@ -7456,7 +7519,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const relNumLabel = p => !p.issue ? '' : (['single', 'kiosque'].includes(p.format) ? '#' + p.issue : 'T. ' + p.issue);
   const relLabel = p => [p.series, relNumLabel(p)].filter(Boolean).join(' ') + (p.variant ? ' · ' + p.variant : '');
   const relFmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR') : '';
-  const relSourceLabel = s => ({ comicvine: 'Comic Vine', import: 'Import', manual: 'Saisie', backup: 'Sauvegarde' })[s] || s || '—';
+  const relSourceLabel = s => ({ comicvine: 'Comic Vine', import: 'Import', manual: 'Saisie', backup: 'Sauvegarde' })[s] || (typeof srcById === 'function' && srcById(s) ? srcById(s).name : '') || s || '—';
 
   // ---------- Édition manuelle (la saisie de l'utilisateur prime)
   const relEdit = async (id, patch) => {
@@ -7492,8 +7555,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     p.dates.lastVerified = at;
     p.updatedAt = at;
     p.manualEdit = at;
+    const touchedF = ['title', 'publisher', 'language'].filter(k => patch[k] !== undefined).concat(patch.date !== undefined ? ['date'] : [], patch.actual !== undefined ? ['actual'] : [], patch.cover !== undefined ? ['cover'] : [], Object.keys(relExtIds(patch.externalIds || {})));
+    touchedF.forEach(f => { const v = fieldGet(p, f); if (v) provRecord(p, f, v, { source: 'manual' }, at); else if (p.prov) delete p.prov[f]; });
+    let closed = 0;
+    relConflictList().forEach(c => { if (c.status === 'open' && c.pubId === id && touchedF.includes(c.field)) { c.status = 'resolved'; c.resolution = 'manual'; c.resolvedAt = at; c.value = fieldGet(p, c.field); closed++; } });
     relIdx = null;
     await relPut('publications', [p]);
+    if (closed) { try { await relSaveMeta(); } catch (_) {} }
     return { ok: true, pub: p };
   };
 
@@ -7599,8 +7667,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     await loadReleaseData();
     const c = RELEASE_CONNECTORS[connectorId];
     const at = relNow();
-    const entry = { id: 'sync_' + Date.now().toString(36), connector: connectorId, from, to, at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, unseen: 0, errors: [] };
+    const entry = { id: 'sync_' + Date.now().toString(36), connector: connectorId, from, to, at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, unseen: 0, conflicts: 0, errors: [] };
     if (!c || !c.fetchRange) { entry.status = 'error'; entry.errors.push('Ce connecteur ne récupère pas de données automatiquement.'); }
+    else if (!srcEnabled(connectorId)) { entry.status = 'disabled'; entry.errors.push('Source désactivée dans « Sources & données ».'); }
+    else if (!srcAllowed(connectorId)) { entry.status = 'blocked'; entry.errors.push('Source non compatible avec une exploitation commerciale : bloquée dans cette édition.'); }
     else if (!relFetchOverride && !c.available()) { entry.status = 'unavailable'; entry.errors.push('Non configuré : ' + c.needs + '.'); }
     else {
       let raw = null;
@@ -7610,8 +7680,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         const touched = new Map(), seen = new Set();
         raw.forEach(r => {
           entry.fetched++;
-          const res = relUpsert(c.normalize(r), { source: connectorId, at, ref: r.url || '' });
-          if (res.action === 'rejected') { entry.rejected++; return; }
+          const res = relUpsert(c.normalize(r), { source: connectorId, type: (srcById(connectorId) || {}).type, at, ref: r.url || '' });
+          entry.conflicts += (res.conflicts || []).length;
+          if (res.action === 'rejected' || res.action === 'conflict') { entry.rejected++; return; }
           seen.add(res.pub.id); touched.set(res.pub.id, res.pub);
           if (res.action === 'added') entry.added++;
           else if (res.action === 'cancelled') entry.cancelled++;
@@ -7660,11 +7731,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const importReleaseRows = async (rows, label) => {
     await loadReleaseData();
     const at = relNow();
-    const entry = { id: 'imp_' + Date.now().toString(36), connector: 'import', label: relStr(label, 120), at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, errors: [] };
+    const entry = { id: 'imp_' + Date.now().toString(36), connector: 'import', label: relStr(label, 120), at, status: 'ok', fetched: 0, added: 0, changed: 0, cancelled: 0, unchanged: 0, rejected: 0, conflicts: 0, errors: [] };
     const touched = new Map();
+    if (!srcEnabled('import')) { entry.status = 'disabled'; entry.errors.push('Source « Import contrôlé » désactivée.'); relLog(entry); try { await relSaveMeta(); } catch (_) {} return entry; }
     (rows || []).slice(0, 20000).forEach((r, i) => {
       entry.fetched++;
       const res = relUpsert(r, { source: 'import', at, ref: label || '' });
+      entry.conflicts += (res.conflicts || []).length;
+      if (res.action === 'conflict') { entry.rejected++; if (entry.errors.length < 20) entry.errors.push('Ligne ' + (i + 2) + ' : ' + res.error); return; }
       if (res.action === 'rejected') { entry.rejected++; if (entry.errors.length < 20) entry.errors.push('Ligne ' + (i + 2) + ' : ' + res.error); return; }
       touched.set(res.pub.id, res.pub);
       if (res.action === 'added') entry.added++;
@@ -7698,7 +7772,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exportReleaseData = () => ({
     schema: REL_SCHEMA, exportedAt: relNow(), profile: relMeta.profile,
     publications: JSON.parse(JSON.stringify([...relPubs.values()])), pulls: JSON.parse(JSON.stringify([...relPulls.values()])),
-    sync: JSON.parse(JSON.stringify(relMeta.sync || {}))
+    sync: JSON.parse(JSON.stringify(relMeta.sync || {})),
+    conflicts: JSON.parse(JSON.stringify(relMeta.conflicts || [])), sourceCfg: JSON.parse(JSON.stringify(relMeta.sourceCfg || {}))
   });
   // Sauvegarde externe = données non fiables : seules des fiches bien formées sont retenues
   const sanitizeReleaseData = d => {
@@ -7713,34 +7788,642 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       p.cover = p.cover && isSafeImageUrl(p.cover.url) ? { url: String(p.cover.url), source: relStr(p.cover.source, 40) } : null;
       ['initial', 'current', 'actual'].forEach(k => { p.dates[k] = relDate(p.dates[k]); });
       p.format = relFormat(p.format); p.cancelled = !!p.cancelled;
+      if (p.prov && (typeof p.prov !== 'object' || Array.isArray(p.prov))) delete p.prov;
+      if (p.prov) Object.keys(p.prov).forEach(k => { const e = p.prov[k]; if (!PROV_FIELDS.includes(k) || !e || typeof e !== 'object' || !SRC_TYPES[e.type]) delete p.prov[k]; else e.v = relStr(e.v, 600); });
+      if (p.extra !== undefined) { const ex = relCleanExtra(p.extra); if (ex) p.extra = ex; else delete p.extra; }
       return p;
     });
+    const conflicts = (Array.isArray(d.conflicts) ? d.conflicts : []).filter(c => c && typeof c.id === 'string' && /^cf_[a-z0-9]{1,40}$/i.test(c.id) && typeof c.pubId === 'string' && (PROV_FIELDS.includes(c.field) || c.field === 'identity') && ['open', 'resolved', 'withdrawn'].includes(c.status) && c.current && c.incoming).slice(0, 3000).map(c => ({
+      id: c.id, pubId: relStr(c.pubId, 80), field: c.field, at: relStr(c.at, 40), seenAt: relStr(c.seenAt, 40), status: c.status, resolution: relStr(c.resolution, 20), resolvedAt: relStr(c.resolvedAt, 40),
+      current: { v: relStr(c.current.v, 600), src: relStr(c.current.src, 40), type: SRC_TYPES[c.current.type] ? c.current.type : '' },
+      incoming: { v: relStr(c.incoming.v, 600), src: relStr(c.incoming.src, 40), type: SRC_TYPES[c.incoming.type] ? c.incoming.type : '', ref: relStr(c.incoming.ref, 200), batch: relStr(c.incoming.batch, 40) } }));
     const pulls = clean(d.pulls, /^pl_[a-z0-9_]{1,40}$/i, 50000).filter(p => typeof p.pubId === 'string').map(p => {
       p.status = PULL_STATUS[p.status] && p.status !== 'available' ? p.status : 'planned';
       p.quantity = Math.max(1, Math.min(99, parseInt(p.quantity, 10) || 1));
       p.history = Array.isArray(p.history) ? p.history.slice(-100) : []; p.copyIds = Array.isArray(p.copyIds) ? p.copyIds.filter(x => typeof x === 'string') : [];
       return p;
     });
-    return { schema: REL_SCHEMA, publications: pubs, pulls, profile: d.profile && typeof d.profile.id === 'string' ? { id: relStr(d.profile.id, 80), kind: 'local', createdAt: relStr(d.profile.createdAt, 40) } : null };
+    return { schema: REL_SCHEMA, publications: pubs, pulls, conflicts, profile: d.profile && typeof d.profile.id === 'string' ? { id: relStr(d.profile.id, 80), kind: 'local', createdAt: relStr(d.profile.createdAt, 40) } : null };
   };
   // Fusion (défaut) : ajoute ce qui manque. Remplacement : la version de la sauvegarde l'emporte. Rien n'est jamais supprimé.
   const mergeReleaseData = (d, mode) => {
     if (!d) return { added: 0, replaced: 0, undo: () => {} };
-    const prevPubs = new Map(relPubs), prevPulls = new Map(relPulls);
+    const prevPubs = new Map(relPubs), prevPulls = new Map(relPulls), prevConflicts = relConflictList().slice();
     let added = 0, replaced = 0;
+    const knownCf = new Set(prevConflicts.map(c => c.id));
+    const newCf = (d.conflicts || []).filter(c => !knownCf.has(c.id));
+    if (newCf.length) relMeta.conflicts = prevConflicts.concat(newCf).slice(0, 3000);
     const tp = [], tl = [];
     d.publications.forEach(p => { const cur = relPubs.get(p.id); if (!cur) { relPubs.set(p.id, p); tp.push(p); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(p)) { relPubs.set(p.id, p); tp.push(p); replaced++; } });
     d.pulls.forEach(p => { const cur = relPulls.get(p.id); if (!cur) { relPulls.set(p.id, p); tl.push(p); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(p)) { relPulls.set(p.id, p); tl.push(p); replaced++; } });
     relIdx = null;
-    const write = Promise.all([relPut('publications', tp), relPut('pulls', tl)]).catch(() => false);
+    const write = Promise.all([relPut('publications', tp), relPut('pulls', tl), newCf.length ? relSaveMeta() : null]).catch(() => false);
     return {
       added, replaced, write,
       undo: () => {
-        relPubs.clear(); prevPubs.forEach((v, k) => relPubs.set(k, v)); relPulls.clear(); prevPulls.forEach((v, k) => relPulls.set(k, v)); relIdx = null;
+        relPubs.clear(); prevPubs.forEach((v, k) => relPubs.set(k, v)); relPulls.clear(); prevPulls.forEach((v, k) => relPulls.set(k, v)); relIdx = null; relMeta.conflicts = prevConflicts;
         relPut('publications', tp.map(p => prevPubs.get(p.id))); relPut('pulls', tl.map(p => prevPulls.get(p.id)));
       }
     };
   };
+
+  // ==========================================================================
+  // LOT 2.5 — ACQUISITION DE DONNÉES : SOURCES, PROVENANCE PAR CHAMP, CONFLITS, IMPORT CONTRÔLÉ
+  // Aucune source n'est appelée en arrière-plan. Aucune valeur n'est écrasée en silence par une source
+  // moins fiable. Les données personnelles (exemplaires, wishlist, pull list) ne sont jamais modifiées ici.
+  // ==========================================================================
+  let panelEdition = 'personal'; // « commercial » bloque toute source non compatible avec une exploitation commerciale
+  const SRC_CLASS = { commercial: 'Compatible commercial', conditions: 'Commercial sous conditions', written: 'Autorisation écrite requise', noncommercial: 'Non commercial uniquement', incompatible: 'Incompatible', unknown: 'Informations insuffisantes' };
+  const SRC_STATUS = { operational: 'Fonctionne', credentials: 'Prêt — identifiants requis', authorization: 'Abonnement ou autorisation requis', unavailable: 'Non disponible' };
+  const SRC_TYPES = { publisher: 'Éditeur', distributor: 'Distributeur', third_party: 'Base tierce', user_import: 'Import utilisateur', manual: 'Saisie manuelle', deduced: 'Déduit' };
+  const SRC_RANK = { manual: 5, publisher: 4, distributor: 3, third_party: 2, user_import: 2, deduced: 1 };
+  const SRC_CONF = { high: 'Élevée', medium: 'Moyenne', low: 'Faible' };
+  const SRC_CHECKED = '2026-11-07';
+  const srcPub = (id, name, market, extra) => Object.assign({
+    id, name, market, type: 'publisher', coverage: 'Sollicitations et dates de sortie publiées sur le site de l\'éditeur',
+    api: 'Aucune API publique', license: 'Conditions du site ; contenu protégé', commercial: 'written', cost: 'Accord à négocier',
+    attribution: '—', storage: 'Non autorisé sans accord', cache: 'Non autorisé sans accord', images: 'Droits de l\'éditeur',
+    limits: 'Aspiration (scraping) exclue', reliability: 'Élevée (source primaire)', status: 'authorization', connector: null
+  }, extra || {});
+  const DATA_SOURCES = [
+    { id: 'comicvine', name: 'Comic Vine (API)', market: 'US', type: 'third_party', coverage: 'Numéros US, volumes, dates de mise en vente, couvertures',
+      api: 'REST / JSONP, clé gratuite', license: 'Conditions de l\'API Comic Vine', commercial: 'noncommercial', cost: 'Gratuit',
+      attribution: 'Lien vers Comic Vine obligatoire', storage: 'Usage personnel ; pas de redistribution de la base', cache: 'Cache local raisonnable',
+      images: 'Usage non commercial ; droits des éditeurs', limits: '200 requêtes par ressource et par heure', reliability: 'Moyenne : dates non confirmées, saisie communautaire',
+      statusFn: () => cvAvailable() ? 'operational' : 'credentials', connector: 'comicvine' },
+    { id: 'import', name: 'Import contrôlé (CSV, JSON, XLSX)', market: 'Tous', type: 'user_import', coverage: 'Planning éditeur, export d\'un autre outil, export Panel',
+      api: 'Fichier local', license: 'Selon l\'origine du fichier (déclarée à l\'import)', commercial: 'conditions', cost: 'Gratuit',
+      attribution: 'Selon l\'origine', storage: 'Local (IndexedDB)', cache: '—', images: 'Adresses conservées ; droits non vérifiés',
+      limits: '20 000 lignes, 20 Mo', reliability: 'Celle de l\'origine déclarée', status: 'operational', connector: 'import' },
+    { id: 'manual', name: 'Saisie manuelle', market: 'Tous', type: 'manual', coverage: 'Toute fiche', api: '—', license: 'Données de l\'utilisateur',
+      commercial: 'commercial', cost: 'Gratuit', attribution: '—', storage: 'Local', cache: '—', images: 'Couverture manuelle protégée', limits: '—',
+      reliability: 'Prioritaire', status: 'operational', connector: 'manual' },
+    { id: 'metron', name: 'Metron (API)', market: 'US', type: 'third_party', coverage: 'Numéros US, dates de mise en vente, identifiants croisés',
+      api: 'REST, compte requis', license: 'Non vérifiée (pages de conditions inaccessibles au contrôle)', commercial: 'unknown', cost: 'Gratuit (dons)',
+      attribution: 'À confirmer', storage: 'À confirmer', cache: 'À confirmer', images: 'Droits des éditeurs', limits: '20 requêtes/min, 5 000/jour',
+      reliability: 'Bonne (base modérée)', status: 'unavailable', connector: null, note: 'Connecteur non écrit : identifiants et licence à confirmer avant usage.' },
+    { id: 'gcd', name: 'Grand Comics Database', market: 'International', type: 'third_party', coverage: 'Fiches détaillées, dates de parution, codes-barres ; peu d\'annonces futures',
+      api: 'Pas d\'API publique officielle ; exports CSV/JSON par page, dumps sur compte', license: 'CC BY-SA 4.0 (données)', commercial: 'conditions', cost: 'Gratuit',
+      attribution: 'Attribution GCD et partage dans les mêmes conditions', storage: 'Autorisé (CC BY-SA)', cache: 'Autorisé', images: 'Scans de couvertures hors licence (droits des éditeurs)',
+      limits: 'Pas d\'aspiration ; relais local limité à 25 requêtes/h', reliability: 'Élevée pour le fond, faible pour les sorties à venir', status: 'unavailable', connector: null,
+      note: 'Utilisée par le relais local du scanner, pas par le calendrier.' },
+    { id: 'marvel_api', name: 'Marvel Comics API', market: 'US', type: 'publisher', coverage: 'Catalogue Marvel, dates, couvertures', api: 'REST, clés publique et privée',
+      license: 'Conditions Marvel', commercial: 'written', cost: 'Gratuit', attribution: '« Data provided by Marvel. © Marvel » obligatoire', storage: 'Limité par les conditions',
+      cache: 'Limité par les conditions', images: 'Droits Marvel', limits: 'Quotas journaliers', reliability: 'Élevée (éditeur)', status: 'unavailable', connector: null,
+      note: 'Disponibilité actuelle du portail non confirmée ; usage commercial soumis à l\'accord de Marvel.' },
+    srcPub('dc', 'DC Comics (site)', 'US'), srcPub('image', 'Image Comics (site)', 'US'), srcPub('darkhorse', 'Dark Horse (site)', 'US'),
+    srcPub('idw', 'IDW Publishing (site)', 'US'), srcPub('boom', 'BOOM! Studios (site)', 'US'), srcPub('dynamite', 'Dynamite (site)', 'US'),
+    srcPub('prh', 'Penguin Random House Publisher Services (Marvel)', 'US', { type: 'distributor', coverage: 'Fichiers FOC et flux ONIX pour libraires', api: 'Fichiers réservés aux comptes libraires', license: 'Contrat de distribution', note: 'Marvel est distribué par PRH depuis 2021 (situation 2026 à confirmer).' }),
+    srcPub('lunar', 'Lunar Distribution (DC)', 'US', { type: 'distributor', coverage: 'Bons de commande et dates FOC pour libraires', api: 'Portail libraires, aucune API publique', license: 'Contrat libraire' }),
+    srcPub('universal', 'Diamond / Universal Distribution', 'US', { type: 'distributor', coverage: 'Catalogue libraires', api: 'Portail libraires', license: 'Contrat libraire', note: 'Statut de l\'entreprise à vérifier.' }),
+    srcPub('panini', 'Panini Comics France (site)', 'FR'), srcPub('urban', 'Urban Comics (site)', 'FR'), srcPub('delcourt', 'Delcourt (site)', 'FR'), srcPub('glenat', 'Glénat (site)', 'FR'),
+    { id: 'bnf', name: 'BnF — Catalogue général (SRU) et data.bnf.fr', market: 'FR', type: 'third_party', coverage: 'Dépôt légal : notices après parution, ISBN, éditeur, date',
+      api: 'SRU (XML), jeux de données sur data.gouv.fr', license: 'Licence Ouverte Etalab', commercial: 'commercial', cost: 'Gratuit',
+      attribution: 'Mention de la source (BnF) et de la date de récupération', storage: 'Libre', cache: 'Libre', images: 'Non fournies (Gallica : conditions distinctes)',
+      limits: 'Pas d\'annonces futures ; changement d\'outil (Noemi) en juin 2026 à vérifier', reliability: 'Très élevée après parution', status: 'unavailable', connector: null,
+      note: 'Non appelable directement depuis le navigateur : un relais est nécessaire.' },
+    { id: 'electre', name: 'Electre Data Services', market: 'FR', type: 'third_party', coverage: 'Livres à paraître dès l\'annonce (flux ONIX des éditeurs)',
+      api: 'API d\'alimentation et de recherche (abonnés)', license: 'Contrat de licence', commercial: 'written', cost: 'Abonnement payant', attribution: 'Selon contrat',
+      storage: 'Selon contrat', cache: 'Selon contrat', images: 'Selon contrat', limits: 'Selon contrat', reliability: 'Très élevée', status: 'authorization', connector: null },
+    { id: 'dilicom', name: 'Dilicom (Fichier exhaustif du livre)', market: 'FR', type: 'distributor', coverage: 'Référentiel professionnel ONIX, disponibilités',
+      api: 'Accès professionnel', license: 'Contrat professionnel', commercial: 'written', cost: 'Abonnement professionnel', attribution: 'Selon contrat',
+      storage: 'Selon contrat', cache: 'Selon contrat', images: 'Selon contrat', limits: 'Réservé aux professionnels', reliability: 'Très élevée', status: 'authorization', connector: null },
+    { id: 'openlibrary', name: 'Open Library', market: 'International', type: 'third_party', coverage: 'Notices par ISBN, couvertures', api: 'REST sans clé',
+      license: 'Conditions des données non vérifiées', commercial: 'unknown', cost: 'Gratuit', attribution: 'Lien de courtoisie demandé', storage: 'À confirmer',
+      cache: 'À confirmer', images: 'Affichage seulement, pas de téléchargement massif ; droits des éditeurs', limits: 'Aspiration bloquée', reliability: 'Variable pour les comics',
+      status: 'unavailable', connector: null },
+    { id: 'googlebooks', name: 'Google Books API', market: 'International', type: 'third_party', coverage: 'Notices par ISBN, prix', api: 'REST, clé',
+      license: 'Conditions Google APIs ; données sous licence de tiers', commercial: 'written', cost: 'Gratuit', attribution: 'Règles de marque Google',
+      storage: 'Restreint', cache: 'Restreint', images: 'Droits des éditeurs', limits: 'Quotas', reliability: 'Variable pour les comics', status: 'unavailable', connector: null,
+      note: 'Anciennes conditions : application payante interdite sans accord (à vérifier).' },
+    { id: 'locg', name: 'League of Comic Geeks', market: 'US', type: 'third_party', coverage: 'Sorties hebdomadaires US', api: 'Aucune API publique',
+      license: 'Conditions du site', commercial: 'incompatible', cost: '—', attribution: '—', storage: 'Non autorisé', cache: 'Non autorisé', images: 'Non autorisé',
+      limits: 'Aspiration exclue', reliability: 'Bonne', status: 'unavailable', connector: null, note: 'L\'export personnel de l\'utilisateur (XLSX) reste importable : ce sont ses données.' },
+    { id: 'clz', name: 'CLZ Comics', market: 'International', type: 'third_party', coverage: 'Base CLZ', api: 'Aucune API publique', license: 'Conditions CLZ',
+      commercial: 'incompatible', cost: 'Abonnement', attribution: '—', storage: 'Non autorisé', cache: 'Non autorisé', images: 'Non autorisé', limits: '—',
+      reliability: 'Bonne', status: 'unavailable', connector: null, note: 'L\'export CSV personnel de l\'utilisateur reste importable.' }
+  ];
+  const srcById = id => DATA_SOURCES.find(s => s.id === id) || null;
+  const srcStatusOf = s => s ? (s.statusFn ? s.statusFn() : s.status) : 'unavailable';
+  const srcCfg = () => relMeta.sourceCfg || (relMeta.sourceCfg = {});
+  const srcEnabled = id => id === 'manual' || (srcCfg()[id] || {}).enabled !== false;
+  const srcAllowed = id => { const s = srcById(id); return panelEdition !== 'commercial' || (!!s && ['commercial', 'conditions'].includes(s.commercial)); };
+  const srcSetEnabled = async (id, on) => {
+    await loadReleaseData();
+    const s = srcById(id);
+    if (!s || !s.connector || id === 'manual') return { ok: false, error: 'Cette source ne peut pas être activée ou désactivée.' };
+    srcCfg()[id] = { enabled: !!on, at: relNow() };
+    relLog({ id: 'cfg_' + Date.now().toString(36), connector: id, at: relNow(), status: on ? 'enabled' : 'disabled', label: on ? 'Source activée' : 'Source désactivée', errors: [] });
+    await relSaveMeta();
+    return { ok: true };
+  };
+  const srcImageRights = source => { const s = srcById(source); return s ? s.images : ''; };
+
+  // ---------- Provenance par champ
+  const PROV_FIELDS = ['title', 'publisher', 'language', 'url', 'date', 'actual', 'cover', 'isbn', 'upc', 'comicvine', 'metron', 'gcd', 'locg', 'clz'];
+  const PROV_LABELS = { title: 'Titre', publisher: 'Éditeur', language: 'Langue', url: 'Lien', date: 'Date annoncée', actual: 'Date confirmée', cover: 'Couverture',
+    isbn: 'ISBN', upc: 'UPC', comicvine: 'ID Comic Vine', metron: 'ID Metron', gcd: 'ID GCD', locg: 'ID LoCG', clz: 'ID CLZ', identity: 'Identité' };
+  const provType = src => (src && SRC_TYPES[src.type]) ? src.type : !src || src.source === 'manual' ? 'manual' : src.source === 'import' || src.source === 'backup' ? 'user_import' : 'third_party';
+  const provConf = type => ['manual', 'publisher', 'distributor'].includes(type) ? 'high' : type === 'deduced' ? 'low' : 'medium';
+  const fieldGet = (p, f) => f === 'date' ? (p.dates.current || '') : f === 'actual' ? (p.dates.actual || '') : f === 'cover' ? ((p.cover && p.cover.url) || '') : REL_EXT_KEYS.includes(f) ? ((p.externalIds || {})[f] || '') : (p[f] || '');
+  const incomingOf = (n, f) => f === 'date' ? n.date : f === 'actual' ? n.actual : REL_EXT_KEYS.includes(f) ? (n.externalIds || {})[f] : n[f];
+  const provOf = (p, f) => (p.prov || {})[f] || null;
+  // Fiche antérieure au lot 2.5 : le type est déduit de la source connue (couverture) ou de l'origine de la fiche
+  const provLegacy = (p, f) => {
+    if (f === 'cover' && p.cover) return { src: p.cover.source, type: provType({ source: p.cover.source }) };
+    if (p.manualEdit && ['title', 'date', 'actual'].includes(f)) return { src: 'manual', type: 'manual' };
+    return { src: p.origin || '', type: provType({ source: p.origin }) };
+  };
+  const provRecord = (p, f, value, src, at, opts = {}) => {
+    p.prov = p.prov || {};
+    const prev = p.prov[f], type = provType(src);
+    const same = !!prev && String(prev.v) === String(value);
+    const e = { v: value, src: src.source, type, ext: relStr(src.ref, 200), at: same ? prev.at : at, verified: at,
+      status: opts.status || (type === 'manual' ? 'verified' : same ? prev.status : 'unverified'), conf: opts.conf || provConf(type), hist: prev ? (prev.hist || []).slice() : [] };
+    if (same) {
+      e.src = prev.src; e.type = prev.type; e.ext = prev.ext;
+      e.confirmedBy = [...new Set((prev.confirmedBy || []).concat(src.source !== prev.src ? [src.source] : []))].slice(0, 10);
+      if (e.confirmedBy.length) { e.status = 'verified'; e.conf = 'high'; }
+      if (SRC_RANK[type] > SRC_RANK[prev.type]) { e.src = src.source; e.type = type; }
+    } else if (prev) e.hist = e.hist.concat([{ v: prev.v, src: prev.src, type: prev.type, from: prev.at, until: at }]).slice(-20);
+    if (opts.by) e.by = opts.by;
+    p.prov[f] = e;
+    return e;
+  };
+  // set = la valeur entrante s'applique ; same = confirmée ; conflict = conservée et conflit ouvert ; skip = rien
+  const provDecide = (p, f, incoming, src) => {
+    if (incoming === '' || incoming === null || incoming === undefined) return 'skip';
+    const cur = fieldGet(p, f);
+    if (!cur) return 'set';
+    if (String(cur) === String(incoming)) return 'same';
+    if (f === 'publisher') return 'conflict'; // fait partie de l'identité : jamais modifié par une source
+    const pv = provOf(p, f) || provLegacy(p, f), inType = provType(src);
+    if (inType === 'manual') return 'set';
+    if (pv.type === 'manual') return 'conflict';
+    if (pv.src === src.source) return 'set'; // la même source corrige sa propre valeur
+    const a = SRC_RANK[inType] || 0, b = SRC_RANK[pv.type] || 0;
+    if (f === 'date' || f === 'actual') return a >= b ? 'set' : 'conflict';
+    return a > b ? 'set' : 'conflict';
+  };
+  const fieldSet = (p, f, v, src, at) => {
+    if (f === 'date') {
+      const kind = !p.dates.current ? 'announced' : v > p.dates.current ? 'postponed' : 'advanced';
+      relPushHistory(p, { at, source: src.source, from: p.dates.current || null, to: v, kind });
+      p.dates.current = v; if (!p.dates.initial) p.dates.initial = v;
+      return kind;
+    }
+    if (f === 'actual') { p.dates.actual = v; return 'confirmed'; }
+    if (f === 'cover') { p.cover = { url: v, source: src.source, rights: srcImageRights(src.source) }; return 'cover'; }
+    if (REL_EXT_KEYS.includes(f)) { p.externalIds[f] = v; relIdx = null; return 'ids'; }
+    p[f] = v;
+    return 'info';
+  };
+  const relConflictList = () => relMeta.conflicts || (relMeta.conflicts = []);
+  const relAddConflict = (p, f, incoming, src, at, extra) => {
+    const list = relConflictList();
+    const ex = list.find(c => c.status === 'open' && c.pubId === p.id && c.field === f && String(c.incoming.v) === String(incoming));
+    if (ex) { ex.seenAt = at; return ex; }
+    const pv = provOf(p, f) || provLegacy(p, f);
+    const c = Object.assign({ id: 'cf_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), pubId: p.id, field: f, at, seenAt: at, status: 'open',
+      current: { v: f === 'identity' ? '' : fieldGet(p, f), src: pv.src || '', type: pv.type || '' },
+      incoming: { v: String(incoming).slice(0, 600), src: src.source, type: provType(src), ref: relStr(src.ref, 200), batch: src.batch || '' } }, extra || {});
+    list.unshift(c);
+    if (list.length > 3000) relMeta.conflicts = list.filter(x => x.status === 'open').concat(list.filter(x => x.status !== 'open')).slice(0, 3000);
+    return c;
+  };
+  const relApplyField = (p, f, v, src, at, changes, conflicts) => {
+    const d = provDecide(p, f, v, src);
+    if (d === 'skip') return;
+    if (d === 'same') { provRecord(p, f, v, src, at); return; }
+    if (d === 'conflict') { conflicts.push(relAddConflict(p, f, v, src, at)); return; }
+    changes.push(fieldSet(p, f, v, src, at));
+    provRecord(p, f, v, src, at);
+  };
+  const relCleanExtra = x => {
+    if (!x || typeof x !== 'object' || Array.isArray(x)) return null;
+    const out = {};
+    Object.entries(x).slice(0, 60).forEach(([k, v]) => { const kk = relStr(k, 60); if (kk && v !== null && v !== undefined && typeof v !== 'object') out[kk] = relStr(v, 500); });
+    return Object.keys(out).length ? out : null;
+  };
+
+  const relResolveConflict = async (cid, choice, manualValue) => {
+    await loadReleaseData();
+    const c = relConflictList().find(x => x.id === cid);
+    if (!c || c.status !== 'open') return { ok: false, error: 'Conflit introuvable ou déjà traité.' };
+    const p = relPubs.get(c.pubId);
+    if (!p) return { ok: false, error: 'Publication introuvable.' };
+    const at = relNow();
+    let value = null;
+    if (c.field === 'identity') {
+      if (choice !== 'keep') return { ok: false, error: 'Un conflit d\'identité se règle en gardant les fiches séparées ou en corrigeant les identifiants à la main.' };
+    } else if (choice === 'incoming') {
+      value = c.incoming.v;
+      const src = { source: c.incoming.src, type: c.incoming.type, ref: c.incoming.ref };
+      fieldSet(p, c.field, value, src, at);
+      provRecord(p, c.field, value, src, at, { status: 'verified', conf: 'high', by: 'user' });
+    } else if (choice === 'manual') {
+      const f = c.field;
+      value = ['date', 'actual'].includes(f) ? relDate(manualValue) : f === 'cover' ? (isSafeImageUrl(manualValue) ? String(manualValue) : '') : REL_EXT_KEYS.includes(f) ? (relExtIds({ [f]: manualValue })[f] || '') : relStr(manualValue, 200);
+      if (!value) return { ok: false, error: 'Valeur invalide pour « ' + (PROV_LABELS[f] || f) + ' ».' };
+      if (f === 'publisher') { const pb = relPublisher(value); value = pb.name; const clash = relIndex().nat.get(relNatural(Object.assign({}, p, { publisher: value }))); if (clash && clash.some(x => x !== p.id)) return { ok: false, error: 'Une publication identique existe déjà avec cet éditeur.' }; }
+      fieldSet(p, f, value, { source: 'manual' }, at);
+      provRecord(p, f, value, { source: 'manual' }, at, { status: 'verified', conf: 'high', by: 'user' });
+      if (f === 'publisher') { p.publisherId = catalogIdsOf({ publisher: p.publisher }).pubId; relIdx = null; }
+    } else if (choice === 'keep') {
+      const cur = fieldGet(p, c.field);
+      if (cur) { const pv = provOf(p, c.field) || provLegacy(p, c.field); provRecord(p, c.field, cur, { source: pv.src || 'manual', type: pv.type }, at, { status: 'verified', conf: 'high', by: 'user' }); }
+    } else return { ok: false, error: 'Choix inconnu.' };
+    relConflictList().forEach(x => { if (x.status === 'open' && x.pubId === c.pubId && x.field === c.field && (x.id === cid || choice !== 'keep')) { x.status = 'resolved'; x.resolution = x.id === cid ? choice : 'superseded'; x.resolvedAt = at; x.value = value; } });
+    p.updatedAt = at;
+    relIdx = null;
+    await relPut('publications', [p]);
+    await relSaveMeta();
+    return { ok: true, pub: p };
+  };
+
+  // ---------- Pipeline d'import : lecture, correspondance des colonnes, validation, aperçu, application, annulation
+  const REL_FIELD_LABELS = { id: 'Identifiant Panel', market: 'Marché', publisher: 'Éditeur', series: 'Série', issue: 'Numéro / tome', title: 'Titre', variant: 'Variante',
+    format: 'Format', language: 'Langue', initialDate: 'Date annoncée initiale', date: 'Date annoncée', actualDate: 'Date confirmée', status: 'Statut', isbn: 'ISBN / EAN',
+    upc: 'UPC', comicvine: 'ID Comic Vine', metron: 'ID Metron', gcd: 'ID GCD', cover: 'Couverture (URL https)', url: 'Lien' };
+  const relFlattenObj = o => {
+    if (!o || typeof o !== 'object') return {};
+    const out = {};
+    Object.entries(o).forEach(([k, v]) => { if (v !== null && v !== undefined && typeof v !== 'object') out[k] = String(v); });
+    if (o.dates && typeof o.dates === 'object') { if (o.dates.current) out.date = o.dates.current; if (o.dates.actual) out.actualDate = o.dates.actual; if (o.dates.initial) out.initialDate = o.dates.initial; }
+    if (o.cancelled === true) out.status = 'annulé';
+    if (o.cover && typeof o.cover === 'object' && o.cover.url) out.cover = o.cover.url;
+    if (o.externalIds && typeof o.externalIds === 'object') Object.entries(relExtIds(o.externalIds)).forEach(([k, v]) => { out[k] = v; });
+    ['cancelled', 'kind', 'schema', 'publisherId', 'origin', 'createdAt', 'updatedAt', 'manualEdit', 'unseenSince'].forEach(k => delete out[k]);
+    return out;
+  };
+  const relReadTable = async input => {
+    input = input || {};
+    if (input.table) return input.table;
+    if (input.buffer) {
+      const b = new Uint8Array(input.buffer.slice(0, 4));
+      if (b[0] === 0x50 && b[1] === 0x4B) { const t = await parseXlsxBuffer(input.buffer); return { format: 'xlsx', headers: t.headers, rows: t.rows }; }
+      input = { text: new TextDecoder('utf-8').decode(input.buffer), name: input.name };
+    }
+    let list = Array.isArray(input.rows) ? input.rows : null, format = 'json';
+    const t = String(input.text || '').replace(/^﻿/, '').trim();
+    if (!list) {
+      if (!t) throw new Error('Fichier vide.');
+      if (/^[\[{]/.test(t)) {
+        let d;
+        try { d = JSON.parse(t); } catch (_) { throw new Error('JSON illisible.'); }
+        list = Array.isArray(d) ? d : Array.isArray(d.publications) ? d.publications : d.releases && Array.isArray(d.releases.publications) ? d.releases.publications : null;
+        if (!list) throw new Error('JSON sans liste de publications.');
+      } else {
+        const parsed = parseCsvText(t);
+        return { format: 'csv', headers: parsed.headers.map(h => String(h).trim()), rows: parsed.rows };
+      }
+    }
+    const flat = list.filter(x => x && typeof x === 'object').map(relFlattenObj);
+    const headers = [];
+    flat.forEach(o => Object.keys(o).forEach(k => { if (!headers.includes(k) && headers.length < 80) headers.push(k); }));
+    return { format, headers, rows: flat.map(o => headers.map(h => o[h] || '')) };
+  };
+  const relAutoMap = headers => {
+    const used = new Set();
+    return headers.map(h => {
+      const k = relKeyNorm(h);
+      const hit = Object.entries(REL_CSV).find(([f, al]) => !used.has(f) && (al.includes(k) || relKeyNorm(f) === k));
+      if (!hit) return '';
+      used.add(hit[0]);
+      return hit[0];
+    });
+  };
+  const relImportPlan = async (input, opts = {}) => {
+    await loadReleaseData();
+    const table = await relReadTable(input);
+    if (!table.headers.length) throw new Error('Aucune colonne détectée.');
+    if (table.rows.length > 20000) throw new Error('Fichier trop long (20 000 lignes maximum).');
+    const mapping = Array.isArray(opts.mapping) && opts.mapping.length === table.headers.length ? opts.mapping.map(f => REL_FIELD_LABELS[f] ? f : '') : relAutoMap(table.headers);
+    const sourceType = SRC_TYPES[opts.sourceType] && opts.sourceType !== 'manual' && opts.sourceType !== 'deduced' ? opts.sourceType : 'user_import';
+    const mapped = new Set(mapping.filter(Boolean));
+    const plan = { id: 'imp_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 5), name: relStr((input && input.name) || 'import', 120), format: table.format, table,
+      headers: table.headers, mapping, sourceType, unknown: table.headers.filter((h, i) => !mapping[i] && h), rows: [],
+      counts: { add: 0, update: 0, identical: 0, conflict: 0, ambiguous: 0, duplicate: 0, invalid: 0, blank: 0 }, blocking: '' };
+    if (!mapped.has('series') && !mapped.has('title')) plan.blocking = 'Associez au moins une colonne à « Série » ou « Titre ».';
+    const src = { source: 'import', type: sourceType };
+    const seenKeys = new Map();
+    table.rows.forEach((row, i) => {
+      const raw = {}, extra = {};
+      mapping.forEach((f, ci) => {
+        const v = String(row[ci] === undefined || row[ci] === null ? '' : row[ci]).trim();
+        if (!v) return;
+        if (f) { if (!raw[f]) raw[f] = v; } else if (table.headers[ci]) extra[relStr(table.headers[ci], 60)] = v.slice(0, 500);
+      });
+      const line = table.format === 'json' ? i + 1 : i + 2;
+      if (!Object.keys(raw).length && !Object.keys(extra).length) { plan.counts.blank++; return; }
+      if (!raw.series && raw.title) { raw.series = raw.title; delete raw.title; }
+      const errors = [], warnings = [];
+      if (!raw.series) errors.push('Série ou titre manquant');
+      ['initialDate', 'date', 'actualDate'].forEach(k => { if (raw[k] && !relDate(raw[k])) errors.push(REL_FIELD_LABELS[k] + ' illisible : « ' + raw[k].slice(0, 30) + ' »'); });
+      if (raw.market && !relMarket(raw.market)) warnings.push('Marché non reconnu : « ' + raw.market.slice(0, 20) + ' »');
+      if (raw.cover && !isSafeImageUrl(raw.cover)) warnings.push('Couverture ignorée (adresse https requise)');
+      if (!raw.date && !raw.actualDate) warnings.push('Date inconnue (aucune date ne sera inventée)');
+      const n = relNormalize(raw, {});
+      if (n.publisher && !REL_PUBLISHERS.some(([nm]) => nm === n.publisher)) warnings.push('Éditeur non référencé, conservé tel quel');
+      if (!n.market) warnings.push('Marché non déterminé');
+      const r = { line, raw, extra: Object.keys(extra).length ? extra : null, errors, warnings, action: '', matchId: '', diffs: [], label: [n.series, n.issue ? '#' + n.issue : '', n.variant].filter(Boolean).join(' ') };
+      if (errors.length) { r.action = 'invalid'; plan.counts.invalid++; plan.rows.push(r); return; }
+      const keys = Object.entries(n.externalIds).map(([k, v]) => k + ':' + v).concat(['nat:' + relNatural(n)]);
+      const dupOf = keys.map(k => seenKeys.get(k)).find(Boolean);
+      if (dupOf) { r.action = 'duplicate'; r.errors.push('Doublon de la ligne ' + dupOf + ' dans le fichier'); plan.counts.duplicate++; plan.rows.push(r); return; }
+      keys.forEach(k => seenKeys.set(k, line));
+      const found = relFind(n);
+      if (found.by === 'conflictingIds') { r.action = 'conflict'; r.errors.push('Identifiants externes contradictoires (plusieurs fiches)'); plan.counts.conflict++; plan.rows.push(r); return; }
+      if (!found.pub) {
+        r.action = found.ambiguous ? 'ambiguous' : 'add';
+        if (found.ambiguous) r.warnings.push('Plusieurs fiches identiques existent : créée à part et signalée comme doublon possible');
+        plan.counts[r.action]++; plan.rows.push(r); return;
+      }
+      r.matchId = found.pub.id;
+      PROV_FIELDS.forEach(f => {
+        const v = incomingOf(n, f), d = provDecide(found.pub, f, v, src);
+        if (d === 'set' || d === 'conflict') r.diffs.push({ field: f, from: fieldGet(found.pub, f), to: v, decision: d });
+      });
+      if (n.cancelled === true && !found.pub.cancelled) r.diffs.push({ field: 'status', from: 'actif', to: 'annulé', decision: 'set' });
+      r.action = r.diffs.some(d => d.decision === 'conflict') ? 'conflict' : r.diffs.length ? 'update' : 'identical';
+      plan.counts[r.action]++;
+      plan.rows.push(r);
+    });
+    return plan;
+  };
+  const relPubHash = p => stableHash(stableJson(p));
+  const relImportApply = async (plan, opts = {}) => {
+    if (!plan || !Array.isArray(plan.rows)) throw new Error('Aperçu d\'import invalide.');
+    if (plan.blocking) throw new Error(plan.blocking);
+    if (plan.appliedAt) throw new Error('Cet import a déjà été appliqué.');
+    await loadReleaseData();
+    if (!srcEnabled('import')) throw new Error('La source « Import contrôlé » est désactivée dans l\'administration des données.');
+    const at = relNow();
+    const src = { source: 'import', type: plan.sourceType || 'user_import', at, ref: plan.name, batch: plan.id };
+    const skip = new Set(opts.skipLines || []);
+    const before = {}, added = [], touched = new Map();
+    const rep = { id: plan.id, name: plan.name, at, format: plan.format, sourceType: src.type, rows: plan.rows.length, added: 0, updated: 0, unchanged: 0, conflicts: 0, conflictRows: 0,
+      ambiguous: 0, duplicates: 0, invalid: 0, skipped: 0, errors: [], unknownColumns: plan.unknown.slice(0, 80) };
+    plan.rows.forEach(r => {
+      if (r.action === 'invalid' || r.action === 'duplicate') { rep[r.action === 'invalid' ? 'invalid' : 'duplicates']++; if (rep.errors.length < 50) rep.errors.push('Ligne ' + r.line + ' : ' + r.errors.join(' ; ')); return; }
+      if (skip.has(r.line)) { rep.skipped++; return; }
+      const n0 = relNormalize(r.raw, src), f0 = relFind(n0);
+      if (f0.pub && !(f0.pub.id in before) && !added.includes(f0.pub.id)) before[f0.pub.id] = JSON.parse(JSON.stringify(f0.pub));
+      const res = relUpsert(Object.assign({}, r.raw, r.extra ? { extra: r.extra } : {}), src);
+      if (res.action === 'rejected') { rep.invalid++; if (rep.errors.length < 50) rep.errors.push('Ligne ' + r.line + ' : ' + res.error); return; }
+      if (res.action === 'conflict') { rep.conflicts++; rep.conflictRows++; if (rep.errors.length < 50) rep.errors.push('Ligne ' + r.line + ' : ' + res.error); return; }
+      touched.set(res.pub.id, res.pub);
+      const nc = (res.conflicts || []).length;
+      rep.conflicts += nc; if (nc) rep.conflictRows++;
+      if (res.action === 'added') { added.push(res.pub.id); rep.added++; if (res.pub.possibleDuplicates) rep.ambiguous++; }
+      else if (res.changes.length) rep.updated++;
+      else if (!nc) rep.unchanged++;
+    });
+    const after = {};
+    touched.forEach((p, id) => { after[id] = relPubHash(p); });
+    await relPut('publications', [...touched.values()]);
+    const db = await openCatalogDb();
+    if (db) await idbWrite(db, ['meta'], tx => tx.objectStore('meta').put(JSON.parse(JSON.stringify({ key: 'relimport_' + plan.id, id: plan.id, at, before, added, after }))));
+    plan.appliedAt = at;
+    const summary = Object.assign({}, rep, { errors: rep.errors.slice(0, 50), undone: null });
+    relMeta.imports = [summary].concat(relMeta.imports || []).slice(0, 30);
+    relLog({ id: plan.id, connector: 'import', label: plan.name, at, status: 'ok', fetched: plan.rows.length, added: rep.added, changed: rep.updated, cancelled: 0, unchanged: rep.unchanged, rejected: rep.invalid + rep.duplicates, conflicts: rep.conflicts, errors: rep.errors.slice(0, 20) });
+    relMeta.sync = Object.assign({}, relMeta.sync, { import: { lastAt: at, lastStatus: 'ok', lastError: '', lastOkAt: at } });
+    await relSaveMeta();
+    return rep;
+  };
+  // Annulation sûre : une fiche modifiée depuis l'import, ou utilisée (pull list, exemplaire, relation), n'est jamais retirée
+  const relImportUndo = async id => {
+    await loadReleaseData();
+    const imp = (relMeta.imports || []).find(x => x.id === id);
+    if (!imp) return { ok: false, error: 'Import introuvable.' };
+    if (imp.undone) return { ok: false, error: 'Cet import a déjà été annulé.' };
+    const db = await openCatalogDb();
+    const snap = db ? await idbGet(db, 'meta', 'relimport_' + id) : null;
+    if (!snap) return { ok: false, error: 'Instantané de l\'import introuvable : annulation impossible.' };
+    const used = new Set();
+    relPulls.forEach(pl => used.add(pl.pubId));
+    (physicalSingles || []).forEach(s => { if (s && s.pubId) used.add(s.pubId); });
+    relPubs.forEach(q => (q.relations || []).forEach(r => used.add(r.to)));
+    const out = { ok: true, restored: 0, removed: 0, kept: [], modified: [] };
+    const toPut = [], toDel = [];
+    (snap.added || []).forEach(pid => {
+      const cur = relPubs.get(pid);
+      if (!cur) return;
+      if (snap.after[pid] !== relPubHash(cur)) { out.modified.push(pid); return; }
+      if (used.has(pid) || (cur.relations || []).length) { out.kept.push(pid); return; }
+      toDel.push(pid);
+    });
+    Object.entries(snap.before || {}).forEach(([pid, old]) => {
+      const cur = relPubs.get(pid);
+      if (!cur || !old) return;
+      if (snap.after[pid] !== relPubHash(cur)) { out.modified.push(pid); return; }
+      toPut.push(old);
+    });
+    await idbWrite(db, ['publications'], tx => { toPut.forEach(p => tx.objectStore('publications').put(p)); toDel.forEach(pid => tx.objectStore('publications').delete(pid)); });
+    toPut.forEach(p => relPubs.set(p.id, p));
+    toDel.forEach(pid => relPubs.delete(pid));
+    relIdx = null;
+    out.restored = toPut.length; out.removed = toDel.length;
+    const at = relNow();
+    relConflictList().forEach(c => { if (c.status === 'open' && c.incoming && c.incoming.batch === id) { c.status = 'withdrawn'; c.resolvedAt = at; c.resolution = 'undo'; } });
+    imp.undone = at;
+    imp.undoResult = { restored: out.restored, removed: out.removed, kept: out.kept.length, modified: out.modified.length };
+    relLog({ id: 'undo_' + id, connector: 'import', label: 'Annulation : ' + imp.name, at, status: 'undo', fetched: 0, added: 0, changed: out.restored, cancelled: 0, unchanged: 0, rejected: 0, errors: out.modified.length ? [out.modified.length + ' fiche(s) modifiée(s) depuis l\'import, laissée(s) en l\'état'] : [] });
+    await relSaveMeta();
+    return out;
+  };
+  const relSourceStats = id => {
+    const sync = (relMeta.sync || {})[id] || {};
+    const last = (relMeta.log || []).find(e => e.connector === id && !['enabled', 'disabled'].includes(e.status));
+    const open = relConflictList().filter(c => c.status === 'open' && c.incoming && c.incoming.src === id).length;
+    let count = 0;
+    relPubs.forEach(p => { if ((p.sources || []).some(s => s.source === id)) count++; });
+    return { lastAt: sync.lastAt || null, lastOkAt: sync.lastOkAt || null, lastStatus: sync.lastStatus || '', lastError: sync.lastError || '', last: last || null, openConflicts: open, publications: count };
+  };
+
+  // ---------- Interface : Sources & données
+  const daState = { tab: 'sources', plan: null, report: null, provQuery: '', provId: '', showResolved: false, sourceType: 'user_import' };
+  const daDate = iso => iso ? new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+  const daStatusBadge = st => '<span class="da-badge da-st-' + escapeHtml(st) + '">' + escapeHtml(SRC_STATUS[st] || st) + '</span>';
+  const daClassBadge = cl => '<span class="da-badge da-cl-' + escapeHtml(cl) + '">' + escapeHtml(SRC_CLASS[cl] || cl) + '</span>';
+  const DA_ACTIONS = { add: 'Nouvelle', update: 'Mise à jour', identical: 'Identique', conflict: 'Conflit', ambiguous: 'Doublon possible', duplicate: 'Doublon (fichier)', invalid: 'Invalide' };
+  const daVal = (f, v) => !v ? '—' : (f === 'date' || f === 'actual') && /^\d{4}-\d{2}-\d{2}$/.test(v) ? relFmtDate(v) : String(v);
+  const daSourcesHtml = () => {
+    const byStatus = {};
+    DATA_SOURCES.forEach(s => { const st = srcStatusOf(s); byStatus[st] = (byStatus[st] || 0) + 1; });
+    const crit = [['coverage', 'Couverture'], ['api', 'API'], ['license', 'Licence'], ['commercial', 'Commercial'], ['cost', 'Coût'], ['attribution', 'Attribution'], ['storage', 'Stockage'], ['cache', 'Cache'], ['images', 'Images'], ['limits', 'Limites'], ['reliability', 'Fiabilité']];
+    return '<p class="da-note">Édition <b>' + (panelEdition === 'commercial' ? 'commerciale' : 'personnelle') + '</b>. ' + (panelEdition === 'commercial' ? 'Les sources non compatibles avec une exploitation commerciale sont bloquées.' : 'Les sources « non commercial » restent utilisables pour votre usage personnel ; elles seront bloquées automatiquement dans une édition commerciale.') +
+      ' Aucune actualisation en arrière-plan : chaque source est interrogée à votre demande. Conditions relevées le ' + relFmtDate(SRC_CHECKED) + '.</p>' +
+      '<div class="da-chips">' + Object.keys(SRC_STATUS).map(st => '<span class="da-chip">' + daStatusBadge(st) + ' <b>' + (byStatus[st] || 0) + '</b></span>').join('') + '</div>' +
+      '<div class="da-wrap"><table class="da-table"><thead><tr><th>Source</th><th>Marché</th><th>Type</th><th>État</th><th>Usage commercial</th><th>Activée</th><th>Dernière actualisation</th></tr></thead><tbody>' +
+      DATA_SOURCES.map(s => {
+        const st = srcStatusOf(s), stats = s.connector ? relSourceStats(s.id) : null, toggle = s.connector && s.id !== 'manual';
+        const last = stats && stats.last ? stats.last : null;
+        const res = last ? (last.status === 'ok' ? (last.added || 0) + ' ajout(s), ' + (last.changed || 0) + ' modif., ' + (last.conflicts || 0) + ' conflit(s)' : 'Échec : ' + ((last.errors || [])[0] || last.status)) : '';
+        return '<tr><td><details><summary><b>' + escapeHtml(s.name) + '</b></summary><dl class="da-dl">' + crit.map(([k, l]) => '<dt>' + l + '</dt><dd>' + escapeHtml(k === 'commercial' ? SRC_CLASS[s[k]] : s[k] || '—') + '</dd>').join('') +
+          (s.note ? '<dt>Note</dt><dd>' + escapeHtml(s.note) + '</dd>' : '') + '</dl></details></td><td>' + escapeHtml(s.market) + '</td><td>' + escapeHtml(SRC_TYPES[s.type] || s.type) + '</td><td>' + daStatusBadge(st) + '</td><td>' + daClassBadge(s.commercial) +
+          (s.connector && !srcAllowed(s.id) ? '<br><small class="da-warn">Bloquée (édition commerciale)</small>' : '') + '</td><td>' +
+          (toggle ? '<label class="da-switch"><input type="checkbox" data-src-toggle="' + escapeHtml(s.id) + '"' + (srcEnabled(s.id) ? ' checked' : '') + '> ' + (srcEnabled(s.id) ? 'Oui' : 'Non') + '</label>' : s.id === 'manual' ? 'Toujours' : '—') + '</td><td>' +
+          (stats ? escapeHtml(daDate(stats.lastAt)) + (res ? '<br><small>' + escapeHtml(res) + '</small>' : '') + (stats.publications ? '<br><small>' + stats.publications + ' publication(s)' + (stats.openConflicts ? ' · ' + stats.openConflicts + ' conflit(s) ouvert(s)' : '') + '</small>' : '') : '—') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  };
+  const daImportHtml = () => {
+    const pl = daState.plan, rep = daState.report;
+    let h = '<div class="da-row"><label>Origine des données <select class="field-input" id="daSourceType">' + ['user_import', 'publisher', 'distributor', 'third_party'].map(t => '<option value="' + t + '"' + (daState.sourceType === t ? ' selected' : '') + '>' + SRC_TYPES[t] + '</option>').join('') + '</select></label>' +
+      '<button class="btn" id="daPickFile">Choisir un fichier (CSV, JSON, XLSX)</button></div>' +
+      '<p class="da-note">L\'origine déclarée fixe la priorité des valeurs : une source moins fiable n\'écrase jamais une valeur existante, elle ouvre un conflit. L\'import alimente le calendrier (publications, éditeurs, séries, relations) ; il ne modifie jamais votre collection, votre wishlist ni votre pull list.</p>';
+    if (rep) {
+      h += '<div class="da-report"><h4>Rapport : ' + escapeHtml(rep.name) + '</h4><p>' + rep.added + ' ajoutée(s) · ' + rep.updated + ' mise(s) à jour · ' + rep.unchanged + ' inchangée(s) · ' + rep.conflicts + ' conflit(s) · ' + rep.ambiguous + ' doublon(s) possible(s) · ' + rep.duplicates + ' doublon(s) dans le fichier · ' + rep.invalid + ' ligne(s) invalide(s)</p>' +
+        (rep.unknownColumns.length ? '<p class="da-note">Colonnes inconnues conservées dans la fiche : ' + escapeHtml(rep.unknownColumns.join(', ')) + '</p>' : '') +
+        (rep.errors.length ? '<ul class="da-errors">' + rep.errors.slice(0, 20).map(e => '<li>' + escapeHtml(e) + '</li>').join('') + '</ul>' : '') + '</div>';
+    }
+    if (pl) {
+      const c = pl.counts, applicable = c.add + c.update + c.ambiguous + c.conflict;
+      h += '<div class="da-plan"><h4>Aperçu : ' + escapeHtml(pl.name) + ' <small>(' + escapeHtml(pl.format.toUpperCase()) + ', ' + pl.rows.length + ' ligne(s))</small></h4>' +
+        '<div class="da-chips">' + Object.keys(DA_ACTIONS).map(a => '<span class="da-chip da-act-' + a + '">' + DA_ACTIONS[a] + ' <b>' + (c[a] || 0) + '</b></span>').join('') + '</div>' +
+        (pl.blocking ? '<p class="da-warn">' + escapeHtml(pl.blocking) + '</p>' : '') +
+        '<details open><summary>Correspondance des colonnes</summary><div class="da-wrap"><table class="da-table"><thead><tr><th>Colonne du fichier</th><th>Exemple</th><th>Champ Panel</th></tr></thead><tbody>' +
+        pl.headers.map((hd, i) => {
+          const ex = (pl.table.rows.find(r => String(r[i] || '').trim()) || [])[i] || '';
+          return '<tr><td>' + escapeHtml(hd) + '</td><td><small>' + escapeHtml(String(ex).slice(0, 40)) + '</small></td><td><select class="field-input" data-map-col="' + i + '"><option value="">— Champ inconnu (conservé)</option>' +
+            Object.entries(REL_FIELD_LABELS).map(([f, l]) => '<option value="' + f + '"' + (pl.mapping[i] === f ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('') + '</select></td></tr>';
+        }).join('') + '</tbody></table></div></details>' +
+        '<div class="da-wrap"><table class="da-table"><thead><tr><th>Ligne</th><th>Action</th><th>Publication</th><th>Détails</th></tr></thead><tbody>' +
+        pl.rows.slice(0, 300).map(r => '<tr><td>' + r.line + '</td><td><span class="da-badge da-act-' + r.action + '">' + DA_ACTIONS[r.action] + '</span></td><td>' + escapeHtml(r.label || '—') + '</td><td><small>' +
+          escapeHtml(r.errors.concat(r.warnings).join(' · ')) + (r.diffs.length ? (r.errors.length || r.warnings.length ? '<br>' : '') + r.diffs.map(d => escapeHtml((PROV_LABELS[d.field] || d.field) + ' : ' + daVal(d.field, d.from) + ' → ' + daVal(d.field, d.to)) + (d.decision === 'conflict' ? ' <b class="da-warn">(conflit, valeur actuelle conservée)</b>' : '')).join('<br>') : '') + '</small></td></tr>').join('') +
+        '</tbody></table></div>' + (pl.rows.length > 300 ? '<p class="da-note">Aperçu limité aux 300 premières lignes ; toutes seront traitées.</p>' : '') +
+        '<div class="da-row"><button class="btn" id="daApply"' + (pl.blocking || !applicable ? ' disabled' : '') + '>Importer ' + applicable + ' ligne(s)</button><button class="btn secondary" id="daCancelPlan">Abandonner</button></div></div>';
+    }
+    const imps = relMeta.imports || [];
+    h += '<h4 class="da-h">Imports précédents</h4>' + (imps.length ? '<div class="da-wrap"><table class="da-table"><thead><tr><th>Date</th><th>Fichier</th><th>Origine</th><th>Résultat</th><th></th></tr></thead><tbody>' +
+      imps.map(x => '<tr><td>' + escapeHtml(daDate(x.at)) + '</td><td>' + escapeHtml(x.name) + '</td><td>' + escapeHtml(SRC_TYPES[x.sourceType] || '') + '</td><td><small>' + x.added + ' ajout(s), ' + x.updated + ' modif., ' + x.conflicts + ' conflit(s), ' + x.invalid + ' invalide(s)' +
+        (x.undone ? '<br>Annulé le ' + escapeHtml(daDate(x.undone)) + (x.undoResult ? ' (' + x.undoResult.removed + ' retirée(s), ' + x.undoResult.restored + ' restaurée(s), ' + (x.undoResult.kept + x.undoResult.modified) + ' conservée(s))' : '') : '') + '</small></td><td>' +
+        (x.undone ? '' : '<button class="btn secondary rel-mini" data-undo-import="' + escapeHtml(x.id) + '">Annuler</button>') + '</td></tr>').join('') + '</tbody></table></div>' : '<p class="da-note">Aucun import.</p>');
+    return h;
+  };
+  const daConflictsHtml = () => {
+    const list = relConflictList().filter(c => daState.showResolved ? c.status !== 'open' : c.status === 'open');
+    const typeTxt = t => SRC_TYPES[t] || t || '—';
+    return '<div class="da-row"><label class="da-switch"><input type="checkbox" id="daShowResolved"' + (daState.showResolved ? ' checked' : '') + '> Afficher les conflits traités</label></div>' +
+      '<p class="da-note">Priorité : saisie manuelle, puis éditeur, distributeur, base tierce et import utilisateur. Une valeur n\'est jamais remplacée en silence par une source moins fiable.</p>' +
+      (list.length ? list.slice(0, 200).map(c => {
+        const p = relPubs.get(c.pubId);
+        return '<div class="da-conflict"><div class="da-cf-head"><b>' + escapeHtml(p ? relLabel(p) : c.pubId) + '</b> · ' + escapeHtml(PROV_LABELS[c.field] || c.field) + ' <small>' + escapeHtml(daDate(c.at)) + '</small></div>' +
+          '<div class="da-cf-grid"><div><small>Valeur actuelle</small><br><b>' + escapeHtml(daVal(c.field, c.current.v)) + '</b><br><small>' + escapeHtml(relSourceLabel(c.current.src) + ' · ' + typeTxt(c.current.type)) + '</small></div>' +
+          '<div><small>Valeur proposée</small><br><b>' + escapeHtml(daVal(c.field, c.incoming.v)) + '</b><br><small>' + escapeHtml(relSourceLabel(c.incoming.src) + ' · ' + typeTxt(c.incoming.type) + (c.incoming.ref ? ' · ' + c.incoming.ref : '')) + '</small></div></div>' +
+          (c.status === 'open' ? '<div class="da-row">' + (c.field === 'identity' ? '<button class="btn secondary rel-mini" data-cf="' + c.id + '" data-choice="keep">Garder les fiches séparées</button>' :
+            '<button class="btn secondary rel-mini" data-cf="' + c.id + '" data-choice="keep">Garder l\'actuelle</button><button class="btn secondary rel-mini" data-cf="' + c.id + '" data-choice="incoming">Prendre la proposée</button>' +
+            '<input class="field-input" data-cf-input="' + c.id + '" placeholder="Autre valeur" style="width:150px"><button class="btn rel-mini" data-cf="' + c.id + '" data-choice="manual">Valider</button>') + '</div>'
+            : '<p class="da-note">' + escapeHtml({ keep: 'Valeur actuelle gardée', incoming: 'Valeur proposée retenue', manual: 'Valeur saisie', superseded: 'Remplacé par une autre décision', undo: 'Import annulé' }[c.resolution] || c.resolution || c.status) + ' · ' + escapeHtml(daDate(c.resolvedAt)) + '</p>') + '</div>';
+      }).join('') : '<p class="da-note">' + (daState.showResolved ? 'Aucun conflit traité.' : 'Aucun conflit ouvert.') + '</p>');
+  };
+  const daLogHtml = () => {
+    const log = relMeta.log || [];
+    const stTxt = { ok: 'Réussi', error: 'Erreur', unavailable: 'Non configurée', disabled: 'Désactivée', blocked: 'Bloquée', enabled: 'Activée', undo: 'Annulation' };
+    return '<p class="da-note">50 dernières opérations (actualisations, imports, annulations, réglages des sources).</p>' + (log.length ? '<div class="da-wrap"><table class="da-table"><thead><tr><th>Date</th><th>Source</th><th>Opération</th><th>État</th><th>Lignes</th><th>Ajouts</th><th>Modif.</th><th>Conflits</th><th>Erreurs</th></tr></thead><tbody>' +
+      log.map(e => '<tr><td>' + escapeHtml(daDate(e.at)) + '</td><td>' + escapeHtml(relSourceLabel(e.connector)) + '</td><td>' + escapeHtml(e.label || (e.from ? relFmtDate(e.from) + ' → ' + relFmtDate(e.to) : '')) + '</td><td>' + escapeHtml(stTxt[e.status] || e.status) + '</td><td>' + (e.fetched || 0) + '</td><td>' + (e.added || 0) + '</td><td>' + (e.changed || 0) + '</td><td>' + (e.conflicts || 0) + '</td><td><small>' + escapeHtml((e.errors || []).slice(0, 3).join(' · ')) + '</small></td></tr>').join('') +
+      '</tbody></table></div>' : '<p class="da-note">Journal vide.</p>');
+  };
+  const relProvTableHtml = p => {
+    const rows = PROV_FIELDS.filter(f => fieldGet(p, f) || provOf(p, f)).map(f => {
+      const pv = provOf(p, f) || Object.assign({ v: fieldGet(p, f), status: 'unverified', conf: 'medium', legacy: true }, provLegacy(p, f));
+      return '<tr><td>' + escapeHtml(PROV_LABELS[f]) + '</td><td>' + escapeHtml(daVal(f, fieldGet(p, f)).slice(0, 80)) + '</td><td>' + escapeHtml(relSourceLabel(pv.src)) + '<br><small>' + escapeHtml(SRC_TYPES[pv.type] || '—') + '</small></td><td>' +
+        escapeHtml(pv.at ? relFmtDate(pv.at.slice(0, 10)) : '—') + '</td><td>' + escapeHtml(pv.verified ? relFmtDate(pv.verified.slice(0, 10)) : '—') + '</td><td>' + escapeHtml(pv.legacy ? 'Antérieur (non tracé)' : pv.status === 'verified' ? 'Vérifié' : 'Non vérifié') +
+        (pv.confirmedBy && pv.confirmedBy.length ? '<br><small>Confirmé par ' + escapeHtml(pv.confirmedBy.map(relSourceLabel).join(', ')) + '</small>' : '') + '</td><td>' + escapeHtml(SRC_CONF[pv.conf] || '—') + '</td><td><small>' +
+        escapeHtml((pv.hist || []).slice(-3).reverse().map(h => daVal(f, h.v) + ' (' + relSourceLabel(h.src) + ')').join(' ← ')) + '</small></td></tr>';
+    });
+    const rights = p.cover ? '<p class="da-note">Couverture : ' + escapeHtml(relSourceLabel(p.cover.source)) + ' — droits : ' + escapeHtml(p.cover.rights || srcImageRights(p.cover.source) || (p.cover.source === 'manual' ? 'couverture choisie par vous' : 'non vérifiés')) + '. Les droits sur les métadonnées n\'incluent pas les droits sur les images.</p>' : '';
+    const extra = p.extra && Object.keys(p.extra).length ? '<p class="da-note">Champs inconnus conservés : ' + escapeHtml(Object.entries(p.extra).slice(0, 12).map(([k, v]) => k + ' = ' + v).join(' · ')) + '</p>' : '';
+    return (rows.length ? '<div class="da-wrap"><table class="da-table da-prov"><thead><tr><th>Champ</th><th>Valeur</th><th>Source</th><th>Récupéré</th><th>Vérifié</th><th>Statut</th><th>Confiance</th><th>Historique</th></tr></thead><tbody>' + rows.join('') + '</tbody></table></div>' : '<p class="da-note">Aucun champ renseigné.</p>') + rights + extra;
+  };
+  const daProvHtml = () => {
+    const q = catNorm(daState.provQuery);
+    const hits = q ? [...relPubs.values()].filter(p => catNorm(relLabel(p) + ' ' + p.publisher + ' ' + Object.values(p.externalIds || {}).join(' ')).includes(q)).slice(0, 30) : [];
+    const sel = daState.provId && relPubs.get(daState.provId);
+    return '<div class="da-row"><input class="field-input" id="daProvSearch" placeholder="Série, éditeur, ISBN…" value="' + escapeHtml(daState.provQuery) + '" style="flex:1;min-width:180px"></div>' +
+      (hits.length ? '<div class="da-hits">' + hits.map(p => '<button class="btn secondary rel-mini" data-prov-id="' + escapeHtml(p.id) + '">' + escapeHtml(relLabel(p) + ' · ' + (p.market || '?')) + '</button>').join('') + '</div>' : q ? '<p class="da-note">Aucune publication.</p>' : '<p class="da-note">Recherchez une publication pour voir l\'origine de chaque champ.</p>') +
+      (sel ? '<h4 class="da-h">' + escapeHtml(relLabel(sel)) + ' <small>' + escapeHtml(sel.id) + '</small></h4>' + relProvTableHtml(sel) : '');
+  };
+  const renderDataAdmin = () => {
+    const body = $('dataAdminBody');
+    if (!body) return;
+    const open = relConflictList().filter(c => c.status === 'open').length;
+    document.querySelectorAll('#dataAdminModal [data-da-tab]').forEach(b => { b.classList.toggle('active', b.dataset.daTab === daState.tab); if (b.dataset.daTab === 'conflicts') b.textContent = 'Conflits' + (open ? ' (' + open + ')' : ''); });
+    body.innerHTML = ({ sources: daSourcesHtml, import: daImportHtml, conflicts: daConflictsHtml, log: daLogHtml, prov: daProvHtml }[daState.tab] || daSourcesHtml)();
+  };
+  const daPlanFrom = async (input, mapping) => {
+    try {
+      daState.plan = await relImportPlan(input, { mapping, sourceType: daState.sourceType });
+      daState.report = null;
+    } catch (e) { showToast('Import impossible : ' + (e.message || e)); }
+    renderDataAdmin();
+  };
+  const openDataAdmin = async (tab, pick) => {
+    await loadReleaseData();
+    if (tab) daState.tab = tab;
+    renderDataAdmin();
+    $('dataAdminModal').classList.add('open');
+    if (pick && $('daImportFile')) $('daImportFile').click();
+  };
+  const wireDataAdmin = () => {
+    const modal = $('dataAdminModal');
+    if (!modal) return;
+    $('closeDataAdminBtn').onclick = () => modal.classList.remove('open');
+    if ($('openDataAdminBtn')) $('openDataAdminBtn').onclick = () => openDataAdmin('sources');
+    modal.querySelectorAll('[data-da-tab]').forEach(b => { b.onclick = () => { daState.tab = b.dataset.daTab; renderDataAdmin(); }; });
+    $('daImportFile').onchange = async e => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      if (file.size > 20 * 1024 * 1024) { showToast('Fichier trop volumineux (20 Mo maximum).'); return; }
+      daState.tab = 'import';
+      await daPlanFrom({ buffer: await file.arrayBuffer(), name: file.name });
+    };
+    const body = $('dataAdminBody');
+    body.addEventListener('click', async e => {
+      const t = e.target.closest('button, [data-prov-id]');
+      if (!t) return;
+      if (t.id === 'daPickFile') $('daImportFile').click();
+      else if (t.id === 'daCancelPlan') { daState.plan = null; renderDataAdmin(); }
+      else if (t.id === 'daApply' && daState.plan) {
+        t.disabled = true;
+        try { daState.report = await relImportApply(daState.plan); daState.plan = null; showToast('Import terminé : ' + daState.report.added + ' ajout(s), ' + daState.report.updated + ' mise(s) à jour, ' + daState.report.conflicts + ' conflit(s).'); if (activeSinglesView === 'releases') renderReleasesGrid(); }
+        catch (err) { showToast('Import impossible : ' + (err.message || err)); }
+        renderDataAdmin();
+      } else if (t.dataset.undoImport) {
+        if (!confirm('Annuler cet import ? Les fiches qu\'il a créées sont retirées et les fiches modifiées retrouvent leur état antérieur, sauf celles modifiées depuis ou utilisées par votre pull list ou votre collection.')) return;
+        const r = await relImportUndo(t.dataset.undoImport);
+        showToast(r.ok ? 'Import annulé : ' + r.removed + ' fiche(s) retirée(s), ' + r.restored + ' restaurée(s)' + (r.kept.length + r.modified.length ? ', ' + (r.kept.length + r.modified.length) + ' conservée(s)' : '') + '.' : r.error);
+        if (activeSinglesView === 'releases') renderReleasesGrid();
+        renderDataAdmin();
+      } else if (t.dataset.cf) {
+        const inp = body.querySelector('[data-cf-input="' + t.dataset.cf + '"]');
+        const r = await relResolveConflict(t.dataset.cf, t.dataset.choice, inp ? inp.value : '');
+        if (!r.ok) showToast(r.error); else if (activeSinglesView === 'releases') renderReleasesGrid();
+        renderDataAdmin();
+      } else if (t.dataset.provId) { daState.provId = t.dataset.provId; renderDataAdmin(); }
+    });
+    body.addEventListener('change', async e => {
+      const t = e.target;
+      if (t.dataset.srcToggle) { const r = await srcSetEnabled(t.dataset.srcToggle, t.checked); if (!r.ok) showToast(r.error); renderDataAdmin(); }
+      else if (t.id === 'daSourceType') { daState.sourceType = t.value; if (daState.plan) await daPlanFrom({ table: daState.plan.table, name: daState.plan.name }, daState.plan.mapping); }
+      else if (t.dataset.mapCol !== undefined && daState.plan) {
+        const m = daState.plan.mapping.slice();
+        const v = t.value;
+        if (v) m.forEach((f, i) => { if (f === v) m[i] = ''; });
+        m[+t.dataset.mapCol] = v;
+        await daPlanFrom({ table: daState.plan.table, name: daState.plan.name }, m);
+      } else if (t.id === 'daShowResolved') { daState.showResolved = t.checked; renderDataAdmin(); }
+    });
+    body.addEventListener('input', e => {
+      if (e.target.id !== 'daProvSearch') return;
+      daState.provQuery = e.target.value;
+      clearTimeout(wireDataAdmin.tm);
+      wireDataAdmin.tm = setTimeout(() => { renderDataAdmin(); const s = $('daProvSearch'); if (s) { s.focus(); s.setSelectionRange(s.value.length, s.value.length); } }, 250);
+    });
+  };
+
 
   // ---------- Exemplaires créés depuis une publication (Collection) et Wishlist structurée
   const relMakeSingle = (p, opts = {}) => {
@@ -8120,7 +8803,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     await loadReleaseData();
     renderReleasesGrid();
     const range = relRange();
-    if (!range || navigator.webdriver || !navigator.onLine || !cvAvailable() || relView.syncing || relView.period !== 'week') return;
+    if (!range || navigator.webdriver || !navigator.onLine || !cvAvailable() || !srcEnabled('comicvine') || !srcAllowed('comicvine') || relView.syncing || relView.period !== 'week') return;
     const seen = (relMeta.ranges || {})['comicvine:' + range[0] + ':' + range[1]];
     if (seen && Date.now() - new Date(seen).getTime() < 12 * 3600000) return;
     await relSyncCurrent(true);
@@ -8261,6 +8944,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h3 class="rel-group">Sources et identifiants</h3><p class="pub-line">' + (p.sources || []).map(s => escapeHtml(relSourceLabel(s.source) + ' (' + new Date(s.at).toLocaleDateString('fr-FR') + ')')).join(' · ') +
         (ext.length ? '<br>' + ext.map(([k, v]) => escapeHtml(k + ' : ' + v)).join(' · ') : '') + (p.url ? '<br><a href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener noreferrer">Fiche source</a>' : '') +
         (p.cover ? '<br>Couverture : ' + escapeHtml(relSourceLabel(p.cover.source)) : '') + '</p>' +
+      '<details class="pub-prov"><summary>Provenance des champs' + (relConflictList().some(c => c.status === 'open' && c.pubId === p.id) ? ' · <b class="da-warn">conflit à régler</b>' : '') + '</summary>' + relProvTableHtml(p) +
+        (relConflictList().some(c => c.status === 'open' && c.pubId === p.id) ? '<button class="btn secondary rel-mini" data-open-conflicts>Régler les conflits</button>' : '') + '</details>' +
       '<h3 class="rel-group">Relations éditoriales</h3>' +
       (rels.length ? rels.map(r => '<div class="pub-rel"><span>' + escapeHtml(r.label) + '</span> <button class="linklike" data-goto="' + escapeHtml(r.otherId) + '">' + escapeHtml(r.other ? relLabel(r.other) + ' (' + (r.other.market || '?') + ')' : r.otherId) + '</button>' +
         ' <button class="btn-icon" data-unrel="' + escapeHtml(r.from + '|' + r.type + '|' + r.to) + '" aria-label="Retirer la relation"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button></div>').join('') : '<p class="rel-note">Aucune relation. Les correspondances entre éditions ne sont jamais créées automatiquement.</p>') +
@@ -8303,7 +8988,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('relPeriod')) $('relPeriod').onchange = e => { relView.period = e.target.value; if (relView.period === 'week') relView.anchor = startOfWeek(relView.anchor); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
     if ($('relSyncBtn')) $('relSyncBtn').onclick = () => relSyncCurrent(false);
     if ($('relAddPubBtn')) $('relAddPubBtn').onclick = () => openPubSheet(null, true);
-    if ($('relImportBtn')) $('relImportBtn').onclick = () => $('relImportFile').click();
+    if ($('relImportBtn')) $('relImportBtn').onclick = () => openDataAdmin('import', true);
     if ($('relImportFile')) $('relImportFile').onchange = async e => {
       const file = e.target.files && e.target.files[0];
       e.target.value = '';
@@ -8325,7 +9010,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     if ($('closePubModalBtn')) $('closePubModalBtn').onclick = () => $('pubModal').classList.remove('open');
   };
-  const initReleases = () => { loadReleaseData().then(() => { if (activeSinglesView === 'releases') renderReleasesGrid(); }).catch(() => {}); };
+  const initReleases = () => { wireDataAdmin(); document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-open-conflicts]')) { $('pubModal').classList.remove('open'); openDataAdmin('conflicts'); } }); loadReleaseData().then(() => { if (activeSinglesView === 'releases') renderReleasesGrid(); }).catch(() => {}); };
 
   const renderPullChips = () => {
     const host = $('pullListChips');
@@ -11003,6 +11688,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       relView.period = 'week'; relView.mode = 'grid'; relView.market = ''; relView.publisher = ''; relView.format = ''; relView.status = '';
       if (d) { relView.anchor = startOfWeek(new Date(d + 'T12:00:00')); releasesWeekStart = relView.anchor; }
       renderReleasesGrid();
+    },
+    data: {
+      sources: () => DATA_SOURCES.map(x => ({ id: x.id, name: x.name, market: x.market, type: x.type, commercial: x.commercial, status: srcStatusOf(x), connector: x.connector, enabled: x.connector ? srcEnabled(x.id) : null, allowed: srcAllowed(x.id),
+        criteria: { coverage: x.coverage, api: x.api, license: x.license, commercial: SRC_CLASS[x.commercial], cost: x.cost, attribution: x.attribution, storage: x.storage, cache: x.cache, images: x.images, limits: x.limits, reliability: x.reliability } })),
+      setEnabled: srcSetEnabled, edition: () => panelEdition, setEditionForTest: e => { panelEdition = e === 'commercial' ? 'commercial' : 'personal'; },
+      plan: relImportPlan, apply: relImportApply, undo: relImportUndo, imports: () => (relMeta.imports || []).slice(),
+      conflicts: status => relConflictList().filter(c => !status || c.status === status).map(c => JSON.parse(JSON.stringify(c))), resolve: relResolveConflict,
+      provenance: id => { const p = relPubs.get(id); return p ? JSON.parse(JSON.stringify(p.prov || {})) : null; }, stats: relSourceStats,
+      open: openDataAdmin, close: () => $('dataAdminModal').classList.remove('open'), state: () => ({ tab: daState.tab, plan: !!daState.plan, report: daState.report }),
+      planInUi: async (text, name) => { daState.tab = 'import'; await daPlanFrom({ text, name }); return daState.plan; }
     },
     releases: {
       ready: () => loadReleaseData(),

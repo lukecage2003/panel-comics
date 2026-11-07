@@ -2062,6 +2062,234 @@ const waitForCdp = async () => {
         test: 'Calendrier international : publications US/FR et relations, connecteur et import contrôlé, reports/annulations/historique, Pull List, Wishlist, transitions sans doublon, sauvegarde, hors ligne',
         ok: !!t27a && t27fail.length === 0
       });
+      // ------------------------------------------------------------------
+      // TEST 28 : Sources, provenance par champ, conflits, pipeline d'import (lot 2.5)
+      // ------------------------------------------------------------------
+      console.log('\n[TEST 28] Sources de données, provenance, conflits, import contrôlé, annulation...');
+      const t28a = await evalExpr(`Promise.race([(async () => {
+        const P = window.Panel, R = P.releases, D = P.data;
+        await R.ready();
+        const r = {};
+        const metaBefore = R.meta();
+        localStorage.setItem('panel_test28_saved', JSON.stringify({ meta: metaBefore, singles: P.getPhysicalSingles(), imports: (metaBefore.imports || []).map(x => x.id) }));
+        const singlesBefore = JSON.stringify(P.getPhysicalSingles()), pullsBefore = R.pulls.all().length;
+        const iso = d => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const plus = n => { const d = new Date(); d.setDate(d.getDate() + n); return iso(d); };
+        const D1 = plus(30), D2 = plus(45), D3 = plus(37), D4 = plus(50);
+        const NL = String.fromCharCode(10);
+        const csv = lines => lines.join(NL);
+        const byS = s => R.all().find(p => p.series === s);
+        window.__t28 = '1 sources';
+        const src = D.sources();
+        const crit = ['coverage', 'api', 'license', 'commercial', 'cost', 'attribution', 'storage', 'cache', 'images', 'limits', 'reliability'];
+        const get = id => src.find(s => s.id === id) || {};
+        const conIds = R.connectors().map(c => c.id);
+        r.sources = src.length >= 20 && src.every(s => crit.every(k => !!s.criteria[k]) && ['operational', 'credentials', 'authorization', 'unavailable'].includes(s.status)) &&
+          get('comicvine').commercial === 'noncommercial' && get('bnf').commercial === 'commercial' && get('metron').commercial === 'unknown' && get('electre').commercial === 'written' &&
+          get('locg').commercial === 'incompatible' && get('gcd').commercial === 'conditions' && ['dc', 'image', 'darkhorse', 'idw', 'boom', 'dynamite', 'panini', 'urban', 'delcourt', 'glenat', 'marvel_api', 'prh', 'lunar', 'dilicom'].every(id => !!get(id).id);
+        r.noFictitious = src.filter(s => s.connector).every(s => conIds.includes(s.connector)) && src.filter(s => s.status === 'operational' || s.status === 'credentials').every(s => !!s.connector);
+        let calls = 0;
+        R.setFetchForTest(async () => { calls++; return []; });
+        await D.setEnabled('comicvine', false);
+        const off = await R.sync('comicvine', D1, D1);
+        await D.setEnabled('comicvine', true);
+        const on = await R.sync('comicvine', D1, D1);
+        r.connectorToggle = off.status === 'disabled' && calls === 1 && on.status === 'ok' && (await D.setEnabled('bnf', true)).ok === false && (await D.setEnabled('manual', false)).ok === false;
+        D.setEditionForTest('commercial');
+        const blocked = await R.sync('comicvine', D1, D1);
+        const cvBlocked = D.sources().find(s => s.id === 'comicvine').allowed === false && D.sources().find(s => s.id === 'import').allowed === true;
+        D.setEditionForTest('personal');
+        r.commercialGate = blocked.status === 'blocked' && calls === 1 && cvBlocked && D.edition() === 'personal';
+        window.__t28 = '2 aperçu';
+        const nBefore = R.all().length;
+        const csv1 = csv(['marche;editeur;serie;numero;titre;format;date_annoncee;comicvine;isbn;Prix FR',
+          'US;Image;T28 Alpha;1;Premier;single;' + D1 + ';T28CV1;;19,90', 'FR;Urban Comics;T28 Beta;1;;album;' + D2 + ';;978-2-00-000001-1;',
+          'US;Image;T28 Gamma;2;;single;31/02/2027;;;', 'US;Image;;3;;single;' + D1 + ';;;', 'US;Image;T28 Alpha;1;Premier;single;' + D1 + ';T28CV1;;19,90']);
+        const pl1 = await D.plan({ text: csv1, name: 't28-editeur.csv' }, { sourceType: 'publisher' });
+        r.importPreview = pl1.format === 'csv' && pl1.counts.add === 2 && pl1.counts.invalid === 2 && pl1.counts.duplicate === 1 && pl1.unknown.includes('Prix FR') &&
+          pl1.rows.some(x => x.action === 'invalid' && x.errors.join(' ').includes('illisible')) && R.all().length === nBefore && !pl1.blocking;
+        const plMap = await D.plan({ text: csv(['Nom de série;N°;Sortie', 'T28 Theta;4;' + D1]), name: 't28-map.csv' });
+        const plMap2 = await D.plan({ table: plMap.table, name: 't28-map.csv' }, { mapping: ['series', 'issue', 'date'] });
+        r.mapping = !!plMap.blocking && !plMap2.blocking && plMap2.counts.add === 1 && plMap2.rows[0].raw.date === D1;
+        let xlsxOk = false;
+        try {
+          const cell = (ref, v) => '<c r="' + ref + '" t="inlineStr"><is><t>' + v + '</t></is></c>';
+          const z = new JSZip();
+          z.file('xl/worksheets/sheet1.xml', '<?xml version="1.0" encoding="UTF-8"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData><row r="1">' + cell('A1', 'serie') + cell('B1', 'numero') + cell('C1', 'editeur') + cell('D1', 'date') +
+            '</row><row r="2">' + cell('A2', 'T28 Xlsx') + cell('B2', '7') + cell('C2', 'DC Comics') + cell('D2', D1) + '</row></sheetData></worksheet>');
+          const buf = await z.generateAsync({ type: 'arraybuffer' });
+          const px = await D.plan({ buffer: buf, name: 't28.xlsx' });
+          const pj = await D.plan({ text: JSON.stringify([{ series: 'T28 Json', issue: '1', publisher: 'Marvel', dates: { current: D1 }, externalIds: { comicvine: 'T28CVJ' } }]), name: 't28.json' });
+          xlsxOk = px.format === 'xlsx' && px.counts.add === 1 && px.rows[0].raw.series === 'T28 Xlsx' && pj.format === 'json' && pj.counts.add === 1 && pj.rows[0].raw.comicvine === 'T28CVJ';
+        } catch (e) { r._xlsxErr = String(e && e.message || e); }
+        r.formats = xlsxOk;
+        window.__t28 = '3 application';
+        const rep1 = await D.apply(pl1);
+        const alpha = byS('T28 Alpha'), beta = byS('T28 Beta');
+        r.importReport = rep1.added === 2 && rep1.invalid === 2 && rep1.duplicates === 1 && rep1.unknownColumns.includes('Prix FR') && !!alpha && !!beta && D.imports()[0].id === pl1.id;
+        let reapply = false; try { await D.apply(pl1); } catch (_) { reapply = true; }
+        r.noDoubleApply = reapply;
+        r.unknownKept = !!alpha && alpha.extra && alpha.extra['Prix FR'] === '19,90';
+        const pa = D.provenance(alpha.id);
+        r.provCreate = pa.date && pa.date.type === 'publisher' && pa.date.src === 'import' && pa.date.conf === 'high' && pa.date.status === 'unverified' && !!pa.date.at && !!pa.date.verified && pa.title.v === 'Premier' && pa.comicvine.v === 'T28CV1';
+        window.__t28 = '4 sources concurrentes';
+        R.setFetchForTest(async () => [{ id: 'T28CV1', volume: 'T28 Alpha', issue: '1', title: 'Premier', storeDate: D1, publisher: 'Image', url: 'https://comicvine.gamespot.com/t28/' }]);
+        await R.sync('comicvine', D1, D1);
+        const pc = D.provenance(alpha.id);
+        r.provConfirm = pc.date.status === 'verified' && (pc.date.confirmedBy || []).includes('comicvine') && pc.date.type === 'publisher' && pc.url && pc.url.src === 'comicvine' && R.get(alpha.id).url === 'https://comicvine.gamespot.com/t28/';
+        R.setFetchForTest(async () => [{ id: 'T28CV1', volume: 'T28 Alpha', issue: '1', title: 'Premier (variante)', storeDate: D3, publisher: 'Image', url: 'https://comicvine.gamespot.com/t28/' }]);
+        const s2 = await R.sync('comicvine', D3, D3);
+        const openA = D.conflicts('open').filter(c => c.pubId === alpha.id);
+        r.noSilentOverwrite = R.get(alpha.id).dates.current === D1 && R.get(alpha.id).title === 'Premier' && openA.some(c => c.field === 'date' && c.incoming.v === D3 && c.current.type === 'publisher') && openA.some(c => c.field === 'title') && s2.conflicts >= 2;
+        await R.sync('comicvine', D3, D3);
+        r.conflictNoDup = D.conflicts('open').filter(c => c.pubId === alpha.id).length === openA.length;
+        R.setFetchForTest(async () => [{ id: 'T28CV2', volume: 'T28 Delta', issue: '1', storeDate: D1, publisher: 'Image' }]);
+        await R.sync('comicvine', D1, D1);
+        const pd = await D.plan({ text: csv(['editeur;serie;numero;date_annoncee;comicvine', 'Image;T28 Delta;1;' + D2 + ';T28CV2']), name: 't28-delta.csv' }, { sourceType: 'publisher' });
+        await D.apply(pd);
+        const delta = byS('T28 Delta');
+        r.higherWins = pd.rows[0].action === 'update' && delta.dates.current === D2 && D.provenance(delta.id).date.type === 'publisher' && delta.dateHistory.some(h => h.kind === 'postponed') && !D.conflicts('open').some(c => c.pubId === delta.id);
+        await R.edit(beta.id, { date: D4 });
+        const pb = await D.plan({ text: csv(['editeur;serie;numero;format;date_annoncee;isbn', 'Urban Comics;T28 Beta;1;album;' + D2 + ';9782000000011']), name: 't28-beta.csv' }, { sourceType: 'publisher' });
+        await D.apply(pb);
+        r.manualProtected = R.get(beta.id).dates.current === D4 && D.provenance(beta.id).date.type === 'manual' && D.conflicts('open').some(c => c.pubId === beta.id && c.field === 'date' && c.current.type === 'manual');
+        window.__t28 = '5 doublons';
+        await R.edit(beta.id, { externalIds: { gcd: 'T28G1' } });
+        const nDup = R.all().length;
+        const pdup = await D.plan({ text: csv(['serie;numero;editeur;format;comicvine;gcd;isbn;date_annoncee',
+          'T28 ALPHA (2026);1;Image;single;T28CV1;;;' + D1, 'T28 Beta Integrale;1;Urban Comics;album;;;978-2-00-000001-1;', 'T28 Omega;1;Image;single;T28CV2;T28G1;;', 'T28 Alphaa;1;Image;single;;;;' + D1]), name: 't28-doublons.csv' });
+        const rows = pdup.rows;
+        r.dupPriority = rows[0].matchId === alpha.id && rows[0].action !== 'add' && rows[1].matchId === beta.id && rows[2].action === 'conflict' && rows[3].action === 'add';
+        const repDup = await D.apply(pdup);
+        r.noTitleMerge = R.all().length === nDup + 1 && !!byS('T28 Alphaa') && !byS('T28 Omega') && repDup.conflictRows >= 1 &&
+          D.conflicts('open').some(c => c.field === 'identity' && (c.candidates || []).includes(beta.id) && (c.candidates || []).includes(delta.id));
+        r.personalUntouched = JSON.stringify(P.getPhysicalSingles()) === singlesBefore && R.pulls.all().length === pullsBefore;
+        window.__t28 = '6 interface';
+        P.showSinglesView('releases');
+        document.getElementById('releasesSearch').value = '';
+        R.view({ mode: 'list', period: 'all', market: '', publisher: '', format: '', status: '' });
+        const gridTxt = document.getElementById('releasesGrid').textContent;
+        r.calendarFed = gridTxt.includes('T28 Alpha') && gridTxt.includes('T28 Beta') && gridTxt.includes('T28 Delta');
+        await D.open('sources');
+        const body = document.getElementById('dataAdminBody');
+        r.uiSources = document.getElementById('dataAdminModal').classList.contains('open') && body.querySelectorAll('.da-table tbody tr').length >= 20 && body.querySelectorAll('[data-src-toggle]').length === 2 && body.textContent.includes('Non commercial uniquement');
+        const pUi = await D.planInUi(csv(['serie;numero;editeur;date_annoncee;Remarque', 'T28 Ui;1;Image;' + D1 + ';note']), 't28-ui.csv');
+        r.uiImport = !!pUi && !!body.querySelector('.da-plan') && body.querySelectorAll('[data-map-col]').length === 5 && body.textContent.includes('Nouvelle') && !byS('T28 Ui');
+        await D.open('conflicts');
+        r.uiConflicts = body.querySelectorAll('.da-conflict').length >= 3 && !!body.querySelector('[data-choice="incoming"]') && /Conflits \\(\\d+\\)/.test(document.querySelector('[data-da-tab="conflicts"]').textContent);
+        await D.open('log');
+        r.uiLog = body.querySelectorAll('.da-table tbody tr').length >= 3;
+        await D.open('prov');
+        const ps = document.getElementById('daProvSearch');
+        ps.value = 'T28 Alpha'; ps.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(res => setTimeout(res, 450));
+        const hit = body.querySelector('[data-prov-id="' + alpha.id + '"]');
+        if (hit) hit.click();
+        r.uiProvenance = !!hit && !!body.querySelector('.da-prov') && body.textContent.includes('Éditeur') && body.textContent.includes('Prix FR');
+        D.close();
+        R.openSheet(alpha.id);
+        r.uiSheet = document.getElementById('pubModalBody').textContent.includes('Provenance des champs') && document.getElementById('pubModalBody').textContent.includes('conflit à régler');
+        document.getElementById('pubModal').classList.remove('open');
+        r.uiSidebar = !!document.getElementById('openDataAdminBtn') && !!document.getElementById('backupJsonBtn') && !!document.getElementById('restoreJsonBtn') && !document.querySelector('.sidebar-footer p');
+        window.__t28 = '7 résolution';
+        const cDate = D.conflicts('open').find(c => c.pubId === alpha.id && c.field === 'date');
+        const cTitle = D.conflicts('open').find(c => c.pubId === alpha.id && c.field === 'title');
+        const cBeta = D.conflicts('open').find(c => c.pubId === beta.id && c.field === 'date');
+        const cId = D.conflicts('open').find(c => c.field === 'identity');
+        const z1 = await D.resolve(cDate.id, 'incoming');
+        const z2 = await D.resolve(cTitle.id, 'manual', 'Premier numéro');
+        const z3 = await D.resolve(cBeta.id, 'keep');
+        const z4 = await D.resolve(cId.id, 'incoming');
+        const z5 = await D.resolve(cDate.id, 'keep');
+        const pr = D.provenance(alpha.id);
+        r.resolve = z1.ok && z2.ok && z3.ok && z4.ok === false && z5.ok === false && R.get(alpha.id).dates.current === D3 && pr.date.by === 'user' && pr.date.status === 'verified' &&
+          R.get(alpha.id).title === 'Premier numéro' && pr.title.type === 'manual' && (pr.title.hist || []).some(h => h.v === 'Premier') && R.get(beta.id).dates.current === D4 &&
+          D.conflicts('resolved').some(c => c.id === cBeta.id && c.resolution === 'keep');
+        window.__t28 = '8 annulation';
+        const u1 = await D.undo(pdup.id);
+        const u1b = await D.undo(pdup.id);
+        r.undo = u1.ok && u1.removed === 1 && !byS('T28 Alphaa') && !!R.get(alpha.id) && u1b.ok === false && D.conflicts().some(c => c.id === cId.id && c.status === 'withdrawn');
+        await R.upsert({ series: 'T28 Epsilon', issue: '1', publisher: 'Image', date: D1, comicvine: 'T28CV5' }, 'comicvine');
+        const eps = byS('T28 Epsilon');
+        const pe = await D.plan({ text: csv(['editeur;serie;numero;date_annoncee;comicvine', 'Image;T28 Epsilon;1;' + D2 + ';T28CV5']), name: 't28-eps.csv' }, { sourceType: 'publisher' });
+        await D.apply(pe);
+        const epsMid = R.get(eps.id).dates.current;
+        const u2 = await D.undo(pe.id);
+        r.undoRestores = epsMid === D2 && u2.restored === 1 && R.get(eps.id).dates.current === D1 && D.provenance(eps.id).date.type === 'third_party';
+        const pz = await D.plan({ text: csv(['editeur;serie;numero;date_annoncee', 'Image;T28 Zeta;1;' + D1, 'Image;T28 Eta;1;' + D1]), name: 't28-zeta.csv' });
+        await D.apply(pz);
+        const zeta = byS('T28 Zeta'), eta = byS('T28 Eta');
+        await R.pulls.add(zeta.id, {});
+        await R.edit(eta.id, { title: 'Eta modifiée' });
+        const u3 = await D.undo(pz.id);
+        r.undoSafe = u3.ok && u3.removed === 0 && (u3.kept.includes(zeta.id) || u3.modified.includes(zeta.id)) && u3.modified.includes(eta.id) && !!R.get(zeta.id) && !!R.get(eta.id) && R.get(eta.id).title === 'Eta modifiée';
+        await R.reloadFromDb();
+        r.persisted = R.get(alpha.id).dates.current === D3 && !byS('T28 Alphaa') && D.provenance(alpha.id).title.type === 'manual' && R.get(eps.id).dates.current === D1;
+        window.__t28 = '9 sauvegarde';
+        const ex = R.exportData();
+        const exA = ex.publications.find(p => p.id === alpha.id);
+        const bad = JSON.parse(JSON.stringify(ex));
+        const badA = bad.publications.find(p => p.id === alpha.id);
+        badA.prov.date.type = 'pirate'; badA.prov.evil = { v: '<img src=x onerror=alert(1)>', type: 'manual' }; badA.extra = { ok: 'oui', nested: { x: 1 } };
+        bad.conflicts.push({ id: 'pirate', pubId: alpha.id, field: 'date', status: 'open', current: {}, incoming: {} });
+        const san = R.sanitize(bad);
+        const sanA = san.publications.find(p => p.id === alpha.id);
+        const cfCount = D.conflicts().length;
+        const m = R.merge(san, 'merge');
+        await m.write;
+        r.backup = !!exA.prov && exA.prov.title.type === 'manual' && ex.conflicts.some(c => c.pubId === alpha.id) && !sanA.prov.date && !sanA.prov.evil && sanA.prov.title.type === 'manual' &&
+          sanA.extra.ok === 'oui' && !('nested' in sanA.extra) && !san.conflicts.some(c => c.id === 'pirate') && san.conflicts.length === ex.conflicts.length && m.added === 0 && D.conflicts().length === cfCount;
+        await D.setEnabled('import', false);
+        let refused = false; try { await D.apply(await D.plan({ text: csv(['serie;numero', 'T28 Off;1']), name: 't28-off.csv' })); } catch (_) { refused = true; }
+        r.importDisabled = refused && !byS('T28 Off');
+        R.setFetchForTest(null);
+        r._expect = { alpha: alpha.id, beta: beta.id };
+        return r;
+      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t28 }), 90000))])`);
+      console.log('Résultat Test 28 (a):', JSON.stringify(t28a));
+      // Redémarrage : provenance, conflits et réglage des sources relus depuis IndexedDB
+      await send('Page.reload', { ignoreCache: false });
+      for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.data) && document.readyState === "complete"')) break; }
+      const t28b = await evalExpr(`(async () => {
+        const P = window.Panel, R = P.releases, D = P.data, exp = ${JSON.stringify((t28a && t28a._expect) || {})};
+        await R.ready();
+        const a = R.get(exp.alpha);
+        return { restart: !!a && D.provenance(exp.alpha).title.type === 'manual' && D.conflicts('resolved').some(c => c.pubId === exp.alpha) && D.sources().find(s => s.id === 'import').enabled === false && D.imports().length >= 4 };
+      })()`);
+      // Nettoyage : publications de test retirées, métadonnées et collection d'origine rétablies
+      const t28c = await evalExpr(`(async () => {
+        const P = window.Panel, R = P.releases;
+        await R.ready();
+        const saved = JSON.parse(localStorage.getItem('panel_test28_saved') || 'null');
+        if (!saved) return { cleanup: false };
+        const ids = R.all().filter(p => /^T28 /.test(p.series)).map(p => p.id);
+        const pulls = R.pulls.all().filter(pl => ids.includes(pl.pubId)).map(pl => pl.id);
+        const newImports = (R.meta().imports || []).map(x => x.id).filter(id => !saved.imports.includes(id));
+        await new Promise(res => {
+          const q = indexedDB.open('panel-catalog');
+          q.onsuccess = () => { const db = q.result; const tx = db.transaction(['publications', 'pulls', 'meta'], 'readwrite');
+            ids.forEach(id => tx.objectStore('publications').delete(id)); pulls.forEach(id => tx.objectStore('pulls').delete(id));
+            newImports.forEach(id => tx.objectStore('meta').delete('relimport_' + id)); tx.objectStore('meta').put(saved.meta);
+            tx.oncomplete = () => { db.close(); res(true); }; tx.onerror = () => { db.close(); res(false); }; };
+          q.onerror = () => res(false);
+        });
+        await R.reloadFromDb();
+        P.setPhysicalSingles(saved.singles);
+        localStorage.removeItem('panel_test28_saved');
+        return { cleanup: !R.all().some(p => /^T28 /.test(p.series)) && P.data.sources().find(s => s.id === 'import').enabled !== false && (R.meta().conflicts || []).length === (saved.meta.conflicts || []).length && P.getPhysicalSingles().length === saved.singles.length };
+      })()`);
+      const t28 = Object.assign({}, t28a, t28b, t28c);
+      delete t28._expect;
+      console.log('Résultat Test 28:', JSON.stringify(t28));
+      const t28keys = ['sources', 'noFictitious', 'connectorToggle', 'commercialGate', 'importPreview', 'mapping', 'formats', 'importReport', 'noDoubleApply', 'unknownKept', 'provCreate',
+        'provConfirm', 'noSilentOverwrite', 'conflictNoDup', 'higherWins', 'manualProtected', 'dupPriority', 'noTitleMerge', 'personalUntouched', 'calendarFed', 'uiSources', 'uiImport',
+        'uiConflicts', 'uiLog', 'uiProvenance', 'uiSheet', 'uiSidebar', 'resolve', 'undo', 'undoRestores', 'undoSafe', 'persisted', 'backup', 'importDisabled', 'restart', 'cleanup'];
+      const t28fail = t28keys.filter(k => t28[k] !== true);
+      if (t28fail.length) console.log('Test 28 — vérifications en échec :', t28fail.join(', '));
+      testResults.push({
+        test: 'Sources & données : matrice des sources, connecteurs activables, édition commerciale, provenance par champ, conflits sans écrasement silencieux, doublons par priorité, import CSV/JSON/XLSX avec aperçu, correspondance, rapport et annulation sûre',
+        ok: !!t28a && t28fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
