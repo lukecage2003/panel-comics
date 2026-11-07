@@ -2,6 +2,8 @@
 
 Rédigé le 7 novembre 2026, à la réception du [cahier des charges Explorer 2.0](00-explorer-2.0-cahier-des-charges.md). **Aucun lot de la Phase 4 n'est commencé.** Le lot 4.1 (audit et architecture) approfondira ces éléments.
 
+> *Révision 5* : documents qui font autorité : [`02`](02-frontieres-collection-explorer.md), [`05`](05-contrats-s1-s6.md), [`06`](06-sauvegardes-par-domaine.md), [`07`](07-architecture-images-r2.md) (qui remplace les premières recommandations du § 4 ci-dessous), [`08`](08-plan-execution.md).
+>
 > *Révision 3* : la séparation Collection / Explorer, les décisions A3, A5, A6 et A7 et les contrats S1 à S6 sont définis dans [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md), qui prime sur ce document. Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
 Légende : **[Fait]** · **[Doc]** · **[Hyp.]** · **[Reco.]** · **[À valider]** (voir [`../phase3/README.md`](../phase3/README.md)).

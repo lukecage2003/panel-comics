@@ -1,6 +1,6 @@
 # Phase 4 · 03 — Changement de navigation : Explorer et Sorties (décisions A5 et A6)
 
-Statut : **documenté, non implémenté**. Ce changement touche l'interface de Collection : **il ne sera réalisé qu'après une validation explicite de l'utilisateur**, dans un lot désigné (proposé : lot 4.9), avec sauvegarde préalable et tests de non-régression.
+Statut : **documenté, non implémenté**. Le **principe** d'une entrée Explorer indépendante dans la navigation principale est **confirmé par l'utilisateur** (7 novembre 2026). Les changements précis N1 à N5 et l'organisation mobile (§ 6) **restent à valider** : aucune modification de l'interface sans validation explicite. Réalisation proposée au lot 3.1b (séparation des domaines côté client), sinon au lot 4.9 ; voir [`08-plan-execution.md`](08-plan-execution.md).
 
 ## 1. Situation actuelle [Fait]
 Barre latérale (bureau), `index.html` l. 1761-1800 :
@@ -58,3 +58,18 @@ Ce qui **ne change pas** : les données, les modèles, les fonctions et le compo
 - Ordre des sections dans la navigation principale : Explorer avant ou après Collection ?
 - Barre mobile : quel bouton laisse sa place, ou faut-il passer à cinq boutons ?
 - Le libellé « Pull List » seul convient-il, ou « Pull List & suivis » ?
+
+## 6. Navigation mobile : propositions (aucune n'est choisie)
+Barre actuelle [Fait, l. 2119-2136] : **Collection** · **Séries** · **Scan** (au centre) · **Wishlist**. Explorer n'y figure pas ; sur mobile, on y accède aujourd'hui depuis la vue Collection.
+
+| Option | Barre proposée | Avantages | Inconvénients |
+|---|---|---|---|
+| **M-A : cinq boutons** | Collection · Séries · Scan · Wishlist · **Explorer** | Rien n'est retiré ; accès direct à tout ; changement minimal pour Collection | Barre plus serrée à 375 px (libellés plus courts, cibles tactiles d'au moins 44 px à vérifier) ; Explorer en bout de barre, moins visible |
+| **M-B : Explorer à la place de Séries** | Collection · **Explorer** · Scan · Wishlist | Quatre boutons, lisibles ; Explorer bien placé | **Retire un accès direct de Collection** (Séries & complétion devient un onglet dans la vue Collection) : modification de Collection |
+| **M-C : sélecteur de domaine** | En-tête : bascule **Collection / Explorer** ; la barre du bas change selon le domaine (Collection : Collection · Séries · Scan · Wishlist ; Explorer : Accueil · Sorties · Guides · Recherche) | Séparation la plus nette ; chaque domaine a sa barre ; extensible à Community | Plus de travail ; deux niveaux à apprendre ; la bascule doit rester visible et accessible |
+| **M-D : Scan en bouton flottant** | Collection · Séries · **Explorer** · Wishlist, avec un bouton flottant « Scanner » dans les vues Collection | Quatre boutons ; Scan reste à un geste dans Collection | Déplace une fonction de Collection ; le bouton flottant peut masquer du contenu ; le scan n'est plus accessible depuis Explorer (ce qui est cohérent avec la séparation) |
+| **M-E : bouton « Plus »** | Collection · Séries · Scan · Wishlist · **Plus** (Explorer, Statistiques, Réglages…) | Évolutif | Explorer caché derrière un menu, contraire à l'objectif d'une entrée propre |
+
+Critères de choix : visibilité d'Explorer, nombre de modifications de Collection, accessibilité (taille des cibles, lecteurs d'écran), évolutivité (Community), cohérence avec le bureau.
+
+Observation : M-A et M-C ne retirent aucune fonction de Collection ; M-B et M-D modifient la barre de Collection ; M-E ne répond pas pleinement à A6. **Le choix revient à l'utilisateur.**

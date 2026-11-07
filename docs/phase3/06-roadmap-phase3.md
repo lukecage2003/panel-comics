@@ -4,6 +4,8 @@ Statut : **proposition à valider**. Sept lots, ajustables. Chaque lot s'arrête
 
 Principe directeur : **Panel reste pleinement utilisable sans compte et sans réseau**. Le cloud est une option qui protège et relie les appareils ; il ne devient jamais un prérequis.
 
+> *Mise à jour du 7 novembre 2026* : l'**ordre** des lots et leurs dépendances font désormais autorité dans [`../phase4/08-plan-execution.md`](../phase4/08-plan-execution.md), qui ajoute le lot **3.1b** (séparation des domaines côté client, sauvegardes par domaine B1) entre 3.1 et 3.4. Le contenu des lots ci-dessous reste valable.
+
 ## Vue d'ensemble
 ```
 3.1 Fondations (local, aucun compte cloud)
@@ -123,12 +125,12 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 
 ## Lot 3.7 — Validation complète et préparation de la Phase 4
 - **Objectifs** : stabiliser sur le Web et Android, bêta fermée ; remettre à la Phase 4 (Explorer 2.0) une base comptes, permissions et sauvegardes stable.
-- **Périmètre** : tests de bout en bout sur les deux plateformes ; performances ; accessibilité des nouveaux écrans ; build Android signé ; observabilité minimale (erreurs de synchronisation) ; liste des sujets de la Phase 4 (communauté, profils publics).
+- **Périmètre** : tests de bout en bout sur les deux plateformes ; performances ; accessibilité des nouveaux écrans ; build Android signé ; observabilité minimale (erreurs de synchronisation) ; liste des prérequis de la Phase 4 (Explorer 2.0 ; Community viendra ensuite comme domaine indépendant).
 - **Dépendances** : 3.1 à 3.6.
 - **Risques** : différences de WebView ; mises à jour de l'application avec une outbox non vide.
 - **Tests** : matrice Web (Edge, Chrome, Firefox) × Android (minSdk 24 à 36) ; mise à jour avec outbox pleine.
 - **Critères d'acceptation** : aucune régression locale ; bêta fermée de 5 à 10 utilisateurs sans perte de données pendant 2 semaines.
-- **Livrables** : rapport de validation, notes de version, plan de la Phase 4.
+- **Livrables** : rapport de validation, notes de version, plan de la Phase 4 (Explorer 2.0 ; Community vient ensuite comme domaine indépendant).
 - **Validation utilisateur** : clôture de la Phase 3.
 
 ---

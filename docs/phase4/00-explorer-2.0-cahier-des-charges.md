@@ -6,6 +6,7 @@
 > **Révision 2 (7 novembre 2026) : correction architecturale « séparation stricte Collection / Explorer »** demandée par l'utilisateur. La section 0 et les passages marqués « *Révision 2* » ont été ajoutés ; le reste du texte d'origine est inchangé. En cas de contradiction, la section 0 et le document [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) font foi.
 > **Révision 3 (7 novembre 2026) : finalisation architecturale** : décisions A3, A5, A6 et A7 de l'utilisateur, contrats S1 à S6 détaillés, domaine Community indépendant (passages marqués « *Révision 3* »).
 > **Révision 4 (7 novembre 2026) : périmètre des Sorties** : comics uniquement, mangas japonais exclus (passages marqués « *Révision 4* » ; détail dans [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md)).
+> **Révision 5 (7 novembre 2026, fait autorité) : finalisation architecturale** : sauvegardes par domaine (B1, principe approuvé), règles de personnalisation S1, périmètre comics étendu à tout Explorer, contrats de référence, architecture des images, plan d'exécution. Documents de référence : [`02`](02-frontieres-collection-explorer.md) (frontières), [`05`](05-contrats-s1-s6.md) (contrats), [`06`](06-sauvegardes-par-domaine.md) (sauvegardes), [`07`](07-architecture-images-r2.md) (images), [`08`](08-plan-execution.md) (plan), [`../DECISIONS.md`](../DECISIONS.md) (journal).
 > Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md). Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
 **Produit :** Panel by Primestone  
@@ -33,6 +34,9 @@
   - **A6** : Explorer a sa **propre entrée dans la navigation principale** et n'est plus une sous-fonction de Collection (documenté, non implémenté).
   - **A7** : la catégorie « Ma collection » est **retirée** de la recherche native d'Explorer ; la recherche dans l'inventaire reste à Collection.
 - *Révision 4* : la fonctionnalité **Sorties** concerne **exclusivement les comics** (américains et internationaux du marché des comics, tous éditeurs). Les **mangas japonais** et leurs calendriers sont **exclus** des calendriers, classements, actualités et recommandations de sorties. Comics et mangas ne sont pas confondus. Voir [`04-perimetre-sorties-comics.md`](04-perimetre-sorties-comics.md).
+- *Révision 5* : la règle « comics uniquement » s'applique à **l'ensemble d'Explorer 2.0** et à ses évolutions (sorties, calendrier éditorial, classements de sorties, actualités) : Explorer n'est pas une encyclopédie générale de la bande dessinée.
+- *Révision 5* : la personnalisation d'Explorer par les données personnelles (S1) est **facultative** : activée par défaut pour les utilisateurs connectés, indisponible pour les visiteurs, désactivable à tout moment, sans accès direct à Collection ni accès administrateur. Explorer conserve toutes ses fonctionnalités éditoriales sans elle.
+- *Révision 5* : chaque domaine (Collection, Lecture, Explorer, puis Community) a sa **propre sauvegarde** ([`06`](06-sauvegardes-par-domaine.md)) ; les anciennes sauvegardes restent lisibles.
 - *Révision 3* : **Community** sera un domaine indépendant (schéma `community` réservé), ni intégré à Explorer ni à Collection.
 - Services communs autorisés : catalogue canonique, identifiants stables, référentiel éditeurs et séries, infrastructure d'images (R2), authentification, services backend, recherche. **Partager l'infrastructure ne signifie pas partager la responsabilité.**
 - Explorer ne lit pas les données internes de Collection. Toute interaction passe par les **contrats S1 à S6** de [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) (lecture personnelle facultative, commandes initiées par l'utilisateur, agrégats anonymes, registre d'images, catalogue canonique, identité).
@@ -173,6 +177,8 @@ Le système doit prendre en charge :
 Toutes ces catégories doivent pouvoir fonctionner avec une image principale, des images secondaires et des variantes selon leur pertinence.
 
 ## 3.3 Architecture de stockage
+
+*Révision 5* : architecture détaillée, droits, file et coûts : [`07-architecture-images-r2.md`](07-architecture-images-r2.md).
 
 **Cloudflare R2 est le stockage central des fichiers images.**
 
@@ -893,6 +899,8 @@ Les permissions doivent être appliquées côté serveur.
 
 ## Prérequis : Phase 3
 
+*Révision 5* : l'ordre des lots, les dépendances et les critères pour commencer Explorer 2.0 sont définis dans [`08-plan-execution.md`](08-plan-execution.md), qui fait autorité.
+
 Stabiliser les comptes, la synchronisation, les sauvegardes, les permissions et les fondations backend avant de construire Explorer 2.0.
 
 ## Phase 4 — Explorer 2.0
@@ -1014,7 +1022,7 @@ Stabiliser les comptes, la synchronisation, les sauvegardes, les permissions et 
 
 - Nouvelle page d'accueil, dans une **section et une entrée de navigation principale propres** à Explorer (décision A6), selon [`03-changement-navigation.md`](03-changement-navigation.md), **après validation explicite** des changements N1 à N5.
 - Retrait de la catégorie « Ma collection » de la recherche native d'Explorer (décision A7).
-- Réacheminement des couplages du lot 2.6 par les contrats S1 et S2, sans changement fonctionnel pour Collection.
+- Réacheminement des couplages du lot 2.6 par les contrats S1 et S2, sans changement fonctionnel pour Collection (*Révision 5* : prévu au lot 3.1b ; ici seulement ce qui n'y aurait pas été fait).
 - Cartes illustrées.
 - Sections.
 - Recherche globale.

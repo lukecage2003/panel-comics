@@ -1,6 +1,6 @@
 # Phase 4 · 02 — Séparation stricte Collection / Explorer : frontières et contrats
 
-Statut : **finalisation architecturale (révision 3, 7 novembre 2026)**. Elle intègre la correction de l'utilisateur et ses décisions A3, A5, A6 et A7. Ce document **prime** sur toute formulation contraire du [cahier des charges Explorer 2.0](00-explorer-2.0-cahier-des-charges.md) et du dossier de Phase 3. **Aucun code n'a été modifié.**
+Statut : **finalisation architecturale (révision 4, 7 novembre 2026, fait autorité)**. Elle intègre la correction de l'utilisateur, ses décisions A3, A5, A6, A7, B1 (principe) et S1, le périmètre « comics uniquement » et l'audit final des dépendances (C1 à C10, D1 à D4, E1 à E5). Documents liés qui font autorité : contrats [`05`](05-contrats-s1-s6.md), sauvegardes [`06`](06-sauvegardes-par-domaine.md), images [`07`](07-architecture-images-r2.md), navigation [`03`](03-changement-navigation.md), plan [`08`](08-plan-execution.md), journal [`../DECISIONS.md`](../DECISIONS.md). Ce document **prime** sur toute formulation contraire du [cahier des charges Explorer 2.0](00-explorer-2.0-cahier-des-charges.md) et du dossier de Phase 3. **Aucun code n'a été modifié.**
 
 Légende : **[Fait]** constaté dans le code · **[Décidé]** décision de l'utilisateur · **[Reco.]** recommandation · **[À valider]** décision encore ouverte.
 
@@ -16,10 +16,10 @@ Légende : **[Fait]** constaté dans le code · **[Décidé]** décision de l'ut
 ## 2. Domaines et responsabilités
 | Domaine | Responsabilité | Propriétaire des données |
 |---|---|---|
-| **Collection** | Comics, exemplaires, éditions et variantes possédés ; état, grading ; emplacements ; acquisitions, historique d'achat ; wishlist ; Pull List ; statistiques ; recherche dans l'inventaire ; images personnelles | Utilisateur (espace personnel) |
-| **Lecture personnelle** | Progression de lecture : `isRead` des exemplaires et progression des guides (`readprog`) | Utilisateur. **Collection en garde provisoirement la responsabilité pour les données existantes** [Décidé A3] |
-| **Explorer** | Catalogue éditorial de découverte ; événements, crossovers, guides (contenu éditorial) ; Key Issues ; classements et tendances (présentation) ; **sorties et calendrier éditorial de comics, mangas exclus** [Décidé A5 ; périmètre : [`04`](04-perimetre-sorties-comics.md)] ; actualités ; séries, personnages, équipes, créateurs, éditeurs ; recommandations ; images éditoriales ; contributions éditoriales | Panel (contenu éditorial) |
-| **Community** (futur) | Profils publics, listes, avis, recommandations entre membres, abonnements, contributions sociales | Utilisateurs, selon leurs réglages de confidentialité |
+| **Collection** | Inventaire personnel ; comics, exemplaires, éditions et variantes possédés ; état, grading ; emplacements physiques ; acquisitions et historique personnel ; **prix d'achat et valeurs personnelles** ; wishlist ; Pull List ; statistiques ; recherche dans l'inventaire ; images personnelles ; toutes les données privées du collectionneur | Utilisateur (espace personnel) |
+| **Lecture personnelle** | Progression et suivi de lecture : `isRead` des exemplaires et progression des guides (`readprog`), avec compatibilité de l'existant | Utilisateur. **Collection en garde provisoirement la responsabilité pour les données existantes** [Décidé A3] |
+| **Explorer** | Catalogue éditorial de découverte ; événements, crossovers, guides (contenu éditorial) ; Key Issues ; classements et tendances (présentation) ; **sorties et calendrier éditorial de comics, mangas exclus** [Décidé A5 ; périmètre : [`04`](04-perimetre-sorties-comics.md)] ; actualités et contenus éditoriaux ; séries, personnages, équipes, auteurs et créateurs, éditeurs ; recherche et recommandations de découverte ; ressources éditoriales et images associées ; contributions éditoriales. Périmètre : **comics**, et non une encyclopédie générale de la bande dessinée (D-12) | Panel (contenu éditorial) |
+| **Community** (futur) | Interactions sociales, publications, discussions, profils communautaires, listes, avis, abonnements ; ni extension de Collection ni d'Explorer | Utilisateurs, selon leurs réglages de confidentialité |
 | **Services communs** | Catalogue canonique (S5), registre d'images et R2 (S4), identité et rôles (S6), agrégation des signaux (S3), sauvegarde (§ 3.3), file de tâches, recherche (index séparés par domaine) | Plateforme |
 
 ## 3. Couplages constatés [Fait]
@@ -32,7 +32,7 @@ Légende : **[Fait]** constaté dans le code · **[Décidé]** décision de l'ut
 | C4 | `exCoverOf` (l. 9439-9445) | Repli sur la couverture de l'exemplaire personnel | Supprimé côté Explorer : seules les images éditoriales (S4) ou un placeholder |
 | C5 | `exCreators` (l. 9466-9474) | Créateurs dérivés de `coverArtist` ; « Couvertures dans votre collection » | Entités issues du catalogue (S5) uniquement ; la section personnelle passe par S1 ou disparaît |
 | C6 | `exSeriesList`, `exPublishers` (l. 9475-9494) | Séries et éditeurs dérivés de la collection, avec comptes | Catalogue (S5) uniquement ; comptes personnels via S1 |
-| C7 | `exSearch` (l. 9497-9510) | Catégorie « Ma collection » | **Retirée de la recherche native d'Explorer** [Décidé A7], lors d'un lot Explorer futur |
+| C7 | `exSearch` (l. 9497-9510) | Catégorie « Ma collection » | **Retirée de la recherche native d'Explorer** [Décidé A7], au lot 3.1b proposé ([`08`](08-plan-execution.md)) |
 | C8 | Suivi de séries (l. 9522) | Lecture directe de `relPulls` | Via S1 (`inPullList`) |
 | C9 | Actions (l. 9979-9982) | `openSingleInspector`, `addPubToWishlist` | Via S2 (`openItem`, `addToWishlist`) |
 | C10 | `readprog` (l. 9354, 9395, 9938) | **Explorer écrit** la progression des guides dans le magasin `readprog` de `panel-catalog` | Écriture via S2 (`setGuideProgress`), lecture via S1 [Décidé A3 : Explorer n'en devient jamais propriétaire] |
@@ -49,7 +49,19 @@ Aucune autre référence de Collection vers les fonctions internes d'Explorer n'
 
 **Rien de cela n'est modifié aujourd'hui.** Les couplages restent en place et validés jusqu'aux lots qui les traiteront.
 
-### 3.3 Sauvegarde : principe proposé (B1)
+### 3.2 bis Calendrier et Pull List (lot 2.4) : couplages constatés lors de l'audit final
+Le module « Publications, calendrier, Pull List et wishlist » (`index.html`, l. 7446 à 9195 environ) mêle des données éditoriales (publications, qui relèvent d'Explorer selon A5) et des données personnelles (Pull List, wishlist, qui relèvent de Collection).
+
+| # | Emplacement | Couplage | Traitement proposé |
+|---|---|---|---|
+| E1 | `addPubToWishlist`, `addPubToCollection`, `wishToCollection`, `collectionToWishlist` (l. 8649-8692) | Le code du calendrier **écrit directement** `physicalSingles` et appelle `persistSingles` | Ces fonctions sont de la logique **Collection** ; elles restent à Collection et sont exposées à Explorer par S2 |
+| E2 | `pullStatusOf`, `pickUpPull` (l. 8697-8800) | La Pull List (Collection) lit le statut des publications (`relPubs`) et crée des exemplaires depuis une publication | Direction autorisée (Collection consomme le catalogue en lecture, S5) ; la Pull List garde son instantané `ref` (l. 8707), qui la rend robuste à une publication absente |
+| E3 | Annulation d'import (l. 8384-8388) | Conserve les publications référencées par la Pull List et par les exemplaires (`pubId`) en lisant Collection | Remplacer par une question S1 agrégée (« ces publications sont-elles référencées ? », réponse oui ou non par identifiant), sans lecture de l'inventaire |
+| E4 | `relCopiesOf` et recherche par série et numéro (l. 8970, 9059) | Le calendrier affiche les exemplaires possédés d'une publication | Via S1 (`owned: n`) |
+| E5 | Stockage | Publications (éditorial) et Pull List (personnel) dans la même base `panel-catalog` (stores `publications` et `pulls`) ; de même `editorial` et `readprog` | Acceptable localement (stores distincts) ; séparés dans les sauvegardes (B1) et côté serveur (schémas) |
+
+### 3.3 Sauvegarde par domaine (B1)
+**Principe approuvé par l'utilisateur.** Spécification complète : [`06-sauvegardes-par-domaine.md`](06-sauvegardes-par-domaine.md). Le texte ci-dessous est le résumé de la révision 3.
 - Un service commun de sauvegarde reçoit des **fournisseurs** déclarés par chaque domaine : `collection`, `lecture`, `explorer`, plus tard `community`. Chacun expose `export()`, `validate(payload)` et `restore(payload, mode)`.
 - Collection n'appelle plus aucune fonction d'Explorer : si Explorer est absent, la sauvegarde de Collection fonctionne.
 - **Compatibilité** : les fichiers existants (`panel-backup` v3, `panel-singles` v2 avec blocs `explorer` et `releases`) restent **lisibles et restaurables indéfiniment**. Aucune sauvegarde existante n'est modifiée ni supprimée.
@@ -70,77 +82,16 @@ Aucune autre référence de Collection vers les fonctions internes d'Explorer n'
 | A11 | Guides créés par l'utilisateur | Brouillon personnel ; publication = soumission éditoriale (copie validée) | [Reco.] intégrée |
 
 ## 5. Contrats S1 à S6
-Règles communes à tous les contrats :
-- **Version** dans le nom (`v1`) ; ajout de champs seulement de façon rétrocompatible ; une version incompatible = `v2`, avec l'ancienne maintenue au moins une version de l'application.
-- **Références** : identifiant canonique (`catalog_issue_id`, `catalog_series_id`) quand il existe, sinon référence textuelle normalisée `{ series, issue, year?, variant? }` marquée `unverified: true`.
-- **Données** : objets simples, sérialisables, copiés. Jamais d'objet interne, de référence mémoire ni d'identifiant d'exemplaire.
-- **Erreurs** : forme unique `{ ok: false, code, message }`, avec `code` ∈ `unavailable`, `unauthenticated`, `forbidden`, `invalid_input`, `not_found`, `conflict`, `rate_limited`, `internal`. Un consommateur doit **toujours** fonctionner en cas d'erreur (dégradation silencieuse vers l'état « sans donnée personnelle »).
-- **Tests** : chaque contrat a des tests de conformité côté fournisseur et un test « fournisseur absent » côté consommateur.
+**La version de référence est [`05-contrats-s1-s6.md`](05-contrats-s1-s6.md)** : responsabilité, propriétaire, entrées, sorties, permissions, erreurs, versions, tests de frontière, disponibilité et dégradation pour chaque contrat. La rédaction de la révision 3 de ce paragraphe est conservée dans l'historique Git (`2b91082`).
 
-### S1 — `PersonalLens.v1` (lecture personnelle facultative)
-| Élément | Définition |
-|---|---|
-| Responsabilité | Donner à Explorer des **statuts personnels minimaux** pour enrichir l'affichage, sans exposer l'inventaire |
-| Fournisseur / consommateur | Collection et Lecture personnelle / Explorer |
-| Exécution | **Sur l'appareil**, sur les données locales de l'utilisateur courant. Aucun appel serveur entre modules ; aucune lecture des données d'un autre utilisateur |
-| Entrées | `statusFor(refs[])` (≤ 500 références) ; `guideProgress(guideId, entryIds[])` (≤ 2 000) |
-| Sorties | `statusFor` → par référence `{ owned: n, wishlisted: bool, inPullList: bool, read: bool }` ; `guideProgress` → par entrée `{ status: 'to_read' \| 'reading' \| 'read' \| 'skipped' \| '', derivedFromCollection: bool }` |
-| Interdit dans la sortie | Prix, état, grading, emplacement, notes, date ou lieu d'achat, identifiant d'exemplaire, nombre total d'exemplaires de la collection |
-| Permissions | Utilisateur courant seulement. Si l'option « Afficher mes statuts personnels dans Explorer » (à créer, activée par défaut) est désactivée, réponse vide |
-| Erreurs | Fournisseur absent, sans collection ou visiteur : `{ ok: true, items: [] }` (vide, **pas** une erreur) ; entrée invalide : `invalid_input` ; dépassement : `rate_limited` |
-
-### S2 — `PersonalCommands.v1` (commandes, à l'initiative de l'utilisateur)
-| Élément | Définition |
-|---|---|
-| Responsabilité | Permettre à l'utilisateur d'agir sur ses données personnelles **depuis** Explorer, l'exécution restant à Collection ou Lecture |
-| Fournisseur / consommateur | Collection et Lecture personnelle / Explorer |
-| Entrées | `addToWishlist(ref)` ; `addToCollection(ref)` (ouvre le formulaire de Collection, prérempli : c'est l'utilisateur qui enregistre) ; `followSeries(seriesRef)` ; `setGuideProgress(guideId, entryId, status)` ; `openItem(ref)` (Collection ouvre sa propre vue) |
-| Sorties | `{ ok: true, duplicate?: bool, undoToken? }` ou une erreur |
-| Permissions | Uniquement à la suite d'un geste explicite de l'utilisateur (clic). **Jamais** depuis un import, un classement, une tâche planifiée ou un worker. Pas d'opération en masse |
-| Règles | Validation, dédoublonnage (`sameVariantWish`), persistance, sauvegarde, annulation et synchronisation sont faits **par le fournisseur**, selon ses règles actuelles |
-| Erreurs | `unavailable` (Collection absente : Explorer masque les boutons), `invalid_input`, `conflict` (doublon : `ok: true, duplicate: true`), `internal` |
-
-### S3 — `SignalAggregates.v1` (agrégats anonymes, serveur)
-| Élément | Définition |
-|---|---|
-| Responsabilité | Produire des **agrégats anonymes** de signaux autorisés (ajouts en wishlist, intérêt, lectures déclarées, consultations, recommandations) |
-| Fournisseur / consommateurs | Service d'agrégation (schéma `signals`, plateforme) / Explorer (classements, priorités d'import), plus tard Community |
-| Entrées (fournisseur) | Tâche planifiée ; lecture des tables personnelles **uniquement** dans des fonctions `security definer` dédiées, limitées aux colonnes nécessaires |
-| Sorties | `signals.aggregates(catalog_ref, signal, period, count, computed_at)` ; aucun identifiant d'utilisateur |
-| Permissions | Écriture : rôle technique du service seulement. Lecture : publique (agrégats publiés). Aucun rôle (y compris `admin`) ne lit les signaux individuels via ce contrat |
-| Règles | Seuil k ≥ 10 utilisateurs distincts par agrégat (proposé), périodes ≥ 1 semaine, exclusion des comptes suspendus et des doublons, respect du consentement et des réglages de confidentialité, aucune écriture dans les tables personnelles |
-| Erreurs | Agrégat sous le seuil : absent (pas de valeur partielle) ; tâche échouée : dernière valeur publiée conservée, avec sa date |
-
-### S4 — `MediaRegistry.v1` (images, infrastructure commune)
-| Élément | Définition |
-|---|---|
-| Responsabilité | Registre central et livraison des **images publiques autorisées** (R2 + CDN) |
-| Fournisseur / consommateurs | Service média / Explorer, et Collection **si elle le choisit** |
-| Entrées | `getImage(entityType, entityId, variant)` ; `listImages(entityType, entityId)` ; écriture : `register`, `replace`, `withdraw` (workers et rôles éditoriaux) |
-| Sorties | `{ url, width, height, variant, attribution, license, status }` |
-| Permissions | Lecture publique des images publiées ; écriture réservée au service média et aux rôles `editor` et `admin` |
-| Règles | Les **images personnelles** (couvertures manuelles, photos d'exemplaires) restent à Collection et ne sont jamais versées au registre sans contribution volontaire et cession de droits. Aucun import ne modifie un enregistrement de Collection. Pas de substitution d'édition ou de variante |
-| Erreurs | `not_found` (placeholder), `withdrawn` (retirée pour droits : placeholder et attribution masquée), `unavailable` (CDN : placeholder) |
-
-### S5 — `CanonicalCatalog.v1` (référentiel commun)
-| Élément | Définition |
-|---|---|
-| Responsabilité | Référentiel canonique des comics, éditions, variantes, séries et éditeurs, avec provenance et droits |
-| Fournisseur / consommateurs | Service catalogue (schéma `catalog`) / Explorer, Collection, Community |
-| Entrées | `resolve(refText)` → candidats avec score de confiance ; `get(id)` ; `search(q)` |
-| Sorties | Fiches canoniques publiques et références externes autorisées |
-| Permissions | Lecture publique ; écriture par les pipelines éditoriaux et les rôles `editor` et `admin` |
-| Règles | Collection **peut**, plus tard et de façon additive, enregistrer un `catalog_issue_id` sur un exemplaire, **sur proposition validée par l'utilisateur**. Le catalogue n'écrit jamais dans Collection. Seules les sources dont les droits le permettent alimentent ce référentiel |
-| Erreurs | `not_found`, résolution ambiguë (liste de candidats, **aucun choix automatique** sous le seuil de confiance), `unavailable` |
-
-### S6 — `Identity.v1`
-| Élément | Définition |
-|---|---|
-| Responsabilité | Authentification, profil, appareils, rôles (Phase 3) |
-| Fournisseur / consommateurs | Supabase Auth et schéma `app` (profil) / tous les domaines |
-| Entrées et sorties | Session (`user_id`, rôles), profil public minimal (plus tard, via Community) |
-| Permissions | Rôles `admin`, `editor`, `moderator` attribués côté serveur ; **aucun** n'ouvre l'accès aux données personnelles d'autrui |
-| Erreurs | `unauthenticated` : Explorer reste utilisable en visiteur ; Collection reste utilisable en local |
+| Contrat | Rôle | Propriétaire |
+|---|---|---|
+| S1 `PersonalLens.v1` | Lecture personnelle **facultative** : activée par défaut pour les connectés, indisponible pour les visiteurs, désactivable, exécutée sur l'appareil, sans accès administrateur [Décidé] ; cas des utilisateurs locaux : **P1 à valider** | Collection + Lecture |
+| S2 `PersonalCommands.v1` | Commandes explicites de l'utilisateur, exécutées par le domaine propriétaire | Collection + Lecture |
+| S3 `SignalAggregates.v1` | Agrégats anonymisés ; seuil k ≥ 10 **proposé**, à valider juridiquement et techniquement | Service d'agrégation |
+| S4 `MediaRegistry.v1` | Registre d'images partagé, associations par domaine | Service média |
+| S5 `CanonicalCatalog.v1` | Catalogue canonique en lecture seule | Service catalogue |
+| S6 `Identity.v1` | Identité et rôles | Plateforme |
 
 ## 6. Community, futur domaine indépendant
 - Schéma propre `community` (réservé, non créé) : profils publics, listes publiques, avis, abonnements, signalements.
@@ -185,19 +136,21 @@ Tests de frontière (lots 3.3 et 4.2) :
 ## 9. Vérification de cohérence (7 novembre 2026)
 | Exigence | Résultat | Où |
 |---|---|---|
-| Explorer fonctionne sans Collection, sans compte, sans connexion | **Conforme dans la conception** : S1 et S2 dégradent sans erreur ; S6 permet le visiteur ; cache local propre à Explorer (§ 8). Aujourd'hui, l'Explorer du lot 2.6 fonctionne hors ligne et sans compte, mais **dépend** des structures de Collection (C2 à C10) | § 5, § 8 ; lots 4.1 et 4.9 |
-| Collection fonctionne sans Explorer | **Non conforme aujourd'hui** sur la sauvegarde (D2 à D4) et le routeur de vues (D1) ; conforme après A6 et B1 | § 3.2, B1 |
-| Aucun accès direct aux données privées depuis Explorer | Garanti par S1, S3 et les tests de frontière ; couplages actuels C2 à C10 à réacheminer | § 3.1, § 7 |
+| Explorer fonctionne sans Collection, sans compte, sans connexion | **Conforme dans la conception** : S1 et S2 dégradent sans erreur ; S6 permet le visiteur ; cache local propre à Explorer (§ 8). Aujourd'hui, l'Explorer du lot 2.6 fonctionne hors ligne et sans compte, mais **dépend** des structures de Collection (C2 à C10) | § 5, § 8 ; lot 3.1b proposé |
+| Collection fonctionne sans Explorer | **Non conforme aujourd'hui** sur la sauvegarde (D2 à D4) et le routeur de vues (D1) ; conforme après A6 et B1 (lot 3.1b) | § 3.2, [`06`](06-sauvegardes-par-domaine.md) |
+| Aucun accès direct aux données privées depuis Explorer | Garanti **dans la conception** par S1, S3 et les tests de frontière. **Pas résolu dans le code** : C2 à C10 et E1 à E5 sont toujours présents (vérifié le 7 novembre 2026) | § 3.1, § 3.2 bis, § 7 |
 | Aucun changement de Collection sans autorisation | Respecté : A5 et A6 documentés ([`03`](03-changement-navigation.md)) et non réalisés ; B1 soumis à validation | § 4 |
-| Contrats S1 à S6 explicites | Responsabilités, entrées, sorties, permissions et erreurs définies | § 5 |
+| Contrats S1 à S6 explicites | Responsabilité, propriétaire, entrées, sorties, permissions, erreurs, versions, tests de frontière, dégradation : définis ; S1 sans dépendance obligatoire | [`05`](05-contrats-s1-s6.md) |
 | Séparation des données éditoriales et personnelles | Schémas distincts ; cache Explorer distinct ; aujourd'hui, `readprog` (personnel) et `editorial` (éditorial) cohabitent dans la base `panel-catalog` (stores distincts) : acceptable localement, séparé côté serveur | § 8 ; B2 |
 | Images et catalogue respectent les frontières | S4 (pas d'images personnelles publiques, aucune écriture dans Collection), S5 (lecture seule, rapprochement validé par l'utilisateur) | § 5 |
-| Community indépendante | Schéma et contrats réservés ; aucune lecture de Collection | § 6 |
+| Community indépendante | Schéma et contrats réservés ; aucune lecture de Collection ni d'Explorer | § 6 |
+| Périmètre comics | Règle documentée ; calendrier actuel non conforme (format `manga`, éditeurs Kana et Kurokawa) | [`04`](04-perimetre-sorties-comics.md) |
+| Personnalisation S1 facultative | Conforme dans la conception ; cas des utilisateurs locaux (P1) à décider | [`05`](05-contrats-s1-s6.md) § 3 |
 
 ## 10. Risques architecturaux
 | Risque | Effet | Parade |
 |---|---|---|
-| Couplages historiques C1 à C10 et D1 à D4 | Explorer et Collection restent liés | Réacheminement aux lots 4.1 et 4.9 ; B1 ; test statique |
+| Couplages historiques C1 à C10, D1 à D4 et E1 à E5 | Explorer et Collection restent liés | Réacheminement (C2 à C10, E1 à E5) et B1 au lot 3.1b proposé, à défaut aux lots 4.1 et 4.9 ; test statique |
 | Retrait de la recherche « Ma collection » (A7) | Fonction du lot 2.6 en moins dans Explorer | Décidé ; la recherche de Collection couvre l'inventaire ; adapter le test 29 au lot concerné |
 | Réidentification par des agrégats trop fins | RGPD | Seuil k, périodes larges, revue juridique |
 | Rôles trop puissants | Fuite de données personnelles | A10 et tests de frontière |

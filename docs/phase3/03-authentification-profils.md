@@ -82,7 +82,7 @@ Champs proposés, Postgres, schéma `app` :
 ## 6. Préparation des phases futures (sans les développer)
 - **Profil public, collection publique** : un futur champ `privacy.*` et des **vues** `public_profiles` et `public_collection` filtrées par confidentialité, sans relâcher la RLS des tables de base.
 - **Abonnements, publications, historique d'activité** : tables séparées dans un futur domaine `community`. Les clés étrangères pointeront vers `profiles.user_id` ; rien n'y est créé en Phase 3.
-- **Modération, administration** : rôle applicatif `app_role` (dans `app_metadata`, modifiable seulement côté serveur), pas avant la Phase 4.
+- **Modération, administration** : *mise à jour du 7 novembre 2026* : les rôles serveur (`app.staff_roles`, `app.has_role()`) arrivent au lot 3.3, prérequis d'Explorer 2.0 (Phase 4), **sans aucun accès aux données personnelles** ; l'idée initiale d'un rôle dans `app_metadata` est remplacée.
 - **Premium** : une table `entitlements` future, alimentée par le fournisseur de paiement ; rien en Phase 3.
 - **International** : `locale` et `preferred_market` sont prêts dès maintenant ; les textes restent à extraire (i18n) dans une phase ultérieure.
 

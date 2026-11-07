@@ -19,6 +19,8 @@ Limites importantes **[Doc]** :
 
 D'où la stratégie : **restauration par utilisateur = pierres tombales + corbeille + export JSON**. La sauvegarde du fournisseur ne sert qu'au sinistre global.
 
+> *Mise à jour du 7 novembre 2026* : les sauvegardes locales seront **découpées par domaine** (Collection, Lecture, Explorer, puis Community), avec un format `panel-bundle` et une lecture rétrocompatible : voir [`../phase4/06-sauvegardes-par-domaine.md`](../phase4/06-sauvegardes-par-domaine.md). L'export serveur `export_my_data()` suivra le même découpage.
+
 ## 2. Résilience
 | Risque | Protection |
 |---|---|
