@@ -1,0 +1,110 @@
+{
+  "title": "Panel : choisir l'univers visuel",
+  "question": "Le tirage propose « Longbox & intercalaires ». Garder cette direction, prendre une alternative, ou relancer.",
+  "options": [
+    {
+      "id": "assigned",
+      "kind": "assigned",
+      "label": "Longbox & intercalaires",
+      "kicker": "LE TIRAGE",
+      "lineage": "Boîtes longbox en carton kraft, sachets + cartons blancs, intercalaires à onglets des comic shops",
+      "thesis": "La collection se range comme une vraie longbox : chaque série est un intercalaire à onglet, chaque comic une pochette blanche, et l'onglet dit combien il y en a derrière.",
+      "palette": ["#F7F7F4", "#B5895A", "#1E1C1A", "#E2382E", "#2A5BD7", "#F2C230"],
+      "materials": ["carton blanc (backing board)", "kraft de longbox", "intercalaires plastique colorés", "marqueur noir"],
+      "viewport": "Ordinateur : rail de navigation kraft à gauche (Collection, Séries, Wishlist, Numérique, Scanner) ; en haut une rangée d'onglets d'intercalaires (séries, largeur proportionnelle au nombre de numéros, couleur par éditeur) ; dessous la grille de couvertures sur carton blanc avec gros numéro, variante et état ; panneau détail à droite. Téléphone : la même rangée d'onglets défile horizontalement, grille 2 colonnes, barre du bas avec le bouton Scanner au centre.",
+      "risk": "Si le kraft et les couleurs d'intercalaires sont timides, ça redevient un écran gris générique ; trop appuyés, ça devient un déguisement de carton.",
+      "raised": [
+        { "from": "challenger-acetate", "raise": "Onglets à la mesure du contenu : la largeur de chaque onglet de série est proportionnelle à son nombre de numéros, comme le rail à onglets d'un manuel." },
+        { "from": "challenger-specimen", "raise": "Hiérarchie par le contraste d'échelle seul : le numéro du comic en très grand, tout le reste petit, sans ornement." },
+        { "from": "challenger-saville", "raise": "Chaque objet porte son numéro : le n° d'issue est le titre principal de chaque fiche, la série passe au second plan." },
+        { "from": "challenger-zoo", "raise": "Couleurs à plat à l'échelle des zones (rail kraft, onglets pleins) : aucun dégradé, aucune lueur." },
+        { "from": "challenger-console", "raise": "Séparations par filets d'un pixel plutôt que par ombres ; Supprimer toujours isolé de ses voisins." }
+      ]
+    },
+    {
+      "id": "model-pick",
+      "kind": "pick",
+      "label": "Quadrichromie de kiosque",
+      "kicker": "LE CHOIX D'IMPECCABLE",
+      "lineage": "Impression quatre couleurs des comics des années 60-80 : trames Ben-Day, papier journal, cyan-magenta-jaune-noir",
+      "thesis": "Panel imprimé comme un comic de kiosque : quatre encres, des trames de points pour les états et les jauges, des repères de calage.",
+      "palette": ["#EEF0EF", "#00A3DA", "#E5007E", "#FFE500", "#161616"],
+      "materials": ["papier journal gris clair", "trame Ben-Day", "repères de calage"],
+      "viewport": "Même structure (rail, onglets de séries, grille, détail) ; le rail est en cyan plein, les états (lu, key issue, wishlist) sont des pastilles tramées magenta/jaune, la progression de série est une jauge en trame de points.",
+      "risk": "C'est la direction la plus attendue pour un sujet comics ; les trames peuvent faire « déco » si elles débordent des états."
+    },
+    {
+      "id": "challenger-acetate",
+      "kind": "challenger",
+      "catalogId": "rw-manual-acetate-tab-board",
+      "label": "Manuel à onglets et calques",
+      "verdict": "competitive",
+      "lineage": "Manuel de logiciel en boîte, intercalaires de couleur, feuillets d'acétate perforés",
+      "thesis": "Chaque division a sa teinte pleine ; les contenus flottent sur des feuillets transparents au-dessus.",
+      "palette": ["#E8622A", "#F2C230", "#3E9A4A", "#2A5BD7", "#7A4FB5", "#F4F2EE"],
+      "materials": ["acétate laiteux", "carton de couleur pleine"],
+      "viewport": "Rail à onglets en escalier sur le bord, une teinte par section (Collection, Séries, Numérique…).",
+      "case": "Tient la clarté (le rail à onglets proportionnels est une vraie navigation) mais un collectionneur de comics ne s'y reconnaît pas.",
+      "risk": "Lecture « logiciel des années 90 » si les feuillets sont trop présents."
+    },
+    {
+      "id": "challenger-specimen",
+      "kind": "challenger",
+      "catalogId": "variable-font-specimen",
+      "label": "Spécimen typographique",
+      "verdict": "declined",
+      "lineage": "Spécimen de fonderie interactif",
+      "palette": ["#FAFAF8", "#111111", "#FF4B1F"],
+      "materials": ["papier blanc", "encre noire"],
+      "case": "Aucun lien avec le monde des comics ; perd sur les deux axes.",
+      "kept": "Hiérarchie par le contraste d'échelle seul."
+    },
+    {
+      "id": "challenger-zoo",
+      "kind": "challenger",
+      "catalogId": "aww2-zoo-gardens-guide-map",
+      "label": "Plan de zoo",
+      "verdict": "declined",
+      "lineage": "Plan-guide de parc en aplats",
+      "palette": ["#8ED462", "#F5F1E4", "#2C2E2A", "#FF705D"],
+      "materials": ["aplats sans grain"],
+      "case": "Les lobes géographiques ne servent ni une grille de couvertures ni un lecteur.",
+      "kept": "Couleur à plat engagée à l'échelle des zones."
+    },
+    {
+      "id": "challenger-console",
+      "kind": "challenger",
+      "catalogId": "digital-design-canon-dark-first-developer-console",
+      "label": "Console sombre",
+      "verdict": "declined",
+      "lineage": "Console de développeur graphite",
+      "palette": ["#1B1D21", "#2A2D33", "#7FD1B9"],
+      "materials": ["graphite", "filets d'un pixel"],
+      "case": "Tu utilises Panel de jour au bureau : un fond sombre va à l'encontre de la scène ; c'est aussi l'esthétique actuelle à remplacer.",
+      "kept": "Filets au lieu d'ombres, actions destructives isolées."
+    },
+    {
+      "id": "challenger-saville",
+      "kind": "challenger",
+      "catalogId": "brand-identity-canon-saville-catalog-sleeve",
+      "label": "Catalogue numéroté",
+      "verdict": "declined",
+      "lineage": "Identité de label à numéros de catalogue",
+      "palette": ["#0D0D0D", "#FFFFFF"],
+      "materials": ["noir mat", "filets blancs"],
+      "case": "Cacher les titres sous des codes nuirait à la recherche de comics.",
+      "kept": "Chaque objet porte son numéro, en titre."
+    }
+  ],
+  "reroll": { "registers": ["safer", "bolder"] },
+  "canon": true,
+  "canonCard": {
+    "kind": "canon",
+    "label": "Le standard de la catégorie",
+    "thesis": "Ce que livrent League of Comic Geeks ou CLZ, exécuté impeccablement : fond blanc, grille de couvertures, une couleur d'accent.",
+    "palette": ["#FFFFFF", "#14171C", "#2B6BE6"],
+    "materials": ["grille propre", "couvertures"],
+    "viewport": "Barre latérale, grille de couvertures, panneau détail.",
+    "risk": "Propre mais interchangeable avec les apps existantes."
+  }
+}

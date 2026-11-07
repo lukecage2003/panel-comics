@@ -1,0 +1,29 @@
+# Secrets et données personnelles : jamais versionnés
+.secrets/
+*.env
+.env*
+phase5/fiche-comparaison.csv
+
+# Caches, profils de test, fichiers générés
+.cache/
+.edge-test-profile*/
+.test-import-profile/
+.impeccable/serve-*.txt
+.impeccable/detect.json
+node_modules/
+android-app/node_modules/
+android-app/www/
+android-app/vendor-cache/
+android-app/android/.gradle/
+android-app/android/app/build/
+android-app/android/build/
+android-app/android/local.properties
+android-app/android/capacitor-cordova-android-plugins/build/
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Sauvegardes (peuvent contenir d'anciennes clés)
+*.backup*
+_backups/

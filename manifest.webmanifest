@@ -1,0 +1,27 @@
+{
+  "name": "Panel — Comics Reader & Collection",
+  "short_name": "Panel",
+  "description": "Lecteur de comics numériques et gestionnaire de collection physique : scan de code-barres, séries, pull list, cote et sorties de la semaine.",
+  "lang": "fr",
+  "dir": "ltr",
+  "id": "./",
+  "start_url": "./?source=pwa",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#070907",
+  "theme_color": "#070907",
+  "categories": ["books", "entertainment", "lifestyle"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Scanner un code-barres", "short_name": "Scanner", "url": "./?action=scan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Ma collection", "short_name": "Collection", "url": "./?view=collection", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Sorties de la semaine", "short_name": "Sorties", "url": "./?view=releases", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Séries à compléter", "short_name": "Séries", "url": "./?view=series", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}
