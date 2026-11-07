@@ -12,9 +12,10 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 
 - **Vision** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
 - **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
-- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lots 2.1 à 2.4 ; lot 2.5 (sources de données, provenance, import contrôlé) livré, en attente de validation.
-- **En attente de validation** : lot 2.5, puis lots 2.6 et 2.7 de la Phase 2.
-- **Tests** : `node run-all-tests.js` (Edge sans interface), 27 tests.
+- **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), Phase 2 · lots 2.1 à 2.5 (le lot 2.5 « sources de données, provenance, import contrôlé » est validé).
+- **En cours jusqu'à validation** : lot 2.6 (Explorer et guides de lecture), livré et en attente de validation.
+- **Feuille de route** : lot 2.7 de la Phase 2 (non commencé). Préparé mais non activé dans le lot 2.6 : actualités (source ou CMS à choisir), images sous licence pour les guides, vérification des éditions VF, autres guides.
+- **Tests** : `node run-all-tests.js` (Edge sans interface), 28 tests.
 - **Points de vigilance** : les fiches sans identifiant ou en double sont signalées (`Panel.catalog.idReport()` propose un identifiant de remplacement, sans rien appliquer). Les entrées de catalogue sans exemplaire sont conservées, et les exemplaires supprimés gardent une pierre tombale. Les instantanés de collection restent limités aux 8 derniers (comportement antérieur).
 - **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
 
@@ -219,6 +220,84 @@ Le Journal garde les 50 dernières opérations : actualisations, imports, annula
 - **API** : `Panel.data.{sources, setEnabled, edition, plan, apply, undo, imports, conflicts, resolve, provenance, stats, open}`.
 - **Sauvegarde du code avant le lot** : `_backups/20261107-da-lot25-avant/`.
 
+## 🧭 Explorer et guides de lecture (Phase 2 · lot 2.6)
+
+Accès : entrée **Explorer & guides** du rail latéral, ou onglet **Explorer** de la barre des vues (mobile compris). Le lot est livré et **en cours jusqu'à validation**.
+
+### Page Explorer
+- **Recherche globale** : une seule saisie couvre les guides et événements (titres VO/VF et alias, par exemple « Le Roi en Noir »), les publications du calendrier, la collection (titre, numéro, ISBN, UPC), les séries, les personnages, les créateurs, les éditeurs, ainsi que les éditions et recueils. Les résultats sont groupés par catégorie, avec un filtre par catégorie et un état vide explicite. Les recherches validées sont mémorisées localement (`panel_explorer_recent`, 8 au plus). Il n'y a pas de moteur séparé : la recherche s'appuie sur `catNorm` et sur les données déjà chargées.
+- **Sections** :
+  - **Pour vous** : suggestions déterministes et expliquées, calculées à partir de la progression, des possessions et de la pull list. Aucun service d'IA.
+  - **À la une** : uniquement les guides marqués « À la une ».
+  - **Guides de lecture** : avec filtre par catégorie.
+  - **Univers** : Marvel, DC, Image, Dark Horse, IDW, BOOM!, Dynamite et les éditeurs de la collection, chacun avec une page.
+  - **Sorties** : réutilise `relQuery` du lot 2.4 (30 prochains jours US et FR, 14 derniers jours).
+  - **Personnages**, **Créateurs**, **Séries**.
+  - **Actualités** : structure seulement. Aucune actualité n'est inventée ; la section attend des contenus éditoriaux de type `news` ou une future source (CMS).
+- **Pages de découverte** : éditeur (guides, sorties à 60 jours, séries, personnages, créateurs), personnage (guides où il est cité, statut de vérification), créateur (guides, collaborations citées, couvertures de la collection), série (numéros possédés, variantes, publications, guides). Seules les données présentes dans Panel sont affichées : pas de biographie ni de chronologie non sourcée.
+
+### Guides de lecture
+- **Fiche** : titre, titre original, éditeur, période, synopsis sans spoiler et zone spoiler séparée, description et notes de complétude, image, personnages, créateurs, prérequis, événements précédents et suivants, langues, sources, dernière vérification et complétude (complet selon les sources / partiel / démonstration).
+- **Catégories** : événement majeur, crossover, saga, chronologie, parcours de personnage, grande période, guide de série, parcours de découverte.
+- **Ordres** : plusieurs par guide (source, publication, chronologique, recommandé, simplifié, complet). Chaque ordre cite sa source ; un ordre dérivé indique son ordre d'origine. Aucun ordre n'est fusionné entre sources.
+- **Entrée** : position, série, volume, numéro, éditeur, année, lien de publication (`pubId`), couverture, explication, importance, source de l'importance, spoiler, prérequis, source, éditions associées.
+- **Importance** : Essentiel / Recommandé / Facultatif seulement avec une source ou une décision éditoriale explicite. Sinon, l'entrée reste « Non classé » ; un niveau sans source est retiré à l'enregistrement et à l'import.
+- **Consultation** :
+  - parcours numéroté avec couvertures en chargement différé, progression globale et par niveau, bouton « Reprendre » (première entrée ni lue ni ignorée) ;
+  - filtres par importance, éditeur et langue (VO / avec édition VF) ; masquer les facultatifs, masquer les lus ; mode simplifié ;
+  - spoilers masqués par défaut ;
+  - accès à la fiche publication, ajout à la wishlist pour une publication identifiée.
+
+### Premier cas : King in Black (démonstration documentée)
+- **Ordre de la source** : 65 numéros relevés sur Comic Book Reading Orders (consulté le 7/11/2026). Seuls les faits sont repris : titres, numéros, ordre et classement requis / facultatif. La série *King in Black* et les numéros *Venom* sont « Essentiel » (requis selon la source), soit 10 entrées ; les 55 autres sont « Facultatif ». Aucun « Recommandé » n'est attribué.
+- **Ordre simplifié** : dérivé de l'ordre de la source (requis seulement), avec sa provenance.
+- **Contexte** (Comic Book Herald) : préparation recommandée par la série *Venom* de Cates et Stegman ; précédé d'*Absolute Carnage* (2019).
+- **Personnages et créateurs** : marqués « non vérifié ».
+- **Éditions françaises** : *King in Black : Venom* n°01 (ISBN 9791039100632) et n°02 (ISBN 9791039102056), relevées sur une fiche de libraire. Elles restent « non vérifiées » et sans contenu associé : leur sommaire exact n'est pas confirmé. Les autres ISBN trouvés (sites de partage, coffret sans ISBN) ont été écartés.
+- **Images** : aucune image des sites de référence n'est reprise. Le guide utilise un visuel généré par Panel ; chaque entrée affiche la couverture de la fiche publication ou de la collection quand le rapprochement est sûr, sinon la couverture de remplacement Panel.
+- **Sources non atteintes** : ReadingOrders.com, Comic Compass et French Comics Reading Order n'ont pas été consultés. Le guide ne prétend pas être exhaustif.
+- **Contenu fourni avec Panel** : il est ajouté s'il manque. Il n'est mis à jour que s'il n'a jamais été modifié localement (`seedVersion`, `editedAt`).
+
+### Correspondances VO / VF et rapprochements
+- **Relations d'édition typées** : traduction de, réédition de, recueil de, contient, partie de, variante de. Une édition ne passe en « Vérifié » qu'avec une source ; l'association aux entrées se fait par position, explicitement.
+- **Entrée → publication** : d'abord le `pubId` explicite, sinon une correspondance exacte (même série de base, sans « (2021) » ni « Vol. n », même numéro, année à ±1 an, publication unique et non variante).
+- **Entrée → collection** : même règle, sans année = « Possédé ? (à confirmer) », qui n'est pas compté comme possédé. Aucun rapprochement par ressemblance de titre.
+- **Une entrée non identifiée reste « Non identifiée au catalogue »** ; aucune publication n'est créée.
+
+### Intégration à la collection et progression
+- **États distincts par entrée** :
+  - possédé (×n), possédé à confirmer, manquant ;
+  - rangé ;
+  - wishlist ;
+  - pull list ;
+  - fiche publication.
+  Posséder n'implique jamais avoir lu ; la wishlist n'est pas la collection.
+- **Progression personnelle** (`readprog`) : À lire, En cours, Lu, Ignoré, avec historique (30 changements). Elle est indépendante des données éditoriales et de la possession, et partagée entre les guides qui contiennent le même numéro (clé `ek_` + empreinte série/volume/numéro). Un exemplaire marqué lu dans la collection apparaît « Lu (collection) » sans écrire de progression.
+- **Réutilisation** : `addPubToWishlist`, `openPubSheet`, `relQuery`, `placeholderCover`. Aucun service dupliqué.
+
+### Administration, import et export
+- **Éditeur** (bouton « Modifier » ou « Créer un guide ») :
+  - métadonnées, image (https) avec source et droits, personnages, créateurs, prérequis, sources ;
+  - plusieurs ordres ; entrées ajoutées, déplacées ou retirées ; importance et sa source ; spoiler ; `pubId` ;
+  - éditions VO/VF avec relation, source, statut et entrées contenues.
+  Le brouillon est validé à l'enregistrement.
+- **Import JSON** (`{ "format": "panel-guides", "version": 1, "guides": [...] }`) :
+  - lecture et validation du schéma (identifiants `gd_…`, URL https seulement, champs bornés) ;
+  - aperçu sans écriture : nouveau, mise à jour, identique, doublon (même identifiant dans le fichier, ou même titre et éditeur qu'un guide existant), invalide ;
+  - confirmation, puis résumé. La progression de lecture n'est jamais modifiée par un import.
+- **Export** : un guide ou tous les guides, en conservant les identifiants, les relations et la provenance.
+
+### Stockage, migration et sauvegarde
+- **IndexedDB `panel-catalog` passe en version 4** : migration additive des magasins `editorial` (index `kind`) et `readprog`. Les magasins existants ne sont ni supprimés ni réécrits, et la migration est idempotente.
+- **Retour arrière** : un code antérieur ne peut pas ouvrir une base en version 4. Les fonctions du catalogue y seraient désactivées, la collection (localStorage) restant intacte. Pour revenir en arrière : sauvegarde JSON, puis code de `_backups/20261107-lot26-avant/`.
+- **Sauvegardes JSON** : la sauvegarde complète et l'export de la collection contiennent un bloc `explorer` (guides et progression). À la restauration, ce bloc est validé ; la fusion ajoute sans écraser, le remplacement rétablit, et l'opération est annulée en cas d'échec. Les anciennes sauvegardes sans bloc `explorer` restent acceptées.
+- **API** : `Panel.explorer.{load, open, state, guides, guide, save, validate, search, setProgress, progress, entryKey, stats, match, recos, exportGuides, importPlan, importApply, planInUi, editor, backup, restore}`.
+- **Sauvegarde du code avant le lot** : `_backups/20261107-lot26-avant/`.
+
+### Sécurité et performances
+- **Sécurité** : tout texte est échappé ; les URL d'images et de sources n'acceptent que https ; les liens externes sont en `noopener noreferrer`. Aucune clé, aucune collecte automatique, aucun téléchargement d'images depuis les sites de référence.
+- **Performances** : les couvertures sont chargées en différé (`loading="lazy"`), avec une image de remplacement en cas d'erreur. La liste est affichée par tranches de 60 entrées, la recherche est temporisée (160 ms) et les données sont chargées une seule fois en mémoire.
+
 ## 📲 Application installable (PWA)
 
 Panel s'installe comme une application (icône d'accueil, plein écran, hors ligne) sur téléphone, tablette et ordinateur.
@@ -422,6 +501,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Explorer & guides de lecture` (base IndexedDB v4 additive, King in Black sourcé sans niveau inventé, validation, rapprochements exacts et « à confirmer », possession ≠ lecture ≠ wishlist, progression partagée, recherche par catégorie et historique, pages éditeur/personnage/créateur/série, filtres et mode simplifié, spoilers, XSS, image de remplacement, éditeur, import JSON avec aperçu et doublons, export, sauvegarde/restauration, redémarrage)
 - `✓ PASS - Sources & données` (matrice des sources, connecteurs activables, blocage en édition commerciale, provenance par champ, conflits sans écrasement silencieux, résolution, doublons par priorité, import CSV/JSON/XLSX avec aperçu, correspondance, rapport, annulation sûre, sauvegarde, redémarrage)
 - `✓ PASS - Calendrier international` (publications US/FR et relations explicites, connecteur simulé, import CSV/JSON, reports, annulations, dates inconnues, historique, Pull List, Wishlist, transitions sans doublon, sauvegarde/restauration, vues, redémarrage hors ligne)
 - `✓ PASS - Emplacements` (4 niveaux, migration sûre et idempotente, valeurs ambiguës, affectation complète/partielle, déplacements, suppression sans perte, comptage, recherche, JSON/CSV, redémarrage hors ligne)

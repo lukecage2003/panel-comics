@@ -82,6 +82,12 @@ Il y a un sprite SVG inline unique : `<symbol id="ic-…">`, utilisé via `<svg 
 - **Toasts** avec action d'annulation (`.toast-action`).
 - **Calendrier** : badges `.rel-market` (marché), `.rel-status` (statut ; reporté en orange, annulé barré) et `.rel-date` (pointillés = annoncée, trait plein cyan = confirmée). La grille `.rel-cal` compte 7 colonnes et passe en points de couleur avec une liste `.rel-cal-list` sous 640 px. Les lignes sont des `.rel-row` et `.pull-row`, la fiche est `#pubModal`, la wishlist structurée est `.wish-box`.
 - **Sources & données** : modale `#dataAdminModal` (`.da-box`), onglets `.da-tab` soulignés en jaune, tableaux `.da-table` dans `.da-wrap` (défilement horizontal interne sur mobile), badges `.da-badge` par état (vert = fonctionne, jaune = identifiants, orange = autorisation, gris = indisponible) et par usage commercial, conflits `.da-conflict` (filet gauche jaune), provenance `.pub-prov` dans la fiche publication.
+- **Explorer & guides (lot 2.6)** :
+  - **Page Explorer** : bandeau `.ex-hero` noir tramé avec une diagonale jaune et une recherche à filet jaune. Sections `.ex-sec` à titres condensés.
+  - **Cartes et tuiles** : cartes de guide `.ex-gcard` (visuel 16:9, ombre d'encre au survol), tuiles d'univers `.ex-unitile` (filet noir, fond jaune au survol), résultats groupés `.ex-res-group` et puces `.ex-chip` (active = noir, compteur jaune).
+  - **Fiche de guide** : en-tête `.ex-ghero` à deux colonnes, colonne latérale `.ex-gside` (un `div`, pas un `aside`, pour ne pas hériter du rail), barres `.ex-bar` jaunes sous filet noir.
+  - **Entrées** : `.ex-entry` avec pastille de position noire et chiffre jaune. Badges d'importance `.ex-imp` : Essentiel = noir et jaune, Recommandé = jaune pâle, Facultatif = blanc. Badges d'état `.ex-b` : possédé en vert, à confirmer en jaune pâle, wishlist en magenta, lu en noir.
+  - **Comportement** : spoilers masqués `.ex-spoil`, éditeur `#guideEditModal` (`.gd-*`). La colonne latérale passe sous le contenu à 900 px et moins. Aucun défilement horizontal à 390 px (vérifié).
 - **Emplacements** : `.loc-cascade` (4 listes Pièce → Meuble → Boîte → Séparateur, 2 colonnes sur mobile) et fenêtre `#locationsModal`, dont l'arbre `.loc-row` est indenté par `--depth`. Le nombre de comics est en `tabular-nums` ; « vide » est affiché en gris.
 
 ## Responsive

@@ -1586,6 +1586,164 @@
     .pub-prov { margin: 10px 0; font-size: 13px; }
     .pub-prov summary { cursor: pointer; font-weight: 600; }
     @media (max-width: 640px) { .da-cf-grid { grid-template-columns: 1fr; } .da-box { width: calc(100vw - 16px); } }
+
+    /* ===== LOT 2.6 · EXPLORER & GUIDES DE LECTURE ===== */
+    #singlesViewSection.is-explorer .singles-stats-bar { display: none !important; }
+    #explorerRoot { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+    .ex-hero { background: #111111; color: #F3F2EE; border-radius: 6px; padding: 26px 22px; background-image: radial-gradient(circle, #2A2A28 1.4px, transparent 1.6px); background-size: 9px 9px; position: relative; overflow: hidden; }
+    .ex-hero::after { content: ''; position: absolute; right: -40px; top: 0; bottom: 0; width: 160px; background: #FFD400; transform: skewX(-18deg); opacity: .95; }
+    .ex-hero-in { position: relative; z-index: 1; max-width: 760px; }
+    .ex-hero h2 { font-family: var(--font-display); font-size: clamp(26px, 4vw, 40px); font-weight: 800; text-transform: uppercase; line-height: 1; margin: 6px 0 16px; color: #F3F2EE; }
+    .ex-kicker { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #8D8A80; font-weight: 700; }
+    .ex-hero .ex-kicker { color: #FFD400; }
+    .ex-search { display: flex; align-items: center; gap: 10px; background: #FFFFFF; border-radius: 4px; padding: 0 12px; border: 2px solid #FFD400; }
+    .ex-search .ic { color: #111111; flex-shrink: 0; }
+    .ex-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 16px; padding: 13px 0; color: #111111; }
+    .ex-hist { margin-top: 10px; }
+    .ex-hist .ex-chip { background: transparent; color: #F3F2EE; border-color: #4A4945; }
+    .ex-sec { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .ex-sec-head h3, .ex-sec > h3 { font-family: var(--font-display); font-size: 22px; font-weight: 800; text-transform: uppercase; margin: 0; letter-spacing: .01em; }
+    .ex-sec-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
+    .ex-note { color: var(--muted); font-size: 13px; margin: 0; }
+    .ex-empty { padding: 22px; border: 1.5px dashed var(--line-strong); border-radius: 6px; color: var(--muted); font-size: 14px; background: #FFFFFF; }
+    .ex-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .ex-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .ex-chip { border: 1.5px solid var(--line-strong); background: #FFFFFF; color: #111111; border-radius: 999px; padding: 5px 11px; font-size: 13px; cursor: pointer; font-family: inherit; }
+    .ex-chip small { color: var(--muted); font-size: 12px; }
+    .ex-chip:hover { border-color: #111111; }
+    .ex-chip.active { background: #111111; color: #FFFFFF; border-color: #111111; }
+    .ex-chip.active b { color: #FFD400; }
+    .ex-chip.is-static { cursor: default; }
+    .ex-res-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 10px; }
+    .ex-res-group { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .ex-res-group h4 { margin: 0 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .ex-res-group h4 small { color: var(--muted); }
+    .ex-res { display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 0; background: transparent; padding: 7px 8px; border-radius: 4px; cursor: pointer; font-family: inherit; color: #111111; min-width: 0; }
+    .ex-res b { font-size: 14px; overflow-wrap: anywhere; }
+    .ex-res small { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+    .ex-res:hover, .ex-res:focus-visible { background: #FFF4C2; }
+    .ex-more { border: 0; background: transparent; color: #111111; text-decoration: underline; font-size: 13px; text-align: left; padding: 6px 8px; cursor: pointer; }
+    .ex-featured { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+    .ex-ggrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+    .ex-gcard { display: flex; flex-direction: column; text-align: left; padding: 0; border: 1px solid var(--line); background: #FFFFFF; border-radius: 6px; overflow: hidden; cursor: pointer; font-family: inherit; color: #111111; min-width: 0; }
+    .ex-gcard:hover { box-shadow: 3px 3px 0 #111111; border-color: #111111; }
+    .ex-gcard-img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; background: #111111; }
+    .ex-gcard-body { display: flex; flex-direction: column; gap: 3px; padding: 10px 12px 12px; }
+    .ex-gcard-body b { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; line-height: 1.05; }
+    .ex-gcard.is-big .ex-gcard-body b { font-size: 26px; }
+    .ex-meta { color: var(--muted); font-size: 12px; }
+    .ex-gnew { border-style: dashed; justify-content: center; min-height: 120px; background: transparent; }
+    .ex-recos { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+    .ex-reco { display: flex; flex-direction: column; gap: 3px; text-align: left; padding: 10px 12px; border: 0; border-left: 4px solid #FFD400; background: #FFFFFF; border-radius: 4px; cursor: pointer; font-family: inherit; color: #111111; }
+    .ex-reco small { color: var(--muted); font-size: 12px; }
+    .ex-uni { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+    .ex-unitile { display: flex; flex-direction: column; gap: 2px; text-align: left; padding: 12px; border: 1.5px solid #111111; background: #FFFFFF; border-radius: 4px; cursor: pointer; font-family: inherit; color: #111111; }
+    .ex-unitile b { font-family: var(--font-display); font-size: 20px; text-transform: uppercase; }
+    .ex-unitile small { font-size: 12px; color: var(--muted); }
+    .ex-unitile span { font-size: 12px; }
+    .ex-unitile:hover { background: #FFD400; }
+    .ex-rel-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .ex-rel-cols h4 { margin: 0 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .04em; }
+    .ex-pubgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 6px; }
+    .ex-pub { display: flex; gap: 10px; align-items: center; width: 100%; text-align: left; padding: 6px; border: 1px solid var(--line); background: #FFFFFF; border-radius: 4px; cursor: pointer; font-family: inherit; color: #111111; margin-bottom: 6px; min-width: 0; }
+    .ex-pub-img { width: 38px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 2px; flex-shrink: 0; background: #DAD8D0; }
+    .ex-pub span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+    .ex-pub b { font-size: 13px; overflow-wrap: anywhere; }
+    .ex-pub small { font-size: 12px; color: var(--muted); }
+    .ex-news { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 12px; }
+    .ex-back { align-self: flex-start; }
+    .ex-phead h2, .ex-ghero h2 { font-family: var(--font-display); font-size: clamp(30px, 5vw, 46px); font-weight: 800; text-transform: uppercase; line-height: 1; margin: 4px 0 8px; }
+    .ex-ghero { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 18px; background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+    .ex-ghero-img { width: 100%; height: 100%; min-height: 220px; object-fit: cover; display: block; background: #111111; }
+    .ex-ghero-txt { padding: 16px 16px 16px 0; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+    .ex-vo { margin: 0; color: var(--muted); font-size: 13px; }
+    .ex-gstats { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; }
+    .ex-gstats b { font-size: 20px; font-variant-numeric: tabular-nums; font-family: var(--font-display); }
+    .ex-gcols { display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; margin-top: 16px; align-items: start; }
+    .ex-gmain { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+    .ex-gside { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .ex-gside section { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 12px; font-size: 13px; }
+    .ex-gside h4 { margin: 0 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .06em; }
+    .ex-gside p { margin: 0 0 6px; line-height: 1.45; }
+    .ex-gside ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 6px; }
+    .ex-src a { color: #111111; overflow-wrap: anywhere; }
+    .ex-ed { border-top: 1px solid var(--line); padding: 8px 0; display: flex; flex-direction: column; gap: 3px; }
+    .ex-ed:first-of-type { border-top: 0; padding-top: 0; }
+    .ex-ed small { color: var(--muted); }
+    .ex-otabs { margin: 0; }
+    .ex-progbox { background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+    .ex-prog { display: grid; grid-template-columns: 150px minmax(0, 1fr) 64px; gap: 10px; align-items: center; font-size: 13px; }
+    .ex-prog b { text-align: right; font-variant-numeric: tabular-nums; }
+    .ex-bar { height: 10px; background: #F3F2EE; border: 1px solid #111111; border-radius: 2px; overflow: hidden; }
+    .ex-bar i { display: block; height: 100%; background: #FFD400; border-right: 1px solid #111111; }
+    .ex-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .ex-filters select { width: auto; min-width: 140px; }
+    .ex-filters .da-switch { font-size: 13px; display: inline-flex; gap: 6px; align-items: center; }
+    .ex-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .ex-entry { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 12px; background: #FFFFFF; border: 1px solid var(--line); border-radius: 6px; padding: 10px; }
+    .ex-entry.is-read { background: #FBFAF6; }
+    .ex-entry.is-read .ex-cov-img { opacity: .55; }
+    .ex-entry.is-focus { box-shadow: 0 0 0 3px #FFD400; border-color: #111111; }
+    .ex-cov { position: relative; display: flex; flex-direction: column; gap: 3px; }
+    .ex-cov-img { width: 92px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 3px; background: #DAD8D0; display: block; }
+    .ex-cov-src { font-size: 12px; color: var(--muted); line-height: 1.2; overflow-wrap: anywhere; }
+    .ex-pos { position: absolute; top: -6px; left: -6px; background: #111111; color: #FFD400; font-weight: 800; font-size: 13px; min-width: 26px; height: 26px; border-radius: 13px; display: inline-flex; align-items: center; justify-content: center; padding: 0 6px; font-variant-numeric: tabular-nums; z-index: 1; }
+    .ex-ebody { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+    .ex-etitle { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+    .ex-etitle b { font-size: 16px; overflow-wrap: anywhere; }
+    .ex-imp { font-size: 12px; font-weight: 700; padding: 2px 8px; border-radius: 3px; border: 1px solid var(--line-strong); color: var(--muted); }
+    .ex-imp.is-essential { background: #111111; color: #FFD400; border-color: #111111; }
+    .ex-imp.is-recommended { background: #FFF4C2; color: #111111; border-color: #111111; }
+    .ex-imp.is-optional { background: #FFFFFF; color: #4A4945; }
+    .ex-badges { display: flex; flex-wrap: wrap; gap: 4px; }
+    .ex-b { font-size: 12px; padding: 2px 7px; border-radius: 3px; background: #F3F2EE; border: 1px solid var(--line); color: #111111; white-space: nowrap; }
+    .ex-b.is-owned { background: #E3F2E8; border-color: #13804A; color: #0B5C34; }
+    .ex-b.is-missing { color: #4A4945; }
+    .ex-b.is-probable, .ex-b.is-partial, .ex-b.is-demo { background: #FFF4C2; border-color: #C9A400; }
+    .ex-b.is-wish { border-color: #B0005F; color: #8A0049; }
+    .ex-b.is-pull { border-color: #111111; }
+    .ex-b.is-st-read { background: #111111; color: #FFFFFF; border-color: #111111; }
+    .ex-b.is-st-reading { background: #FFD400; border-color: #111111; }
+    .ex-b.is-st-skipped { text-decoration: line-through; }
+    .ex-why { margin: 0; font-size: 13px; line-height: 1.4; }
+    .ex-vf { margin: 0; font-size: 12px; color: var(--muted); }
+    .ex-unres { color: var(--muted); font-style: italic; }
+    .ex-link { border: 0; background: transparent; padding: 0; color: #111111; text-decoration: underline; cursor: pointer; font: inherit; }
+    .ex-spoil { border: 1px dashed #111111; background: #FFF4C2; padding: 6px 10px; border-radius: 4px; font-size: 13px; cursor: pointer; text-align: left; font-family: inherit; }
+    .ex-acts { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 2px; }
+    .ex-stbtn { border: 1px solid var(--line-strong); background: #FFFFFF; padding: 5px 10px; border-radius: 4px; font-size: 13px; cursor: pointer; font-family: inherit; color: #111111; min-height: 32px; }
+    .ex-stbtn:hover { border-color: #111111; }
+    .ex-stbtn.active { background: #111111; color: #FFFFFF; border-color: #111111; }
+    .ex-entries.is-simple { gap: 4px; }
+    .ex-entry.is-simple { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; padding: 8px 10px; }
+    .ex-entry.is-simple .ex-pos { position: static; }
+    .ex-entry.is-simple .ex-st { width: auto; margin-left: auto; }
+    .ex-img.is-fallback, .ex-cov-img.is-fallback { opacity: .9; }
+    .gd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 8px; }
+    .gd-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+    .gd-f { display: flex; flex-direction: column; gap: 3px; font-size: 12px; color: var(--muted); }
+    .gd-f textarea, .gd-f input, .gd-f select { color: #111111; }
+    #guideEditBody h4 { margin: 16px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .06em; }
+    #guideEditBody .da-tabs { flex-shrink: 0; }
+    .gd-entries input.field-input, .gd-entries select.field-input { min-width: 90px; padding: 5px 6px; font-size: 13px; }
+    .gd-entries input.gd-s { min-width: 52px; width: 60px; }
+    .gd-ops { white-space: nowrap; }
+    #guideEditBody { overflow-y: auto; flex: 1 1 auto; min-height: 0; }
+    @media (max-width: 900px) {
+      .ex-gcols { grid-template-columns: minmax(0, 1fr); }
+      .ex-ghero { grid-template-columns: minmax(0, 1fr); }
+      .ex-ghero-img { min-height: 0; aspect-ratio: 16 / 9; height: auto; }
+      .ex-ghero-txt { padding: 0 14px 14px; }
+    }
+    @media (max-width: 560px) {
+      .ex-hero { padding: 20px 16px; }
+      .ex-hero::after { width: 70px; right: -30px; }
+      .ex-featured, .ex-ggrid { grid-template-columns: minmax(0, 1fr); }
+      .ex-entry { grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+      .ex-cov-img { width: 64px; }
+      .ex-prog { grid-template-columns: 96px minmax(0, 1fr) 54px; font-size: 12px; }
+      .ex-filters select { flex: 1 1 140px; }
+    }
   </style>
 </head>
 <body>
@@ -1606,6 +1764,9 @@
         <button class="nav-btn active" id="navAllSingles">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg></span> Ma collection</div>
           <span class="nav-badge" id="badgeSinglesTotal">0</span>
+        </button>
+        <button class="nav-btn" id="navExplorer">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span> Explorer & guides</div>
         </button>
         <button class="nav-btn" id="navSinglesSeries">
           <div class="nav-btn-content"><span class="icon">▤</span> Séries & complétion</div>
@@ -1717,6 +1878,7 @@
     <section id="singlesViewSection">
       <nav class="filter-tabs-bar singles-subnav" id="singlesSubnav" aria-label="Vues de la collection">
         <button class="tab-btn active" data-sview="collection">Collection</button>
+        <button class="tab-btn" data-sview="explorer">Explorer</button>
         <button class="tab-btn" data-sview="series">Séries</button>
         <button class="tab-btn" data-sview="releases">★ Calendrier</button>
         <button class="tab-btn" data-sview="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
@@ -1782,6 +1944,9 @@
         <div id="seriesTrackDetail"></div>
         <div class="series-track-grid" id="seriesTrackGrid"></div>
       </div>
+
+      <!-- ===== VUE : EXPLORER & GUIDES DE LECTURE (lot 2.6) ===== -->
+      <div id="singlesExplorerView" hidden><div id="explorerRoot"></div></div>
 
       <!-- ===== VUE : CALENDRIER INTERNATIONAL & PULL LIST ===== -->
       <div id="singlesReleasesView" hidden>
@@ -2506,6 +2671,17 @@
     </div>
     <div id="dataAdminBody"></div>
     <input type="file" id="daImportFile" accept=".csv,.json,.txt,.xlsx,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+  </div>
+</div>
+<div class="modal-backdrop" id="guideEditModal">
+  <div class="modal-box da-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px;flex-shrink:0">
+      <h2 id="guideEditTitle">Guide de lecture</h2>
+      <button class="btn-icon" id="closeGuideEditBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
+    </div>
+    <div id="guideEditBody"></div>
+    <div class="ex-row" style="justify-content:flex-end;margin-top:10px;flex-shrink:0"><button class="btn" id="guideEditSave">Enregistrer</button></div>
+    <input type="file" id="guideImportFile" accept=".json,application/json" hidden>
   </div>
 </div>
 <div class="modal-backdrop" id="locationsModal">
@@ -4787,7 +4963,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Retour arrière : Panel.catalog.rollback() vide uniquement cette base dérivée.
   // ==========================================================================
   const CATALOG_SCHEMA = 2; // 2 : exemplaires normalisés (état, grading, slab, signature, achat)
-  const CATALOG_DB_VERSION = 3; // 3 : magasins « publications » et « pulls » (lot 2.4), sans effet sur la migration
+  const CATALOG_DB_VERSION = 4; // 3 : magasins « publications » et « pulls » (lot 2.4) ; 4 : « editorial » et « readprog » (lot 2.6). Ajouts seulement.
   const CATALOG_ENTITY_STORES = ['publishers', 'series', 'issues', 'variants', 'copies'];
   const CATALOG_DISABLED_KEY = 'panel_catalog_disabled';
   let catalogDbPromise = null;
@@ -4811,6 +4987,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         mk('copies', [['variantId', 'variantId'], ['legacyId', 'legacyId']]);
         mk('publications', [['market', 'market']]);
         mk('pulls', [['pubId', 'pubId']]);
+        mk('editorial', [['kind', 'kind']]);
+        mk('readprog');
         if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'key' });
         if (!db.objectStoreNames.contains('backups')) db.createObjectStore('backups', { keyPath: 'id' });
       };
@@ -6771,9 +6949,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   const showSinglesView = view => {
     activeSinglesView = view;
-    const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView' };
+    const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView' };
+    if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-explorer', view === 'explorer');
+    if (view === 'explorer') ['mobSingles', 'mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.remove('active'));
     Object.entries(map).forEach(([v, id]) => { if ($(id)) $(id).hidden = v !== view; });
-    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats' };
+    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer' };
     $$('#navSinglesBlock .nav-btn').forEach(b => b.classList.remove('active'));
     const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : navMap[view];
     if ($(navId)) $(navId).classList.add('active');
@@ -6783,7 +6963,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       collection: ['Ma collection', 'Inventaire physique : singles, variantes, grading et rangement'],
       series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
       releases: ['Calendrier & pull list', 'Sorties américaines et francophones, reports, annulations et votre pull list'],
-      stats: ['Statistiques', 'Valeur, investissement et composition de votre collection']
+      stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
+      explorer: ['Explorer', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
     };
     if ($('mainTitleHeading') && titles[view]) {
       $('mainTitleHeading').textContent = titles[view][0];
@@ -6791,6 +6972,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     renderSinglesCollection();
     if (view === 'releases') loadReleasesForWeek();
+    if (view === 'explorer') showExplorer().catch(() => {});
   };
 
   const updateSinglesStats = () => {
@@ -9010,7 +9192,825 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     if ($('closePubModalBtn')) $('closePubModalBtn').onclick = () => $('pubModal').classList.remove('open');
   };
-  const initReleases = () => { wireDataAdmin(); document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-open-conflicts]')) { $('pubModal').classList.remove('open'); openDataAdmin('conflicts'); } }); loadReleaseData().then(() => { if (activeSinglesView === 'releases') renderReleasesGrid(); }).catch(() => {}); };
+
+  // ==========================================================================
+  // LOT 2.6 — EXPLORER & READING GUIDES
+  // Données éditoriales (magasin « editorial ») séparées de la progression personnelle (magasin « readprog »).
+  // Les publications restent celles du calendrier (lot 2.4) et les exemplaires ceux de la collection :
+  // aucun catalogue parallèle. Rien n'est inventé : une entrée non identifiée reste « non résolue ».
+  // ==========================================================================
+  const GD_SCHEMA = 1;
+  const GD_CATEGORIES = { major_event: 'Événement majeur', crossover: 'Crossover', saga: 'Saga', chronology: 'Chronologie', character_path: 'Parcours de personnage', era: 'Grande période éditoriale', series_guide: 'Guide de série', discovery: 'Parcours de découverte' };
+  const GD_ORDER_TYPES = { reference: 'Ordre de la source', publication: 'Ordre de publication', chronological: 'Ordre chronologique', recommended: 'Ordre recommandé', simplified: 'Ordre simplifié', complete: 'Ordre complet avec tie-ins' };
+  const GD_IMPORTANCE = { essential: 'Essentiel', recommended: 'Recommandé', optional: 'Facultatif' };
+  const GD_PROGRESS = { to_read: 'À lire', reading: 'En cours', read: 'Lu', skipped: 'Ignoré' };
+  const GD_COMPLETENESS = { complete: 'Complet selon les sources', partial: 'Partiel', demo: 'Démonstration' };
+  const GD_EDITION_REL = { translated_from: 'Traduction de', reprint_of: 'Réédition de', collects: 'Recueil de', contains: 'Contient', part_of: 'Partie de', variant_of: 'Variante de' };
+  const GD_GUIDE_REL = { preceded_by: 'Précédé de', followed_by: 'Suivi de', related: 'Lié à', prerequisite: 'Prérequis' };
+  const GD_ROLES = { writer: 'Scénario', artist: 'Dessin', inker: 'Encrage', colorist: 'Couleurs', letterer: 'Lettrage', editor: 'Édition', cover: 'Couverture' };
+  const GD_VERIF = { verified: 'Vérifié', unverified: 'Non vérifié' };
+  const gdStr = (v, max = 300) => (v === null || v === undefined) ? '' : String(v).trim().slice(0, max);
+  const gdHttps = u => { const s = gdStr(u, 800); return /^https:\/\/[^\s"'<>]+$/i.test(s) ? s : ''; };
+  const gdIssue = v => gdStr(v, 20).replace(/^#\s*/, '');
+  const gdBase = s => catNorm(String(s || '').replace(/\(\s*\d{4}\s*\)/g, ' ').replace(/\bvol(ume)?\.?\s*\d+\b/ig, ' '));
+  const gdEntryKey = (series, volume, issue) => 'ek_' + stableHash(gdBase(series) + '|' + catNorm(volume) + '|' + gdIssue(issue).toLowerCase());
+
+  // ---------- Premier cas : King in Black (Marvel, 2020-2021)
+  // Faits repris : titres, numéros, ordre et classement requis/facultatif de Comic Book Reading Orders (consulté le 7/11/2026).
+  // Aucun texte ni aucune image n'est copié. Les éditions françaises sont des pistes non vérifiées.
+  const GD_KIB_ORDER = ['Symbiote Spider-Man: King in Black||1-5', 'King in Black: Namor||1-4', 'Atlantis Attacks||5', 'King in Black: Wiccan and Hulkling||1', 'King in Black||1',
+    'Union||1-2', 'Black Cat|Vol. 2|1', 'Spider-Woman|Vol. 7|7-8', 'Guardians of the Galaxy|Vol. 6|10|2019', 'King in Black: Ghost Rider||1', 'King in Black: Black Knight||1',
+    'King in Black: Black Panther||1', 'Venom|Vol. 4|31', 'King in Black||2', 'Venom|Vol. 4|32', 'King in Black: Iron Man/Doom||1', 'King in Black: Return of the Valkyries||1',
+    'King in Black: Planet of the Symbiotes||1-2', 'King in Black: Thunderbolts||1-3', 'King in Black: Gwenom vs. Carnage||1-3', 'King in Black: Immortal Hulk||1', 'S.W.O.R.D.|Vol. 2|2-3',
+    'King in Black||3', 'Daredevil|Vol. 6|26-27', 'Deadpool|Vol. 7|10', 'King in Black: Marauders||1', 'Savage Avengers||17-19', 'Miles Morales: Spider-Man||23',
+    'King in Black: Return of the Valkyries||2-4', 'Black Cat|Vol. 2|2-3', 'Venom|Vol. 4|33', 'King in Black||4', 'Fantastic Four|Vol. 6|29', 'King in Black: Captain America||1',
+    'King in Black: Scream||1', 'King in Black: Spider-Man||1', 'S.W.O.R.D.|Vol. 2|4', 'Fantastic Four|Vol. 6|30', 'Venom|Vol. 4|34', 'Avengers|Vol. 8|45', 'King in Black||5',
+    'King in Black: Namor||5', 'King in Black: Planet of the Symbiotes||3', 'Venom||200|2021|Également numéroté Venom Vol. 4 #35 selon la source.'];
+  const gdSeedKib = () => {
+    const entries = [];
+    GD_KIB_ORDER.forEach(line => {
+      const [series, volume, range, year, note] = line.split('|');
+      const [a, b] = range.split('-').map(Number);
+      for (let n = a; n <= (b || a); n++) {
+        const core = series === 'King in Black' || series === 'Venom';
+        entries.push({ id: gdEntryKey(series, volume, n), series, volume: volume || '', issue: String(n), publisher: 'Marvel', year: year || '2021', date: '', title: '',
+          importance: core ? 'essential' : 'optional', importanceSource: 'src_cbro',
+          why: series === 'King in Black' ? 'Série principale de l\'événement (requise selon la source).' : series === 'Venom' ? 'Série Venom liée à l\'événement (requise selon la source).' : '',
+          spoiler: false, prerequisites: '', sourceId: 'src_cbro', pubId: '', cover: null, note: note || '' });
+      }
+    });
+    entries.forEach((e, i) => { e.pos = i + 1; });
+    const at = '2026-11-07T00:00:00.000Z';
+    return {
+      id: 'gd_king_in_black', kind: 'guide', schema: GD_SCHEMA, origin: 'seed', seedVersion: 1, featured: true,
+      category: 'major_event', title: 'King in Black', originalTitle: 'King in Black', aliases: ['Le Roi en Noir', 'KIB'], publisher: 'Marvel', periodStart: 2020, periodEnd: 2021,
+      synopsis: 'Événement Marvel centré sur Knull, le dieu des symbiotes, et sur Venom. Le guide reprend l\'ordre de lecture de la source citée : la série King in Black et la série Venom y sont requises, les autres titres sont facultatifs.',
+      description: 'Guide de démonstration : ordre de lecture de 65 numéros relevé auprès d\'une seule source, sans couvertures sous licence. Les correspondances françaises sont des pistes à vérifier.',
+      spoilerNote: '', image: null, languages: ['en', 'fr'],
+      characters: [{ name: 'Knull', status: 'unverified', sourceId: '' }, { name: 'Venom (Eddie Brock)', status: 'unverified', sourceId: '' }],
+      creators: [{ name: 'Donny Cates', roles: ['writer'], scope: 'King in Black, Venom', sourceId: 'src_cbh', status: 'unverified' }, { name: 'Ryan Stegman', roles: ['artist'], scope: 'King in Black, Venom', sourceId: 'src_cbh', status: 'unverified' }],
+      prerequisites: [{ title: 'Venom (2018) de Donny Cates et Ryan Stegman', note: 'Lecture préparatoire recommandée par la source.', sourceId: 'src_cbh', guideId: '' }],
+      relations: [{ type: 'preceded_by', title: 'Absolute Carnage (2019)', guideId: '', sourceId: 'src_cbh' }],
+      sources: [
+        { id: 'src_cbro', label: 'Comic Book Reading Orders — King in Black', url: 'https://comicbookreadingorders.com/marvel/events/king-in-black-reading-order/', retrievedAt: '2026-11-07', license: 'Droits réservés : seuls les faits (titres, numéros, ordre, requis/facultatif) sont repris.', kind: 'reference' },
+        { id: 'src_cbh', label: 'Comic Book Herald — King in Black', url: 'https://www.comicbookherald.com/the-complete-marvel-reading-order-guide/king-in-black', retrievedAt: '2026-11-07', license: 'Droits réservés : informations factuelles seulement.', kind: 'reference' },
+        { id: 'src_side1', label: 'Fiche libraire (export.side.fr) — King in Black Venom n°01', url: 'https://export.side.fr/en/9791039100632-king-in-black-venom-n01', retrievedAt: '2026-11-07', license: 'Données commerciales de libraire, non vérifiées.', kind: 'edition' },
+        { id: 'src_side2', label: 'Fiche libraire (export.side.fr) — King in Black Venom n°02', url: 'https://export.side.fr/en/9791039102056-king-in-black-venom-n02', retrievedAt: '2026-11-07', license: 'Données commerciales de libraire, non vérifiées.', kind: 'edition' }
+      ],
+      orders: [
+        { id: 'ord_kib_ref', type: 'reference', label: 'Ordre de la source (65 numéros)', sourceId: 'src_cbro', derivedFrom: '', entries },
+        { id: 'ord_kib_simple', type: 'simplified', label: 'Ordre simplifié (requis seulement)', sourceId: 'src_cbro', derivedFrom: 'ord_kib_ref',
+          entries: entries.filter(e => e.importance === 'essential').map((e, i) => Object.assign({}, e, { pos: i + 1 })) }
+      ],
+      editions: [
+        { id: 'ed_kib_fr_venom1', lang: 'fr', title: 'King in Black : Venom n°01', publisher: 'Panini Comics', isbn: '9791039100632', date: '', pages: '', relation: 'collects', contains: [], cover: null, sourceId: 'src_side1', status: 'unverified',
+          note: 'Présenté par le libraire comme un recueil des épisodes liés à King in Black écrits par Donny Cates ; le contenu exact n\'est pas vérifié.' },
+        { id: 'ed_kib_fr_venom2', lang: 'fr', title: 'King in Black : Venom n°02', publisher: 'Panini Comics', isbn: '9791039102056', date: '', pages: '', relation: 'collects', contains: [], cover: null, sourceId: 'src_side2', status: 'unverified',
+          note: 'Contenu exact non vérifié.' }
+      ],
+      completeness: 'demo', verifiedAt: '2026-11-07', createdAt: at, updatedAt: at
+    };
+  };
+
+  // ---------- Validation (saisie, import, restauration)
+  const gdSanitize = raw => {
+    const errors = [], warnings = [];
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return { errors: ['Objet de guide attendu.'], warnings };
+    const id = gdStr(raw.id, 70);
+    if (!/^gd_[a-z0-9_]{1,60}$/.test(id)) errors.push('Identifiant invalide (format gd_xxx) : « ' + id.slice(0, 40) + ' ».');
+    const title = gdStr(raw.title, 200);
+    if (!title) errors.push('Titre manquant.');
+    const kind = raw.kind === 'news' ? 'news' : 'guide';
+    const sources = (Array.isArray(raw.sources) ? raw.sources : []).slice(0, 40).filter(s => s && typeof s === 'object').map(s => ({
+      id: /^src_[a-z0-9_]{1,40}$/.test(gdStr(s.id, 50)) ? gdStr(s.id, 50) : 'src_' + stableHash(gdStr(s.label) + gdStr(s.url)), label: gdStr(s.label, 200) || 'Source', url: gdHttps(s.url),
+      retrievedAt: gdStr(s.retrievedAt, 30), license: gdStr(s.license, 300), kind: gdStr(s.kind, 20) }));
+    const srcIds = new Set(sources.map(s => s.id));
+    const srcRef = v => { const s = gdStr(v, 50); return srcIds.has(s) ? s : ''; };
+    const img = v => { if (!v || typeof v !== 'object') return null; const url = gdHttps(v.url); return url ? { url, source: gdStr(v.source, 120), rights: gdStr(v.rights, 300), kind: gdStr(v.kind, 30), lang: gdStr(v.lang, 8), edition: gdStr(v.edition, 120), verifiedAt: gdStr(v.verifiedAt, 30), manual: v.manual === true } : null; };
+    const entry = (e, i, oi) => {
+      if (!e || typeof e !== 'object') return null;
+      const series = gdStr(e.series, 200);
+      if (!series) { errors.push('Ordre ' + (oi + 1) + ', entrée ' + (i + 1) + ' : série manquante.'); return null; }
+      const volume = gdStr(e.volume, 30), issue = gdIssue(e.issue);
+      let importance = GD_IMPORTANCE[e.importance] ? e.importance : null;
+      const importanceSource = gdStr(e.importanceSource, 50);
+      if (importance && !importanceSource) { warnings.push('Entrée « ' + series + ' #' + issue + ' » : niveau éditorial sans source ni décision, retiré.'); importance = null; }
+      return { id: gdEntryKey(series, volume, issue), pos: i + 1, series, volume, issue, title: gdStr(e.title, 200), publisher: gdStr(e.publisher, 100), year: gdStr(e.year, 4).replace(/[^0-9]/g, ''), date: relDate(e.date) || '',
+        importance, importanceSource: importance ? importanceSource : '', why: gdStr(e.why, 600), spoiler: e.spoiler === true, prerequisites: gdStr(e.prerequisites, 300),
+        sourceId: srcRef(e.sourceId), pubId: /^pbc_[a-z0-9_]{1,40}$/i.test(gdStr(e.pubId, 50)) ? gdStr(e.pubId, 50) : '', cover: img(e.cover), note: gdStr(e.note, 300) };
+    };
+    const orders = (Array.isArray(raw.orders) ? raw.orders : []).slice(0, 12).map((o, oi) => {
+      if (!o || typeof o !== 'object') return null;
+      const seen = new Set();
+      const entries = (Array.isArray(o.entries) ? o.entries : []).slice(0, 3000).map((e, i) => entry(e, i, oi)).filter(Boolean).filter(e => { if (seen.has(e.id)) { warnings.push('Entrée en double retirée : ' + e.series + ' #' + e.issue); return false; } seen.add(e.id); return true; });
+      entries.forEach((e, i) => { e.pos = i + 1; });
+      return { id: /^ord_[a-z0-9_]{1,50}$/.test(gdStr(o.id, 60)) ? gdStr(o.id, 60) : 'ord_' + stableHash(id + '|' + oi + '|' + gdStr(o.label)), type: GD_ORDER_TYPES[o.type] ? o.type : 'reference',
+        label: gdStr(o.label, 120) || GD_ORDER_TYPES[o.type] || 'Ordre', sourceId: srcRef(o.sourceId), derivedFrom: gdStr(o.derivedFrom, 60), entries };
+    }).filter(Boolean);
+    if (kind === 'guide' && !orders.length) warnings.push('Aucun ordre de lecture.');
+    const entryIds = new Set(orders.flatMap(o => o.entries.map(e => e.id)));
+    const editions = (Array.isArray(raw.editions) ? raw.editions : []).slice(0, 300).filter(x => x && typeof x === 'object' && gdStr(x.title)).map(x => ({
+      id: /^ed_[a-z0-9_]{1,50}$/.test(gdStr(x.id, 60)) ? gdStr(x.id, 60) : 'ed_' + stableHash(gdStr(x.title) + gdStr(x.isbn)), lang: gdStr(x.lang, 8).toLowerCase() || 'fr', title: gdStr(x.title, 200),
+      publisher: gdStr(x.publisher, 100), isbn: gdStr(x.isbn, 20).replace(/[^0-9Xx]/g, '').toUpperCase(), date: relDate(x.date) || '', pages: gdStr(x.pages, 6).replace(/[^0-9]/g, ''),
+      relation: GD_EDITION_REL[x.relation] ? x.relation : 'collects', contains: (Array.isArray(x.contains) ? x.contains : []).map(c => gdStr(c, 60)).filter(c => entryIds.has(c)).slice(0, 500),
+      cover: img(x.cover), sourceId: srcRef(x.sourceId), status: x.status === 'verified' && srcRef(x.sourceId) ? 'verified' : 'unverified', note: gdStr(x.note, 400), pubId: /^pbc_[a-z0-9_]{1,40}$/i.test(gdStr(x.pubId, 50)) ? gdStr(x.pubId, 50) : '' }));
+    const people = (list, isCreator) => (Array.isArray(list) ? list : []).slice(0, 200).filter(x => x && gdStr(typeof x === 'string' ? x : x.name)).map(x => typeof x === 'string' ? { name: gdStr(x, 120), status: 'unverified', sourceId: '', roles: [] } : {
+      name: gdStr(x.name, 120), status: x.status === 'verified' && srcRef(x.sourceId) ? 'verified' : 'unverified', sourceId: srcRef(x.sourceId),
+      roles: isCreator ? (Array.isArray(x.roles) ? x.roles : []).filter(r => GD_ROLES[r]).slice(0, 7) : [], scope: gdStr(x.scope, 200) });
+    const links = (list, types) => (Array.isArray(list) ? list : []).slice(0, 50).filter(x => x && gdStr(x.title || x.guideId)).map(x => ({
+      type: types && types[x.type] ? x.type : (types ? 'related' : undefined), title: gdStr(x.title, 200), note: gdStr(x.note, 300), guideId: /^gd_[a-z0-9_]{1,60}$/.test(gdStr(x.guideId, 70)) ? gdStr(x.guideId, 70) : '', sourceId: srcRef(x.sourceId) }));
+    const ps = parseInt(raw.periodStart, 10), pe = parseInt(raw.periodEnd, 10);
+    const guide = {
+      id, kind, schema: GD_SCHEMA, origin: ['seed', 'user', 'import'].includes(raw.origin) ? raw.origin : 'user', seedVersion: parseInt(raw.seedVersion, 10) || 0, featured: raw.featured === true,
+      category: GD_CATEGORIES[raw.category] ? raw.category : 'major_event', title, originalTitle: gdStr(raw.originalTitle, 200), aliases: (Array.isArray(raw.aliases) ? raw.aliases : []).map(a => gdStr(a, 120)).filter(Boolean).slice(0, 20),
+      publisher: gdStr(raw.publisher, 100), periodStart: ps >= 1900 && ps <= 2200 ? ps : null, periodEnd: pe >= 1900 && pe <= 2200 ? pe : null,
+      synopsis: gdStr(raw.synopsis, 3000), description: gdStr(raw.description, 4000), spoilerNote: gdStr(raw.spoilerNote, 1000), image: img(raw.image),
+      languages: (Array.isArray(raw.languages) ? raw.languages : []).map(l => gdStr(l, 8).toLowerCase()).filter(Boolean).slice(0, 10),
+      characters: people(raw.characters, false), creators: people(raw.creators, true), prerequisites: links(raw.prerequisites, null), relations: links(raw.relations, GD_GUIDE_REL),
+      sources, orders, editions, completeness: GD_COMPLETENESS[raw.completeness] ? raw.completeness : 'partial', verifiedAt: gdStr(raw.verifiedAt, 30),
+      createdAt: gdStr(raw.createdAt, 40) || relNow(), updatedAt: gdStr(raw.updatedAt, 40) || relNow(), editedAt: gdStr(raw.editedAt, 40)
+    };
+    if (JSON.stringify(guide).length > 2000000) errors.push('Guide trop volumineux.');
+    return errors.length ? { errors, warnings } : { guide, errors, warnings };
+  };
+
+  // ---------- Stockage
+  const exEditorial = new Map(), exProgress = new Map();
+  let exLoadPromise = null;
+  const exPut = async (store, recs) => {
+    const list = (recs || []).filter(Boolean);
+    const db = await openCatalogDb();
+    if (!db || !db.objectStoreNames.contains(store)) return false;
+    if (list.length) await idbWrite(db, [store], tx => list.forEach(r => tx.objectStore(store).put(JSON.parse(JSON.stringify(r)))));
+    return true;
+  };
+  const loadExplorerData = force => {
+    if (exLoadPromise && !force) return exLoadPromise;
+    exLoadPromise = (async () => {
+      const db = await openCatalogDb();
+      exEditorial.clear(); exProgress.clear();
+      if (db && db.objectStoreNames.contains('editorial')) {
+        (await idbAll(db, 'editorial')).forEach(g => g && g.id && exEditorial.set(g.id, g));
+        (await idbAll(db, 'readprog')).forEach(p => p && p.id && exProgress.set(p.id, p));
+      }
+      // Contenu fourni avec Panel : ajouté s'il manque ; mis à jour seulement s'il n'a jamais été modifié
+      const seed = gdSanitize(gdSeedKib()).guide;
+      const cur = exEditorial.get(seed.id);
+      if (!cur || (cur.origin === 'seed' && !cur.editedAt && (cur.seedVersion || 0) < seed.seedVersion)) {
+        exEditorial.set(seed.id, seed);
+        try { await exPut('editorial', [seed]); } catch (_) {}
+      }
+      return true;
+    })();
+    return exLoadPromise;
+  };
+  const exGuides = () => [...exEditorial.values()].filter(g => g.kind === 'guide');
+  const exSaveGuide = async (raw, opts = {}) => {
+    await loadExplorerData();
+    const r = gdSanitize(raw);
+    if (!r.guide) return { ok: false, errors: r.errors, warnings: r.warnings };
+    const g = r.guide, prev = exEditorial.get(g.id);
+    const at = relNow();
+    g.createdAt = prev ? prev.createdAt : g.createdAt;
+    g.updatedAt = at;
+    if (opts.edit) g.editedAt = at;
+    if (prev && prev.origin === 'seed' && opts.edit) g.origin = 'seed';
+    exEditorial.set(g.id, g);
+    await exPut('editorial', [g]);
+    return { ok: true, guide: g, warnings: r.warnings, created: !prev };
+  };
+
+  // ---------- Progression personnelle (indépendante des données éditoriales et de la possession)
+  const exSetProgress = async (entryKey, status) => {
+    await loadExplorerData();
+    if (!/^ek_[a-z0-9]{1,40}$/i.test(String(entryKey || ''))) return { ok: false, error: 'Entrée inconnue.' };
+    if (status && !GD_PROGRESS[status]) return { ok: false, error: 'Statut inconnu.' };
+    const at = relNow();
+    const rec = exProgress.get(entryKey) || { id: entryKey, status: '', at, history: [] };
+    if (rec.status === (status || '')) return { ok: true, unchanged: true, rec };
+    rec.history = (rec.history || []).concat([{ from: rec.status || '', to: status || '', at }]).slice(-30);
+    rec.status = status || '';
+    rec.at = at;
+    exProgress.set(entryKey, rec);
+    await exPut('readprog', [rec]);
+    return { ok: true, rec };
+  };
+
+  // ---------- Rapprochement avec le calendrier et la collection (titre exact + numéro + année cohérente ; jamais par ressemblance)
+  const exIndexBuild = () => {
+    const singles = new Map(), pubs = new Map();
+    const push = (m, k, v) => { const l = m.get(k); if (l) l.push(v); else m.set(k, [v]); };
+    physicalSingles.forEach(s => push(singles, gdBase(s.series) + '#' + gdIssue(s.issue).toLowerCase(), s));
+    relPubs.forEach(p => { if (!p.market || p.market === 'US') push(pubs, gdBase(p.series) + '#' + gdIssue(p.issue).toLowerCase(), p); });
+    const pulls = new Set();
+    relPulls.forEach(pl => { if (pl.status !== 'cancelled') pulls.add(pl.pubId); });
+    return { singles, pubs, pulls };
+  };
+  const exYear = v => { const y = parseInt(String(v || '').slice(0, 4), 10); return y >= 1900 && y <= 2200 ? y : null; };
+  const exMatch = (e, idx) => {
+    const k = gdBase(e.series) + '#' + gdIssue(e.issue).toLowerCase();
+    const yr = exYear(e.year);
+    const yearOk = y => (!yr || !y) ? null : Math.abs(y - yr) <= 1;
+    let pub = e.pubId ? relPubs.get(e.pubId) || null : null, pubHow = pub ? 'manual' : '';
+    if (!pub) {
+      const c = (idx.pubs.get(k) || []).filter(p => !p.variant && yearOk(exYear(p.dates.actual || p.dates.current)) === true);
+      if (c.length === 1) { pub = c[0]; pubHow = 'auto'; }
+    }
+    const owned = [], wish = [], probable = [];
+    const seen = new Set();
+    (idx.singles.get(k) || []).forEach(s => {
+      if (seen.has(s.id)) return; seen.add(s.id);
+      const sure = (pub && s.pubId === pub.id) || yearOk(exYear(s.coverYear) || exYear(s.releaseDate) || exYear(s.coverDate)) === true;
+      const unknown = !sure && yearOk(exYear(s.coverYear) || exYear(s.releaseDate) || exYear(s.coverDate)) === null;
+      if (sure) (s.isWishlist ? wish : owned).push(s);
+      else if (unknown && !s.isWishlist) probable.push(s);
+    });
+    if (pub) physicalSingles.forEach(s => { if (s.pubId === pub.id && !seen.has(s.id)) { seen.add(s.id); (s.isWishlist ? wish : owned).push(s); } });
+    const prog = exProgress.get(e.id);
+    const readInCollection = owned.some(s => s.isRead);
+    const status = prog && prog.status ? prog.status : '';
+    return { pub, pubHow, owned, wish, probable, pull: !!pub && idx.pulls.has(pub.id), located: owned.some(s => s.locationId || s.box || s.location), readInCollection,
+      status, effective: status || (readInCollection ? 'read' : ''), derived: !status && readInCollection };
+  };
+  const exCoverOf = (e, m) => {
+    if (e.cover && e.cover.url) return { url: e.cover.url, source: e.cover.source || 'Saisie', rights: e.cover.rights || '', protected: true };
+    if (m.pub && m.pub.cover && m.pub.cover.url) return { url: m.pub.cover.url, source: relSourceLabel(m.pub.cover.source), rights: m.pub.cover.rights || srcImageRights(m.pub.cover.source) || '' };
+    const s = m.owned.find(x => x.coverUrl && isSafeImageUrl(x.coverUrl));
+    if (s) return { url: s.coverUrl, source: 'Votre collection' + (s.coverSource ? ' (' + s.coverSource + ')' : ''), rights: '' };
+    return { url: placeholderCover(e.series, e.issue), source: '', rights: '', placeholder: true };
+  };
+  const exOrderStats = (g, order, idx) => {
+    const st = { total: 0, essential: 0, recommended: 0, optional: 0, unclassified: 0, owned: 0, read: 0, reading: 0, skipped: 0, missing: 0, byImp: {} };
+    (order ? order.entries : []).forEach(e => {
+      const m = exMatch(e, idx);
+      st.total++;
+      const imp = e.importance || 'unclassified';
+      st[imp]++;
+      const b = st.byImp[imp] || (st.byImp[imp] = { total: 0, read: 0, skipped: 0 });
+      b.total++;
+      if (m.owned.length) st.owned++; else st.missing++;
+      if (m.effective === 'read') { st.read++; b.read++; }
+      if (m.effective === 'reading') st.reading++;
+      if (m.effective === 'skipped') { st.skipped++; b.skipped++; }
+    });
+    const denom = st.total - st.skipped;
+    st.pct = denom > 0 ? Math.round(st.read / denom * 100) : 0;
+    return st;
+  };
+
+  // ---------- Agrégats de découverte (uniquement à partir des données présentes)
+  const exCharacters = () => {
+    const m = new Map();
+    exGuides().forEach(g => (g.characters || []).forEach(c => { const k = catNorm(c.name); if (!k) return; const x = m.get(k) || { key: k, name: c.name, guides: [], verified: false }; x.guides.push(g.id); x.verified = x.verified || c.status === 'verified'; m.set(k, x); }));
+    return [...m.values()].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+  };
+  const exCreators = () => {
+    const m = new Map();
+    const add = (name, role, ref) => { const k = catNorm(name); if (!k) return; const x = m.get(k) || { key: k, name: gdStr(name, 120), roles: new Set(), guides: new Set(), covers: [] }; if (role) x.roles.add(role); ref(x); m.set(k, x); };
+    exGuides().forEach(g => (g.creators || []).forEach(c => (c.roles.length ? c.roles : ['']).forEach(r => add(c.name, r, x => x.guides.add(g.id)))));
+    physicalSingles.forEach(s => { if (s.coverArtist) add(s.coverArtist, 'cover', x => { if (x.covers.length < 200) x.covers.push(s.id); }); });
+    return [...m.values()].map(x => ({ key: x.key, name: x.name, roles: [...x.roles], guides: [...x.guides], covers: x.covers })).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
+  };
+  const exSeriesList = () => {
+    const m = new Map();
+    const add = (name, publisher, year, from, ref) => { const k = gdBase(name); if (!k) return; const x = m.get(k) || { key: k, name: String(name).replace(/\s*\(\s*\d{4}\s*\)\s*$/, '').trim(), publishers: new Set(), years: [], owned: 0, wish: 0, pubs: 0, guides: new Set(), issues: new Set() }; if (publisher) x.publishers.add(publisher); if (year) x.years.push(year); ref(x); m.set(k, x); };
+    physicalSingles.forEach(s => add(s.series, s.publisher, exYear(s.coverYear) || exYear(s.releaseDate), 'collection', x => { if (s.isWishlist) x.wish++; else { x.owned++; x.issues.add(gdIssue(s.issue)); } }));
+    relPubs.forEach(p => add(p.series, p.publisher, exYear(p.dates.current), 'calendar', x => { x.pubs++; }));
+    exGuides().forEach(g => (g.orders || []).forEach(o => o.entries.forEach(e => add(e.series, e.publisher, exYear(e.year), 'guide', x => x.guides.add(g.id)))));
+    return [...m.values()].map(x => ({ key: x.key, name: x.name, publishers: [...x.publishers], from: x.years.length ? Math.min(...x.years) : null, to: x.years.length ? Math.max(...x.years) : null,
+      owned: x.owned, wish: x.wish, pubs: x.pubs, guides: [...x.guides], issues: [...x.issues].filter(Boolean).sort((a, b) => (issueNumber(a) || 0) - (issueNumber(b) || 0)) }));
+  };
+  const exPublishers = () => {
+    const m = new Map();
+    REL_PUBLISHERS.forEach(([name, market]) => { if (!m.has(catNorm(name))) m.set(catNorm(name), { key: catNorm(name), name, market, owned: 0, pubs: 0, guides: 0, known: true }); });
+    const get = name => { const pb = relPublisher(name); const k = catNorm(pb.name); if (!k) return null; if (!m.has(k)) m.set(k, { key: k, name: pb.name, market: pb.market, owned: 0, pubs: 0, guides: 0, known: false }); return m.get(k); };
+    physicalSingles.forEach(s => { const x = !s.isWishlist && get(s.publisher); if (x) x.owned++; });
+    relPubs.forEach(p => { const x = get(p.publisher); if (x) x.pubs++; });
+    exGuides().forEach(g => { const x = get(g.publisher); if (x) x.guides++; });
+    return [...m.values()];
+  };
+
+  // ---------- Recherche globale (catalogue des publications, collection, séries, guides, personnages, créateurs, éditeurs, éditions)
+  const EX_CATS = { guides: 'Guides & événements', publications: 'Publications', collection: 'Ma collection', series: 'Séries', characters: 'Personnages', creators: 'Créateurs', publishers: 'Éditeurs', editions: 'Éditions & recueils' };
+  const exSearch = (q, opts = {}) => {
+    const nq = catNorm(q);
+    const out = {};
+    if (!nq) return out;
+    const toks = nq.split(' ').filter(Boolean);
+    const lim = opts.limit || 8;
+    const test = txt => { const t = ' ' + catNorm(txt) + ' '; return toks.every(w => t.includes(w)); };
+    const rank = txt => catNorm(txt).startsWith(nq) ? 0 : 1;
+    const put = (cat, list, label) => { const l = list.sort((a, b) => rank(label(a)) - rank(label(b)) || label(a).localeCompare(label(b), 'fr')); if (l.length) out[cat] = { total: l.length, items: l.slice(0, lim) }; };
+    put('guides', exGuides().filter(g => test([g.title, g.originalTitle, g.publisher, (g.aliases || []).join(' '), (g.characters || []).map(c => c.name).join(' '), GD_CATEGORIES[g.category]].join(' '))), g => g.title);
+    put('publications', [...relPubs.values()].filter(p => test([p.series, p.title, p.publisher, p.issue, '#' + p.issue, p.market, Object.values(p.externalIds || {}).join(' ')].join(' '))), p => p.series);
+    put('collection', physicalSingles.filter(s => test([s.series, s.title, s.publisher, s.issue, '#' + s.issue, s.variant, s.isbn, s.upc].join(' '))), s => s.series || '');
+    put('series', exSeriesList().filter(x => test(x.name + ' ' + x.publishers.join(' '))), x => x.name);
+    put('characters', exCharacters().filter(x => test(x.name)), x => x.name);
+    put('creators', exCreators().filter(x => test(x.name)), x => x.name);
+    put('publishers', exPublishers().filter(x => test(x.name)), x => x.name);
+    put('editions', exGuides().flatMap(g => (g.editions || []).map(ed => Object.assign({ guideId: g.id, guideTitle: g.title }, ed))).filter(ed => test([ed.title, ed.publisher, ed.isbn, ed.guideTitle].join(' '))), ed => ed.title);
+    return out;
+  };
+  const EX_HIST_KEY = 'panel_explorer_recent';
+  const exHistory = () => { try { const v = JSON.parse(localStorage.getItem(EX_HIST_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 8) : []; } catch (_) { return []; } };
+  const exRemember = q => { const s = gdStr(q, 80); if (!s) return; try { localStorage.setItem(EX_HIST_KEY, JSON.stringify([s].concat(exHistory().filter(x => x !== s)).slice(0, 8))); } catch (_) {} };
+
+  // ---------- Recommandations déterministes et explicables
+  const exRecos = () => {
+    const idx = exIndexBuild(), out = [];
+    const followed = new Set(getPullList().map(p => gdBase(p.name)));
+    relPulls.forEach(pl => { const p = relPubs.get(pl.pubId); if (p && pl.status !== 'cancelled') followed.add(gdBase(p.series)); });
+    exGuides().forEach(g => {
+      const order = (g.orders || [])[0];
+      if (!order) return;
+      const st = exOrderStats(g, order, idx);
+      if (st.read > 0 && st.read + st.skipped < st.total) out.push({ guideId: g.id, kind: 'continue', score: 3, text: 'Continuer « ' + g.title + ' »', why: st.read + ' lu(s) sur ' + st.total + ' dans votre progression.' });
+      else if (st.owned > 0) out.push({ guideId: g.id, kind: 'owned', score: 2, text: 'Vous possédez ' + st.owned + ' numéro(s) de « ' + g.title + ' »', why: st.missing + ' entrée(s) du guide manquent à votre collection.' });
+      const series = new Set(order.entries.map(e => gdBase(e.series)));
+      const hitF = [...followed].find(f => series.has(f));
+      if (hitF) out.push({ guideId: g.id, kind: 'followed', score: 1, text: 'Guide lié à une série suivie', why: 'Une série de votre pull list figure dans « ' + g.title + ' ».' });
+      if (st.read > 0) (g.prerequisites || []).forEach(p => out.push({ guideId: p.guideId || g.id, kind: 'prereq', score: 1, text: 'Prérequis de « ' + g.title + ' » : ' + p.title, why: p.note || 'Indiqué comme lecture préalable par la source.' }));
+    });
+    const seen = new Set();
+    return out.sort((a, b) => b.score - a.score).filter(r => { const k = r.guideId + r.kind + r.text; if (seen.has(k)) return false; seen.add(k); return true; }).slice(0, 6);
+  };
+
+  // ---------- Interface
+  const exView = { page: 'home', id: '', q: '', cat: '', guideCat: '', order: '', imp: '', hideOptional: false, hideRead: false, publisher: '', lang: 'vo', simple: false, spoilers: false, limit: 60, focus: '' };
+  const h = escapeHtml;
+  const exArt = (title, sub) => {
+    const t = String(title || 'Panel').toUpperCase().slice(0, 28).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const s = String(sub || '').toUpperCase().slice(0, 30).replace(/[&<>"']/g, '');
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><defs><pattern id="d" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.6" fill="#2A2A28"/></pattern></defs>' +
+      '<rect width="640" height="360" fill="#111"/><rect width="640" height="360" fill="url(#d)"/><polygon points="420,0 640,0 640,360 300,360" fill="#FFD400"/><polygon points="455,0 470,0 350,360 335,360" fill="#111"/>' +
+      '<text x="32" y="300" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="800" font-size="46" fill="#F3F2EE">' + t + '</text><text x="34" y="330" font-family="Arial" font-size="15" letter-spacing="3" fill="#FFD400">' + s + '</text></svg>';
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  };
+  const exGuideImg = g => g.image && g.image.url ? g.image.url : exArt(g.title, (g.publisher || '') + (g.periodStart ? ' · ' + g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '-' + g.periodEnd : '') : ''));
+  const exImg = (url, alt, cls, fallback) => '<img class="' + (cls || 'ex-img') + '" src="' + h(url) + '" alt="' + h(alt || '') + '" loading="lazy" decoding="async" data-fallback="' + h(fallback || '') + '">';
+  const exBack = () => '<button class="btn secondary ex-back" data-ex-go="home">← Explorer</button>';
+  const exGuideCard = (g, big) => {
+    const n = ((g.orders || [])[0] || { entries: [] }).entries.length;
+    return '<button class="ex-gcard' + (big ? ' is-big' : '') + '" data-ex-guide="' + h(g.id) + '">' + exImg(exGuideImg(g), g.title, 'ex-gcard-img', exArt(g.title, g.publisher)) +
+      '<span class="ex-gcard-body"><span class="ex-kicker">' + h(GD_CATEGORIES[g.category] || '') + ' · ' + h(g.publisher || '') + '</span><b>' + h(g.title) + '</b>' +
+      '<span class="ex-meta">' + (g.periodStart ? h(String(g.periodStart) + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '')) + ' · ' : '') + n + ' entrée(s) · ' + h(GD_COMPLETENESS[g.completeness] || '') + '</span></span></button>';
+  };
+  const exPubMini = p => '<button class="ex-pub" data-ex-pub="' + h(p.id) + '">' + exImg(p.cover && p.cover.url ? p.cover.url : placeholderCover(p.series, p.issue), relLabel(p), 'ex-pub-img', placeholderCover(p.series, p.issue)) +
+    '<span><b>' + h(relLabel(p)) + '</b><small>' + h((p.market || '') + ' · ' + (p.publisher || '')) + '</small>' + relDateBadge(p) + '</span></button>';
+  const exResultsHtml = () => {
+    const res = exSearch(exView.q, { limit: exView.cat ? 60 : 6 });
+    const cats = Object.keys(EX_CATS).filter(c => res[c] && (!exView.cat || exView.cat === c));
+    const chips = '<div class="ex-chips"><button class="ex-chip' + (!exView.cat ? ' active' : '') + '" data-ex-cat="">Tout</button>' + Object.keys(EX_CATS).filter(c => res[c]).map(c => '<button class="ex-chip' + (exView.cat === c ? ' active' : '') + '" data-ex-cat="' + c + '">' + EX_CATS[c] + ' <b>' + res[c].total + '</b></button>').join('') + '</div>';
+    if (!cats.length) return '<div class="ex-empty"><b>Aucun résultat pour « ' + h(exView.q) + ' ».</b><br>La recherche porte sur votre collection, le calendrier, les guides, les personnages, les créateurs et les éditeurs enregistrés dans Panel. Essayez un autre titre, un numéro (« venom 31 ») ou un ISBN.</div>';
+    const item = (c, x) => {
+      if (c === 'guides') return '<button class="ex-res" data-ex-guide="' + h(x.id) + '"><b>' + h(x.title) + '</b><small>' + h((GD_CATEGORIES[x.category] || '') + ' · ' + (x.publisher || '')) + (x.originalTitle && x.originalTitle !== x.title ? ' · VO : ' + h(x.originalTitle) : '') + '</small></button>';
+      if (c === 'publications') return '<button class="ex-res" data-ex-pub="' + h(x.id) + '"><b>' + h(relLabel(x)) + '</b><small>' + h((x.market || '?') + ' · ' + (x.publisher || '') + ' · ' + (REL_STATUS[relStatusOf(x)] || '')) + '</small></button>';
+      if (c === 'collection') return '<button class="ex-res" data-ex-single="' + h(x.id) + '"><b>' + h((x.series || '') + (x.issue ? ' #' + gdIssue(x.issue) : '') + (x.variant ? ' · ' + x.variant : '')) + '</b><small>' + h((x.isWishlist ? 'Wishlist' : 'Possédé') + ' · ' + (x.publisher || '')) + '</small></button>';
+      if (c === 'series') return '<button class="ex-res" data-ex-go="series" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h(x.publishers.join(', ') + (x.owned ? ' · ' + x.owned + ' possédé(s)' : '') + (x.pubs ? ' · ' + x.pubs + ' au calendrier' : '')) + '</small></button>';
+      if (c === 'characters') return '<button class="ex-res" data-ex-go="character" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + x.guides.length + ' guide(s)</small></button>';
+      if (c === 'creators') return '<button class="ex-res" data-ex-go="creator" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h(x.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>';
+      if (c === 'publishers') return '<button class="ex-res" data-ex-go="publisher" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h((x.market ? REL_MARKETS[x.market] ? REL_MARKETS[x.market].label : x.market : '') + (x.owned ? ' · ' + x.owned + ' possédé(s)' : '')) + '</small></button>';
+      return '<button class="ex-res" data-ex-guide="' + h(x.guideId) + '"><b>' + h(x.title) + '</b><small>' + h((x.publisher || '') + (x.isbn ? ' · ISBN ' + x.isbn : '') + ' · ' + (GD_VERIF[x.status] || '') + ' · guide ' + x.guideTitle) + '</small></button>';
+    };
+    return chips + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => item(c, x)).join('') +
+      (!exView.cat && res[c].total > res[c].items.length ? '<button class="ex-more" data-ex-cat="' + c + '">Voir les ' + res[c].total + ' résultats</button>' : '') + '</section>').join('') + '</div>';
+  };
+  const exHomeHtml = () => {
+    const guides = exGuides();
+    const featured = guides.filter(g => g.featured);
+    const today = relToday(), soon = isoDate(new Date(Date.now() + 30 * 86400000)), past = isoDate(new Date(Date.now() - 14 * 86400000));
+    const upcoming = m => relQuery({ range: [today, soon], market: m, publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(0, 6);
+    const recent = relQuery({ range: [past, isoDate(new Date(Date.now() - 86400000))], market: '', publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(-6).reverse();
+    const recos = exRecos();
+    const pubs = exPublishers().filter(p => p.known || p.owned || p.pubs || p.guides);
+    const main = ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'];
+    const tiles = pubs.filter(p => main.includes(p.name)).concat(pubs.filter(p => !main.includes(p.name) && (p.owned || p.pubs || p.guides)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 9));
+    const chars = exCharacters(), creators = exCreators().slice(0, 24);
+    const series = exSeriesList().filter(x => x.owned || x.pubs).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 12);
+    const gCats = Object.keys(GD_CATEGORIES).filter(c => guides.some(g => g.category === c));
+    const shown = guides.filter(g => !exView.guideCat || g.category === exView.guideCat);
+    const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
+    return (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
+      sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
+      sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours, avec vos possessions et votre progression.',
+        (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
+        '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
+        '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button></div>') +
+      sec('exSecUniverses', 'Explorer les univers', 'Éditeurs connus de Panel et ceux de votre collection.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + p.owned + ' possédé(s) · ' + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
+      sec('exSecReleases', 'Sorties et publications', 'Données du calendrier international (lot 2.4).', '<div class="ex-rel-cols">' +
+        [['US', 'États-Unis · 30 prochains jours'], ['FR', 'Francophone · 30 prochains jours']].map(([m, t]) => { const l = upcoming(m); return '<div><h4>' + t + '</h4>' + (l.length ? l.map(exPubMini).join('') : '<p class="ex-note">Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.</p>') + '</div>'; }).join('') +
+        '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
+      sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
+      sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides et artistes de couverture de votre collection.', creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
+      sec('exSecSeries', 'Séries', 'Vos séries et celles du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
+      sec('exSecNews', 'Actualités et annonces', '', exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') :
+        '<p class="ex-note">Aucune source d\'actualités n\'est configurée. Panel n\'affiche pas d\'actualités inventées : cette section accueillera des contenus éditoriaux importés (type « news ») ou un futur service de publication.</p>');
+  };
+  const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
+  const exSrcLabel = (g, id) => { const s = (g.sources || []).find(x => x.id === id); return s ? s.label : ''; };
+  const exGuideHtml = g => {
+    const idx = exIndexBuild();
+    const order = (g.orders || []).find(o => o.id === exView.order) || (g.orders || [])[0];
+    const st = exOrderStats(g, order, idx);
+    const edByEntry = new Map();
+    (g.editions || []).forEach(ed => ed.contains.forEach(k => { const l = edByEntry.get(k) || []; l.push(ed); edByEntry.set(k, l); }));
+    const pubSet = [...new Set((order ? order.entries : []).map(e => e.publisher).filter(Boolean))];
+    let entries = order ? order.entries.slice() : [];
+    const matches = new Map(entries.map(e => [e.id, exMatch(e, idx)]));
+    entries = entries.filter(e => {
+      const m = matches.get(e.id);
+      if (exView.imp && (e.importance || 'none') !== exView.imp) return false;
+      if (exView.hideOptional && e.importance === 'optional') return false;
+      if (exView.hideRead && (m.effective === 'read' || m.effective === 'skipped')) return false;
+      if (exView.publisher && e.publisher !== exView.publisher) return false;
+      if (exView.lang === 'vf' && !edByEntry.has(e.id)) return false;
+      return true;
+    });
+    const next = (order ? order.entries : []).find(e => { const m = matches.get(e.id); return m.effective !== 'read' && m.effective !== 'skipped'; });
+    const bar = (label, a, b) => { const pct = b > 0 ? Math.round(a / b * 100) : 0; return '<div class="ex-prog"><span>' + h(label) + '</span><div class="ex-bar"><i style="width:' + pct + '%"></i></div><b>' + a + '/' + b + '</b></div>'; };
+    const impBars = Object.keys(GD_IMPORTANCE).concat(['unclassified']).filter(k => st.byImp[k]).map(k => bar(GD_IMPORTANCE[k] || 'Non classé', st.byImp[k].read, st.byImp[k].total - st.byImp[k].skipped)).join('');
+    const card = e => {
+      const m = matches.get(e.id), cov = exCoverOf(e, m), eds = edByEntry.get(e.id) || [];
+      const badges = [];
+      if (m.owned.length) badges.push('<span class="ex-b is-owned">Possédé' + (m.owned.length > 1 ? ' ×' + m.owned.length : '') + '</span>');
+      else if (m.probable.length) badges.push('<span class="ex-b is-probable" title="Même titre et numéro, année absente de votre fiche">Possédé ? (à confirmer)</span>');
+      else badges.push('<span class="ex-b is-missing">Manquant</span>');
+      if (m.located) badges.push('<span class="ex-b">Rangé</span>');
+      if (m.wish.length) badges.push('<span class="ex-b is-wish">Wishlist</span>');
+      if (m.pull) badges.push('<span class="ex-b is-pull">Pull list</span>');
+      if (m.effective) badges.push('<span class="ex-b is-st-' + m.effective + '">' + GD_PROGRESS[m.effective] + (m.derived ? ' (collection)' : '') + '</span>');
+      const title = e.series + (e.volume ? ' ' + e.volume : '') + (e.issue ? ' #' + e.issue : '');
+      const why = e.why ? (e.spoiler && !exView.spoilers ? '<button class="ex-spoil" data-ex-spoilers>Explication masquée (spoiler) — afficher</button>' : '<p class="ex-why">' + h(e.why) + '</p>') : '';
+      if (exView.simple) return '<li class="ex-entry is-simple' + (exView.focus === e.id ? ' is-focus' : '') + '" id="exE_' + h(e.id) + '"><span class="ex-pos">' + e.pos + '</span><b>' + h(title) + '</b>' + (e.importance ? '<span class="ex-imp is-' + e.importance + '">' + GD_IMPORTANCE[e.importance] + '</span>' : '') + badges.join('') +
+        '<select class="field-input ex-st" data-ex-st="' + h(e.id) + '" aria-label="Statut de lecture"><option value="">—</option>' + Object.entries(GD_PROGRESS).map(([k, l]) => '<option value="' + k + '"' + (m.status === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></li>';
+      return '<li class="ex-entry' + (m.effective === 'read' ? ' is-read' : '') + (exView.focus === e.id ? ' is-focus' : '') + '" id="exE_' + h(e.id) + '">' +
+        '<div class="ex-cov"><span class="ex-pos">' + e.pos + '</span>' + exImg(cov.url, title, 'ex-cov-img', placeholderCover(e.series, e.issue)) + (cov.placeholder ? '' : '<small class="ex-cov-src" title="' + h(cov.rights || '') + '">' + h(cov.source) + '</small>') + '</div>' +
+        '<div class="ex-ebody"><div class="ex-etitle"><b>' + h(title) + '</b>' + (e.importance ? '<span class="ex-imp is-' + e.importance + '" title="Source : ' + h(exSrcLabel(g, e.importanceSource) || 'décision éditoriale') + '">' + GD_IMPORTANCE[e.importance] + '</span>' : '<span class="ex-imp">Non classé</span>') + '</div>' +
+        '<small class="ex-meta">' + h([e.publisher, e.year, e.title].filter(Boolean).join(' · ')) + (m.pub ? ' · <button class="ex-link" data-ex-pub="' + h(m.pub.id) + '">Fiche ' + (m.pubHow === 'auto' ? '(correspondance exacte)' : '') + '</button>' : ' · <span class="ex-unres">Non identifiée au catalogue</span>') + '</small>' +
+        '<div class="ex-badges">' + badges.join('') + '</div>' + why + (e.note ? '<p class="ex-why"><i>' + h(e.note) + '</i></p>' : '') + (e.prerequisites ? '<p class="ex-why">Prérequis : ' + h(e.prerequisites) + '</p>' : '') +
+        (eds.length ? '<p class="ex-vf">VF : ' + eds.map(ed => h(ed.title + (ed.publisher ? ' (' + ed.publisher + ')' : '')) + ' <span class="ex-b">' + GD_VERIF[ed.status] + '</span>').join(' · ') + '</p>' : '') +
+        '<div class="ex-acts">' + Object.entries(GD_PROGRESS).map(([k, l]) => '<button class="ex-stbtn' + (m.status === k ? ' active' : '') + '" data-ex-set="' + h(e.id) + '" data-st="' + k + '">' + l + '</button>').join('') +
+        (m.pub && !m.owned.length && !m.wish.length ? '<button class="ex-stbtn" data-ex-wish="' + h(m.pub.id) + '">+ Wishlist</button>' : '') + '</div></div></li>';
+    };
+    const shown = entries.slice(0, exView.limit);
+    const people = (list, isC) => list.map(x => '<button class="ex-chip" data-ex-go="' + (isC ? 'creator' : 'character') + '" data-ex-id="' + h(catNorm(x.name)) + '">' + h(x.name) + (isC && x.roles.length ? ' <small>' + h(x.roles.map(r => GD_ROLES[r]).join(', ')) + '</small>' : '') + (x.status !== 'verified' ? ' <small>non vérifié</small>' : '') + '</button>').join('');
+    const involved = [...new Set((order ? order.entries : []).map(e => e.series))];
+    return exBack() + '<article class="ex-guide">' +
+      '<header class="ex-ghero">' + exImg(exGuideImg(g), g.title, 'ex-ghero-img', exArt(g.title, g.publisher)) + '<div class="ex-ghero-txt"><span class="ex-kicker">' + h(GD_CATEGORIES[g.category] || '') + ' · ' + h(g.publisher || '') + (g.periodStart ? ' · ' + g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '') : '') + '</span>' +
+        '<h2>' + h(g.title) + '</h2>' + (g.originalTitle && g.originalTitle !== g.title ? '<p class="ex-vo">Titre original : ' + h(g.originalTitle) + '</p>' : '') +
+        '<div class="ex-badges"><span class="ex-b is-' + g.completeness + '">' + h(GD_COMPLETENESS[g.completeness]) + '</span>' + (g.verifiedAt ? '<span class="ex-b">Vérifié le ' + h(relFmtDate(g.verifiedAt.slice(0, 10))) + '</span>' : '') + '<span class="ex-b">' + (g.languages || []).map(l => l.toUpperCase()).join(' / ') + '</span></div>' +
+        '<div class="ex-gstats"><span><b>' + st.total + '</b> entrées</span><span><b>' + st.essential + '</b> essentielles</span><span><b>' + st.owned + '</b> possédées</span><span><b>' + st.read + '</b> lues</span><span><b>' + st.missing + '</b> manquantes</span></div>' +
+        '<div class="ex-row">' + (next ? '<button class="btn" data-ex-next="' + h(next.id) + '">Reprendre : ' + h(next.series + ' #' + next.issue) + '</button>' : '<span class="ex-b is-owned">Guide terminé</span>') +
+        '<button class="btn secondary" data-ex-edit="' + h(g.id) + '">Modifier</button><button class="btn secondary" data-ex-export="' + h(g.id) + '">Exporter</button></div></div></header>' +
+      '<div class="ex-gcols"><div class="ex-gmain">' +
+        '<div class="da-tabs ex-otabs">' + (g.orders || []).map(o => '<button class="da-tab' + (o.id === (order && order.id) ? ' active' : '') + '" data-ex-order="' + h(o.id) + '">' + h(o.label) + '</button>').join('') + '</div>' +
+        (order ? '<p class="ex-note">' + h(GD_ORDER_TYPES[order.type]) + (order.sourceId ? ' · source : ' + h(exSrcLabel(g, order.sourceId)) : ' · décision éditoriale') + (order.derivedFrom ? ' · dérivé de « ' + h(((g.orders || []).find(o => o.id === order.derivedFrom) || {}).label || '') + ' »' : '') + '</p>' : '<p class="ex-note">Aucun ordre de lecture.</p>') +
+        '<div class="ex-progbox">' + bar('Progression globale', st.read, st.total - st.skipped) + impBars + '</div>' +
+        '<div class="ex-filters"><select class="field-input" data-ex-f="imp"><option value="">Toutes importances</option>' + Object.entries(GD_IMPORTANCE).map(([k, l]) => '<option value="' + k + '"' + (exView.imp === k ? ' selected' : '') + '>' + l + '</option>').join('') + '<option value="none"' + (exView.imp === 'none' ? ' selected' : '') + '>Non classé</option></select>' +
+          (pubSet.length > 1 ? '<select class="field-input" data-ex-f="publisher"><option value="">Tous éditeurs</option>' + pubSet.map(p => '<option' + (exView.publisher === p ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select>' : '') +
+          '<select class="field-input" data-ex-f="lang"><option value="vo"' + (exView.lang === 'vo' ? ' selected' : '') + '>VO</option><option value="vf"' + (exView.lang === 'vf' ? ' selected' : '') + '>Avec édition VF</option></select>' +
+          ['hideOptional:Masquer les facultatifs', 'hideRead:Masquer les lus', 'simple:Mode simplifié', 'spoilers:Afficher les spoilers'].map(x => { const [k, l] = x.split(':'); return '<label class="da-switch"><input type="checkbox" data-ex-f="' + k + '"' + (exView[k] ? ' checked' : '') + '> ' + l + '</label>'; }).join('') + '</div>' +
+        '<p class="ex-note">' + entries.length + ' entrée(s) affichée(s) sur ' + st.total + '.</p>' +
+        (entries.length ? '<ol class="ex-entries' + (exView.simple ? ' is-simple' : '') + '">' + shown.map(card).join('') + '</ol>' + (entries.length > shown.length ? '<button class="btn secondary" data-ex-moreentries>Afficher ' + Math.min(60, entries.length - shown.length) + ' entrée(s) de plus</button>' : '') : '<div class="ex-empty">Aucune entrée ne correspond aux filtres.</div>') +
+      '</div><div class="ex-gside">' +
+        '<section><h4>Contexte</h4>' + (g.spoilerNote && !exView.spoilers ? '<button class="ex-spoil" data-ex-spoilers>Synopsis avec spoilers masqué — afficher</button>' : '<p>' + h(g.synopsis || 'Synopsis non renseigné.') + '</p>' + (g.spoilerNote ? '<p>' + h(g.spoilerNote) + '</p>' : '')) + (g.description ? '<p class="ex-note">' + h(g.description) + '</p>' : '') + '</section>' +
+        ((g.prerequisites || []).length ? '<section><h4>Prérequis</h4><ul>' + g.prerequisites.map(p => '<li>' + exLinkTitle(p) + (p.note ? ' — ' + h(p.note) : '') + (p.sourceId ? ' <small>(' + h(exSrcLabel(g, p.sourceId)) + ')</small>' : '') + '</li>').join('') + '</ul></section>' : '') +
+        ((g.relations || []).length ? '<section><h4>Événements liés</h4><ul>' + g.relations.map(r => '<li>' + h(GD_GUIDE_REL[r.type] || '') + ' : ' + exLinkTitle(r) + (r.sourceId ? ' <small>(' + h(exSrcLabel(g, r.sourceId)) + ')</small>' : '') + '</li>').join('') + '</ul></section>' : '') +
+        ((g.characters || []).length ? '<section><h4>Personnages</h4><div class="ex-chips">' + people(g.characters, false) + '</div></section>' : '') +
+        ((g.creators || []).length ? '<section><h4>Créateurs</h4><div class="ex-chips">' + people(g.creators, true) + '</div></section>' : '') +
+        '<section><h4>Séries impliquées (' + involved.length + ')</h4><div class="ex-chips">' + involved.map(s => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(gdBase(s)) + '">' + h(s) + '</button>').join('') + '</div></section>' +
+        '<section><h4>Éditions françaises</h4>' + ((g.editions || []).length ? g.editions.map(ed => '<div class="ex-ed"><b>' + h(ed.title) + '</b><small>' + h([ed.publisher, ed.isbn ? 'ISBN ' + ed.isbn : '', ed.date ? relFmtDate(ed.date) : '', ed.pages ? ed.pages + ' p.' : '', GD_EDITION_REL[ed.relation]].filter(Boolean).join(' · ')) + '</small>' +
+          '<span class="ex-b ' + (ed.status === 'verified' ? 'is-owned' : 'is-probable') + '">' + GD_VERIF[ed.status] + '</span> <small>' + (ed.contains.length ? ed.contains.length + ' entrée(s) associée(s)' : 'Contenu non associé') + '</small>' + (ed.note ? '<p class="ex-note">' + h(ed.note) + '</p>' : '') + (ed.sourceId ? '<small>Source : ' + h(exSrcLabel(g, ed.sourceId)) + '</small>' : '') + '</div>').join('') : '<p class="ex-note">Aucune correspondance VF enregistrée.</p>') + '</section>' +
+        '<section><h4>Sources</h4><ul class="ex-src">' + (g.sources || []).map(s => '<li>' + (s.url ? '<a href="' + h(s.url) + '" target="_blank" rel="noopener noreferrer">' + h(s.label) + '</a>' : h(s.label)) + (s.retrievedAt ? ' <small>· consultée le ' + h(relFmtDate(s.retrievedAt.slice(0, 10))) + '</small>' : '') + (s.license ? '<br><small>' + h(s.license) + '</small>' : '') + '</li>').join('') + '</ul></section>' +
+      '</div></div></article>';
+  };
+  const exEntityHtml = () => {
+    const key = exView.id, guides = exGuides();
+    const glist = ids => ids.length ? '<div class="ex-ggrid">' + ids.map(id => exEditorial.get(id)).filter(Boolean).map(g => exGuideCard(g)).join('') + '</div>' : '<p class="ex-note">Aucun guide associé.</p>';
+    if (exView.page === 'publisher') {
+      const p = exPublishers().find(x => x.key === key);
+      if (!p) return exBack() + '<div class="ex-empty">Éditeur introuvable.</div>';
+      const ser = exSeriesList().filter(x => x.publishers.some(n => catNorm(relPublisher(n).name) === key)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs));
+      const up = relQuery({ range: [relToday(), isoDate(new Date(Date.now() + 60 * 86400000))], market: '', publisher: p.name, format: '', status: '', q: '', pullOnly: false }).slice(0, 12);
+      const gids = guides.filter(g => catNorm(relPublisher(g.publisher).name) === key).map(g => g.id);
+      const chars = exCharacters().filter(c => c.guides.some(id => gids.includes(id))), crea = exCreators().filter(c => c.guides.some(id => gids.includes(id)));
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h((REL_MARKETS[p.market] || {}).label || 'Autre marché') + '</span><h2>' + h(p.name) + '</h2><p class="ex-note">Présentation éditoriale non renseignée. ' + p.owned + ' exemplaire(s) possédé(s), ' + p.pubs + ' publication(s) au calendrier, ' + gids.length + ' guide(s).</p></header>' +
+        '<section class="ex-sec"><h3>Guides et événements</h3>' + glist(gids) + '</section>' +
+        '<section class="ex-sec"><h3>À paraître (60 jours)</h3>' + (up.length ? '<div class="ex-pubgrid">' + up.map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune sortie enregistrée.</p>') + '</section>' +
+        '<section class="ex-sec"><h3>Séries (' + ser.length + ')</h3>' + (ser.length ? '<div class="ex-chips">' + ser.slice(0, 80).map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + '</button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') + '</section>' +
+        (chars.length ? '<section class="ex-sec"><h3>Personnages</h3><div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + '</button>').join('') + '</div></section>' : '') +
+        (crea.length ? '<section class="ex-sec"><h3>Créateurs</h3><div class="ex-chips">' + crea.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + '</button>').join('') + '</div></section>' : '');
+    }
+    if (exView.page === 'character') {
+      const c = exCharacters().find(x => x.key === key);
+      if (!c) return exBack() + '<div class="ex-empty">Personnage introuvable.</div>';
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">Personnage</span><h2>' + h(c.name) + '</h2><p class="ex-note">' + (c.verified ? 'Présence vérifiée par une source.' : 'Présence citée dans un guide, non vérifiée.') + ' Panel n\'affiche ni chronologie ni relation non sourcée.</p></header>' +
+        '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>';
+    }
+    if (exView.page === 'creator') {
+      const c = exCreators().find(x => x.key === key);
+      if (!c) return exBack() + '<div class="ex-empty">Créateur introuvable.</div>';
+      const covers = c.covers.map(id => physicalSingles.find(s => s.id === id)).filter(Boolean);
+      const collab = new Map();
+      c.guides.forEach(id => (exEditorial.get(id).creators || []).forEach(o => { if (catNorm(o.name) !== key) collab.set(catNorm(o.name), o.name); }));
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(c.roles.map(r => GD_ROLES[r] || r).join(' · ') || 'Créateur') + '</span><h2>' + h(c.name) + '</h2><p class="ex-note">Bibliographie limitée aux données présentes dans Panel (guides et collection).</p></header>' +
+        '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>' +
+        (collab.size ? '<section class="ex-sec"><h3>Collaborations citées</h3><div class="ex-chips">' + [...collab.entries()].map(([k, n]) => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(k) + '">' + h(n) + '</button>').join('') + '</div></section>' : '') +
+        (covers.length ? '<section class="ex-sec"><h3>Couvertures dans votre collection (' + covers.length + ')</h3><div class="ex-chips">' + covers.slice(0, 60).map(s => '<button class="ex-chip" data-ex-single="' + h(s.id) + '">' + h(s.series + ' #' + gdIssue(s.issue)) + '</button>').join('') + '</div></section>' : '');
+    }
+    if (exView.page === 'series') {
+      const x = exSeriesList().find(s => s.key === key);
+      if (!x) return exBack() + '<div class="ex-empty">Série introuvable.</div>';
+      const pubs = [...relPubs.values()].filter(p => gdBase(p.series) === key).sort((a, b) => (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
+      const vars = physicalSingles.filter(s => gdBase(s.series) === key && s.variant).length;
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(x.publishers.join(' · ') || 'Éditeur inconnu') + (x.from ? ' · ' + x.from + (x.to && x.to !== x.from ? '–' + x.to : '') : '') + '</span><h2>' + h(x.name) + '</h2>' +
+        '<p class="ex-note">' + x.owned + ' exemplaire(s) possédé(s)' + (x.wish ? ', ' + x.wish + ' en wishlist' : '') + (vars ? ', ' + vars + ' variante(s)' : '') + ', ' + x.pubs + ' publication(s) au calendrier.</p></header>' +
+        (x.issues.length ? '<section class="ex-sec"><h3>Numéros possédés</h3><div class="ex-chips">' + x.issues.map(n => '<span class="ex-chip is-static">#' + h(n) + '</span>').join('') + '</div></section>' : '') +
+        '<section class="ex-sec"><h3>Publications et éditions</h3>' + (pubs.length ? '<div class="ex-pubgrid">' + pubs.slice(0, 60).map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune publication au calendrier.</p>') + '</section>' +
+        '<section class="ex-sec"><h3>Guides de lecture</h3>' + glist(x.guides) + '</section>';
+    }
+    return exHomeHtml();
+  };
+  const renderExplorer = () => {
+    const root = $('explorerRoot');
+    if (!root) return;
+    if (exView.page === 'home') {
+      const hist = exHistory();
+      root.innerHTML = '<section class="ex-hero"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Tout l\'univers comics, à partir de vos données.</h2>' +
+        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="Titre, numéro, événement, personnage, créateur, éditeur, ISBN…" value="' + h(exView.q) + '"></div>' +
+        (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') + '</div></section>' +
+        '<div id="exResults">' + (exView.q ? exResultsHtml() : '') + '</div><div id="exHome"' + (exView.q ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
+    } else if (exView.page === 'guide') {
+      const g = exEditorial.get(exView.id);
+      root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
+    } else root.innerHTML = exEntityHtml();
+  };
+  const exRefreshResults = () => {
+    const r = $('exResults'), home = $('exHome');
+    if (!r) return renderExplorer();
+    r.innerHTML = exView.q ? exResultsHtml() : '';
+    if (home) home.hidden = !!exView.q;
+  };
+  const exGo = (page, id) => {
+    Object.assign(exView, { page, id: id || '' });
+    if (page === 'guide') Object.assign(exView, { order: '', imp: '', hideOptional: false, hideRead: false, publisher: '', lang: 'vo', limit: 60, focus: '' });
+    renderExplorer();
+    const v = $('singlesExplorerView');
+    if (v && v.scrollIntoView && !navigator.webdriver) v.scrollIntoView({ block: 'start' });
+  };
+  const showExplorer = async () => {
+    await Promise.all([loadExplorerData(), loadReleaseData()]);
+    renderExplorer();
+  };
+
+  // ---------- Édition des guides (formulaire simple, brouillon validé à l'enregistrement)
+  let gdDraft = null, gdDraftOrder = 0, gdPendingPlan = null;
+  const gdNewDraft = () => ({ id: 'gd_' + Date.now().toString(36), kind: 'guide', origin: 'user', category: 'major_event', title: '', originalTitle: '', publisher: '', periodStart: '', periodEnd: '', synopsis: '', description: '',
+    image: null, languages: ['en'], characters: [], creators: [], prerequisites: [], relations: [], sources: [], orders: [{ id: 'ord_' + Date.now().toString(36), type: 'reference', label: 'Ordre de lecture', sourceId: '', entries: [] }], editions: [], completeness: 'partial', verifiedAt: '' });
+  const gdPath = (obj, path, val) => { const ks = path.split('.'); let o = obj; for (let i = 0; i < ks.length - 1; i++) { o = o[ks[i]]; if (o === undefined || o === null) return; } o[ks[ks.length - 1]] = val; };
+  const gdField = (label, path, val, type, extra) => '<label class="gd-f"><span>' + label + '</span>' + (type === 'textarea' ? '<textarea class="field-input" data-gd="' + path + '" rows="3">' + h(val || '') + '</textarea>' : '<input class="field-input" data-gd="' + path + '" type="' + (type || 'text') + '" value="' + h(val === null || val === undefined ? '' : val) + '"' + (extra || '') + '>') + '</label>';
+  const gdSelect = (label, path, val, opts) => '<label class="gd-f"><span>' + label + '</span><select class="field-input" data-gd="' + path + '">' + Object.entries(opts).map(([k, l]) => '<option value="' + h(k) + '"' + (String(val) === k ? ' selected' : '') + '>' + h(l) + '</option>').join('') + '</select></label>';
+  const renderGuideEditor = () => {
+    const d = gdDraft, body = $('guideEditBody');
+    if (!d || !body) return;
+    const srcOpts = Object.assign({ '': '— (décision éditoriale)' }, Object.fromEntries((d.sources || []).map(s => [s.id, s.label])));
+    const o = d.orders[gdDraftOrder] || d.orders[0];
+    const peopleTxt = (list, isC) => (list || []).map(x => x.name + (isC && x.roles && x.roles.length ? ' : ' + x.roles.join(',') : '')).join('\n');
+    body.innerHTML = '<h4>Événement / guide</h4><div class="gd-grid">' + gdField('Titre *', 'title', d.title) + gdField('Titre original', 'originalTitle', d.originalTitle) + gdField('Éditeur', 'publisher', d.publisher) +
+      gdSelect('Catégorie', 'category', d.category, GD_CATEGORIES) + gdField('Début (année)', 'periodStart', d.periodStart, 'number') + gdField('Fin (année)', 'periodEnd', d.periodEnd, 'number') +
+      gdSelect('Complétude', 'completeness', d.completeness, GD_COMPLETENESS) + gdField('Dernière vérification', 'verifiedAt', (d.verifiedAt || '').slice(0, 10), 'date') +
+      '<label class="gd-f"><span>À la une</span><input type="checkbox" data-gd-bool="featured"' + (d.featured ? ' checked' : '') + '></label></div>' +
+      gdField('Synopsis (sans spoiler)', 'synopsis', d.synopsis, 'textarea') + gdField('Avertissement / synopsis avec spoilers', 'spoilerNote', d.spoilerNote, 'textarea') + gdField('Description / notes de complétude', 'description', d.description, 'textarea') +
+      '<div class="gd-grid">' + gdField('Image principale (https)', 'image.url', d.image && d.image.url) + gdField('Source de l\'image', 'image.source', d.image && d.image.source) + gdField('Droits / conditions', 'image.rights', d.image && d.image.rights) + '</div>' +
+      '<div class="gd-grid"><label class="gd-f"><span>Personnages (un par ligne)</span><textarea class="field-input" data-gd-list="characters" rows="3">' + h(peopleTxt(d.characters)) + '</textarea></label>' +
+      '<label class="gd-f"><span>Créateurs (« Nom : writer,artist »)</span><textarea class="field-input" data-gd-list="creators" rows="3">' + h(peopleTxt(d.creators, true)) + '</textarea></label>' +
+      '<label class="gd-f"><span>Prérequis (un par ligne)</span><textarea class="field-input" data-gd-list="prerequisites" rows="3">' + h((d.prerequisites || []).map(p => p.title).join('\n')) + '</textarea></label></div>' +
+      '<h4>Sources</h4>' + (d.sources || []).map((s, i) => '<div class="gd-row">' + gdField('Libellé', 'sources.' + i + '.label', s.label) + gdField('URL (https)', 'sources.' + i + '.url', s.url) + gdField('Licence / conditions', 'sources.' + i + '.license', s.license) + gdField('Consultée le', 'sources.' + i + '.retrievedAt', (s.retrievedAt || '').slice(0, 10), 'date') + '</div>').join('') +
+      '<button class="btn secondary rel-mini" data-gd-act="addSource">+ Source</button>' +
+      '<h4>Ordres de lecture</h4><div class="da-tabs">' + d.orders.map((x, i) => '<button class="da-tab' + (i === gdDraftOrder ? ' active' : '') + '" data-gd-order="' + i + '">' + h(x.label || 'Ordre') + ' (' + x.entries.length + ')</button>').join('') + '<button class="da-tab" data-gd-act="addOrder">+ Ordre</button></div>' +
+      (o ? '<div class="gd-grid">' + gdField('Libellé', 'orders.' + gdDraftOrder + '.label', o.label) + gdSelect('Type', 'orders.' + gdDraftOrder + '.type', o.type, GD_ORDER_TYPES) + gdSelect('Source de l\'ordre', 'orders.' + gdDraftOrder + '.sourceId', o.sourceId, srcOpts) + '</div>' +
+        '<div class="da-wrap"><table class="da-table gd-entries"><thead><tr><th>#</th><th>Série *</th><th>Vol.</th><th>N°</th><th>Année</th><th>Importance</th><th>Source du niveau</th><th>Explication</th><th>Spoiler</th><th>Publication (pbc_…)</th><th></th></tr></thead><tbody>' +
+        o.entries.map((e, i) => { const p = 'orders.' + gdDraftOrder + '.entries.' + i + '.'; return '<tr><td>' + (i + 1) + '</td><td><input class="field-input" data-gd="' + p + 'series" value="' + h(e.series) + '"></td><td><input class="field-input gd-s" data-gd="' + p + 'volume" value="' + h(e.volume) + '"></td><td><input class="field-input gd-s" data-gd="' + p + 'issue" value="' + h(e.issue) + '"></td>' +
+          '<td><input class="field-input gd-s" data-gd="' + p + 'year" value="' + h(e.year) + '"></td><td><select class="field-input" data-gd="' + p + 'importance"><option value="">Non classé</option>' + Object.entries(GD_IMPORTANCE).map(([k, l]) => '<option value="' + k + '"' + (e.importance === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></td>' +
+          '<td><select class="field-input" data-gd="' + p + 'importanceSource">' + Object.entries(Object.assign({ '': '—', editorial: 'Décision éditoriale Panel' }, srcOpts, { '': '—' })).map(([k, l]) => '<option value="' + h(k) + '"' + (e.importanceSource === k ? ' selected' : '') + '>' + h(l) + '</option>').join('') + '</select></td>' +
+          '<td><input class="field-input" data-gd="' + p + 'why" value="' + h(e.why) + '"></td><td><input type="checkbox" data-gd-bool="' + p + 'spoiler"' + (e.spoiler ? ' checked' : '') + '></td><td><input class="field-input" data-gd="' + p + 'pubId" value="' + h(e.pubId) + '"></td>' +
+          '<td class="gd-ops"><button class="btn-icon" data-gd-act="up" data-i="' + i + '" aria-label="Monter">↑</button><button class="btn-icon" data-gd-act="down" data-i="' + i + '" aria-label="Descendre">↓</button><button class="btn-icon" data-gd-act="del" data-i="' + i + '" aria-label="Retirer">✕</button></td></tr>'; }).join('') +
+        '</tbody></table></div><button class="btn secondary rel-mini" data-gd-act="addEntry">+ Entrée</button>' : '') +
+      '<h4>Correspondances d\'éditions (VO / VF)</h4>' + (d.editions || []).map((ed, i) => '<div class="gd-row">' + gdField('Titre', 'editions.' + i + '.title', ed.title) + gdField('Éditeur', 'editions.' + i + '.publisher', ed.publisher) + gdField('ISBN', 'editions.' + i + '.isbn', ed.isbn) +
+        gdSelect('Relation', 'editions.' + i + '.relation', ed.relation, GD_EDITION_REL) + gdSelect('Source', 'editions.' + i + '.sourceId', ed.sourceId, srcOpts) + gdSelect('Statut', 'editions.' + i + '.status', ed.status, GD_VERIF) +
+        '<label class="gd-f"><span>Entrées contenues (positions, ex. 12, 22-24)</span><input class="field-input" data-gd-contains="' + i + '" value="' + h(gdPositions(ed.contains)) + '"></label></div>').join('') +
+      '<button class="btn secondary rel-mini" data-gd-act="addEdition">+ Édition</button>' +
+      '<p class="ex-note">Un niveau éditorial (Essentiel, Recommandé, Facultatif) n\'est conservé que s\'il cite une source ou une décision éditoriale. Une édition ne passe en « Vérifié » qu\'avec une source.</p><div id="guideEditMsg" class="ex-note"></div>';
+  };
+  const gdPositions = keys => { const o = gdDraft && (gdDraft.orders[gdDraftOrder] || gdDraft.orders[0]); if (!o) return ''; return (keys || []).map(k => { const i = o.entries.findIndex(e => (e.id || gdEntryKey(e.series, e.volume, e.issue)) === k); return i >= 0 ? i + 1 : null; }).filter(Boolean).join(', '); };
+  const openGuideEditor = id => {
+    const g = id && exEditorial.get(id);
+    gdDraft = g ? JSON.parse(JSON.stringify(g)) : gdNewDraft();
+    gdDraftOrder = 0;
+    gdPendingPlan = null;
+    $('guideEditSave').textContent = 'Enregistrer';
+    $('guideEditSave').disabled = false;
+    $('guideEditTitle').textContent = g ? 'Modifier « ' + g.title + ' »' : 'Nouveau guide';
+    renderGuideEditor();
+    $('guideEditModal').classList.add('open');
+  };
+  const saveGuideDraft = async () => {
+    const d = JSON.parse(JSON.stringify(gdDraft));
+    d.orders.forEach(o => o.entries.forEach(e => { if (e.importance && e.importanceSource === 'editorial') e.importanceSource = 'editorial'; }));
+    const r = await exSaveGuide(d, { edit: true });
+    if (!r.ok) { $('guideEditMsg').innerHTML = '<span class="da-warn">' + h(r.errors.join(' ')) + '</span>'; return r; }
+    $('guideEditModal').classList.remove('open');
+    showToast('Guide enregistré' + (r.warnings.length ? ' (' + r.warnings.length + ' avertissement(s) : ' + r.warnings[0] + ')' : '') + '.');
+    exGo('guide', r.guide.id);
+    return r;
+  };
+  const wireGuideEditor = () => {
+    const modal = $('guideEditModal');
+    if (!modal) return;
+    $('closeGuideEditBtn').onclick = () => modal.classList.remove('open');
+    $('guideEditSave').onclick = () => saveGuideDraft();
+    const body = $('guideEditBody');
+    body.addEventListener('input', e => {
+      const t = e.target;
+      if (!gdDraft) return;
+      if (t.dataset.gd) {
+        if (t.dataset.gd.startsWith('image.') && !gdDraft.image) gdDraft.image = { url: '', source: '', rights: '', manual: true };
+        gdPath(gdDraft, t.dataset.gd, t.value);
+      } else if (t.dataset.gdList) {
+        const lines = t.value.split('\n').map(x => x.trim()).filter(Boolean);
+        if (t.dataset.gdList === 'creators') gdDraft.creators = lines.map(l => { const [n, r] = l.split(':'); return { name: n.trim(), roles: (r || '').split(',').map(x => x.trim()).filter(x => GD_ROLES[x]), status: 'unverified', sourceId: '' }; });
+        else if (t.dataset.gdList === 'characters') gdDraft.characters = lines.map(n => ({ name: n, status: 'unverified', sourceId: '' }));
+        else gdDraft.prerequisites = lines.map(n => ({ title: n, note: '', sourceId: '', guideId: '' }));
+      } else if (t.dataset.gdContains !== undefined) {
+        const o = gdDraft.orders[gdDraftOrder] || gdDraft.orders[0];
+        const pos = [];
+        t.value.split(',').forEach(part => { const [a, b] = part.split('-').map(x => parseInt(x, 10)); if (a) for (let n = a; n <= (b || a) && n - a < 500; n++) pos.push(n); });
+        gdDraft.editions[+t.dataset.gdContains].contains = pos.map(n => o.entries[n - 1]).filter(Boolean).map(e => gdEntryKey(e.series, e.volume, e.issue));
+      }
+    });
+    body.addEventListener('change', e => {
+      const t = e.target;
+      if (t.dataset.gdBool) gdPath(gdDraft, t.dataset.gdBool, t.checked);
+      else if (t.tagName === 'SELECT' && t.dataset.gd) { gdPath(gdDraft, t.dataset.gd, t.value); if (/^orders\.\d+\.(label|type)$/.test(t.dataset.gd)) renderGuideEditor(); }
+    });
+    body.addEventListener('click', e => {
+      const t = e.target.closest('[data-gd-act],[data-gd-order]');
+      if (!t || !gdDraft) return;
+      if (t.dataset.gdOrder !== undefined) { gdDraftOrder = +t.dataset.gdOrder; renderGuideEditor(); return; }
+      const o = gdDraft.orders[gdDraftOrder], i = +t.dataset.i, act = t.dataset.gdAct;
+      if (act === 'addEntry' && o) o.entries.push({ series: '', volume: '', issue: '', year: '', importance: '', importanceSource: '', why: '', spoiler: false, pubId: '', publisher: gdDraft.publisher || '' });
+      else if (act === 'up' && o && i > 0) [o.entries[i - 1], o.entries[i]] = [o.entries[i], o.entries[i - 1]];
+      else if (act === 'down' && o && i < o.entries.length - 1) [o.entries[i + 1], o.entries[i]] = [o.entries[i], o.entries[i + 1]];
+      else if (act === 'del' && o) o.entries.splice(i, 1);
+      else if (act === 'addOrder') { gdDraft.orders.push({ id: 'ord_' + Date.now().toString(36), type: 'recommended', label: 'Nouvel ordre', sourceId: '', entries: [] }); gdDraftOrder = gdDraft.orders.length - 1; }
+      else if (act === 'addSource') gdDraft.sources.push({ id: 'src_' + Date.now().toString(36), label: 'Nouvelle source', url: '', license: '', retrievedAt: relToday() });
+      else if (act === 'addEdition') gdDraft.editions.push({ id: 'ed_' + Date.now().toString(36), lang: 'fr', title: 'Nouvelle édition', publisher: '', isbn: '', relation: 'collects', contains: [], sourceId: '', status: 'unverified', note: '' });
+      renderGuideEditor();
+    });
+  };
+
+  // ---------- Import / export JSON des guides (aperçu, validation, doublons, confirmation)
+  const gdExport = ids => ({ format: 'panel-guides', version: 1, exportedAt: relNow(), guides: (ids ? ids.map(id => exEditorial.get(id)) : exGuides()).filter(Boolean).map(g => JSON.parse(JSON.stringify(g))) });
+  const gdImportPlan = async text => {
+    await loadExplorerData();
+    let d;
+    try { d = typeof text === 'string' ? JSON.parse(text) : text; } catch (_) { throw new Error('JSON illisible.'); }
+    const list = Array.isArray(d) ? d : d && Array.isArray(d.guides) ? d.guides : d && d.kind ? [d] : null;
+    if (!list) throw new Error('Aucun guide dans ce fichier (attendu : { "format": "panel-guides", "guides": [...] }).');
+    if (d && d.format && d.format !== 'panel-guides') throw new Error('Format inconnu : « ' + gdStr(d.format, 40) + ' ».');
+    const plan = { rows: [], counts: { add: 0, update: 0, identical: 0, duplicate: 0, invalid: 0 } };
+    const seen = new Set();
+    list.slice(0, 500).forEach((raw, i) => {
+      const r = gdSanitize(Object.assign({}, raw, { origin: 'import' }));
+      const row = { n: i + 1, title: gdStr(raw && raw.title, 120) || '—', id: gdStr(raw && raw.id, 70), errors: r.errors, warnings: r.warnings, guide: r.guide || null, action: '' };
+      if (!r.guide) row.action = 'invalid';
+      else if (seen.has(r.guide.id)) { row.action = 'duplicate'; row.errors = ['Identifiant présent deux fois dans le fichier.']; }
+      else {
+        seen.add(r.guide.id);
+        const cur = exEditorial.get(r.guide.id);
+        const twin = !cur && exGuides().find(g => catNorm(g.title) === catNorm(r.guide.title) && catNorm(g.publisher) === catNorm(r.guide.publisher));
+        if (twin) { row.action = 'duplicate'; row.errors = ['Un guide « ' + twin.title + ' » du même éditeur existe déjà (' + twin.id + ') : non importé.']; }
+        else if (!cur) row.action = 'add';
+        else { const strip = g => JSON.stringify(Object.assign({}, g, { createdAt: '', updatedAt: '', editedAt: '', origin: '' })); row.action = strip(cur) === strip(r.guide) ? 'identical' : 'update'; if (row.action === 'update' && cur.editedAt) row.warnings = row.warnings.concat(['Remplace une version modifiée localement le ' + relFmtDate(cur.editedAt.slice(0, 10)) + '.']); }
+      }
+      plan.counts[row.action]++;
+      plan.rows.push(row);
+    });
+    return plan;
+  };
+  const gdImportApply = async plan => {
+    const recs = plan.rows.filter(r => r.action === 'add' || r.action === 'update').map(r => {
+      const prev = exEditorial.get(r.guide.id);
+      return Object.assign({}, r.guide, { origin: prev ? prev.origin : 'import', createdAt: prev ? prev.createdAt : r.guide.createdAt, updatedAt: relNow(), editedAt: prev && prev.origin === 'seed' ? relNow() : r.guide.editedAt });
+    });
+    recs.forEach(g => exEditorial.set(g.id, g));
+    await exPut('editorial', recs);
+    return { added: plan.counts.add, updated: plan.counts.update, skipped: plan.counts.identical + plan.counts.duplicate + plan.counts.invalid };
+  };
+  const gdShowImportPlan = plan => {
+    gdPendingPlan = plan;
+    const c = plan.counts, act = { add: 'Nouveau', update: 'Mise à jour', identical: 'Identique', duplicate: 'Doublon', invalid: 'Invalide' };
+    $('guideEditTitle').textContent = 'Importer des guides';
+    $('guideEditBody').innerHTML = '<div class="da-chips">' + Object.keys(act).map(a => '<span class="da-chip">' + act[a] + ' <b>' + c[a] + '</b></span>').join('') + '</div>' +
+      '<div class="da-wrap"><table class="da-table"><thead><tr><th>#</th><th>Guide</th><th>Action</th><th>Détails</th></tr></thead><tbody>' + plan.rows.map(r => '<tr><td>' + r.n + '</td><td>' + h(r.title) + '<br><small>' + h(r.id) + '</small></td><td>' + act[r.action] + '</td><td><small>' + h(r.errors.concat(r.warnings).join(' · ')) + (r.guide ? ' ' + r.guide.orders.reduce((a, o) => a + o.entries.length, 0) + ' entrée(s), ' + r.guide.sources.length + ' source(s)' : '') + '</small></td></tr>').join('') + '</tbody></table></div>' +
+      '<p class="ex-note">Rien n\'est écrit avant confirmation. Votre progression de lecture n\'est jamais modifiée par un import.</p><div id="guideEditMsg"></div>';
+    $('guideEditSave').textContent = 'Importer ' + (c.add + c.update) + ' guide(s)';
+    $('guideEditSave').disabled = !(c.add + c.update);
+    $('guideEditModal').classList.add('open');
+  };
+
+  // ---------- Sauvegarde JSON complète
+  const exportExplorerData = () => ({ schema: GD_SCHEMA, editorial: [...exEditorial.values()].map(g => JSON.parse(JSON.stringify(g))), progress: [...exProgress.values()].map(p => JSON.parse(JSON.stringify(p))) });
+  const sanitizeExplorerData = d => {
+    if (!d || typeof d !== 'object') return null;
+    const editorial = (Array.isArray(d.editorial) ? d.editorial : []).slice(0, 2000).map(g => gdSanitize(g).guide).filter(Boolean);
+    const progress = (Array.isArray(d.progress) ? d.progress : []).slice(0, 100000).filter(p => p && /^ek_[a-z0-9]{1,40}$/i.test(String(p.id || '')) && (p.status === '' || GD_PROGRESS[p.status])).map(p => ({
+      id: p.id, status: p.status, at: gdStr(p.at, 40), history: (Array.isArray(p.history) ? p.history : []).slice(-30).filter(x => x && typeof x === 'object').map(x => ({ from: GD_PROGRESS[x.from] ? x.from : '', to: GD_PROGRESS[x.to] ? x.to : '', at: gdStr(x.at, 40) })) }));
+    return { editorial, progress };
+  };
+  const mergeExplorerData = (d, mode) => {
+    if (!d) return { added: 0, replaced: 0, undo: () => {}, write: Promise.resolve() };
+    const prevE = new Map(exEditorial), prevP = new Map(exProgress);
+    let added = 0, replaced = 0;
+    const te = [], tp = [];
+    d.editorial.forEach(g => { const cur = exEditorial.get(g.id); if (!cur) { exEditorial.set(g.id, g); te.push(g); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(g)) { exEditorial.set(g.id, g); te.push(g); replaced++; } });
+    d.progress.forEach(p => { const cur = exProgress.get(p.id); if (!cur) { exProgress.set(p.id, p); tp.push(p); added++; } else if (mode === 'replace' && JSON.stringify(cur) !== JSON.stringify(p)) { exProgress.set(p.id, p); tp.push(p); replaced++; } });
+    const write = Promise.all([exPut('editorial', te), exPut('readprog', tp)]).catch(() => false);
+    return { added, replaced, write, undo: () => { exEditorial.clear(); prevE.forEach((v, k) => exEditorial.set(k, v)); exProgress.clear(); prevP.forEach((v, k) => exProgress.set(k, v)); exPut('editorial', te.map(g => prevE.get(g.id))); exPut('readprog', tp.map(p => prevP.get(p.id))); } };
+  };
+  const exDownload = (obj, name) => {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+
+  // ---------- Événements de l'interface
+  const wireExplorer = () => {
+    const root = $('explorerRoot');
+    if (!root) return;
+    wireGuideEditor();
+    root.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.dataset.fallback && t.src !== t.dataset.fallback) { t.src = t.dataset.fallback; t.classList.add('is-fallback'); } }, true);
+    root.addEventListener('input', e => {
+      if (e.target.id !== 'exSearch') return;
+      clearTimeout(wireExplorer.tm);
+      const v = e.target.value;
+      wireExplorer.tm = setTimeout(() => { exView.q = v; exView.cat = ''; exRefreshResults(); }, 160);
+    });
+    root.addEventListener('keydown', e => { if (e.target.id === 'exSearch' && e.key === 'Enter') { clearTimeout(wireExplorer.tm); exView.q = e.target.value; exRemember(exView.q); exRefreshResults(); } });
+    root.addEventListener('change', async e => {
+      const t = e.target;
+      if (t.dataset.exF) { exView[t.dataset.exF] = t.type === 'checkbox' ? t.checked : t.value; exView.limit = 60; renderExplorer(); }
+      else if (t.dataset.exSt) { await exSetProgress(t.dataset.exSt, t.value); renderExplorer(); }
+    });
+    root.addEventListener('click', async e => {
+      const t = e.target.closest('button, a');
+      if (!t || t.tagName === 'A') return;
+      const d = t.dataset;
+      if (exView.q && (d.exGuide || d.exGo || d.exPub || d.exSingle)) exRemember(exView.q);
+      if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
+      else if (d.exQ) { exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
+      else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
+      else if (d.exGuide) exGo('guide', d.exGuide);
+      else if (d.exGo) exGo(d.exGo, d.exId || '');
+      else if (d.exPub) openPubSheet(d.exPub);
+      else if (d.exSingle) { const s = physicalSingles.find(x => x.id === d.exSingle); if (s) openSingleInspector(s); }
+      else if (d.exOrder) { exView.order = d.exOrder; exView.limit = 60; renderExplorer(); }
+      else if (d.exSet) { const m = exProgress.get(d.exSet); await exSetProgress(d.exSet, m && m.status === d.st ? '' : d.st); renderExplorer(); }
+      else if (d.exWish) { const r = addPubToWishlist(d.exWish); showToast(r.ok ? (r.duplicate ? 'Déjà dans la wishlist.' : 'Ajouté à la wishlist.') : r.error); renderExplorer(); }
+      else if (d.exNext) { exView.focus = d.exNext; const g = exEditorial.get(exView.id), o = g && ((g.orders || []).find(x => x.id === exView.order) || g.orders[0]); const pos = o ? o.entries.findIndex(x => x.id === d.exNext) : 0; if (pos >= exView.limit) exView.limit = pos + 20; Object.assign(exView, { imp: '', hideOptional: false, hideRead: false, publisher: '', lang: 'vo' }); renderExplorer(); const el = $('exE_' + d.exNext); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' }); }
+      else if (d.exSpoilers !== undefined) { exView.spoilers = true; renderExplorer(); }
+      else if (d.exMoreentries !== undefined) { exView.limit += 60; renderExplorer(); }
+      else if (d.exEdit) openGuideEditor(d.exEdit);
+      else if (d.exNewguide !== undefined) openGuideEditor(null);
+      else if (d.exExport !== undefined) exDownload(gdExport(d.exExport ? [d.exExport] : null), 'panel_guides_' + (d.exExport || 'tous') + '_' + relToday() + '.json');
+      else if (d.exImport !== undefined) $('guideImportFile').click();
+      else if (d.exCalendar !== undefined) { showSinglesView('releases'); }
+    });
+    $('guideImportFile').onchange = async e => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
+      if (file.size > 10 * 1024 * 1024) { showToast('Fichier trop volumineux (10 Mo maximum).'); return; }
+      try { gdShowImportPlan(await gdImportPlan(await file.text())); } catch (err) { showToast('Import impossible : ' + (err.message || err)); }
+    };
+    const save = $('guideEditSave');
+    save.addEventListener('click', async ev => {
+      if (!gdPendingPlan) return;
+      ev.stopImmediatePropagation();
+      const r = await gdImportApply(gdPendingPlan);
+      gdPendingPlan = null;
+      save.textContent = 'Enregistrer'; save.disabled = false;
+      $('guideEditModal').classList.remove('open');
+      showToast('Import : ' + r.added + ' nouveau(x) guide(s), ' + r.updated + ' mis à jour, ' + r.skipped + ' ignoré(s).');
+      renderExplorer();
+    }, true);
+    $('closeGuideEditBtn').addEventListener('click', () => { gdPendingPlan = null; save.textContent = 'Enregistrer'; save.disabled = false; });
+  };
+
+  const initReleases = () => { wireDataAdmin(); wireExplorer(); loadExplorerData().catch(() => {}); document.addEventListener('click', e => { if (e.target.closest && e.target.closest('[data-open-conflicts]')) { $('pubModal').classList.remove('open'); openDataAdmin('conflicts'); } }); loadReleaseData().then(() => { if (activeSinglesView === 'releases') renderReleasesGrid(); }).catch(() => {}); };
 
   const renderPullChips = () => {
     const host = $('pullListChips');
@@ -10411,7 +11411,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations(), releases: exportReleaseData() };
+    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations(), releases: exportReleaseData(), explorer: exportExplorerData() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -10484,7 +11484,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (list.length && !items.length) throw new Error('Aucune fiche lisible dans la sauvegarde (fichier corrompu ?).');
     const seriesMetaIn = d.seriesMeta && typeof d.seriesMeta === 'object' && !Array.isArray(d.seriesMeta) ? d.seriesMeta : null;
     const digitalKeys = ['folders', 'bookmarks', 'theories', 'readingPositions'].filter(k => d[k] !== undefined);
-    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys, locations: sanitizeLocDoc(d.locations), releases: sanitizeReleaseData(d.releases) };
+    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys, locations: sanitizeLocDoc(d.locations), releases: sanitizeReleaseData(d.releases), explorer: sanitizeExplorerData(d.explorer) };
   };
 
   // Applique une sauvegarde validée. mode « merge » (défaut) : ajoute ce qui manque, ne modifie rien d'existant.
@@ -10495,7 +11495,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const snapId = await snapshotSingles(mode === 'replace' ? 'Avant remplacement par une sauvegarde' : 'Avant fusion d\'une sauvegarde');
     if (!snapId && !opts.allowWithoutSnapshot) throw new Error('Instantané de sécurité impossible (stockage indisponible) : restauration annulée, rien n\'a été modifié.');
     const prevSingles = physicalSingles, prevMeta = seriesMeta, prevLocDoc = JSON.parse(JSON.stringify(locDoc));
-    let relMerged = null;
+    let relMerged = null, exMerged = null;
     clearTimeout(locSyncTimer);
     try {
       let added = 0, conflicts = 0;
@@ -10524,6 +11524,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (payload.locations) mergeLocDoc(payload.locations, mode);
       // Calendrier et pull list : ajoutés (fusion) ou rétablis (remplacement) ; rien n'est supprimé
       if (payload.releases) relMerged = mergeReleaseData(payload.releases, mode);
+      // Guides et progression de lecture : ajoutés (fusion) ou rétablis (remplacement) ; rien n'est supprimé
+      if (payload.explorer) { await loadExplorerData(); exMerged = mergeExplorerData(payload.explorer, mode); await exMerged.write; }
       // Vérification : ce qui est relu doit correspondre à ce qui vient d'être écrit
       const back = JSON.parse(localStorage.getItem('panel_physical_singles') || '[]');
       if (!opts.persist && back.length !== physicalSingles.length) throw new Error('Écriture incomplète du stockage local.');
@@ -10533,6 +11535,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       seriesMeta = prevMeta;
       locDoc = prevLocDoc; locInvalidate(); saveLocDoc();
       if (relMerged) relMerged.undo();
+      if (exMerged) exMerged.undo();
       try { persistSingles(); saveSeriesMeta(); } catch (_) {}
       return { ok: false, mode, error: String(err.message || err), snapshotId: snapId, rolledBack: true };
     }
@@ -11136,6 +12139,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navSinglesSeries').onclick = () => goSingles('series');
     $('navSinglesReleases').onclick = () => goSingles('releases');
     $('navSinglesStats').onclick = () => goSingles('stats');
+    if ($('navExplorer')) $('navExplorer').onclick = () => goSingles('explorer');
     $('singlesSubnav').onclick = e => {
       const b = e.target.closest('[data-sview]');
       if (!b) return;
@@ -11439,6 +12443,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         seriesMeta,
         locations: exportLocations(),
         releases: exportReleaseData(),
+        explorer: exportExplorerData(),
         exportedAt: new Date().toISOString()
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -11688,6 +12693,29 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       relView.period = 'week'; relView.mode = 'grid'; relView.market = ''; relView.publisher = ''; relView.format = ''; relView.status = '';
       if (d) { relView.anchor = startOfWeek(new Date(d + 'T12:00:00')); releasesWeekStart = relView.anchor; }
       renderReleasesGrid();
+    },
+    explorer: {
+      load: () => loadExplorerData(true),
+      open: async (page, id) => { if ($('navExplorer')) $('navExplorer').click(); await showExplorer(); if (page) exGo(page, id); return exView.page; },
+      state: () => JSON.parse(JSON.stringify(exView)),
+      guides: () => exGuides().map(g => ({ id: g.id, title: g.title, category: g.category, origin: g.origin, entries: (g.orders || []).map(o => o.entries.length), completeness: g.completeness })),
+      guide: id => { const g = exEditorial.get(id); return g ? JSON.parse(JSON.stringify(g)) : null; },
+      save: raw => exSaveGuide(raw, { edit: true }),
+      validate: raw => { const r = gdSanitize(raw); return { ok: !!r.guide, errors: r.errors, warnings: r.warnings, guide: r.guide || null }; },
+      search: (q, opts) => { const r = exSearch(q, opts); return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, { total: v.total, items: v.items.map(x => x.id || x.key) }])); },
+      setProgress: exSetProgress,
+      progress: key => { const p = exProgress.get(key); return p ? JSON.parse(JSON.stringify(p)) : null; },
+      entryKey: gdEntryKey,
+      stats: (id, orderId) => { const g = exEditorial.get(id); if (!g) return null; const o = (g.orders || []).find(x => x.id === orderId) || g.orders[0]; const st = exOrderStats(g, o, exIndexBuild()); delete st.byImp; return st; },
+      match: (id, entryId) => { const g = exEditorial.get(id); const e = g && g.orders.flatMap(o => o.entries).find(x => x.id === entryId); if (!e) return null; const m = exMatch(e, exIndexBuild()); return { pubId: m.pub ? m.pub.id : '', pubHow: m.pubHow, owned: m.owned.map(s => s.id), wish: m.wish.map(s => s.id), probable: m.probable.map(s => s.id), pull: m.pull, status: m.status, effective: m.effective }; },
+      recos: exRecos,
+      exportGuides: ids => gdExport(ids),
+      importPlan: text => gdImportPlan(text),
+      importApply: plan => gdImportApply(plan),
+      planInUi: async text => { gdShowImportPlan(await gdImportPlan(text)); return true; },
+      editor: id => openGuideEditor(id || null),
+      backup: () => exportExplorerData(),
+      restore: async (d, mode) => { await loadExplorerData(); const m = mergeExplorerData(sanitizeExplorerData(d), mode === 'replace' ? 'replace' : 'merge'); await m.write; return { added: m.added, replaced: m.replaced }; }
     },
     data: {
       sources: () => DATA_SOURCES.map(x => ({ id: x.id, name: x.name, market: x.market, type: x.type, commercial: x.commercial, status: srcStatusOf(x), connector: x.connector, enabled: x.connector ? srcEnabled(x.id) : null, allowed: srcAllowed(x.id),

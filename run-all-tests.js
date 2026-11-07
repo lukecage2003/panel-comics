@@ -2290,6 +2290,251 @@ const waitForCdp = async () => {
         test: 'Sources & données : matrice des sources, connecteurs activables, édition commerciale, provenance par champ, conflits sans écrasement silencieux, doublons par priorité, import CSV/JSON/XLSX avec aperçu, correspondance, rapport et annulation sûre',
         ok: !!t28a && t28fail.length === 0
       });
+      // ------------------------------------------------------------------
+      // TEST 29 : Explorer & guides de lecture (lot 2.6)
+      // ------------------------------------------------------------------
+      console.log('\n[TEST 29] Explorer, guides de lecture, progression, rapprochements, import/export, sauvegarde...');
+      const t29a = await evalExpr(`Promise.race([(async () => {
+        const P = window.Panel, X = P.explorer, R = P.releases;
+        await R.ready(); await X.load();
+        const r = {};
+        window.__t29 = '1 base';
+        const kibBefore = X.guide('gd_king_in_black');
+        localStorage.setItem('panel_test29_saved', JSON.stringify({ singles: P.getPhysicalSingles(), kib: kibBefore, hist: localStorage.getItem('panel_explorer_recent') }));
+        const dbInfo = await new Promise(res => { const q = indexedDB.open('panel-catalog'); q.onsuccess = () => { const db = q.result; const o = { v: db.version, stores: [...db.objectStoreNames] }; res(o); }; q.onerror = () => res(null); });
+        r.dbV4 = !!dbInfo && dbInfo.v === 4 && ['publishers', 'series', 'issues', 'variants', 'copies', 'publications', 'pulls', 'meta', 'backups', 'editorial', 'readprog'].every(s => dbInfo.stores.includes(s));
+        // Premier guide : King in Black, données sourcées, sans niveau inventé
+        const k = kibBefore, ref = k && k.orders[0], simple = k && k.orders[1];
+        const ess = ref ? ref.entries.filter(e => e.importance === 'essential') : [];
+        r.kibSeed = !!k && k.origin === 'seed' && ref.entries.length === 65 && ref.sourceId === 'src_cbro' && ess.length === 10 &&
+          ref.entries.every(e => (e.importance === 'essential' || e.importance === 'optional') && e.importanceSource === 'src_cbro') && !ref.entries.some(e => e.importance === 'recommended') &&
+          ref.entries.every((e, i) => e.pos === i + 1) && new Set(ref.entries.map(e => e.id)).size === 65 && ref.entries[11].series === 'King in Black' && ref.entries[11].issue === '1' &&
+          ref.entries[64].series === 'Venom' && ref.entries[64].issue === '200' && simple.type === 'simplified' && simple.derivedFrom === ref.id && simple.entries.length === 10;
+        r.kibHonest = k.completeness === 'demo' && k.image === null && k.sources.every(s => /^https:\\/\\//.test(s.url) && s.retrievedAt && s.license) && k.editions.length === 2 &&
+          k.editions.every(ed => ed.status === 'unverified' && ed.contains.length === 0) && k.characters.every(c => c.status === 'unverified') && ref.entries.every(e => !e.cover && !e.pubId);
+        // Validation
+        window.__t29 = '2 validation';
+        const v1 = X.validate({ id: 'mauvais id', title: '' }), v2 = X.validate({ id: 'gd_t29_v', title: 'V', sources: [{ id: 'src_a', label: 'A', url: 'javascript:alert(1)' }], orders: [{ entries: [{ series: 'T29 V', issue: '1', importance: 'essential' }, { series: 'T29 V', issue: '1' }, { issue: '2' }] }] });
+        r.validation = !v1.ok && v1.errors.length >= 2 && !v2.ok && v2.errors.some(e => /série manquante/.test(e));
+        const v3 = X.validate({ id: 'gd_t29_v', title: 'V', image: { url: 'http://x.test/a.png' }, sources: [{ id: 'src_a', label: 'A', url: 'javascript:alert(1)' }], orders: [{ entries: [{ series: 'T29 V', issue: '1', importance: 'essential' }, { series: 'T29 V', issue: '#1' }, { series: 'T29 V', issue: '2', importance: 'optional', importanceSource: 'src_a' }] }] });
+        r.noAutoImportance = v3.ok && v3.guide.sources[0].url === '' && v3.guide.image === null && v3.guide.orders[0].entries.length === 2 && v3.guide.orders[0].entries[0].importance === null &&
+          v3.guide.orders[0].entries[1].importance === 'optional' && v3.warnings.some(w => /sans source/.test(w)) && v3.warnings.some(w => /double/.test(w));
+        // Guide de test + rapprochements
+        window.__t29 = '3 rapprochements';
+        const T = 'T29 Saga';
+        const g1 = { id: 'gd_t29_saga', title: 'T29 Saga <img src=x onerror=window.__x29=1>', publisher: 'Marvel', category: 'saga', periodStart: 2024,
+          sources: [{ id: 'src_t29', label: 'Source T29', url: 'https://example.org/t29', retrievedAt: '2026-11-07', license: 'Test' }],
+          characters: [{ name: 'T29 Héros' }], creators: [{ name: 'T29 Autrice', roles: ['writer'] }],
+          image: { url: 'https://127.0.0.1:1/t29-hero.png', source: 'Test', rights: 'Test' },
+          orders: [{ id: 'ord_t29', type: 'reading' === 'x' ? '' : 'recommended', label: 'Ordre T29', sourceId: 'src_t29', entries: [1, 2, 3, 4, 5].map(n => ({ series: T, issue: String(n), year: '2024', publisher: 'Marvel', importance: n === 1 ? 'essential' : 'optional', importanceSource: n === 1 ? 'src_t29' : 'editorial', why: n === 2 ? 'Révélation <b>importante</b>' : '', spoiler: n === 2 })) }],
+          editions: [{ id: 'ed_t29_fr', lang: 'fr', title: 'T29 Saga Intégrale', publisher: 'Panini Comics', isbn: '979-10-00000-00-1', relation: 'collects', contains: [], sourceId: 'src_t29', status: 'verified' }] };
+        const s1 = await X.save(g1);
+        const g2 = { id: 'gd_t29_other', title: 'T29 Autre', publisher: 'Marvel', category: 'character_path', orders: [{ id: 'ord_t29b', label: 'O', entries: [{ series: T, issue: '1', year: '2024' }] }] };
+        const s2 = await X.save(g2);
+        r.saved = s1.ok && s1.created && s2.ok && X.guides().some(g => g.id === 'gd_t29_saga') && X.guide('gd_t29_saga').editions[0].status === 'verified' && X.guide('gd_t29_saga').orders[0].entries[1].importance === 'optional';
+        const base = P.getPhysicalSingles();
+        const mk = (id, o) => Object.assign({ id, series: T, publisher: 'Marvel', isWishlist: false, isRead: false, addedAt: new Date().toISOString() }, o);
+        P.setPhysicalSingles(base.concat([mk('t29_s1', { issue: '1', coverYear: 2024 }), mk('t29_s2', { issue: '2' }), mk('t29_s3', { issue: '3', coverYear: 2024, isWishlist: true }),
+          mk('t29_s4', { issue: '4', coverYear: 2024, isRead: true }), mk('t29_s5', { issue: '5', coverYear: 1994 }), mk('t29_sx', { series: 'T29 Sagas', issue: '1', coverYear: 2024 })]));
+        const up = await R.upsert({ market: 'US', publisher: 'Marvel', series: T, issue: '1', date: '2024-03-06', format: 'single' }, 'manual');
+        const eid = n => X.entryKey(T, '', n);
+        const m1 = X.match('gd_t29_saga', eid(1)), m2 = X.match('gd_t29_saga', eid(2)), m3 = X.match('gd_t29_saga', eid(3)), m4 = X.match('gd_t29_saga', eid(4)), m5 = X.match('gd_t29_saga', eid(5));
+        r.matchExact = !!up.pub && m1.pubId === up.pub.id && m1.pubHow === 'auto' && m1.owned.length === 1 && m1.owned[0] === 't29_s1' && !m1.owned.includes('t29_sx');
+        r.matchProbable = m2.owned.length === 0 && m2.probable[0] === 't29_s2' && m5.owned.length === 0 && m5.probable.length === 0;
+        r.ownedVsWish = m3.owned.length === 0 && m3.wish[0] === 't29_s3' && m3.status === '';
+        r.readDerived = m4.owned[0] === 't29_s4' && m4.effective === 'read' && m4.status === '';
+        // Progression personnelle : indépendante de la possession, partagée entre guides
+        window.__t29 = '4 progression';
+        const p1 = await X.setProgress(eid(3), 'read'), bad = await X.setProgress(eid(3), 'possédé'), same = await X.setProgress(eid(3), 'read');
+        await X.setProgress(eid(5), 'skipped');
+        const st = X.stats('gd_t29_saga');
+        r.progress = p1.ok && !bad.ok && same.unchanged === true && X.progress(eid(3)).status === 'read' && X.progress(eid(3)).history.length === 1 &&
+          X.match('gd_t29_saga', eid(3)).owned.length === 0 && X.match('gd_t29_saga', eid(3)).wish.length === 1 && P.getPhysicalSingles().find(s => s.id === 't29_s3').isRead === false;
+        r.stats = st.total === 5 && st.read === 2 && st.skipped === 1 && st.owned === 2 && st.missing === 3 && st.essential === 1 && st.optional === 4 && st.pct === 50;
+        await X.setProgress(eid(1), 'reading');
+        r.sharedProgress = X.stats('gd_t29_other').reading === 1 && X.match('gd_t29_other', eid(1)).status === 'reading';
+        // Recherche
+        window.__t29 = '5 recherche';
+        const S = q => X.search(q);
+        const sk = S('king in black'), sv = S('Venom'), sc = S('knull'), scr = S('cates'), sp = S('marvel'), se = S('9791039100632'), st29 = S('t29 saga 1');
+        r.search = (sk.guides || {}).items[0] === 'gd_king_in_black' && !!(sc.characters && sc.characters.total) && !!(scr.creators && scr.creators.total) && !!(sp.publishers && sp.publishers.total) &&
+          !!(se.editions && se.editions.items[0] === 'ed_kib_fr_venom1') && !!(st29.collection && st29.collection.items.includes('t29_s1')) && !!(st29.publications && st29.publications.items.includes(up.pub.id)) &&
+          Object.keys(S('')).length === 0 && Object.keys(S('zzqx inexistant 29')).length === 0 && !!S('Le Roi en Noir').guides;
+        r.recos = X.recos().some(x => x.guideId === 'gd_t29_saga' && x.why && x.text);
+        // Interface : page Explorer
+        window.__t29 = '6 interface';
+        await X.open();
+        const root = document.getElementById('explorerRoot');
+        const vis = el => !!el && el.getClientRects().length > 0;
+        r.uiHome = vis(document.getElementById('singlesExplorerView')) && ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
+          getComputedStyle(document.querySelector('.singles-stats-bar')).display === 'none' && document.getElementById('navExplorer').classList.contains('active') &&
+          ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'].every(n => [...root.querySelectorAll('.ex-unitile b')].some(b => b.textContent === n)) &&
+          /Aucune source d'actualités/.test(document.getElementById('exSecNews').textContent) && !!root.querySelector('[data-ex-guide="gd_king_in_black"]');
+        const inp = document.getElementById('exSearch');
+        inp.value = 'venom'; inp.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(res => setTimeout(res, 400));
+        r.uiSearch = root.querySelectorAll('.ex-res-group').length >= 1 && document.getElementById('exHome').hidden === true;
+        inp.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        r.history = JSON.parse(localStorage.getItem('panel_explorer_recent') || '[]')[0] === 'venom';
+        root.querySelector('.ex-chip[data-ex-cat="guides"]').click();
+        r.uiCategory = root.querySelectorAll('.ex-res-group').length === 1;
+        inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true }));
+        await new Promise(res => setTimeout(res, 400));
+        root.querySelector('[data-ex-go="publisher"]').click();
+        r.uiPublisher = !!root.querySelector('.ex-phead h2') && !!root.querySelector('.ex-back');
+        await X.open('character', 't29 heros');
+        r.uiCharacter = /non vérifiée/.test(root.textContent) && !!root.querySelector('[data-ex-guide="gd_t29_saga"]');
+        await X.open('creator', 't29 autrice');
+        r.uiCreator = !!root.querySelector('[data-ex-guide="gd_t29_saga"]');
+        await X.open('series', 't29 saga');
+        r.uiSeries = !!root.querySelector('[data-ex-pub]') && /possédé/.test(root.textContent);
+        // Guide illustré
+        window.__t29 = '7 guide';
+        await X.open('guide', 'gd_king_in_black');
+        const entries = () => root.querySelectorAll('.ex-entry');
+        r.uiGuide = entries().length === 60 && !!root.querySelector('[data-ex-moreentries]') && root.querySelectorAll('.ex-otabs .da-tab').length === 2 && !!root.querySelector('[data-ex-next]') &&
+          [...root.querySelectorAll('.ex-src a')].every(a => a.rel.includes('noopener') && a.target === '_blank') && root.querySelectorAll('.ex-entry img[loading="lazy"]').length === 60 &&
+          /Non identifiée au catalogue/.test(root.textContent) && /Démonstration/.test(root.textContent);
+        root.querySelector('[data-ex-moreentries]').click();
+        r.uiMore = entries().length === 65;
+        root.querySelectorAll('.ex-otabs .da-tab')[1].click();
+        r.uiOrder = entries().length === 10 && [...entries()].every(li => /Essentiel/.test(li.textContent));
+        root.querySelectorAll('.ex-otabs .da-tab')[0].click();
+        const cb = name => root.querySelector('[data-ex-f="' + name + '"]');
+        cb('hideOptional').click();
+        r.uiHideOptional = entries().length === 10;
+        cb('hideOptional').click();
+        const sel = root.querySelector('select[data-ex-f="imp"]'); sel.value = 'optional'; sel.dispatchEvent(new Event('change', { bubbles: true }));
+        r.uiImpFilter = entries().length === 55 || (entries().length === 60 && /55 entrée/.test(root.textContent));
+        const sel2 = root.querySelector('select[data-ex-f="imp"]'); sel2.value = ''; sel2.dispatchEvent(new Event('change', { bubbles: true }));
+        const lang = root.querySelector('select[data-ex-f="lang"]'); lang.value = 'vf'; lang.dispatchEvent(new Event('change', { bubbles: true }));
+        r.uiLangVf = entries().length === 0 && !!root.querySelector('.ex-empty');
+        const lang2 = root.querySelector('select[data-ex-f="lang"]'); lang2.value = 'vo'; lang2.dispatchEvent(new Event('change', { bubbles: true }));
+        cb('simple').click();
+        r.uiSimple = root.querySelectorAll('.ex-entry.is-simple').length === 60 && root.querySelectorAll('select[data-ex-st]').length === 60;
+        cb('simple').click();
+        // Guide de test : XSS, spoilers, statut en un clic, image de remplacement, édition vérifiée
+        await X.open('guide', 'gd_t29_saga');
+        r.xss = window.__x29 === undefined && !root.querySelector('img[src="x"]') && root.innerHTML.includes('&lt;img') && !root.querySelector('.ex-why b');
+        r.spoiler = !!root.querySelector('[data-ex-spoilers]') && !/Révélation/.test(root.textContent);
+        root.querySelector('[data-ex-spoilers]').click();
+        r.spoilerShown = /Révélation <b>importante<\\/b>/.test(root.textContent);
+        root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"]').click();
+        await new Promise(res => setTimeout(res, 300));
+        r.uiStatus = X.progress(eid(2)).status === 'reading' && !!root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"].active');
+        root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"]').click();
+        await new Promise(res => setTimeout(res, 300));
+        r.uiStatusToggle = X.progress(eid(2)).status === '';
+        // Échec de chargement d'image : simulé (le réseau du navigateur de test n'est pas déterministe après les tests hors ligne)
+        const im0 = root.querySelector('.ex-ghero-img');
+        if (im0) im0.dispatchEvent(new Event('error'));
+        await new Promise(res => setTimeout(res, 100));
+        const im1 = root.querySelector('.ex-ghero-img');
+        const fb = !!im1 && im1.src.startsWith('data:image/svg') && im1.classList.contains('is-fallback');
+        r.imageFallback = fb;
+        r.uiBadges = /Possédé/.test(root.textContent) && /Wishlist/.test(root.textContent) && /à confirmer/.test(root.textContent) && /Lu \\(collection\\)/.test(root.textContent) && !!root.querySelector('.ex-link[data-ex-pub]');
+        // Éditeur
+        window.__t29 = '8 éditeur';
+        X.editor('gd_t29_saga');
+        const modal = document.getElementById('guideEditModal');
+        r.editor = modal.classList.contains('open') && modal.querySelectorAll('.gd-entries tbody tr').length === 5 && !!modal.querySelector('[data-gd="title"]');
+        modal.querySelector('[data-gd-act="down"][data-i="0"]').click();
+        const firstSeries = modal.querySelector('.gd-entries tbody tr td:nth-child(4) input').value;
+        modal.querySelector('[data-gd-act="addEntry"]').click();
+        const rows = modal.querySelectorAll('.gd-entries tbody tr');
+        const last = rows[rows.length - 1];
+        const setv = (el, v) => { el.value = v; el.dispatchEvent(new Event('input', { bubbles: true })); };
+        setv(last.querySelector('input[data-gd$=".series"]'), T); setv(last.querySelector('input[data-gd$=".issue"]'), '6'); setv(last.querySelector('input[data-gd$=".year"]'), '2024');
+        setv(modal.querySelector('[data-gd="title"]'), 'T29 Saga modifiée');
+        const saved = await (async () => { document.getElementById('guideEditSave').click(); for (let i = 0; i < 20; i++) { await new Promise(res => setTimeout(res, 100)); if (!modal.classList.contains('open')) return true; } return false; })();
+        const ge = X.guide('gd_t29_saga');
+        r.editorSave = saved && firstSeries === '2' && ge.title === 'T29 Saga modifiée' && ge.orders[0].entries.length === 6 && ge.orders[0].entries[0].issue === '2' && ge.orders[0].entries[5].issue === '6' && !!ge.editedAt;
+        // Contenu fourni modifié : jamais écrasé par le contenu initial
+        const kEdit = JSON.parse(JSON.stringify(kibBefore)); kEdit.description = 'Note locale T29';
+        r.seedEdit = (await X.save(kEdit)).ok && !!X.guide('gd_king_in_black').editedAt;
+        // Import / export
+        window.__t29 = '9 import';
+        const exp = X.exportGuides(['gd_king_in_black']);
+        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 4;
+        const progBefore = JSON.stringify(X.progress(eid(3)));
+        const file = JSON.stringify({ format: 'panel-guides', version: 1, guides: [
+          { id: 'gd_t29_imp', title: 'T29 Importé', publisher: 'DC Comics', orders: [{ entries: [{ series: T, issue: '3', year: '2024' }] }] },
+          { id: 'gd_t29_imp', title: 'T29 Importé bis', orders: [] },
+          { id: 'gd_t29_bad', title: '' },
+          X.exportGuides(['gd_t29_other']).guides[0],
+          { id: 'gd_t29_twin', title: 'King in Black', publisher: 'Marvel', orders: [] }] });
+        const plan = await X.importPlan(file);
+        r.importPlan = plan.counts.add === 1 && plan.counts.duplicate === 2 && plan.counts.invalid === 1 && plan.counts.identical === 1 && !X.guide('gd_t29_imp');
+        let badFmt = false; try { await X.importPlan('{"format":"autre","guides":[]}'); } catch (_) { badFmt = true; }
+        let badJson = false; try { await X.importPlan('{oops'); } catch (_) { badJson = true; }
+        r.importReject = badFmt && badJson;
+        const ap = await X.importApply(plan);
+        r.importApply = ap.added === 1 && ap.updated === 0 && X.guide('gd_t29_imp').origin === 'import' && JSON.stringify(X.progress(eid(3))) === progBefore && !X.guide('gd_t29_twin') && !X.guide('gd_t29_bad');
+        await X.planInUi(file);
+        r.importUi = modal.classList.contains('open') && modal.querySelectorAll('.da-table tbody tr').length === 5 && /Importer 0 guide/.test(document.getElementById('guideEditSave').textContent) && document.getElementById('guideEditSave').disabled;
+        document.getElementById('closeGuideEditBtn').click();
+        // Sauvegarde JSON
+        window.__t29 = '10 sauvegarde';
+        const bk = X.backup();
+        r.backupBlock = bk.editorial.some(g => g.id === 'gd_t29_saga') && bk.progress.some(p => p.id === eid(3) && p.status === 'read');
+        const vOld = P.validateBackupPayload({ format: 'panel-backup', version: 3, physicalSingles: [] });
+        const vNew = P.validateBackupPayload({ format: 'panel-backup', version: 3, physicalSingles: [], explorer: { editorial: [{ id: 'gd_t29_rest', title: 'T29 Restauré', sources: [{ label: 'x', url: 'javascript:1' }] }, { id: 'bad' }], progress: [{ id: eid(4), status: 'read' }, { id: eid(4), status: 'pirate' }, { id: 'nope', status: 'read' }] } });
+        r.backupValidate = vOld.explorer === null && vNew.explorer.editorial.length === 1 && vNew.explorer.editorial[0].sources[0].url === '' && vNew.explorer.progress.length === 1;
+        const rs = await X.restore({ editorial: [{ id: 'gd_t29_rest', title: 'T29 Restauré' }, Object.assign({}, X.guide('gd_t29_other'), { title: 'Écrasé ?' })], progress: [{ id: eid(4), status: 'read' }, { id: eid(3), status: 'to_read' }] }, 'merge');
+        r.restoreMerge = rs.added === 2 && X.guide('gd_t29_other').title === 'T29 Autre' && X.progress(eid(3)).status === 'read' && X.progress(eid(4)).status === 'read' && !!X.guide('gd_t29_rest');
+        const fullHas = await new Promise(res => { const orig = URL.createObjectURL; let got = null; URL.createObjectURL = b => { got = b; return 'blob:t29'; }; const a0 = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () {};
+          try { document.getElementById('backupJsonBtn').click(); } catch (_) {} URL.createObjectURL = orig; HTMLAnchorElement.prototype.click = a0; if (!got) return res(false); got.text().then(t => { const d = JSON.parse(t); res(!!d.explorer && d.explorer.editorial.some(g => g.id === 'gd_t29_saga') && d.releases !== undefined); }); });
+        r.fullBackup = fullHas;
+        // Seconde ouverture de la base : aucune migration destructive
+        r.seedIdempotent = (await X.load()) === true && X.guides().filter(g => g.id === 'gd_king_in_black').length === 1 && X.guide('gd_king_in_black').description === 'Note locale T29';
+        r._expect = { pub: up.pub.id };
+        return r;
+      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t29 }), 90000))])`);
+      console.log('Résultat Test 29 (a):', JSON.stringify(t29a));
+      // Redémarrage hors ligne : guides, édition et progression relus depuis IndexedDB
+      await send('Page.reload', { ignoreCache: false });
+      for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.explorer) && document.readyState === "complete"')) break; }
+      const t29b = await evalExpr(`(async () => {
+        const X = window.Panel.explorer;
+        await X.load();
+        const k = X.entryKey('T29 Saga', '', 3);
+        return { restart: !!X.guide('gd_t29_saga') && X.guide('gd_t29_saga').title === 'T29 Saga modifiée' && X.progress(k).status === 'read' && X.guide('gd_king_in_black').description === 'Note locale T29' && !!X.guide('gd_t29_imp') };
+      })()`);
+      // Nettoyage : guides et progression de test retirés, King in Black et collection rétablis
+      const t29c = await evalExpr(`(async () => {
+        const P = window.Panel, X = P.explorer, R = P.releases;
+        const saved = JSON.parse(localStorage.getItem('panel_test29_saved') || 'null');
+        if (!saved) return { cleanup: false };
+        const ids = ['gd_t29_saga', 'gd_t29_other', 'gd_t29_imp', 'gd_t29_rest'];
+        const keys = [1, 2, 3, 4, 5, 6].map(n => X.entryKey('T29 Saga', '', n));
+        const pubs = R.all().filter(p => p.series === 'T29 Saga').map(p => p.id);
+        await new Promise(res => {
+          const q = indexedDB.open('panel-catalog');
+          q.onsuccess = () => { const db = q.result; const tx = db.transaction(['editorial', 'readprog', 'publications'], 'readwrite');
+            ids.forEach(id => tx.objectStore('editorial').delete(id)); keys.forEach(id => tx.objectStore('readprog').delete(id)); pubs.forEach(id => tx.objectStore('publications').delete(id));
+            if (saved.kib) tx.objectStore('editorial').put(saved.kib);
+            tx.oncomplete = () => { db.close(); res(true); }; tx.onerror = () => { db.close(); res(false); }; };
+          q.onerror = () => res(false);
+        });
+        await X.load(); await R.reloadFromDb();
+        P.setPhysicalSingles(saved.singles);
+        if (saved.hist === null) localStorage.removeItem('panel_explorer_recent'); else localStorage.setItem('panel_explorer_recent', saved.hist);
+        localStorage.removeItem('panel_test29_saved');
+        return { cleanup: !X.guides().some(g => /^gd_t29/.test(g.id)) && !X.progress(keys[2]) && JSON.stringify(X.guide('gd_king_in_black')) === JSON.stringify(saved.kib) && !R.all().some(p => p.series === 'T29 Saga') && P.getPhysicalSingles().length === saved.singles.length };
+      })()`);
+      const t29 = Object.assign({}, t29a, t29b, t29c);
+      delete t29._expect;
+      console.log('Résultat Test 29:', JSON.stringify(t29));
+      const t29keys = ['dbV4', 'kibSeed', 'kibHonest', 'validation', 'noAutoImportance', 'saved', 'matchExact', 'matchProbable', 'ownedVsWish', 'readDerived', 'progress', 'stats', 'sharedProgress',
+        'search', 'recos', 'uiHome', 'uiSearch', 'history', 'uiCategory', 'uiPublisher', 'uiCharacter', 'uiCreator', 'uiSeries', 'uiGuide', 'uiMore', 'uiOrder', 'uiHideOptional', 'uiImpFilter',
+        'uiLangVf', 'uiSimple', 'xss', 'spoiler', 'spoilerShown', 'uiStatus', 'uiStatusToggle', 'imageFallback', 'uiBadges', 'editor', 'editorSave', 'seedEdit', 'exportOk', 'importPlan', 'importReject',
+        'importApply', 'importUi', 'backupBlock', 'backupValidate', 'restoreMerge', 'fullBackup', 'seedIdempotent', 'restart', 'cleanup'];
+      const t29fail = t29keys.filter(k => t29[k] !== true);
+      if (t29fail.length) console.log('Test 29 — vérifications en échec :', t29fail.join(', '));
+      testResults.push({
+        test: 'Explorer & guides de lecture : base v4 additive, King in Black sourcé, validation, rapprochements exacts, progression personnelle, recherche, pages, filtres, XSS, éditeur, import/export, sauvegarde, redémarrage',
+        ok: !!t29a && t29fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
