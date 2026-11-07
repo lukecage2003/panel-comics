@@ -27,3 +27,4 @@ android-app/android/capacitor-cordova-android-plugins/build/
 # Sauvegardes (peuvent contenir d'anciennes clés)
 *.backup*
 _backups/
+.impeccable/detect*.json
