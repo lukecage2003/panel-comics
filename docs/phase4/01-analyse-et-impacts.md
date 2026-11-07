@@ -2,6 +2,8 @@
 
 Rédigé le 7 novembre 2026, à la réception du [cahier des charges Explorer 2.0](00-explorer-2.0-cahier-des-charges.md). **Aucun lot de la Phase 4 n'est commencé.** Le lot 4.1 (audit et architecture) approfondira ces éléments.
 
+> *Révision 2* : la séparation Collection / Explorer est définie dans [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md), qui prime sur ce document.
+
 Légende : **[Fait]** · **[Doc]** · **[Hyp.]** · **[Reco.]** · **[À valider]** (voir [`../phase3/README.md`](../phase3/README.md)).
 
 ## 1. Décisions désormais tranchées par l'utilisateur
@@ -25,11 +27,11 @@ Conséquence **[Reco.]** : le lot 4.1 doit commencer par une **matrice de droits
 ## 3. Ce que la Phase 3 doit livrer en plus pour préparer Explorer 2.0
 | Prérequis | Lot de Phase 3 | Détail |
 |---|---|---|
-| **Rôles et permissions serveur** (`admin`, `editor`, `moderator`) | **3.3** | Table `app.staff_roles(user_id, role, granted_by, granted_at)`, fonction `app.has_role(role)` (`security definer`, `search_path=''`), RLS ; attribution manuelle seulement (pas d'interface publique) |
+| **Rôles et permissions serveur** (`admin`, `editor`, `moderator`) | **3.3** | Table `app.staff_roles(user_id, role, granted_by, granted_at)`, fonction `app.has_role(role)` (`security definer`, `search_path=''`), RLS ; attribution manuelle seulement (pas d'interface publique). **Un rôle ne donne aucun accès aux données personnelles** (`app.*`), ce que des tests doivent prouver |
 | **Schémas réservés** | **3.1** | `app` = données personnelles ; `catalog`, `editorial` et `media` réservés à la Phase 4 et **non créés** en Phase 3. Le banc de tests doit savoir appliquer des migrations multi-schémas |
 | **Journal des modifications** générique | 3.6 | Le patron de `sync_conflicts` et du journal d'administration servira à `change_history` et `media_audit_logs` |
-| **Consentement pour les signaux communautaires** | 3.6 | Les classements communautaires (§ 6.2) agrègent collections et wishlists, aujourd'hui « privées par défaut ». Il faut décider (et faire valider) si l'agrégation anonyme est couverte par le contrat ou exige un réglage explicite ; seuil minimal d'agrégation (k-anonymat, par exemple ≥ 10 utilisateurs) **[Reco.]** |
-| **Identifiants canoniques** | 3.4 | Les identifiants clients (`s_…`) restent personnels. Le catalogue serveur aura ses propres identifiants (`uuid`), et les exemplaires y seront reliés par un champ `catalog_issue_id` ajouté au lot 4.x, sans modifier l'existant |
+| **Consentement pour les signaux communautaires** | 3.6 | Via le service d'agrégation dédié uniquement (contrat S3). Les classements communautaires (§ 6.2) agrègent collections et wishlists, aujourd'hui « privées par défaut ». Il faut décider (et faire valider) si l'agrégation anonyme est couverte par le contrat ou exige un réglage explicite ; seuil minimal d'agrégation (k-anonymat, par exemple ≥ 10 utilisateurs) **[Reco.]** |
+| **Identifiants canoniques** | 3.4 | Les identifiants clients (`s_…`) restent personnels. Le catalogue serveur aura ses propres identifiants (`uuid`), Un rapprochement facultatif `catalog_issue_id` pourra être ajouté **plus tard, de façon additive, à l'initiative de Collection et proposé à l'utilisateur** (contrat S5) ; il ne fait pas partie des lots Explorer |
 
 Le lot 3.1 reste dans son périmètre ; seul l'ajout des schémas réservés est **documenté** (pas créé).
 

@@ -60,7 +60,7 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 ## Lot 3.3 — Profils, préférences, appareils
 - **Objectifs** : profil minimal, préférences synchronisées, liste des appareils.
 - **Périmètre fonctionnel** : nom affiché, langue, marché préféré ; préférences (thème, vue, sons, haptique, lecture) ; liste des appareils avec révocation ; confidentialité « tout privé ».
-- **Périmètre technique** : `profiles`, `user_settings`, `devices` ; **rôles serveur** `app.staff_roles` et `app.has_role()` (prérequis d'Explorer 2.0, voir [`../phase4/01-analyse-et-impacts.md`](../phase4/01-analyse-et-impacts.md) § 3), attribués manuellement ; premier usage réel de `sync_push`/`sync_pull` sur une seule entité simple (`user_settings`).
+- **Périmètre technique** : `profiles`, `user_settings`, `devices` ; **rôles serveur** `app.staff_roles` et `app.has_role()` (prérequis d'Explorer 2.0, voir [`../phase4/01-analyse-et-impacts.md`](../phase4/01-analyse-et-impacts.md) § 3), attribués manuellement, **sans aucun accès aux données personnelles** (`app.*`), tests de frontière à l'appui (voir [`../phase4/02-frontieres-collection-explorer.md`](../phase4/02-frontieres-collection-explorer.md), A10) ; premier usage réel de `sync_push`/`sync_pull` sur une seule entité simple (`user_settings`).
 - **Dépendances** : 3.2.
 - **Changements de données** : préférences locales copiées dans `user_settings` ; localStorage conservé.
 - **Risques** : boucle d'écriture entre appareils (préférences) → HLC et comparaison de valeur.

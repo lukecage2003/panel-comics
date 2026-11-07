@@ -50,7 +50,7 @@ L'utilisateur a réalisé huit contrôles fonctionnels, tous satisfaisants :
 - La clé Comic Vine reste à renouveler. La signature Android de publication, l'option `allowBackup` et la purge des anciennes clés Marvel/Vision sont toujours en attente de décision.
 
 ## Phase 3 — Comptes, profils et synchronisation local-first
-Conception livrée le 7 novembre 2026 (voir [`phase3/`](phase3/), commit `93f15db`). Le lot 3.1 a été lancé par l'utilisateur le 7 novembre 2026.
+Conception livrée le 7 novembre 2026 (voir [`phase3/`](phase3/), commit `93f15db`). Le lot 3.1 a été lancé par l'utilisateur le 7 novembre 2026, puis suspendu le même jour avant toute modification de code (copies de sécurité `*.backup.20261107-lot31` créées, non versionnées), pour intégrer la correction « séparation stricte Collection / Explorer ».
 
 ## Phase 4 — Explorer 2.0
-Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Non commencée ; prérequis : Phase 3.
+Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Non commencée ; prérequis : Phase 3.

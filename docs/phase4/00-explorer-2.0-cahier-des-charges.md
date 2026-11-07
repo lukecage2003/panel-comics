@@ -1,8 +1,10 @@
 # PANEL EXPLORER 2.0
 ## Cahier des charges fonctionnel et technique définitif
 
-> Document fourni par l'utilisateur le 7 novembre 2026, archivé tel quel. Il définit la **Phase 4**, qui commence après la Phase 3.
-> Analyse des impacts et points à arbitrer : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md).
+> Document fourni par l'utilisateur le 7 novembre 2026. Il définit la **Phase 4**, qui commence après la Phase 3.
+>
+> **Révision 2 (7 novembre 2026) : correction architecturale « séparation stricte Collection / Explorer »** demandée par l'utilisateur. La section 0 et les passages marqués « *Révision 2* » ont été ajoutés ; le reste du texte d'origine est inchangé. En cas de contradiction, la section 0 et le document [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) font foi.
+> Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md).
 
 **Produit :** Panel by Primestone  
 **Module :** Explorer 2.0  
@@ -14,6 +16,18 @@
 **Stratégie d'importation :** Import massif initial + importation progressive et actualisation automatique  
 **Couverture visuelle :** Tous les domaines d'Explorer  
 **Gestion éditoriale :** Hybride — automatisation, validation humaine et contributions communautaires
+
+---
+
+# 0. SÉPARATION STRICTE COLLECTION / EXPLORER (*Révision 2*)
+
+- Explorer et Collection sont deux modules **fonctionnellement indépendants**. Explorer n'est pas une extension de Collection ; Collection n'est pas une dépendance d'Explorer.
+- **Collection** reste seule responsable : comics, exemplaires, éditions et variantes possédés, état et grading, emplacements, acquisitions et historique d'achat, wishlist, Pull List, statistiques de collection, progression personnelle liée à la lecture et aux possessions.
+- **Explorer** est responsable de la découverte : catalogue éditorial, événements, guides, Key Issues, classements, tendances, sorties et calendrier éditorial, actualités, séries, personnages, équipes, créateurs, éditeurs, recommandations, images éditoriales, contributions.
+- Explorer fonctionne pour un utilisateur **sans collection** et pour un **visiteur non connecté**.
+- Services communs autorisés : catalogue canonique, identifiants stables, référentiel éditeurs et séries, infrastructure d'images (R2), authentification, services backend, recherche. **Partager l'infrastructure ne signifie pas partager la responsabilité.**
+- Explorer ne lit pas les données internes de Collection. Toute interaction passe par les **contrats S1 à S6** de [`02-frontieres-collection-explorer.md`](02-frontieres-collection-explorer.md) (lecture personnelle facultative, commandes initiées par l'utilisateur, agrégats anonymes, registre d'images, catalogue canonique, identité).
+- Les lots Explorer 2.0 ne modifient **aucune** fonctionnalité, interface, donnée ou modèle de Collection, et n'effectuent aucune migration destructive.
 
 ---
 
@@ -76,7 +90,7 @@ Créer une infrastructure commune permettant de rechercher, importer, identifier
 
 Le système doit fonctionner indépendamment de l'interface Explorer.
 
-Il doit pouvoir être réutilisé ultérieurement dans les autres parties de Panel, notamment :
+Il doit pouvoir être réutilisé ultérieurement dans les autres parties de Panel, notamment (*Révision 2* : en tant qu'**infrastructure commune** ; chaque module garde son propre usage, et les imports d'Explorer ne modifient jamais les enregistrements personnels de Collection — contrat S4) :
 - Collection.
 - Fiches de comics.
 - Fiches de séries.
@@ -245,7 +259,7 @@ L'import doit fonctionner par lots, avec possibilité de reprendre un traitement
 
 L'import initial doit traiter en priorité :
 
-1. Comics déjà présents dans les collections.
+1. Comics les plus demandés, selon un **signal agrégé et anonyme** (contrat S3). *Révision 2* : Explorer ne lit pas les collections individuelles.
 2. Comics des séries populaires.
 3. Événements et guides existants.
 4. Key Issues.
@@ -495,6 +509,8 @@ Ne jamais présenter un classement partiel comme les ventes mondiales complètes
 
 ## 6.2 Classements communautaires Panel
 
+*Révision 2* : ces indicateurs proviennent **uniquement** du service d'agrégation dédié (contrat S3) : collecte autorisée, seuil d'anonymat, aucun accès d'Explorer aux inventaires individuels, aucune collection exposée sans autorisation, aucune modification des données de Collection.
+
 Indicateurs possibles :
 - Ajouts en collection.
 - Ajouts en wishlist.
@@ -561,7 +577,7 @@ Enrichissements :
 - Guides par période éditoriale.
 - Guides officiels Panel.
 - Guides communautaires validés.
-- Progression personnelle.
+- Progression personnelle (*Révision 2* : donnée personnelle, affichée via le contrat S1 ; voir la décision A3).
 
 Les couvertures doivent être reliées aux entrées du catalogue, et non importées séparément à chaque création de guide.
 
@@ -639,6 +655,8 @@ L'architecture frontend doit être déterminée après inspection du repository 
 ## 10.3 Tables indicatives
 
 Ne pas recréer les tables déjà existantes dans le catalogue.
+
+*Révision 2* : les tables éditoriales et média vivent dans les schémas `catalog`, `editorial`, `media` et `community`, **séparés** du schéma personnel `app` (Collection). Aucune jointure entre tables personnelles et éditoriales pour l'affichage d'Explorer. Les guides du lot 2.6 existent localement (magasin `editorial`) : `reading_guides` et `guide_entries` en seront la version serveur.
 
 Tables éditoriales possibles :
 - events.
@@ -866,7 +884,8 @@ Stabiliser les comptes, la synchronisation, les sauvegardes, les permissions et 
 
 ### Lot 4.1 — Audit et architecture
 
-- Audit du Lot 2.6.
+- Audit du Lot 2.6, dont les couplages avec Collection (C1 à C10, document 02).
+- Conception des contrats S1 à S6 et du test statique de frontière.
 - Audit du catalogue.
 - Inventaire des images existantes.
 - Identification des images manquantes.
@@ -978,7 +997,8 @@ Stabiliser les comptes, la synchronisation, les sauvegardes, les permissions et 
 
 ### Lot 4.9 — Explorer Home et recherche
 
-- Nouvelle page d'accueil.
+- Nouvelle page d'accueil, dans une **section et une navigation propres** à Explorer (décision A6).
+- Réacheminement des couplages du lot 2.6 par les contrats S1 et S2, sans changement fonctionnel pour Collection.
 - Cartes illustrées.
 - Sections.
 - Recherche globale.
@@ -1051,6 +1071,11 @@ Explorer 2.0 doit satisfaire les critères suivants :
 23. Les interfaces web et Android sont correctement optimisées.
 24. Les performances restent acceptables avec un volume important d'images.
 25. Aucune régression n'est introduite dans la collection et le catalogue.
+26. *Révision 2* : Explorer s'affiche entièrement pour un visiteur non connecté et pour un utilisateur sans collection.
+27. *Révision 2* : le test statique de frontière passe (aucune référence d'Explorer aux structures internes de Collection).
+28. *Révision 2* : un rôle éditorial ou d'administration ne lit aucune donnée personnelle (tests RLS).
+29. *Révision 2* : les classements communautaires ne contiennent que des agrégats au-dessus du seuil d'anonymat.
+30. *Révision 2* : aucun import, classement ou tâche planifiée ne modifie une donnée de Collection (empreinte des données personnelles identique avant et après).
 
 ---
 
@@ -1095,7 +1120,7 @@ Les images non disponibles doivent être clairement identifiées et ne doivent p
 
 # 18. DÉFINITION DU SUCCÈS
 
-Explorer doit permettre à un utilisateur de découvrir un événement, de consulter sa couverture, d'explorer les numéros associés, de voir leurs Key Issues, de consulter les tendances et d'ajouter les comics à sa collection.
+Explorer doit permettre à un utilisateur de découvrir un événement, de consulter sa couverture, d'explorer les numéros associés, de voir leurs Key Issues, de consulter les tendances et d'ajouter les comics à sa collection (*Révision 2* : par une commande envoyée à Collection, qui l'exécute — contrat S2).
 
 Il doit également pouvoir parcourir des classements illustrés, découvrir des séries, des personnages et des créateurs, et profiter de guides visuellement riches.
 

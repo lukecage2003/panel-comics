@@ -21,6 +21,8 @@ Statut : **conception à valider**. Ce document est le cœur technique de la Pha
 | Données numériques héritées (Phase 1) | — | **Jamais** | Hors périmètre produit, conservées localement |
 | Historique de valeur (`panel_value_snapshots`) | — | À décider au lot 3.4 | Volumineux, d'intérêt secondaire |
 
+Toutes ces entités relèvent de l'**espace personnel** (Collection et progression personnelle). Aucune n'est lue par Explorer en dehors des contrats définis dans [`../phase4/02-frontieres-collection-explorer.md`](../phase4/02-frontieres-collection-explorer.md).
+
 Couvertures : seule l'**URL** et sa provenance sont synchronisées. Une couverture manuelle stockée en `data:` n'est envoyée qu'au-dessous de 256 Ko. Au-delà, un stockage objet sera nécessaire (décision ultérieure, droits d'image à vérifier).
 
 ## 2. Modèle serveur commun
