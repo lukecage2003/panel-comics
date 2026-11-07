@@ -33,10 +33,10 @@ const killEdge = () => {
 };
 // Garde-fou global : un test bloqué ne doit jamais laisser Edge tourner indéfiniment
 const globalTimer = setTimeout(() => {
-  console.error('✗ Délai global dépassé (180 s) — arrêt.');
+  console.error('✗ Délai global dépassé (300 s) — arrêt.');
   killEdge();
   process.exit(1);
-}, 180000);
+}, 300000);
 
 // Attente active du port CDP (au lieu d'un délai fixe fragile)
 const waitForCdp = async () => {
@@ -1640,6 +1640,203 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Exemplaires et variantes : état/grading/slab/signature/achat normalisés, regroupement par variante, saisie structurée, restauration JSON fidèle',
         ok: !!t25 && ['normalize', 'catalog', 'grouping', 'badge', 'inspector', 'form', 'formSync', 'noExtraFields', 'restore', 'cleanup'].every(k => t25[k] === true)
+      });
+
+      // ==========================================
+      // TEST 26 : Emplacements (lot 2.3) — hiérarchie, affectation, déplacements, suppression sûre, migration, imports/exports, persistance hors ligne
+      // ==========================================
+      console.log('\n[TEST 26] Emplacements : hiérarchie, migration, affectation, déplacements, sauvegardes, persistance...');
+      const t26a = await evalExpr(`Promise.race([(async () => {
+        const P = window.Panel, L = P.locations, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        localStorage.setItem('panel_test26_saved', JSON.stringify({ singles: P.getPhysicalSingles(), doc: L.doc(), last: localStorage.getItem('panel_last_location') }));
+        await L.setDocForTest(null);
+        const base = { condition: 'NM 9.4 (Near Mint)', keyType: 'none', isWishlist: false, notes: '', addedAt: '2026-01-01T00:00:00Z', publisher: 'DC Comics', variant: 'Cover A', updatedAt: '2026-02-02T00:00:00Z' };
+        const fx = [
+          { ...base, id: 'l1', series: 'Loc A', issue: '#1', box: 'Short Box 1', divider: 'DC', location: 'Short Box 1 · DC' },
+          { ...base, id: 'l2', series: 'Loc B', issue: '#1', box: 'short box 1 ', divider: '', location: 'short box 1' },
+          { ...base, id: 'l3', series: 'Loc C', issue: '#1', box: '', divider: '', location: 'Long Box Marvel' },
+          { ...base, id: 'l4', series: 'Loc D', issue: '#1', box: 'Bureau / Étagère 2', divider: '', location: 'Bureau / Étagère 2' },
+          { ...base, id: 'l5', series: 'Loc E', issue: '#1', box: '', divider: 'X-Men', location: '' },
+          { ...base, id: 'l6', series: 'Loc F', issue: '#1', box: '', divider: '', location: '' },
+          { ...base, id: 'l7', series: 'Loc G', issue: '#1', room: 'Bureau', furniture: 'Bibliothèque', box: 'Boîte 04', divider: 'Séparateur DC', location: 'Boîte 04 · Séparateur DC' },
+          { ...base, id: 'l8', series: 'Loc H', issue: '#1', box: 'Short Box 1', divider: '', location: 'Salon' },
+          { ...base, id: 'l9', series: 'Loc W', issue: '#1', box: 'Short Box 1', isWishlist: true }
+        ];
+        P.setPhysicalSingles(JSON.parse(JSON.stringify(fx)));
+        await wait(300);
+        const before = JSON.stringify(P.getPhysicalSingles());
+        window.__t26 = "1 Migration : sauvegarde + insta";
+        // Migration : sauvegarde + instantané, fiches inchangées, valeurs identiques regroupées, ambiguïtés signalées
+        const m = await L.migrate();
+        const sb1 = L.find('box', 'Short Box 1'), dc = L.find('divider', 'DC'), lbm = L.find('box', 'Long Box Marvel');
+        const doc = L.doc();
+        r.migration = m.ok && !!m.backupId && !!m.snapshotId && m.legacyUntouched && JSON.stringify(P.getPhysicalSingles()) === before &&
+          doc.nodes.filter(n => n.level === 'box' && n.name.toLowerCase().trim() === 'short box 1').length === 1 && !!dc && !!lbm &&
+          L.path(L.of(P.getPhysicalSingles()[6]).nodeId) === 'Bureau > Bibliothèque > Boîte 04 > Séparateur DC' &&
+          L.of(fx[0]).nodeId === dc && L.of(fx[1]).nodeId === sb1 && L.of(fx[2]).nodeId === lbm && L.of(fx[5]).status === 'none';
+        const unres = doc.unresolved.filter(u => u.kind === 'non-resolu');
+        r.ambiguous = L.of(fx[3]).status === 'unresolved' && L.of(fx[4]).status === 'unresolved' && unres.length === 2 && unres.every(u => u.reason && u.count === 1) &&
+          !doc.nodes.some(n => /tag[eè]re 2/i.test(n.name)) && doc.unresolved.some(u => u.kind === 'info' && u.value === 'Salon') && L.of(fx[7]).nodeId === sb1;
+        const st = await P.catalog.status();
+        r.backupExists = st.backups.some(b => b.id === m.backupId && b.count === fx.length);
+        window.__t26 = "2 Idempotence";
+        // Idempotence
+        const ids1 = L.doc().nodes.map(n => n.id).sort().join(',');
+        const m2 = await L.migrate({ force: true });
+        const m3 = await L.migrate();
+        r.idempotent = m2.ok && m3.already && L.doc().nodes.map(n => n.id).sort().join(',') === ids1 && JSON.stringify(P.getPhysicalSingles()) === before;
+        window.__t26 = "3 Création des quatre niveaux et";
+        // Création des quatre niveaux et relations
+        const salon = L.create({ level: 'room', name: 'Salon' }), eta = L.create({ level: 'furniture', parentId: salon.node.id, name: 'Étagère', type: 'Étagère' });
+        const b5 = L.create({ level: 'box', parentId: eta.node.id, name: 'Boîte 05', capacity: 150 }), mv = L.create({ level: 'divider', parentId: b5.node.id, name: 'Marvel' });
+        r.create = [salon, eta, b5, mv].every(x => x.ok) && L.path(mv.node.id) === 'Salon > Étagère > Boîte 05 > Marvel' && b5.node.capacity === 150 &&
+          !L.create({ level: 'divider', name: 'Orphelin' }).ok && !L.create({ level: 'box', parentId: salon.node.id, name: 'X' }).ok && !L.create({ level: 'furniture', parentId: salon.node.id, name: 'étagère' }).ok;
+        window.__t26 = "4 Affectation complète, partiell";
+        // Affectation complète, partielle, modification
+        L.assign(['l1'], mv.node.id);
+        const a1 = P.getPhysicalSingles().find(x => x.id === 'l1');
+        r.assign = a1.locationId === mv.node.id && !!a1.locationAt && a1.box === 'Boîte 05' && a1.divider === 'Marvel' && a1.locationHistory.length === 1 && a1.locationHistory[0].path === 'Short Box 1 > DC';
+        L.assign(['l2'], salon.node.id);
+        r.partial = L.of(P.getPhysicalSingles().find(x => x.id === 'l2')).path.length === 1 && P.getPhysicalSingles().find(x => x.id === 'l2').box === '';
+        L.assign(['l2'], b5.node.id);
+        r.modify = L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l2')).nodeId) === 'Salon > Étagère > Boîte 05';
+        window.__t26 = "5 Déplacement d'une boîte : les ";
+        // Déplacement d'une boîte : les comics suivent, aucune fiche réécrite
+        const h8 = JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l8'));
+        const mvBox = L.move(sb1, eta.node.id);
+        r.moveBox = mvBox.ok && L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l8')).nodeId) === 'Salon > Étagère > Short Box 1' && JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l8')) === h8 &&
+          !L.move(mv.node.id, salon.node.id).ok && L.move(dc, b5.node.id).ok && L.path(dc) === 'Salon > Étagère > Boîte 05 > DC';
+        window.__t26 = "6 Comptage, recherche, contenu, ";
+        // Comptage, recherche, contenu, emplacements vides
+        const c = L.counts();
+        r.counts = c.byId[salon.node.id] === 3 && c.byId[b5.node.id] === 2 && c.byId[sb1] === 1 && c.none === 1 && c.unresolved === 2 && !(c.byId[sb1] > 1);
+        const vide = L.create({ level: 'box', parentId: eta.node.id, name: 'Boîte vide' });
+        r.search = L.search('boite 05').some(x => x.id === b5.node.id && x.path === 'Salon > Étagère > Boîte 05') && L.contents(b5.node.id).sort().join(',') === 'l1,l2' && L.unused().includes(vide.node.id) && !L.unused().includes(b5.node.id);
+        window.__t26 = "7 Recherche dans la collection p";
+        // Recherche dans la collection par emplacement (filtre)
+        P.renderSinglesCollection();
+        const sel = document.getElementById('boxFilterSelect');
+        sel.value = b5.node.id; sel.dispatchEvent(new Event('change', { bubbles: true }));
+        await wait(100);
+        const shown = [...document.querySelectorAll('[data-sid]')].map(e => e.dataset.sid).filter(id => /^l\\d$/.test(id)).sort().join(',');
+        r.filter = shown === 'l1,l2';
+        sel.value = 'all'; sel.dispatchEvent(new Event('change', { bubbles: true }));
+        window.__t26 = "8 Renommage et réorganisation : ";
+        // Renommage et réorganisation : fiches inchangées
+        const g7 = JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l7'));
+        const bureau = L.find('room', 'Bureau');
+        L.update(bureau, { name: 'Bureau principal', description: 'Pièce du fond' });
+        const order0 = L.tree().filter(x => x.level === 'room').map(x => x.name).join(',');
+        L.reorder(salon.node.id, -1);
+        const order1 = L.tree().filter(x => x.level === 'room').map(x => x.name).join(',');
+        r.rename = L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l7')).nodeId).startsWith('Bureau principal >') && JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l7')) === g7 && order0 !== order1;
+        window.__t26 = "9 Suppression sécurisée : jamais";
+        // Suppression sécurisée : jamais d'exemplaire supprimé
+        const n0 = P.getPhysicalSingles().length;
+        const d1 = L.remove(lbm);
+        const d2 = L.remove(lbm, { keep: true });
+        const d3 = L.remove(b5.node.id);
+        const d4 = L.remove(mv.node.id, { reassignTo: b5.node.id });
+        r.safeDelete = d1.needsChoice && d1.count === 1 && d2.ok && L.of(P.getPhysicalSingles().find(x => x.id === 'l3')).status === 'deleted' && L.of(P.getPhysicalSingles().find(x => x.id === 'l3')).text.includes('(supprimé)') &&
+          !d3.ok && d3.children >= 1 && d4.ok && d4.moved === 1 && P.getPhysicalSingles().find(x => x.id === 'l1').locationId === b5.node.id && P.getPhysicalSingles().length === n0 &&
+          L.doc().nodes.some(n => n.id === mv.node.id && n.deletedAt) && L.restore(mv.node.id).ok;
+        window.__t26 = "10 Formulaire : sélection progres";
+        // Formulaire : sélection progressive filtrée, affectation à l'enregistrement
+        const $ = id => document.getElementById(id);
+        L.fillCascade(null);
+        $('singleLocRoom').value = salon.node.id; $('singleLocRoom').dispatchEvent(new Event('change', { bubbles: true }));
+        const furnOpts = [...$('singleLocFurniture').options].map(o => o.value).filter(Boolean);
+        $('singleLocFurniture').value = eta.node.id; $('singleLocFurniture').dispatchEvent(new Event('change', { bubbles: true }));
+        $('singleLocBox').value = b5.node.id; $('singleLocBox').dispatchEvent(new Event('change', { bubbles: true }));
+        $('singleSeriesInput').value = 'Rangement Form Test'; $('singleIssueInput').value = '#3'; $('singleVariantNameInput').value = 'Cover A';
+        await P.saveSingleIssue();
+        await wait(200);
+        const nf = P.getPhysicalSingles().find(x => x.series === 'Rangement Form Test');
+        r.form = furnOpts.join(',') === eta.node.id && $('singleLocDivider').options.length >= 2 && !!nf && nf.locationId === b5.node.id && nf.box === 'Boîte 05';
+        window.__t26 = "11 Export / restauration JSON : h";
+        // Export / restauration JSON : hiérarchie et relations reconstruites, sans doublon
+        const full = { format: 'panel-backup', version: 3, physicalSingles: P.getPhysicalSingles(), seriesMeta: {}, locations: L.doc() };
+        const docJson = JSON.stringify(L.doc().nodes.map(n => [n.id, n.parentId, n.name, n.deletedAt]).sort());
+        const payload = P.validateBackupPayload(JSON.parse(JSON.stringify(full)));
+        await L.setDocForTest(null);
+        const res1 = await P.applyBackupRestore(payload, { mode: 'merge' });
+        const res2 = await P.applyBackupRestore(P.validateBackupPayload(JSON.parse(JSON.stringify(full))), { mode: 'merge' });
+        r.restore = res1.ok && res2.ok && JSON.stringify(L.doc().nodes.map(n => [n.id, n.parentId, n.name, n.deletedAt]).sort()) === docJson &&
+          P.getPhysicalSingles().find(x => x.id === 'l1').locationId === b5.node.id && L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l1')).nodeId) === 'Salon > Étagère > Boîte 05';
+        window.__t26 = "12 Export CSV puis réimport répét";
+        if (!r.restore) r._restoreInfo = { res1: { ok: res1.ok, error: res1.error, added: res1.added }, res2ok: res2.ok, nodes: L.doc().nodes.length, expected: JSON.parse(docJson).length, l1: (P.getPhysicalSingles().find(x => x.id === 'l1') || {}).locationId };
+        // Export CSV puis réimport répété : colonnes Pièce/Meuble/Boîte/Séparateur, aucun doublon
+        const cols = L.exportColumns(P.getPhysicalSingles().find(x => x.id === 'l7'));
+        const csv = 'Series,Issue,Pièce,Meuble,Boîte,Séparateur\\r\\nImport Loc,1,' + cols.room + ',' + cols.furniture + ',' + cols.box + ',' + cols.divider + '\\r\\nImport Loc,2,Garage,Armoire,Boîte G,\\r\\n';
+        const nodesBefore = L.doc().nodes.length;
+        const imp = () => { const parsed = P.parseCsvText(csv); return P.convertCsvRows(parsed, P.detectCsvMapping(parsed.headers), { source: P.detectCsvSource(parsed.headers) }).items; };
+        const it1 = imp();
+        P.setPhysicalSingles(P.getPhysicalSingles().concat(it1)); await wait(700);
+        const afterFirst = L.doc().nodes.length;
+        P.setPhysicalSingles(P.getPhysicalSingles().concat(imp())); await wait(700);
+        const imported = P.getPhysicalSingles().filter(x => x.series === 'Import Loc');
+        r.csv = cols.room === 'Bureau principal' && cols.box === 'Boîte 04' && it1[0].room === 'Bureau principal' && it1[0].divider === 'Séparateur DC' &&
+          imported.every(x => L.of(x).status === 'legacy') && L.of(imported[0]).nodeId === L.of(P.getPhysicalSingles().find(x => x.id === 'l7')).nodeId &&
+          afterFirst === nodesBefore + 3 && L.doc().nodes.length === afterFirst && L.path(L.of(imported[1]).nodeId) === 'Garage > Armoire > Boîte G';
+        window.__t26 = "13 Hors ligne : aucune requête ré";
+        if (!r.csv) r._csvInfo = { mapping: P.detectCsvMapping(P.parseCsvText(csv).headers), it: it1.map(x => [x.room, x.furniture, x.box, x.divider]), st: imported.map(x => L.of(x).status), before: nodesBefore, afterFirst, now: L.doc().nodes.length };
+        // Hors ligne : aucune requête réseau pendant les opérations
+        const realFetch = window.fetch; let calls = 0;
+        window.fetch = (...a) => { calls++; return Promise.reject(new Error('hors ligne')); };
+        const off = L.create({ level: 'box', parentId: eta.node.id, name: 'Boîte hors ligne' });
+        L.assign(['l6'], off.node.id);
+        window.fetch = realFetch;
+        r.offlineOps = off.ok && calls === 0 && L.of(P.getPhysicalSingles().find(x => x.id === 'l6')).nodeId === off.node.id;
+        window.__t26 = "14 Copie IndexedDB : localStorage";
+        // Copie IndexedDB : localStorage effacé → emplacements repris
+        await wait(300);
+        await L.sync();
+        const n1 = L.doc().nodes.length;
+        const lsBackup = localStorage.getItem('panel_locations');
+        localStorage.removeItem('panel_locations');
+        L.reloadFromStorage();
+        const rec = await L.recoverFromIdb();
+        r.idbRecovery = rec.source === 'indexeddb' && L.doc().nodes.length === n1 && !!localStorage.getItem('panel_locations');
+        if (!r.idbRecovery && lsBackup) localStorage.setItem('panel_locations', lsBackup);
+        r._expect = { l1: b5.node.id, l6: off.node.id, nodes: n1 };
+        return r;
+      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t26 }), 60000))])`);
+      console.log('Résultat Test 26 (a):', JSON.stringify(t26a));
+      // Redémarrage complet hors ligne : la hiérarchie et les affectations sont relues depuis le stockage
+      let t26b = {};
+      try {
+        await send('Network.enable');
+        await send('Network.emulateNetworkConditions', { offline: true, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+        await send('Page.reload', { ignoreCache: false });
+        for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.locations) && document.readyState === "complete"')) break; }
+        await new Promise(r => setTimeout(r, 800));
+        t26b = await evalExpr(`(() => {
+          const P = window.Panel, L = P.locations, exp = ${JSON.stringify((t26a && t26a._expect) || {})};
+          const s = id => P.getPhysicalSingles().find(x => x.id === id);
+          return { restart: L.doc().nodes.length === exp.nodes && L.of(s('l1')).nodeId === exp.l1 && L.of(s('l6')).nodeId === exp.l6 && L.path(exp.l1) === 'Salon > Étagère > Boîte 05' };
+        })()`);
+      } finally {
+        await send('Network.emulateNetworkConditions', { offline: false, latency: 0, downloadThroughput: -1, uploadThroughput: -1 });
+      }
+      // Nettoyage : collection et emplacements du profil de test rétablis
+      const t26c = await evalExpr(`(async () => {
+        const P = window.Panel, L = P.locations;
+        const saved = JSON.parse(localStorage.getItem('panel_test26_saved') || 'null');
+        if (!saved) return { cleanup: false };
+        P.setPhysicalSingles(saved.singles);
+        await L.setDocForTest(saved.doc);
+        if (saved.last == null) localStorage.removeItem('panel_last_location'); else localStorage.setItem('panel_last_location', saved.last);
+        localStorage.removeItem('panel_test26_saved');
+        await new Promise(r => setTimeout(r, 600));
+        return { cleanup: L.doc().nodes.length === saved.doc.nodes.length && P.getPhysicalSingles().length === saved.singles.length };
+      })()`);
+      const t26 = Object.assign({}, t26a, t26b, t26c);
+      delete t26._expect;
+      console.log('Résultat Test 26:', JSON.stringify(t26));
+      testResults.push({
+        test: 'Emplacements : 4 niveaux, migration sûre et idempotente, ambiguïtés signalées, affectation, déplacements, suppression sans perte, recherche, JSON/CSV, redémarrage hors ligne',
+        ok: !!t26a && ['migration', 'ambiguous', 'backupExists', 'idempotent', 'create', 'assign', 'partial', 'modify', 'moveBox', 'counts', 'search', 'filter', 'rename', 'safeDelete', 'form', 'restore', 'csv', 'offlineOps', 'idbRecovery', 'restart', 'cleanup'].every(k => t26[k] === true)
       });
 
       console.log('\n==========================================');

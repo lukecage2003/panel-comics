@@ -41,6 +41,22 @@ Une base IndexedDB dédiée, `panel-catalog`, organise la collection en **édite
 - **Regroupement** : les cartes et la liste affichent « ×N » quand une variante a plusieurs exemplaires possédés. La fiche détaillée liste tous les exemplaires de la même variante. Le calcul est local et fonctionne aussi après un retour arrière du catalogue.
 - **Saisie** : un bloc « Grading, slab et signature » et un champ « Acheté chez » complètent le formulaire. La liste « Condition / Grading » reste synchronisée avec la société et la note. Les nouveaux champs ne sont écrits que s'ils sont remplis. L'import CSV renseigne aussi `signedBy`, `certNumber` et `store`, sans retirer les notes.
 - **Restauration JSON fidèle** : les champs d'une fiche qui n'étaient pas listés sont désormais conservés lors d'une restauration. Auparavant, ils étaient perdus : provenance des couvertures, historique, codes-barres, identifiants Metron/GCD, grading. Seuls les valeurs simples et quelques objets connus et vérifiés sont repris.
+- **Emplacements (lot 2.3)** : hiérarchie **Pièce → Meuble → Boîte → Séparateur**, enregistrée une seule fois dans `localStorage` (`panel_locations`) avec une copie IndexedDB (`panel-catalog` / `meta` / `locations`, même révision, reprise automatique si le stockage local est perdu).
+  - **Identifiants** : chaque élément a un identifiant stable et des dates de création et de modification. Un exemplaire référence son emplacement par identifiant (`locationId`, `locationAt`, et `locationHistory` qui garde les 10 derniers). L'affectation peut être partielle (une pièce seulement, par exemple) ou absente.
+  - **Migration** : les anciens champs `box`, `divider` et `location` sont rattachés par une table de correspondance, sans modifier les fiches ni leurs dates. Une sauvegarde complète et un instantané sont faits avant, et la migration peut être relancée sans effet. Les écritures identiques sont regroupées (casse, accents, espaces).
+  - **Valeurs ambiguës** : une valeur contenant un chemin (`/`, `>`, `|`), un séparateur sans boîte, une pièce sans meuble ou un nom porté par plusieurs boîtes n'est jamais transformé. Ces valeurs sont listées comme « non résolues » dans le gestionnaire, qui permet de les affecter.
+  - **Gestionnaire** (« Gérer les emplacements », filtre Rangement) :
+    - création, renommage, description, type de meuble, capacité de boîte ;
+    - réorganisation et déplacement d'un élément vers un autre parent ;
+    - nombre de comics par niveau, emplacements vides, recherche ;
+    - contenu d'un emplacement, avec déplacement groupé.
+  - **Suppression sécurisée** : la suppression est refusée tant qu'il reste des sous-emplacements. Les comics rangés sont soit réaffectés, soit gardés avec leur emplacement précédent, affiché « (supprimé) ». L'élément est conservé comme pierre tombale. Aucun exemplaire n'est supprimé.
+  - **Formulaire** : une sélection progressive Pièce → Meuble → Boîte → Séparateur, où chaque choix filtre le suivant et où l'on peut s'arrêter à n'importe quel niveau. Le dernier emplacement utilisé est proposé. La saisie libre en texte reste disponible. Un nouveau comic n'est plus placé d'office dans « Short Box 1 ».
+  - **Affichage** : le chemin complet apparaît sur les cartes, dans la liste et dans la fiche. Le filtre Rangement et la recherche trouvent un comic par son emplacement.
+  - **Imports et exports** :
+    - CSV : colonnes Pièce, Meuble, Boîte et Séparateur reconnues à l'import et ajoutées à l'export ;
+    - JSON : sauvegarde et export contiennent toute la hiérarchie, la restauration la reconstruit sans doublon et sans supprimer d'emplacement existant ;
+    - un réimport répété ne crée aucun doublon.
 - **Échec de migration** : la collection n'est pas touchée et le catalogue est vidé. Aucune nouvelle tentative automatique n'a lieu tant que la collection n'a pas changé (`Panel.catalog.enable()` force une nouvelle tentative). Les sauvegardes `panel-catalog.backups` ne sont jamais supprimées automatiquement.
 - **Retour arrière** (testé) : `Panel.catalog.rollback()` vide uniquement la base dérivée `panel-catalog`. Les sauvegardes, les instantanés et la collection ne sont pas touchés, et la migration automatique est désactivée (`panel_catalog_disabled`). `Panel.catalog.enable()` la relance. Pour revenir au code d'avant le lot 2.1, il suffit de revenir au commit `8b04cb3` : l'ancien code ignore simplement la base `panel-catalog`.
 - **Contrôle** : « Vérifier les données » (menu Plus) affiche l'état du catalogue et le nombre de doublons signalés. L'API de test est `Panel.catalog.{status, verify, read, sync, migrate}`.
@@ -248,6 +264,7 @@ node run-all-tests.js
 - `✓ PASS - Hiérarchie Boîtes & Doublons` (Alerte doublon, conservation multiple, filtrage dynamique par boîte)
 - `✓ PASS - Recherche Globale & Comic Vine` (Raccourci ⌘K, suggestions réactives, fenêtre modale Comic Vine)
 - `✓ PASS - Numérique retiré de l’interface, données numériques conservées et exportables`
+- `✓ PASS - Emplacements` (4 niveaux, migration sûre et idempotente, valeurs ambiguës, affectation complète/partielle, déplacements, suppression sans perte, comptage, recherche, JSON/CSV, redémarrage hors ligne)
 - `✓ PASS - Exemplaires et variantes` (normalisation état/grading/slab/signature/achat, regroupement par variante, saisie structurée, restauration JSON fidèle)
 - `✓ PASS - Catalogue normalisé` (migration additive vérifiée fiche par fiche, provenance, doublons signalés, idempotence, synchro incrémentale, retour arrière, durabilité IndexedDB, export LoCG réel si présent)
 - `✓ PASS - Collector Pro : valeurs, wishlist exclue, anti-XSS, import sûr`

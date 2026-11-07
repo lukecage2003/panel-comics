@@ -1262,6 +1262,45 @@
     .comic-poster { background: #E7EAE9; }
     .comic-poster-gradient { display: none !important; }
     .comic-badges-strip { top: 0 !important; left: 0 !important; right: 0 !important; padding: 0 !important; justify-content: space-between !important; align-items: flex-start !important; }
+    .loc-cascade { margin: 4px 0 10px; }
+    .loc-cascade > label { display: block; font-weight: 700; margin-bottom: 4px; }
+    .loc-cascade-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+    .loc-cascade-grid select { width: 100%; min-width: 0; }
+    .loc-cascade-grid select:disabled { opacity: .55; }
+    .loc-cascade-foot { display: flex; gap: 4px 10px; flex-wrap: wrap; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 4px; }
+    .loc-free { margin: 0 0 10px; font-size: 13px; }
+    .loc-free > summary { cursor: pointer; color: var(--muted); margin-bottom: 6px; }
+    .loc-toolbar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+    .loc-toolbar input { flex: 1 1 200px; min-width: 0; }
+    .loc-summary { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+    .loc-summary b { color: var(--ink); font-variant-numeric: tabular-nums; }
+    .loc-summary .loc-warn b { color: var(--red); }
+    .loc-tree { max-height: 46vh; overflow: auto; border: 1px solid var(--line); border-radius: var(--radius-md); }
+    .loc-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto auto; align-items: center; gap: 8px; padding: 4px 8px 4px calc(8px + var(--depth, 0) * 18px); border-bottom: 1px solid var(--line); font-size: 13px; }
+    .loc-row.is-selected { background: var(--tint-cyan); }
+    .loc-row.lvl-room .loc-name { font-weight: 800; }
+    .loc-row.lvl-furniture .loc-name { font-weight: 700; }
+    .loc-name { background: none; border: 0; padding: 4px 0; text-align: left; color: var(--ink); cursor: pointer; font: inherit; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .loc-name:hover { text-decoration: underline; }
+    .loc-level { font-size: 12px; color: var(--muted); white-space: nowrap; }
+    .loc-count { font-size: 12px; font-weight: 700; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .loc-count.is-empty { color: var(--muted); font-weight: 400; }
+    .loc-actions { display: flex; gap: 2px; align-items: center; }
+    .loc-group { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; margin: 12px 8px 4px; }
+    .loc-empty { color: var(--muted); font-size: 13px; padding: 8px; margin: 0; }
+    .loc-editor, .loc-contents { border: 1.5px solid var(--key); border-radius: var(--radius-md); padding: 10px; margin-bottom: 10px; font-size: 13px; }
+    .loc-editor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+    .loc-editor-btns, .loc-move { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin: 8px 0; }
+    .loc-error { color: var(--red); font-size: 12px; margin: 4px 0 0; }
+    .loc-contents ul { margin: 6px 0; padding-left: 18px; max-height: 30vh; overflow: auto; }
+    .loc-unres { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+    .loc-unres-act { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    @media (max-width: 720px) {
+      .loc-cascade-grid, .loc-editor-grid { grid-template-columns: 1fr 1fr; }
+      .loc-row { grid-template-columns: minmax(0, 1fr) auto; }
+      .loc-level { display: none; }
+      .loc-actions { grid-column: 1 / -1; justify-content: flex-end; flex-wrap: wrap; }
+    }
     .copies-badge { margin: 6px auto 0 6px; background: var(--key); color: #FFFFFF; font-weight: 800; font-size: 12px; line-height: 1; padding: 3px 6px; border-radius: 3px; font-variant-numeric: tabular-nums; }
     .grading-details { margin: 4px 0 10px; border: 1px solid var(--line); border-radius: var(--radius-md); padding: 6px 10px; }
     .grading-details summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
@@ -1711,6 +1750,7 @@
         <select id="boxFilterSelect" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size: 12px;color:var(--ink)">
           <option value="all">Toutes les Boîtes (Short & Long Boxes)</option>
         </select>
+        <button type="button" class="btn secondary" id="manageLocationsBtn" style="font-size:12px;padding:5px 10px">Gérer les emplacements</button>
         <span id="boxCountSummary" style="font-size: 12px;color:var(--muted);margin-left:auto">0 comics</span>
       </div>
 
@@ -2088,7 +2128,18 @@
       </div>
     </div>
 
-    <!-- EMPLACEMENT PHYSIQUE HIÉRARCHIQUE : BOÎTE & SÉPARATEUR (SECTION 8) -->
+    <!-- EMPLACEMENT : PIÈCE → MEUBLE → BOÎTE → SÉPARATEUR (lot 2.3) -->
+    <div class="loc-cascade" id="singleLocCascade">
+      <label for="singleLocRoom"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Emplacement</label>
+      <div class="loc-cascade-grid">
+        <select id="singleLocRoom" aria-label="Pièce"><option value="">Pièce —</option></select>
+        <select id="singleLocFurniture" aria-label="Meuble"><option value="">Meuble —</option></select>
+        <select id="singleLocBox" aria-label="Boîte"><option value="">Boîte —</option></select>
+        <select id="singleLocDivider" aria-label="Séparateur"><option value="">Séparateur —</option></select>
+      </div>
+      <div class="loc-cascade-foot"><span id="singleLocPath">Sans emplacement</span><span id="singleLocStatus"></span><button type="button" class="btn-link" id="singleLocManageBtn">Gérer les emplacements</button></div>
+    </div>
+    <details class="loc-free"><summary>Saisie libre (boîte et séparateur en texte)</summary>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-row">
         <label for="singleBoxInput"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Boîte (Box)</label>
@@ -2100,6 +2151,7 @@
         <input id="singleDividerInput" placeholder="Ex: Spider-Man, Batman, Key Issues...">
       </div>
     </div>
+    </details>
     <input type="hidden" id="singleLocationInput">
 
     <!-- PROTECTION & WISHLIST -->
@@ -2244,6 +2296,26 @@
 <!-- ==========================================================================
      MODALE PARAMÈTRES & CLÉS API (COMIC VINE, MARVEL, THÈMES)
      ========================================================================== -->
+<div class="modal-backdrop" id="locationsModal">
+  <div class="modal-box" style="max-width:760px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <h2>Emplacements</h2>
+      <button class="btn-icon" id="closeLocationsModalBtn" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
+    </div>
+    <div class="loc-toolbar">
+      <input id="locSearchInput" type="search" placeholder="Rechercher un emplacement (pièce, meuble, boîte…)" aria-label="Rechercher un emplacement">
+      <button type="button" class="btn" id="locAddRoomBtn">+ Pièce</button>
+      <button type="button" class="btn secondary" id="locAddFurnitureBtn">+ Meuble</button>
+      <button type="button" class="btn secondary" id="locAddBoxBtn">+ Boîte</button>
+    </div>
+    <div class="loc-summary" id="locSummary"></div>
+    <div class="loc-editor" id="locEditor" hidden></div>
+    <div class="loc-contents" id="locContents" hidden></div>
+    <div class="loc-tree" id="locTree"></div>
+    <details id="locUnresolvedBox" hidden style="margin-top:10px"><summary>Anciennes valeurs non résolues (<span id="locUnresolvedCount">0</span> comics)</summary><div id="locUnresolvedList"></div></details>
+  </div>
+</div>
+
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal-box" style="max-width:520px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
@@ -4405,6 +4477,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     mirrorSinglesToIdb(singlesRev);
     scheduleCatalogSync();
+    scheduleLocationSync();
   };
   // Instantané complet (copie profonde) avant toute modification par lot ; les 8 derniers sont conservés
   const SNAPSHOT_KEEP = 8;
@@ -4609,7 +4682,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const CAT_ISSUE_FIELDS = ['issue', 'title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType', 'keyNote', 'keyNotes'];
   const CAT_VARIANT_FIELDS = ['variant', 'coverUrl', 'coverMeta', 'coverHistory', 'coverLookup', 'fandomLookup', 'upc', 'barcode', 'isbn', 'printing', 'comicVineId', 'metronId', 'gcdId', 'coverSource', 'coverArtist', 'ratio'];
   const CAT_FIELDS = new Set([...CAT_SERIES_FIELDS, ...CAT_ISSUE_FIELDS, ...CAT_VARIANT_FIELDS]);
-  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency']);
+  const COPY_FIELDS = new Set(['condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency', 'locationId', 'locationAt', 'locationHistory', 'room', 'furniture']);
   const splitLegacySingle = s => {
     const catalogFields = {}, personal = {}, extra = {};
     Object.keys(s || {}).forEach(k => {
@@ -4969,6 +5042,678 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       catalogMigrated = !!(r && r.ok);
       if (r && r.status === 'failed') console.warn('Migration du catalogue annulée (collection intacte)', r.errors);
     } catch (e) { console.warn('Catalogue indisponible', e); }
+  };
+
+  // ==========================================================================
+  // EMPLACEMENTS PHYSIQUES — Pièce → Meuble → Boîte → Séparateur (Phase 2, lot 2.3)
+  // Les nœuds sont stockés une seule fois (localStorage « panel_locations » + copie IndexedDB panel-catalog/meta/locations).
+  // Un exemplaire référence un nœud par identifiant (locationId) dès qu'on l'affecte. Les fiches plus anciennes restent
+  // inchangées : leurs champs texte (box, divider, location) sont rattachés aux nœuds par une table de correspondance.
+  // Suppression = pierre tombale (deletedAt) : les références historiques restent lisibles, aucun exemplaire supprimé.
+  // ==========================================================================
+  const LOC_KEY = 'panel_locations';
+  const LOC_LEVELS = ['room', 'furniture', 'box', 'divider'];
+  const LOC_LABELS = { room: 'Pièce', furniture: 'Meuble', box: 'Boîte', divider: 'Séparateur' };
+  const LOC_PARENT = { room: null, furniture: 'room', box: 'furniture', divider: 'box' };
+  const LOC_FURNITURE_TYPES = ['Bibliothèque', 'Étagère', 'Armoire', 'Commode', 'Meuble à tiroirs', 'Placard', 'Autre'];
+  const LOC_AMBIG_RE = /[\/>|\\]/;
+  const emptyLocDoc = () => ({ schema: 1, rev: 0, nodes: [], legacyMap: {}, unresolved: [], migration: null });
+  const readLocDoc = () => {
+    try { const d = JSON.parse(localStorage.getItem(LOC_KEY) || 'null'); return d && Array.isArray(d.nodes) ? Object.assign(emptyLocDoc(), d) : emptyLocDoc(); } catch (_) { return emptyLocDoc(); }
+  };
+  let locDoc = readLocDoc();
+  let locIndexCache = null;
+  const locInvalidate = () => { locIndexCache = null; };
+  const locIdx = () => {
+    if (locIndexCache) return locIndexCache;
+    const byId = new Map(locDoc.nodes.map(n => [n.id, n]));
+    const children = new Map();
+    locDoc.nodes.forEach(n => {
+      if (n.deletedAt) return;
+      const k = n.parentId || '';
+      if (!children.has(k)) children.set(k, []);
+      children.get(k).push(n);
+    });
+    children.forEach(l => l.sort((a, b) => LOC_LEVELS.indexOf(a.level) - LOC_LEVELS.indexOf(b.level) || (a.order || 0) - (b.order || 0) || a.name.localeCompare(b.name, 'fr', { numeric: true })));
+    return (locIndexCache = { byId, children });
+  };
+  const locKids = id => locIdx().children.get(id || '') || [];
+  // Enregistrement : localStorage + copie IndexedDB (même révision) ; renvoie la promesse de la copie IndexedDB
+  const saveLocDoc = () => {
+    locDoc.rev = Math.max(Date.now(), (locDoc.rev || 0) + 1);
+    locInvalidate();
+    try { localStorage.setItem(LOC_KEY, JSON.stringify(locDoc)); }
+    catch (e) { showToast('Stockage local plein : les emplacements restent enregistrés dans IndexedDB. Exportez une sauvegarde JSON.'); }
+    const snap = JSON.parse(JSON.stringify(locDoc));
+    return openCatalogDb().then(db => db && idbWrite(db, ['meta'], t => t.objectStore('meta').put({ key: 'locations', rev: snap.rev, doc: snap, at: new Date().toISOString() })))
+      .then(() => true).catch(e => { console.warn('Copie IndexedDB des emplacements impossible', e); return false; });
+  };
+  // Reprise au démarrage : la copie IndexedDB est reprise si elle est plus récente (localStorage plein ou effacé)
+  const recoverLocationsFromIdb = async () => {
+    try {
+      const db = await openCatalogDb();
+      const rec = db ? await idbGet(db, 'meta', 'locations') : null;
+      if (!rec || !rec.doc || !Array.isArray(rec.doc.nodes) || !(rec.rev > (locDoc.rev || 0))) return { source: 'localStorage' };
+      locDoc = Object.assign(emptyLocDoc(), rec.doc);
+      locInvalidate();
+      try { localStorage.setItem(LOC_KEY, JSON.stringify(locDoc)); } catch (_) {}
+      return { source: 'indexeddb', nodes: locDoc.nodes.length };
+    } catch (e) { return { source: 'erreur', error: e.message }; }
+  };
+
+  // Chemins
+  const locPath = id => {
+    const out = [];
+    const { byId } = locIdx();
+    let n = byId.get(id), guard = 0;
+    while (n && guard++ < 6) { out.unshift(n); n = n.parentId ? byId.get(n.parentId) : null; }
+    return out;
+  };
+  const locPathText = path => path.map(n => n.name + (n.deletedAt ? ' (supprimé)' : '')).join(' > ');
+
+  // Anciennes valeurs texte d'une fiche
+  const legacyLocParts = s => {
+    const t = v => String(v == null ? '' : v).trim();
+    let box = t(s.box), divider = t(s.divider);
+    const location = t(s.location);
+    if (!box && location) {
+      const p = location.split('·');
+      box = t(p[0]);
+      if (!divider && p.length > 1) divider = t(p.slice(1).join('·'));
+    }
+    return { room: t(s.room), furniture: t(s.furniture), box, divider, location };
+  };
+  const legacyLocKey = p => [p.room, p.furniture, p.box, p.divider].map(catNorm).join('|');
+  const legacyLocText = p => [p.room, p.furniture, p.box, p.divider].filter(Boolean).join(' > ') || p.location;
+
+  // Recherche / création d'un nœud par nom (casse, accents et espaces ignorés ; anciens noms reconnus)
+  const locSameName = (n, name) => { const k = catNorm(name); return catNorm(n.name) === k || (n.aliases || []).some(a => catNorm(a) === k); };
+  const locFindChild = (parentId, level, name) => locKids(parentId).find(n => n.level === level && locSameName(n, name)) || null;
+  const locFindUnique = (level, name) => {
+    const m = locDoc.nodes.filter(n => !n.deletedAt && n.level === level && locSameName(n, name));
+    return m.length === 1 ? m[0] : m.length ? 'ambigu' : null;
+  };
+  const locNextOrder = parentId => { const k = locKids(parentId); return k.length ? Math.max(...k.map(x => x.order || 0)) + 1 : 1; };
+  const locAddAlias = (n, raw) => {
+    raw = String(raw || '').trim();
+    if (raw && raw !== n.name && !(n.aliases || []).includes(raw)) { n.aliases = (n.aliases || []).concat([raw]).slice(-10); return true; }
+    return false;
+  };
+  const locEnsure = (level, parentId, name, origin) => {
+    const found = locFindChild(parentId, level, name);
+    if (found) { locAddAlias(found, name); return found; }
+    const id = 'loc_' + level[0] + '_' + stableHash((parentId || '') + '|' + level + '|' + catNorm(name));
+    const existing = locIdx().byId.get(id);
+    if (existing) return existing; // même élément déplacé ou supprimé : jamais de doublon
+    const now = new Date().toISOString();
+    const node = { id, level, parentId: parentId || null, name: String(name).trim().slice(0, 80), description: '', type: '', capacity: null, order: locNextOrder(parentId), aliases: [], origin, createdAt: now, updatedAt: now, deletedAt: null };
+    locDoc.nodes.push(node);
+    locInvalidate();
+    return node;
+  };
+  // Rattachement des valeurs texte à la hiérarchie, sans supposition : une valeur qui contient un chemin (/, >, |),
+  // un séparateur sans boîte, une boîte dans une pièce sans meuble ou un nom porté par plusieurs éléments reste non résolu.
+  const locResolveParts = (p, origin) => {
+    const parts = [p.room, p.furniture, p.box, p.divider];
+    if (!parts.some(Boolean)) return { none: true };
+    if (parts.some(x => x && LOC_AMBIG_RE.test(x))) return { reason: 'Valeur contenant un chemin (/, > ou |) : pièce, meuble et boîte impossibles à distinguer avec certitude' };
+    if (p.divider && !p.box) return { reason: 'Séparateur sans boîte' };
+    if (p.box && p.room && !p.furniture) return { reason: 'Pièce indiquée sans meuble' };
+    let parent = null;
+    for (const level of LOC_LEVELS) {
+      const name = p[level];
+      if (!name) continue;
+      let node;
+      if (!parent && level !== 'room') {
+        const u = locFindUnique(level, name);
+        if (u === 'ambigu') return { reason: 'Plusieurs éléments « ' + LOC_LABELS[level] + ' » portent ce nom' };
+        node = u || locEnsure(level, null, name, origin);
+        locAddAlias(node, name);
+      } else node = locEnsure(level, parent ? parent.id : null, name, origin);
+      parent = node;
+    }
+    return { nodeId: parent.id };
+  };
+  // Synchronisation des fiches non affectées explicitement (migration initiale, puis nouvelles valeurs importées)
+  const locSyncLegacy = origin => {
+    const map = locDoc.legacyMap || (locDoc.legacyMap = {});
+    const unresolved = new Map();
+    const nodes0 = locDoc.nodes.length, map0 = Object.keys(map).length;
+    let mapped = 0, explicit = 0, none = 0, textDiff = 0;
+    const flag = (key, value, reason, s, kind) => {
+      const k = kind + '|' + key;
+      if (!unresolved.has(k)) unresolved.set(k, { key, value, reason, kind, count: 0, ids: [] });
+      const u = unresolved.get(k);
+      u.count++;
+      if (u.ids.length < 50) u.ids.push(legacyBaseId(s));
+    };
+    physicalSingles.forEach(s => {
+      if (!s || typeof s !== 'object') return;
+      if (s.locationId !== undefined) { explicit++; return; }
+      const p = legacyLocParts(s);
+      const key = legacyLocKey(p);
+      if (key === '|||') { none++; return; }
+      if (!map[key] || !locIdx().byId.get(map[key])) {
+        const r = locResolveParts(p, origin);
+        if (r.none) { none++; return; }
+        if (r.reason) { flag(key, legacyLocText(p), r.reason, s, 'non-resolu'); return; }
+        map[key] = r.nodeId;
+      }
+      mapped++;
+      if (p.location && p.box && catNorm(p.location) !== catNorm(p.box) && catNorm(p.location) !== catNorm(p.box + ' ' + p.divider)) {
+        textDiff++;
+        flag('texte|' + catNorm(p.location) + '|' + key, p.location, 'Texte « emplacement » différent de la boîte : la boîte a été retenue, le texte est conservé', s, 'info');
+      }
+    });
+    const list = [...unresolved.values()].sort((a, b) => b.count - a.count);
+    const changed = locDoc.nodes.length !== nodes0 || Object.keys(map).length !== map0 || stableJson(list) !== stableJson(locDoc.unresolved || []);
+    locDoc.unresolved = list;
+    return { changed, createdNodes: locDoc.nodes.length - nodes0, mapped, explicit, none, unresolved: list.filter(u => u.kind === 'non-resolu').reduce((a, u) => a + u.count, 0), textDiff };
+  };
+
+  // Emplacement effectif d'une fiche : affectation explicite, sinon anciennes valeurs rattachées, sinon texte non résolu
+  const locationOf = s => {
+    const none = { status: 'none', nodeId: null, path: [], text: '' };
+    if (!s || typeof s !== 'object') return none;
+    if (s.locationId !== undefined && s.locationId !== null) {
+      if (!s.locationId) return none;
+      const path = locPath(s.locationId);
+      if (!path.length) return { status: 'missing', nodeId: s.locationId, path: [], text: legacyLocText(legacyLocParts(s)) || 'Emplacement introuvable' };
+      return { status: path[path.length - 1].deletedAt ? 'deleted' : 'explicit', nodeId: s.locationId, path, text: locPathText(path) };
+    }
+    const p = legacyLocParts(s);
+    const key = legacyLocKey(p);
+    if (key === '|||') return none;
+    const id = (locDoc.legacyMap || {})[key];
+    const path = id ? locPath(id) : [];
+    if (path.length) return { status: path[path.length - 1].deletedAt ? 'deleted' : 'legacy', nodeId: id, path, text: locPathText(path) };
+    return { status: 'unresolved', nodeId: null, path: [], text: legacyLocText(p) };
+  };
+  const locInside = (s, id) => locationOf(s).path.some(n => n.id === id);
+  const locCounts = () => {
+    const m = new Map();
+    let none = 0, unresolved = 0;
+    physicalSingles.forEach(s => {
+      if (!s || s.isWishlist) return;
+      const r = locationOf(s);
+      if (r.status === 'none') none++;
+      else if (r.status === 'unresolved' || r.status === 'missing') unresolved++;
+      r.path.forEach(n => m.set(n.id, (m.get(n.id) || 0) + 1));
+    });
+    m.none = none; m.unresolved = unresolved;
+    return m;
+  };
+  const locContents = id => physicalSingles.filter(s => s && locInside(s, id));
+  const locLiveNodes = () => locDoc.nodes.filter(n => !n.deletedAt);
+  const locTreeOrder = () => {
+    const out = [];
+    const walk = (pid, depth) => locKids(pid).forEach(n => { out.push({ node: n, depth }); walk(n.id, depth + 1); });
+    walk('', 0);
+    return out;
+  };
+  const searchLocations = q => {
+    const k = catNorm(q);
+    const counts = locCounts();
+    return locLiveNodes().map(n => ({ node: n, path: locPath(n.id) })).filter(x => !k || catNorm(locPathText(x.path)).includes(k) || (x.node.aliases || []).some(a => catNorm(a).includes(k)) || catNorm(x.node.description).includes(k))
+      .map(x => ({ id: x.node.id, level: x.node.level, name: x.node.name, path: locPathText(x.path), count: counts.get(x.node.id) || 0 }));
+  };
+  const unusedLocations = () => { const c = locCounts(); return locLiveNodes().filter(n => !c.get(n.id)); };
+
+  // Opérations (toutes réversibles ; aucune suppression de fiche)
+  const locError = error => ({ ok: false, error });
+  const locCheckParent = (level, parentId) => {
+    if (!LOC_LEVELS.includes(level)) return 'Niveau inconnu';
+    if (level === 'room') return parentId ? 'Une pièce ne peut pas avoir de parent' : null;
+    if (!parentId) return level === 'divider' ? 'Un séparateur doit être placé dans une boîte' : null;
+    const p = locIdx().byId.get(parentId);
+    if (!p || p.deletedAt) return 'Emplacement parent introuvable';
+    if (p.level !== LOC_PARENT[level]) return LOC_LABELS[level] + ' : le parent doit être un élément « ' + LOC_LABELS[LOC_PARENT[level]] + ' »';
+    return null;
+  };
+  const createLocation = (o = {}) => {
+    const name = String(o.name || '').trim().slice(0, 80);
+    if (!name) return locError('Nom obligatoire');
+    const err = locCheckParent(o.level, o.parentId || null);
+    if (err) return locError(err);
+    if (locFindChild(o.parentId || null, o.level, name)) return locError('Un élément portant ce nom existe déjà à cet endroit');
+    const now = new Date().toISOString();
+    const node = {
+      id: 'loc_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7), level: o.level, parentId: o.parentId || null, name,
+      description: String(o.description || '').trim().slice(0, 300), type: o.level === 'furniture' ? String(o.type || '').trim().slice(0, 40) : '',
+      capacity: o.level === 'box' && numOrNull(o.capacity) > 0 ? Math.round(numOrNull(o.capacity)) : null,
+      order: locNextOrder(o.parentId || null), aliases: [], origin: 'utilisateur', createdAt: now, updatedAt: now, deletedAt: null
+    };
+    locDoc.nodes.push(node);
+    saveLocDoc();
+    return { ok: true, node };
+  };
+  const updateLocation = (id, patch = {}) => {
+    const n = locIdx().byId.get(id);
+    if (!n || n.deletedAt) return locError('Emplacement introuvable');
+    if (patch.name !== undefined) {
+      const name = String(patch.name || '').trim().slice(0, 80);
+      if (!name) return locError('Nom obligatoire');
+      const clash = locKids(n.parentId).find(x => x.id !== id && x.level === n.level && catNorm(x.name) === catNorm(name));
+      if (clash) return locError('Un élément portant ce nom existe déjà à cet endroit');
+      if (name !== n.name) { locAddAlias(n, n.name); n.name = name; }
+    }
+    if (patch.description !== undefined) n.description = String(patch.description || '').trim().slice(0, 300);
+    if (patch.type !== undefined && n.level === 'furniture') n.type = String(patch.type || '').trim().slice(0, 40);
+    if (patch.capacity !== undefined && n.level === 'box') n.capacity = numOrNull(patch.capacity) > 0 ? Math.round(numOrNull(patch.capacity)) : null;
+    n.updatedAt = new Date().toISOString();
+    saveLocDoc();
+    return { ok: true, node: n };
+  };
+  const moveLocation = (id, parentId) => {
+    const n = locIdx().byId.get(id);
+    if (!n || n.deletedAt) return locError('Emplacement introuvable');
+    parentId = parentId || null;
+    const err = locCheckParent(n.level, parentId);
+    if (err) return locError(err);
+    if ((n.parentId || null) === parentId) return { ok: true, node: n, unchanged: true };
+    if (locKids(parentId).some(x => x.id !== id && x.level === n.level && catNorm(x.name) === catNorm(n.name))) return locError('Un élément portant ce nom existe déjà à la destination');
+    n.parentId = parentId;
+    n.order = locNextOrder(parentId);
+    n.updatedAt = new Date().toISOString();
+    saveLocDoc();
+    return { ok: true, node: n };
+  };
+  const reorderLocation = (id, delta) => {
+    const n = locIdx().byId.get(id);
+    if (!n || n.deletedAt) return locError('Emplacement introuvable');
+    const sib = locKids(n.parentId).filter(x => x.level === n.level);
+    const i = sib.indexOf(n), j = i + (delta < 0 ? -1 : 1);
+    if (j < 0 || j >= sib.length) return { ok: true, unchanged: true };
+    [sib[i], sib[j]] = [sib[j], sib[i]];
+    const now = new Date().toISOString();
+    sib.forEach((x, k) => { if (x.order !== k + 1) { x.order = k + 1; x.updatedAt = now; } });
+    saveLocDoc();
+    return { ok: true };
+  };
+  // Affectation explicite d'un ou plusieurs exemplaires (nodeId vide = sans emplacement)
+  const assignLocation = (targets, nodeId, opts = {}) => {
+    nodeId = nodeId || '';
+    const node = nodeId ? locIdx().byId.get(nodeId) : null;
+    if (nodeId && (!node || node.deletedAt)) return locError('Emplacement introuvable');
+    const path = node ? locPath(nodeId) : [];
+    const nameAt = lvl => (path.find(n => n.level === lvl) || {}).name || '';
+    const now = new Date().toISOString();
+    let changed = 0;
+    (targets || []).forEach(s => {
+      if (!s || typeof s !== 'object') return;
+      if (s.locationId !== undefined && s.locationId === nodeId) return;
+      const cur = locationOf(s);
+      if (cur.nodeId === (nodeId || null) && nodeId && s.locationId !== undefined) return;
+      if (cur.nodeId || cur.text) s.locationHistory = (Array.isArray(s.locationHistory) ? s.locationHistory : []).concat([{ nodeId: cur.nodeId, path: cur.text, at: now }]).slice(-10);
+      s.locationId = nodeId;
+      s.locationAt = now;
+      // Champs texte d'origine tenus à jour pour les anciennes versions de Panel et les exports
+      s.box = nameAt('box');
+      s.divider = nameAt('divider');
+      s.location = s.box ? s.box + (s.divider ? ' · ' + s.divider : '') : '';
+      s.updatedAt = now;
+      changed++;
+    });
+    if (nodeId) { try { localStorage.setItem('panel_last_location', nodeId); } catch (_) {} }
+    if (changed && opts.persist !== false) persistSingles();
+    return { ok: true, changed };
+  };
+  // Suppression sécurisée : refusée s'il reste des sous-emplacements ; exemplaires réaffectés ou emplacement conservé
+  const removeLocation = (id, opts = {}) => {
+    const n = locIdx().byId.get(id);
+    if (!n || n.deletedAt) return locError('Emplacement introuvable');
+    const kids = locKids(id);
+    if (kids.length) return Object.assign(locError('Cet emplacement contient encore ' + kids.length + ' sous-emplacement(s) : déplacez-les ou supprimez-les d\'abord.'), { children: kids.length });
+    const inside = physicalSingles.filter(s => s && locationOf(s).nodeId === id);
+    if (inside.length && opts.reassignTo === undefined && !opts.keep) return { ok: false, needsChoice: true, count: inside.length };
+    let moved = 0;
+    if (inside.length && opts.reassignTo !== undefined) {
+      if (opts.reassignTo === id) return locError('Choisissez un autre emplacement');
+      const r = assignLocation(inside, opts.reassignTo, { persist: false });
+      if (!r.ok) return r;
+      moved = r.changed;
+    }
+    n.deletedAt = new Date().toISOString();
+    n.updatedAt = n.deletedAt;
+    saveLocDoc();
+    if (moved) persistSingles();
+    return { ok: true, moved, kept: opts.reassignTo === undefined ? inside.length : 0 };
+  };
+  const restoreLocation = id => {
+    const n = locIdx().byId.get(id);
+    if (!n || !n.deletedAt) return locError('Emplacement introuvable');
+    if (n.parentId) { const p = locIdx().byId.get(n.parentId); if (!p || p.deletedAt) return locError('Restaurez d\'abord l\'emplacement parent'); }
+    if (locKids(n.parentId).some(x => x.level === n.level && catNorm(x.name) === catNorm(n.name))) return locError('Un élément portant ce nom existe déjà à cet endroit');
+    n.deletedAt = null;
+    n.updatedAt = new Date().toISOString();
+    saveLocDoc();
+    return { ok: true, node: n };
+  };
+
+  // Migration initiale : sauvegarde complète + instantané, rattachement des anciennes valeurs, fiches inchangées
+  const migrateLocations = async (opts = {}) => {
+    if (locDoc.migration && locDoc.migration.status === 'ok' && !opts.force) {
+      const r = locSyncLegacy('import');
+      if (r.changed) await saveLocDoc();
+      return Object.assign({ ok: true, already: true }, r);
+    }
+    const before = stableHash(stableJson(physicalSingles));
+    let backupId = null;
+    try {
+      const db = await openCatalogDb();
+      if (db) {
+        backupId = 'bk_' + Date.now() + '_loc';
+        await idbWrite(db, ['backups'], tx => tx.objectStore('backups').put({
+          id: backupId, at: new Date().toISOString(), reason: 'Avant migration des emplacements (lot 2.3)', format: 'panel-backup', version: 3,
+          physicalSingles: JSON.parse(JSON.stringify(physicalSingles)), seriesMeta: JSON.parse(JSON.stringify(seriesMeta || {})), locations: JSON.parse(JSON.stringify(locDoc)), ...readStoredDigitalData()
+        }));
+      }
+    } catch (e) { backupId = null; }
+    const snapshotId = await snapshotSingles('Avant migration des emplacements (lot 2.3)');
+    if (!backupId && !snapshotId) return { ok: false, error: 'Sauvegarde préalable impossible : migration annulée, rien n\'a été modifié.' };
+    const prev = JSON.parse(JSON.stringify(locDoc));
+    try {
+      const r = locSyncLegacy('migration');
+      if (stableHash(stableJson(physicalSingles)) !== before) throw new Error('Collection modifiée pendant la migration');
+      const live = locLiveNodes();
+      locDoc.migration = {
+        status: 'ok', schema: 1, at: new Date().toISOString(), backupId, snapshotId, legacyCount: physicalSingles.length,
+        mapped: r.mapped, none: r.none, explicit: r.explicit, unresolved: r.unresolved, textDiff: r.textDiff, createdNodes: r.createdNodes,
+        nodes: Object.fromEntries(LOC_LEVELS.map(l => [l, live.filter(n => n.level === l).length])), mergedSpellings: live.reduce((a, n) => a + (n.aliases || []).length, 0)
+      };
+      await saveLocDoc();
+      return Object.assign({ ok: true, legacyUntouched: true }, locDoc.migration);
+    } catch (e) {
+      locDoc = prev;
+      locInvalidate();
+      return { ok: false, error: e.message || String(e), backupId, snapshotId };
+    }
+  };
+  let locSyncTimer = null;
+  const scheduleLocationSync = () => {
+    if (!locDoc.migration || locDoc.migration.status !== 'ok') return;
+    clearTimeout(locSyncTimer);
+    locSyncTimer = setTimeout(() => {
+      if (!locDoc.migration || locDoc.migration.status !== 'ok') return; // état revérifié à l'exécution (restauration ou remise à zéro entre-temps)
+      const r = locSyncLegacy('import');
+      if (r.changed) saveLocDoc();
+    }, 400);
+  };
+  // Saisie libre tapée à la main : la sélection progressive est vidée (le texte saisi fait foi)
+  document.addEventListener('input', e => {
+    if (e.target && (e.target.id === 'singleBoxInput' || e.target.id === 'singleDividerInput') && $('singleLocCascade')) renderCascade(0, []);
+  });
+
+  // Sauvegardes : export complet, validation et fusion (aucun nœud existant supprimé)
+  const exportLocations = () => JSON.parse(JSON.stringify(locDoc));
+  const sanitizeLocDoc = d => {
+    if (!d || typeof d !== 'object' || !Array.isArray(d.nodes)) return null;
+    const str = (v, max) => String(v == null ? '' : v).slice(0, max);
+    const date = v => (typeof v === 'string' && /^\d{4}-\d{2}-\d{2}/.test(v)) ? v.slice(0, 40) : null;
+    const nodes = d.nodes.filter(n => n && typeof n === 'object' && /^loc_[A-Za-z0-9_-]{1,60}$/.test(String(n.id)) && LOC_LEVELS.includes(n.level) && str(n.name, 80).trim()).map(n => ({
+      id: String(n.id), level: n.level, parentId: n.parentId && /^loc_[A-Za-z0-9_-]{1,60}$/.test(String(n.parentId)) ? String(n.parentId) : null,
+      name: str(n.name, 80).trim(), description: str(n.description, 300), type: str(n.type, 40), capacity: numOrNull(n.capacity) > 0 ? Math.round(numOrNull(n.capacity)) : null,
+      order: Number.isFinite(Number(n.order)) ? Number(n.order) : 0, aliases: Array.isArray(n.aliases) ? n.aliases.filter(a => typeof a === 'string').map(a => a.slice(0, 80)).slice(0, 10) : [],
+      origin: str(n.origin, 20) || 'sauvegarde', createdAt: date(n.createdAt) || new Date().toISOString(), updatedAt: date(n.updatedAt) || new Date().toISOString(), deletedAt: date(n.deletedAt)
+    }));
+    const legacyMap = {};
+    if (d.legacyMap && typeof d.legacyMap === 'object') Object.entries(d.legacyMap).forEach(([k, v]) => { if (typeof v === 'string' && /^loc_/.test(v) && k.length < 400) legacyMap[k] = v; });
+    return { schema: 1, nodes, legacyMap, migration: d.migration && typeof d.migration === 'object' ? { status: d.migration.status === 'ok' ? 'ok' : 'restauré', at: date(d.migration.at) } : null };
+  };
+  const mergeLocDoc = (inc, mode) => {
+    if (!inc) return { added: 0, updated: 0 };
+    let added = 0, updated = 0;
+    const byId = locIdx().byId;
+    inc.nodes.forEach(n => {
+      const cur = byId.get(n.id);
+      if (!cur) { locDoc.nodes.push(Object.assign({}, n)); added++; }
+      else if (mode === 'replace' && stableJson(cur) !== stableJson(n)) { Object.assign(cur, n); updated++; }
+    });
+    Object.entries(inc.legacyMap || {}).forEach(([k, v]) => { if (!locDoc.legacyMap[k] || mode === 'replace') locDoc.legacyMap[k] = v; });
+    if (!locDoc.migration && inc.migration) locDoc.migration = { status: 'ok', schema: 1, at: new Date().toISOString(), restoredFrom: inc.migration.at || null };
+    locInvalidate();
+    locSyncLegacy('import');
+    saveLocDoc();
+    return { added, updated };
+  };
+  // Colonnes d'export (CSV) : chemin résolu, sinon anciennes valeurs
+  const locExportColumns = s => {
+    const r = locationOf(s);
+    const at = lvl => (r.path.find(n => n.level === lvl) || {}).name || '';
+    if (r.path.length) return { room: at('room'), furniture: at('furniture'), box: at('box'), divider: at('divider'), path: r.text };
+    const p = legacyLocParts(s || {});
+    return { room: p.room, furniture: p.furniture, box: p.box, divider: p.divider, path: r.text };
+  };
+
+  // ---------- Interface : sélection progressive dans le formulaire d'un exemplaire ----------
+  const LOC_CASCADE = [['room', 'singleLocRoom'], ['furniture', 'singleLocFurniture'], ['box', 'singleLocBox'], ['divider', 'singleLocDivider']];
+  const cascadeOptions = (level, parentId) => {
+    const list = parentId ? locKids(parentId).filter(n => n.level === level) : (level === 'room' ? locKids('').filter(n => n.level === 'room') : level === 'divider' ? [] : locKids('').filter(n => n.level === level));
+    return '<option value="">' + LOC_LABELS[level] + (parentId || level === 'room' || level === 'divider' ? ' —' : ' (non classé) —') + '</option>' + list.map(n => '<option value="' + escapeHtml(n.id) + '">' + escapeHtml(n.name) + '</option>').join('');
+  };
+  const cascadeDeepest = () => { let id = ''; LOC_CASCADE.forEach(([, el]) => { if ($(el) && $(el).value) id = $(el).value; }); return id; };
+  const paintCascadePath = () => { const id = cascadeDeepest(); if ($('singleLocPath')) $('singleLocPath').textContent = id ? locPathText(locPath(id)) : 'Sans emplacement'; };
+  const renderCascade = (fromIndex, chosenPath) => {
+    let parentId = fromIndex > 0 ? ($(LOC_CASCADE[fromIndex - 1][1]) || {}).value || '' : '';
+    for (let i = fromIndex; i < LOC_CASCADE.length; i++) {
+      const [level, elId] = LOC_CASCADE[i];
+      const el = $(elId);
+      if (!el) continue;
+      // Sans parent choisi : éléments de ce niveau non encore classés (boîtes reprises des anciennes valeurs, par exemple)
+      const prevChosen = i > 0 ? (($(LOC_CASCADE[i - 1][1]) || {}).value || '') : '';
+      const anyEarlier = LOC_CASCADE.slice(0, i).some(([, e]) => $(e) && $(e).value);
+      const usable = i === 0 || !!prevChosen || (!anyEarlier && level !== 'divider');
+      el.innerHTML = cascadeOptions(level, i === 0 ? null : prevChosen || null);
+      el.disabled = !usable || el.options.length <= 1;
+      const want = chosenPath && chosenPath.find(n => n.level === level);
+      el.value = want && [...el.options].some(o => o.value === want.id) ? want.id : '';
+      parentId = el.value;
+    }
+    paintCascadePath();
+    return parentId;
+  };
+  const fillLocCascade = item => {
+    const box = $('singleLocCascade');
+    if (!box) return;
+    const cur = item ? locationOf(item) : null;
+    let path = cur ? cur.path.filter(n => !n.deletedAt) : [];
+    if (!item) {
+      let last = '';
+      try { last = localStorage.getItem('panel_last_location') || ''; } catch (_) {}
+      const p = last ? locPath(last) : [];
+      path = p.length && !p.some(n => n.deletedAt) ? p : [];
+    }
+    box.dataset.initial = item && cur && cur.nodeId && cur.path.length && !cur.path[cur.path.length - 1].deletedAt ? cur.nodeId : '';
+    renderCascade(0, path);
+    if ($('singleLocStatus')) $('singleLocStatus').textContent = cur && cur.status === 'unresolved' ? 'Ancienne valeur non résolue : « ' + cur.text + ' » (conservée).' : cur && cur.status === 'deleted' ? 'Emplacement supprimé : ' + cur.text : '';
+  };
+  // Enregistrement : l'affectation n'est écrite que si la sélection a changé
+  const applyCascadeLocation = target => {
+    const box = $('singleLocCascade');
+    if (!box) return;
+    const sel = cascadeDeepest();
+    if (sel === (box.dataset.initial || '')) return;
+    if (!sel && !(box.dataset.initial || '')) return;
+    assignLocation([target], sel, { persist: false });
+  };
+  document.addEventListener('change', e => {
+    const id = e.target && e.target.id;
+    const i = LOC_CASCADE.findIndex(([, el]) => el === id);
+    if (i < 0) return;
+    renderCascade(i + 1, null);
+    // Champs texte d'origine alignés sur la sélection (compatibilité)
+    const pathNodes = locPath(cascadeDeepest());
+    const at = lvl => (pathNodes.find(n => n.level === lvl) || {}).name || '';
+    if ($('singleBoxInput')) $('singleBoxInput').value = at('box');
+    if ($('singleDividerInput')) $('singleDividerInput').value = at('divider');
+  });
+
+  // ---------- Interface : gestionnaire des emplacements ----------
+  let locUi = { query: '', selected: null };
+  const locOptionsHtml = (filterFn, selectedId, emptyLabel) => (emptyLabel != null ? '<option value="">' + escapeHtml(emptyLabel) + '</option>' : '') +
+    locTreeOrder().filter(x => filterFn(x.node)).map(x => '<option value="' + escapeHtml(x.node.id) + '"' + (x.node.id === selectedId ? ' selected' : '') + '>' + '· '.repeat(x.depth) + escapeHtml(LOC_LABELS[x.node.level] + ' : ' + x.node.name) + '</option>').join('');
+  const renderLocationsManager = () => {
+    const tree = $('locTree');
+    if (!tree) return;
+    const counts = locCounts();
+    const q = catNorm(locUi.query);
+    const matches = q ? new Set(searchLocations(locUi.query).flatMap(r => locPath(r.id).map(n => n.id))) : null;
+    const live = locLiveNodes();
+    $('locSummary').innerHTML = LOC_LEVELS.map(l => '<span><b>' + live.filter(n => n.level === l).length + '</b> ' + escapeHtml(LOC_LABELS[l].toLowerCase()) + (live.filter(n => n.level === l).length > 1 ? (l === 'furniture' ? 's' : 's') : '') + '</span>').join('') +
+      '<span><b>' + counts.none + '</b> sans emplacement</span>' + (counts.unresolved ? '<span class="loc-warn"><b>' + counts.unresolved + '</b> non résolu' + (counts.unresolved > 1 ? 's' : '') + '</span>' : '') + '<span><b>' + unusedLocations().length + '</b> vides</span>';
+    const row = x => {
+      const n = x.node, c = counts.get(n.id) || 0, childLevel = LOC_LEVELS[LOC_LEVELS.indexOf(n.level) + 1];
+      const cap = n.level === 'box' && n.capacity ? ' / ' + n.capacity : '';
+      return '<div class="loc-row lvl-' + n.level + (locUi.selected === n.id ? ' is-selected' : '') + '" data-loc-id="' + escapeHtml(n.id) + '" style="--depth:' + x.depth + '">' +
+        '<button type="button" class="loc-name" data-loc-act="view">' + escapeHtml(n.name) + '</button>' +
+        '<span class="loc-level">' + escapeHtml(LOC_LABELS[n.level] + (n.type ? ' · ' + n.type : '')) + '</span>' +
+        '<span class="loc-count' + (c ? '' : ' is-empty') + '" title="Comics rangés (sous-niveaux compris)">' + (c ? c + cap : 'vide' + cap) + '</span>' +
+        '<span class="loc-actions">' +
+          (childLevel ? '<button type="button" class="btn-link" data-loc-act="add" data-level="' + childLevel + '">+ ' + escapeHtml(LOC_LABELS[childLevel]) + '</button>' : '') +
+          '<button type="button" class="btn-icon" data-loc-act="up" aria-label="Monter" title="Monter">↑</button>' +
+          '<button type="button" class="btn-icon" data-loc-act="down" aria-label="Descendre" title="Descendre">↓</button>' +
+          '<button type="button" class="btn-icon" data-loc-act="edit" aria-label="Modifier ou déplacer" title="Modifier ou déplacer"><svg class=ic aria-hidden=true><use href=#ic-pencil /></svg></button>' +
+          '<button type="button" class="btn-icon" data-loc-act="del" aria-label="Supprimer" title="Supprimer"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>' +
+        '</span></div>';
+    };
+    const rows = locTreeOrder().filter(x => !matches || matches.has(x.node.id));
+    const topLevel = x => (locPath(x.node.id)[0] || {}).level;
+    const roomRows = rows.filter(x => topLevel(x) === 'room');
+    const looseRows = rows.filter(x => topLevel(x) !== 'room');
+    tree.innerHTML = (roomRows.length ? roomRows.map(row).join('') : '<p class="loc-empty">' + (q ? 'Aucune pièce ne correspond.' : 'Aucune pièce pour l\'instant. Créez une pièce, puis ses meubles, boîtes et séparateurs.') + '</p>') +
+      (looseRows.length ? '<p class="loc-group">Non classés (parent à préciser)</p>' + looseRows.map(row).join('') : '');
+    const unres = (locDoc.unresolved || []).filter(u => u.kind === 'non-resolu');
+    const ub = $('locUnresolvedBox');
+    if (ub) {
+      ub.hidden = !unres.length;
+      $('locUnresolvedCount').textContent = unres.reduce((a, u) => a + u.count, 0);
+      $('locUnresolvedList').innerHTML = unres.map((u, i) => '<div class="loc-unres"><div><b>' + escapeHtml(u.value) + '</b> · ' + u.count + ' comic(s)<br><small>' + escapeHtml(u.reason) + '</small></div>' +
+        '<div class="loc-unres-act"><select data-unres-target="' + i + '" aria-label="Affecter à">' + locOptionsHtml(() => true, '', 'Affecter à…') + '</select><button type="button" class="btn secondary" data-unres-apply="' + i + '">Affecter</button></div></div>').join('');
+    }
+  };
+  const showLocEditor = html => { const ed = $('locEditor'); ed.innerHTML = html; ed.hidden = !html; };
+  const locEditorForm = (mode, n, level, parentId) => {
+    const lvl = n ? n.level : level;
+    const parentLevel = LOC_PARENT[lvl];
+    const parentSel = parentLevel ? '<div class="form-row"><label for="locEdParent">' + escapeHtml(LOC_LABELS[parentLevel]) + ' parent</label><select id="locEdParent">' +
+      locOptionsHtml(x => x.level === parentLevel, n ? n.parentId : parentId, lvl === 'divider' ? null : '— (à préciser)') + '</select></div>' : '';
+    return '<div class="loc-editor-head"><b>' + (mode === 'edit' ? 'Modifier' : 'Nouveau') + ' : ' + escapeHtml(LOC_LABELS[lvl].toLowerCase()) + '</b></div>' +
+      '<div class="loc-editor-grid"><div class="form-row"><label for="locEdName">Nom ou numéro</label><input id="locEdName" maxlength="80" value="' + escapeHtml(n ? n.name : '') + '"></div>' + parentSel +
+      (lvl === 'furniture' ? '<div class="form-row"><label for="locEdType">Type</label><select id="locEdType"><option value="">—</option>' + LOC_FURNITURE_TYPES.map(t => '<option' + (n && n.type === t ? ' selected' : '') + '>' + escapeHtml(t) + '</option>').join('') + '</select></div>' : '') +
+      (lvl === 'box' ? '<div class="form-row"><label for="locEdCapacity">Capacité (facultatif)</label><input id="locEdCapacity" type="number" min="1" step="1" value="' + (n && n.capacity ? n.capacity : '') + '"></div>' : '') +
+      '<div class="form-row" style="grid-column:1/-1"><label for="locEdDesc">Description</label><input id="locEdDesc" maxlength="300" value="' + escapeHtml(n ? n.description : '') + '"></div></div>' +
+      '<div class="loc-editor-btns"><button type="button" class="btn" id="locEdSave" data-mode="' + mode + '" data-level="' + lvl + '" data-id="' + escapeHtml(n ? n.id : '') + '">Enregistrer</button><button type="button" class="btn secondary" id="locEdCancel">Annuler</button></div><p class="loc-error" id="locEdError" role="alert"></p>';
+  };
+  const showLocContents = id => {
+    const box = $('locContents');
+    const list = locContents(id);
+    locUi.selected = id;
+    box.hidden = false;
+    box.innerHTML = '<div class="loc-contents-head"><b>' + escapeHtml(locPathText(locPath(id))) + '</b> · ' + list.length + ' comic(s)' +
+      ' <button type="button" class="btn-link" id="locShowInCollection">Afficher dans la collection</button></div>' +
+      (list.length ? '<ul>' + list.slice(0, 200).map(s => '<li>' + escapeHtml((s.series || '') + ' ' + (s.issue || '') + (s.variant ? ' · ' + s.variant : '')) + (s.isWishlist ? ' <small>(wishlist)</small>' : '') + ' <small>' + escapeHtml(locationOf(s).text) + '</small></li>').join('') + '</ul>' +
+        (list.length > 200 ? '<p class="loc-empty">… et ' + (list.length - 200) + ' autre(s).</p>' : '') +
+        '<div class="loc-move"><label for="locMoveAllTarget">Déplacer ces comics vers</label><select id="locMoveAllTarget">' + locOptionsHtml(n => n.id !== id, '', 'Choisir…') + '</select><button type="button" class="btn secondary" id="locMoveAllBtn">Déplacer</button></div>'
+        : '<p class="loc-empty">Emplacement vide.</p>');
+    renderLocationsManager();
+  };
+  const openLocationsManager = () => {
+    const m = $('locationsModal');
+    if (!m) return;
+    locUi = { query: '', selected: null };
+    if ($('locSearchInput')) $('locSearchInput').value = '';
+    showLocEditor('');
+    $('locContents').hidden = true;
+    renderLocationsManager();
+    m.classList.add('open');
+  };
+  const refreshAfterLocationChange = () => {
+    renderLocationsManager(); updateBoxesList(); renderSinglesCollection();
+    if ($('singleLocCascade')) renderCascade(0, locPath(cascadeDeepest()).filter(n => !n.deletedAt));
+  };
+  const wireLocationsManager = () => {
+    const m = $('locationsModal');
+    if (!m || m.dataset.wired) return;
+    m.dataset.wired = '1';
+    $('closeLocationsModalBtn').onclick = () => m.classList.remove('open');
+    $('locSearchInput').oninput = e => { locUi.query = e.target.value; renderLocationsManager(); };
+    $('locAddRoomBtn').onclick = () => showLocEditor(locEditorForm('new', null, 'room', null));
+    $('locAddFurnitureBtn').onclick = () => showLocEditor(locEditorForm('new', null, 'furniture', null));
+    $('locAddBoxBtn').onclick = () => showLocEditor(locEditorForm('new', null, 'box', null));
+    m.addEventListener('click', e => {
+      const t = e.target.closest('button');
+      if (!t || !m.contains(t)) return;
+      const rowEl = t.closest('[data-loc-id]');
+      const id = rowEl ? rowEl.dataset.locId : null;
+      const act = t.dataset.locAct;
+      if (act === 'view') return showLocContents(id);
+      if (act === 'add') return showLocEditor(locEditorForm('new', null, t.dataset.level, id));
+      if (act === 'edit') return showLocEditor(locEditorForm('edit', locIdx().byId.get(id)));
+      if (act === 'up' || act === 'down') { reorderLocation(id, act === 'up' ? -1 : 1); return renderLocationsManager(); }
+      if (act === 'del') {
+        const r = removeLocation(id);
+        if (r.ok) { showToast('Emplacement supprimé (aucun comic concerné).'); return refreshAfterLocationChange(); }
+        if (!r.needsChoice) return showLocEditor('<p class="loc-error" role="alert">' + escapeHtml(r.error) + '</p>');
+        return showLocEditor('<div class="loc-editor-head"><b>Supprimer « ' + escapeHtml(locIdx().byId.get(id).name) + ' »</b></div><p>' + r.count + ' comic(s) y sont rangés. Ils ne seront pas supprimés.</p>' +
+          '<div class="loc-move"><label for="locDelTarget">Les déplacer vers</label><select id="locDelTarget">' + locOptionsHtml(n => n.id !== id, '', 'Sans emplacement') + '</select>' +
+          '<button type="button" class="btn" id="locDelMove" data-id="' + escapeHtml(id) + '">Déplacer puis supprimer</button></div>' +
+          '<button type="button" class="btn secondary" id="locDelKeep" data-id="' + escapeHtml(id) + '">Supprimer en conservant leur emplacement précédent (affiché « supprimé »)</button> <button type="button" class="btn-link" id="locEdCancel">Annuler</button>');
+      }
+      if (t.id === 'locEdCancel') return showLocEditor('');
+      if (t.id === 'locDelMove' || t.id === 'locDelKeep') {
+        const r = t.id === 'locDelMove' ? removeLocation(t.dataset.id, { reassignTo: $('locDelTarget').value }) : removeLocation(t.dataset.id, { keep: true });
+        showToast(r.ok ? (r.moved ? r.moved + ' comic(s) déplacé(s), emplacement supprimé.' : 'Emplacement supprimé ; les comics gardent leur emplacement précédent.') : r.error);
+        showLocEditor('');
+        return refreshAfterLocationChange();
+      }
+      if (t.id === 'locEdSave') {
+        const name = $('locEdName').value, parentId = $('locEdParent') ? $('locEdParent').value : null;
+        const extra = { description: $('locEdDesc').value, type: $('locEdType') ? $('locEdType').value : undefined, capacity: $('locEdCapacity') ? $('locEdCapacity').value : undefined };
+        let r;
+        if (t.dataset.mode === 'new') r = createLocation(Object.assign({ level: t.dataset.level, parentId, name }, extra));
+        else {
+          r = updateLocation(t.dataset.id, Object.assign({ name }, extra));
+          if (r.ok && parentId !== null && (r.node.parentId || '') !== (parentId || '')) r = moveLocation(t.dataset.id, parentId);
+        }
+        if (!r.ok) { $('locEdError').textContent = r.error; return; }
+        showLocEditor('');
+        return refreshAfterLocationChange();
+      }
+      if (t.id === 'locShowInCollection') {
+        updateBoxesList();
+        const sel = $('boxFilterSelect');
+        if (sel) { sel.value = locUi.selected; renderSinglesCollection(); }
+        m.classList.remove('open');
+        return;
+      }
+      if (t.id === 'locMoveAllBtn') {
+        const target = $('locMoveAllTarget').value;
+        if (!target) return;
+        const r = assignLocation(locContents(locUi.selected), target);
+        showToast(r.ok ? r.changed + ' comic(s) déplacé(s).' : r.error);
+        showLocContents(target);
+        return refreshAfterLocationChange();
+      }
+      if (t.dataset.unresApply !== undefined) {
+        const u = (locDoc.unresolved || []).filter(x => x.kind === 'non-resolu')[Number(t.dataset.unresApply)];
+        const target = m.querySelector('[data-unres-target="' + t.dataset.unresApply + '"]').value;
+        if (!u || !target) return;
+        const list = physicalSingles.filter(s => locationOf(s).status === 'unresolved' && legacyLocKey(legacyLocParts(s)) === u.key);
+        const r = assignLocation(list, target);
+        locSyncLegacy('import');
+        saveLocDoc();
+        showToast(r.ok ? r.changed + ' comic(s) affecté(s) ; ancienne valeur conservée dans leur historique.' : r.error);
+        return refreshAfterLocationChange();
+      }
+    });
+  };
+  const initLocations = async () => {
+    await recoverLocationsFromIdb();
+    wireLocationsManager();
+    if (!navigator.webdriver && (!locDoc.migration || locDoc.migration.status !== 'ok')) {
+      const r = await migrateLocations();
+      if (r.ok && !r.already) { updateBoxesList(); renderSinglesCollection(); }
+    }
   };
 
   // Réduction des photos avant stockage (une photo de téléphone saturerait localStorage)
@@ -5405,7 +6150,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       datalist.innerHTML = Array.from(boxes).map(b => `<option value="${escapeHtml(b)}"></option>`).join('');
     }
 
-    if (boxSelect) {
+    if (boxSelect && locLiveNodes().length) {
+      // Emplacements hiérarchiques : chaque niveau filtre son contenu (sous-niveaux compris)
+      const cur = boxSelect.value;
+      const counts = locCounts();
+      boxSelect.innerHTML = '<option value="all">Tous les emplacements</option>' +
+        locTreeOrder().map(x => `<option value="${escapeHtml(x.node.id)}">${'· '.repeat(x.depth)}${escapeHtml(x.node.name)} (${counts.get(x.node.id) || 0})</option>`).join('') +
+        `<option value="__none">Sans emplacement (${counts.none})</option>` + (counts.unresolved ? `<option value="__unresolved">Anciennes valeurs non résolues (${counts.unresolved})</option>` : '');
+      if ([...boxSelect.options].some(o => o.value === cur)) boxSelect.value = cur;
+    } else if (boxSelect) {
       const cur = boxSelect.value;
       boxSelect.innerHTML = '<option value="all">Toutes les Boîtes (Short & Long Boxes)</option>' +
         Array.from(boxes).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true })).map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)} (${physicalSingles.filter(s => boxOf(s) === b).length})</option>`).join('');
@@ -5431,7 +6184,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const rating = Number($('singleRatingInput') && $('singleRatingInput').dataset.value) || 0;
     const coverYear = parseInt(($('singleYearInput') && $('singleYearInput').value) || '', 10) || null;
 
-    const box = ($('singleBoxInput') && $('singleBoxInput').value.trim()) || 'Short Box 1';
+    const box = ($('singleBoxInput') && $('singleBoxInput').value.trim()) || '';
     const divider = ($('singleDividerInput') && $('singleDividerInput').value.trim()) || '';
     const location = divider ? (box + ' · ' + divider) : box;
     $('singleLocationInput').value = location;
@@ -5507,6 +6260,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           updatedAt: new Date().toISOString()
         });
         applyStructuredCopyFields(physicalSingles[idx]);
+        applyCascadeLocation(physicalSingles[idx]);
         withCover(physicalSingles[idx], prevItem);
         applyFormValuation(physicalSingles[idx], prevEst);
       }
@@ -5523,6 +6277,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         addedAt: new Date().toISOString()
       };
       applyStructuredCopyFields(newSingle);
+      applyCascadeLocation(newSingle);
       withCover(newSingle, null);
       applyFormValuation(newSingle, null);
       physicalSingles.unshift(newSingle);
@@ -5601,7 +6356,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (!cpBox) { cpBox = document.createElement('div'); cpBox.id = 'inspectCopiesBox'; cpBox.className = 'inspect-copies'; $('inspectPurchaseMeta').insertAdjacentElement('afterend', cpBox); }
       const vid = catalogIdsOf(item).variantId;
       const same = physicalSingles.filter(x => x && catalogIdsOf(x).variantId === vid);
-      const lineOf = x => [x === item ? 'Cet exemplaire' : '', x.isWishlist ? 'Wishlist' : '', copyDetailText(normalizeCopyData(x)), x.location || boxOf(x) || ''].filter(Boolean).join(' · ');
+      const lineOf = x => [x === item ? 'Cet exemplaire' : '', x.isWishlist ? 'Wishlist' : '', copyDetailText(normalizeCopyData(x)), locationOf(x).text].filter(Boolean).join(' · ');
       cpBox.innerHTML = '<div class="inspect-copy-detail">' + escapeHtml(copyDetailText(normalizeCopyData(item))) + '</div>' +
         (same.length > 1 ? '<p class="inspect-copies-title">Exemplaires de cette variante (' + same.length + ')</p><ul>' +
           same.map((x, i) => '<li><button type="button" class="btn-link" data-copy-idx="' + i + '"' + (x === item ? ' aria-current="true"' : '') + '>' + escapeHtml(lineOf(x)) + '</button></li>').join('') + '</ul>' : '');
@@ -5655,9 +6410,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         : '';
     }
 
-    const boxText = item.box || (item.location ? item.location.split('·')[0].trim() : 'Non classé');
-    const divText = item.divider || (item.location && item.location.includes('·') ? item.location.split('·')[1].trim() : '');
-    $('inspectLocationText').textContent = `${boxText}${divText ? ' · ' + divText : ''}`;
+    const locR = locationOf(item);
+    $('inspectLocationText').textContent = locR.text ? locR.text + (locR.status === 'unresolved' ? ' (ancienne valeur non résolue)' : locR.status === 'missing' ? ' (introuvable)' : '') : 'Sans emplacement';
     $('inspectNotesText').textContent = item.notes || 'Aucune note particulière';
 
     // Lecture & note (modifiables directement depuis l'inspecteur)
@@ -5746,11 +6500,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         : 'Valeur saisie manuellement. Videz le champ ou cliquez « Coter » pour revenir à la cote auto.';
     }
 
-    const bText = item.box || (item.location ? item.location.split('·')[0].trim() : 'Short Box 1');
+    const bText = item.box || (item.location ? item.location.split('·')[0].trim() : '');
     const dText = item.divider || (item.location && item.location.includes('·') ? item.location.split('·')[1].trim() : '');
     if ($('singleBoxInput')) $('singleBoxInput').value = bText;
     if ($('singleDividerInput')) $('singleDividerInput').value = dText;
-    $('singleLocationInput').value = item.location || 'Short Box 1';
+    $('singleLocationInput').value = item.location || '';
+    fillLocCascade(item);
 
     $('singleProtectedCheckbox').checked = !!item.isProtected;
     $('singleWishlistCheckbox').checked = !!item.isWishlist;
@@ -5865,11 +6620,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     const boxSelect = $('boxFilterSelect');
     const activeBox = boxSelect ? boxSelect.value : 'all';
-    if (activeBox !== 'all' && boxOf(s) !== activeBox) return false;
+    if (activeBox && activeBox !== 'all') {
+      const lr = locationOf(s);
+      if (activeBox === '__none' ? lr.status !== 'none' : activeBox === '__unresolved' ? !['unresolved', 'missing'].includes(lr.status) : /^loc_/.test(activeBox) ? !lr.path.some(n => n.id === activeBox) : boxOf(s) !== activeBox) return false;
+    }
 
     if (singlesSearchQuery) {
       const q = singlesSearchQuery.toLowerCase();
-      const str = [s.series, s.issue, s.publisher, s.variant, s.box, s.divider, s.location, s.notes, s.condition].join(' ').toLowerCase();
+      const str = [s.series, s.issue, s.publisher, s.variant, s.box, s.divider, s.location, locationOf(s).text, s.notes, s.condition].join(' ').toLowerCase();
       if (!q.split(/\s+/).every(t => str.includes(t))) return false;
     }
     return true;
@@ -5986,7 +6744,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<div class="row-title"><b>' + escapeHtml(item.series) + ' ' + escapeHtml(item.issue) + '</b>' +
             '<small>' + escapeHtml(item.variant || '') + (nCopies > 1 ? ' · ×' + nCopies + ' ex.' : '') + (key ? ' · ' + key : '') + (item.rating ? ' · <span class="stars">' + starsText(item.rating) + '</span>' : '') + '</small></div>' +
           '<span class="row-dim hide-sm">' + escapeHtml(condShort) + '</span>' +
-          '<span class="row-dim hide-sm">' + escapeHtml(item.location || boxOf(item) || '—') + '</span>' +
+          '<span class="row-dim hide-sm" title="' + escapeHtml(locationOf(item).text) + '">' + escapeHtml(locationOf(item).text || '—') + '</span>' +
           '<span class="row-num row-dim">' + (item.isWishlist ? '—' : money(paidOf(item))) + '</span>' +
           '<span class="row-num" style="color:var(--gold);font-weight:700" title="' + escapeHtml(VALUE_SOURCE_LABELS[item.valueSource] || 'Valeur') + '">' + valuePrefix(item) + money(value) + '</span>' +
           '<div class="row-actions">' +
@@ -6022,7 +6780,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<div class="comic-caption-row" style="font-size: 12px;color:var(--muted)">' +
             (item.isWishlist ? '<span style="color:var(--orange)">Recherché</span>'
               : '<button class="read-dot ' + (item.isRead ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (item.isRead ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
-            (item.rating ? '<span class="stars">' + starsText(item.rating) + '</span>' : '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.location || boxOf(item) || '') + '</span>') +
+            (item.rating ? '<span class="stars">' + starsText(item.rating) + '</span>' : '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + escapeHtml(locationOf(item).text) + '">' + escapeHtml(locationOf(item).text) + '</span>') +
           '</div>' +
           '<div class="comic-card-action-bar">' +
             '<button class="card-action-btn" data-inspect>Inspecter</button>' +
@@ -6493,7 +7251,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       { label: '< 6.0', test: s => !isGradedCondition(s.condition) && gradeScore(s.condition) < 6 }
     ].map(b => ({ label: b.label, v: owned.filter(b.test).length }));
 
-    const byBox = Object.entries(groupBy(owned, s => boxOf(s) || 'Non rangé')).map(([k, l]) => ({ label: k, v: l.length })).sort((a, b) => b.v - a.v).slice(0, 8);
+    const byBox = Object.entries(groupBy(owned, s => { const r = locationOf(s); const up = r.path.filter(n => n.level !== 'divider'); return up.length ? up.map(n => n.name).join(' > ') : (r.text || 'Non rangé'); })).map(([k, l]) => ({ label: k, v: l.length })).sort((a, b) => b.v - a.v).slice(0, 8);
 
     const readN = owned.filter(s => s.isRead).length;
     const rated = owned.filter(s => s.rating);
@@ -6608,6 +7366,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     { key: 'rating', label: 'Note', aliases: ['rating', 'myrating', 'stars', 'score', 'note'] },
     { key: 'signedBy', label: 'Dédicacé par', aliases: ['signedby', 'signed', 'signature', 'signatures'] },
     { key: 'keyInfo', label: 'Info key issue', aliases: ['key', 'keycategory', 'keyreason', 'keyinfo', 'keycomments', 'keyissue', 'keynotes'] },
+    { key: 'room', label: 'Pièce', aliases: ['room', 'piece', 'salle'] },
+    { key: 'furniture', label: 'Meuble', aliases: ['furniture', 'meuble', 'shelf', 'shelving', 'bookcase', 'etagere', 'bibliotheque'] },
+    { key: 'divider', label: 'Séparateur', aliases: ['divider', 'separateur', 'intercalaire'] },
     { key: 'box', label: 'Boîte / emplacement', aliases: ['storagebox', 'box', 'location', 'storage', 'storagelocation', 'boite', 'emplacement'] },
     { key: 'notes', label: 'Notes', aliases: ['notes', 'comments', 'comment', 'mynotes', 'remarks'] },
     { key: 'inCollection', label: 'En collection (oui / non)', aliases: ['incollection', 'owned', 'collected', 'possede'] },
@@ -6840,7 +7601,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           purchaseDate,
           estValue: value,
           coverYear,
-          box: box.slice(0, 100), divider: '', location: box.slice(0, 200),
+          box: box.slice(0, 100), divider: String(get('divider') || '').slice(0, 100), location: (box + (get('divider') ? ' · ' + get('divider') : '')).slice(0, 200),
+          ...(get('room') ? { room: String(get('room')).slice(0, 80) } : {}), ...(get('furniture') ? { furniture: String(get('furniture')).slice(0, 80) } : {}),
           isProtected: false,
           isWishlist,
           isRead: !!readTxt && (csvTruthy(readTxt) || (mapping.read >= 0 && /date/.test(normHeader(parsed.headers[mapping.read])) && parseDateFlexible(readTxt) !== '')),
@@ -7788,13 +8550,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Boîte', 'Séparateur', 'Notes', 'Date ajout'];
+    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Pièce', 'Meuble', 'Boîte', 'Séparateur', 'Notes', 'Date ajout'];
     const rows = physicalSingles.map(s => [
       s.series, s.issue, s.publisher, s.variant, s.keyType || 'none', s.condition,
       numOrNull(s.coverPrice) ?? '', numOrNull(s.purchasePrice) ?? '', s.purchaseDate || '', numOrNull(s.estValue) ?? '',
       ({ auto: 'Cote auto', market: 'Marché (' + (s.marketSource || 'vente') + ')', manual: 'Saisie' })[s.valueSource] || '', s.coverYear || '',
       s.isRead ? 'Oui' : 'Non', s.rating || '', s.isProtected ? 'Oui' : 'Non', s.isWishlist ? 'Oui' : 'Non',
-      boxOf(s), s.divider || '', s.notes || '', s.addedAt || ''
+      ...(c => [c.room, c.furniture, c.box, c.divider])(locExportColumns(s)), s.notes || '', s.addedAt || ''
     ].map(csvCell));
 
     const csvContent = [headers.map(csvCell).join(','), ...rows.map(r => r.join(','))].join('\r\n');
@@ -7813,7 +8575,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta };
+    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations() };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -7885,7 +8647,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (list.length && !items.length) throw new Error('Aucune fiche lisible dans la sauvegarde (fichier corrompu ?).');
     const seriesMetaIn = d.seriesMeta && typeof d.seriesMeta === 'object' && !Array.isArray(d.seriesMeta) ? d.seriesMeta : null;
     const digitalKeys = ['folders', 'bookmarks', 'theories', 'readingPositions'].filter(k => d[k] !== undefined);
-    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys };
+    return { items, invalid, seriesMeta: seriesMetaIn, exportedAt: d.exportedAt || null, digitalKeys, locations: sanitizeLocDoc(d.locations) };
   };
 
   // Applique une sauvegarde validée. mode « merge » (défaut) : ajoute ce qui manque, ne modifie rien d'existant.
@@ -7895,7 +8657,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const persist = opts.persist || persistSingles;
     const snapId = await snapshotSingles(mode === 'replace' ? 'Avant remplacement par une sauvegarde' : 'Avant fusion d\'une sauvegarde');
     if (!snapId && !opts.allowWithoutSnapshot) throw new Error('Instantané de sécurité impossible (stockage indisponible) : restauration annulée, rien n\'a été modifié.');
-    const prevSingles = physicalSingles, prevMeta = seriesMeta;
+    const prevSingles = physicalSingles, prevMeta = seriesMeta, prevLocDoc = JSON.parse(JSON.stringify(locDoc));
+    clearTimeout(locSyncTimer);
     try {
       let added = 0, conflicts = 0;
       if (mode === 'replace') {
@@ -7919,6 +8682,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       }
       persist();
       saveSeriesMeta();
+      // Emplacements de la sauvegarde : ajoutés (fusion) ou rétablis (remplacement) ; aucun emplacement actuel supprimé
+      if (payload.locations) mergeLocDoc(payload.locations, mode);
       // Vérification : ce qui est relu doit correspondre à ce qui vient d'être écrit
       const back = JSON.parse(localStorage.getItem('panel_physical_singles') || '[]');
       if (!opts.persist && back.length !== physicalSingles.length) throw new Error('Écriture incomplète du stockage local.');
@@ -7926,6 +8691,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     } catch (err) {
       physicalSingles = prevSingles;
       seriesMeta = prevMeta;
+      locDoc = prevLocDoc; locInvalidate(); saveLocDoc();
       try { persistSingles(); saveSeriesMeta(); } catch (_) {}
       return { ok: false, mode, error: String(err.message || err), snapshotId: snapId, rolledBack: true };
     }
@@ -8122,6 +8888,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if ($('runVisualRecognitionBtn')) $('runVisualRecognitionBtn').onclick = executeVisualCoverRecognition;
 
     if ($('boxFilterSelect')) $('boxFilterSelect').onchange = () => renderSinglesCollection();
+    if ($('manageLocationsBtn')) $('manageLocationsBtn').onclick = openLocationsManager;
+    if ($('singleLocManageBtn')) $('singleLocManageBtn').onclick = openLocationsManager;
+    wireLocationsManager();
 
     if ($('scannerCameraSelect')) {
       $('scannerCameraSelect').onchange = e => {
@@ -8158,9 +8927,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('singleConditionSelect').value = 'NM 9.4 (Near Mint)';
       $('singleCoverPriceInput').value = '';
       resetExtendedSingleFields();
-      if ($('singleBoxInput')) $('singleBoxInput').value = 'Short Box 1';
+      if ($('singleBoxInput')) $('singleBoxInput').value = '';
       if ($('singleDividerInput')) $('singleDividerInput').value = '';
-      $('singleLocationInput').value = 'Short Box 1';
+      $('singleLocationInput').value = '';
+      fillLocCascade(null);
       if ($('duplicateWarningBox')) $('duplicateWarningBox').style.display = 'none';
       $('singleProtectedCheckbox').checked = true;
       $('singleWishlistCheckbox').checked = false;
@@ -8834,6 +9604,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         ...readStoredDigitalData(),
         physicalSingles,
         seriesMeta,
+        locations: exportLocations(),
         exportedAt: new Date().toISOString()
       };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -9015,7 +9786,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // Démarrage
   bindEvents();
   renderSinglesCollection();
-  recoverSinglesFromIdb().then(() => { if (!navigator.webdriver) setTimeout(initCatalog, 1500); });
+  recoverSinglesFromIdb().then(() => { initLocations(); if (!navigator.webdriver) setTimeout(initCatalog, 1500); });
   initPwa();
   handleLaunchParams();
   if (coverJobOptions.active && !navigator.webdriver) setTimeout(() => { if (coverJobOptions.active) runCoverJob(); }, 4000);
@@ -9042,6 +9813,28 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     searchComicVineApi,
     saveSingleIssue,
     openSingleInspector,
+    locations: {
+      doc: exportLocations,
+      migrate: migrateLocations,
+      sync: async () => { const r = locSyncLegacy('import'); await saveLocDoc(); return r; },
+      create: createLocation, update: updateLocation, move: moveLocation, reorder: reorderLocation, remove: removeLocation, restore: restoreLocation,
+      assign: (ids, nodeId) => assignLocation(physicalSingles.filter(x => x && ids.includes(x.id)), nodeId),
+      of: s => { const r = locationOf(s); return { status: r.status, nodeId: r.nodeId, text: r.text, path: r.path.map(n => n.id) }; },
+      path: id => locPathText(locPath(id)),
+      counts: () => { const m = locCounts(); return { byId: Object.fromEntries(m), none: m.none, unresolved: m.unresolved }; },
+      contents: id => locContents(id).map(x => x.id),
+      search: searchLocations,
+      unused: () => unusedLocations().map(n => n.id),
+      tree: () => locTreeOrder().map(x => ({ id: x.node.id, level: x.node.level, name: x.node.name, depth: x.depth })),
+      find: (level, name) => (locLiveNodes().find(n => n.level === level && catNorm(n.name) === catNorm(name)) || {}).id || null,
+      exportColumns: locExportColumns,
+      sanitize: sanitizeLocDoc,
+      recoverFromIdb: recoverLocationsFromIdb,
+      reloadFromStorage: () => { locDoc = readLocDoc(); locInvalidate(); return locDoc.nodes.length; },
+      setDocForTest: d => { clearTimeout(locSyncTimer); locDoc = Object.assign(emptyLocDoc(), JSON.parse(JSON.stringify(d || emptyLocDoc()))); locInvalidate(); return saveLocDoc(); },
+      fillCascade: fillLocCascade,
+      openManager: openLocationsManager
+    },
     renderSinglesCollection,
     getPhysicalSingles: () => physicalSingles,
     showSinglesView,
