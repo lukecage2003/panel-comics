@@ -114,6 +114,13 @@ Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec op
   - commandes acceptées seulement après un vrai geste de l'utilisateur, avec un jeton à usage unique ;
   - dédoublonnage par Collection et annulation exacte ;
   - test 33 ; front **32/32**. Sauvegardes `*.backup.20261108-3.1b-2`.
+- **3.1b-3 Explorer découplé de Collection (C2 à C10, A7)** ([réalisation](phase4/05-contrats-s1-s6.md#consommation-par-explorer-sous-lot-31b-3-8-novembre-2026)) :
+  - Explorer ne lit plus `physicalSingles`, `relPulls` ni les séries suivies ; statuts et filtres personnels via S1, actions via S2 avec un jeton de geste ;
+  - S1 v1 complété de façon compatible : statuts facultatifs `unconfirmed` et `seriesFollowed`, agrégats `collectionFacets` « d'après votre collection » ;
+  - retraits prévus par la conception : badge « Rangé », couverture d'un exemplaire personnel, catégorie « Ma collection » de la recherche (A7) ;
+  - interrupteur « Personnaliser Explorer avec mes données » (effet immédiat) ; sans S1, guide éditorial complet et pages dérivées masquées ;
+  - test 34 « Frontières » créé ; test 29 adapté pour A7, deux clics rejoués par CDP ; `check:boundaries` : 0 couplage.
+  - Résultats : front **33/33**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-3`.
 
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.

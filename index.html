@@ -1610,6 +1610,8 @@
     .ex-search input { flex: 1; min-width: 0; border: 0; outline: 0; background: transparent; font-size: 16px; padding: 13px 0; color: #111111; }
     .ex-hist { margin-top: 10px; }
     .ex-hist .ex-chip { background: transparent; color: #F3F2EE; border-color: #4A4945; }
+    .ex-personalize { display: inline-flex; align-items: center; gap: 8px; margin-top: 12px; color: #F3F2EE; font-size: 13px; }
+    .ex-personalize-note { display: block; margin-top: 4px; color: #B5B3AC; font-size: 12px; }
     .ex-sec { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
     .ex-sec-head h3, .ex-sec > h3 { font-family: var(--font-display); font-size: 22px; font-weight: 800; text-transform: uppercase; margin: 0; letter-spacing: .01em; }
     .ex-sec-head p { margin: 2px 0 0; color: var(--muted); font-size: 13px; }
@@ -1710,6 +1712,7 @@
     .ex-b.is-missing { color: #4A4945; }
     .ex-b.is-probable, .ex-b.is-partial, .ex-b.is-demo { background: #FFF4C2; border-color: #C9A400; }
     .ex-b.is-wish { border-color: #B0005F; color: #8A0049; }
+    .ex-b.is-personal { border-style: dashed; font-size: 11px; vertical-align: middle; }
     .ex-b.is-pull { border-color: #111111; }
     .ex-b.is-st-read { background: #111111; color: #FFFFFF; border-color: #111111; }
     .ex-b.is-st-reading { background: #FFD400; border-color: #111111; }
@@ -9485,8 +9488,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return { ok: true, guide: g, warnings: r.warnings, created: !prev };
   };
 
-  // ---------- Progression personnelle (indépendante des données éditoriales et de la possession)
-  const exSetProgress = async (entryKey, status) => {
+  // ---------- Progression personnelle des guides : domaine Lecture (propriétaire, A3). Explorer y accède seulement par S1 (lecture) et S2 (écriture).
+  const lecSetGuideProgress = async (entryKey, status) => {
     await loadExplorerData();
     if (!/^ek_[a-z0-9]{1,40}$/i.test(String(entryKey || ''))) return { ok: false, error: 'Entrée inconnue.' };
     if (status && !GD_PROGRESS[status]) return { ok: false, error: 'Statut inconnu.' };
@@ -9497,63 +9500,77 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     rec.status = status || '';
     rec.at = at;
     exProgress.set(entryKey, rec);
-    await exPut('readprog', [rec]);
+    const db = await openCatalogDb();
+    if (db && db.objectStoreNames.contains('readprog')) await idbWrite(db, ['readprog'], tx => tx.objectStore('readprog').put(JSON.parse(JSON.stringify(rec))));
     return { ok: true, rec };
   };
 
-  // ---------- Rapprochement avec le calendrier et la collection (titre exact + numéro + année cohérente ; jamais par ressemblance)
+  // ---------- Rapprochement avec le calendrier (titre exact + numéro + année cohérente ; jamais par ressemblance)
+  // Lot 3.1b-3 : Explorer ne lit plus l'inventaire. Les statuts personnels viennent de S1 (PersonalLens.v1), les actions passent par S2.
   const exIndexBuild = () => {
-    const singles = new Map(), pubs = new Map();
-    const push = (m, k, v) => { const l = m.get(k); if (l) l.push(v); else m.set(k, [v]); };
-    physicalSingles.forEach(s => push(singles, gdBase(s.series) + '#' + gdIssue(s.issue).toLowerCase(), s));
-    relPubs.forEach(p => { if (!p.market || p.market === 'US') push(pubs, gdBase(p.series) + '#' + gdIssue(p.issue).toLowerCase(), p); });
-    const pulls = new Set();
-    relPulls.forEach(pl => { if (pl.status !== 'cancelled') pulls.add(pl.pubId); });
-    return { singles, pubs, pulls };
+    const pubs = new Map();
+    relPubs.forEach(p => { if (!p.market || p.market === 'US') { const k = gdBase(p.series) + '#' + gdIssue(p.issue).toLowerCase(); const l = pubs.get(k); if (l) l.push(p); else pubs.set(k, [p]); } });
+    return { pubs };
   };
   const exYear = v => { const y = parseInt(String(v || '').slice(0, 4), 10); return y >= 1900 && y <= 2200 ? y : null; };
-  const exMatch = (e, idx) => {
+  const exResolve = (e, idx) => {
     const k = gdBase(e.series) + '#' + gdIssue(e.issue).toLowerCase();
     const yr = exYear(e.year);
-    const yearOk = y => (!yr || !y) ? null : Math.abs(y - yr) <= 1;
     let pub = e.pubId ? relPubs.get(e.pubId) || null : null, pubHow = pub ? 'manual' : '';
-    if (!pub) {
-      const c = (idx.pubs.get(k) || []).filter(p => !p.variant && yearOk(exYear(p.dates.actual || p.dates.current)) === true);
+    if (!pub && yr) {
+      const c = (idx.pubs.get(k) || []).filter(p => { const y = exYear(p.dates.actual || p.dates.current); return !p.variant && !!y && Math.abs(y - yr) <= 1; });
       if (c.length === 1) { pub = c[0]; pubHow = 'auto'; }
     }
-    const owned = [], wish = [], probable = [];
-    const seen = new Set();
-    (idx.singles.get(k) || []).forEach(s => {
-      if (seen.has(s.id)) return; seen.add(s.id);
-      const sure = (pub && s.pubId === pub.id) || yearOk(exYear(s.coverYear) || exYear(s.releaseDate) || exYear(s.coverDate)) === true;
-      const unknown = !sure && yearOk(exYear(s.coverYear) || exYear(s.releaseDate) || exYear(s.coverDate)) === null;
-      if (sure) (s.isWishlist ? wish : owned).push(s);
-      else if (unknown && !s.isWishlist) probable.push(s);
-    });
-    if (pub) physicalSingles.forEach(s => { if (s.pubId === pub.id && !seen.has(s.id)) { seen.add(s.id); (s.isWishlist ? wish : owned).push(s); } });
-    const prog = exProgress.get(e.id);
-    const readInCollection = owned.some(s => s.isRead);
-    const status = prog && prog.status ? prog.status : '';
-    return { pub, pubHow, owned, wish, probable, pull: !!pub && idx.pulls.has(pub.id), located: owned.some(s => s.locationId || s.box || s.location), readInCollection,
-      status, effective: status || (readInCollection ? 'read' : ''), derived: !status && readInCollection };
+    return { pub, pubHow };
   };
+  // Fournisseur des contrats personnels (S1/S2). undefined : fournisseur local ; null : fournisseur absent (tests de frontière).
+  let exProviderOverride;
+  const exContracts = () => exProviderOverride === undefined ? PERSONAL_CONTRACTS_V1 : exProviderOverride;
+  // Réglage désactivé : aucun appel au fournisseur (docs/phase4/05 § 3)
+  const exLensCall = (fn, ...args) => { const C = exContracts(); const f = C && C.lens && C.lens[fn]; if (typeof f !== 'function') return null; try { if (typeof C.lens.isEnabled === 'function' && !C.lens.isEnabled()) return null; const r = f(...args); return r && r.ok ? r : null; } catch (_) { return null; } };
+  const exPersonalOn = () => !!exLensCall('statusFor', []);
+  const exCommands = () => { const C = exContracts(); return C && C.commands ? C.commands : null; };
+  const exRefOf = (e, pub) => ({ series: String(e.series || ''), issue: String(e.issue == null ? '' : e.issue), year: e.year ? String(e.year) : '', pubId: pub ? pub.id : '' });
+  // Rapprochement d'une liste d'entrées : publication (Explorer) + statuts minimaux (S1). Aucun exemplaire n'est jamais reçu.
+  const exMatchAll = (entries, idx, guideId) => {
+    const base = entries.map(e => exResolve(e, idx));
+    const st = [];
+    let personal = true;
+    for (let i = 0; i < entries.length && personal; i += 500) {
+      const r = exLensCall('statusFor', entries.slice(i, i + 500).map((e, j) => exRefOf(e, base[i + j].pub)), { include: ['unconfirmed', 'seriesFollowed'] });
+      if (r) st.push(...r.items); else personal = false;
+    }
+    if (!entries.length) personal = exPersonalOn();
+    const gp = personal && guideId && entries.length ? exLensCall('guideProgress', guideId, entries.map(e => e.id)) : null;
+    const out = new Map();
+    entries.forEach((e, i) => {
+      const s = personal ? st[i] : null, g = gp && gp.items[i], status = g && !g.derivedFromCollection ? g.status : ''; // statut explicite seulement ; « lu » dérivé de la collection vient de S1 read
+      const read = !!(s && s.read);
+      out.set(e.id, { pub: base[i].pub, pubHow: base[i].pubHow, personal, owned: s ? s.owned : 0, wish: !!(s && s.wishlisted), probable: !!(s && !s.owned && s.unconfirmed), pull: !!(s && s.inPullList),
+        followed: !!(s && s.seriesFollowed), status, effective: status || (read ? 'read' : ''), derived: !status && read });
+    });
+    out.personal = personal;
+    return out;
+  };
+  // Couverture : éditoriale (guide), puis calendrier, sinon placeholder. Jamais l'image d'un exemplaire personnel (C4).
   const exCoverOf = (e, m) => {
     if (e.cover && e.cover.url) return { url: e.cover.url, source: e.cover.source || 'Saisie', rights: e.cover.rights || '', protected: true };
     if (m.pub && m.pub.cover && m.pub.cover.url) return { url: m.pub.cover.url, source: relSourceLabel(m.pub.cover.source), rights: m.pub.cover.rights || srcImageRights(m.pub.cover.source) || '' };
-    const s = m.owned.find(x => x.coverUrl && isSafeImageUrl(x.coverUrl));
-    if (s) return { url: s.coverUrl, source: 'Votre collection' + (s.coverSource ? ' (' + s.coverSource + ')' : ''), rights: '' };
     return { url: placeholderCover(e.series, e.issue), source: '', rights: '', placeholder: true };
   };
-  const exOrderStats = (g, order, idx) => {
+  const exOrderStats = (g, order, idx, matches) => {
     const st = { total: 0, essential: 0, recommended: 0, optional: 0, unclassified: 0, owned: 0, read: 0, reading: 0, skipped: 0, missing: 0, byImp: {} };
-    (order ? order.entries : []).forEach(e => {
-      const m = exMatch(e, idx);
+    const list = order ? order.entries : [];
+    const ms = matches || exMatchAll(list, idx, g.id);
+    st.personal = ms.personal;
+    list.forEach(e => {
+      const m = ms.get(e.id);
       st.total++;
       const imp = e.importance || 'unclassified';
       st[imp]++;
       const b = st.byImp[imp] || (st.byImp[imp] = { total: 0, read: 0, skipped: 0 });
       b.total++;
-      if (m.owned.length) st.owned++; else st.missing++;
+      if (m.owned) st.owned++; else st.missing++;
       if (m.effective === 'read') { st.read++; b.read++; }
       if (m.effective === 'reading') st.reading++;
       if (m.effective === 'skipped') { st.skipped++; b.skipped++; }
@@ -9564,39 +9581,42 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ---------- Agrégats de découverte (uniquement à partir des données présentes)
+  // Les parties « d'après votre collection » viennent de S1 (collectionFacets) et disparaissent si S1 est indisponible ou désactivé (C5, C6).
+  const exFacets = () => exLensCall('collectionFacets');
   const exCharacters = () => {
     const m = new Map();
     exGuides().forEach(g => (g.characters || []).forEach(c => { const k = catNorm(c.name); if (!k) return; const x = m.get(k) || { key: k, name: c.name, guides: [], verified: false }; x.guides.push(g.id); x.verified = x.verified || c.status === 'verified'; m.set(k, x); }));
     return [...m.values()].sort((a, b) => a.name.localeCompare(b.name, 'fr'));
   };
-  const exCreators = () => {
+  const exCreators = (facets = exFacets()) => {
     const m = new Map();
     const add = (name, role, ref) => { const k = catNorm(name); if (!k) return; const x = m.get(k) || { key: k, name: gdStr(name, 120), roles: new Set(), guides: new Set(), covers: [] }; if (role) x.roles.add(role); ref(x); m.set(k, x); };
     exGuides().forEach(g => (g.creators || []).forEach(c => (c.roles.length ? c.roles : ['']).forEach(r => add(c.name, r, x => x.guides.add(g.id)))));
-    physicalSingles.forEach(s => { if (s.coverArtist) add(s.coverArtist, 'cover', x => { if (x.covers.length < 200) x.covers.push(s.id); }); });
+    if (facets) facets.coverArtists.forEach(a => add(a.name, 'cover', x => { a.covers.forEach(c => { if (x.covers.length < 200) x.covers.push(c); }); }));
     return [...m.values()].map(x => ({ key: x.key, name: x.name, roles: [...x.roles], guides: [...x.guides], covers: x.covers })).sort((a, b) => a.name.localeCompare(b.name, 'fr'));
   };
-  const exSeriesList = () => {
+  const exSeriesList = (facets = exFacets()) => {
     const m = new Map();
-    const add = (name, publisher, year, from, ref) => { const k = gdBase(name); if (!k) return; const x = m.get(k) || { key: k, name: String(name).replace(/\s*\(\s*\d{4}\s*\)\s*$/, '').trim(), publishers: new Set(), years: [], owned: 0, wish: 0, pubs: 0, guides: new Set(), issues: new Set() }; if (publisher) x.publishers.add(publisher); if (year) x.years.push(year); ref(x); m.set(k, x); };
-    physicalSingles.forEach(s => add(s.series, s.publisher, exYear(s.coverYear) || exYear(s.releaseDate), 'collection', x => { if (s.isWishlist) x.wish++; else { x.owned++; x.issues.add(gdIssue(s.issue)); } }));
-    relPubs.forEach(p => add(p.series, p.publisher, exYear(p.dates.current), 'calendar', x => { x.pubs++; }));
-    exGuides().forEach(g => (g.orders || []).forEach(o => o.entries.forEach(e => add(e.series, e.publisher, exYear(e.year), 'guide', x => x.guides.add(g.id)))));
+    const add = (name, publisher, year, ref) => { const k = gdBase(name); if (!k) return; const x = m.get(k) || { key: k, name: String(name).replace(/\s*\(\s*\d{4}\s*\)\s*$/, '').trim(), publishers: new Set(), years: [], owned: 0, wish: 0, variants: 0, pubs: 0, guides: new Set(), issues: new Set(), personal: false }; if (publisher) x.publishers.add(publisher); if (year) x.years.push(year); ref(x); m.set(k, x); };
+    if (facets) facets.series.forEach(s => { add(s.name, '', null, x => { x.personal = true; s.publishers.forEach(p => x.publishers.add(p)); s.years.forEach(y => x.years.push(y)); x.owned += s.owned; x.wish += s.wish; x.variants += s.variants; s.issues.forEach(n => x.issues.add(n)); }); });
+    relPubs.forEach(p => add(p.series, p.publisher, exYear(p.dates.current), x => { x.pubs++; }));
+    exGuides().forEach(g => (g.orders || []).forEach(o => o.entries.forEach(e => add(e.series, e.publisher, exYear(e.year), x => x.guides.add(g.id)))));
     return [...m.values()].map(x => ({ key: x.key, name: x.name, publishers: [...x.publishers], from: x.years.length ? Math.min(...x.years) : null, to: x.years.length ? Math.max(...x.years) : null,
-      owned: x.owned, wish: x.wish, pubs: x.pubs, guides: [...x.guides], issues: [...x.issues].filter(Boolean).sort((a, b) => (issueNumber(a) || 0) - (issueNumber(b) || 0)) }));
+      owned: x.owned, wish: x.wish, variants: x.variants, pubs: x.pubs, guides: [...x.guides], personal: x.personal, issues: [...x.issues].filter(Boolean).sort((a, b) => (issueNumber(a) || 0) - (issueNumber(b) || 0)) }));
   };
-  const exPublishers = () => {
+  const exPublishers = (facets = exFacets()) => {
     const m = new Map();
     REL_PUBLISHERS.forEach(([name, market]) => { if (!m.has(catNorm(name))) m.set(catNorm(name), { key: catNorm(name), name, market, owned: 0, pubs: 0, guides: 0, known: true }); });
     const get = name => { const pb = relPublisher(name); const k = catNorm(pb.name); if (!k) return null; if (!m.has(k)) m.set(k, { key: k, name: pb.name, market: pb.market, owned: 0, pubs: 0, guides: 0, known: false }); return m.get(k); };
-    physicalSingles.forEach(s => { const x = !s.isWishlist && get(s.publisher); if (x) x.owned++; });
+    if (facets) facets.publishers.forEach(p => { const x = get(p.name); if (x) x.owned += p.owned; });
     relPubs.forEach(p => { const x = get(p.publisher); if (x) x.pubs++; });
     exGuides().forEach(g => { const x = get(g.publisher); if (x) x.guides++; });
     return [...m.values()];
   };
 
-  // ---------- Recherche globale (catalogue des publications, collection, séries, guides, personnages, créateurs, éditeurs, éditions)
-  const EX_CATS = { guides: 'Guides & événements', publications: 'Publications', collection: 'Ma collection', series: 'Séries', characters: 'Personnages', creators: 'Créateurs', publishers: 'Éditeurs', editions: 'Éditions & recueils' };
+  // ---------- Recherche globale (catalogue des publications, séries, guides, personnages, créateurs, éditeurs, éditions)
+  // A7 (lot 3.1b-3) : la catégorie « Ma collection » est retirée de la recherche d'Explorer ; la collection se cherche dans Collection.
+  const EX_CATS = { guides: 'Guides & événements', publications: 'Publications', series: 'Séries', characters: 'Personnages', creators: 'Créateurs', publishers: 'Éditeurs', editions: 'Éditions & recueils' };
   const exSearch = (q, opts = {}) => {
     const nq = catNorm(q);
     const out = {};
@@ -9606,13 +9626,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const test = txt => { const t = ' ' + catNorm(txt) + ' '; return toks.every(w => t.includes(w)); };
     const rank = txt => catNorm(txt).startsWith(nq) ? 0 : 1;
     const put = (cat, list, label) => { const l = list.sort((a, b) => rank(label(a)) - rank(label(b)) || label(a).localeCompare(label(b), 'fr')); if (l.length) out[cat] = { total: l.length, items: l.slice(0, lim) }; };
+    const facets = exFacets();
     put('guides', exGuides().filter(g => test([g.title, g.originalTitle, g.publisher, (g.aliases || []).join(' '), (g.characters || []).map(c => c.name).join(' '), GD_CATEGORIES[g.category]].join(' '))), g => g.title);
     put('publications', [...relPubs.values()].filter(p => test([p.series, p.title, p.publisher, p.issue, '#' + p.issue, p.market, Object.values(p.externalIds || {}).join(' ')].join(' '))), p => p.series);
-    put('collection', physicalSingles.filter(s => test([s.series, s.title, s.publisher, s.issue, '#' + s.issue, s.variant, s.isbn, s.upc].join(' '))), s => s.series || '');
-    put('series', exSeriesList().filter(x => test(x.name + ' ' + x.publishers.join(' '))), x => x.name);
+    put('series', exSeriesList(facets).filter(x => test(x.name + ' ' + x.publishers.join(' '))), x => x.name);
     put('characters', exCharacters().filter(x => test(x.name)), x => x.name);
-    put('creators', exCreators().filter(x => test(x.name)), x => x.name);
-    put('publishers', exPublishers().filter(x => test(x.name)), x => x.name);
+    put('creators', exCreators(facets).filter(x => test(x.name)), x => x.name);
+    put('publishers', exPublishers(facets).filter(x => test(x.name)), x => x.name);
     put('editions', exGuides().flatMap(g => (g.editions || []).map(ed => Object.assign({ guideId: g.id, guideTitle: g.title }, ed))).filter(ed => test([ed.title, ed.publisher, ed.isbn, ed.guideTitle].join(' '))), ed => ed.title);
     return out;
   };
@@ -9620,20 +9640,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exHistory = () => { try { const v = JSON.parse(localStorage.getItem(EX_HIST_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 8) : []; } catch (_) { return []; } };
   const exRemember = q => { const s = gdStr(q, 80); if (!s) return; try { localStorage.setItem(EX_HIST_KEY, JSON.stringify([s].concat(exHistory().filter(x => x !== s)).slice(0, 8))); } catch (_) {} };
 
-  // ---------- Recommandations déterministes et explicables
+  // ---------- Recommandations déterministes et explicables (statuts via S1 ; aucune si S1 est indisponible ou désactivé)
   const exRecos = () => {
+    if (!exPersonalOn()) return [];
     const idx = exIndexBuild(), out = [];
-    const followed = new Set(getPullList().map(p => gdBase(p.name)));
-    relPulls.forEach(pl => { const p = relPubs.get(pl.pubId); if (p && pl.status !== 'cancelled') followed.add(gdBase(p.series)); });
     exGuides().forEach(g => {
       const order = (g.orders || [])[0];
       if (!order) return;
-      const st = exOrderStats(g, order, idx);
+      const ms = exMatchAll(order.entries, idx, g.id);
+      const st = exOrderStats(g, order, idx, ms);
+      if (!st.personal) return;
       if (st.read > 0 && st.read + st.skipped < st.total) out.push({ guideId: g.id, kind: 'continue', score: 3, text: 'Continuer « ' + g.title + ' »', why: st.read + ' lu(s) sur ' + st.total + ' dans votre progression.' });
       else if (st.owned > 0) out.push({ guideId: g.id, kind: 'owned', score: 2, text: 'Vous possédez ' + st.owned + ' numéro(s) de « ' + g.title + ' »', why: st.missing + ' entrée(s) du guide manquent à votre collection.' });
-      const series = new Set(order.entries.map(e => gdBase(e.series)));
-      const hitF = [...followed].find(f => series.has(f));
-      if (hitF) out.push({ guideId: g.id, kind: 'followed', score: 1, text: 'Guide lié à une série suivie', why: 'Une série de votre pull list figure dans « ' + g.title + ' ».' });
+      if ([...ms.values()].some(m => m.followed)) out.push({ guideId: g.id, kind: 'followed', score: 1, text: 'Guide lié à une série suivie', why: 'Une série de votre pull list figure dans « ' + g.title + ' ».' });
       if (st.read > 0) (g.prerequisites || []).forEach(p => out.push({ guideId: p.guideId || g.id, kind: 'prereq', score: 1, text: 'Prérequis de « ' + g.title + ' » : ' + p.title, why: p.note || 'Indiqué comme lecture préalable par la source.' }));
     });
     const seen = new Set();
@@ -9666,11 +9685,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const res = exSearch(exView.q, { limit: exView.cat ? 60 : 6 });
     const cats = Object.keys(EX_CATS).filter(c => res[c] && (!exView.cat || exView.cat === c));
     const chips = '<div class="ex-chips"><button class="ex-chip' + (!exView.cat ? ' active' : '') + '" data-ex-cat="">Tout</button>' + Object.keys(EX_CATS).filter(c => res[c]).map(c => '<button class="ex-chip' + (exView.cat === c ? ' active' : '') + '" data-ex-cat="' + c + '">' + EX_CATS[c] + ' <b>' + res[c].total + '</b></button>').join('') + '</div>';
-    if (!cats.length) return '<div class="ex-empty"><b>Aucun résultat pour « ' + h(exView.q) + ' ».</b><br>La recherche porte sur votre collection, le calendrier, les guides, les personnages, les créateurs et les éditeurs enregistrés dans Panel. Essayez un autre titre, un numéro (« venom 31 ») ou un ISBN.</div>';
+    if (!cats.length) return '<div class="ex-empty"><b>Aucun résultat pour « ' + h(exView.q) + ' ».</b><br>La recherche porte sur le calendrier, les guides, les personnages, les créateurs et les éditeurs enregistrés dans Panel. Essayez un autre titre, un numéro (« venom 31 ») ou un ISBN. Vos exemplaires se cherchent dans Collection.</div>';
     const item = (c, x) => {
       if (c === 'guides') return '<button class="ex-res" data-ex-guide="' + h(x.id) + '"><b>' + h(x.title) + '</b><small>' + h((GD_CATEGORIES[x.category] || '') + ' · ' + (x.publisher || '')) + (x.originalTitle && x.originalTitle !== x.title ? ' · VO : ' + h(x.originalTitle) : '') + '</small></button>';
       if (c === 'publications') return '<button class="ex-res" data-ex-pub="' + h(x.id) + '"><b>' + h(relLabel(x)) + '</b><small>' + h((x.market || '?') + ' · ' + (x.publisher || '') + ' · ' + (REL_STATUS[relStatusOf(x)] || '')) + '</small></button>';
-      if (c === 'collection') return '<button class="ex-res" data-ex-single="' + h(x.id) + '"><b>' + h((x.series || '') + (x.issue ? ' #' + gdIssue(x.issue) : '') + (x.variant ? ' · ' + x.variant : '')) + '</b><small>' + h((x.isWishlist ? 'Wishlist' : 'Possédé') + ' · ' + (x.publisher || '')) + '</small></button>';
       if (c === 'series') return '<button class="ex-res" data-ex-go="series" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h(x.publishers.join(', ') + (x.owned ? ' · ' + x.owned + ' possédé(s)' : '') + (x.pubs ? ' · ' + x.pubs + ' au calendrier' : '')) + '</small></button>';
       if (c === 'characters') return '<button class="ex-res" data-ex-go="character" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + x.guides.length + ' guide(s)</small></button>';
       if (c === 'creators') return '<button class="ex-res" data-ex-go="creator" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h(x.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>';
@@ -9687,27 +9705,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const upcoming = m => relQuery({ range: [today, soon], market: m, publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(0, 6);
     const recent = relQuery({ range: [past, isoDate(new Date(Date.now() - 86400000))], market: '', publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(-6).reverse();
     const recos = exRecos();
-    const pubs = exPublishers().filter(p => p.known || p.owned || p.pubs || p.guides);
+    const facets = exFacets(), personal = !!facets;
+    const pubs = exPublishers(facets).filter(p => p.known || p.owned || p.pubs || p.guides);
     const main = ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'];
     const tiles = pubs.filter(p => main.includes(p.name)).concat(pubs.filter(p => !main.includes(p.name) && (p.owned || p.pubs || p.guides)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 9));
-    const chars = exCharacters(), creators = exCreators().slice(0, 24);
-    const series = exSeriesList().filter(x => x.owned || x.pubs).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 12);
+    const chars = exCharacters(), creators = exCreators(facets).slice(0, 24);
+    const series = exSeriesList(facets).filter(x => x.owned || x.pubs).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 12);
     const gCats = Object.keys(GD_CATEGORIES).filter(c => guides.some(g => g.category === c));
     const shown = guides.filter(g => !exView.guideCat || g.category === exView.guideCat);
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
     return (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
       sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
-      sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours, avec vos possessions et votre progression.',
+      sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
         (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
         '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
         '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button></div>') +
-      sec('exSecUniverses', 'Explorer les univers', 'Éditeurs connus de Panel et ceux de votre collection.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + p.owned + ' possédé(s) · ' + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
+      sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
       sec('exSecReleases', 'Sorties et publications', 'Données du calendrier international (lot 2.4).', '<div class="ex-rel-cols">' +
         [['US', 'États-Unis · 30 prochains jours'], ['FR', 'Francophone · 30 prochains jours']].map(([m, t]) => { const l = upcoming(m); return '<div><h4>' + t + '</h4>' + (l.length ? l.map(exPubMini).join('') : '<p class="ex-note">Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.</p>') + '</div>'; }).join('') +
         '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
-      sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides et artistes de couverture de votre collection.', creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
-      sec('exSecSeries', 'Séries', 'Vos séries et celles du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
+      sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
+      sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
       sec('exSecNews', 'Actualités et annonces', '', exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') :
         '<p class="ex-note">Aucune source d\'actualités n\'est configurée. Panel n\'affiche pas d\'actualités inventées : cette section accueillera des contenus éditoriaux importés (type « news ») ou un futur service de publication.</p>');
   };
@@ -9716,46 +9735,50 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exGuideHtml = g => {
     const idx = exIndexBuild();
     const order = (g.orders || []).find(o => o.id === exView.order) || (g.orders || [])[0];
-    const st = exOrderStats(g, order, idx);
+    const matches = exMatchAll(order ? order.entries : [], idx, g.id);
+    const st = exOrderStats(g, order, idx, matches);
+    // Sans S1 (fournisseur absent ou réglage désactivé) : guide éditorial complet, sans badge, filtre ni progression personnels
+    const personal = st.personal, canAct = !!exCommands();
     const edByEntry = new Map();
     (g.editions || []).forEach(ed => ed.contains.forEach(k => { const l = edByEntry.get(k) || []; l.push(ed); edByEntry.set(k, l); }));
     const pubSet = [...new Set((order ? order.entries : []).map(e => e.publisher).filter(Boolean))];
     let entries = order ? order.entries.slice() : [];
-    const matches = new Map(entries.map(e => [e.id, exMatch(e, idx)]));
     entries = entries.filter(e => {
       const m = matches.get(e.id);
       if (exView.imp && (e.importance || 'none') !== exView.imp) return false;
       if (exView.hideOptional && e.importance === 'optional') return false;
-      if (exView.hideRead && (m.effective === 'read' || m.effective === 'skipped')) return false;
+      if (personal && exView.hideRead && (m.effective === 'read' || m.effective === 'skipped')) return false;
       if (exView.publisher && e.publisher !== exView.publisher) return false;
       if (exView.lang === 'vf' && !edByEntry.has(e.id)) return false;
       return true;
     });
-    const next = (order ? order.entries : []).find(e => { const m = matches.get(e.id); return m.effective !== 'read' && m.effective !== 'skipped'; });
+    const next = personal ? (order ? order.entries : []).find(e => { const m = matches.get(e.id); return m.effective !== 'read' && m.effective !== 'skipped'; }) : null;
     const bar = (label, a, b) => { const pct = b > 0 ? Math.round(a / b * 100) : 0; return '<div class="ex-prog"><span>' + h(label) + '</span><div class="ex-bar"><i style="width:' + pct + '%"></i></div><b>' + a + '/' + b + '</b></div>'; };
     const impBars = Object.keys(GD_IMPORTANCE).concat(['unclassified']).filter(k => st.byImp[k]).map(k => bar(GD_IMPORTANCE[k] || 'Non classé', st.byImp[k].read, st.byImp[k].total - st.byImp[k].skipped)).join('');
     const card = e => {
       const m = matches.get(e.id), cov = exCoverOf(e, m), eds = edByEntry.get(e.id) || [];
+      // Badges personnels : statuts minimaux de S1 seulement (ni emplacement, ni identifiant d'exemplaire)
       const badges = [];
-      if (m.owned.length) badges.push('<span class="ex-b is-owned">Possédé' + (m.owned.length > 1 ? ' ×' + m.owned.length : '') + '</span>');
-      else if (m.probable.length) badges.push('<span class="ex-b is-probable" title="Même titre et numéro, année absente de votre fiche">Possédé ? (à confirmer)</span>');
-      else badges.push('<span class="ex-b is-missing">Manquant</span>');
-      if (m.located) badges.push('<span class="ex-b">Rangé</span>');
-      if (m.wish.length) badges.push('<span class="ex-b is-wish">Wishlist</span>');
-      if (m.pull) badges.push('<span class="ex-b is-pull">Pull list</span>');
-      if (m.effective) badges.push('<span class="ex-b is-st-' + m.effective + '">' + GD_PROGRESS[m.effective] + (m.derived ? ' (collection)' : '') + '</span>');
+      if (personal) {
+        if (m.owned) badges.push('<span class="ex-b is-owned">Possédé' + (m.owned > 1 ? ' ×' + m.owned : '') + '</span>');
+        else if (m.probable) badges.push('<span class="ex-b is-probable" title="Même titre et numéro, année absente de votre fiche">Possédé ? (à confirmer)</span>');
+        else badges.push('<span class="ex-b is-missing">Manquant</span>');
+        if (m.wish) badges.push('<span class="ex-b is-wish">Wishlist</span>');
+        if (m.pull) badges.push('<span class="ex-b is-pull">Pull list</span>');
+        if (m.effective) badges.push('<span class="ex-b is-st-' + m.effective + '">' + GD_PROGRESS[m.effective] + (m.derived ? ' (collection)' : '') + '</span>');
+      }
       const title = e.series + (e.volume ? ' ' + e.volume : '') + (e.issue ? ' #' + e.issue : '');
       const why = e.why ? (e.spoiler && !exView.spoilers ? '<button class="ex-spoil" data-ex-spoilers>Explication masquée (spoiler) — afficher</button>' : '<p class="ex-why">' + h(e.why) + '</p>') : '';
       if (exView.simple) return '<li class="ex-entry is-simple' + (exView.focus === e.id ? ' is-focus' : '') + '" id="exE_' + h(e.id) + '"><span class="ex-pos">' + e.pos + '</span><b>' + h(title) + '</b>' + (e.importance ? '<span class="ex-imp is-' + e.importance + '">' + GD_IMPORTANCE[e.importance] + '</span>' : '') + badges.join('') +
-        '<select class="field-input ex-st" data-ex-st="' + h(e.id) + '" aria-label="Statut de lecture"><option value="">—</option>' + Object.entries(GD_PROGRESS).map(([k, l]) => '<option value="' + k + '"' + (m.status === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></li>';
+        (personal && canAct ? '<select class="field-input ex-st" data-ex-st="' + h(e.id) + '" aria-label="Statut de lecture"><option value="">—</option>' + Object.entries(GD_PROGRESS).map(([k, l]) => '<option value="' + k + '"' + (m.status === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select>' : '') + '</li>';
       return '<li class="ex-entry' + (m.effective === 'read' ? ' is-read' : '') + (exView.focus === e.id ? ' is-focus' : '') + '" id="exE_' + h(e.id) + '">' +
         '<div class="ex-cov"><span class="ex-pos">' + e.pos + '</span>' + exImg(cov.url, title, 'ex-cov-img', placeholderCover(e.series, e.issue)) + (cov.placeholder ? '' : '<small class="ex-cov-src" title="' + h(cov.rights || '') + '">' + h(cov.source) + '</small>') + '</div>' +
         '<div class="ex-ebody"><div class="ex-etitle"><b>' + h(title) + '</b>' + (e.importance ? '<span class="ex-imp is-' + e.importance + '" title="Source : ' + h(exSrcLabel(g, e.importanceSource) || 'décision éditoriale') + '">' + GD_IMPORTANCE[e.importance] + '</span>' : '<span class="ex-imp">Non classé</span>') + '</div>' +
         '<small class="ex-meta">' + h([e.publisher, e.year, e.title].filter(Boolean).join(' · ')) + (m.pub ? ' · <button class="ex-link" data-ex-pub="' + h(m.pub.id) + '">Fiche ' + (m.pubHow === 'auto' ? '(correspondance exacte)' : '') + '</button>' : ' · <span class="ex-unres">Non identifiée au catalogue</span>') + '</small>' +
-        '<div class="ex-badges">' + badges.join('') + '</div>' + why + (e.note ? '<p class="ex-why"><i>' + h(e.note) + '</i></p>' : '') + (e.prerequisites ? '<p class="ex-why">Prérequis : ' + h(e.prerequisites) + '</p>' : '') +
+        (badges.length ? '<div class="ex-badges">' + badges.join('') + '</div>' : '') + why + (e.note ? '<p class="ex-why"><i>' + h(e.note) + '</i></p>' : '') + (e.prerequisites ? '<p class="ex-why">Prérequis : ' + h(e.prerequisites) + '</p>' : '') +
         (eds.length ? '<p class="ex-vf">VF : ' + eds.map(ed => h(ed.title + (ed.publisher ? ' (' + ed.publisher + ')' : '')) + ' <span class="ex-b">' + GD_VERIF[ed.status] + '</span>').join(' · ') + '</p>' : '') +
-        '<div class="ex-acts">' + Object.entries(GD_PROGRESS).map(([k, l]) => '<button class="ex-stbtn' + (m.status === k ? ' active' : '') + '" data-ex-set="' + h(e.id) + '" data-st="' + k + '">' + l + '</button>').join('') +
-        (m.pub && !m.owned.length && !m.wish.length ? '<button class="ex-stbtn" data-ex-wish="' + h(m.pub.id) + '">+ Wishlist</button>' : '') + '</div></div></li>';
+        '<div class="ex-acts">' + (personal && canAct ? Object.entries(GD_PROGRESS).map(([k, l]) => '<button class="ex-stbtn' + (m.status === k ? ' active' : '') + '" data-ex-set="' + h(e.id) + '" data-st="' + k + '">' + l + '</button>').join('') : '') +
+        (canAct && m.pub && !m.owned && !m.wish ? '<button class="ex-stbtn" data-ex-wish="' + h(m.pub.id) + '">+ Wishlist</button>' : '') + '</div></div></li>';
     };
     const shown = entries.slice(0, exView.limit);
     const people = (list, isC) => list.map(x => '<button class="ex-chip" data-ex-go="' + (isC ? 'creator' : 'character') + '" data-ex-id="' + h(catNorm(x.name)) + '">' + h(x.name) + (isC && x.roles.length ? ' <small>' + h(x.roles.map(r => GD_ROLES[r]).join(', ')) + '</small>' : '') + (x.status !== 'verified' ? ' <small>non vérifié</small>' : '') + '</button>').join('');
@@ -9764,17 +9787,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<header class="ex-ghero">' + exImg(exGuideImg(g), g.title, 'ex-ghero-img', exArt(g.title, g.publisher)) + '<div class="ex-ghero-txt"><span class="ex-kicker">' + h(GD_CATEGORIES[g.category] || '') + ' · ' + h(g.publisher || '') + (g.periodStart ? ' · ' + g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '') : '') + '</span>' +
         '<h2>' + h(g.title) + '</h2>' + (g.originalTitle && g.originalTitle !== g.title ? '<p class="ex-vo">Titre original : ' + h(g.originalTitle) + '</p>' : '') +
         '<div class="ex-badges"><span class="ex-b is-' + g.completeness + '">' + h(GD_COMPLETENESS[g.completeness]) + '</span>' + (g.verifiedAt ? '<span class="ex-b">Vérifié le ' + h(relFmtDate(g.verifiedAt.slice(0, 10))) + '</span>' : '') + '<span class="ex-b">' + (g.languages || []).map(l => l.toUpperCase()).join(' / ') + '</span></div>' +
-        '<div class="ex-gstats"><span><b>' + st.total + '</b> entrées</span><span><b>' + st.essential + '</b> essentielles</span><span><b>' + st.owned + '</b> possédées</span><span><b>' + st.read + '</b> lues</span><span><b>' + st.missing + '</b> manquantes</span></div>' +
-        '<div class="ex-row">' + (next ? '<button class="btn" data-ex-next="' + h(next.id) + '">Reprendre : ' + h(next.series + ' #' + next.issue) + '</button>' : '<span class="ex-b is-owned">Guide terminé</span>') +
+        '<div class="ex-gstats"><span><b>' + st.total + '</b> entrées</span><span><b>' + st.essential + '</b> essentielles</span>' + (personal ? '<span><b>' + st.owned + '</b> possédées</span><span><b>' + st.read + '</b> lues</span><span><b>' + st.missing + '</b> manquantes</span>' : '') + '</div>' +
+        '<div class="ex-row">' + (!personal ? '' : next ? '<button class="btn" data-ex-next="' + h(next.id) + '">Reprendre : ' + h(next.series + ' #' + next.issue) + '</button>' : '<span class="ex-b is-owned">Guide terminé</span>') +
         '<button class="btn secondary" data-ex-edit="' + h(g.id) + '">Modifier</button><button class="btn secondary" data-ex-export="' + h(g.id) + '">Exporter</button></div></div></header>' +
       '<div class="ex-gcols"><div class="ex-gmain">' +
         '<div class="da-tabs ex-otabs">' + (g.orders || []).map(o => '<button class="da-tab' + (o.id === (order && order.id) ? ' active' : '') + '" data-ex-order="' + h(o.id) + '">' + h(o.label) + '</button>').join('') + '</div>' +
         (order ? '<p class="ex-note">' + h(GD_ORDER_TYPES[order.type]) + (order.sourceId ? ' · source : ' + h(exSrcLabel(g, order.sourceId)) : ' · décision éditoriale') + (order.derivedFrom ? ' · dérivé de « ' + h(((g.orders || []).find(o => o.id === order.derivedFrom) || {}).label || '') + ' »' : '') + '</p>' : '<p class="ex-note">Aucun ordre de lecture.</p>') +
-        '<div class="ex-progbox">' + bar('Progression globale', st.read, st.total - st.skipped) + impBars + '</div>' +
+        (personal ? '<div class="ex-progbox">' + bar('Progression globale', st.read, st.total - st.skipped) + impBars + '</div>' : '<p class="ex-note">Personnalisation désactivée ou indisponible : guide affiché sans vos statuts ni votre progression.</p>') +
         '<div class="ex-filters"><select class="field-input" data-ex-f="imp"><option value="">Toutes importances</option>' + Object.entries(GD_IMPORTANCE).map(([k, l]) => '<option value="' + k + '"' + (exView.imp === k ? ' selected' : '') + '>' + l + '</option>').join('') + '<option value="none"' + (exView.imp === 'none' ? ' selected' : '') + '>Non classé</option></select>' +
           (pubSet.length > 1 ? '<select class="field-input" data-ex-f="publisher"><option value="">Tous éditeurs</option>' + pubSet.map(p => '<option' + (exView.publisher === p ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select>' : '') +
           '<select class="field-input" data-ex-f="lang"><option value="vo"' + (exView.lang === 'vo' ? ' selected' : '') + '>VO</option><option value="vf"' + (exView.lang === 'vf' ? ' selected' : '') + '>Avec édition VF</option></select>' +
-          ['hideOptional:Masquer les facultatifs', 'hideRead:Masquer les lus', 'simple:Mode simplifié', 'spoilers:Afficher les spoilers'].map(x => { const [k, l] = x.split(':'); return '<label class="da-switch"><input type="checkbox" data-ex-f="' + k + '"' + (exView[k] ? ' checked' : '') + '> ' + l + '</label>'; }).join('') + '</div>' +
+          ['hideOptional:Masquer les facultatifs'].concat(personal ? ['hideRead:Masquer les lus'] : [], ['simple:Mode simplifié', 'spoilers:Afficher les spoilers']).map(x => { const [k, l] = x.split(':'); return '<label class="da-switch"><input type="checkbox" data-ex-f="' + k + '"' + (exView[k] ? ' checked' : '') + '> ' + l + '</label>'; }).join('') + '</div>' +
         '<p class="ex-note">' + entries.length + ' entrée(s) affichée(s) sur ' + st.total + '.</p>' +
         (entries.length ? '<ol class="ex-entries' + (exView.simple ? ' is-simple' : '') + '">' + shown.map(card).join('') + '</ol>' + (entries.length > shown.length ? '<button class="btn secondary" data-ex-moreentries>Afficher ' + Math.min(60, entries.length - shown.length) + ' entrée(s) de plus</button>' : '') : '<div class="ex-empty">Aucune entrée ne correspond aux filtres.</div>') +
       '</div><div class="ex-gside">' +
@@ -9790,16 +9813,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '</div></div></article>';
   };
   const exEntityHtml = () => {
-    const key = exView.id, guides = exGuides();
+    const key = exView.id, guides = exGuides(), facets = exFacets(), personal = !!facets;
+    const tag = '<span class="ex-b is-personal">D\'après votre collection</span>';
     const glist = ids => ids.length ? '<div class="ex-ggrid">' + ids.map(id => exEditorial.get(id)).filter(Boolean).map(g => exGuideCard(g)).join('') + '</div>' : '<p class="ex-note">Aucun guide associé.</p>';
     if (exView.page === 'publisher') {
-      const p = exPublishers().find(x => x.key === key);
+      const p = exPublishers(facets).find(x => x.key === key);
       if (!p) return exBack() + '<div class="ex-empty">Éditeur introuvable.</div>';
-      const ser = exSeriesList().filter(x => x.publishers.some(n => catNorm(relPublisher(n).name) === key)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs));
+      const ser = exSeriesList(facets).filter(x => x.publishers.some(n => catNorm(relPublisher(n).name) === key)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs));
       const up = relQuery({ range: [relToday(), isoDate(new Date(Date.now() + 60 * 86400000))], market: '', publisher: p.name, format: '', status: '', q: '', pullOnly: false }).slice(0, 12);
       const gids = guides.filter(g => catNorm(relPublisher(g.publisher).name) === key).map(g => g.id);
-      const chars = exCharacters().filter(c => c.guides.some(id => gids.includes(id))), crea = exCreators().filter(c => c.guides.some(id => gids.includes(id)));
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h((REL_MARKETS[p.market] || {}).label || 'Autre marché') + '</span><h2>' + h(p.name) + '</h2><p class="ex-note">Présentation éditoriale non renseignée. ' + p.owned + ' exemplaire(s) possédé(s), ' + p.pubs + ' publication(s) au calendrier, ' + gids.length + ' guide(s).</p></header>' +
+      const chars = exCharacters().filter(c => c.guides.some(id => gids.includes(id))), crea = exCreators(facets).filter(c => c.guides.some(id => gids.includes(id)));
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h((REL_MARKETS[p.market] || {}).label || 'Autre marché') + '</span><h2>' + h(p.name) + '</h2><p class="ex-note">Présentation éditoriale non renseignée. ' + p.pubs + ' publication(s) au calendrier, ' + gids.length + ' guide(s).</p>' + (personal ? '<p class="ex-note">' + tag + ' ' + p.owned + ' exemplaire(s) possédé(s).</p>' : '') + '</header>' +
         '<section class="ex-sec"><h3>Guides et événements</h3>' + glist(gids) + '</section>' +
         '<section class="ex-sec"><h3>À paraître (60 jours)</h3>' + (up.length ? '<div class="ex-pubgrid">' + up.map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune sortie enregistrée.</p>') + '</section>' +
         '<section class="ex-sec"><h3>Séries (' + ser.length + ')</h3>' + (ser.length ? '<div class="ex-chips">' + ser.slice(0, 80).map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + '</button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') + '</section>' +
@@ -9813,28 +9837,34 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>';
     }
     if (exView.page === 'creator') {
-      const c = exCreators().find(x => x.key === key);
+      const c = exCreators(facets).find(x => x.key === key);
       if (!c) return exBack() + '<div class="ex-empty">Créateur introuvable.</div>';
-      const covers = c.covers.map(id => physicalSingles.find(s => s.id === id)).filter(Boolean);
+      const covers = personal ? c.covers : [];
       const collab = new Map();
       c.guides.forEach(id => (exEditorial.get(id).creators || []).forEach(o => { if (catNorm(o.name) !== key) collab.set(catNorm(o.name), o.name); }));
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(c.roles.map(r => GD_ROLES[r] || r).join(' · ') || 'Créateur') + '</span><h2>' + h(c.name) + '</h2><p class="ex-note">Bibliographie limitée aux données présentes dans Panel (guides et collection).</p></header>' +
+      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(c.roles.map(r => GD_ROLES[r] || r).join(' · ') || 'Créateur') + '</span><h2>' + h(c.name) + '</h2><p class="ex-note">Bibliographie limitée aux données présentes dans Panel (guides' + (personal ? ' et, d\'après votre collection, couvertures' : '') + ').</p></header>' +
         '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>' +
         (collab.size ? '<section class="ex-sec"><h3>Collaborations citées</h3><div class="ex-chips">' + [...collab.entries()].map(([k, n]) => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(k) + '">' + h(n) + '</button>').join('') + '</div></section>' : '') +
-        (covers.length ? '<section class="ex-sec"><h3>Couvertures dans votre collection (' + covers.length + ')</h3><div class="ex-chips">' + covers.slice(0, 60).map(s => '<button class="ex-chip" data-ex-single="' + h(s.id) + '">' + h(s.series + ' #' + gdIssue(s.issue)) + '</button>').join('') + '</div></section>' : '');
+        (covers.length ? '<section class="ex-sec"><h3>Couvertures dans votre collection (' + covers.length + ') ' + tag + '</h3><div class="ex-chips">' + covers.slice(0, 60).map(s => '<button class="ex-chip" data-ex-open="1" data-series="' + h(s.series) + '" data-issue="' + h(s.issue) + '" data-year="' + h(s.year || '') + '">' + h(s.series + ' #' + gdIssue(s.issue)) + '</button>').join('') + '</div></section>' : '');
     }
     if (exView.page === 'series') {
-      const x = exSeriesList().find(s => s.key === key);
+      const x = exSeriesList(facets).find(s => s.key === key);
       if (!x) return exBack() + '<div class="ex-empty">Série introuvable.</div>';
       const pubs = [...relPubs.values()].filter(p => gdBase(p.series) === key).sort((a, b) => (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
-      const vars = physicalSingles.filter(s => gdBase(s.series) === key && s.variant).length;
       return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(x.publishers.join(' · ') || 'Éditeur inconnu') + (x.from ? ' · ' + x.from + (x.to && x.to !== x.from ? '–' + x.to : '') : '') + '</span><h2>' + h(x.name) + '</h2>' +
-        '<p class="ex-note">' + x.owned + ' exemplaire(s) possédé(s)' + (x.wish ? ', ' + x.wish + ' en wishlist' : '') + (vars ? ', ' + vars + ' variante(s)' : '') + ', ' + x.pubs + ' publication(s) au calendrier.</p></header>' +
-        (x.issues.length ? '<section class="ex-sec"><h3>Numéros possédés</h3><div class="ex-chips">' + x.issues.map(n => '<span class="ex-chip is-static">#' + h(n) + '</span>').join('') + '</div></section>' : '') +
+        '<p class="ex-note">' + x.pubs + ' publication(s) au calendrier.</p>' + (x.personal ? '<p class="ex-note">' + tag + ' ' + x.owned + ' exemplaire(s) possédé(s)' + (x.wish ? ', ' + x.wish + ' en wishlist' : '') + (x.variants ? ', ' + x.variants + ' variante(s)' : '') + '.</p>' : '') + '</header>' +
+        (x.personal && x.issues.length ? '<section class="ex-sec"><h3>Numéros possédés ' + tag + '</h3><div class="ex-chips">' + x.issues.map(n => '<span class="ex-chip is-static">#' + h(n) + '</span>').join('') + '</div></section>' : '') +
         '<section class="ex-sec"><h3>Publications et éditions</h3>' + (pubs.length ? '<div class="ex-pubgrid">' + pubs.slice(0, 60).map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune publication au calendrier.</p>') + '</section>' +
         '<section class="ex-sec"><h3>Guides de lecture</h3>' + glist(x.guides) + '</section>';
     }
     return exHomeHtml();
+  };
+  const exPersonalizeHtml = () => {
+    const C = exContracts();
+    if (!C || !C.settings) return '';
+    const on = C.settings.personalize();
+    return '<label class="da-switch ex-personalize"><input type="checkbox" id="exPersonalize" data-ex-personalize' + (on ? ' checked' : '') + '> Personnaliser Explorer avec mes données</label>' +
+      '<small class="ex-personalize-note">' + (on ? 'Statuts possédé, wishlist, pull list et progression calculés sur cet appareil ; rien n\'est envoyé.' : 'Désactivé : Explorer n\'affiche que le contenu éditorial.') + '</small>';
   };
   const renderExplorer = () => {
     const root = $('explorerRoot');
@@ -9843,7 +9873,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const hist = exHistory();
       root.innerHTML = '<section class="ex-hero"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Tout l\'univers comics, à partir de vos données.</h2>' +
         '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="Titre, numéro, événement, personnage, créateur, éditeur, ISBN…" value="' + h(exView.q) + '"></div>' +
-        (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') + '</div></section>' +
+        (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') +
+        exPersonalizeHtml() + '</div></section>' +
         '<div id="exResults">' + (exView.q ? exResultsHtml() : '') + '</div><div id="exHome"' + (exView.q ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
@@ -10068,23 +10099,31 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     root.addEventListener('change', async e => {
       const t = e.target;
       if (t.dataset.exF) { exView[t.dataset.exF] = t.type === 'checkbox' ? t.checked : t.value; exView.limit = 60; renderExplorer(); }
-      else if (t.dataset.exSt) { await exSetProgress(t.dataset.exSt, t.value); renderExplorer(); }
+      else if (t.dataset.exPersonalize !== undefined) { const C = exContracts(); if (C && C.settings) C.settings.setPersonalize(t.checked); renderExplorer(); } // effet immédiat
+      else if (t.dataset.exSt) { const S2 = exCommands(); const r = S2 ? await S2.setGuideProgress(exView.id, t.dataset.exSt, t.value, { gesture: S2.gesture(e) }) : null; if (!r || !r.ok) showToast('Progression non enregistrée.'); renderExplorer(); }
     });
     root.addEventListener('click', async e => {
       const t = e.target.closest('button, a');
       if (!t || t.tagName === 'A') return;
       const d = t.dataset;
-      if (exView.q && (d.exGuide || d.exGo || d.exPub || d.exSingle)) exRemember(exView.q);
+      if (exView.q && (d.exGuide || d.exGo || d.exPub)) exRemember(exView.q);
+      // Actions personnelles : uniquement par S2, avec un jeton de geste tiré de ce clic (jamais d'appel direct à Collection ni à Lecture)
+      const S2 = exCommands(), gesture = () => S2 ? S2.gesture(e) : null;
       if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
       else if (d.exQ) { exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
       else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
       else if (d.exGuide) exGo('guide', d.exGuide);
       else if (d.exGo) exGo(d.exGo, d.exId || '');
       else if (d.exPub) openPubSheet(d.exPub);
-      else if (d.exSingle) { const s = physicalSingles.find(x => x.id === d.exSingle); if (s) openSingleInspector(s); }
+      else if (d.exOpen) { const r = S2 ? S2.openItem({ series: d.series || '', issue: d.issue || '', year: d.year || '' }, { gesture: gesture() }) : null; if (!r || !r.ok) showToast('Exemplaire introuvable dans votre collection.'); }
       else if (d.exOrder) { exView.order = d.exOrder; exView.limit = 60; renderExplorer(); }
-      else if (d.exSet) { const m = exProgress.get(d.exSet); await exSetProgress(d.exSet, m && m.status === d.st ? '' : d.st); renderExplorer(); }
-      else if (d.exWish) { const r = addPubToWishlist(d.exWish); showToast(r.ok ? (r.duplicate ? 'Déjà dans la wishlist.' : 'Ajouté à la wishlist.') : r.error); renderExplorer(); }
+      else if (d.exSet) { const r = S2 ? await S2.setGuideProgress(exView.id, d.exSet, t.classList.contains('active') ? '' : d.st, { gesture: gesture() }) : null; if (!r || !r.ok) showToast('Progression non enregistrée.'); renderExplorer(); }
+      else if (d.exWish) {
+        const r = S2 ? S2.addToWishlist({ pubId: d.exWish }, { gesture: gesture() }) : null;
+        if (r && r.ok && !r.duplicate && r.undoToken) showToastAction('Ajouté à la wishlist.', 'Annuler', () => { S2.undo(r.undoToken).then(() => renderExplorer()); });
+        else showToast(r && r.ok ? (r.duplicate ? 'Déjà dans la wishlist.' : 'Ajouté à la wishlist.') : 'Ajout impossible.');
+        renderExplorer();
+      }
       else if (d.exNext) { exView.focus = d.exNext; const g = exEditorial.get(exView.id), o = g && ((g.orders || []).find(x => x.id === exView.order) || g.orders[0]); const pos = o ? o.entries.findIndex(x => x.id === d.exNext) : 0; if (pos >= exView.limit) exView.limit = pos + 20; Object.assign(exView, { imp: '', hideOptional: false, hideRead: false, publisher: '', lang: 'vo' }); renderExplorer(); const el = $('exE_' + d.exNext); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' }); }
       else if (d.exSpoilers !== undefined) { exView.spoilers = true; renderExplorer(); }
       else if (d.exMoreentries !== undefined) { exView.limit += 60; renderExplorer(); }
@@ -13265,18 +13304,75 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const readingStatusOf = matched => matched.owned.some(s => s.isRead);
   const s1Ref = ref => ref && typeof ref === 'object' && typeof ref.series === 'string' && ref.series.trim() && ref.series.length <= 300 && (ref.issue === undefined || typeof ref.issue === 'string' || typeof ref.issue === 'number');
   const s1Available = () => Array.isArray(physicalSingles);
-  const lensStatusFor = refs => {
+  // Domaine Collection : rapprochement d'une référence avec l'inventaire (titre exact + numéro + année cohérente, ou publication liée ; jamais par ressemblance).
+  // Utilisé seulement par les fournisseurs S1 et S2 : les exemplaires ne sortent jamais de Collection.
+  const colYear = v => { const y = parseInt(String(v || '').slice(0, 4), 10); return y >= 1900 && y <= 2200 ? y : null; };
+  const colKey = (series, issue) => gdBase(series) + '#' + gdIssue(issue).toLowerCase();
+  const colIndex = () => {
+    const singles = new Map(), pulls = new Set();
+    physicalSingles.forEach(s => { const k = colKey(s.series, s.issue); const l = singles.get(k); if (l) l.push(s); else singles.set(k, [s]); });
+    relPulls.forEach(pl => { if (pl.status !== 'cancelled') pulls.add(pl.pubId); });
+    const followed = new Set(getPullList().map(p => gdBase(p.name)));
+    relPulls.forEach(pl => { const p = relPubs.get(pl.pubId); if (p && pl.status !== 'cancelled') followed.add(gdBase(p.series)); });
+    return { singles, pulls, followed };
+  };
+  const colRef = ref => ({ series: ref.series, issue: String(ref.issue == null ? '' : ref.issue), year: ref.year || '', pubId: typeof ref.pubId === 'string' ? ref.pubId : '' });
+  const colMatch = (ref, idx) => {
+    const k = colKey(ref.series, ref.issue), yr = colYear(ref.year), pubId = ref.pubId || '';
+    const yearOk = y => (!yr || !y) ? null : Math.abs(y - yr) <= 1;
+    const owned = [], wish = [], probable = [], seen = new Set();
+    (idx.singles.get(k) || []).forEach(s => {
+      if (seen.has(s.id)) return; seen.add(s.id);
+      const y = yearOk(colYear(s.coverYear) || colYear(s.releaseDate) || colYear(s.coverDate));
+      const sure = (pubId && s.pubId === pubId) || y === true;
+      if (sure) (s.isWishlist ? wish : owned).push(s);
+      else if (y === null && !s.isWishlist) probable.push(s);
+    });
+    if (pubId) physicalSingles.forEach(s => { if (s.pubId === pubId && !seen.has(s.id)) { seen.add(s.id); (s.isWishlist ? wish : owned).push(s); } });
+    return { owned, wish, probable, pull: !!pubId && idx.pulls.has(pubId), followed: idx.followed.has(gdBase(ref.series)) };
+  };
+  // Statuts facultatifs (ajout compatible de v1, seulement sur demande : include) : unconfirmed (même titre et numéro, année absente de la fiche), seriesFollowed (série suivie)
+  const S1_OPTIONAL = ['unconfirmed', 'seriesFollowed'];
+  const lensStatusFor = (refs, opts) => {
     if (!personalizeEnabled()) return s1Err('disabled');
     if (!s1Available()) return s1Err('unavailable');
     if (!Array.isArray(refs) || !refs.every(s1Ref)) return s1Err('invalid_input');
     if (refs.length > S1_MAX_REFS) return s1Err('rate_limited');
-    const idx = exIndexBuild();
+    const inc = new Set(opts && Array.isArray(opts.include) ? opts.include.filter(x => S1_OPTIONAL.includes(x)) : []);
+    const idx = colIndex();
     const items = refs.map(ref => {
-      const m = exMatch({ id: '', series: ref.series, issue: String(ref.issue == null ? '' : ref.issue), year: ref.year || '', pubId: typeof ref.pubId === 'string' ? ref.pubId : '' }, idx);
+      const m = colMatch(colRef(ref), idx);
       // Liste blanche : aucun prix, valeur, état, emplacement, note, date d'achat ni identifiant d'exemplaire
-      return { owned: m.owned.length, wishlisted: m.wish.length > 0, inPullList: !!m.pull, read: readingStatusOf(m) };
+      const it = { owned: m.owned.length, wishlisted: m.wish.length > 0, inPullList: !!m.pull, read: readingStatusOf(m) };
+      if (inc.has('unconfirmed')) it.unconfirmed = m.probable.length > 0;
+      if (inc.has('seriesFollowed')) it.seriesFollowed = m.followed;
+      return it;
     });
     return { ok: true, items };
+  };
+  // Agrégats « d'après votre collection » pour les pages séries, éditeurs et créateurs d'Explorer (C5, C6), jusqu'au catalogue éditorial (lot 4.3).
+  // Seulement des noms, des numéros, des années de couverture et des comptes : ni prix, ni état, ni emplacement, ni note, ni identifiant d'exemplaire.
+  const lensCollectionFacets = () => {
+    if (!personalizeEnabled()) return s1Err('disabled');
+    if (!s1Available()) return s1Err('unavailable');
+    const series = new Map(), publishers = new Map(), artists = new Map();
+    physicalSingles.forEach(s => {
+      const k = gdBase(s.series);
+      if (k) {
+        const x = series.get(k) || { name: String(s.series), publishers: new Set(), years: [], owned: 0, wish: 0, variants: 0, issues: new Set() };
+        if (s.publisher) x.publishers.add(String(s.publisher));
+        const y = colYear(s.coverYear) || colYear(s.releaseDate); if (y) x.years.push(y);
+        if (s.isWishlist) x.wish++; else { x.owned++; x.issues.add(gdIssue(s.issue)); }
+        if (s.variant) x.variants++;
+        series.set(k, x);
+      }
+      if (!s.isWishlist && s.publisher) publishers.set(String(s.publisher), (publishers.get(String(s.publisher)) || 0) + 1);
+      if (s.coverArtist) { const a = artists.get(String(s.coverArtist)) || []; if (a.length < 200) a.push({ series: String(s.series || ''), issue: gdIssue(s.issue), year: String(colYear(s.coverYear) || colYear(s.releaseDate) || colYear(s.coverDate) || '') }); artists.set(String(s.coverArtist), a); }
+    });
+    return { ok: true,
+      series: [...series.values()].map(x => ({ name: x.name, publishers: [...x.publishers], years: x.years, owned: x.owned, wish: x.wish, variants: x.variants, issues: [...x.issues].filter(Boolean) })),
+      publishers: [...publishers.entries()].map(([name, owned]) => ({ name, owned })),
+      coverArtists: [...artists.entries()].map(([name, covers]) => ({ name, covers })) };
   };
   const lensGuideProgress = (guideId, entryIds) => {
     if (!personalizeEnabled()) return s1Err('disabled');
@@ -13286,12 +13382,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const g = exEditorial.get(guideId);
     const entries = new Map();
     ((g && g.orders) || []).forEach(o => (o.entries || []).forEach(e => { if (e && e.id) entries.set(e.id, e); }));
-    const idx = exIndexBuild();
+    const idx = colIndex(), pidx = exIndexBuild();
     const items = entryIds.map(id => {
       const prog = exProgress.get(id);
       const status = prog && GD_PROGRESS[prog.status] ? prog.status : '';
       const e = entries.get(id);
-      const derived = !status && !!e && readingStatusOf(exMatch(e, idx));
+      const pub = e ? exResolve(e, pidx).pub : null;
+      const derived = !status && !!e && readingStatusOf(colMatch(colRef({ series: e.series, issue: e.issue, year: e.year ? String(e.year) : '', pubId: pub ? pub.id : '' }), idx));
       return { status: status || (derived ? 'read' : ''), derivedFromCollection: derived };
     });
     return { ok: true, items };
@@ -13349,15 +13446,15 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const e = s2Guard(opts, () => (typeof entryId === 'string' && /^ek_[a-z0-9]{1,40}$/i.test(entryId) && (status === '' || GD_PROGRESS[status]) ? null : s1Err('invalid_input'))); if (e) return e;
     const prev = exProgress.get(entryId);
     const prevStatus = prev ? prev.status : '';
-    const r = await exSetProgress(entryId, status);
+    const r = await lecSetGuideProgress(entryId, status);
     if (!r || !r.ok) return s1Err('internal');
-    return { ok: true, undoToken: r.unchanged ? undefined : s2Token(() => exSetProgress(entryId, prevStatus)) };
+    return { ok: true, undoToken: r.unchanged ? undefined : s2Token(() => lecSetGuideProgress(entryId, prevStatus)) };
   };
   // Ouverture : la fiche est trouvée et affichée par Collection ; Explorer ne reçoit aucun identifiant d'exemplaire
   const cmdOpenItem = (ref, opts = {}) => {
     const e = s2Guard(opts, () => (s1Ref(ref) ? null : s1Err('invalid_input'))); if (e) return e;
-    const m = exMatch({ id: '', series: ref.series, issue: String(ref.issue == null ? '' : ref.issue), year: ref.year || '', pubId: typeof ref.pubId === 'string' ? ref.pubId : '' }, exIndexBuild());
-    const s = m.owned[0] || m.wish[0];
+    const m = colMatch(colRef(ref), colIndex());
+    const s = m.owned[0] || m.wish[0] || m.probable[0];
     if (!s) return s1Err('invalid_input');
     openSingleInspector(s);
     return { ok: true };
@@ -13365,7 +13462,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const cmdUndo = async token => { const f = s2Undo.get(token); if (!f) return false; s2Undo.delete(token); await f(); return true; };
   const PERSONAL_CONTRACTS_V1 = Object.freeze({
     version: 1,
-    lens: Object.freeze({ isEnabled: personalizeEnabled, statusFor: lensStatusFor, guideProgress: lensGuideProgress }),
+    lens: Object.freeze({ isEnabled: personalizeEnabled, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets }),
     commands: Object.freeze({ gesture: s2Gesture, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, openItem: cmdOpenItem, undo: cmdUndo }),
     settings: Object.freeze({ personalize: personalizeEnabled, setPersonalize })
   });
@@ -13438,11 +13535,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       save: raw => exSaveGuide(raw, { edit: true }),
       validate: raw => { const r = gdSanitize(raw); return { ok: !!r.guide, errors: r.errors, warnings: r.warnings, guide: r.guide || null }; },
       search: (q, opts) => { const r = exSearch(q, opts); return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, { total: v.total, items: v.items.map(x => x.id || x.key) }])); },
-      setProgress: exSetProgress,
+      setProgress: lecSetGuideProgress,
       progress: key => { const p = exProgress.get(key); return p ? JSON.parse(JSON.stringify(p)) : null; },
       entryKey: gdEntryKey,
       stats: (id, orderId) => { const g = exEditorial.get(id); if (!g) return null; const o = (g.orders || []).find(x => x.id === orderId) || g.orders[0]; const st = exOrderStats(g, o, exIndexBuild()); delete st.byImp; return st; },
-      match: (id, entryId) => { const g = exEditorial.get(id); const e = g && g.orders.flatMap(o => o.entries).find(x => x.id === entryId); if (!e) return null; const m = exMatch(e, exIndexBuild()); return { pubId: m.pub ? m.pub.id : '', pubHow: m.pubHow, owned: m.owned.map(s => s.id), wish: m.wish.map(s => s.id), probable: m.probable.map(s => s.id), pull: m.pull, status: m.status, effective: m.effective }; },
+      // Diagnostic de rapprochement (tests) : combine la résolution d'Explorer et le rapprochement de Collection, hors du code d'Explorer
+      match: (id, entryId) => { const g = exEditorial.get(id); const e = g && g.orders.flatMap(o => o.entries).find(x => x.id === entryId); if (!e) return null; const rs = exResolve(e, exIndexBuild()); const m = colMatch(colRef({ series: e.series, issue: e.issue, year: e.year ? String(e.year) : '', pubId: rs.pub ? rs.pub.id : '' }), colIndex()); const p = exProgress.get(e.id); const status = p && p.status ? p.status : ''; const read = m.owned.some(s => s.isRead); return { pubId: rs.pub ? rs.pub.id : '', pubHow: rs.pubHow, owned: m.owned.map(s => s.id), wish: m.wish.map(s => s.id), probable: m.probable.map(s => s.id), pull: m.pull, status, effective: status || (read ? 'read' : '') }; },
+      // Tests de frontière : null simule un fournisseur S1/S2 absent ; undefined rétablit le fournisseur local
+      setPersonalProviderForTest: p => { exProviderOverride = p === undefined ? undefined : p; return true; },
       recos: exRecos,
       exportGuides: ids => gdExport(ids),
       importPlan: text => gdImportPlan(text),

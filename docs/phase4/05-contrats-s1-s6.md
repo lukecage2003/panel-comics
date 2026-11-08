@@ -140,3 +140,14 @@ S2 ne dépend **pas** de S1 : une commande peut être envoyée sans lecture pré
 - **Tests** : test 33 de `run-all-tests.js`, avec de vrais clics envoyés par CDP (`Input.dispatchMouseEvent`).
 - **Hors de ce sous-lot** : Explorer n'utilise pas encore S1 et S2 (sous-lot 3.1b-3).
 
+## Consommation par Explorer (sous-lot 3.1b-3, 8 novembre 2026)
+- **Explorer ne lit plus Collection ni Lecture** : il résout seulement la publication du calendrier (`exResolve`) et demande les statuts à S1. Le rapprochement avec l'inventaire (`colIndex`, `colMatch`) est une fonction interne de Collection, utilisée uniquement par les fournisseurs S1 et S2.
+- **Ajouts compatibles de v1** (règle du § 1 : champ facultatif ajouté), sans aucun champ interdit :
+  - `statusFor(refs, { include })` : statuts facultatifs renvoyés **seulement sur demande** : `unconfirmed` (même titre et numéro, année absente de la fiche : badge « Possédé ? (à confirmer) ») et `seriesFollowed` (série suivie) ; sans `include`, la sortie reste exactement `{ owned, wishlisted, inPullList, read }` ;
+  - `collectionFacets()` : agrégats « d'après votre collection » pour les pages séries, éditeurs et créateurs (C5, C6) : noms, éditeurs, années de couverture, numéros, comptes ; ni prix, ni état, ni emplacement, ni note, ni identifiant d'exemplaire. Il disparaît au profit du catalogue éditorial (S5) au lot 4.3.
+- **Retraits prévus par la conception** ([`02`](02-frontieres-collection-explorer.md) § 3, C3 et C4) : badge « Rangé » (emplacement, champ interdit) et repli sur la couverture d'un exemplaire personnel ; A7 : catégorie « Ma collection » retirée de la recherche d'Explorer.
+- **Actions** : « + Wishlist », statut de lecture d'une entrée (boutons et liste du mode simplifié) et ouverture d'un exemplaire depuis la page d'un créateur passent par S2, avec `commands.gesture(event)` dans le gestionnaire de clic. L'ajout à la wishlist propose désormais « Annuler ».
+- **Dégradation** : réglage désactivé ou fournisseur absent → guide éditorial complet, sans badge, filtre « Masquer les lus », progression ni recommandations ; les séries, créateurs et éditeurs dérivés de la collection disparaissent. Réglage désactivé : **aucun appel** au fournisseur.
+- **Réglage** « Personnaliser Explorer avec mes données » : interrupteur dans l'en-tête d'Explorer, effet immédiat.
+- **Tests** : test 34 (« Frontières ») ; test 29 adapté pour A7, et ses deux clics de statut rejoués par de vrais clics CDP (attentes inchangées), car S2 refuse les événements synthétiques.
+

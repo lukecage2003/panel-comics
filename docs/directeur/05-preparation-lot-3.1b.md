@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 et 3.1b-2 livrés ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
+Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1, 3.1b-2 et 3.1b-3 livrés ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 
@@ -65,6 +65,7 @@ Documents de référence, qui font autorité :
 | Risques | Régression visible d'Explorer (badges, progression) |
 | Tests | Test statique : aucune référence à `physicalSingles`, `persistSingles` ni aux stores de Collection dans le code d'Explorer ; Explorer complet avec un fournisseur S1 absent (`unavailable`) ; test 29 au vert hors A7 |
 | Acceptation | Critère X2, partie Explorer, de [`08`](../phase4/08-plan-execution.md) § 6 |
+| Réalisation (8 novembre 2026) | **Livré.** `check:boundaries` : 0 couplage sur 65 fonctions Explorer (règles étendues aux guides, aux séries suivies et aux fonctions internes de Collection et Lecture). Détails : [`phase4/05`](../phase4/05-contrats-s1-s6.md#consommation-par-explorer-sous-lot-31b-3-8-novembre-2026). Test 34 créé (statique strict, fournisseur absent, réglage désactivé) ; test 29 adapté pour A7, ses deux clics de statut rejoués par CDP |
 
 ### 3.1b-4 — Découplage Collection → Explorer (D1 à D4)
 | | |
@@ -123,6 +124,8 @@ Documents de référence, qui font autorité :
 | M1-M4 | Périmètre comics des Sorties | Filtre B-17 dans 3.1b-5 | Voir [`phase4/04`](../phase4/04-perimetre-sorties-comics.md) § 5 | Trancher avant 3.1b-5, sinon reporter le filtre au lot 4.6 |
 
 ## 4. Carte des couplages vérifiée (8 novembre 2026, `npm run check:boundaries`)
+> **Après 3.1b-3** : 0 couplage. La carte ci-dessous est l'état de départ ; les points D et E restent à traiter en 3.1b-4 et 3.1b-5.
+
 36 fonctions Explorer analysées, **15 couplages** vers les données personnelles, tous déjà répertoriés dans [`phase4/02`](../phase4/02-frontieres-collection-explorer.md) :
 
 | Règle | Fonction (ligne) | Sous-lot |

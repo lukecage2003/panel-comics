@@ -2364,7 +2364,7 @@ const waitForCdp = async () => {
         const S = q => X.search(q);
         const sk = S('king in black'), sv = S('Venom'), sc = S('knull'), scr = S('cates'), sp = S('marvel'), se = S('9791039100632'), st29 = S('t29 saga 1');
         r.search = (sk.guides || {}).items[0] === 'gd_king_in_black' && !!(sc.characters && sc.characters.total) && !!(scr.creators && scr.creators.total) && !!(sp.publishers && sp.publishers.total) &&
-          !!(se.editions && se.editions.items[0] === 'ed_kib_fr_venom1') && !!(st29.collection && st29.collection.items.includes('t29_s1')) && !!(st29.publications && st29.publications.items.includes(up.pub.id)) &&
+          !!(se.editions && se.editions.items[0] === 'ed_kib_fr_venom1') && !st29.collection && /* A7 (3.1b-3) : plus de catégorie « Ma collection » */ !!(st29.publications && st29.publications.items.includes(up.pub.id)) &&
           Object.keys(S('')).length === 0 && Object.keys(S('zzqx inexistant 29')).length === 0 && !!S('Le Roi en Noir').guides;
         r.recos = X.recos().some(x => x.guideId === 'gd_t29_saga' && x.why && x.text);
         // Interface : page Explorer
@@ -2425,12 +2425,7 @@ const waitForCdp = async () => {
         r.spoiler = !!root.querySelector('[data-ex-spoilers]') && !/Révélation/.test(root.textContent);
         root.querySelector('[data-ex-spoilers]').click();
         r.spoilerShown = /Révélation <b>importante<\\/b>/.test(root.textContent);
-        root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"]').click();
-        await new Promise(res => setTimeout(res, 300));
-        r.uiStatus = X.progress(eid(2)).status === 'reading' && !!root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"].active');
-        root.querySelector('[data-ex-set="' + eid(2) + '"][data-st="reading"]').click();
-        await new Promise(res => setTimeout(res, 300));
-        r.uiStatusToggle = X.progress(eid(2)).status === '';
+        // uiStatus et uiStatusToggle : vrais clics (CDP) après cette phase, car S2 refuse les événements synthétiques (lot 3.1b-3)
         // Échec de chargement d'image : simulé (le réseau du navigateur de test n'est pas déterministe après les tests hors ligne)
         const im0 = root.querySelector('.ex-ghero-img');
         if (im0) im0.dispatchEvent(new Event('error'));
@@ -2499,6 +2494,15 @@ const waitForCdp = async () => {
         return r;
       })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t29 }), 90000))])`);
       console.log('Résultat Test 29 (a):', JSON.stringify(t29a));
+      // Statut de lecture en un clic : vrai clic de l'utilisateur (Input.dispatchMouseEvent), exigé par S2 (jeton de geste)
+      const t29pos = sel => evalExpr(`(() => { const b = document.querySelector(${JSON.stringify(sel)}); if (!b) return null; b.scrollIntoView({ block: 'center' }); const q = b.getBoundingClientRect(); return { x: Math.round(q.left + q.width / 2), y: Math.round(q.top + q.height / 2) }; })()`);
+      const t29click = async sel => { const p = await t29pos(sel); if (!p) return false; await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: p.x, y: p.y, button: 'left', clickCount: 1 }); await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: p.x, y: p.y, button: 'left', clickCount: 1 }); await new Promise(r => setTimeout(r, 400)); return true; };
+      const t29key = await evalExpr(`(async () => { const X = window.Panel.explorer; await X.open('guide', 'gd_t29_saga'); return X.entryKey('T29 Saga', '', 2); })()`);
+      const t29sel = '[data-ex-set="' + t29key + '"][data-st="reading"]';
+      const t29s = {};
+      t29s.uiStatus = (await t29click(t29sel)) && await evalExpr(`window.Panel.explorer.progress(${JSON.stringify(t29key)}).status === 'reading' && !!document.querySelector(${JSON.stringify(t29sel + '.active')})`);
+      t29s.uiStatusToggle = (await t29click(t29sel)) && await evalExpr(`window.Panel.explorer.progress(${JSON.stringify(t29key)}).status === ''`);
+      Object.assign(t29a || {}, t29s);
       // Redémarrage hors ligne : guides, édition et progression relus depuis IndexedDB
       await send('Page.reload', { ignoreCache: false });
       for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.explorer) && document.readyState === "complete"')) break; }
@@ -2990,6 +2994,91 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Contrats S1 et S2 (lot 3.1b-2) : statuts minimaux en liste blanche, lecture seule, réglage désactivable (P1-a), erreurs, commandes seulement après un vrai geste, jeton à usage unique, dédoublonnage, annulation',
         ok: t33fail.length === 0
+      });
+      // ─── Test 34 : lot 3.1b — frontières entre domaines (enrichi à chaque sous-lot, clôturé au 3.1b-6) ───
+      // Statique : scripts/check-boundaries.js --strict à 0 couplage, et contrôle négatif (un couplage injecté est bien détecté).
+      console.log('\n[TEST 34] Frontières : contrôle statique, Explorer sans fournisseur S1/S2, réglage désactivé, aucune écriture...');
+      const t34s = (() => {
+        const run = env => { try { return { code: 0, out: require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'scripts', 'check-boundaries.js'), '--strict'], { env: Object.assign({}, process.env, env || {}), encoding: 'utf8' }) }; } catch (e) { return { code: e.status, out: String(e.stdout || '') }; } };
+        const ok = run();
+        const neg = path.join(require('os').tmpdir(), 'panel-t34-negatif.html');
+        fs.writeFileSync(neg, "<script>\n(() => {\n  const exT34Fuite = () => physicalSingles.length + relPulls.size;\n  const exT34Action = s => openSingleInspector(s);\n})();\n</script>\n");
+        const bad = run({ BOUNDARIES_FILE: neg });
+        try { fs.unlinkSync(neg); } catch (_) {}
+        return { staticStrict: ok.code === 0 && / 0 couplage/.test(ok.out), staticNegative: bad.code === 1 && /3 couplage/.test(bad.out) };
+      })();
+      const t34a = await evalExpr(`(async () => {
+        const P = window.Panel, X = P.explorer, C = P.contracts.personal.v1, r = {};
+        await P.releases.ready(); await X.load();
+        const fps = async () => JSON.stringify(await Promise.all(['collection', 'reading', 'explorer'].map(d => P.backup.fingerprint(d))));
+        const fp0 = await fps();
+        const prev = localStorage.getItem('panel_explorer_personalize');
+        localStorage.removeItem('panel_explorer_personalize');
+        const root = document.getElementById('explorerRoot');
+        const has = sel => !!root.querySelector(sel);
+        const personalSel = '.ex-entry .ex-badges .ex-b, [data-ex-set], [data-ex-st], .ex-progbox'; // badges personnels des entrées (les badges éditoriaux des éditions VF sont ailleurs)
+        // Fournisseur instrumenté : compte les appels à S1 et ajoute des agrégats fictifs « d'après votre collection » (aucune écriture)
+        const calls = { n: 0 };
+        const spy = { version: 1, settings: C.settings, commands: C.commands, lens: {
+          isEnabled: C.lens.isEnabled,
+          statusFor: (...a) => { calls.n++; return C.lens.statusFor(...a); },
+          guideProgress: (...a) => { calls.n++; return C.lens.guideProgress(...a); },
+          collectionFacets: () => { calls.n++; const f = C.lens.collectionFacets(); if (!f.ok) return f;
+            return Object.assign({}, f, { series: f.series.concat([{ name: 'T34 Serie Perso', publishers: ['T34 Editeur'], years: [2024], owned: 2, wish: 0, variants: 0, issues: ['1', '2'] }]),
+              coverArtists: f.coverArtists.concat([{ name: 'T34 Artiste', covers: [{ series: 'T34 Serie Perso', issue: '1', year: '2024' }] }]) }); } } };
+        X.setPersonalProviderForTest(spy);
+        // 1. Personnalisation active : statuts via S1, pages dérivées signalées « d'après votre collection »
+        await X.open('guide', 'gd_king_in_black');
+        r.personalOn = calls.n > 0 && has('.ex-b.is-owned, .ex-b.is-missing') && has('[data-ex-set]') && has('.ex-progbox') && X.stats('gd_king_in_black').personal === true;
+        await X.open('creator', 't34 artiste');
+        r.derivedTagged = has('.ex-b.is-personal') && has('[data-ex-open]') && /Couvertures dans votre collection/.test(root.textContent);
+        await X.open('series', 't34 serie perso');
+        r.seriesTagged = has('.ex-b.is-personal') && /Numéros possédés/.test(root.textContent) && /2 exemplaire/.test(root.textContent);
+        r.searchNoCollection = !('collection' in X.search('venom')) && !!X.search('t34 artiste').creators;
+        // 2. Réglage désactivé depuis l'interface : effet immédiat, aucun appel au fournisseur
+        await X.open('home');
+        const sw = document.getElementById('exPersonalize');
+        r.switchShown = !!sw && sw.checked === true;
+        calls.n = 0;
+        if (sw) { sw.checked = false; sw.dispatchEvent(new Event('change', { bubbles: true })); }
+        r.switchImmediate = localStorage.getItem('panel_explorer_personalize') === '0' && !document.getElementById('exSecReco') && document.getElementById('exPersonalize').checked === false && /Désactivé/.test(root.textContent);
+        await X.open('guide', 'gd_king_in_black');
+        const guideOff = !has(personalSel) && root.querySelectorAll('.ex-entry').length === 60 && /Personnalisation désactivée ou indisponible/.test(root.textContent);
+        await X.open('creator', 't34 artiste');
+        const creatorOff = /Créateur introuvable/.test(root.textContent);
+        await X.open('series', 't34 serie perso');
+        const seriesOff = /Série introuvable/.test(root.textContent);
+        r.disabledEditorialOnly = guideOff && creatorOff && seriesOff && !X.search('t34 artiste').creators && X.recos().length === 0;
+        r.disabledNoProviderCall = calls.n === 0;
+        await X.open('home');
+        const sw2 = document.getElementById('exPersonalize');
+        if (sw2) { sw2.checked = true; sw2.dispatchEvent(new Event('change', { bubbles: true })); }
+        r.reenabled = localStorage.getItem('panel_explorer_personalize') === '1' && calls.n > 0;
+        // 3. Fournisseur absent : Explorer complet en version éditoriale, sans badge, sans action personnelle, sans réglage
+        X.setPersonalProviderForTest(null);
+        await X.open('home');
+        r.absentHome = ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
+          !document.getElementById('exSecReco') && !document.getElementById('exPersonalize') && ![...root.querySelectorAll('.ex-unitile span')].some(s => /possédé/.test(s.textContent));
+        await X.open('guide', 'gd_king_in_black');
+        r.absentGuide = root.querySelectorAll('.ex-entry').length === 60 && !has(personalSel) && !has('[data-ex-wish]') && !!root.querySelector('[data-ex-moreentries]') && X.stats('gd_king_in_black').personal === false;
+        r.absentSearch = !!X.search('king in black').guides && !('collection' in X.search('venom'));
+        r.absentRecos = X.recos().length === 0;
+        // Rétablissement et empreintes : aucune écriture dans Collection, Lecture ni Explorer pendant le test
+        X.setPersonalProviderForTest(undefined);
+        if (prev === null) localStorage.removeItem('panel_explorer_personalize'); else localStorage.setItem('panel_explorer_personalize', prev);
+        await X.open('home');
+        r.noWrite = (await fps()) === fp0;
+        return r;
+      })()`);
+      const t34 = Object.assign({}, t34s, t34a);
+      console.log('Résultat Test 34:', JSON.stringify(t34));
+      const t34keys = ['staticStrict', 'staticNegative', 'personalOn', 'derivedTagged', 'seriesTagged', 'searchNoCollection', 'switchShown', 'switchImmediate', 'disabledEditorialOnly', 'disabledNoProviderCall',
+        'reenabled', 'absentHome', 'absentGuide', 'absentSearch', 'absentRecos', 'noWrite'];
+      const t34fail = t34keys.filter(k => !t34 || t34[k] !== true);
+      if (t34fail.length) console.log('Test 34 — vérifications en échec :', t34fail.join(', '));
+      testResults.push({
+        test: 'Frontières (lot 3.1b) : contrôle statique strict, Explorer via S1/S2 seulement, pages « d\'après votre collection » masquées sans S1, réglage désactivable à effet immédiat sans appel au fournisseur, fournisseur absent, aucune écriture',
+        ok: t34fail.length === 0
       });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
