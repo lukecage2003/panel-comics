@@ -10,6 +10,7 @@ const mapRpcError = err => {
   const msg = String(e.message || e.error_description || e.hint || e);
   const out = (code) => Object.assign(new Error(msg), { code, cause: err });
   if (e.name === 'TypeError' || /fetch|network|Failed to fetch|ECONN|ETIMEDOUT/i.test(msg) && !e.code) return out('network');
+  if (e.code === '53400' || /rate_limited/.test(msg)) return out('rate_limited'); // lot 3.6 (migration 12) : lot refusé, à rejouer plus tard
   if (e.status === 401 || e.code === '28000' || e.code === 'PGRST301' || /not_authenticated|JWT expired|invalid JWT/i.test(msg)) return out('session_expired');
   if (e.code === '42501' || /device_revoked_or_unknown/.test(msg)) return out('device_revoked');
   if (e.code === '22023' || /invalid_(batch|op|cursor)/.test(msg)) return out('invalid');

@@ -201,3 +201,14 @@ Restant, avec un service externe ou une décision : projet Supabase et `verify-s
 | Appareils | `api.register_device` (20 actifs au plus), `api.list_devices`, `api.revoke_device` ; appareil révoqué refusé par `settings_merge` et `sync_push` | Écran Compte et Appareils (affiché seulement avec un projet configuré) |
 | Client | `createSupabaseAccount(client)`, `createHlc(appareil)` (monotone, `observe()`) | Client supabase-js réel |
 
+
+## 12. Lot 3.6 local, suite (8 novembre 2026)
+**Statut : implémenté et validé localement (PGlite) ; Edge Function jamais déployée ; aucune tâche planifiée activée.** Décision : D-45.
+
+| Élément | Réalisé | Reste |
+|---|---|---|
+| Limitation de débit | Migration 12 : déclencheur d'instruction sur `app.sync_ops`, plafond dans `app.service_limits` (service seulement), lot refusé en entier ; `mapRpcError` → `rate_limited` | Limites de la passerelle d'API du projet réel |
+| Purge planifiable | `app.purge_due(âge)` sur tous les comptes, âge minimal 7 jours | Planification (pg_cron ou Edge Function) et durée validée juridiquement |
+| Suppression de compte | `app.delete_account` (cascade vérifiée sur toutes les tables à `user_id`) ; `functions/delete-account` : jeton, phrase « SUPPRIMER MON COMPTE », effacement des données puis compte, arrêt avant suppression du compte si l'effacement échoue | Déploiement, clé de service en variable d'environnement du projet |
+| Runbook | [`runbooks/incident.md`](runbooks/incident.md) | Relecture par l'utilisateur ; démarche CNIL validée par un professionnel |
+| Tests | `limits.test.js` (3), `delete-account.test.js` (3), `verify-supabase.sql` étendu | `verify-supabase.sql` sur un vrai projet |

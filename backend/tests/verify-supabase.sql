@@ -5,7 +5,7 @@
 do $$
 declare
   n int;
-  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','staff_role_log','staff_roles','sync_conflicts','sync_ops','user_settings','user_sync_state'];
+  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','service_limits','staff_role_log','staff_roles','sync_conflicts','sync_ops','user_settings','user_sync_state'];
   got text[];
 begin
   select array_agg(relname::text order by relname) into got from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r';
@@ -77,8 +77,17 @@ begin
     and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
   if n <> 2 then raise exception 'api.list_conflicts et api.resolve_conflict : security definer, search_path vide, authenticated seulement'; end if;
 
+  -- Lot 3.6 (migration 12, D-45) : réglages, purge et suppression de compte réservés au service ; limitation de débit active
+  if has_table_privilege('authenticated', 'app.service_limits', 'select,insert,update,delete') or has_table_privilege('anon', 'app.service_limits', 'select') then
+    raise exception 'app.service_limits accessible à un client';
+  end if;
+  select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace and proname in ('purge_due','delete_account','enforce_sync_rate')
+    and prosecdef and not has_function_privilege('authenticated', oid, 'execute') and not has_function_privilege('anon', oid, 'execute');
+  if n <> 3 then raise exception 'Fonctions de service du lot 3.6 : % conforme(s) sur 3', n; end if;
+  if not exists (select 1 from pg_trigger where tgname = 'sync_ops_rate' and tgrelid = 'app.sync_ops'::regclass) then raise exception 'Limitation de débit absente'; end if;
+
   select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;
 
-  raise notice 'verify-supabase : schéma app conforme (14 tables, 37 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
+  raise notice 'verify-supabase : schéma app conforme (15 tables, 37 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
 end $$;

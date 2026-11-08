@@ -42,6 +42,7 @@ const newDevice = async (uid, label) => { await H.asUser(db, uid); return (await
 test('correspondance des erreurs : session, appareil révoqué, réseau, requête invalide', () => {
   assert.equal(mapRpcError({ code: 'PGRST301', message: 'JWT expired' }).code, 'session_expired');
   assert.equal(mapRpcError({ status: 401, message: 'x' }).code, 'session_expired');
+  assert.equal(mapRpcError({ code: '53400', message: 'rate_limited' }).code, 'rate_limited');
   assert.equal(mapRpcError({ code: '42501', message: 'device_revoked_or_unknown' }).code, 'device_revoked');
   assert.equal(mapRpcError(new TypeError('Failed to fetch')).code, 'network');
   assert.equal(mapRpcError({ code: '22023', message: 'invalid_batch' }).code, 'invalid');

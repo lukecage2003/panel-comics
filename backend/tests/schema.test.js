@@ -24,9 +24,9 @@ const EXPECTED_COLUMNS = {
   sync_conflicts: ['id', 'user_id', 'entity', 'entity_id', 'field', 'local_value', 'server_value', 'base_rev', 'server_rev', 'device_id', 'created_at', 'resolved_at', 'resolution']
 };
 
-test('le schéma app contient exactement les 14 tables prévues (12 personnelles + rôles serveur du lot 3.3)', async () => {
+test('le schéma app contient exactement les 15 tables prévues (12 personnelles + rôles serveur du lot 3.3 + réglages du service, lot 3.6)', async () => {
   const r = await db.query("select table_name from information_schema.tables where table_schema = 'app' order by 1");
-  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log'].sort());
+  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log', 'service_limits'].sort());
 });
 
 test('aucun schéma réservé (catalog, editorial, media, signals, community) n\'est créé', async () => {

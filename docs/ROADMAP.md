@@ -26,7 +26,7 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 | 3.3 | Profils, préférences, appareils, rôles serveur (prérequis d'Explorer 2.0) | Préparé localement le 8 novembre 2026 (migration 10, D-38, `roles.test.js`) ; écran Compte branché après 3.2 |
 | 3.4 | Moteur de synchronisation, migration d'une collection existante | Préparé localement le 8 novembre 2026 (RPC, moteur, tests PGlite) ; branchement et migration après 3.2 |
 | 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille locale livrée le 8 novembre 2026 (D-36) ; résolution serveur réversible (migration 11) et centre des conflits livrés localement le 8 novembre 2026 (D-43), non validés sur Supabase |
-| 3.6 | Sauvegardes, restauration, suppression de compte, RGPD | Préparé localement le 8 novembre 2026 (export, effacement, purge ; D-35) ; suppression du compte auth et purge planifiée après 3.2 |
+| 3.6 | Sauvegardes, restauration, suppression de compte, RGPD | Préparé localement le 8 novembre 2026 (export, effacement, purge ; D-35) ; limitation de débit, purge planifiable, suppression de compte (Edge Function non déployée) et runbook d'incident (D-45) ; déploiement, planification et documents juridiques après 3.2 |
 | 3.7 | Validation Web + Android, bêta fermée | Scénarios V1 à V14 couverts localement le 8 novembre 2026 (V8 approché ; [matrice](phase3/11-matrice-validation-3.7.md), D-44) ; validation réelle Web, Android et bêta après 3.2 |
 
 ## Ordre et dépendances
