@@ -4791,6 +4791,168 @@ module.exports = { FORMAT, VERSION, SERIES_TYPES, VARIANT_KINDS, EDITION_FORMATS
   emptyStore, loadStore, resolve, link, lookup, usages, relink, chooseSeries, merge, undo, duplicateCandidates, describe, stats,
   fromCollectionCopy, fromRelease, fromEventIssue, buildFromModules };
   return Object.freeze(module.exports); })();
+  /* domains/explorer/event-levels.js */
+  out.eventLevels = (() => { const module = { exports: {} };
+'use strict';
+// Event Center v2 (R2, D-57) — module autonome : ni réseau, ni stockage, ni accès direct aux autres domaines.
+// Niveaux de lecture (Essentiel ⊂ Recommandé ⊂ Complet), rôles normalisés, ordre recommandé Panel versionné, progression par niveau.
+// Règles :
+//  - un niveau est une SÉLECTION ÉDITORIALE PANEL, affichée comme telle avec sa justification, jamais comme un fait bibliographique ;
+//  - une sélection ne porte que sur des liens déjà présents dans la fiche (aucune série ni aucun numéro ajouté) ; un lien introuvable
+//    (fiche modifiée par l'utilisateur, source retirée) est signalé « non applicable » et ignoré ;
+//  - l'ordre recommandé Panel est construit à partir des rôles (préludes, série principale, tie-ins choisis, épilogues, conséquences) :
+//    il n'est jamais recopié d'un guide tiers ; chaque modification de sélection crée une nouvelle version ;
+//  - « Complet » = série principale + tous les liens de la fiche, sauf ceux masqués par l'utilisateur (jamais l'essentiel) ;
+//  - une série citée sans numéros est comptée à part (« numéros non précisés »), jamais devinée.
+
+const LEVELS = Object.freeze({ essential: 'Essentiel', recommended: 'Recommandé', complete: 'Complet' });
+const LEVEL_KEYS = Object.freeze(['essential', 'recommended', 'complete']);
+const LEVEL_DEF = Object.freeze({
+  essential: 'La série principale et les numéros sans lesquels l\'histoire ne se comprend pas.',
+  recommended: 'L\'essentiel, plus les lectures qui éclairent l\'intrigue principale.',
+  complete: 'Tout ce que les sources rattachent à l\'événement.'
+});
+const ROLES = Object.freeze({ core: 'Cœur (série principale)', prelude: 'Prélude', tie_in: 'Tie-in', epilogue: 'Épilogue', consequence: 'Conséquence', related: 'Lié' });
+const ROLE_OF = Object.freeze({ prelude: 'prelude', tie_in: 'tie_in', crossover: 'tie_in', epilogue: 'epilogue', aftermath: 'consequence', related_series: 'related' });
+const ROLE_ORDER = Object.freeze(['prelude', 'core', 'tie_in', 'epilogue', 'consequence', 'related']);
+const AUTHOR = 'Panel — sélection éditoriale';
+
+// Sélections éditoriales Panel (version 1, 8 novembre 2026). Chaque entrée désigne un lien existant (relation + série) et dit pourquoi.
+const SELECTIONS = Object.freeze({
+  gd_secret_wars_1984: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Récit complet en douze numéros : la série principale suffit.', essential: [],
+    recommendedWhy: 'Aucun lien n\'est rattaché par les sources : rien à ajouter.', recommended: [] },
+  gd_infinity_gauntlet: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les six numéros, précédés de The Thanos Quest, où Thanos réunit les Gemmes : sans lui, le début de la série principale reste obscur.',
+    essential: [{ relation: 'prelude', series: 'The Thanos Quest', why: 'Thanos rassemble les Gemmes de l\'infini : point de départ direct de la série principale.' }],
+    recommendedWhy: 'Le retour de Thanos dans Silver Surfer et le sort des Gemmes après l\'événement.',
+    recommended: [{ relation: 'prelude', series: 'Silver Surfer', why: 'Retour de Thanos et mise en place de l\'intrigue cosmique, par le scénariste de la série principale.' },
+      { relation: 'aftermath', series: 'Warlock and the Infinity Watch', why: 'Ce que deviennent les Gemmes après l\'événement.' }] },
+  gd_house_of_m: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les huit numéros contiennent toute l\'intrigue.', essential: [],
+    recommendedWhy: 'Ce qui précède immédiatement l\'événement et ses premières conséquences.',
+    recommended: [{ relation: 'prelude', series: 'Excalibur', why: 'Xavier et Magneto à Génosha juste avant l\'événement : situe l\'état de la Sorcière rouge.' },
+      { relation: 'aftermath', series: 'Decimation: House of M – The Day After', why: 'Premières conséquences de la perte de leurs pouvoirs par la plupart des mutants.' }] },
+  gd_civil_war: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les sept numéros racontent tout le conflit.', essential: [],
+    recommendedWhy: 'Les deux lectures qui éclairent le plus la série principale, parmi des dizaines de tie-ins.',
+    recommended: [{ relation: 'tie_in', series: 'Amazing Spider-Man', why: 'Le point de vue de Peter Parker, dont le choix de révéler son identité est au cœur de l\'événement.' },
+      { relation: 'tie_in', series: 'Civil War: Front Line', why: 'Le conflit vu du terrain par des journalistes : contexte et enjeux de la loi de recensement.' }] },
+  gd_crisis_infinite_earths: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les douze numéros forment un récit complet.', essential: [],
+    recommendedWhy: 'Les nombreux crossovers prolongent l\'événement dans chaque série sans être nécessaires à l\'intrigue : Panel n\'en recommande aucun.', recommended: [] },
+  gd_infinite_crisis: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les sept numéros contiennent l\'intrigue principale.', essential: [],
+    recommendedWhy: 'Le numéro de lancement et les quatre mini-séries qui mènent à l\'événement.',
+    recommended: [{ relation: 'prelude', series: 'Countdown to Infinite Crisis', why: 'Point de départ des quatre mini-séries préparatoires.' },
+      { relation: 'prelude', series: 'The OMAC Project', why: 'L\'une des quatre mini-séries préparatoires.' },
+      { relation: 'prelude', series: 'Villains United', why: 'L\'une des quatre mini-séries préparatoires.' },
+      { relation: 'prelude', series: 'Day of Vengeance', why: 'L\'une des quatre mini-séries préparatoires.' },
+      { relation: 'prelude', series: 'Rann–Thanagar War', why: 'L\'une des quatre mini-séries préparatoires.' }] },
+  gd_blackest_night: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'La série principale, du #0 au #8.', essential: [],
+    recommendedWhy: 'L\'intrigue se poursuit dans les deux séries Green Lantern, étroitement liées à la série principale.',
+    recommended: [{ relation: 'tie_in', series: 'Green Lantern', why: 'Le fil principal de l\'intrigue continue dans Green Lantern, écrit par le scénariste de l\'événement.' },
+      { relation: 'tie_in', series: 'Green Lantern Corps', why: 'Le versant Green Lantern Corps de l\'invasion des Black Lanterns.' }] },
+  gd_flashpoint: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les cinq numéros racontent l\'événement.', essential: [],
+    recommendedWhy: 'Ce qui mène directement à l\'événement et le Batman de cette réalité, central dans l\'intrigue.',
+    recommended: [{ relation: 'prelude', series: 'The Flash', why: 'Les numéros qui mènent directement au début de l\'événement.' },
+      { relation: 'tie_in', series: 'Flashpoint: Batman – Knight of Vengeance', why: 'Le Batman de cette réalité, personnage central de la série principale.' }] },
+  gd_king_in_black: { version: 1, at: '2026-11-08', changes: [{ version: 1, at: '2026-11-08', note: 'Première sélection.' }],
+    essentialWhy: 'Les cinq numéros racontent l\'événement.', essential: [],
+    recommendedWhy: 'La série Venom qui prépare l\'arrivée de Knull.',
+    recommended: [{ relation: 'related_series', series: 'Venom', why: 'La série Venom du scénariste de l\'événement prépare directement l\'arrivée de Knull.' }] }
+});
+
+const str = (v, max = 200) => (v === null || v === undefined) ? '' : String(v).replace(/\s+/g, ' ').trim().slice(0, max);
+const key = s => str(s, 200).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/\bthe\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+const linkKey = (relation, series) => relation + '|' + key(series);
+const issueNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 9999; };
+
+// Liens d'une vue d'événement (eventView de media-core, fournie par l'appelant) aplatis par rôle
+function linksOf(view) {
+  const out = [];
+  Object.entries((view && view.groups) || {}).forEach(([relation, list]) => (list || []).forEach(l => out.push({ relation, role: ROLE_OF[relation] || 'related', series: l.series, volume: l.volume || '', issues: (l.issueList || []).slice(), readingPos: l.readingPos || null })));
+  return out;
+}
+const itemsOf = (l, why, level) => l.issues.map(n => ({ series: l.series, volume: l.volume, issue: n, role: l.role, relation: l.relation, level, why }));
+
+// Niveaux d'un événement. guide : fiche (id, event.mainSeries) ; view : eventView(guide) ; opts.hidden : clés relation|série masquées par l'utilisateur
+function levelsFor(guide, view, opts = {}) {
+  const sel = SELECTIONS[guide && guide.id] || null;
+  const hidden = new Set((opts.hidden || []).map(String));
+  const ms = guide && guide.event && guide.event.mainSeries;
+  const links = linksOf(view), byKey = new Map();
+  links.forEach(l => { const k = linkKey(l.relation, l.series); byKey.set(k, (byKey.get(k) || []).concat(l)); });
+  const unmatched = [], pick = (list, level) => {
+    const items = [], series = [];
+    (list || []).forEach(s => {
+      const found = byKey.get(linkKey(s.relation, s.series));
+      if (!found) { unmatched.push({ level, relation: s.relation, series: s.series }); return; }
+      found.forEach(l => { series.push({ series: l.series, volume: l.volume, role: l.role, relation: l.relation, why: s.why, count: l.issues.length, key: linkKey(l.relation, l.series) }); items.push(...itemsOf(l, s.why, level)); });
+    });
+    return { items, series };
+  };
+  const core = ms ? (view.main || []).map(i => ({ series: ms.series, volume: ms.volume || '', issue: String(i.issue), role: 'core', relation: 'main', level: 'essential', why: 'Série principale.' })) : [];
+  const ess = pick(sel ? sel.essential : [], 'essential');
+  const rec = pick(sel ? sel.recommended : [], 'recommended');
+  const chosen = new Set(ess.series.concat(rec.series).map(x => x.key));
+  const rest = links.filter(l => !chosen.has(linkKey(l.relation, l.series)));
+  const comp = { items: [], series: [] };
+  rest.forEach(l => { const k = linkKey(l.relation, l.series); if (hidden.has(k)) return; comp.series.push({ series: l.series, volume: l.volume, role: l.role, relation: l.relation, why: '', count: l.issues.length, key: k }); comp.items.push(...itemsOf(l, '', 'complete')); });
+  const dedupe = list => { const seen = new Set(); return list.filter(i => { const k = key(i.series) + '|' + key(i.volume) + '|' + i.issue; if (seen.has(k)) return false; seen.add(k); return true; }); };
+  const essential = dedupe(core.concat(ess.items));
+  const recommended = dedupe(essential.concat(rec.items));
+  const complete = dedupe(recommended.concat(comp.items));
+  const unnumbered = list => list.filter(x => !x.count).map(x => x.series);
+  const lv = (items, added, why, selWhy, series) => ({ count: items.length, added, why, selectionWhy: selWhy, items, series, unnumbered: unnumbered(series) });
+  return {
+    guideId: guide && guide.id, editorial: !!sel, author: AUTHOR, version: sel ? sel.version : 0, at: sel ? sel.at : '', changes: sel ? sel.changes.slice() : [],
+    levels: {
+      essential: lv(essential, essential.length, LEVEL_DEF.essential, sel ? sel.essentialWhy : 'Aucune sélection Panel pour cet événement : la série principale seule.', ess.series),
+      recommended: lv(recommended, recommended.length - essential.length, LEVEL_DEF.recommended, sel ? sel.recommendedWhy : 'Aucune sélection Panel pour cet événement.', rec.series),
+      complete: lv(complete, complete.length - recommended.length, LEVEL_DEF.complete, 'Tous les liens rattachés par les sources' + (hidden.size ? ', sauf ceux que vous avez masqués' : '') + '.', comp.series)
+    },
+    hidden: [...hidden], unmatched
+  };
+}
+
+// Ordre recommandé Panel : construit à partir des rôles (jamais recopié) ; numéros d'une même série dans l'ordre de publication
+function recommendedOrder(lv, level) {
+  const items = (lv && lv.levels[level] ? lv.levels[level].items : []).slice();
+  const firstPos = new Map(); items.forEach((it, i) => { const k = it.role + '|' + key(it.series); if (!firstPos.has(k)) firstPos.set(k, i); });
+  items.sort((a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role) || firstPos.get(a.role + '|' + key(a.series)) - firstPos.get(b.role + '|' + key(b.series)) || issueNum(a.issue) - issueNum(b.issue));
+  return { type: 'recommended', id: 'ord_panel_' + (lv && lv.guideId) + '_' + level + '_v' + (lv ? lv.version : 0), label: 'Ordre recommandé Panel — ' + LEVELS[level] + (lv && lv.version ? ' (version ' + lv.version + ', ' + lv.at + ')' : ''),
+    author: AUTHOR, version: lv ? lv.version : 0, builtFrom: 'roles', note: 'Construit par Panel à partir des rôles : préludes, série principale, tie-ins, épilogues, conséquences. Les tie-ins se lisent en parallèle de la série principale ; aucune position n\'est reprise d\'un guide tiers.',
+    entries: items.map((it, i) => Object.assign({ position: i + 1 }, it)) };
+}
+
+// Progression par niveau. statusOf(item) → 'read' | 'skipped' | 'reading' | '' (fourni par l'appelant, à partir du domaine Lecture)
+function progressFor(lv, statusOf) {
+  const out = {};
+  LEVEL_KEYS.forEach(level => {
+    const ord = recommendedOrder(lv, level).entries;
+    let read = 0, skipped = 0, next = null;
+    ord.forEach(it => { const s = statusOf(it); if (s === 'read') read++; else if (s === 'skipped') skipped++; else if (!next) next = it; });
+    out[level] = { total: ord.length, read, skipped, done: read + skipped, percent: ord.length ? Math.round((read + skipped) * 100 / ord.length) : 0, next };
+  });
+  return out;
+}
+
+// Contrôle des sélections contre une fiche : chaque entrée justifiée, aucune entrée sans lien correspondant
+function auditSelection(guide, view) {
+  const sel = SELECTIONS[guide && guide.id];
+  if (!sel) return { ok: false, missing: true, problems: ['Aucune sélection Panel'] };
+  const lv = levelsFor(guide, view), problems = [];
+  if (!sel.essentialWhy || !sel.recommendedWhy) problems.push('Justification de niveau manquante');
+  sel.essential.concat(sel.recommended).forEach(s => { if (!str(s.why)) problems.push('Justification manquante : ' + s.series); });
+  lv.unmatched.forEach(u => problems.push('Lien introuvable : ' + u.relation + ' ' + u.series));
+  return { ok: !problems.length, problems, counts: { essential: lv.levels.essential.count, recommended: lv.levels.recommended.count, complete: lv.levels.complete.count } };
+}
+
+module.exports = { LEVELS, LEVEL_KEYS, LEVEL_DEF, ROLES, ROLE_OF, AUTHOR, SELECTIONS, linkKey, levelsFor, recommendedOrder, progressFor, auditSelection };
+  return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
 </script>
@@ -12349,6 +12511,43 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exEventFacts = g => { const MC = exMC(); if (!MC || !g.event) return ''; const v = MC.eventView(g); return [v.counts.main ? v.counts.main + ' numéro(s) principaux' : '', v.counts.linkedSeries ? v.counts.linkedSeries + ' série(s) liée(s)' : ''].filter(Boolean).join(' · '); };
   const exIssueCard = (x, sub) => '<button class="ex-iss" data-ex-go="issue" data-ex-id="' + h(x.key) + '">' + mediaImg(exIssueRef(x.key), { cls: 'ex-iss-img', kind: 'issue', alt: exIssueLabel(x), fallback: mediaPlaceholder('issue', x.series, x.issue !== '' ? '#' + x.issue : ''), w: 120, h: 180 }) +
     '<span class="ex-iss-txt"><b>' + h(exIssueLabel(x)) + '</b>' + (sub ? '<small>' + h(sub) + '</small>' : '') + '</span></button>';
+  // ---------- Event Center v2 (R2, D-57) : « Que lire ? » — niveaux, justification, progression par niveau, ordre recommandé Panel
+  // Préférences locales (niveau choisi, liens masqués) ; progression lue par S1 (guideProgress) et écrite par S2 (setGuideProgress), jamais directement
+  const EX_LEVEL_KEY = 'panel_event_levels_v1';
+  const exEL = () => (window.PanelDomains && window.PanelDomains.eventLevels) || null;
+  const exLevelPrefs = () => { try { const d = JSON.parse(localStorage.getItem(EX_LEVEL_KEY) || 'null'); if (d && d.version === 1 && typeof d.levels === 'object' && typeof d.hidden === 'object') return d; } catch (_) {} return { version: 1, levels: {}, hidden: {} }; };
+  const exLevelPrefsSave = d => { try { localStorage.setItem(EX_LEVEL_KEY, JSON.stringify(d)); return true; } catch (_) { return false; } };
+  const exLevelsHtml = (g, v) => {
+    const EL = exEL();
+    if (!EL || !g.event || !g.event.mainSeries) return '';
+    const prefs = exLevelPrefs(), level = EL.LEVELS[prefs.levels[g.id]] ? prefs.levels[g.id] : 'essential';
+    const lv = EL.levelsFor(g, v, { hidden: prefs.hidden[g.id] || [] }), cur = lv.levels[level];
+    const order = EL.recommendedOrder(lv, level), full = EL.recommendedOrder(lv, 'complete').entries;
+    const keyOf = it => exIssueKey(it.series, it.volume, it.issue);
+    const gp = exLensCall('guideProgress', g.id, full.map(keyOf));
+    const stOf = new Map(); if (gp) full.forEach((it, i) => { const x = gp.items[i]; if (x && !x.derivedFromCollection) stOf.set(keyOf(it), x.status); else if (x && x.status === 'read') stOf.set(keyOf(it), 'read'); });
+    const prog = EL.progressFor(lv, it => stOf.get(keyOf(it)) || ''), pg = prog[level];
+    const tabs = EL.LEVEL_KEYS.map(k => '<button type="button" class="ex-chip' + (k === level ? ' is-active' : '') + '" data-ex-level="' + k + '" aria-pressed="' + (k === level) + '">' + h(EL.LEVELS[k]) + ' · <b data-level-count="' + k + '">' + lv.levels[k].count + '</b> numéro(s)' + (gp ? ' <small>' + prog[k].done + '/' + prog[k].total + '</small>' : '') + '</button>').join('');
+    const roleB = it => '<span class="ex-b" data-role="' + h(it.role) + '">' + h(EL.ROLES[it.role] || it.role) + '</span>';
+    const series = cur.series.length ? '<ul class="ex-ev-links" data-level-series>' + cur.series.map(s => '<li><b>' + h(s.series + (s.volume ? ' ' + s.volume : '')) + '</b> ' + roleB(s) + ' <small>' + (s.count ? s.count + ' numéro(s)' : 'numéros non précisés par les sources') + '</small>' +
+      (s.why ? '<br><small class="ex-note">' + h(s.why) + '</small>' : '') + (level === 'complete' ? ' <button type="button" class="btn-link" data-ex-hide="' + h(s.key) + '">Masquer</button>' : '') + '</li>').join('') + '</ul>' : '';
+    const hiddenN = (prefs.hidden[g.id] || []).length;
+    const next = pg.next ? '<button class="ex-link" data-ex-go="issue" data-ex-id="' + h(keyOf(pg.next)) + '">' + h(pg.next.series + ' #' + pg.next.issue) + '</button>' : '';
+    const progress = gp ? '<p class="ex-note" data-level-progress="' + pg.done + '/' + pg.total + '"><b>' + pg.read + '</b> lu(s)' + (pg.skipped ? ', ' + pg.skipped + ' ignoré(s)' : '') + ' sur ' + pg.total + ' · ' + (next ? 'Prochain : ' + next : (pg.total ? 'Niveau terminé' : '')) + '</p>'
+      : '<p class="ex-note" data-level-progress="off">Activez la personnalisation pour suivre votre progression par niveau.</p>';
+    const LIMIT = 80, rows = order.entries.slice(0, LIMIT).map(it => { const k = keyOf(it), st = stOf.get(k) || '';
+      return '<li data-level-item="' + h(k) + '"><span class="ex-b">' + it.position + '</span> <button class="ex-link" data-ex-go="issue" data-ex-id="' + h(k) + '">' + h(it.series + (it.volume ? ' ' + it.volume : '') + ' #' + it.issue) + '</button> ' + roleB(it) +
+        (gp ? ' <button type="button" class="ex-stbtn' + (st === 'read' ? ' active' : '') + '" data-ex-set="' + h(k) + '" data-st="read">Lu</button> <button type="button" class="ex-stbtn' + (st === 'skipped' ? ' active' : '') + '" data-ex-set="' + h(k) + '" data-st="skipped">Ignorer</button>' : '') + '</li>'; }).join('');
+    return '<section class="ex-sec" id="exLevels" data-ex-levels="' + h(g.id) + '" data-level="' + level + '"><h3>Que lire ?</h3>' +
+      '<div class="ex-chips" role="group" aria-label="Niveau de lecture">' + tabs + '</div>' +
+      '<p class="ex-note" data-level-why><b>' + h(lv.editorial ? 'Sélection éditoriale Panel' + (lv.version ? ' (version ' + lv.version + ', ' + lv.at + ')' : '') : 'Pas de sélection Panel pour cet événement') + '</b> — ' + h(cur.selectionWhy) + ' <small>' + h(cur.why) + '</small></p>' +
+      progress + series +
+      (cur.unnumbered.length ? '<p class="ex-note" data-level-unnumbered>' + cur.unnumbered.length + ' série(s) citée(s) sans numéros précisés : non comptée(s) dans le total.</p>' : '') +
+      (lv.unmatched.length ? '<p class="ex-note" data-level-unmatched>Sélection non applicable à cette fiche (lien absent) : ' + h(lv.unmatched.map(u => u.series).join(', ')) + '.</p>' : '') +
+      (level === 'complete' && hiddenN ? '<p class="ex-note">' + hiddenN + ' lien(s) masqué(s). <button type="button" class="btn-link" data-ex-unhide="1">Tout réafficher</button></p>' : '') +
+      '<details data-level-order><summary>' + h(order.label) + ' — ' + order.entries.length + ' numéro(s)</summary><p class="ex-note">' + h(order.note) + '</p><ol class="ex-ev-links" style="list-style:none;padding:0">' + rows + '</ol>' +
+      (order.entries.length > LIMIT ? '<p class="ex-note">… et ' + (order.entries.length - LIMIT) + ' autre(s) numéro(s).</p>' : '') + '</details></section>';
+  };
   const exEventHtml = g => {
     const MC = exMC();
     if (!MC || !g.event) return '';
@@ -12370,7 +12569,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const gal = [], evRef = exMediaOf('guide', g).ref;
     if (evRef && !mediaFailed(evRef.url)) gal.push({ ref: evRef, label: g.title + ' — ' + (MEDIA_VTYPES[evRef.visualType] || 'Visuel de l\'événement') });
     [...idx.values()].filter(x => x.guides.some(r => r.id === g.id && r.relation !== 'order')).forEach(x => { const r = exIssueRef(x.key); if (r && !mediaFailed(r.url)) gal.push({ ref: r, label: exIssueLabel(x) + ' — ' + exRelLabel(x.guides.find(q => q.id === g.id).relation) }); });
-    return '<section class="ex-sec ex-event" id="exEventSheet"><div class="ex-sec-head"><h3>Fiche événement</h3><p>' + h([ev.universe, g.publisher, g.periodStart ? g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '') : '', exEventFacts(g)].filter(Boolean).join(' · ')) + '</p></div>' +
+    return '<section class="ex-sec ex-event" id="exEventSheet"><div class="ex-sec-head"><h3>Fiche événement</h3><p>' + h([ev.universe, g.publisher, g.periodStart ? g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '') : '', exEventFacts(g)].filter(Boolean).join(' · ')) + '</p></div>' + exLevelsHtml(g, v) +
       (gal.length ? exGallery('Galerie de l\'événement', gal, 'Visuels associés à l\'événement et à ses numéros, avec leur source et leur statut.') : '<p class="ex-note" data-ex-nogallery>Aucun visuel dont l\'affichage est établi n\'est encore associé à cet événement ou à ses numéros. <button class="ex-link" data-ex-go="visuals">Compléter les visuels</button></p>') +
       (ms ? '<section class="ex-sec"><h3>Série principale : ' + h(ms.series + (ms.volume ? ' ' + ms.volume : '')) + ' (' + v.main.length + ')' + src(ms.sourceId) + '</h3><div class="ex-iss-grid">' + mainCards + '</div></section>' : '') +
       (groups ? '<section class="ex-sec"><h3>Préludes, tie-ins et suites</h3><div class="ex-ev-groups">' + groups + '</div></section>' : '') +
@@ -13011,6 +13210,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       else if (d.exGo) exGo(d.exGo, d.exId || '');
       else if (d.exPub) openPubSheet(d.exPub);
       else if (d.exOpen) { const r = S2 ? S2.openItem({ series: d.series || '', issue: d.issue || '', year: d.year || '' }, { gesture: gesture() }) : null; if (!r || !r.ok) showToast('Exemplaire introuvable dans votre collection.'); }
+      else if (d.exLevel) { const pr = exLevelPrefs(); pr.levels[exView.id] = d.exLevel; exLevelPrefsSave(pr); renderExplorer(); }
+      else if (d.exHide) { const pr = exLevelPrefs(), l = pr.hidden[exView.id] || []; if (!l.includes(d.exHide)) l.push(d.exHide); pr.hidden[exView.id] = l.slice(-200); exLevelPrefsSave(pr); renderExplorer(); showToast('Lien masqué dans le niveau Complet (réaffichable).'); }
+      else if (d.exUnhide) { const pr = exLevelPrefs(); delete pr.hidden[exView.id]; exLevelPrefsSave(pr); renderExplorer(); }
       else if (d.exOrder) { exView.order = d.exOrder; exView.limit = 60; renderExplorer(); }
       else if (d.exSet) { const r = S2 ? await S2.setGuideProgress(exView.id, d.exSet, t.classList.contains('active') ? '' : d.st, { gesture: gesture() }) : null; if (!r || !r.ok) showToast('Progression non enregistrée.'); renderExplorer(); }
       else if (d.exWish) {

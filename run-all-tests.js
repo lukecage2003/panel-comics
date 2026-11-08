@@ -4330,6 +4330,73 @@ const waitForCdp = async () => {
       if (t52fail.length) console.log('Test 52 — vérifications en échec :', t52fail.join(', '));
       testResults.push({ test: 'Catalogue commun (R1) : Collection, Sorties et Explorer résolus vers une identité partagée, fiches intactes, reconstruction idempotente, nouveaux mangas refusés, index sauvegardé, retour arrière et reconstruction identique', ok: t52fail.length === 0 });
 
+      // ─── Test 53 : Event Center v2 (R2, D-57) — niveaux de lecture, progression par niveau, ordre recommandé Panel ───
+      console.log('\n[TEST 53] Event Center v2 : niveaux justifiés pour les 9 événements, essentiel visible en tête, progression, ordre Panel...');
+      const t53 = await Promise.race([evalExpr(`(async () => {
+        const P = window.Panel, EL = window.PanelDomains.eventLevels, MC = window.PanelDomains.mediaCore, r = {}; window.__t53 = r; const T0 = performance.now(); r.ms = {};
+        // Onglet de test masqué : les minuteurs y sont fortement ralentis ; les rendus d'Explorer étant synchrones, on cède la main par MessageChannel (non ralenti)
+        const tick = () => new Promise(res => { const c = new MessageChannel(); c.port1.onmessage = () => res(); c.port2.postMessage(0); });
+        const wait = async ms => { for (let i = 0; i < 3; i++) await tick(); };
+        const prefsKey = 'panel_event_levels_v1', prefs0 = localStorage.getItem(prefsKey), prog0 = JSON.stringify(P.releases.all().length);
+        localStorage.removeItem(prefsKey);
+        try {
+          const ids = ['gd_secret_wars_1984', 'gd_infinity_gauntlet', 'gd_house_of_m', 'gd_civil_war', 'gd_crisis_infinite_earths', 'gd_infinite_crisis', 'gd_blackest_night', 'gd_flashpoint', 'gd_king_in_black'];
+          const audits = ids.map(id => { const g = P.explorer.guide(id); return g ? EL.auditSelection(g, MC.eventView(g)) : { ok: false, problems: ['absent'] }; });
+          r.nineJustified = audits.every(a => a.ok);
+          r.step = 'audit'; r.ms['audit'] = Math.round(performance.now() - T0);
+          if (!r.nineJustified) r.auditProblems = audits.map((a, i) => a.ok ? '' : ids[i] + ':' + a.problems.join('/')).filter(Boolean);
+          document.getElementById('navExplorer').click(); await wait(150);
+          if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
+          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(250);
+          const sec = document.getElementById('exLevels'), sheet = document.getElementById('exEventSheet');
+          r.step = 'cw-open'; r.ms['cw-open'] = Math.round(performance.now() - T0);
+          r.section = !!sec && sec.dataset.level === 'essential';
+          // En tête de fiche : avant la galerie et la série principale ; nombre d'essentiels lisible tout de suite
+          r.firstScreen = !!sec && sheet.querySelector('.ex-sec') === sec && sec.getBoundingClientRect().top < window.innerHeight;
+          r.essentialCount = sec.querySelector('[data-level-count="essential"]').textContent === '7';
+          r.editorialLabel = /Sélection éditoriale Panel \\(version 1/.test(sec.querySelector('[data-level-why]').textContent);
+          sec.querySelector('[data-ex-level="recommended"]').click(); await wait(200);
+          const sec2 = document.getElementById('exLevels');
+          r.step = 'rec'; r.ms['rec'] = Math.round(performance.now() - T0);
+          r.recommended = sec2.dataset.level === 'recommended' && sec2.querySelector('[data-level-count="recommended"]').textContent === '28' && /Amazing Spider-Man/.test(sec2.querySelector('[data-level-series]').textContent) && /Front Line/.test(sec2.textContent);
+          r.panelOrder = /Ordre recommandé Panel — Recommandé \\(version 1/.test(sec2.querySelector('[data-level-order] summary').textContent) && sec2.querySelectorAll('[data-level-item]').length === 28 &&
+            sec2.querySelector('[data-level-item] [data-role]').dataset.role !== 'tie_in';
+          r.progress = !!sec2.querySelector('[data-level-progress]');
+          sec2.querySelector('[data-ex-level="complete"]').click(); await wait(200);
+          r.step = 'complete'; r.ms['complete'] = Math.round(performance.now() - T0);
+          let sec3 = document.getElementById('exLevels'); const total = Number(sec3.querySelector('[data-level-count="complete"]').textContent);
+          const hide = sec3.querySelector('[data-ex-hide]'); hide.click(); await wait(200);
+          sec3 = document.getElementById('exLevels');
+          r.hide = Number(sec3.querySelector('[data-level-count="complete"]').textContent) < total && Number(sec3.querySelector('[data-level-count="essential"]').textContent) === 7;
+          sec3.querySelector('[data-ex-unhide]').click(); await wait(200);
+          r.unhide = Number(document.getElementById('exLevels').querySelector('[data-level-count="complete"]').textContent) === total;
+          r.persisted = JSON.parse(localStorage.getItem(prefsKey)).levels.gd_civil_war === 'complete';
+          // Événement sans tie-in : niveaux égaux et justifiés
+          r.step = 'sw'; r.ms['sw'] = Math.round(performance.now() - T0);
+          document.querySelector('#explorerRoot .ex-back').click(); await wait(150);
+          r.step = 'sw-back'; r.ms['sw-back'] = Math.round(performance.now() - T0);
+          document.querySelector('#exSecEvents [data-ex-guide="gd_secret_wars_1984"]').click(); await wait(250);
+          r.step = 'sw-open'; r.ms['sw-open'] = Math.round(performance.now() - T0);
+          const sw = document.getElementById('exLevels');
+          r.noTieIn = !!sw && sw.querySelector('[data-level-count="essential"]').textContent === '12' && sw.querySelector('[data-level-count="complete"]').textContent === '12';
+          r.noThirdPartyOrder = !document.querySelector('#exLevels [data-level-order]').textContent.includes('CBRO');
+          r.dataUntouched = JSON.stringify(P.releases.all().length) === prog0;
+          r.step = 'end'; r.ms['end'] = Math.round(performance.now() - T0);
+          const back = document.querySelector('#explorerRoot .ex-back'); if (back) { back.click(); await wait(100); }
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (prefs0 === null) localStorage.removeItem(prefsKey); else localStorage.setItem(prefsKey, prefs0);
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 90000))]);
+      if (t53 && t53.timeout) { const part = await Promise.race([evalExpr('JSON.stringify(window.__t53 || null)'), new Promise(res => setTimeout(() => res('page bloquée'), 5000))]); console.log('Test 53 — état partiel :', part); }
+      console.log('Résultat Test 53:', JSON.stringify(t53));
+      const t53keys = ['nineJustified', 'section', 'firstScreen', 'essentialCount', 'editorialLabel', 'recommended', 'panelOrder', 'progress', 'hide', 'unhide', 'persisted', 'noTieIn', 'noThirdPartyOrder', 'dataUntouched'];
+      const t53fail = t53keys.filter(k => !t53 || t53[k] !== true);
+      if (t53fail.length) console.log('Test 53 — vérifications en échec :', t53fail.join(', '));
+      testResults.push({ test: 'Event Center v2 (R2) : 9 événements aux niveaux justifiés, essentiel visible en tête de fiche, niveau recommandé, ordre recommandé Panel versionné construit par rôles, progression, masquage réversible, préférence locale', ok: t53fail.length === 0 });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

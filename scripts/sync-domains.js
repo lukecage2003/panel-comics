@@ -13,7 +13,8 @@ const MODULES = [
   ['mediaCore', 'domains/explorer/media-core.js'],
   ['eventSeeds', 'domains/explorer/events-seed.js'],
   ['eventCrossref', 'domains/explorer/events-crossref.js'],
-  ['publicationCore', 'domains/catalog/publication-core.js']
+  ['publicationCore', 'domains/catalog/publication-core.js'],
+  ['eventLevels', 'domains/explorer/event-levels.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

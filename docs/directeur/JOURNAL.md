@@ -63,3 +63,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **Contrôle éditorial** (D-52) : statuts de fiabilité expliqués, concordance distincte de corroboration, vérification par référence bibliographique (collection.id), écarts qualifiés, cas Superman #712, Crisis Aftermath, ASM #539 et Excalibur traités.
   - **R1 Catalogue commun** (D-55) : identité partagée par Collection, Sorties et Explorer (index de références réversible), variantes, réimpressions et recueils distincts, fusion annulable, nouveaux mangas refusés, test 52.
   - **R1 finition** (D-56) : encadré « Dans Panel » sur l'exemplaire et le numéro, écran Catalogue commun (rattachements à trancher, fusion, historique, annulation).
+  - **R2 Event Center v2** (D-57) : niveaux de lecture justifiés pour les 9 événements, ordre recommandé Panel versionné, progression par niveau, test 53.
