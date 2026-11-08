@@ -106,7 +106,7 @@ Contenu de [`../phase3/06-roadmap-phase3.md`](../phase3/06-roadmap-phase3.md), a
 | 4.11 Tests et validation | Fonctionnels, sécurité, performance, droits | Critères 1 à 31 du cahier |
 
 ## 4. Community (phase ultérieure, non commencée)
-- **C-0 (documentaire)** : frontières et contrats `CommunityFeed.v1` et `CommunityPublish.v1`, modèle de publication explicite (copie révocable), modération, signalements, confidentialité par catégorie (`privacy.*` de la Phase 3).
+- **C-0** (contrats codés et testés le 8 novembre 2026, D-46 ; reste documentaire pour la modération serveur) : frontières et contrats `CommunityFeed.v1` et `CommunityPublish.v1`, modèle de publication explicite (copie révocable), modération, signalements, confidentialité par catégorie (`privacy.*` de la Phase 3).
 - Règles : schéma `community` propre ; ne lit ni Collection ni Explorer directement ; publie ses signaux dans S3 ; consomme S4, S5 et S6.
 - Implémentation : pas avant la fin de la Phase 3 et le lot 4.10.
 

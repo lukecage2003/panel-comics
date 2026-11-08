@@ -122,7 +122,12 @@ S2 ne dépend **pas** de S1 : une commande peut être envoyée sans lecture pré
 | Disponibilité | Hors ligne : session locale conservée, sans rafraîchissement |
 
 ## 9. Futur contrat Community (réservé)
-`CommunityFeed.v1` (publications, listes publiques, avis) et `CommunityPublish.v1` (publication **explicite** par l'utilisateur d'une copie de ses données). Ils seront définis avec Community ; aucun n'est créé aujourd'hui.
+`CommunityFeed.v1` (publications, listes publiques, avis) et `CommunityPublish.v1` (publication **explicite** par l'utilisateur d'une copie de ses données). **Définis le 8 novembre 2026 (C-0, D-46)** dans `domains/community/policy-core.js` :
+- `buildPublish` / `validatePublish` pour `CommunityPublish.v1`. Champs : `contract`, `clientId`, `visibility`, `text`, `items`, `createdAt`, `consent`, `revocable`. Les éléments passent par la liste blanche `SHAREABLE_COPY_FIELDS`. Le consentement explicite est obligatoire et la publication toujours révocable.
+- `buildRevoke` pour `CommunityRevoke.v1`.
+- `validateFeedItem` pour `CommunityFeed.v1`. Tout champ hors contrat, tout HTML et tout champ personnel est refusé.
+
+Aucun service ne les reçoit encore. L'application montre seulement un « Aperçu de l'envoi » (test 46).
 
 ## Réalisation de S1 et S2 (sous-lot 3.1b-2, 8 novembre 2026)
 - **API** : `Panel.contracts.personal.v1` = `{ version, lens, commands, settings }`, gelé.

@@ -86,3 +86,34 @@ test('modération : signalement dédoublonné, priorité, décision motivée, re
   assert.equal(mod.appeal(A, 'p1', 'encore').ok, false);
   assert.equal(mod.log().length, 1);
 });
+
+// Contrats C-0 (D-46) : enveloppes versionnées, rien n'est envoyé
+test('CommunityPublish.v1 : consentement explicite, copie filtrée, enveloppe figée et révocable, champ hors contrat refusé', () => {
+  const now = Date.parse('2026-11-08T12:00:00Z');
+  const draft = { id: 'cd_1', text: 'Ma pile du mois', visibility: 'public', items: [{ series: 'Saga', issue: '#1', grade: 'NM' }] };
+  assert.equal(C.buildPublish(A, draft, null, now).ok, false, 'sans consentement');
+  assert.equal(C.buildPublish(A, Object.assign({}, draft, { id: 'x y' }), { explicit: true }, now).ok, false);
+  const r = C.buildPublish(A, draft, { explicit: true }, now);
+  assert.equal(r.ok, true);
+  assert.equal(r.envelope.contract, 'CommunityPublish.v1');
+  assert.equal(r.envelope.revocable, true);
+  assert.ok(Object.isFrozen(r.envelope) && Object.isFrozen(r.envelope.items[0]));
+  assert.equal(C.validatePublish(r.envelope).ok, true);
+  assert.equal(C.validatePublish(Object.assign({}, r.envelope, { email: 'a@b.fr' })).ok, false);
+  assert.equal(C.validatePublish(Object.assign({}, r.envelope, { items: [{ series: 'S', price: 3 }] })).ok, false, 'prix jamais accepté');
+  assert.equal(C.validatePublish(Object.assign({}, r.envelope, { revocable: false })).ok, false);
+  const bad = C.buildPublish(A, Object.assign({}, draft, { items: [{ series: 'S', price: 3 }] }), { explicit: true }, now);
+  assert.equal(bad.ok, false, 'élément avec champ interdit refusé');
+  const rv = C.buildRevoke(r.envelope, now);
+  assert.equal(rv.ok, true); assert.deepEqual(Object.keys(rv.envelope).sort(), ['at', 'clientId', 'contract']);
+});
+
+test('CommunityFeed.v1 : élément reçu validé avant affichage (HTML, champs personnels et contrats inconnus refusés)', () => {
+  const ok = { contract: 'CommunityFeed.v1', id: 'p_1', authorId: 'u_b', authorName: 'Lectrice', visibility: 'public', text: 'Super run', items: [{ series: 'Saga' }], createdAt: '2026-11-08T10:00:00Z' };
+  assert.equal(C.validateFeedItem(ok).ok, true);
+  assert.equal(C.validateFeedItem(Object.assign({}, ok, { text: '<img src=x onerror=alert(1)>' })).ok, false);
+  assert.equal(C.validateFeedItem(Object.assign({}, ok, { location: 'Boîte 3' })).ok, false);
+  assert.equal(C.validateFeedItem(Object.assign({}, ok, { items: [{ series: 'S', value: 10 }] })).ok, false);
+  assert.equal(C.validateFeedItem(Object.assign({}, ok, { contract: 'CommunityFeed.v2' })).ok, false);
+  assert.equal(C.validateFeedItem(Object.assign({}, ok, { createdAt: 'hier' })).ok, false);
+});

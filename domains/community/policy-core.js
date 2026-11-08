@@ -136,4 +136,59 @@ function createModeration(now = () => new Date().toISOString()) {
   return { report, queue, decide, appeal, log: () => log.map(x => Object.assign({}, x)) };
 }
 
-module.exports = { VISIBILITY, ROLES, REPORT_REASONS, SHAREABLE_COPY_FIELDS, FORBIDDEN_FIELDS, LIMITS, shareCopy, personalDataWarnings, canView, canEdit, canModerate, createGraph, createRateLimiter, validatePost, createModeration };
+// Contrats C-0 (D-46) : CommunityPublish.v1 (envoi explicite d'une copie, révocable) et CommunityFeed.v1 (élément de fil reçu).
+// Purs et versionnés : aucun envoi ici. Un futur service distant n'acceptera que ces enveloppes ; tout champ hors contrat est refusé.
+const PUBLISH_CONTRACT = 'CommunityPublish.v1', FEED_CONTRACT = 'CommunityFeed.v1', REVOKE_CONTRACT = 'CommunityRevoke.v1';
+const ID_RE = /^[A-Za-z0-9_-]{1,60}$/;
+const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{1,3})?Z$/;
+function buildPublish(author, draft, consent, now = Date.now()) {
+  const errors = [];
+  if (!consent || consent.explicit !== true) errors.push('consentement explicite requis');
+  if (!draft || !ID_RE.test(String(draft.id || ''))) errors.push('identifiant de brouillon invalide');
+  const v = validatePost(author || { id: 'local', createdAt: null }, draft || {}, now);
+  errors.push(...v.errors);
+  if (errors.length) return { ok: false, errors, warnings: v.warnings };
+  const items = (draft.items || []).map(it => shareCopy(it).copy);
+  const at = new Date(now).toISOString();
+  const env = { contract: PUBLISH_CONTRACT, clientId: draft.id, visibility: draft.visibility, text: String(draft.text || '').slice(0, LIMITS.maxText), items, createdAt: at, consent: { explicit: true, at }, revocable: true };
+  return { ok: true, envelope: deepFreeze(env), warnings: v.warnings };
+}
+function validatePublish(env) {
+  const errors = [], keys = ['contract', 'clientId', 'visibility', 'text', 'items', 'createdAt', 'consent', 'revocable'];
+  if (!env || typeof env !== 'object') return { ok: false, errors: ['enveloppe absente'] };
+  const extra = Object.keys(env).filter(k => !keys.includes(k));
+  if (extra.length) errors.push('champs hors contrat : ' + extra.join(', '));
+  if (env.contract !== PUBLISH_CONTRACT) errors.push('contrat inconnu');
+  if (!ID_RE.test(String(env.clientId || ''))) errors.push('clientId invalide');
+  if (!VISIBILITY.includes(env.visibility)) errors.push('visibilité inconnue');
+  if (typeof env.text !== 'string' || env.text.length > LIMITS.maxText) errors.push('texte invalide');
+  if (!Array.isArray(env.items) || env.items.length > LIMITS.maxListItems) errors.push('liste invalide');
+  else env.items.forEach((it, i) => { const bad = Object.keys(it || {}).filter(k => !SHAREABLE_COPY_FIELDS.includes(k)); if (bad.length) errors.push('élément ' + i + ' : champs interdits ' + bad.join(', ')); });
+  if (!ISO_RE.test(String(env.createdAt || ''))) errors.push('date invalide');
+  if (!env.consent || env.consent.explicit !== true) errors.push('consentement explicite requis');
+  if (env.revocable !== true) errors.push('une publication doit rester révocable');
+  return { ok: !errors.length, errors };
+}
+function buildRevoke(env, now = Date.now()) {
+  if (!env || env.contract !== PUBLISH_CONTRACT || !ID_RE.test(String(env.clientId || ''))) return { ok: false, errors: ['publication inconnue'] };
+  return { ok: true, envelope: deepFreeze({ contract: REVOKE_CONTRACT, clientId: env.clientId, at: new Date(now).toISOString() }) };
+}
+// Élément de fil reçu d'un service : validé avant tout affichage ; jamais d'HTML, jamais de champ personnel
+function validateFeedItem(x) {
+  const errors = [], keys = ['contract', 'id', 'authorId', 'authorName', 'visibility', 'text', 'items', 'createdAt', 'removed'];
+  if (!x || typeof x !== 'object') return { ok: false, errors: ['élément absent'] };
+  const extra = Object.keys(x).filter(k => !keys.includes(k));
+  if (extra.length) errors.push('champs hors contrat : ' + extra.join(', '));
+  if (x.contract !== FEED_CONTRACT) errors.push('contrat inconnu');
+  if (!ID_RE.test(String(x.id || '')) || !ID_RE.test(String(x.authorId || ''))) errors.push('identifiants invalides');
+  if (typeof x.authorName !== 'string' || x.authorName.length > 80) errors.push('nom invalide');
+  if (!VISIBILITY.includes(x.visibility)) errors.push('visibilité inconnue');
+  if (typeof x.text !== 'string' || x.text.length > LIMITS.maxText || /<[a-z!/]/i.test(x.text)) errors.push('texte invalide');
+  if (!Array.isArray(x.items) || x.items.some(it => Object.keys(it || {}).some(k => !SHAREABLE_COPY_FIELDS.includes(k)))) errors.push('liste invalide');
+  if (!ISO_RE.test(String(x.createdAt || ''))) errors.push('date invalide');
+  if (x.removed !== undefined && typeof x.removed !== 'boolean') errors.push('retrait invalide');
+  return { ok: !errors.length, errors };
+}
+function deepFreeze(o) { Object.values(o).forEach(v => { if (v && typeof v === 'object') deepFreeze(v); }); return Object.freeze(o); }
+
+module.exports = { VISIBILITY, ROLES, REPORT_REASONS, SHAREABLE_COPY_FIELDS, FORBIDDEN_FIELDS, LIMITS, shareCopy, personalDataWarnings, canView, canEdit, canModerate, createGraph, createRateLimiter, validatePost, createModeration, PUBLISH_CONTRACT, FEED_CONTRACT, REVOKE_CONTRACT, buildPublish, validatePublish, buildRevoke, validateFeedItem };

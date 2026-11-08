@@ -4016,6 +4016,52 @@ const waitForCdp = async () => {
         ok: t45fail.length === 0
       });
 
+      // ─── Test 46 : Communauté C-0 (D-46) — aperçu de l'envoi CommunityPublish.v1, consentement explicite, rien n'est envoyé ───
+      console.log('\n[TEST 46] Communauté : aperçu de l\'envoi, consentement, enveloppe filtrée, aucune requête réseau...');
+      const t46 = await evalExpr(`(async () => {
+        const P = window.Panel, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const CK = 'panel_community_drafts_v1', prev = localStorage.getItem(CK);
+        const fetches = []; const of = window.fetch; window.fetch = function (u) { fetches.push(String(u)); return of.apply(this, arguments); };
+        try {
+          const s = P.community.saveDraft({ text: 'Test 46 pile du mois', visibility: 'public', items: [{ series: 'T46 Saga', issue: '#1', grade: 'NM' }] });
+          r.saved = s.ok === true;
+          const no = P.community.preview(s.id, false);
+          r.needsConsent = no.ok === false && no.errors.some(e => /consentement/.test(e));
+          const yes = P.community.preview(s.id, true);
+          r.envelope = yes.ok === true && yes.envelope.contract === 'CommunityPublish.v1' && yes.envelope.revocable === true && yes.envelope.items[0].series === 'T46 Saga' && !('price' in yes.envelope.items[0]);
+          r.contractOk = window.PanelDomains.communityPolicy.validatePublish(yes.envelope).ok === true;
+          document.querySelector('[data-sview="community"]').click(); await wait(100);
+          const btn = document.querySelector('[data-draft-preview="' + s.id + '"]');
+          r.button = !!btn;
+          btn.click(); await wait(50);
+          const dlg = document.getElementById('communityPreviewDialog');
+          const pre = dlg.querySelector('[data-envelope]');
+          r.dialogNoConsent = dlg.classList.contains('open') && /consentement/.test(pre.textContent) && dlg.querySelector('[data-publish]').disabled;
+          const cb = dlg.querySelector('[data-consent]'); cb.checked = true; cb.dispatchEvent(new Event('change'));
+          r.dialogEnvelope = /CommunityPublish\.v1/.test(pre.textContent) && /T46 Saga/.test(pre.textContent) && /rien n.est envoyé/.test(dlg.textContent);
+          dlg.querySelector('[data-close]').click();
+          r.publishBlocked = P.community.publish().error === 'not_configured';
+          r.noNetwork = fetches.length === 0;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.fetch = of;
+          const dl = document.getElementById('communityPreviewDialog'); if (dl) dl.classList.remove('open');
+          if (prev === null) localStorage.removeItem(CK); else localStorage.setItem(CK, prev);
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
+        r.finalState = localStorage.getItem(CK) === prev;
+        return r;
+      })()`);
+      console.log('Résultat Test 46:', JSON.stringify(t46));
+      const t46keys = ['saved', 'needsConsent', 'envelope', 'contractOk', 'button', 'dialogNoConsent', 'dialogEnvelope', 'publishBlocked', 'noNetwork', 'finalState'];
+      const t46fail = t46keys.filter(k => !t46 || t46[k] !== true);
+      if (t46fail.length) console.log('Test 46 — vérifications en échec :', t46fail.join(', '));
+      testResults.push({
+        test: 'Communauté C-0 : aperçu exact de l\'envoi (CommunityPublish.v1), consentement explicite exigé, copie filtrée, publication bloquée sans service, aucune requête réseau',
+        ok: t46fail.length === 0
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

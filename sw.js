@@ -6,7 +6,7 @@
  *   pas de réponses opaques qui gonfleraient le quota de stockage).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-08-conflicts';
+const VERSION = 'panel-2026-11-08-community-c0';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [
