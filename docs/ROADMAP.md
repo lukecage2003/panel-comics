@@ -15,6 +15,9 @@ Mise à jour : 7 novembre 2026. Historique détaillé : [`HISTORIQUE-LOTS.md`](H
 ## Plan directeur 2.0 (7 novembre 2026)
 Audit global et financier, backlog P0 à P3 : [`directeur/04-backlog-feuille-de-route-decisions.md`](directeur/04-backlog-feuille-de-route-decisions.md). **G-F approuvé (D-17)** : lot **F0** (correctifs des calculs financiers, sans migration) avant le lot 3.1, puis **F1** (frais, devises, lots, sorties) et **L1** (lecture par œuvre) après le lot 3.1b. F0 **validé (D-19)** ; 3.1b clos (D-26). **F1 implémenté le 8 novembre 2026** (D-27 à D-29, mission « Autonomous night shift » ; onglet Finances et export Excel restants). **L1 implémenté le 8 novembre 2026** (D-30 ; entrée de navigation Lecture restante, U-D1) : [réalisation](directeur/06-specifications-F1-L1.md#a12-réalisation-de-f1-mission--autonomous-night-shift--8-novembre-2026).
 
+## Rebaseline produit (8 novembre 2026, proposé)
+Vision en six piliers, modèle de données cible, roadmap **R0 à R10** et critères d'acceptation : [`directeur/08-rebaseline-produit.md`](directeur/08-rebaseline-produit.md) (D-54). Une fois validée, cette roadmap ordonne les lots des phases 3 à 5 ci-dessous.
+
 ## Phase 3 — lots proposés
 Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 
