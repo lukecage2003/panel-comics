@@ -5,7 +5,7 @@
 do $$
 declare
   n int;
-  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','series_follows','sync_conflicts','sync_ops','user_settings','user_sync_state'];
+  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','sync_conflicts','sync_ops','user_settings','user_sync_state'];
   got text[];
 begin
   select array_agg(relname::text order by relname) into got from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r';
@@ -15,7 +15,7 @@ begin
   if n <> 0 then raise exception 'RLS désactivée sur % table(s)', n; end if;
 
   select count(*) into n from pg_policies where schemaname = 'app';
-  if n <> 35 then raise exception 'Nombre de politiques : % (35 attendues : 8 tables x 4 + 3 lectures)', n; end if;
+  if n <> 36 then raise exception 'Nombre de politiques : % (36 attendues : 8 tables x 4 + 3 lectures + reading_states en lecture)', n; end if;
 
   select count(*) into n from pg_policies where schemaname = 'app' and not (roles @> array['authenticated']::name[]);
   if n <> 0 then raise exception '% politique(s) ne visent pas authenticated', n; end if;
@@ -45,8 +45,17 @@ begin
   select count(*) into n from pg_constraint where connamespace = 'app'::regnamespace and contype = 'f' and confdeltype <> 'c';
   if n <> 0 then raise exception '% clé(s) étrangère(s) sans cascade', n; end if;
 
+  -- Lot 3.4 (migration 8, D-31) : écritures des tables synchronisées seulement par api.sync_push
+  select count(*) into n from pg_class c where c.relnamespace = 'app'::regnamespace
+    and c.relname in ('copies','locations','pulls','series_follows','reading_progress','reading_states')
+    and has_table_privilege('authenticated', c.oid, 'insert,update,delete');
+  if n <> 0 then raise exception 'authenticated peut écrire directement dans % table(s) synchronisée(s)', n; end if;
+  select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace and proname in ('sync_push','sync_pull')
+    and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
+  if n <> 2 then raise exception 'api.sync_push et api.sync_pull : security definer, search_path vide, authenticated seulement'; end if;
+
   select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;
 
-  raise notice 'verify-supabase : schéma app conforme (11 tables, 35 politiques, RLS 100 %%, anon sans droit).';
+  raise notice 'verify-supabase : schéma app conforme (12 tables, 36 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
 end $$;

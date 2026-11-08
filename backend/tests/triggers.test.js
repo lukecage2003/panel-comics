@@ -5,7 +5,8 @@ const assert = require('node:assert/strict');
 const H = require('./harness');
 
 let db;
-test.before(async () => { db = await H.freshDb(); await H.createUsers(db, H.USER_A, H.USER_B); });
+// Exécuté sur le schéma du lot 3.1 (migrations 1 à 7) : la migration 8 retire les écritures directes (T1) ; le schéma final est couvert par sync.test.js.
+test.before(async () => { db = await H.freshDb({ upTo: H.LOT_31 }); await H.createUsers(db, H.USER_A, H.USER_B); });
 test.after(async () => { await db.close(); });
 
 test('rev strictement croissant sur 1 000 écritures (insertions et mises à jour, toutes tables)', async () => {

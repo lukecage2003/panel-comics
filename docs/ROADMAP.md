@@ -24,8 +24,8 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 | 3.1b | Séparation des domaines côté client : sauvegardes par domaine (B1), contrats S1 et S2 locaux, réacheminement des couplages, navigation si validée | **Clos le 8 novembre 2026** (D-26) : 3.1b-1 à 3.1b-6 livrés ; 3.1b-7 (navigation) non engagé, reporté au lot 4.9 ([plan](directeur/05-preparation-lot-3.1b.md)) |
 | 3.2 | Projet cloud, authentification, CSP, hébergement, sécurité Android | À faire |
 | 3.3 | Profils, préférences, appareils, rôles serveur (prérequis d'Explorer 2.0) | À faire |
-| 3.4 | Moteur de synchronisation, migration d'une collection existante | À faire |
-| 3.5 | Conflits, multi-appareils, corbeille | À faire |
+| 3.4 | Moteur de synchronisation, migration d'une collection existante | Préparé localement le 8 novembre 2026 (RPC, moteur, tests PGlite) ; branchement et migration après 3.2 |
+| 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille et interface à faire |
 | 3.6 | Sauvegardes, restauration, suppression de compte, RGPD | À faire |
 | 3.7 | Validation Web + Android, bêta fermée | À faire |
 

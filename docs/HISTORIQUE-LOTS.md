@@ -160,3 +160,8 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - migration conservatrice avec aperçu, conflits de notes, idempotence et annulation ; section `works` de la sauvegarde Lecture ;
   - test 36. Résultats : `npm run test:all` vert : front **35/35**, base 82/82, secrets 0, frontières 0. Sauvegardes `*.backup.20261108-l1`.
 
+- **Backend 3.4 local (mission « Autonomous night shift », D-31)** ([réalisation](phase3/10-dossier-lots-3.2-3.7.md)) :
+  - migration 8 : `api.sync_push` / `api.sync_pull`, `reading_states`, écritures directes retirées, pierres tombales, conflits par champ ;
+  - moteur client `backend/sync-engine/engine.js` (outbox, reprise, quarantaine de compte), session locale sans secret ;
+  - `sync.test.js` (16 tests, 3 appareils simulés). Résultats : `npm run test:all` vert : base **99/99**, secrets 0, frontières 0, front 35/35. Rien n'est connecté au réseau.
+

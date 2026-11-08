@@ -18,12 +18,13 @@ const EXPECTED_COLUMNS = {
   pulls: [...COMMON, 'series_key', 'release_date'],
   series_follows: [...COMMON],
   reading_progress: [...COMMON, 'guide_id', 'entry_id'],
-  user_sync_state: ['user_id', 'last_rev'],
+  reading_states: [...COMMON],
+  user_sync_state: ['user_id', 'last_rev', 'purged_below_rev'],
   sync_ops: ['user_id', 'op_id', 'applied_rev', 'result', 'created_at'],
   sync_conflicts: ['id', 'user_id', 'entity', 'entity_id', 'field', 'local_value', 'server_value', 'base_rev', 'server_rev', 'device_id', 'created_at', 'resolved_at', 'resolution']
 };
 
-test('le schéma app contient exactement les 11 tables prévues', async () => {
+test('le schéma app contient exactement les 12 tables prévues', async () => {
   const r = await db.query("select table_name from information_schema.tables where table_schema = 'app' order by 1");
   assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES].sort());
 });
@@ -74,7 +75,7 @@ test('index (user_id, rev) et index des politiques présents', async () => {
 test('toutes les clés étrangères vers auth.users sont en cascade', async () => {
   const r = await db.query(`select conrelid::regclass::text as tbl, confdeltype from pg_constraint
     where contype = 'f' and connamespace = 'app'::regnamespace`);
-  assert.equal(r.rows.length, 11);
+  assert.equal(r.rows.length, 12);
   for (const x of r.rows) assert.equal(x.confdeltype, 'c', x.tbl);
 });
 
@@ -118,7 +119,7 @@ test('confidentialité : privacy privé par défaut', async () => {
   assert.deepEqual(r.rows[0].privacy, { profile_public: false });
 });
 
-test('suppression d\'un utilisateur : 0 ligne restante dans les 11 tables', async () => {
+test('suppression d\'un utilisateur : 0 ligne restante dans les 12 tables', async () => {
   const U = '33333333-3333-4333-8333-333333333333';
   await H.createUsers(db, U);
   for (const t of H.APP_TABLES) { const s = H.sampleRow(t, U); await db.query(s.sql, s.params); }

@@ -10,7 +10,8 @@ const TECHNICAL = ['user_sync_state', 'sync_ops', 'sync_conflicts'];
 
 let db;
 test.before(async () => {
-  db = await H.freshDb();
+  // Exécuté sur le schéma du lot 3.1 (migrations 1 à 7) : la migration 8 retire les écritures directes (T1) ; le schéma final est couvert par sync.test.js.
+  db = await H.freshDb({ upTo: H.LOT_31 });
   await H.createUsers(db, H.USER_A, H.USER_B);
   // Chaque utilisateur possède au moins une ligne dans chaque table (insertion en administrateur pour les tables techniques).
   for (const uid of [H.USER_A, H.USER_B]) {

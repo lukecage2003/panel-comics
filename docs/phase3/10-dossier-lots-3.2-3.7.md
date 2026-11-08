@@ -165,3 +165,19 @@ Le contrôle automatique de tous ces scénarios se fait sur Supabase local, avan
 - Avis juridique.
 
 Aucun de ces prérequis n'est engagé à ce jour.
+
+## 9. Réalisation locale du lot 3.4 et d'une partie de 3.5 (mission « Autonomous night shift », 8 novembre 2026)
+**Statut : implémenté et validé localement (PGlite) ; non validé sur Supabase ; synchronisation réelle non activée** (`PANEL_SYNC_ENABLED = false`, aucun projet cloud). Décision appliquée : D-31 (T1 à T4).
+
+| Élément | Réalisé |
+|---|---|
+| Migration 8 (`20261109000008_sync_rpc.sql`) | Schéma `api` ; `api.sync_push(device, ops, confirm_mass_delete)` et `api.sync_pull(after_rev, limit)` ; table `reading_states` (L1) ; `field_revs` estampillés par déclencheur ; `purged_below_rev` ; retrait des écritures directes (T1) ; `app.skip_rev` ignoré pour les rôles clients (T4) |
+| Idempotence | `op_id` enregistré dans `sync_ops` : un rejeu renvoie `duplicate` et le statut d'origine, sans nouvelle révision |
+| Curseurs | Pagination par `rev` (`next_rev`, `has_more`) ; `resync_required` si le curseur est sous `purged_below_rev` |
+| Conflits (3.5, partie) | Par champ : premier écrivain gagnant, conflit journalisé dans `sync_conflicts` ; un null n'écrase jamais une valeur concurrente connue ; modification prioritaire sur suppression ; champs inconnus conservés ; plus de 50 suppressions dans un lot : confirmation exigée |
+| Moteur client (`backend/sync-engine/engine.js`) | Outbox persistante, mêmes `op_id` après coupure, état enregistré après chaque lot et chaque page, outbox liée au compte (quarantaine sinon), session expirée ou appareil révoqué : arrêt propre ; empreinte de vérification |
+| Session locale (3.2/3.3, partie) | `createLocalSession()` : connecté, expiré, déconnecté ; aucun secret stocké, aucun fournisseur externe |
+| Tests (`backend/tests/sync.test.js`) | 16 tests, dont 3 appareils × 150 opérations aléatoires avec coupures et convergence vérifiée. Les tests RLS, durcissement et déclencheurs du lot 3.1 s'exécutent sur le schéma des migrations 1 à 7 (`freshDb({ upTo: LOT_31 })`) |
+
+Restant, avec un service externe ou une décision : projet Supabase et `verify-supabase.sql` réel (3.2), authentification réelle (3.2/3.3), branchement du moteur dans `index.html` et migration d'une collection existante (3.4, après 3.2), corbeille et interface de conflits (3.5), purge et RGPD (3.6), validation Web + Android (3.7).
+

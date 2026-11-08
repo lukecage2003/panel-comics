@@ -10,11 +10,15 @@ const ROOT = path.resolve(__dirname, '..');
 const MIGRATIONS_DIR = path.join(ROOT, 'supabase', 'migrations');
 const AUTH_STUB = path.join(__dirname, 'auth-stub.sql');
 
-const APP_TABLES = [
+const APP_TABLES_31 = [
   'profiles', 'user_settings', 'devices',
   'copies', 'locations', 'pulls', 'series_follows', 'reading_progress',
   'user_sync_state', 'sync_ops', 'sync_conflicts'
 ];
+// Lot 3.4 (migration 8) : état de lecture par œuvre (L1)
+const APP_TABLES = APP_TABLES_31.concat(['reading_states']);
+// Schéma du lot 3.1 (migrations 1 à 7) : écritures directes encore permises, avant leur retrait au lot 3.4 (T1, D-31)
+const LOT_31 = 7;
 const SYNC_TABLES = ['copies', 'locations', 'pulls', 'series_follows', 'reading_progress'];
 
 const USER_A = '11111111-1111-4111-8111-111111111111';
@@ -23,11 +27,11 @@ const USER_B = '22222222-2222-4222-8222-222222222222';
 const migrationFiles = () => fs.readdirSync(MIGRATIONS_DIR).filter(f => /^\d{14}_.+\.sql$/.test(f)).sort();
 
 // Base neuve : stub auth + migrations (+ seed facultatif).
-async function freshDb({ migrations = true, seed = false } = {}) {
+async function freshDb({ migrations = true, seed = false, upTo = Infinity } = {}) {
   const db = new PGlite({ extensions: { citext } });
   await db.exec(fs.readFileSync(AUTH_STUB, 'utf8'));
   if (migrations) {
-    for (const f of migrationFiles()) {
+    for (const f of migrationFiles().slice(0, upTo)) {
       try { await db.exec(fs.readFileSync(path.join(MIGRATIONS_DIR, f), 'utf8')); }
       catch (e) { throw new Error(`Migration ${f} : ${e.message}`); }
     }
@@ -71,4 +75,4 @@ function sampleRow(table, uid, n = 1) {
   }
 }
 
-module.exports = { freshDb, asAdmin, asUser, asAnon, createUsers, tryQuery, sampleRow, migrationFiles, APP_TABLES, SYNC_TABLES, USER_A, USER_B };
+module.exports = { APP_TABLES_31, LOT_31, freshDb, asAdmin, asUser, asAnon, createUsers, tryQuery, sampleRow, migrationFiles, APP_TABLES, SYNC_TABLES, USER_A, USER_B };

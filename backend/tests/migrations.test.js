@@ -20,7 +20,7 @@ async function fingerprint(db) {
   ].join('\n---\n');
 }
 
-test('sept migrations horodatées, dans l\'ordre attendu', () => {
+test('huit migrations horodatées, dans l\'ordre attendu', () => {
   assert.deepEqual(H.migrationFiles(), [
     '20261107000001_app_schema.sql',
     '20261107000002_profiles_settings_devices.sql',
@@ -28,7 +28,8 @@ test('sept migrations horodatées, dans l\'ordre attendu', () => {
     '20261107000004_sync_tables.sql',
     '20261107000005_rls_policies.sql',
     '20261107000006_rev_triggers.sql',
-    '20261108000007_hardening.sql'
+    '20261108000007_hardening.sql',
+    '20261109000008_sync_rpc.sql'
   ]);
 });
 
@@ -58,7 +59,7 @@ test('chaque migration s\'applique séparément dans l\'ordre (sans la suivante)
     assert.ok(n >= 0, f);
   }
   const n = (await db.query("select count(*)::int n from information_schema.tables where table_schema = 'app'")).rows[0].n;
-  assert.equal(n, 11);
+  assert.equal(n, 12);
   await db.close();
 });
 
@@ -78,7 +79,7 @@ test('sauvegarde puis restauration locale (PGlite dumpDataDir / loadDataDir) : d
   const { citext } = require('@electric-sql/pglite/contrib/citext');
   const db = await H.freshDb({ seed: true });
   await H.createUsers(db, H.USER_A);
-  await H.asUser(db, H.USER_A);
+  // Écritures en administrateur : depuis la migration 8, un client n'écrit plus directement (api.sync_push)
   for (let i = 0; i < 5; i++) await db.query('insert into app.copies (user_id, id, data) values ($1, $2, $3)', [H.USER_A, `s_r${i}`, JSON.stringify({ i })]);
   await H.asAdmin(db);
   const before = await fingerprint(db);
@@ -90,6 +91,7 @@ test('sauvegarde puis restauration locale (PGlite dumpDataDir / loadDataDir) : d
   assert.equal(JSON.stringify((await restored.query('select user_id, id, data, rev from app.copies order by 1, 2')).rows), rows, 'données identiques');
   await H.asUser(restored, H.USER_A);
   assert.equal((await restored.query('select count(*)::int n from app.copies')).rows[0].n, 5, 'RLS active après restauration');
+  await H.asAdmin(restored);
   const r = await restored.query("insert into app.copies (user_id, id) values ($1, 's_after') returning rev", [H.USER_A]);
   assert.equal(Number(r.rows[0].rev), 6, 'la séquence rev reprend où elle s\'était arrêtée');
   await restored.close();

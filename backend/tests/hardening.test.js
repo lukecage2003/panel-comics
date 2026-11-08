@@ -11,7 +11,8 @@ const lastRev = async uid => {
   const r = await db.query('select last_rev from app.user_sync_state where user_id = $1', [uid]);
   return r.rows.length ? Number(r.rows[0].last_rev) : 0;
 };
-test.before(async () => { db = await H.freshDb(); await H.createUsers(db, H.USER_A, H.USER_B); });
+// Exécuté sur le schéma du lot 3.1 (migrations 1 à 7) : la migration 8 retire les écritures directes (T1) ; le schéma final est couvert par sync.test.js.
+test.before(async () => { db = await H.freshDb({ upTo: H.LOT_31 }); await H.createUsers(db, H.USER_A, H.USER_B); });
 test.after(async () => { await db.close(); });
 
 test('D1 : un appareil révoqué ne peut pas être réactivé par l\'utilisateur', async () => {

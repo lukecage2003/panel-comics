@@ -16,7 +16,7 @@ backend/
   .env.example            noms de variables, sans valeur (jamais de clé de service)
   supabase/
     config.toml           configuration de la Supabase CLI, sans secret
-    migrations/           7 migrations horodatées, appliquées dans l'ordre (la 7e : durcissement après audit)
+    migrations/           8 migrations horodatées, appliquées dans l'ordre (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4)
     seed.sql              données fictives (@exemple.test)
   tests/
     auth-stub.sql         schéma auth minimal (en test seulement ; Supabase fournit le vrai)
@@ -27,18 +27,22 @@ backend/
     migrations.test.js    ordre, rejeu déterministe, conventions, seed
     secrets.test.js       sensibilité et masquage du détecteur de secrets
     hardening.test.js     défauts corrigés par la migration 7, rev sous transaction, privilèges
+    sync.test.js          lot 3.4 : sync_push / sync_pull, idempotence, conflits, curseurs, coupures, 3 appareils simulés
     verify-supabase.sql   contrôle du schéma, réutilisable sur Supabase local (psql)
+  sync-engine/
+    engine.js             moteur client (outbox, lots, pages, reprise) ; transport et stockage injectés, aucun appel réseau
 ```
 
 ## Schéma `app` (données personnelles uniquement)
-- **11 tables :**
+- **12 tables** (la 12e, `reading_states`, au lot 3.4) **:**
   - profil et réglages : `profiles`, `user_settings`, `devices` ;
-  - synchronisables : `copies`, `locations`, `pulls`, `series_follows`, `reading_progress` ;
+  - synchronisables : `copies`, `locations`, `pulls`, `series_follows`, `reading_progress`, `reading_states` ;
   - techniques : `user_sync_state`, `sync_ops`, `sync_conflicts`.
 - **RLS :** activée sur toutes les tables. Politiques `to authenticated` par opération, avec `(select auth.uid()) = user_id`. Les tables techniques sont en lecture seule. `anon` n'a aucun droit.
 - **Déclencheurs :**
   - `app.assign_rev()` (`security definer`, `search_path` vide) : révision strictement croissante par utilisateur ;
   - `updated_at` : horodatage serveur, `created_at` conservé.
+- **Écritures (lot 3.4, D-31) :** un client n'écrit plus directement dans les tables synchronisées. Il passe par `api.sync_push` et lit par `api.sync_pull` (`security definer`, `search_path` vide, `authenticated` seulement). Les suppressions sont des pierres tombales.
 - **Schémas réservés, non créés :** `catalog`, `editorial`, `media`, `signals` (Explorer 2.0) et `community`.
 
 ## Conventions de migration
