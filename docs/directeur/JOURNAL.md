@@ -58,3 +58,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **3.6 suite** (D-45) : limitation de débit, purge planifiable, suppression de compte (Edge Function testée localement, non déployée), runbook d'incident.
   - **Community C-0** (D-46) : contrats Publish, Revoke et Feed codés et testés ; aperçu de l'envoi dans l'application, test 46.
   - **Explorer 4.9** (D-47) : filtre des résultats par éditeur, test 47.
+  - **Système visuel et documentaire** (D-48 à D-50) : fournisseurs et statuts, modèle événementiel, catalogue de huit événements Marvel et DC, fiches événement et numéro, visionneuse, outil de complétion, tests 48 à 50.

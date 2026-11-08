@@ -35,6 +35,9 @@ L'ordre des lots, leurs dépendances et les critères pour reprendre le lot 3.1 
 ## Phase 4 — Explorer 2.0
 Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans le [cahier des charges](phase4/00-explorer-2.0-cahier-des-charges.md) § 14. Prérequis : Phase 3 terminée. Règle structurante : **séparation stricte Collection / Explorer** ([frontières et contrats](phase4/02-frontieres-collection-explorer.md), révision 3) ; les lots Explorer ne modifient pas Collection. Décisions du 7 novembre 2026 : A3 (progression = domaine Lecture, via S1), A5 (sorties = Explorer), A6 (entrée de navigation propre, [changement documenté](phase4/03-changement-navigation.md), non implémenté), A7 (pas de recherche « Ma collection » dans Explorer). Community sera un domaine indépendant. Les **Sorties** concernent exclusivement les comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Point bloquant identifié : les **droits des sources** (métadonnées et images) pour un catalogue partagé ([analyse](phase4/01-analyse-et-impacts.md) § 2).
 
+
+Système documentaire et iconographique (8 novembre 2026, D-48 à D-50) : fiches événement et numéro, galeries, outil de complétion, catalogue initial de neuf événements sans image ([phase4/09](phase4/09-systeme-visuel-documentaire.md)). Reste : choix d'une source d'images sous licence (décision utilisateur), recoupement des faits.
+
 ## Backlog (hors lots planifiés)
 - Source d'actualités ou CMS (actualités non activées).
 - Sources d'images sous licence (désormais traitées par Explorer 2.0, lots 4.1 et 4.3).

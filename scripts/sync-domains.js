@@ -9,7 +9,9 @@ const ROOT = path.join(__dirname, '..');
 const HTML = path.join(ROOT, 'index.html');
 const MODULES = [
   ['catalogCore', 'domains/explorer/catalog-core.js'],
-  ['communityPolicy', 'domains/community/policy-core.js']
+  ['communityPolicy', 'domains/community/policy-core.js'],
+  ['mediaCore', 'domains/explorer/media-core.js'],
+  ['eventSeeds', 'domains/explorer/events-seed.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

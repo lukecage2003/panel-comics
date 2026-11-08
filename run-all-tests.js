@@ -33,10 +33,10 @@ const killEdge = () => {
 };
 // Garde-fou global : un test bloqué ne doit jamais laisser Edge tourner indéfiniment
 const globalTimer = setTimeout(() => {
-  console.error('✗ Délai global dépassé (300 s) — arrêt.');
+  console.error('✗ Délai global dépassé (480 s) — arrêt.');
   killEdge();
   process.exit(1);
-}, 300000);
+}, 480000);
 
 // Attente active du port CDP (au lieu d'un délai fixe fragile)
 const waitForCdp = async () => {
@@ -2469,7 +2469,7 @@ const waitForCdp = async () => {
         // Import / export
         window.__t29 = '9 import';
         const exp = X.exportGuides(['gd_king_in_black']);
-        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 4;
+        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 5;
         const progBefore = JSON.stringify(X.progress(eid(3)));
         const file = JSON.stringify({ format: 'panel-guides', version: 1, guides: [
           { id: 'gd_t29_imp', title: 'T29 Importé', publisher: 'DC Comics', orders: [{ entries: [{ series: T, issue: '3', year: '2024' }] }] },
@@ -3850,7 +3850,7 @@ const waitForCdp = async () => {
           r.searchCards = res.length > 0 && res.every(b => b.dataset.hasMedia === '1' && b.querySelector('img.ex-res-thumb') && b.querySelector('img.ex-res-thumb').getAttribute('src'));
           r.lazy = res.every(b => b.querySelector('img').getAttribute('loading') === 'lazy');
           // Page de guide, puis page de personnage : visuel en tête, remplacement annoncé, bouton de complément
-          await X.open('guide', guides[0].id);
+          await X.open('guide', (guides.find(g => g.id === 'gd_king_in_black') || guides[0]).id);
           await wait(200);
           const chip = document.querySelector('#explorerRoot [data-ex-go="character"]');
           r.hasCharacter = !!chip;
@@ -4100,6 +4100,129 @@ const waitForCdp = async () => {
       const t47fail = t47keys.filter(k => !t47 || t47[k] !== true);
       if (t47fail.length) console.log('Test 47 — vérifications en échec :', t47fail.join(', '));
       testResults.push({ test: 'Explorer 4.9 : filtre des résultats par éditeur (avant la limite, totaux exacts), catégories sans éditeur masquées, libellé accessible, réinitialisé à la nouvelle recherche', ok: t47fail.length === 0 });
+
+      console.log('\n[TEST 48] Fiche événement : série principale, tie-ins, chronologie, ordres distincts, aucun visuel inventé...');
+      const t48 = await evalExpr(`(async () => {
+        const r = {}; const wait = ms => new Promise(res => setTimeout(res, ms));
+        try {
+          document.getElementById('navExplorer').click(); await wait(200);
+          const sec = document.getElementById('exSecEvents');
+          r.homeSection = !!sec && /Marvel/.test(sec.textContent) && /DC/.test(sec.textContent) && sec.querySelectorAll('.ex-gcard').length >= 9;
+          const card = sec && sec.querySelector('[data-ex-guide="gd_civil_war"]');
+          r.cardFacts = !!card && /7 numéro\\(s\\) principaux/.test(card.textContent);
+          card.click(); await wait(200);
+          const ev = document.getElementById('exEventSheet');
+          r.sheet = !!ev;
+          r.mainIssues = ev.querySelectorAll('.ex-iss-grid .ex-iss').length === 7;
+          r.tieIns = [...ev.querySelectorAll('.ex-ev-group h4')].some(x => /Tie-in/i.test(x.textContent));
+          r.sourced = ev.querySelectorAll('.ex-src-ref').length > 0;
+          r.ordersDistinct = /non documenté/.test(ev.querySelector('.ex-ev-orders').textContent) && ev.querySelectorAll('.ex-ev-orders li').length === 4;
+          r.timelineCited = ev.querySelectorAll('.ex-timeline li').length >= 2;
+          r.noInventedImg = [...ev.querySelectorAll('img')].every(i => !i.src || i.src.startsWith('https:') || i.src.startsWith('data:'));
+          r.noGalleryNote = !!ev.querySelector('[data-ex-nogallery]');
+          r.noOverflow = document.documentElement.scrollWidth <= window.innerWidth + 1;
+          // King in Black : seed complété (5 numéros, sources conservées)
+          document.querySelector('.ex-back').click(); await wait(150);
+          document.querySelector('#exSecEvents [data-ex-guide="gd_king_in_black"]').click(); await wait(200);
+          r.kib = document.querySelectorAll('#exEventSheet .ex-iss-grid .ex-iss').length === 5;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { document.getElementById('navAllSingles').click(); await wait(100); }
+        return r;
+      })()`);
+      console.log('Résultat Test 48:', JSON.stringify(t48));
+      const t48keys = ['homeSection', 'cardFacts', 'sheet', 'mainIssues', 'tieIns', 'sourced', 'ordersDistinct', 'timelineCited', 'noInventedImg', 'noGalleryNote', 'noOverflow', 'kib'];
+      const t48fail = t48keys.filter(k => !t48 || t48[k] !== true);
+      if (t48fail.length) console.log('Test 48 — vérifications en échec :', t48fail.join(', '));
+      testResults.push({ test: 'Fiche événement : section Marvel/DC, série principale, tie-ins sourcés, chronologie sur dates citées, trois ordres distincts, aucun visuel inventé, King in Black complété', ok: t48fail.length === 0 });
+
+      console.log('\n[TEST 49] Fiche numéro et recherche illustrée (numéros, filtre éditeur)...');
+      const t49 = await evalExpr(`(async () => {
+        const r = {}; const wait = ms => new Promise(res => setTimeout(res, ms));
+        const hist = localStorage.getItem('panel_explorer_recent');
+        try {
+          document.getElementById('navExplorer').click(); await wait(150);
+          if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
+          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(200);
+          document.querySelector('#exEventSheet .ex-iss').click(); await wait(200);
+          const head = document.querySelector('.ex-issue-head');
+          r.issuePage = !!head && /Civil War.*#1/.test(head.querySelector('h2').textContent);
+          r.statusMissing = head.querySelector('[data-issue-status]').dataset.issueStatus === 'unavailable';
+          r.appearsIn = [...document.querySelectorAll('.ex-ev-links li')].some(li => /Civil War/.test(li.textContent) && /Série principale/.test(li.textContent));
+          r.editBtn = !!head.querySelector('[data-ex-media="issue"]');
+          document.querySelector('.ex-back').click(); await wait(150);
+          const s = document.getElementById('exSearch');
+          s.value = 'blackest night'; s.dispatchEvent(new Event('input', { bubbles: true })); await wait(350);
+          const groups = [...document.querySelectorAll('.ex-res-group h4')].map(x => x.firstChild.textContent.trim());
+          r.issuesGroup = groups.includes('Numéros');
+          r.eventFacts = !!document.querySelector('[data-ev-facts]');
+          const sel = document.querySelector('[data-ex-rpub]');
+          if (sel && [...sel.options].some(o => o.value === 'DC')) { sel.value = 'DC'; sel.dispatchEvent(new Event('change', { bubbles: true })); await wait(150); }
+          r.filterKeepsIssues = [...document.querySelectorAll('.ex-res-group h4')].some(x => x.firstChild.textContent.trim() === 'Numéros');
+          s.value = ''; s.dispatchEvent(new Event('input', { bubbles: true })); await wait(250);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (hist === null) localStorage.removeItem('panel_explorer_recent'); else localStorage.setItem('panel_explorer_recent', hist);
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 49:', JSON.stringify(t49));
+      const t49keys = ['issuePage', 'statusMissing', 'appearsIn', 'editBtn', 'issuesGroup', 'eventFacts', 'filterKeepsIssues'];
+      const t49fail = t49keys.filter(k => !t49 || t49[k] !== true);
+      if (t49fail.length) console.log('Test 49 — vérifications en échec :', t49fail.join(', '));
+      testResults.push({ test: 'Fiche numéro (visuel indisponible signalé, événements et relation) et recherche : catégorie Numéros, faits des événements, filtre éditeur', ok: t49fail.length === 0 });
+
+      console.log('\n[TEST 50] Outil de complétion et visionneuse : association FICTIVE, audit, confirmation, retrait annulable, clavier...');
+      const t50p = evalExpr(`(async () => {
+        const r = {}; const wait = () => Promise.resolve(); // rendus synchrones : pas de minuteries enchaînées (freinées dans un onglet caché)
+        const refsRaw = localStorage.getItem('panel_media_refs_v1'), failRaw = localStorage.getItem('panel_media_failed_v1');
+        try {
+          const M = window.Panel.media;
+          const key = M.issueIndex().find(x => x.series === 'Civil War' && x.issue === '2').key;
+          // Fixture FICTIVE : domaine réservé exemple.test, jamais une vraie couverture
+          const set = M.setRef('issue', key, { url: 'https://exemple.test/fx-civil-war-2.jpg', source: 'Fixture de test', visualType: 'cover' }, { confirmed: true });
+          r.set = !!set.ok && M.ref('issue', key).verification === 'unverified' && /non vérifié/.test(M.credit(M.ref('issue', key)));
+          document.getElementById('navExplorer').click(); await wait(150);
+          if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
+          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(150);
+          const item = document.querySelector('#exEventSheet .ex-gal-item');
+          r.gallery = !!item && /Série principale/.test(item.textContent);
+          item.click(); await wait(100);
+          const lb = document.getElementById('exLightbox');
+          r.lightbox = !!lb && lb.classList.contains('open') && lb.querySelector('[role="dialog"][aria-modal="true"]') !== null;
+          r.lbMeta = /Fixture de test/.test(lb.textContent) && /Couverture principale/.test(lb.textContent) && /non vérifié/.test(lb.querySelector('[data-lb-status]').textContent);
+          lb.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(50);
+          r.lbEscape = !lb.classList.contains('open');
+          document.querySelector('#explorerRoot .ex-back').click(); await wait(150);
+          document.querySelector('#exSecEvents [data-ex-go="visuals"]').click(); await wait(150);
+          const row = document.querySelector('[data-audit="issue:' + key + '"]');
+          r.audit = !!row && /Non vérifié/.test(row.textContent);
+          row.querySelector('[data-v="user_confirmed"]').click(); await wait(100);
+          r.confirmed = M.ref('issue', key).verification === 'user_confirmed';
+          document.querySelector('[data-audit="issue:' + key + '"] [data-ex-vremove]').click(); await wait(100);
+          r.removed = M.ref('issue', key) === null;
+          const undo = [...document.querySelectorAll('button')].find(b => b.textContent === 'Annuler' && b.offsetParent !== null);
+          if (undo) { undo.click(); await wait(100); }
+          r.undo = !!M.ref('issue', key);
+          r.missingList = document.querySelectorAll('#exVisualsMissing .ex-missing li').length > 0;
+          const vk = document.querySelector('[data-ex-vkind]'); vk.value = 'event'; vk.dispatchEvent(new Event('change', { bubbles: true })); await wait(100);
+          r.kindFilter = [...document.querySelectorAll('#exVisualsMissing .ex-missing li span')].every(s => /^Événement/.test(s.textContent));
+          r.providers = M.providers().filter(p => p.enabled).map(p => p.id).sort().join(',') === 'manual,panel_local';
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (refsRaw === null) localStorage.removeItem('panel_media_refs_v1'); else localStorage.setItem('panel_media_refs_v1', refsRaw);
+          if (failRaw === null) localStorage.removeItem('panel_media_failed_v1'); else localStorage.setItem('panel_media_failed_v1', failRaw);
+          const lb = document.getElementById('exLightbox'); if (lb) lb.classList.remove('open');
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
+        return r;
+      })()`);
+      const t50 = await Promise.race([t50p, new Promise(res => setTimeout(() => res({ timeout: true }), 60000))]);
+            console.log('Résultat Test 50:', JSON.stringify(t50));
+      const t50keys = ['set', 'gallery', 'lightbox', 'lbMeta', 'lbEscape', 'audit', 'confirmed', 'removed', 'undo', 'missingList', 'kindFilter', 'providers'];
+      const t50fail = t50keys.filter(k => !t50 || t50[k] !== true);
+      if (t50fail.length) console.log('Test 50 — vérifications en échec :', t50fail.join(', '));
+      testResults.push({ test: 'Complétion des visuels (fixture fictive) : galerie, visionneuse accessible (Échap), audit, confirmation, retrait annulable, filtre par type, fournisseurs réseau inactifs', ok: t50fail.length === 0 });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
