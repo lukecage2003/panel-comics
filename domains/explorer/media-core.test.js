@@ -155,8 +155,8 @@ test('catalogue recoupé : sources par fiche, chaque lien rattaché à une sourc
     const ids = new Set(g.sources.map(s => s.id));
     assert.ok(g.event.links.every(l => ids.has(l.sourceId)), g.id + ' : source déclarée');
     assert.ok(g.event.links.every(l => !l.readingPos), g.id + ' : aucune position de lecture recopiée');
-    assert.ok(g.sources.every(s => /aucune image/.test(s.license)), g.id + ' : aucune image');
-    assert.equal(g.seedVersion, S.EVENT_SEEDS[i].seedVersion + 1);
+    assert.ok(g.sources.every(s => s.kind === 'bibliographic' ? /couvertures exclues/.test(s.license) : /aucune image/.test(s.license)), g.id + ' : aucune image');
+    assert.equal(g.seedVersion, S.EVENT_SEEDS[i].seedVersion + C.CROSSREF[g.id].version);
     assert.equal(g.image, null);
   });
   const stats = merged.map(g => M.crossCheck({ event: M.sanitizeEventBlock(g.event, new Set(g.sources.map(s => s.id))) }).stats);
@@ -165,4 +165,62 @@ test('catalogue recoupé : sources par fiche, chaque lien rattaché à une sourc
   assert.equal(M.mergeCrossref(S.EVENT_SEEDS[0], null), S.EVENT_SEEDS[0]);
   const kib = M.mergeCrossref({ seedVersion: 2, sources: [{ id: 'src_cbro' }, S.KIB_SOURCE], event: JSON.parse(JSON.stringify(S.KIB_EVENT)) }, C.KIB_CROSSREF);
   assert.ok(kib.event.links.some(l => l.series === 'Atlantis Attacks' && l.issues === '5'));
+});
+
+// ---------- Fiabilité (D-52) : fixture FICTIVE, aucune donnée réelle
+const fxGuide = (over = {}) => {
+  const sources = [{ id: 'src_fx_a', kind: 'guide' }, { id: 'src_fx_b', kind: 'guide' }, { id: 'src_fx_bib', kind: 'bibliographic', label: 'Base fictive' }, { id: 'src_fx_site', kind: 'reference' }].map(s => Object.assign(s, over[s.id] || {}));
+  const raw = { links: [
+    { relation: 'tie_in', series: 'Fixture A', issues: '1-3', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fixture A', issues: '1-3', sourceId: 'src_fx_b' },
+    { relation: 'tie_in', series: 'Fixture B', issues: '1', sourceId: 'src_fx_a' },
+    { relation: 'tie_in', series: 'Fixture C', issues: '1-3', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fixture C', issues: '1-4', sourceId: 'src_fx_b' },
+    { relation: 'tie_in', series: 'Fixture D', sourceId: 'src_fx_a' },
+    { relation: 'tie_in', series: 'Fixture E', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fixture E', issues: '1-2', sourceId: 'src_fx_b' }],
+    verifications: over.verifications || [{ series: 'Fixture A', issueCount: 3, sourceId: 'src_fx_bib' }], divergences: over.divergences || [] };
+  return { sources, event: M.sanitizeEventBlock(raw, new Set(sources.map(s => s.id))) };
+};
+const item = (cc, s) => cc.items.find(i => i.series === s);
+
+test('fiabilité : relevé, concordant sans indépendance établie, écart de périmètre, incomplet, absence non contradictoire', () => {
+  const cc = M.crossCheck(fxGuide());
+  assert.equal(item(cc, 'Fixture B').level, 'recorded');
+  assert.equal(item(cc, 'Fixture A').level, 'concordant');
+  assert.match(item(cc, 'Fixture A').why, /indépendance n'est pas établie/);
+  assert.equal(item(cc, 'Fixture C').level, 'partial');
+  assert.equal(item(cc, 'Fixture C').reasons[0].kind, 'scope');
+  assert.equal(item(cc, 'Fixture D').incomplete, true);
+  assert.equal(item(cc, 'Fixture E').level, 'concordant', 'une source sans numéros ne contredit pas une source qui en cite');
+  assert.equal(cc.levels.contested, 0);
+});
+
+test('fiabilité : corroboré seulement avec une indépendance déclarée et justifiée ; contesté seulement sur divergence réelle', () => {
+  assert.equal(item(M.crossCheck(fxGuide({ src_fx_a: { independentOf: ['src_fx_b'] } })), 'Fixture A').level, 'concordant', 'sans justification');
+  assert.equal(item(M.crossCheck(fxGuide({ src_fx_a: { independentOf: ['src_fx_b'], independenceNote: 'Fixture : relevés indépendants' } })), 'Fixture A').level, 'corroborated');
+  const cc = M.crossCheck(fxGuide({ divergences: [{ topic: 'Fixture C', series: 'Fixture C', text: 'Fixture', kind: 'real', sourceIds: ['src_fx_a', 'src_fx_b'] }] }));
+  assert.equal(item(cc, 'Fixture C').level, 'contested');
+  assert.equal(M.sanitizeEventBlock({ divergences: [{ text: 'x', kind: 'inventé' }] }, new Set()).divergences[0].kind, '');
+});
+
+test('fiabilité : vérifié uniquement par une source bibliographique, écart signalé hors intervalle', () => {
+  const cc = M.crossCheck(fxGuide());
+  assert.equal(item(cc, 'Fixture A').verification, 'verified');
+  assert.match(item(cc, 'Fixture A').verificationWhy, /pas le rattachement/);
+  assert.equal(item(cc, 'Fixture B').verification, 'unverified');
+  // Deux sites identiques ne valent pas vérification : la même donnée portée par une source non bibliographique reste « non vérifié »
+  assert.equal(item(M.crossCheck(fxGuide({ verifications: [{ series: 'Fixture A', issueCount: 3, sourceId: 'src_fx_site' }] })), 'Fixture A').verification, 'unverified');
+  assert.equal(item(M.crossCheck(fxGuide({ verifications: [{ series: 'Fixture A', issueCount: 2, sourceId: 'src_fx_bib' }] })), 'Fixture A').verification, 'gap');
+});
+
+test('catalogue contrôlé : écarts tous qualifiés, cas prioritaires expliqués, aucune corroboration supposée', () => {
+  const C = require('./events-crossref');
+  const all = S.EVENT_SEEDS.map(g => { const m = M.mergeCrossref(g, C.CROSSREF[g.id]); return Object.assign(m, { event: M.sanitizeEventBlock(m.event, new Set(m.sources.map(s => s.id))) }); });
+  all.forEach(g => assert.ok(g.event.divergences.every(d => d.kind), g.id + ' : écart qualifié'));
+  const by = id => all.find(g => g.id === id), div = (id, topic) => by(id).event.divergences.find(d => d.topic === topic);
+  assert.equal(div('gd_infinite_crisis', 'Superman #712').kind, 'explained');
+  assert.equal(div('gd_civil_war', 'Amazing Spider-Man #539').kind, 'same_source');
+  assert.ok(by('gd_infinite_crisis').event.unidentified[0].explanation);
+  assert.ok(by('gd_house_of_m').event.links.some(l => l.series === 'Excalibur' && l.sourceId === 'src_cbro_hom' && l.issues === '13-14'));
+  const ccs = all.map(g => [g.id, M.crossCheck(g)]);
+  ccs.forEach(([id, cc]) => { assert.equal(cc.levels.corroborated, 0, id); assert.equal(cc.levels.contested, 0, id); });
+  assert.deepEqual(ccs.filter(([, cc]) => cc.main.verification !== 'verified').map(([id, cc]) => [id, cc.main.verification]), [['gd_blackest_night', 'gap']]);
 });

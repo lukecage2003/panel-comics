@@ -60,3 +60,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **Explorer 4.9** (D-47) : filtre des résultats par éditeur, test 47.
   - **Système visuel et documentaire** (D-48 à D-50) : fournisseurs et statuts, modèle événementiel, catalogue de huit événements Marvel et DC, fiches événement et numéro, visionneuse, outil de complétion, tests 48 à 50.
   - **Recoupement** (D-51) : CBRO et Reading Orders pour huit événements, divergences expliquées, qualité documentaire par fiche, test 51.
+  - **Contrôle éditorial** (D-52) : statuts de fiabilité expliqués, concordance distincte de corroboration, vérification par référence bibliographique (collection.id), écarts qualifiés, cas Superman #712, Crisis Aftermath, ASM #539 et Excalibur traités.

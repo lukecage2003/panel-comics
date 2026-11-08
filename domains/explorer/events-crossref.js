@@ -33,7 +33,7 @@ const CROSSREF = {
   gd_house_of_m: {
     sources: [cbro('hom', 'House of M', 'marvel/events/house-of-m-reading-order/')],
     links: [
-      ...L('prelude', 'src_cbro_hom', [['Excalibur', 'Vol. 3', '1-14', 'Le guide marque les #1-12 comme facultatifs.']]),
+      ...L('prelude', 'src_cbro_hom', [['Excalibur', 'Vol. 3', '13-14', 'Le guide mentionne aussi les #1-12 dans une note de lecture de fond facultative, hors de sa liste (corrigé le 8 novembre 2026 : relevé initial #1-14).']]),
       ...L('tie_in', 'src_cbro_hom', [['Fantastic Four: House of M', '', '1-3'], ['Iron Man: House of M', '', '1-3'], ['Spider-Man: House of M', '', '1-5'], ['Mutopia X', '', '1-4'],
         ['Uncanny X-Men', '', '462-465'], ['New X-Men: Academy X', '', '16-19', 'Intitulé New X-Men (Vol. 2) par le guide.'], ['The Incredible Hulk', 'Vol. 2', '83-86'], ['Wolverine', 'Vol. 3', '33-35'],
         ['Captain America', 'Vol. 5', '10'], ['Black Panther', 'Vol. 4', '7'], ['Cable & Deadpool', '', '17'], ['Exiles', '', '69-71'], ['New Thunderbolts', '', '11'], ['The Pulse', '', '10'],
@@ -42,7 +42,7 @@ const CROSSREF = {
         ['House of M: Masters of Evil', '', '1-4', 'Publiée en 2009-2010 ; listée par le guide avec l\'événement.']])],
     divergences: [
       D('Mutopia X', 'Wikipédia cite cinq numéros, CBRO quatre (#1-4).', ['src_wp_hom', 'src_cbro_hom']),
-      D('Excalibur Vol. 3', 'Wikipédia classe les #11-12 parmi les tie-ins et les #13-14 en introduction ; CBRO place les #1-14 avant l\'événement.', ['src_wp_hom', 'src_cbro_hom'])],
+      D('Excalibur Vol. 3', 'Wikipédia classe les #11-12 parmi les tie-ins et les #13-14 en introduction ; CBRO place les #13-14 avant l\'événement et ne cite les #1-12 qu\'en lecture de fond facultative.', ['src_wp_hom', 'src_cbro_hom'])],
     uncertain: [{ text: 'La page Reading Orders consultée n\'affichait aucune liste.', sourceId: '' }]
   },
   gd_civil_war: {
@@ -172,5 +172,70 @@ const KIB_CROSSREF = {
     D('Venom Vol. 4', 'CBRO retient les #31-35 avec l\'événement ; Reading Orders conseille une lecture préalable beaucoup plus large (#1-12, 16-35).', ['src_cbro', 'src_ro_kib']),
     D('Beta Ray Bill #1', 'Cité par Reading Orders seulement.', ['src_ro_kib'])]
 };
+
+// ---------- Contrôle éditorial (D-52, 8 novembre 2026)
+// Référence bibliographique : catalogue public de collection.id (The Collector), interrogé par sa recherche publique sans compte.
+// Il agrège des bases bibliographiques (GCD et Metron notamment) sous CC BY-SA 4.0 : seuls des faits sont repris (titre, années, nombre de numéros),
+// avec attribution ; aucune couverture (droits des éditeurs ; adresses signées non conservées). Une vérification porte sur l'identification
+// et la numérotation d'une série, jamais sur son rattachement à l'événement ni sur un ordre de lecture.
+const LIC_CID = 'Données de catalogue sous CC BY-SA 4.0 (agrégées notamment de GCD et Metron) : faits repris avec attribution (titre, années, nombre de numéros) ; couvertures exclues (droits des éditeurs).';
+const cid = (key, q) => ({ id: 'src_cid_' + key, label: 'collection.id (The Collector) — catalogue', url: 'https://api.collection.id/v1/public/catalog/search?q=' + encodeURIComponent(q), retrievedAt: '2026-11-08', license: LIC_CID, kind: 'bibliographic' });
+// [titre dans la référence, années, nombre de numéros, autres intitulés rencontrés, note]
+const V = (sourceId, rows) => rows.map(([series, years, issueCount, matches, note]) => ({ series, years: years || '', issueCount, matches: matches || [], note: note || '', sourceId }));
+const fp3 = n => ['Flashpoint: ' + n, '', 3];
+const QUALITY = {
+  gd_secret_wars_1984: { key: 'sw84', q: 'Secret Wars', ver: [['Marvel Super-Heroes Secret Wars', '1984-1985', 12]] },
+  gd_infinity_gauntlet: { key: 'ig', q: 'Infinity Gauntlet', ver: [['The Infinity Gauntlet', '1991', 6]],
+    kinds: { 'Silver Surfer Vol. 3': ['scope', 'Relecture du 8 novembre 2026 : la transcription est exacte (le #39 est absent de la liste CBRO, le #60 y figure) ; il s\'agit d\'une sélection différente, pas d\'une erreur de relevé.'],
+      'Cloak and Dagger Vol. 3': ['placement'], 'Tie-ins de 1991': ['scope', 'Relecture du 8 novembre 2026 : Hulk #383-385, Quasar #26-27 et Sleepwalker #6-7 figurent bien dans la liste CBRO.'] },
+    uncertain: [{ text: 'CBRO ne divise pas sa liste en sections : la relation « prélude » attribuée aux séries citées avant The Infinity Gauntlet #1 est déduite de leur position dans la liste.', sourceId: 'src_cbro_ig' }] },
+  gd_house_of_m: { key: 'hom', q: 'House of M',
+    ver: [['House of M', '2005', 8], ['Mutopia X', '2005-2006', 5], ['Fantastic Four: House of M', '', 3], ['Spider-Man: House of M', '', 5], ['Iron Man: House of M', '', 3],
+      ['House of M: Avengers', '2008', 5], ['Civil War: House of M', '2008-2009', 5], ['House of M: Masters of Evil', '2009-2010', 4], ['What If? House of M', '2009', 1]],
+    kinds: { 'Mutopia X': ['scope', 'La référence bibliographique recense cinq numéros (2005-2006) : le compte de Wikipédia est conforme ; CBRO n\'en cite que quatre.'], 'Excalibur Vol. 3': ['placement'] },
+    uncertain: [{ text: 'CBRO ne divise pas sa liste en sections : la relation « prélude » d\'Excalibur Vol. 3 est déduite de sa position avant House of M #1.', sourceId: 'src_cbro_hom' }] },
+  gd_civil_war: { key: 'cw', q: 'Civil War',
+    ver: [['Civil War', '2006-2007', 7], ['Civil War: Front Line', '', 11], ['Civil War: X-Men', '', 4], ['Civil War: Young Avengers & Runaways', '', 4, ['Civil War: Young Avengers/Runaways']], ['Civil War: Files', '', 1], ['Civil War: Opening Shot', '', 1],
+      ['Civil War: The Return', '', 1], ['Civil War: War Crimes', '', 1], ['Civil War: The Initiative', '', 1], ['Civil War: Battle Damage Report', '', 1]],
+    kinds: { 'Tie-ins': ['absence', 'Wikipédia ne précise pas de numéros : ce silence ne contredit pas les numéros de CBRO.'],
+      'Amazing Spider-Man #539': ['same_source', 'Relecture du 8 novembre 2026 : CBRO place le #539 dans sa liste principale et ouvre aussi sa rubrique de suites par « Amazing Spider-Man #539-543 (Back in Black) ». Les deux rattachements sont conservés. Ce numéro relève de Civil War, sans lien avec King in Black.'] } },
+  gd_crisis_infinite_earths: { key: 'coie', q: 'Crisis on Infinite Earths', ver: [['Crisis on Infinite Earths', '1985-1986', 12]],
+    kinds: { 'Numéros des crossovers': ['scope'],
+      'Préparation ou crossover': ['placement', 'CBRO range ces numéros dans une section explicite « Pre-Crisis Monitor Appearances » (apparitions du Monitor avant l\'événement) : choix de placement, pas contradiction sur les numéros.'],
+      'Séries croisées': ['absence'] } },
+  gd_infinite_crisis: { key: 'ic', q: 'Infinite Crisis',
+    ver: [['Infinite Crisis', '2005-2006', 7], ['Villains United: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Villains United']], ['Day of Vengeance: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Day of Vengeance']],
+      ['Rann-Thanagar War: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Rann-Thanagar War']], ['The OMAC Project: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: OMAC Project']],
+      ['Infinite Crisis Secret Files 2006', '', 1, ['Infinite Crisis Secret Files and Origins']], ['Crisis Aftermath: The Battle for Blüdhaven', '2006', 6], ['Crisis Aftermath: The Spectre', '2006', 3]],
+    kinds: { 'Numéros des tie-ins': ['scope'], 'Day of Vengeance': ['placement', 'Wikipédia ne donne pas de numéros : seul le classement (prélude ou tie-in) diffère.'],
+      'Superman #712': ['explained', 'La référence bibliographique date ce numéro d\'août 2011 (série Superman commencée en 2006). Selon des sources secondaires consultées (non vérifiées), c\'est une histoire de complément de Kurt Busiek et Rick Leonardi, prévue à l\'origine pour Superman #659 et située après la mort de Superboy dans Infinite Crisis : placement dans la chronologie de l\'univers, pas dans l\'ordre de publication.'] },
+    unidentified: { 'Crisis Aftermath': 'Deux mini-séries portent ce titre : The Battle for Blüdhaven (6 numéros) et The Spectre (3 numéros), déjà citées séparément. L\'entrée sans numéro désigne probablement la bannière commune ; elle reste non identifiée faute d\'élément décisif.' } },
+  gd_blackest_night: { key: 'bn', q: 'Blackest Night',
+    ver: [['Blackest Night', '2009-2010', 8, [], 'Le #0 cité par Wikipédia n\'entre pas dans ce total (numéro catalogué à part ou non compté) : écart signalé, non tranché.'],
+      ['Blackest Night: Batman', '', 3], ['Blackest Night: Superman', '', 3], ['Blackest Night: Flash', '', 3], ['Blackest Night: Titans', '', 3], ['Blackest Night: Wonder Woman', '', 3], ['Blackest Night: JSA', '', 3],
+      ['Blackest Night: Tales of the Corps', '', 3], ['Untold Tales of Blackest Night', '', 1], ['Blackest Night: Director\'s Cut', '', 1]],
+    kinds: { 'Justice League of America Vol. 2': ['scope'], 'Numéros présents dans un seul guide': ['absence'], 'Nature de l\'ordre': ['explained'] } },
+  gd_flashpoint: { key: 'fp', q: 'Flashpoint',
+    ver: [['Flashpoint', '2011', 5], fp3('Batman - Knight of Vengeance'), fp3('Deadman and the Flying Graysons'), fp3('Citizen Cold'), fp3('Deathstroke and the Curse of the Ravager'), fp3('Legion of Doom'),
+      fp3('The Outsider'), ['Flashpoint: Reverse-Flash', '', 1], fp3('Project Superman'), fp3('Wonder Woman and the Furies'), ['Flashpoint: Green Arrow Industries', '', 1], fp3('Lois Lane and the Resistance'),
+      ['Flashpoint: The Canterbury Cricket', '', 1], ['Flashpoint: Grodd of War', '', 1], fp3('Abin Sur - The Green Lantern'), fp3('Hal Jordan'), fp3('Secret Seven'),
+      ['Frankenstein & the Creatures of the Unknown', '', 3, ['Flashpoint: Frankenstein and the Creatures of the Unknown']], ['Flashpoint: The World of Flashpoint', '', 3, ['The World of Flashpoint']],
+      fp3('Emperor Aquaman'), fp3('Kid Flash Lost')],
+    kinds: { 'Lectures préalables': ['scope'] } }
+};
+const KIB_QUALITY = { key: 'kib', q: 'King in Black',
+  ver: [['King in Black', '2021', 5], ['King in Black: Gwenom vs. Carnage', '', 3], ['King in Black: Planet of the Symbiotes', '', 3], ['King in Black: Return of the Valkyries', '', 4],
+    ['Symbiote Spider-Man: King in Black', '', 5], ['King in Black: Namor', '', 5], ['King in Black Handbook', '', 1], ['King in Black: Spider-Man', '', 1], ['King in Black: Iron Man/Doom', '', 1]],
+  kinds: { 'Atlantis Attacks': ['absence'], 'Année de la série principale': ['explained', 'La référence bibliographique date la série de 2021, année des dates de couverture ; le #1 est sorti en décembre 2020.'],
+    'Venom Vol. 4': ['scope'], 'Beta Ray Bill #1': ['absence'] } };
+const applyQuality = (cr, q) => {
+  const s = cid(q.key, q.q); cr.version = 2; cr.sources = (cr.sources || []).concat([s]);
+  cr.verifications = V(s.id, q.ver || []);
+  (cr.divergences || []).forEach(d => { const k = q.kinds && q.kinds[d.topic]; if (k) { d.kind = k[0]; if (k[1]) d.explanation = k[1]; } });
+  if (q.uncertain) cr.uncertain = (cr.uncertain || []).concat(q.uncertain);
+  if (q.unidentified) (cr.unidentified || []).forEach(u => { const k = Object.keys(q.unidentified).find(x => u.text.startsWith(x)); if (k) u.explanation = q.unidentified[k]; });
+};
+Object.keys(QUALITY).forEach(id => applyQuality(CROSSREF[id], QUALITY[id]));
+applyQuality(KIB_CROSSREF, KIB_QUALITY);
 
 module.exports = { CROSSREF, KIB_CROSSREF, CROSSREF_RETRIEVED: '2026-11-08' };

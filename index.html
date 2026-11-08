@@ -1744,6 +1744,7 @@
     .ex-b.is-owned { background: #E3F2E8; border-color: #13804A; color: #0B5C34; }
     .ex-b.is-missing { color: #4A4945; }
     .ex-b.is-probable, .ex-b.is-partial, .ex-b.is-demo { background: #FFF4C2; border-color: #C9A400; }
+    .ex-b.is-ok { background: #DFF3E4; border-color: #2E7D46; }
     .ex-b.is-wish { border-color: #B0005F; color: #8A0049; }
     .ex-b.is-personal { border-style: dashed; font-size: 11px; vertical-align: middle; }
     .ex-b.is-pull { border-color: #111111; }
@@ -3596,6 +3597,18 @@ const EVENT_RELATIONS = Object.freeze({ prelude: 'Prélude', tie_in: 'Tie-in', c
 const ORDER_KINDS = Object.freeze({ publication: 'Ordre de publication', chronological: 'Ordre chronologique (dans l\'univers)', recommended: 'Ordre de lecture recommandé', reference: 'Ordre de la source citée' });
 const ROLES = Object.freeze(['writer', 'artist', 'inker', 'colorist', 'letterer', 'editor', 'cover']);
 
+// Fiabilité documentaire (D-52). Trois axes distincts, jamais confondus :
+// - recoupement : combien de sources citent la série et si elles concordent ; deux sources ne sont « indépendantes » que si l'une le déclare
+//   avec une justification (independentOf + independenceNote) : sinon la concordance n'est PAS une corroboration ;
+// - vérification : seule une source de type « bibliographic » (base bibliographique) peut vérifier l'identification d'une série et son nombre de numéros ;
+//   elle ne vérifie jamais le rattachement de la série à l'événement ;
+// - écarts : chaque différence est qualifiée (périmètre, placement, absence…) ; une absence d'information n'est jamais une contradiction.
+const DIVERGENCE_KINDS = Object.freeze({ scope: 'Différence de périmètre', placement: 'Différence de placement', absence: 'Information absente d\'une source (pas une contradiction)',
+  same_source: 'Ambiguïté interne à une source', explained: 'Écart expliqué', real: 'Divergence réelle (contestée)' });
+const RELIABILITY = Object.freeze({ recorded: 'Relevé depuis une source', concordant: 'Concordant (indépendance non établie)', partial: 'Recoupé avec écarts', corroborated: 'Corroboré par des sources indépendantes', contested: 'Contesté' });
+const VERIFICATION_LEVELS = Object.freeze({ verified: 'Vérifié (référence bibliographique)', gap: 'Écart avec la référence bibliographique', unverified: 'Non vérifié' });
+const AUTO_KIND = Object.freeze({ issues: 'scope', relation: 'placement', relation_series: 'placement', volume: 'scope' });
+
 // « 1-5 », « 0-8 », « 13-14, 16 » → numéros explicites ; au plus 500
 function expandIssues(spec) {
   const out = [];
@@ -3627,9 +3640,14 @@ function sanitizeEventBlock(raw, srcIds) {
   const texts = list => (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)).map(c => ({ text: str(c.text || c.name, 600), sourceId: src(c.sourceId) }));
   // Qualité documentaire (D-51) : divergences explicites entre sources, informations incertaines, publications non identifiées
   const divergences = (Array.isArray(raw.divergences) ? raw.divergences : []).slice(0, 60).filter(d => d && str(d.text)).map(d => ({ topic: str(d.topic, 120), text: str(d.text, 600),
-    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))] }));
+    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))],
+    kind: DIVERGENCE_KINDS[d.kind] ? d.kind : '', series: str(d.series, 200), explanation: str(d.explanation, 800) }));
+  // Fiabilité (D-52) : faits bibliographiques (titre, années, nombre de numéros) ; jamais sans source
+  const verifications = (Array.isArray(raw.verifications) ? raw.verifications : []).slice(0, 200).filter(v => v && str(v.series) && Number.isInteger(v.issueCount) && v.issueCount > 0 && src(v.sourceId)).map(v => ({
+    series: str(v.series, 200), matches: (Array.isArray(v.matches) ? v.matches : []).slice(0, 6).map(m => str(m, 200)).filter(Boolean), years: str(v.years, 20), issueCount: v.issueCount, sourceId: src(v.sourceId), note: str(v.note, 400) }));
+  const notes = list => { const ok = (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)); return texts(ok).map((c, i) => Object.assign(c, { explanation: str(ok[i].explanation, 800) })); };
   return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })),
-    divergences, uncertain: texts(raw.uncertain), unidentified: texts(raw.unidentified) };
+    divergences, uncertain: notes(raw.uncertain), unidentified: notes(raw.unidentified), verifications };
 }
 
 const issueNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 9999; };
@@ -3699,14 +3717,50 @@ function crossCheck(guide) {
     if (conflicts.length) reasons.push({ code: 'relation', issues: conflicts });
     if (srcs.length > 1) { const sets = srcs.map(([, s]) => s.relations); if (sets.some(x => sets.some(y => ![...x].some(r => y.has(r))))) reasons.push({ code: 'relation_series' }); }
     if (g.volumes.size > 1) reasons.push({ code: 'volume', volumes: [...g.volumes] });
-    items.push({ series: g.series, sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size });
+    reasons.forEach(r => { r.kind = AUTO_KIND[r.code]; });
+    items.push(Object.assign({ series: g.series, key: seriesKey(g.series), sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size, incomplete: all.size === 0 },
+      reliabilityOf(guide, seriesKey(g.series), srcs.map(([id]) => id), reasons), verificationOf(guide, seriesKey(g.series), [...all])));
   });
   items.sort((a, b) => a.series.localeCompare(b.series));
-  const stats = { corroborated: 0, divergent: 0, single: 0 };
-  items.forEach(i => { stats[i.status]++; });
-  const main = ev && ev.mainSeries ? ev.mainSeries.issues.length : 0;
+  const stats = { corroborated: 0, divergent: 0, single: 0 }, levels = { recorded: 0, concordant: 0, partial: 0, corroborated: 0, contested: 0 }, verification = { verified: 0, gap: 0, unverified: 0 };
+  items.forEach(i => { stats[i.status]++; levels[i.level]++; verification[i.verification]++; });
+  const incomplete = items.filter(i => i.incomplete).length;
+  const ms = ev && ev.mainSeries;
+  const mainCheck = ms ? Object.assign({ series: ms.series, issueCount: ms.issues.length }, verificationOf(guide, seriesKey(ms.series), ms.issues.map(i => i.issue))) : null;
+  const main = ms ? ms.issues.length : 0;
   const publications = main + [...bySeries.values()].reduce((n, g) => { const s = new Set(); g.sources.forEach(x => x.issues.forEach((_, k) => s.add(k))); return n + s.size; }, 0);
-  return { items, stats, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+  return { items, stats, levels, verification, incomplete, main: mainCheck, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+}
+
+const srcOf = (guide, id) => ((guide && guide.sources) || []).find(s => s.id === id) || null;
+const srcName = (guide, id) => { const s = srcOf(guide, id); return s ? s.label : id; };
+// Indépendance : déclarée et justifiée par l'une des deux sources, jamais supposée
+function sourcesIndependent(guide, a, b) {
+  const decl = (x, y) => !!x && Array.isArray(x.independentOf) && x.independentOf.includes(y) && !!str(x.independenceNote);
+  return a !== b && (decl(srcOf(guide, a), b) || decl(srcOf(guide, b), a));
+}
+const divergencesFor = (guide, key) => ((guide && guide.event && guide.event.divergences) || []).filter(d => seriesKey(d.series || d.topic) === key);
+function reliabilityOf(guide, key, ids, reasons) {
+  const known = ids.filter(id => id !== '?'), names = known.map(id => srcName(guide, id)).join(' ; ');
+  const real = divergencesFor(guide, key).find(d => d.kind === 'real');
+  if (real) return { level: 'contested', why: 'Divergence réelle signalée entre sources : ' + real.text };
+  if (known.length < 2) return { level: 'recorded', why: 'Relevé depuis une seule source (' + (names || 'source non attribuée') + ') ; non recoupé.' };
+  if (reasons.length) {
+    const kinds = [...new Set(reasons.map(r => DIVERGENCE_KINDS[r.kind]))].join(', ').toLowerCase();
+    return { level: 'partial', why: 'Cité par ' + known.length + ' sources (' + names + ') avec des écarts : ' + kinds + '. Écart conservé, non tranché.' };
+  }
+  const indep = known.some((a, i) => known.slice(i + 1).some(b => sourcesIndependent(guide, a, b)));
+  if (indep) return { level: 'corroborated', why: 'Cité de façon identique par ' + known.length + ' sources dont l\'indépendance est justifiée (' + names + ').' };
+  return { level: 'concordant', why: 'Cité de façon identique par ' + known.length + ' sources (' + names + ') ; leur indépendance n\'est pas établie : concordance, pas corroboration.' };
+}
+// Vérification : seule une source « bibliographic » compte ; elle porte sur l'identification et la numérotation, pas sur le rattachement à l'événement
+function verificationOf(guide, key, nums) {
+  const v = ((guide && guide.event && guide.event.verifications) || []).find(x => (srcOf(guide, x.sourceId) || {}).kind === 'bibliographic' && [x.series].concat(x.matches || []).some(n => seriesKey(n) === key));
+  if (!v) return { verification: 'unverified', verificationWhy: 'Aucune référence bibliographique consultée pour cette série.' };
+  const base = 'Référence bibliographique (' + srcName(guide, v.sourceId) + ') : ' + v.series + (v.years ? ' (' + v.years + ')' : '') + ', ' + v.issueCount + ' numéro(s).';
+  const out = nums.filter(n => !/^\d+$/.test(String(n)) || Number(n) < 1 || Number(n) > v.issueCount);
+  if (out.length) return { verification: 'gap', verificationWhy: base + ' Numéro(s) cité(s) hors de cet intervalle : #' + out.join(', #') + '.' + (v.note ? ' ' + v.note : ''), verificationSourceId: v.sourceId };
+  return { verification: 'verified', verificationWhy: base + (nums.length ? ' Numéros cités compris entre #1 et #' + v.issueCount + '.' : '') + ' Seules l\'identification et la numérotation sont vérifiées, pas le rattachement à l\'événement.' + (v.note ? ' ' + v.note : ''), verificationSourceId: v.sourceId };
 }
 
 // Fusion d'un complément de recoupement dans un guide brut : ajoute sources, liens et notes de qualité, sans rien retirer ni réécrire
@@ -3715,8 +3769,8 @@ function mergeCrossref(raw, cr) {
   const g = JSON.parse(JSON.stringify(raw)), ev = g.event = g.event || { links: [] };
   g.sources = (g.sources || []).concat(JSON.parse(JSON.stringify(cr.sources || [])).filter(s => !(g.sources || []).some(x => x.id === s.id)));
   ev.links = (ev.links || []).concat(JSON.parse(JSON.stringify(cr.links || [])));
-  ['divergences', 'uncertain', 'unidentified'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
-  g.seedVersion = (g.seedVersion || 1) + 1;
+  ['divergences', 'uncertain', 'unidentified', 'verifications'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
+  g.seedVersion = (g.seedVersion || 1) + (Number.isInteger(cr.version) && cr.version > 0 ? cr.version : 1);
   return g;
 }
 
@@ -3734,7 +3788,8 @@ function checkEventRelations(guides) {
 }
 
 module.exports = { PROVIDER_KINDS, PROVIDERS, providerById, providerCanRun, VISUAL_TYPES, ENTITY_KINDS, VERIFICATION, MEDIA_STATUS, normalizeRef, classifyRef, displayable, pickRef, auditRefs,
-  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref };
+  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref,
+  DIVERGENCE_KINDS, RELIABILITY, VERIFICATION_LEVELS, sourcesIndependent };
   return Object.freeze(module.exports); })();
   /* domains/explorer/events-seed.js */
   out.eventSeeds = (() => { const module = { exports: {} };
@@ -3967,7 +4022,7 @@ const CROSSREF = {
   gd_house_of_m: {
     sources: [cbro('hom', 'House of M', 'marvel/events/house-of-m-reading-order/')],
     links: [
-      ...L('prelude', 'src_cbro_hom', [['Excalibur', 'Vol. 3', '1-14', 'Le guide marque les #1-12 comme facultatifs.']]),
+      ...L('prelude', 'src_cbro_hom', [['Excalibur', 'Vol. 3', '13-14', 'Le guide mentionne aussi les #1-12 dans une note de lecture de fond facultative, hors de sa liste (corrigé le 8 novembre 2026 : relevé initial #1-14).']]),
       ...L('tie_in', 'src_cbro_hom', [['Fantastic Four: House of M', '', '1-3'], ['Iron Man: House of M', '', '1-3'], ['Spider-Man: House of M', '', '1-5'], ['Mutopia X', '', '1-4'],
         ['Uncanny X-Men', '', '462-465'], ['New X-Men: Academy X', '', '16-19', 'Intitulé New X-Men (Vol. 2) par le guide.'], ['The Incredible Hulk', 'Vol. 2', '83-86'], ['Wolverine', 'Vol. 3', '33-35'],
         ['Captain America', 'Vol. 5', '10'], ['Black Panther', 'Vol. 4', '7'], ['Cable & Deadpool', '', '17'], ['Exiles', '', '69-71'], ['New Thunderbolts', '', '11'], ['The Pulse', '', '10'],
@@ -3976,7 +4031,7 @@ const CROSSREF = {
         ['House of M: Masters of Evil', '', '1-4', 'Publiée en 2009-2010 ; listée par le guide avec l\'événement.']])],
     divergences: [
       D('Mutopia X', 'Wikipédia cite cinq numéros, CBRO quatre (#1-4).', ['src_wp_hom', 'src_cbro_hom']),
-      D('Excalibur Vol. 3', 'Wikipédia classe les #11-12 parmi les tie-ins et les #13-14 en introduction ; CBRO place les #1-14 avant l\'événement.', ['src_wp_hom', 'src_cbro_hom'])],
+      D('Excalibur Vol. 3', 'Wikipédia classe les #11-12 parmi les tie-ins et les #13-14 en introduction ; CBRO place les #13-14 avant l\'événement et ne cite les #1-12 qu\'en lecture de fond facultative.', ['src_wp_hom', 'src_cbro_hom'])],
     uncertain: [{ text: 'La page Reading Orders consultée n\'affichait aucune liste.', sourceId: '' }]
   },
   gd_civil_war: {
@@ -4106,6 +4161,71 @@ const KIB_CROSSREF = {
     D('Venom Vol. 4', 'CBRO retient les #31-35 avec l\'événement ; Reading Orders conseille une lecture préalable beaucoup plus large (#1-12, 16-35).', ['src_cbro', 'src_ro_kib']),
     D('Beta Ray Bill #1', 'Cité par Reading Orders seulement.', ['src_ro_kib'])]
 };
+
+// ---------- Contrôle éditorial (D-52, 8 novembre 2026)
+// Référence bibliographique : catalogue public de collection.id (The Collector), interrogé par sa recherche publique sans compte.
+// Il agrège des bases bibliographiques (GCD et Metron notamment) sous CC BY-SA 4.0 : seuls des faits sont repris (titre, années, nombre de numéros),
+// avec attribution ; aucune couverture (droits des éditeurs ; adresses signées non conservées). Une vérification porte sur l'identification
+// et la numérotation d'une série, jamais sur son rattachement à l'événement ni sur un ordre de lecture.
+const LIC_CID = 'Données de catalogue sous CC BY-SA 4.0 (agrégées notamment de GCD et Metron) : faits repris avec attribution (titre, années, nombre de numéros) ; couvertures exclues (droits des éditeurs).';
+const cid = (key, q) => ({ id: 'src_cid_' + key, label: 'collection.id (The Collector) — catalogue', url: 'https://api.collection.id/v1/public/catalog/search?q=' + encodeURIComponent(q), retrievedAt: '2026-11-08', license: LIC_CID, kind: 'bibliographic' });
+// [titre dans la référence, années, nombre de numéros, autres intitulés rencontrés, note]
+const V = (sourceId, rows) => rows.map(([series, years, issueCount, matches, note]) => ({ series, years: years || '', issueCount, matches: matches || [], note: note || '', sourceId }));
+const fp3 = n => ['Flashpoint: ' + n, '', 3];
+const QUALITY = {
+  gd_secret_wars_1984: { key: 'sw84', q: 'Secret Wars', ver: [['Marvel Super-Heroes Secret Wars', '1984-1985', 12]] },
+  gd_infinity_gauntlet: { key: 'ig', q: 'Infinity Gauntlet', ver: [['The Infinity Gauntlet', '1991', 6]],
+    kinds: { 'Silver Surfer Vol. 3': ['scope', 'Relecture du 8 novembre 2026 : la transcription est exacte (le #39 est absent de la liste CBRO, le #60 y figure) ; il s\'agit d\'une sélection différente, pas d\'une erreur de relevé.'],
+      'Cloak and Dagger Vol. 3': ['placement'], 'Tie-ins de 1991': ['scope', 'Relecture du 8 novembre 2026 : Hulk #383-385, Quasar #26-27 et Sleepwalker #6-7 figurent bien dans la liste CBRO.'] },
+    uncertain: [{ text: 'CBRO ne divise pas sa liste en sections : la relation « prélude » attribuée aux séries citées avant The Infinity Gauntlet #1 est déduite de leur position dans la liste.', sourceId: 'src_cbro_ig' }] },
+  gd_house_of_m: { key: 'hom', q: 'House of M',
+    ver: [['House of M', '2005', 8], ['Mutopia X', '2005-2006', 5], ['Fantastic Four: House of M', '', 3], ['Spider-Man: House of M', '', 5], ['Iron Man: House of M', '', 3],
+      ['House of M: Avengers', '2008', 5], ['Civil War: House of M', '2008-2009', 5], ['House of M: Masters of Evil', '2009-2010', 4], ['What If? House of M', '2009', 1]],
+    kinds: { 'Mutopia X': ['scope', 'La référence bibliographique recense cinq numéros (2005-2006) : le compte de Wikipédia est conforme ; CBRO n\'en cite que quatre.'], 'Excalibur Vol. 3': ['placement'] },
+    uncertain: [{ text: 'CBRO ne divise pas sa liste en sections : la relation « prélude » d\'Excalibur Vol. 3 est déduite de sa position avant House of M #1.', sourceId: 'src_cbro_hom' }] },
+  gd_civil_war: { key: 'cw', q: 'Civil War',
+    ver: [['Civil War', '2006-2007', 7], ['Civil War: Front Line', '', 11], ['Civil War: X-Men', '', 4], ['Civil War: Young Avengers & Runaways', '', 4, ['Civil War: Young Avengers/Runaways']], ['Civil War: Files', '', 1], ['Civil War: Opening Shot', '', 1],
+      ['Civil War: The Return', '', 1], ['Civil War: War Crimes', '', 1], ['Civil War: The Initiative', '', 1], ['Civil War: Battle Damage Report', '', 1]],
+    kinds: { 'Tie-ins': ['absence', 'Wikipédia ne précise pas de numéros : ce silence ne contredit pas les numéros de CBRO.'],
+      'Amazing Spider-Man #539': ['same_source', 'Relecture du 8 novembre 2026 : CBRO place le #539 dans sa liste principale et ouvre aussi sa rubrique de suites par « Amazing Spider-Man #539-543 (Back in Black) ». Les deux rattachements sont conservés. Ce numéro relève de Civil War, sans lien avec King in Black.'] } },
+  gd_crisis_infinite_earths: { key: 'coie', q: 'Crisis on Infinite Earths', ver: [['Crisis on Infinite Earths', '1985-1986', 12]],
+    kinds: { 'Numéros des crossovers': ['scope'],
+      'Préparation ou crossover': ['placement', 'CBRO range ces numéros dans une section explicite « Pre-Crisis Monitor Appearances » (apparitions du Monitor avant l\'événement) : choix de placement, pas contradiction sur les numéros.'],
+      'Séries croisées': ['absence'] } },
+  gd_infinite_crisis: { key: 'ic', q: 'Infinite Crisis',
+    ver: [['Infinite Crisis', '2005-2006', 7], ['Villains United: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Villains United']], ['Day of Vengeance: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Day of Vengeance']],
+      ['Rann-Thanagar War: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: Rann-Thanagar War']], ['The OMAC Project: Infinite Crisis Special', '', 1, ['Infinite Crisis Special: OMAC Project']],
+      ['Infinite Crisis Secret Files 2006', '', 1, ['Infinite Crisis Secret Files and Origins']], ['Crisis Aftermath: The Battle for Blüdhaven', '2006', 6], ['Crisis Aftermath: The Spectre', '2006', 3]],
+    kinds: { 'Numéros des tie-ins': ['scope'], 'Day of Vengeance': ['placement', 'Wikipédia ne donne pas de numéros : seul le classement (prélude ou tie-in) diffère.'],
+      'Superman #712': ['explained', 'La référence bibliographique date ce numéro d\'août 2011 (série Superman commencée en 2006). Selon des sources secondaires consultées (non vérifiées), c\'est une histoire de complément de Kurt Busiek et Rick Leonardi, prévue à l\'origine pour Superman #659 et située après la mort de Superboy dans Infinite Crisis : placement dans la chronologie de l\'univers, pas dans l\'ordre de publication.'] },
+    unidentified: { 'Crisis Aftermath': 'Deux mini-séries portent ce titre : The Battle for Blüdhaven (6 numéros) et The Spectre (3 numéros), déjà citées séparément. L\'entrée sans numéro désigne probablement la bannière commune ; elle reste non identifiée faute d\'élément décisif.' } },
+  gd_blackest_night: { key: 'bn', q: 'Blackest Night',
+    ver: [['Blackest Night', '2009-2010', 8, [], 'Le #0 cité par Wikipédia n\'entre pas dans ce total (numéro catalogué à part ou non compté) : écart signalé, non tranché.'],
+      ['Blackest Night: Batman', '', 3], ['Blackest Night: Superman', '', 3], ['Blackest Night: Flash', '', 3], ['Blackest Night: Titans', '', 3], ['Blackest Night: Wonder Woman', '', 3], ['Blackest Night: JSA', '', 3],
+      ['Blackest Night: Tales of the Corps', '', 3], ['Untold Tales of Blackest Night', '', 1], ['Blackest Night: Director\'s Cut', '', 1]],
+    kinds: { 'Justice League of America Vol. 2': ['scope'], 'Numéros présents dans un seul guide': ['absence'], 'Nature de l\'ordre': ['explained'] } },
+  gd_flashpoint: { key: 'fp', q: 'Flashpoint',
+    ver: [['Flashpoint', '2011', 5], fp3('Batman - Knight of Vengeance'), fp3('Deadman and the Flying Graysons'), fp3('Citizen Cold'), fp3('Deathstroke and the Curse of the Ravager'), fp3('Legion of Doom'),
+      fp3('The Outsider'), ['Flashpoint: Reverse-Flash', '', 1], fp3('Project Superman'), fp3('Wonder Woman and the Furies'), ['Flashpoint: Green Arrow Industries', '', 1], fp3('Lois Lane and the Resistance'),
+      ['Flashpoint: The Canterbury Cricket', '', 1], ['Flashpoint: Grodd of War', '', 1], fp3('Abin Sur - The Green Lantern'), fp3('Hal Jordan'), fp3('Secret Seven'),
+      ['Frankenstein & the Creatures of the Unknown', '', 3, ['Flashpoint: Frankenstein and the Creatures of the Unknown']], ['Flashpoint: The World of Flashpoint', '', 3, ['The World of Flashpoint']],
+      fp3('Emperor Aquaman'), fp3('Kid Flash Lost')],
+    kinds: { 'Lectures préalables': ['scope'] } }
+};
+const KIB_QUALITY = { key: 'kib', q: 'King in Black',
+  ver: [['King in Black', '2021', 5], ['King in Black: Gwenom vs. Carnage', '', 3], ['King in Black: Planet of the Symbiotes', '', 3], ['King in Black: Return of the Valkyries', '', 4],
+    ['Symbiote Spider-Man: King in Black', '', 5], ['King in Black: Namor', '', 5], ['King in Black Handbook', '', 1], ['King in Black: Spider-Man', '', 1], ['King in Black: Iron Man/Doom', '', 1]],
+  kinds: { 'Atlantis Attacks': ['absence'], 'Année de la série principale': ['explained', 'La référence bibliographique date la série de 2021, année des dates de couverture ; le #1 est sorti en décembre 2020.'],
+    'Venom Vol. 4': ['scope'], 'Beta Ray Bill #1': ['absence'] } };
+const applyQuality = (cr, q) => {
+  const s = cid(q.key, q.q); cr.version = 2; cr.sources = (cr.sources || []).concat([s]);
+  cr.verifications = V(s.id, q.ver || []);
+  (cr.divergences || []).forEach(d => { const k = q.kinds && q.kinds[d.topic]; if (k) { d.kind = k[0]; if (k[1]) d.explanation = k[1]; } });
+  if (q.uncertain) cr.uncertain = (cr.uncertain || []).concat(q.uncertain);
+  if (q.unidentified) (cr.unidentified || []).forEach(u => { const k = Object.keys(q.unidentified).find(x => u.text.startsWith(x)); if (k) u.explanation = q.unidentified[k]; });
+};
+Object.keys(QUALITY).forEach(id => applyQuality(CROSSREF[id], QUALITY[id]));
+applyQuality(KIB_CROSSREF, KIB_QUALITY);
 
 module.exports = { CROSSREF, KIB_CROSSREF, CROSSREF_RETRIEVED: '2026-11-08' };
   return Object.freeze(module.exports); })();
@@ -11299,7 +11419,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const kind = raw.kind === 'news' ? 'news' : 'guide';
     const sources = (Array.isArray(raw.sources) ? raw.sources : []).slice(0, 40).filter(s => s && typeof s === 'object').map(s => ({
       id: /^src_[a-z0-9_]{1,40}$/.test(gdStr(s.id, 50)) ? gdStr(s.id, 50) : 'src_' + stableHash(gdStr(s.label) + gdStr(s.url)), label: gdStr(s.label, 200) || 'Source', url: gdHttps(s.url),
-      retrievedAt: gdStr(s.retrievedAt, 30), license: gdStr(s.license, 300), kind: gdStr(s.kind, 20) }));
+      retrievedAt: gdStr(s.retrievedAt, 30), license: gdStr(s.license, 300), kind: gdStr(s.kind, 20),
+      independentOf: (Array.isArray(s.independentOf) ? s.independentOf : []).slice(0, 10).map(x => gdStr(x, 50)).filter(Boolean), independenceNote: gdStr(s.independenceNote, 300) }));
     const srcIds = new Set(sources.map(s => s.id));
     const srcRef = v => { const s = gdStr(v, 50); return srcIds.has(s) ? s : ''; };
     const img = v => { if (!v || typeof v !== 'object') return null; const url = gdHttps(v.url); return url ? { url, source: gdStr(v.source, 120), rights: gdStr(v.rights, 300), kind: gdStr(v.kind, 30), lang: gdStr(v.lang, 8), edition: gdStr(v.edition, 120), verifiedAt: gdStr(v.verifiedAt, 30), manual: v.manual === true } : null; };
@@ -11685,24 +11806,34 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ((ev.consequences || []).length ? '<section class="ex-sec"><h3>Conséquences</h3><ul>' + ev.consequences.map(c => '<li>' + h(c.text) + src(c.sourceId) + '</li>').join('') + '</ul></section>' : '') +
       '<div class="ex-ev-cols"><section class="ex-sec"><h3>Chronologie de publication</h3>' + timeline + '</section><section class="ex-sec"><h3>Ordres</h3>' + orders + '</section></div>' + exEventQuality(g) + '</section>';
   };
-  // Qualité documentaire (D-51) : complétude, sources consultées, recoupement série par série, divergences expliquées, incertitudes
+  // Qualité documentaire (D-51, D-52) : trois axes distincts — recoupement (sources qui concordent, indépendance jamais supposée),
+  // vérification (référence bibliographique seulement), écarts qualifiés (périmètre, placement, absence…) ; chaque statut est expliqué
   const EX_CC_REASON = { issues: 'numéros différents', relation: 'relation différente pour un même numéro', relation_series: 'rattachement différent', volume: 'volumes différents' };
   const exEventQuality = g => {
     const MC = exMC(); if (!MC || !g.event || !MC.crossCheck) return '';
     const cc = MC.crossCheck(g), ev = g.event, lab = id => exSrcLabel(g, id) || id;
-    const kindLabel = s => s.kind === 'guide' ? 'Guide tiers' : s.kind === 'reference' ? 'Référence' : (s.kind || 'Source');
-    const li = x => '<li><b>' + h(x.series) + '</b> <small>' + h(x.sourceIds.map(lab).join(' ; ')) + '</small>' +
-      (x.reasons.length ? '<small class="ex-note">' + h(x.reasons.map(r => EX_CC_REASON[r.code] + (r.issues ? ' (#' + r.issues.join(', #') + ')' : '')).join(' ; ')) + '</small>' : '') +
-      (x.status === 'corroborated' && x.numberSources < 2 ? '<small class="ex-note">Série recoupée ; numéros fournis par une seule source.</small>' : '') + '</li>';
-    const div = cc.items.filter(x => x.status === 'divergent'), corr = cc.items.filter(x => x.status === 'corroborated');
+    const DK = MC.DIVERGENCE_KINDS || {}, RL = MC.RELIABILITY || {}, VL = MC.VERIFICATION_LEVELS || {};
+    const kindLabel = s => ({ guide: 'Guide tiers', reference: 'Référence', bibliographic: 'Référence bibliographique', edition: 'Fiche commerciale' })[s.kind] || (s.kind || 'Source');
+    const vb = (v, why) => '<span class="ex-b' + (v === 'verified' ? ' is-ok' : v === 'gap' ? ' is-probable' : '') + '" data-cv="' + v + '" title="' + h(why || '') + '">' + h(VL[v] || v) + '</span>';
+    const li = x => '<li data-cc-item="' + h(x.level) + '"><span><b>' + h(x.series) + '</b> <span class="ex-b" data-cc-level="' + h(x.level) + '">' + h(RL[x.level] || x.level) + '</span> ' + vb(x.verification, x.verificationWhy) +
+      (x.incomplete ? ' <span class="ex-b" data-cc-incomplete>Incomplet : aucun numéro précisé</span>' : '') + '</span>' +
+      '<small class="ex-note">' + h(x.why) + (x.reasons.length ? ' Détail : ' + x.reasons.map(r => EX_CC_REASON[r.code] + (r.issues ? ' (#' + r.issues.join(', #') + ')' : '')).join(' ; ') + '.' : '') + '</small>' +
+      (x.verification !== 'unverified' ? '<small class="ex-note">' + h(x.verificationWhy) + '</small>' : '') + '</li>';
+    const L = cc.levels, V = cc.verification, multi = (g.sources || []).length > 1;
+    const byLevel = ['contested', 'partial', 'corroborated', 'concordant', 'recorded'].map(k => [k, cc.items.filter(x => x.level === k)]).filter(([, l]) => l.length);
     return '<section class="ex-sec ex-quality" id="exEventQuality"><h3>Qualité documentaire</h3>' +
-      '<p class="ex-note">Complétude : <b>' + h(GD_COMPLETENESS[g.completeness] || g.completeness || 'non indiquée') + '</b> · ' + cc.publications + ' publication(s) citée(s) · séries recoupées : <b data-cc-corroborated>' + cc.stats.corroborated + '</b>, divergentes : <b data-cc-divergent>' + cc.stats.divergent + '</b>, une seule source : <b data-cc-single>' + cc.stats.single + '</b>. Aucune liste n\'est présentée comme exhaustive.</p>' +
-      '<h4>Sources consultées (' + (g.sources || []).length + ')</h4><ul class="ex-ev-links">' + (g.sources || []).map(s => '<li><span><span class="ex-b">' + h(kindLabel(s)) + '</span> ' + (s.url ? '<a href="' + h(s.url) + '" target="_blank" rel="noopener noreferrer">' + h(s.label) + '</a>' : h(s.label)) + (s.retrievedAt ? ' <small>relevé le ' + h(s.retrievedAt) + '</small>' : '') + '</span>' + (s.license ? '<small class="ex-note">' + h(s.license) + '</small>' : '') + '</li>').join('') + '</ul>' +
-      ((ev.divergences || []).length ? '<h4>Divergences entre sources (' + ev.divergences.length + ')</h4><ul class="ex-ev-links" data-ex-divergences>' + ev.divergences.map(d => '<li><b>' + h(d.topic) + '</b><small class="ex-note">' + h(d.text) + '</small><small>' + h(d.sourceIds.map(lab).join(' ; ')) + '</small></li>').join('') + '</ul>' : '') +
-      (div.length ? '<details data-cc-div-list><summary>Écarts détectés automatiquement (' + div.length + ')</summary><ul class="ex-ev-links">' + div.map(li).join('') + '</ul></details>' : '') +
-      (corr.length ? '<details><summary>Séries citées par plusieurs sources sans écart (' + corr.length + ')</summary><ul class="ex-ev-links">' + corr.map(li).join('') + '</ul></details>' : '') +
-      (((ev.uncertain || []).length + (ev.unidentified || []).length) ? '<h4>Informations incertaines et publications non identifiées</h4><ul>' + (ev.uncertain || []).concat(ev.unidentified || []).map(c => '<li>' + h(c.text) + (c.sourceId ? ' <small class="ex-src-ref">(' + h(lab(c.sourceId)) + ')</small>' : '') + '</li>').join('') + '</ul>' : '') +
-      '<p class="ex-note">Relevés par lecture outillée de pages publiques : à contrôler avant toute validation. Les ordres de lecture des guides tiers ne sont pas reproduits.</p></section>';
+      '<p class="ex-note">Complétude : <b>' + h(GD_COMPLETENESS[g.completeness] || g.completeness || 'non indiquée') + '</b> · ' + cc.publications + ' publication(s) citée(s). Aucune liste n\'est présentée comme exhaustive.</p>' +
+      '<ul class="ex-ev-links" data-cc-summary>' +
+      '<li><span><b>Recoupement</b> (séries liées) : relevées d\'une seule source <b data-cc-recorded>' + L.recorded + '</b>, concordantes <b data-cc-concordant>' + L.concordant + '</b>, recoupées avec écarts <b data-cc-partial>' + L.partial + '</b>, corroborées <b data-cc-corroborated>' + L.corroborated + '</b>, contestées <b data-cc-contested>' + L.contested + '</b>, incomplètes <b data-cc-incomplete-count>' + cc.incomplete + '</b>.</span>' +
+      (multi && !L.corroborated ? '<small class="ex-note" data-cc-independence>L\'indépendance des sources n\'est pas établie (les guides et Wikipédia peuvent s\'appuyer les uns sur les autres) : une concordance n\'est pas présentée comme une corroboration.</small>' : '') + '</li>' +
+      '<li><span><b>Vérification</b> (identification et numérotation, d\'après une référence bibliographique) : vérifiées <b data-cv-verified>' + V.verified + '</b>, en écart <b data-cv-gap>' + V.gap + '</b>, non vérifiées <b data-cv-unverified>' + V.unverified + '</b>.</span>' +
+      '<small class="ex-note">Deux sites qui donnent la même information ne suffisent jamais à « vérifier ». La référence bibliographique ne vérifie pas le rattachement d\'une série à l\'événement.</small></li>' +
+      (cc.main ? '<li data-cv-main><span><b>Série principale — ' + h(cc.main.series) + '</b> ' + vb(cc.main.verification, cc.main.verificationWhy) + '</span><small class="ex-note">' + h(cc.main.verificationWhy) + '</small></li>' : '') + '</ul>' +
+      '<h4>Sources consultées (' + (g.sources || []).length + ')</h4><ul class="ex-ev-links">' + (g.sources || []).map(s => '<li><span><span class="ex-b" data-src-kind="' + h(s.kind || '') + '">' + h(kindLabel(s)) + '</span> ' + (s.url ? '<a href="' + h(s.url) + '" target="_blank" rel="noopener noreferrer">' + h(s.label) + '</a>' : h(s.label)) + (s.retrievedAt ? ' <small>relevé le ' + h(s.retrievedAt) + '</small>' : '') + '</span>' + (s.license ? '<small class="ex-note">' + h(s.license) + '</small>' : '') + '</li>').join('') + '</ul>' +
+      ((ev.divergences || []).length ? '<h4>Écarts entre sources (' + ev.divergences.length + ')</h4><ul class="ex-ev-links" data-ex-divergences>' + ev.divergences.map(d => '<li><span><b>' + h(d.topic) + '</b>' + (d.kind ? ' <span class="ex-b' + (d.kind === 'real' ? ' is-probable' : '') + '" data-div-kind="' + h(d.kind) + '">' + h(DK[d.kind] || d.kind) + '</span>' : ' <span class="ex-b" data-div-kind="">Non qualifié</span>') + '</span><small class="ex-note">' + h(d.text) + '</small>' + (d.explanation ? '<small class="ex-note" data-div-explained>' + h(d.explanation) + '</small>' : '') + '<small>' + h(d.sourceIds.map(lab).join(' ; ')) + '</small></li>').join('') + '</ul>' : '') +
+      (byLevel.length ? '<details data-cc-div-list><summary>Statut série par série (' + cc.items.length + ')</summary>' + byLevel.map(([k, l]) => '<h4>' + h(RL[k] || k) + ' (' + l.length + ')</h4><ul class="ex-ev-links">' + l.map(li).join('') + '</ul>').join('') + '</details>' : '') +
+      (((ev.uncertain || []).length + (ev.unidentified || []).length) ? '<h4>Informations incertaines et publications non identifiées</h4><ul data-ex-uncertain>' + (ev.uncertain || []).concat(ev.unidentified || []).map(c => '<li>' + h(c.text) + (c.sourceId ? ' <small class="ex-src-ref">(' + h(lab(c.sourceId)) + ')</small>' : '') + (c.explanation ? '<small class="ex-note">' + h(c.explanation) + '</small>' : '') + '</li>').join('') + '</ul>' : '') +
+      '<p class="ex-note">Relevés par lecture outillée de pages publiques : à contrôler avant toute validation. Les ordres de lecture des guides tiers ne sont pas reproduits. Couvertures : aucune source étudiée n\'autorise l\'affichage des couvertures de numéros ; les visuels restent des remplacements.</p></section>';
   };
   // Visionneuse commune : agrandissement, navigation, provenance et statut ; clavier (←, →, Échap)
   const exLbStore = new Map();

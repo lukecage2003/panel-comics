@@ -2469,7 +2469,7 @@ const waitForCdp = async () => {
         // Import / export
         window.__t29 = '9 import';
         const exp = X.exportGuides(['gd_king_in_black']);
-        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 6;
+        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 7;
         const progBefore = JSON.stringify(X.progress(eid(3)));
         const file = JSON.stringify({ format: 'panel-guides', version: 1, guides: [
           { id: 'gd_t29_imp', title: 'T29 Importé', publisher: 'DC Comics', orders: [{ entries: [{ series: T, issue: '3', year: '2024' }] }] },
@@ -4233,25 +4233,35 @@ const waitForCdp = async () => {
           document.querySelector('#exSecEvents [data-ex-guide="gd_crisis_infinite_earths"]').click(); await wait();
           const q = document.getElementById('exEventQuality');
           r.section = !!q;
-          r.threeSources = /Sources consultées \\(3\\)/.test(q.textContent) && q.querySelectorAll('a[href^="https://"]').length >= 3;
-          r.counts = Number(q.querySelector('[data-cc-corroborated]').textContent) > 0 && Number(q.querySelector('[data-cc-divergent]').textContent) > 0;
-          r.divergences = q.querySelectorAll('[data-ex-divergences] li').length >= 2;
+          r.threeSources = /Sources consultées \\(4\\)/.test(q.textContent) && q.querySelectorAll('a[href^="https://"]').length >= 4 && !!q.querySelector('[data-src-kind="bibliographic"]');
+          const n = s => Number(q.querySelector(s).textContent);
+          r.counts = n('[data-cc-concordant]') > 0 && n('[data-cc-partial]') > 0 && n('[data-cc-corroborated]') === 0 && !!q.querySelector('[data-cc-independence]');
+          r.divergences = q.querySelectorAll('[data-ex-divergences] li').length >= 2 && [...q.querySelectorAll('[data-ex-divergences] [data-div-kind]')].every(b => b.dataset.divKind) && !!q.querySelector('[data-div-explained]');
+          r.verification = !!q.querySelector('[data-cv-main] [data-cv="verified"]') && /pas le rattachement/.test(q.querySelector('[data-cv-main]').textContent) && q.querySelectorAll('[data-cc-item] [data-cc-level]').length > 0;
           r.badge = document.querySelectorAll('#exEventSheet [data-ex-divergent]').length > 0;
           r.notExhaustive = /Aucune liste n'est présentée comme exhaustive/.test(q.textContent);
           r.noGuideOrder = !document.querySelector('#exEventSheet .ex-ev-links .ex-b') || ![...document.querySelectorAll('#exEventSheet .ex-ev-links .ex-b')].some(b => /Position de lecture/.test(b.textContent));
           document.querySelector('#explorerRoot .ex-back').click(); await wait();
           document.querySelector('#exSecEvents [data-ex-guide="gd_secret_wars_1984"]').click(); await wait();
           const q2 = document.getElementById('exEventQuality');
-          r.singleSourceHonest = !!q2 && /Sources consultées \\(1\\)/.test(q2.textContent) && /source unique/.test(q2.textContent);
+          r.singleSourceHonest = !!q2 && /Sources consultées \\(2\\)/.test(q2.textContent) && /source unique/.test(q2.textContent) && Number(q2.querySelector('[data-cc-concordant]').textContent) === 0;
+          document.querySelector('#explorerRoot .ex-back').click(); await wait();
+          document.querySelector('#exSecEvents [data-ex-guide="gd_infinite_crisis"]').click(); await wait();
+          const q3 = document.getElementById('exEventQuality');
+          r.priorityCases = [...q3.querySelectorAll('[data-ex-divergences] li')].some(li => /Superman #712/.test(li.textContent) && li.querySelector('[data-div-kind="explained"]') && /Superman #659/.test(li.textContent)) && /Battle for Blüdhaven/.test(q3.querySelector('[data-ex-uncertain]').textContent);
+          document.querySelector('#explorerRoot .ex-back').click(); await wait();
+          document.querySelector('#exSecEvents [data-ex-guide="gd_blackest_night"]').click(); await wait();
+          r.mainGap = !!document.querySelector('#exEventQuality [data-cv-main] [data-cv="gap"]') && /#0/.test(document.querySelector('#exEventQuality [data-cv-main]').textContent);
+          r.noCoverInvented = [...document.querySelectorAll('#exEventSheet img')].every(i => !i.src || i.src.startsWith('data:') || i.closest('.is-fallback'));
         } catch (e) { r.error = String(e && e.message || e); }
         finally { document.getElementById('navAllSingles').click(); }
         return r;
       })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 60000))]);
       console.log('Résultat Test 51:', JSON.stringify(t51));
-      const t51keys = ['section', 'threeSources', 'counts', 'divergences', 'badge', 'notExhaustive', 'noGuideOrder', 'singleSourceHonest'];
+      const t51keys = ['section', 'threeSources', 'counts', 'divergences', 'verification', 'badge', 'notExhaustive', 'noGuideOrder', 'singleSourceHonest', 'priorityCases', 'mainGap', 'noCoverInvented'];
       const t51fail = t51keys.filter(k => !t51 || t51[k] !== true);
       if (t51fail.length) console.log('Test 51 — vérifications en échec :', t51fail.join(', '));
-      testResults.push({ test: 'Recoupement : trois sources citées, séries recoupées et divergentes comptées, divergences expliquées, aucune liste dite exhaustive, aucun ordre de guide recopié, fiche à source unique signalée', ok: t51fail.length === 0 });
+      testResults.push({ test: 'Fiabilité : sources dont une bibliographique, concordance distincte de corroboration, écarts qualifiés et expliqués, vérification de la série principale (et écart Blackest Night #0), cas Superman #712 et Crisis Aftermath expliqués, aucune couverture inventée', ok: t51fail.length === 0 });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

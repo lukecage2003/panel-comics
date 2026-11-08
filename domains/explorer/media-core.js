@@ -164,6 +164,18 @@ const EVENT_RELATIONS = Object.freeze({ prelude: 'Prélude', tie_in: 'Tie-in', c
 const ORDER_KINDS = Object.freeze({ publication: 'Ordre de publication', chronological: 'Ordre chronologique (dans l\'univers)', recommended: 'Ordre de lecture recommandé', reference: 'Ordre de la source citée' });
 const ROLES = Object.freeze(['writer', 'artist', 'inker', 'colorist', 'letterer', 'editor', 'cover']);
 
+// Fiabilité documentaire (D-52). Trois axes distincts, jamais confondus :
+// - recoupement : combien de sources citent la série et si elles concordent ; deux sources ne sont « indépendantes » que si l'une le déclare
+//   avec une justification (independentOf + independenceNote) : sinon la concordance n'est PAS une corroboration ;
+// - vérification : seule une source de type « bibliographic » (base bibliographique) peut vérifier l'identification d'une série et son nombre de numéros ;
+//   elle ne vérifie jamais le rattachement de la série à l'événement ;
+// - écarts : chaque différence est qualifiée (périmètre, placement, absence…) ; une absence d'information n'est jamais une contradiction.
+const DIVERGENCE_KINDS = Object.freeze({ scope: 'Différence de périmètre', placement: 'Différence de placement', absence: 'Information absente d\'une source (pas une contradiction)',
+  same_source: 'Ambiguïté interne à une source', explained: 'Écart expliqué', real: 'Divergence réelle (contestée)' });
+const RELIABILITY = Object.freeze({ recorded: 'Relevé depuis une source', concordant: 'Concordant (indépendance non établie)', partial: 'Recoupé avec écarts', corroborated: 'Corroboré par des sources indépendantes', contested: 'Contesté' });
+const VERIFICATION_LEVELS = Object.freeze({ verified: 'Vérifié (référence bibliographique)', gap: 'Écart avec la référence bibliographique', unverified: 'Non vérifié' });
+const AUTO_KIND = Object.freeze({ issues: 'scope', relation: 'placement', relation_series: 'placement', volume: 'scope' });
+
 // « 1-5 », « 0-8 », « 13-14, 16 » → numéros explicites ; au plus 500
 function expandIssues(spec) {
   const out = [];
@@ -195,9 +207,14 @@ function sanitizeEventBlock(raw, srcIds) {
   const texts = list => (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)).map(c => ({ text: str(c.text || c.name, 600), sourceId: src(c.sourceId) }));
   // Qualité documentaire (D-51) : divergences explicites entre sources, informations incertaines, publications non identifiées
   const divergences = (Array.isArray(raw.divergences) ? raw.divergences : []).slice(0, 60).filter(d => d && str(d.text)).map(d => ({ topic: str(d.topic, 120), text: str(d.text, 600),
-    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))] }));
+    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))],
+    kind: DIVERGENCE_KINDS[d.kind] ? d.kind : '', series: str(d.series, 200), explanation: str(d.explanation, 800) }));
+  // Fiabilité (D-52) : faits bibliographiques (titre, années, nombre de numéros) ; jamais sans source
+  const verifications = (Array.isArray(raw.verifications) ? raw.verifications : []).slice(0, 200).filter(v => v && str(v.series) && Number.isInteger(v.issueCount) && v.issueCount > 0 && src(v.sourceId)).map(v => ({
+    series: str(v.series, 200), matches: (Array.isArray(v.matches) ? v.matches : []).slice(0, 6).map(m => str(m, 200)).filter(Boolean), years: str(v.years, 20), issueCount: v.issueCount, sourceId: src(v.sourceId), note: str(v.note, 400) }));
+  const notes = list => { const ok = (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)); return texts(ok).map((c, i) => Object.assign(c, { explanation: str(ok[i].explanation, 800) })); };
   return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })),
-    divergences, uncertain: texts(raw.uncertain), unidentified: texts(raw.unidentified) };
+    divergences, uncertain: notes(raw.uncertain), unidentified: notes(raw.unidentified), verifications };
 }
 
 const issueNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 9999; };
@@ -267,14 +284,50 @@ function crossCheck(guide) {
     if (conflicts.length) reasons.push({ code: 'relation', issues: conflicts });
     if (srcs.length > 1) { const sets = srcs.map(([, s]) => s.relations); if (sets.some(x => sets.some(y => ![...x].some(r => y.has(r))))) reasons.push({ code: 'relation_series' }); }
     if (g.volumes.size > 1) reasons.push({ code: 'volume', volumes: [...g.volumes] });
-    items.push({ series: g.series, sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size });
+    reasons.forEach(r => { r.kind = AUTO_KIND[r.code]; });
+    items.push(Object.assign({ series: g.series, key: seriesKey(g.series), sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size, incomplete: all.size === 0 },
+      reliabilityOf(guide, seriesKey(g.series), srcs.map(([id]) => id), reasons), verificationOf(guide, seriesKey(g.series), [...all])));
   });
   items.sort((a, b) => a.series.localeCompare(b.series));
-  const stats = { corroborated: 0, divergent: 0, single: 0 };
-  items.forEach(i => { stats[i.status]++; });
-  const main = ev && ev.mainSeries ? ev.mainSeries.issues.length : 0;
+  const stats = { corroborated: 0, divergent: 0, single: 0 }, levels = { recorded: 0, concordant: 0, partial: 0, corroborated: 0, contested: 0 }, verification = { verified: 0, gap: 0, unverified: 0 };
+  items.forEach(i => { stats[i.status]++; levels[i.level]++; verification[i.verification]++; });
+  const incomplete = items.filter(i => i.incomplete).length;
+  const ms = ev && ev.mainSeries;
+  const mainCheck = ms ? Object.assign({ series: ms.series, issueCount: ms.issues.length }, verificationOf(guide, seriesKey(ms.series), ms.issues.map(i => i.issue))) : null;
+  const main = ms ? ms.issues.length : 0;
   const publications = main + [...bySeries.values()].reduce((n, g) => { const s = new Set(); g.sources.forEach(x => x.issues.forEach((_, k) => s.add(k))); return n + s.size; }, 0);
-  return { items, stats, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+  return { items, stats, levels, verification, incomplete, main: mainCheck, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+}
+
+const srcOf = (guide, id) => ((guide && guide.sources) || []).find(s => s.id === id) || null;
+const srcName = (guide, id) => { const s = srcOf(guide, id); return s ? s.label : id; };
+// Indépendance : déclarée et justifiée par l'une des deux sources, jamais supposée
+function sourcesIndependent(guide, a, b) {
+  const decl = (x, y) => !!x && Array.isArray(x.independentOf) && x.independentOf.includes(y) && !!str(x.independenceNote);
+  return a !== b && (decl(srcOf(guide, a), b) || decl(srcOf(guide, b), a));
+}
+const divergencesFor = (guide, key) => ((guide && guide.event && guide.event.divergences) || []).filter(d => seriesKey(d.series || d.topic) === key);
+function reliabilityOf(guide, key, ids, reasons) {
+  const known = ids.filter(id => id !== '?'), names = known.map(id => srcName(guide, id)).join(' ; ');
+  const real = divergencesFor(guide, key).find(d => d.kind === 'real');
+  if (real) return { level: 'contested', why: 'Divergence réelle signalée entre sources : ' + real.text };
+  if (known.length < 2) return { level: 'recorded', why: 'Relevé depuis une seule source (' + (names || 'source non attribuée') + ') ; non recoupé.' };
+  if (reasons.length) {
+    const kinds = [...new Set(reasons.map(r => DIVERGENCE_KINDS[r.kind]))].join(', ').toLowerCase();
+    return { level: 'partial', why: 'Cité par ' + known.length + ' sources (' + names + ') avec des écarts : ' + kinds + '. Écart conservé, non tranché.' };
+  }
+  const indep = known.some((a, i) => known.slice(i + 1).some(b => sourcesIndependent(guide, a, b)));
+  if (indep) return { level: 'corroborated', why: 'Cité de façon identique par ' + known.length + ' sources dont l\'indépendance est justifiée (' + names + ').' };
+  return { level: 'concordant', why: 'Cité de façon identique par ' + known.length + ' sources (' + names + ') ; leur indépendance n\'est pas établie : concordance, pas corroboration.' };
+}
+// Vérification : seule une source « bibliographic » compte ; elle porte sur l'identification et la numérotation, pas sur le rattachement à l'événement
+function verificationOf(guide, key, nums) {
+  const v = ((guide && guide.event && guide.event.verifications) || []).find(x => (srcOf(guide, x.sourceId) || {}).kind === 'bibliographic' && [x.series].concat(x.matches || []).some(n => seriesKey(n) === key));
+  if (!v) return { verification: 'unverified', verificationWhy: 'Aucune référence bibliographique consultée pour cette série.' };
+  const base = 'Référence bibliographique (' + srcName(guide, v.sourceId) + ') : ' + v.series + (v.years ? ' (' + v.years + ')' : '') + ', ' + v.issueCount + ' numéro(s).';
+  const out = nums.filter(n => !/^\d+$/.test(String(n)) || Number(n) < 1 || Number(n) > v.issueCount);
+  if (out.length) return { verification: 'gap', verificationWhy: base + ' Numéro(s) cité(s) hors de cet intervalle : #' + out.join(', #') + '.' + (v.note ? ' ' + v.note : ''), verificationSourceId: v.sourceId };
+  return { verification: 'verified', verificationWhy: base + (nums.length ? ' Numéros cités compris entre #1 et #' + v.issueCount + '.' : '') + ' Seules l\'identification et la numérotation sont vérifiées, pas le rattachement à l\'événement.' + (v.note ? ' ' + v.note : ''), verificationSourceId: v.sourceId };
 }
 
 // Fusion d'un complément de recoupement dans un guide brut : ajoute sources, liens et notes de qualité, sans rien retirer ni réécrire
@@ -283,8 +336,8 @@ function mergeCrossref(raw, cr) {
   const g = JSON.parse(JSON.stringify(raw)), ev = g.event = g.event || { links: [] };
   g.sources = (g.sources || []).concat(JSON.parse(JSON.stringify(cr.sources || [])).filter(s => !(g.sources || []).some(x => x.id === s.id)));
   ev.links = (ev.links || []).concat(JSON.parse(JSON.stringify(cr.links || [])));
-  ['divergences', 'uncertain', 'unidentified'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
-  g.seedVersion = (g.seedVersion || 1) + 1;
+  ['divergences', 'uncertain', 'unidentified', 'verifications'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
+  g.seedVersion = (g.seedVersion || 1) + (Number.isInteger(cr.version) && cr.version > 0 ? cr.version : 1);
   return g;
 }
 
@@ -302,4 +355,5 @@ function checkEventRelations(guides) {
 }
 
 module.exports = { PROVIDER_KINDS, PROVIDERS, providerById, providerCanRun, VISUAL_TYPES, ENTITY_KINDS, VERIFICATION, MEDIA_STATUS, normalizeRef, classifyRef, displayable, pickRef, auditRefs,
-  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref };
+  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref,
+  DIVERGENCE_KINDS, RELIABILITY, VERIFICATION_LEVELS, sourcesIndependent };
