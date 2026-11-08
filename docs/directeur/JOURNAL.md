@@ -61,3 +61,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **Système visuel et documentaire** (D-48 à D-50) : fournisseurs et statuts, modèle événementiel, catalogue de huit événements Marvel et DC, fiches événement et numéro, visionneuse, outil de complétion, tests 48 à 50.
   - **Recoupement** (D-51) : CBRO et Reading Orders pour huit événements, divergences expliquées, qualité documentaire par fiche, test 51.
   - **Contrôle éditorial** (D-52) : statuts de fiabilité expliqués, concordance distincte de corroboration, vérification par référence bibliographique (collection.id), écarts qualifiés, cas Superman #712, Crisis Aftermath, ASM #539 et Excalibur traités.
+  - **R1 Catalogue commun** (D-55) : identité partagée par Collection, Sorties et Explorer (index de références réversible), variantes, réimpressions et recueils distincts, fusion annulable, nouveaux mangas refusés, test 52.

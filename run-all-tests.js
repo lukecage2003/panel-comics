@@ -4263,6 +4263,49 @@ const waitForCdp = async () => {
       if (t51fail.length) console.log('Test 51 — vérifications en échec :', t51fail.join(', '));
       testResults.push({ test: 'Fiabilité : sources dont une bibliographique, concordance distincte de corroboration, écarts qualifiés et expliqués, vérification de la série principale (et écart Blackest Night #0), cas Superman #712 et Crisis Aftermath expliqués, aucune couverture inventée', ok: t51fail.length === 0 });
 
+      // ─── Test 52 : Catalogue commun de publications (R1, D-55) ───
+      console.log('\n[TEST 52] Catalogue commun : une identité partagée par Collection, Sorties et Explorer, sans modifier les fiches...');
+      const t52 = await Promise.race([evalExpr(`(async () => {
+        const P = window.Panel, C = P.publications, r = {};
+        try {
+          await P.releases.ready(); r.ready = await C.ready();
+          const singlesBefore = localStorage.getItem('panel_physical_singles'), relBefore = JSON.stringify(P.releases.all());
+          const rep = await C.rebuild(); const st = await C.stats();
+          r.built = !!rep && st.issues > 0 && st.refs > 0;
+          r.legacyUntouched = localStorage.getItem('panel_physical_singles') === singlesBefore && JSON.stringify(P.releases.all()) === relBefore;
+          const singles = JSON.parse(singlesBefore || '[]').filter(s => s && s.id && s.series && s.issue);
+          const lk = singles.length ? await C.lookup('collection', singles[0].id) : null;
+          r.collection = !singles.length || !!(lk && /^pub_i_/.test(lk.issueId));
+          const idx = P.media.issueIndex(); const ek = idx[0] && await C.lookup('explorer', idx[0].key);
+          r.explorer = !!(ek && /^pub_i_/.test(ek.issueId));
+          const rel = P.releases.all().find(p => !P.releases.outOfScope(p) && p.issue);
+          const rk = rel ? await C.lookup('release', rel.id) : null;
+          r.release = !rel || !!(rk && (rk.issueId || rk.editionId));
+          // Idempotence : deuxième reconstruction sans création
+          const rep2 = await C.rebuild(), st2 = await C.stats();
+          r.idempotent = st2.issues === st.issues && st2.series === st.series && rep2.collection.created + rep2.release.created + rep2.explorer.created === 0;
+          // Garde-fou manga (D-54) : aucune nouvelle publication manga, rien n'est ajouté
+          const n0 = P.releases.all().length;
+          const m = await P.releases.upsert({ series: 'Fixture Manga R1', issue: '1', format: 'manga', publisher: 'Fixture' }, { source: 'test' });
+          r.mangaBlocked = !!m && m.action === 'rejected' && m.outOfScope === true && P.releases.all().length === n0;
+          // Sauvegarde : l'index commun voyage dans la section Explorer
+          const b = await P.backup.export({ domains: ['explorer'] });
+          const pc = b.sections.explorer.publicationCatalog;
+          r.backup = !!(pc && pc.format === 'panel-publications' && Object.keys(pc.refs).length === st2.refs);
+          // Retour arrière (index seul) puis reconstruction : mêmes identifiants (déterministes), fiches intactes
+          const before = singles.length ? await C.lookup('collection', singles[0].id) : null;
+          await C.rollback(); r.rolledBack = (await C.stats()).refs === 0;
+          await C.rebuild(); const after = singles.length ? await C.lookup('collection', singles[0].id) : null;
+          r.reversible = (!before || (!!after && after.issueId === before.issueId)) && localStorage.getItem('panel_physical_singles') === singlesBefore;
+        } catch (e) { r.error = String(e && e.message || e); }
+        return r;
+      })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 60000))]);
+      console.log('Résultat Test 52:', JSON.stringify(t52));
+      const t52keys = ['ready', 'built', 'legacyUntouched', 'collection', 'explorer', 'release', 'idempotent', 'mangaBlocked', 'backup', 'rolledBack', 'reversible'];
+      const t52fail = t52keys.filter(k => !t52 || t52[k] !== true);
+      if (t52fail.length) console.log('Test 52 — vérifications en échec :', t52fail.join(', '));
+      testResults.push({ test: 'Catalogue commun (R1) : Collection, Sorties et Explorer résolus vers une identité partagée, fiches intactes, reconstruction idempotente, nouveaux mangas refusés, index sauvegardé, retour arrière et reconstruction identique', ok: t52fail.length === 0 });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
