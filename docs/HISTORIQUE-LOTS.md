@@ -165,3 +165,5 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - moteur client `backend/sync-engine/engine.js` (outbox, reprise, quarantaine de compte), session locale sans secret ;
   - `sync.test.js` (16 tests, 3 appareils simulés). Résultats : `npm run test:all` vert : base **99/99**, secrets 0, frontières 0, front 35/35. Rien n'est connecté au réseau.
 
+- **Fondations Explorer 2.0 et Communauté (mission « Autonomous night shift »)** ([réalisation](directeur/07-conception-explorer-2.0-community.md)) : modules autonomes `domains/explorer/catalog-core.js` et `domains/community/policy-core.js`, non branchés ; `npm run test:domains` : **16/16**, ajouté à `test:all`.
+

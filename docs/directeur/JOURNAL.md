@@ -48,4 +48,5 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | F1 Finances | Terminé (F1-5 partiel) | `index.html` (`Panel.finance`, formulaire, filtre « Sorties », CSV, B1), test 35, test 25 adapté, `sw.js` | `test:all` : 82/82, 0, 0 couplage, 34/34 | D-27 à D-29 appliquées | Onglet Finances (U-D2) | L1 |
 | L1 Lecture | Terminé (L1-4 partiel) | `index.html` (`Panel.reading`, S1 `read`, S2 `markRead`, fenêtre « Lecture par œuvre… », B1 `works`), test 36, `sw.js` | `test:all` : 82/82, 0, 0 couplage, 35/35 | D-30 appliquée | Entrée Lecture (U-D1) | Backend 3.4 local |
 | Backend 3.4 local | Terminé localement (non validé sur Supabase) | migration 8, `backend/sync-engine/engine.js`, `backend/tests/sync.test.js`, tests 3.1 adaptés | `test:all` : 99/99, 0, 0 couplage, 35/35 | D-31 appliquée | Projet Supabase (3.2) | Fondations Explorer 2.0 |
+| Fondations Explorer 2.0 et Communauté | Préparé (non branché) | `domains/`, `package.json` (`test:domains`) | `test:domains` 16/16, secrets 0, frontières 0 | — | Source du catalogue, conditions d'utilisation | Rapport final |
 

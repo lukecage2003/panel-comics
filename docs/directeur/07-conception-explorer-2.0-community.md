@@ -241,3 +241,12 @@ Community → S3 ← Explorer
 - Community : C-0 (ce document), puis C-1 à C-5 (B.8).
 
 F1 et L1 s'insèrent après 3.1b ; L1 de préférence **avant** le lot 3.4 (voir [`phase3/10`](../phase3/10-dossier-lots-3.2-3.7.md) § 4.4).
+
+## Réalisation des fondations (mission « Autonomous night shift », 8 novembre 2026)
+**Statut : préparé et testé localement, non branché à l'interface, aucun service externe.** Voir [`domains/README.md`](../../domains/README.md).
+
+| Module | Couvert | Restant |
+|---|---|---|
+| `domains/explorer/catalog-core.js` (10 tests) | Entités par `kind` et relations génériques typées (A.8) ; seul `medium = comic` publié (D-12) ; recherche locale tolérante (accents, une faute ou une inversion, deux au-delà de 7 lettres, préfixe, alias et titre VO), groupée par `kind`, moins de 150 ms sur 50 000 entités ; pages avec portes et faits sourcés ; ordre de lecture d'un événement (facultatifs masquables) ; recommandations motivées (suite, même événement, même créateur, choix de la rédaction), filtre personnel fourni par l'appelant ; actualités sourcées non expirées | Données réelles du catalogue (source et licence), stockage (schémas `catalog` et `editorial`), interface (lots 4.2 à 4.9) |
+| `domains/community/policy-core.js` (6 tests) | Publier = copier selon une liste blanche (C-D1) ; visibilité privé, abonnés ou public ; blocage dans les deux sens ; liens refusés pendant 7 jours ; avertissement sur les e-mails, téléphones et adresses ; limites par fenêtre glissante ; signalements dédoublonnés et priorisés ; décision motivée, retrait réversible, appel ; pas d'auto-modération ; le module ne lit aucun domaine personnel (test statique) | Hébergement, comptes réels (3.2/3.3), conditions d'utilisation et procédure légale de modération (décision humaine), interface |
+
