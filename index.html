@@ -12800,7 +12800,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     { name: 'pulls', domain: 'collection', source: 'IndexedDB panel-catalog/pulls', table: 'app.pulls', synced: true, reason: 'Pull List personnelle (D-09) ; la publication n\'est pas transférée' },
     { name: 'reading_progress', domain: 'reading', source: 'IndexedDB panel-catalog/readprog', table: 'app.reading_progress', synced: true, reason: 'Progression personnelle (domaine Lecture), jamais propriété d\'Explorer' },
     { name: 'user_guides', domain: 'reading', source: 'IndexedDB panel-catalog/editorial (créés ou modifiés)', table: 'app.user_guides (lot 3.4)', synced: false, reason: 'Reporté au lot 3.4, facultatif' },
-    { name: 'prefs', domain: 'app', source: 'localStorage panel_theme, panel_sound_effects, panel_haptic_feedback, panel_singles_view_mode', table: 'app.user_settings.prefs', synced: true, reason: 'Confort multi-appareil' },
+    { name: 'prefs', domain: 'app', source: 'localStorage panel_theme, panel_sound_effects, panel_haptic_feedback, panel_singles_view_mode, panel_explorer_personalize', table: 'app.user_settings.prefs', synced: true, reason: 'Confort multi-appareil' },
     { name: 'catalog', domain: 'collection', source: 'IndexedDB panel-catalog (séries, numéros, variantes)', table: null, synced: false, reason: 'Recalculable depuis les exemplaires' },
     { name: 'publications', domain: 'explorer', source: 'IndexedDB panel-catalog/publications', table: null, synced: false, reason: 'Licence Comic Vine non commerciale ; avis juridique requis' },
     { name: 'value_snapshots', domain: 'collection', source: 'localStorage panel_value_snapshots', table: null, synced: false, reason: 'À décider au lot 3.4' },
@@ -12809,7 +12809,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     { name: 'digital_legacy', domain: 'app', source: 'panel-library (PDF/CBZ), notes, annotations, marque-pages, dossiers', table: null, synced: false, reason: 'Jamais : hors périmètre produit, conservé localement' }
   ]);
   const SYNC_SECRET_KEYS = Object.freeze(['panel_comicvine_key', 'panel_metron_creds', 'panel_cv_proxy', 'panel_gcd_proxy', 'panel_metron_proxy']);
-  const SYNC_PREF_KEYS = Object.freeze(['panel_theme', 'panel_sound_effects', 'panel_haptic_feedback', 'panel_singles_view_mode']);
+  const SYNC_PREF_KEYS = Object.freeze(['panel_theme', 'panel_sound_effects', 'panel_haptic_feedback', 'panel_singles_view_mode', 'panel_explorer_personalize']);
   const SYNC_DATA_COVER_MAX = 256 * 1024;
   const syncReadiness = async () => {
     const bytes = v => { try { return new Blob([typeof v === 'string' ? v : JSON.stringify(v)]).size; } catch (_) { return 0; } };
@@ -13253,7 +13253,125 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
   };
 
+  // ── Lot 3.1b-2 : contrats locaux S1 PersonalLens.v1 et S2 PersonalCommands.v1 (docs/phase4/05 § 3 et § 4) ──
+  // P1-a (D-22) : le profil local est traité comme connecté. Réglage « Personnaliser Explorer avec mes données » (activé par défaut).
+  // S1 ne renvoie que des statuts minimaux (liste blanche) ; S2 n'exécute une commande qu'avec un jeton de geste utilisateur.
+  const PERSONALIZE_KEY = 'panel_explorer_personalize';
+  const personalizeEnabled = () => { try { return localStorage.getItem(PERSONALIZE_KEY) !== '0'; } catch (_) { return true; } };
+  const setPersonalize = on => { try { localStorage.setItem(PERSONALIZE_KEY, on ? '1' : '0'); } catch (_) {} return personalizeEnabled(); };
+  const S1_MAX_REFS = 500, S1_MAX_ENTRIES = 2000;
+  const s1Err = code => ({ ok: false, error: code });
+  // Domaine Lecture : statut « lu » d'une œuvre. Provisoirement alimenté par isRead des exemplaires (A3, D-08) ; remplacé par L1 (L-D2) sans toucher à S1.
+  const readingStatusOf = matched => matched.owned.some(s => s.isRead);
+  const s1Ref = ref => ref && typeof ref === 'object' && typeof ref.series === 'string' && ref.series.trim() && ref.series.length <= 300 && (ref.issue === undefined || typeof ref.issue === 'string' || typeof ref.issue === 'number');
+  const s1Available = () => Array.isArray(physicalSingles);
+  const lensStatusFor = refs => {
+    if (!personalizeEnabled()) return s1Err('disabled');
+    if (!s1Available()) return s1Err('unavailable');
+    if (!Array.isArray(refs) || !refs.every(s1Ref)) return s1Err('invalid_input');
+    if (refs.length > S1_MAX_REFS) return s1Err('rate_limited');
+    const idx = exIndexBuild();
+    const items = refs.map(ref => {
+      const m = exMatch({ id: '', series: ref.series, issue: String(ref.issue == null ? '' : ref.issue), year: ref.year || '', pubId: typeof ref.pubId === 'string' ? ref.pubId : '' }, idx);
+      // Liste blanche : aucun prix, valeur, état, emplacement, note, date d'achat ni identifiant d'exemplaire
+      return { owned: m.owned.length, wishlisted: m.wish.length > 0, inPullList: !!m.pull, read: readingStatusOf(m) };
+    });
+    return { ok: true, items };
+  };
+  const lensGuideProgress = (guideId, entryIds) => {
+    if (!personalizeEnabled()) return s1Err('disabled');
+    if (!s1Available()) return s1Err('unavailable');
+    if (typeof guideId !== 'string' || !Array.isArray(entryIds) || !entryIds.every(x => typeof x === 'string')) return s1Err('invalid_input');
+    if (entryIds.length > S1_MAX_ENTRIES) return s1Err('rate_limited');
+    const g = exEditorial.get(guideId);
+    const entries = new Map();
+    ((g && g.orders) || []).forEach(o => (o.entries || []).forEach(e => { if (e && e.id) entries.set(e.id, e); }));
+    const idx = exIndexBuild();
+    const items = entryIds.map(id => {
+      const prog = exProgress.get(id);
+      const status = prog && GD_PROGRESS[prog.status] ? prog.status : '';
+      const e = entries.get(id);
+      const derived = !status && !!e && readingStatusOf(exMatch(e, idx));
+      return { status: status || (derived ? 'read' : ''), derivedFromCollection: derived };
+    });
+    return { ok: true, items };
+  };
+
+  // Jetons de geste : émis seulement pour un événement réel de l'utilisateur (isTrusted), à usage unique, valables 10 s
+  const s2Tokens = new Map();
+  const s2Gesture = ev => {
+    if (!ev || ev.isTrusted !== true) return null;
+    const tok = 'g_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+    s2Tokens.set(tok, Date.now() + 10000);
+    return tok;
+  };
+  const s2Consume = tok => { const exp = s2Tokens.get(tok); s2Tokens.delete(tok); return !!exp && exp >= Date.now(); };
+  const s2Guard = (opts, check) => {
+    if (!s2Available()) return s1Err('unavailable');
+    if (!opts || !s2Consume(opts.gesture)) return s1Err('gesture_required');
+    return check ? check() : null;
+  };
+  const s2Available = () => Array.isArray(physicalSingles);
+  const s2Pub = ref => ref && typeof ref.pubId === 'string' ? relPubs.get(ref.pubId) || null : null;
+  const s2Undo = new Map();
+  const s2Token = fn => { const t = 'u_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); s2Undo.set(t, fn); return t; };
+  const cmdAddToWishlist = (ref, opts = {}) => {
+    const e = s2Guard(opts, () => (s2Pub(ref) ? null : s1Err('invalid_input'))); if (e) return e;
+    const r = addPubToWishlist(ref.pubId, opts.variant ? { variant: opts.variant } : {});
+    if (!r.ok) return s1Err('internal');
+    if (r.duplicate) return { ok: true, duplicate: true };
+    const id = r.item.id;
+    return { ok: true, undoToken: s2Token(() => { const i = physicalSingles.findIndex(x => x.id === id && x.isWishlist); if (i >= 0) { physicalSingles.splice(i, 1); persistSingles(); } }) };
+  };
+  const cmdAddToCollection = (ref, opts = {}) => {
+    const e = s2Guard(opts, () => (s2Pub(ref) ? null : s1Err('invalid_input'))); if (e) return e;
+    const r = addPubToCollection(ref.pubId, {});
+    if (!r.ok) return s1Err('internal');
+    if (r.item && !r.converted) setTimeout(() => openSingleInspector(r.item), 0); // l'utilisateur complète la fiche (prix payé jamais inventé, D-18)
+    return { ok: true, converted: !!r.converted };
+  };
+  const cmdAddToPullList = async (ref, opts = {}) => {
+    const e = s2Guard(opts, () => (s2Pub(ref) ? null : s1Err('invalid_input'))); if (e) return e;
+    const r = await addPull(ref.pubId, {});
+    return r && r.ok !== false ? { ok: true, duplicate: !!(r && r.duplicate) } : s1Err('internal');
+  };
+  const cmdFollowSeries = (seriesRef, opts = {}) => {
+    const e = s2Guard(opts, () => (seriesRef && typeof seriesRef.series === 'string' && seriesRef.series.trim() && seriesRef.series.length <= 300 ? null : s1Err('invalid_input'))); if (e) return e;
+    if (isPulled(seriesRef.series)) return { ok: true, duplicate: true };
+    const name = seriesRef.series.trim(), key = normSeries(name), existed = Object.prototype.hasOwnProperty.call(seriesMeta, key);
+    const prev = existed ? JSON.parse(JSON.stringify(seriesMeta[key])) : null;
+    togglePull(name, true);
+    // Annulation : l'entrée de série revient exactement à son état d'avant (absente si elle n'existait pas)
+    return { ok: true, undoToken: s2Token(() => { if (existed) seriesMeta[key] = prev; else delete seriesMeta[key]; saveSeriesMeta(); }) };
+  };
+  // Progression de guide : commande exécutée par le domaine Lecture (propriétaire), jamais par Collection
+  const cmdSetGuideProgress = async (guideId, entryId, status, opts = {}) => {
+    const e = s2Guard(opts, () => (typeof entryId === 'string' && /^ek_[a-z0-9]{1,40}$/i.test(entryId) && (status === '' || GD_PROGRESS[status]) ? null : s1Err('invalid_input'))); if (e) return e;
+    const prev = exProgress.get(entryId);
+    const prevStatus = prev ? prev.status : '';
+    const r = await exSetProgress(entryId, status);
+    if (!r || !r.ok) return s1Err('internal');
+    return { ok: true, undoToken: r.unchanged ? undefined : s2Token(() => exSetProgress(entryId, prevStatus)) };
+  };
+  // Ouverture : la fiche est trouvée et affichée par Collection ; Explorer ne reçoit aucun identifiant d'exemplaire
+  const cmdOpenItem = (ref, opts = {}) => {
+    const e = s2Guard(opts, () => (s1Ref(ref) ? null : s1Err('invalid_input'))); if (e) return e;
+    const m = exMatch({ id: '', series: ref.series, issue: String(ref.issue == null ? '' : ref.issue), year: ref.year || '', pubId: typeof ref.pubId === 'string' ? ref.pubId : '' }, exIndexBuild());
+    const s = m.owned[0] || m.wish[0];
+    if (!s) return s1Err('invalid_input');
+    openSingleInspector(s);
+    return { ok: true };
+  };
+  const cmdUndo = async token => { const f = s2Undo.get(token); if (!f) return false; s2Undo.delete(token); await f(); return true; };
+  const PERSONAL_CONTRACTS_V1 = Object.freeze({
+    version: 1,
+    lens: Object.freeze({ isEnabled: personalizeEnabled, statusFor: lensStatusFor, guideProgress: lensGuideProgress }),
+    commands: Object.freeze({ gesture: s2Gesture, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, openItem: cmdOpenItem, undo: cmdUndo }),
+    settings: Object.freeze({ personalize: personalizeEnabled, setPersonalize })
+  });
+
   window.Panel = {
+    contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     backup: { providers: () => BUNDLE_PROVIDERS.map(p => ({ id: p.id, domain: p.domain, schema: p.schema })), export: bundleExport, validate: bundleValidate, restore: bundleRestore, undo: bundleUndo, fingerprint: bunFingerprint, fingerprints: bunFingerprints, toV3: bundleToV3, fromLegacy: bundleFromLegacy, downloadFull: bundleDownloadFull, openExportDialog: openBundleExportDialog, openRestoreDialog: openBundleRestoreDialog },
     parseComicBarcode,

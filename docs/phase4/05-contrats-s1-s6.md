@@ -123,3 +123,20 @@ S2 ne dépend **pas** de S1 : une commande peut être envoyée sans lecture pré
 
 ## 9. Futur contrat Community (réservé)
 `CommunityFeed.v1` (publications, listes publiques, avis) et `CommunityPublish.v1` (publication **explicite** par l'utilisateur d'une copie de ses données). Ils seront définis avec Community ; aucun n'est créé aujourd'hui.
+
+## Réalisation de S1 et S2 (sous-lot 3.1b-2, 8 novembre 2026)
+- **API** : `Panel.contracts.personal.v1` = `{ version, lens, commands, settings }`, gelé.
+- **P1-a (D-22)** : le profil local est traité comme connecté. Le réglage `panel_explorer_personalize` (activé par défaut) fait partie des préférences sauvegardées (section `app`). Son interface arrive au sous-lot 3.1b-3, quand Explorer consommera S1.
+- **S1** :
+  - `statusFor` renvoie exactement `{ owned, wishlisted, inPullList, read }` ;
+  - `read` vient de `readingStatusOf` (domaine Lecture), alimenté provisoirement par `isRead` et remplacé par L1 (L-D2) ;
+  - `guideProgress` renvoie `{ status, derivedFromCollection }` ;
+  - erreurs : `disabled`, `unavailable`, `invalid_input`, `rate_limited` (au-delà de 500 références ou de 2 000 entrées).
+- **S2** :
+  - un jeton n'est délivré que par `commands.gesture(event)` pour un événement `isTrusted` ; il est à usage unique et valable 10 s ; sans lui : `gesture_required` ;
+  - `addToCollection` ouvre la fiche créée pour que l'utilisateur la complète (aucun prix payé inventé, D-18) ;
+  - `setGuideProgress` est exécutée par le domaine Lecture ; `openItem` ouvre la fiche dans Collection sans renvoyer d'identifiant à Explorer ;
+  - annulation par `commands.undo(undoToken)`.
+- **Tests** : test 33 de `run-all-tests.js`, avec de vrais clics envoyés par CDP (`Input.dispatchMouseEvent`).
+- **Hors de ce sous-lot** : Explorer n'utilise pas encore S1 et S2 (sous-lot 3.1b-3).
+

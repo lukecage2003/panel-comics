@@ -2896,6 +2896,101 @@ const waitForCdp = async () => {
         test: 'Sauvegardes par domaine (lot 3.1b-1) : panel-bundle v1, intégrité sha256, restauration d\'un domaine seul, annulation, altération refusée, références conservées, conversion v3, anciens fichiers, garde-fou, Explorer absent, clés chiffrées',
         ok: !!t32 && t32fail.length === 0
       });
+      // ─── Test 33 : lot 3.1b-2 — contrats locaux S1 PersonalLens.v1 et S2 PersonalCommands.v1 (docs/phase4/05 § 3 et § 4) ───
+      // Phase 1 : S1 (lecture seule, liste blanche, réglage, erreurs) et refus de S2 sans geste. Non destructif.
+      const t33a = await evalExpr(`(async () => {
+        const P = window.Panel, r = {};
+        const C = P && P.contracts && P.contracts.personal && P.contracts.personal.v1;
+        if (!C) return { api: false };
+        r.api = C.version === 1 && Object.isFrozen(C) && ['isEnabled', 'statusFor', 'guideProgress'].every(k => typeof C.lens[k] === 'function')
+          && ['gesture', 'addToWishlist', 'addToCollection', 'addToPullList', 'followSeries', 'setGuideProgress', 'openItem', 'undo'].every(k => typeof C.commands[k] === 'function');
+        await P.releases.ready(); await P.explorer.load();
+        const lsPrint = () => { const o = []; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o.push([k, localStorage.getItem(k)]); } return JSON.stringify(o.sort()); };
+        const prevSetting = localStorage.getItem('panel_explorer_personalize');
+        localStorage.removeItem('panel_explorer_personalize');
+        r.defaultEnabled = C.lens.isEnabled() === true; // P1-a (D-22) : le profil local est traité comme connecté
+        const singles = P.getPhysicalSingles();
+        const s = singles.find(x => !x.isWishlist && x.series && (x.coverYear || x.pubId));
+        const refs = singles.slice(0, 40).map(x => ({ series: x.series, issue: x.issue, year: x.coverYear || '', pubId: x.pubId || '' }));
+        const ls0 = lsPrint();
+        const st = C.lens.statusFor(refs);
+        const one = s ? C.lens.statusFor([{ series: s.series, issue: s.issue, year: s.coverYear || '', pubId: s.pubId || '' }]) : null;
+        const g = P.explorer.guides()[0];
+        const gd = g ? P.explorer.guide(g.id) : null;
+        const entryIds = gd ? ((gd.orders || [])[0] || { entries: [] }).entries.map(e => e.id) : [];
+        const gp = gd ? C.lens.guideProgress(gd.id, entryIds) : { ok: true, items: [] };
+        r.noWrite = lsPrint() === ls0;
+        const allowed = ['owned', 'wishlisted', 'inPullList', 'read'];
+        r.whitelist = st.ok === true && st.items.length === refs.length && st.items.every(it => JSON.stringify(Object.keys(it)) === JSON.stringify(allowed) && Number.isInteger(it.owned) && [it.wishlisted, it.inPullList, it.read].every(v => typeof v === 'boolean'));
+        const txt = JSON.stringify(st) + JSON.stringify(one);
+        r.noForbidden = !/price|value|condition|grade|location|box|notes|purchase|"id"/i.test(txt) && singles.slice(0, 40).every(x => !txt.includes(x.id));
+        r.ownedDetected = !s || (one.ok && one.items[0].owned >= 1);
+        r.guideProgress = gp.ok === true && gp.items.length === entryIds.length && gp.items.every(it => ['', 'to_read', 'reading', 'read', 'skipped'].includes(it.status) && typeof it.derivedFromCollection === 'boolean' && Object.keys(it).length === 2);
+        r.errors = C.lens.statusFor('x').error === 'invalid_input' && C.lens.statusFor([{}]).error === 'invalid_input' && C.lens.statusFor(new Array(501).fill({ series: 'X' })).error === 'rate_limited' && C.lens.guideProgress(5, []).error === 'invalid_input';
+        C.settings.setPersonalize(false);
+        r.disabled = C.lens.isEnabled() === false && C.lens.statusFor(refs).error === 'disabled' && C.lens.guideProgress('x', []).error === 'disabled';
+        if (prevSetting === null) localStorage.removeItem('panel_explorer_personalize'); else localStorage.setItem('panel_explorer_personalize', prevSetting);
+        r.settingBackedUp = P.backup ? (await P.backup.export({ domains: ['app'] })).sections.app !== undefined : false;
+        // S2 sans geste : refusé ; un événement synthétique (non isTrusted) ne donne pas de jeton
+        const pub = P.releases.all().find(p => p && p.id);
+        r.pubAvailable = !!pub;
+        const fp0 = await P.backup.fingerprint('collection');
+        r.noGesture = C.commands.addToWishlist({ pubId: pub && pub.id }, {}).error === 'gesture_required' && C.commands.addToWishlist({ pubId: pub && pub.id }, { gesture: 'g_faux' }).error === 'gesture_required'
+          && C.commands.gesture(new MouseEvent('click')) === null && C.commands.gesture(null) === null && (await C.commands.setGuideProgress('g', 'ek_x', 'read', {})).error === 'gesture_required';
+        r.noGestureNoWrite = (await P.backup.fingerprint('collection')) === fp0;
+        // Bouton de test : un vrai clic (Input.dispatchMouseEvent) fournit un jeton de geste
+        window.__t33 = { tokens: [], fp0, pubId: pub && pub.id, entry: entryIds[0] || null, guide: gd && gd.id };
+        const b = document.createElement('button');
+        b.id = 't33gesture'; b.textContent = 'T33'; b.style.cssText = 'position:fixed;left:4px;top:4px;width:60px;height:30px;z-index:2147483647';
+        b.addEventListener('click', e => { window.__t33.tokens.push(C.commands.gesture(e)); });
+        document.body.appendChild(b);
+        return r;
+      })()`);
+      for (let i = 0; i < 6; i++) {
+        await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: 30, y: 18, button: 'left', clickCount: 1 });
+        await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: 30, y: 18, button: 'left', clickCount: 1 });
+      }
+      // Phase 2 : commandes avec jeton de geste, dédoublonnage, jeton à usage unique, annulation
+      const t33b = await evalExpr(`(async () => {
+        const P = window.Panel, C = P.contracts.personal.v1, X = window.__t33, r = {};
+        document.getElementById('t33gesture').remove();
+        const tk = X.tokens.filter(Boolean);
+        r.trustedTokens = tk.length === 6;
+        if (!X.pubId || tk.length < 6) return r;
+        const w1 = C.commands.addToWishlist({ pubId: X.pubId }, { gesture: tk[0] });
+        const w2 = C.commands.addToWishlist({ pubId: X.pubId }, { gesture: tk[1] });
+        r.wishlist = w1.ok === true && w2.ok === true && w2.duplicate === true;
+        r.tokenSingleUse = C.commands.addToWishlist({ pubId: X.pubId }, { gesture: tk[0] }).error === 'gesture_required';
+        if (w1.undoToken) await C.commands.undo(w1.undoToken);
+        r.wishUndo = (await P.backup.fingerprint('collection')) === X.fp0;
+        r.invalid = C.commands.addToWishlist({ pubId: 'pbc_inexistante' }, { gesture: tk[2] }).error === 'invalid_input';
+        if (X.entry) {
+          const before = P.explorer.progress(X.entry);
+          const sp = await C.commands.setGuideProgress(X.guide, X.entry, before && before.status === 'skipped' ? 'reading' : 'skipped', { gesture: tk[3] });
+          const changed = P.explorer.progress(X.entry);
+          if (sp.undoToken) await C.commands.undo(sp.undoToken);
+          const after = P.explorer.progress(X.entry);
+          r.guideCommand = sp.ok === true && !!changed && changed.status !== (before ? before.status : '') && (after ? after.status : '') === (before ? before.status : '');
+        } else r.guideCommand = true;
+        const name = 'T33 Série suivie fictive';
+        const f1 = C.commands.followSeries({ series: name }, { gesture: tk[4] });
+        const f2 = C.commands.followSeries({ series: name }, { gesture: tk[5] });
+        r.follow = f1.ok === true && !f1.duplicate && f2.ok === true && f2.duplicate === true;
+        if (f1.undoToken) await C.commands.undo(f1.undoToken);
+        const meta = P.getSeriesMeta();
+        r.followUndo = !Object.values(meta).some(m => m && m.name === name && m.pull);
+        r.finalCollection = (await P.backup.fingerprint('collection')) === X.fp0;
+        return r;
+      })()`);
+      const t33 = Object.assign({}, t33a, t33b);
+      console.log('Résultat Test 33:', JSON.stringify(t33));
+      const t33keys = ['api', 'defaultEnabled', 'noWrite', 'whitelist', 'noForbidden', 'ownedDetected', 'guideProgress', 'errors', 'disabled', 'settingBackedUp', 'pubAvailable', 'noGesture', 'noGestureNoWrite', 'trustedTokens', 'wishlist', 'tokenSingleUse', 'wishUndo', 'invalid', 'guideCommand', 'follow', 'followUndo', 'finalCollection'];
+      const t33fail = t33keys.filter(k => !t33 || t33[k] !== true);
+      if (t33fail.length) console.log('Test 33 — vérifications en échec :', t33fail.join(', '));
+      testResults.push({
+        test: 'Contrats S1 et S2 (lot 3.1b-2) : statuts minimaux en liste blanche, lecture seule, réglage désactivable (P1-a), erreurs, commandes seulement après un vrai geste, jeton à usage unique, dédoublonnage, annulation',
+        ok: t33fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

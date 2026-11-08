@@ -109,6 +109,11 @@ Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec op
   - test 32 (R1 à R9) ; test 29 adapté au nouveau format de la sauvegarde complète ;
   - défaut trouvé par le test et corrigé : l'annulation d'une restauration doit reprendre une copie profonde et suspendre la resynchronisation des emplacements, sinon l'état d'avant n'est pas rétabli à l'identique.
   - Résultats : front **31/31**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-0` créées ; aucune supprimée.
+- **3.1b-2 Contrats S1 et S2** ([réalisation](phase4/05-contrats-s1-s6.md#réalisation-de-s1-et-s2-sous-lot-31b-2-8-novembre-2026)) :
+  - `Panel.contracts.personal.v1` : statuts minimaux en liste blanche, lecture seule, réglage de personnalisation, P1-a ;
+  - commandes acceptées seulement après un vrai geste de l'utilisateur, avec un jeton à usage unique ;
+  - dédoublonnage par Collection et annulation exacte ;
+  - test 33 ; front **32/32**. Sauvegardes `*.backup.20261108-3.1b-2`.
 
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.
