@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 06 — Spécifications des lots F1 (finances) et L1 (lecture)
 
-Statut : **spécifications définitives, prêtes à valider** (8 novembre 2026, révision 2 : exports, cas limites, sous-lots ; analyse des décisions en partie C). F1 et L1 sont intégrés à la feuille de route (D-17). **Mise à jour du 8 novembre 2026 : F1 implémenté** (sous-lots F1-0 à F1-4, F1-5 en partie ; décisions D-27 à D-29), voir § A.12 ; L1 : voir § B.8.
+Statut : **spécifications définitives, prêtes à valider** (8 novembre 2026, révision 2 : exports, cas limites, sous-lots ; analyse des décisions en partie C). F1 et L1 sont intégrés à la feuille de route (D-17). **Mise à jour du 8 novembre 2026 : F1 implémenté** (sous-lots F1-0 à F1-4, F1-5 en partie ; décisions D-27 à D-29), voir § A.12 ; L1 implémenté (L1-1 à L1-3 ; L1-4 en partie), voir § B.8.
 
 Ce document prolonge :
 - le modèle financier de [`02`](02-audit-financier.md) § 3 ;
@@ -320,4 +320,17 @@ Implémenté localement et testé (test 35 de `run-all-tests.js`, suite complèt
 
 API : `Panel.finance` (`summary`, `byCurrency`, `costOf`, `realizedGainOf`, `dispose`, `restoreDisposal`, `lots`, `previewLot`, `createLot`, `removeLot`, `defaultMethod`, `log`, `undo`, `defaultCurrency`, `setDefaultCurrency`, `format`).
 Risque résiduel : l'affichage d'un montant de devise non précisée garde le symbole « $ » hérité de F0 (aucun réétiquetage sans geste, D-28) ; seules les fiches en devise explicite s'affichent dans leur devise.
+
+## B.8 Réalisation de L1 (mission « Autonomous night shift », 8 novembre 2026)
+Implémenté localement et testé (test 36 de `run-all-tests.js`, suite complète au vert). Décision appliquée : D-30 (L-D1 à L-D3).
+
+| Sous-lot | Réalisé | Écarts |
+|---|---|---|
+| L1-1 | Domaine Lecture : `panel_reading_v1` (`states`, `log` en ajout seulement, `conflicts`) ; `ReadingState` (statut, première et dernière lecture, relectures, note, position de reprise, source) ; `workKey` = `pub:<pubId>` si la publication est connue, sinon `loc:<titre>#<numéro>@<année du volume>` (tolérance ±1 an à la lecture) ; lecture de compatibilité de `isRead` sans écriture, exemplaires vendus compris ; section `works` du fournisseur B1 Lecture (fusion sans écrasement, annulation) | Une autre édition (VO/VF, recueil) est une autre œuvre ; pas encore de relation d'édition (S5) |
+| L1-2 | S1 `read` fourni par Lecture (l'état enregistré prime) ; S2 `markRead` (ajout compatible de v1, jeton de geste) ; la case « Lu » d'une fiche et le bouton de l'inspecteur passent par Lecture : un geste vaut pour tous les exemplaires de l'œuvre ; `isRead` reste écrit (double écriture transitoire, L-D2) ; filtres, comptes et séries utilisent le statut effectif | — |
+| L1-3 | Migration de `isRead` (fenêtre « Lecture par œuvre… ») : aperçu, idempotence (un état existant n'est jamais réécrit), annulation immédiate et annulation durable par lot (`undoMigration`) ; notes divergentes : la plus récente, sinon la plus haute, conflit conservé et résoluble (`resolveConflict`, valeur écartée journalisée) ; `isRead` et `rating` restent sur les fiches | La migration n'est jamais lancée automatiquement : elle attend le geste de l'utilisateur |
+| L1-4 (partiel) | API : progression de série dérivée (jamais stockée) et « prochain numéro », reprise (`resume`), statistiques (lus, en cours, à lire, abandonnés, relectures, lus sans possession, pile à lire, conflits ouverts) | Entrée Lecture dans la navigation : dépend de U-D1 (non tranchée) |
+
+API : `Panel.reading` (`keyOf`, `statusOf`, `isRead`, `state`, `list`, `history`, `setStatus`, `rate`, `setPosition`, `migrationPreview`, `migrate`, `undoMigration`, `conflicts`, `resolveConflict`, `seriesProgress`, `stats`, `resume`, `undo`).
+Backend : table `reading_states` préparée (migration 8, lot 3.4 local).
 

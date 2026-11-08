@@ -1821,6 +1821,7 @@
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
       <button class="btn secondary" id="backupOptionsBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Sauvegarder un seul domaine (Collection, Lecture, Explorer), au format compatible, ou avec vos clés chiffrées">Sauvegarde par domaine…</button>
+      <button class="btn secondary" id="readingMigrateBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Regrouper « lu » et les notes par œuvre (Lecture). Les fiches ne sont pas modifiées.">Lecture par œuvre…</button>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
       <button class="btn secondary" id="openDataAdminBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Sources & données</button>
       <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
@@ -7031,6 +7032,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         });
         applyStructuredCopyFields(physicalSingles[idx]);
         applyFinanceFormFields(physicalSingles[idx], prevItem);
+        if (!!prevItem.isRead !== isRead || rdReadOfCopy(prevItem) !== isRead) rdFromCopyToggle(physicalSingles[idx]);
         applyCascadeLocation(physicalSingles[idx]);
         withCover(physicalSingles[idx], prevItem);
         applyFormValuation(physicalSingles[idx], prevEst);
@@ -7049,6 +7051,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       };
       applyStructuredCopyFields(newSingle);
       applyFinanceFormFields(newSingle, null);
+      if (isRead) rdFromCopyToggle(newSingle);
       applyCascadeLocation(newSingle);
       withCover(newSingle, null);
       applyFormValuation(newSingle, null);
@@ -7191,12 +7194,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const readBtn = $('inspectReadToggle');
     if (readBtn) {
       const paintRead = () => {
-        readBtn.className = 'read-dot ' + (item.isRead ? 'read' : 'unread');
-        readBtn.textContent = item.isRead ? 'Lu' : 'Non lu';
+        const rd = rdReadOfCopy(item);
+        readBtn.className = 'read-dot ' + (rd ? 'read' : 'unread');
+        readBtn.textContent = rd ? 'Lu' : 'Non lu';
       };
       paintRead();
       readBtn.onclick = () => {
-        item.isRead = !item.isRead;
+        item.isRead = !rdReadOfCopy(item);
+        rdFromCopyToggle(item);
         persistSingles();
         paintRead();
         renderSinglesCollection();
@@ -7283,7 +7288,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     fillFinanceFormFields(item);
     setPurchasePrefill(false);
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = item.purchaseDate || '';
-    if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = !!item.isRead;
+    if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = rdReadOfCopy(item);
     renderStarInput($('singleRatingInput'), item.rating || 0);
     if ($('singleYearInput')) $('singleYearInput').value = item.coverYear || '';
     $('singleEstValueInput').dataset.source = item.valueSource || (numOrNull(item.estValue) !== null ? 'manual' : '');
@@ -7392,7 +7397,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     $('statSinglesSeries').textContent = ownedSeries.length;
     if ($('statSinglesCompleteSub')) $('statSinglesCompleteSub').textContent = ownedSeries.filter(g => g.isRun && g.missing.length === 0).length + ' runs complets';
-    if ($('statSinglesReadSub')) $('statSinglesReadSub').textContent = owned.filter(s => s.isRead).length + ' lus';
+    if ($('statSinglesReadSub')) $('statSinglesReadSub').textContent = owned.filter(rdReadOfCopy).length + ' lus';
     if ($('statSinglesGradedSub')) $('statSinglesGradedSub').textContent = (fin.valueUnknown ? fin.valueUnknown + ' sans valeur · ' : '') + owned.filter(s => isGradedCondition(s.condition)).length + ' gradés';
     if ($('statSinglesWishlist')) $('statSinglesWishlist').textContent = wish.length;
     if ($('statSinglesWishlistSub')) { const wv = sumKnown(wish, valueOf); $('statSinglesWishlistSub').textContent = wv.n ? money(wv.total) + ' estimés' + (wv.unknown ? ' (' + wv.unknown + ' sans valeur)' : '') : 'valeur inconnue'; }
@@ -7425,8 +7430,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (activeSingleFilter === 'Indé' && ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse'].includes(s.publisher)) return false;
     if (!['all', 'key', 'graded', 'wishlist', 'disposed', 'Indé'].includes(activeSingleFilter) && s.publisher !== activeSingleFilter) return false;
 
-    if (singlesReadFilter === 'read' && !s.isRead) return false;
-    if (singlesReadFilter === 'unread' && s.isRead) return false;
+    if (singlesReadFilter === 'read' && !rdReadOfCopy(s)) return false;
+    if (singlesReadFilter === 'unread' && rdReadOfCopy(s)) return false;
 
     const boxSelect = $('boxFilterSelect');
     const activeBox = boxSelect ? boxSelect.value : 'all';
@@ -7467,7 +7472,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     on('[data-inspect]', () => openSingleInspector(item));
     on('[data-edit]', () => editSingleIssue(item));
     on('[data-del]', () => removeSingleWithUndo(item));
-    on('[data-toggle-read]', () => { item.isRead = !item.isRead; persistSingles(); renderSinglesCollection(); });
+    on('[data-toggle-read]', () => { item.isRead = !rdReadOfCopy(item); rdFromCopyToggle(item); persistSingles(); renderSinglesCollection(); });
   };
 
   // RENDU DE LA COLLECTION PHYSIQUE DE SINGLES AVEC FILTRAGE, RÉPARTITION & TRI
@@ -7560,7 +7565,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<span class="row-num" style="color:var(--gold);font-weight:700" title="' + escapeHtml(VALUE_SOURCE_LABELS[item.valueSource] || 'Valeur') + '">' + valuePrefix(item) + money(value) + '</span>' +
           '<div class="row-actions">' +
             (item.isWishlist ? '<span class="read-dot" style="background:var(--tint-yellow);color:var(--orange)"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wish</span>'
-              : '<button class="read-dot ' + (item.isRead ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (item.isRead ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
+              : '<button class="read-dot ' + (rdReadOfCopy(item) ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (rdReadOfCopy(item) ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
             '<button class="card-action-btn danger" data-del title="Retirer" aria-label="Retirer"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg></button>' +
           '</div>';
         wireSingleActions(row, item);
@@ -7590,7 +7595,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '</div>' +
           '<div class="comic-caption-row" style="font-size: 12px;color:var(--muted)">' +
             (item.isWishlist ? '<span style="color:var(--orange)">' + escapeHtml(wishLabel(item)) + '</span>'
-              : '<button class="read-dot ' + (item.isRead ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (item.isRead ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
+              : '<button class="read-dot ' + (rdReadOfCopy(item) ? 'read' : 'unread') + '" data-toggle-read title="Basculer lu / non lu">' + (rdReadOfCopy(item) ? '<svg class=ic aria-hidden=true><use href=#ic-check /></svg> Lu' : 'Non lu') + '</button>') +
             (item.rating ? '<span class="stars">' + starsText(item.rating) + '</span>' : '<span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="' + escapeHtml(locationOf(item).text) + '">' + escapeHtml(locationOf(item).text) + '</span>') +
           '</div>' +
           '<div class="comic-card-action-bar">' +
@@ -7659,7 +7664,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         owned, wish, ownedNums, wishNums, start, end, missing, completion,
         ownedCount: owned.length,
         value: (r => r.n ? r.total : null)(sumKnown(owned, valueOf)),
-        readCount: owned.filter(s => s.isRead).length,
+        readCount: owned.filter(rdReadOfCopy).length,
         cover: sortedOwned[0] || g.items[0],
         pulled: isPulled(g.name),
         hasTotal: Number.isInteger(meta.total),
@@ -7711,7 +7716,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       for (let i = g.start; i <= g.end; i++) {
         const ownedItems = g.owned.filter(s => issueNumber(s) === i);
         if (ownedItems.length) {
-          const read = ownedItems.some(s => s.isRead);
+          const read = ownedItems.some(rdReadOfCopy);
           chips.push(`<button class="issue-chip owned${read ? ' read' : ''}" data-n="${i}" title="#${i} possédé${ownedItems.length > 1 ? ' (' + ownedItems.length + ' ex.)' : ''}${read ? ' · lu' : ''}">${i}${ownedItems.length > 1 ? '×' + ownedItems.length : ''}</button>`);
         } else if (g.wishNums.has(i)) {
           chips.push(`<button class="issue-chip wish" data-n="${i}" title="#${i} en wishlist">${i}</button>`);
@@ -9656,6 +9661,200 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const gdIssue = v => gdStr(v, 20).replace(/^#\s*/, '');
   const gdBase = s => catNorm(String(s || '').replace(/\(\s*\d{4}\s*\)/g, ' ').replace(/\bvol(ume)?\.?\s*\d+\b/ig, ' '));
   const gdEntryKey = (series, volume, issue) => 'ek_' + stableHash(gdBase(series) + '|' + catNorm(volume) + '|' + gdIssue(issue).toLowerCase());
+  // ── Lot L1 : domaine Lecture (docs/directeur/06 partie B ; D-30) ──
+  // État par œuvre dans localStorage panel_reading_v1 ; journal en ajout seulement. isRead et rating restent sur les fiches (deux versions au moins).
+  // Lecture de compatibilité : sans état enregistré, une œuvre est lue si un de ses exemplaires (même vendu) porte isRead.
+  const rdYear = v => { const y = parseInt(String(v || '').slice(0, 4), 10); return y >= 1900 && y <= 2200 ? y : null; };
+  const rdBaseKey = (series, issue) => gdBase(series) + '#' + gdIssue(issue).toLowerCase(); // même règle que colKey (S1)
+  const RD_KEY = 'panel_reading_v1';
+  const RD_STATUSES = ['to_read', 'reading', 'read', 'abandoned'];
+  const RD_LOG_MAX = 5000;
+  const rdVolYear = (series, year) => { const m = String(series || '').match(/\(\s*(\d{4})\s*\)/); return m ? +m[1] : rdYear(year); };
+  // workKey : publication du catalogue si connue, sinon clé locale « titre + numéro @ année de volume ». Une autre édition (VO/VF, recueil) est une autre œuvre.
+  const rdKeys = ref => {
+    if (!ref || typeof ref !== 'object' || !String(ref.series || '').trim()) return null;
+    const base = 'loc:' + rdBaseKey(ref.series, ref.issue == null ? '' : String(ref.issue));
+    const y = rdVolYear(ref.series, ref.year || ref.coverYear || ref.releaseDate || ref.coverDate);
+    const local = base + '@' + (y || '');
+    const alts = y ? [base + '@' + (y - 1), base + '@' + (y + 1), base + '@'] : [];
+    const pub = typeof ref.pubId === 'string' && ref.pubId ? 'pub:' + ref.pubId : null;
+    return { primary: pub || local, all: [pub, local].concat(alts).filter(Boolean), local, base };
+  };
+  const rdEmpty = () => ({ version: 1, states: {}, log: [], conflicts: {} });
+  let rdCache = null, rdCacheRaw = null;
+  const rdLoad = () => {
+    const raw0 = rdRaw();
+    if (rdCache && raw0 === rdCacheRaw) return rdCache; // relu si la clé a changé ailleurs (restauration, autre onglet)
+    let d = null;
+    try { d = JSON.parse(raw0 || 'null'); } catch (_) { d = null; }
+    rdCacheRaw = raw0;
+    if (!d || typeof d !== 'object' || d.version !== 1) d = rdEmpty();
+    if (!d.states || typeof d.states !== 'object') d.states = {};
+    if (!Array.isArray(d.log)) d.log = [];
+    if (!d.conflicts || typeof d.conflicts !== 'object') d.conflicts = {};
+    rdCache = d;
+    return d;
+  };
+  const rdRaw = () => { try { return localStorage.getItem(RD_KEY); } catch (_) { return null; } };
+  const rdSave = () => { const d = rdLoad(); if (d.log.length > RD_LOG_MAX) d.log = d.log.slice(-RD_LOG_MAX); const j = JSON.stringify(d); localStorage.setItem(RD_KEY, j); rdCacheRaw = j; };
+  const rdSetRaw = raw => { rdCache = null; try { if (raw === null || raw === undefined) localStorage.removeItem(RD_KEY); else localStorage.setItem(RD_KEY, raw); } catch (_) {} };
+  const rdFind = ref => { const k = rdKeys(ref); if (!k) return null; const st = rdLoad().states; const key = k.all.find(x => st[x]); return key ? { key, state: st[key] } : null; };
+  const rdCopiesOf = ref => { const k = rdKeys(ref); if (!k) return []; return physicalSingles.filter(s => s && !s.isWishlist && (() => { const sk = rdKeys(s); return sk && (sk.primary === k.primary || k.all.includes(sk.local) || (k.primary.startsWith('pub:') && sk.primary === k.primary)); })()); };
+  // Index de compatibilité (clés des exemplaires lus, sortis compris), recalculé à chaque tâche : aucun parcours complet par fiche
+  let rdCompatCache = null, rdCompatList = null, rdCompatLen = -1;
+  const rdCompat = () => {
+    if (rdCompatCache && rdCompatList === physicalSingles && rdCompatLen === physicalSingles.length) return rdCompatCache;
+    const set = new Set();
+    physicalSingles.forEach(s => { if (!s || s.isWishlist || !s.isRead) return; const k = rdKeys(s); if (!k) return; set.add(k.local); if (s.pubId) set.add('pub:' + s.pubId); });
+    rdCompatCache = set; rdCompatList = physicalSingles; rdCompatLen = physicalSingles.length;
+    Promise.resolve().then(() => { rdCompatCache = null; });
+    return set;
+  };
+  // Statut effectif : l'état enregistré prime ; sinon compatibilité isRead (au moins un exemplaire lu = lu, sans perte)
+  const rdStatusOf = ref => { const f = rdFind(ref); if (f) return f.state.status; const k = rdKeys(ref); if (!k) return ''; const c = rdCompat(); return k.all.some(x => c.has(x)) ? 'read' : ''; };
+  const rdIsRead = ref => rdStatusOf(ref) === 'read';
+  const rdUndo = new Map();
+  const rdToken = fn => { const t = 'rd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); rdUndo.set(t, fn); return t; };
+  const rdLog = (workKey, event, note, extra) => { rdLoad().log.push(Object.assign({ id: 'rl_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), workKey, at: new Date().toISOString(), event, note: String(note || '').slice(0, 300) }, extra || {})); };
+  const rdLabel = ref => ({ series: String(ref.series || '').slice(0, 200), issue: String(ref.issue == null ? '' : ref.issue).slice(0, 20), year: rdVolYear(ref.series, ref.year || ref.coverYear) || null, pubId: typeof ref.pubId === 'string' && ref.pubId ? ref.pubId : null });
+  // Changement de statut (un seul geste pour tous les exemplaires et éditions identiques)
+  const rdSetStatus = (ref, status, opts = {}) => {
+    const k = rdKeys(ref);
+    if (!k) return { ok: false, error: 'invalid_input' };
+    if (status !== '' && !RD_STATUSES.includes(status)) return { ok: false, error: 'invalid_input' };
+    const raw = rdRaw(), d = rdLoad(), f = rdFind(ref), now = new Date().toISOString();
+    const key = f ? f.key : k.primary;
+    const prev = f ? f.state : null, prevStatus = prev ? prev.status : rdStatusOf(ref);
+    if (status === '' && !prev) return { ok: true, unchanged: true, workKey: key };
+    const st = prev ? Object.assign({}, prev) : Object.assign({ workKey: key, firstReadAt: null, lastReadAt: null, readCount: 0, rating: null, review: null, position: null, createdAt: now }, rdLabel(ref));
+    st.status = status || 'to_read';
+    if (st.status === 'read') {
+      st.lastReadAt = opts.at || now; if (!st.firstReadAt) st.firstReadAt = st.lastReadAt;
+      if (prevStatus !== 'read' || opts.reread) st.readCount = (st.readCount || 0) + 1;
+    }
+    st.source = opts.source || 'user'; st.updatedAt = now;
+    d.states[key] = st;
+    const event = st.status === 'read' ? (prevStatus === 'read' || (st.readCount > 1 && opts.reread) ? 'reread' : 'finished') : st.status === 'reading' ? 'started' : st.status === 'abandoned' ? 'abandoned' : 'status';
+    if (prevStatus !== st.status || opts.reread) rdLog(key, event, opts.note, { from: prevStatus || null, to: st.status, by: st.source });
+    rdSave(); rdCompatCache = null;
+    return { ok: true, workKey: key, status: st.status, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  const rdRate = (ref, rating, opts = {}) => {
+    const k = rdKeys(ref), r = rating === null ? null : parseInt(rating, 10);
+    if (!k || (r !== null && !(r >= 0 && r <= 5))) return { ok: false, error: 'invalid_input' };
+    const raw = rdRaw(), d = rdLoad(), f = rdFind(ref), now = new Date().toISOString();
+    const key = f ? f.key : k.primary;
+    const st = f ? Object.assign({}, f.state) : Object.assign({ workKey: key, status: rdStatusOf(ref) || 'to_read', firstReadAt: null, lastReadAt: null, readCount: 0, review: null, position: null, createdAt: now, source: 'user' }, rdLabel(ref));
+    if ((st.rating === undefined ? null : st.rating) !== r) rdLog(key, 'rating', opts.note, { from: st.rating === undefined ? null : st.rating, to: r, by: opts.source || 'user' });
+    st.rating = r; st.ratedAt = now; st.updatedAt = now;
+    d.states[key] = st; rdSave();
+    return { ok: true, workKey: key, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  const rdSetPosition = (ref, pos) => {
+    const f = rdFind(ref);
+    if (!f) return { ok: false, error: 'unknown_work' };
+    const raw = rdRaw();
+    const page = pos && Number.isInteger(pos.page) && pos.page >= 0 ? pos.page : null;
+    f.state.position = { page, note: String((pos && pos.note) || '').slice(0, 300) }; f.state.updatedAt = new Date().toISOString();
+    rdSave();
+    return { ok: true, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  // Migration de isRead (L-D2) : aperçu, idempotence, annulation ; isRead et rating restent sur les fiches
+  const rdMigrationPlan = () => {
+    const st = rdLoad().states, groups = new Map();
+    physicalSingles.forEach(s => {
+      if (!s || s.isWishlist || !s.isRead) return;
+      const k = rdKeys(s); if (!k) return;
+      if (k.all.some(x => st[x])) return; // déjà un état : jamais réécrit
+      const g = groups.get(k.primary) || { key: k.primary, ref: s, copies: [] };
+      g.copies.push(s); groups.set(k.primary, g);
+    });
+    return [...groups.values()].map(g => {
+      const rated = g.copies.filter(s => (parseInt(s.rating, 10) || 0) > 0).map(s => ({ copyId: s.id, rating: parseInt(s.rating, 10), at: s.updatedAt || s.addedAt || null }));
+      const distinct = [...new Set(rated.map(x => x.rating))];
+      // L-D3 (D-30) : la plus récente, puis la plus haute ; les autres valeurs sont consignées, rien n'est écrasé
+      const chosen = rated.slice().sort((a, b) => String(b.at || '').localeCompare(String(a.at || '')) || b.rating - a.rating)[0] || null;
+      return { workKey: g.key, label: rdLabel(g.ref), copies: g.copies.map(s => s.id), rating: chosen ? chosen.rating : null, conflict: distinct.length > 1 ? rated : null };
+    });
+  };
+  const rdMigrate = () => {
+    const plan = rdMigrationPlan();
+    if (!plan.length) return { ok: true, created: 0, conflicts: 0, idempotent: true };
+    const raw = rdRaw(), d = rdLoad(), now = new Date().toISOString(), batch = 'mig_' + Date.now().toString(36);
+    let conflicts = 0;
+    plan.forEach(p => {
+      d.states[p.workKey] = Object.assign({ workKey: p.workKey, status: 'read', firstReadAt: null, lastReadAt: null, readCount: 1, rating: p.rating, review: null, position: null, createdAt: now, updatedAt: now, source: 'migrated:isRead', batch }, p.label);
+      rdLog(p.workKey, 'migrated', '', { by: 'migrated:isRead', copies: p.copies, batch });
+      if (p.conflict) { conflicts++; d.conflicts[p.workKey] = { kind: 'rating', candidates: p.conflict, chosen: p.rating, at: now, resolved: false }; }
+    });
+    rdSave();
+    return { ok: true, created: plan.length, conflicts, batch, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  // Annulation durable (après rechargement) : retire les états du lot de migration jamais modifiés depuis
+  const rdUndoMigration = batch => {
+    const d = rdLoad(), raw = rdRaw();
+    const keys = Object.keys(d.states).filter(k => d.states[k].batch === batch && d.states[k].source === 'migrated:isRead' && d.states[k].updatedAt === d.states[k].createdAt);
+    if (!keys.length) return { ok: false, error: 'Aucun état de ce lot de migration à retirer.' };
+    keys.forEach(k => { delete d.states[k]; delete d.conflicts[k]; rdLog(k, 'migration_undone', '', { batch, by: 'user' }); });
+    rdSave();
+    return { ok: true, removed: keys.length, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  const rdResolveConflict = (workKey, rating) => {
+    const d = rdLoad(), c = d.conflicts[workKey], st = d.states[workKey];
+    if (!c || !st) return { ok: false, error: 'Aucun conflit pour cette œuvre.' };
+    const r = parseInt(rating, 10);
+    if (!c.candidates.some(x => x.rating === r)) return { ok: false, error: 'Note absente des candidates.' };
+    const raw = rdRaw();
+    rdLog(workKey, 'rating', 'Rapprochement des notes', { from: st.rating, to: r, by: 'user', discarded: c.candidates.filter(x => x.rating !== r) });
+    st.rating = r; st.updatedAt = new Date().toISOString(); c.resolved = true; c.chosen = r;
+    rdSave();
+    return { ok: true, undoToken: rdToken(() => rdSetRaw(raw)) };
+  };
+  // Dérivés : série (jamais stockée), « prochain numéro », reprise, statistiques
+  const rdSeriesProgress = series => {
+    const base = gdBase(series), nums = new Map();
+    physicalSingles.forEach(s => { if (s && !s.isWishlist && gdBase(s.series) === base) { const n = issueNumber(s); if (Number.isFinite(n) && !nums.has(n)) nums.set(n, s); } });
+    const sorted = [...nums.keys()].sort((a, b) => a - b);
+    const read = sorted.filter(n => rdIsRead(nums.get(n)));
+    const next = sorted.find(n => !rdIsRead(nums.get(n)));
+    return { series: base, known: sorted.length, read: read.length, pct: sorted.length ? Math.round(read.length / sorted.length * 100) : null, next: next === undefined ? null : '#' + next };
+  };
+  const rdStats = () => {
+    const d = rdLoad(), states = Object.values(d.states), yearAgo = Date.now() - 365 * 864e5;
+    const by = s => states.filter(x => x.status === s).length;
+    const owned = physicalSingles.filter(s => s && isOwned(s));
+    const pile = owned.filter(s => rdStatusOf(s) !== 'read').length;
+    return { works: states.length, read: by('read'), reading: by('reading'), toRead: by('to_read'), abandoned: by('abandoned'), rereads: states.reduce((a, x) => a + Math.max(0, (x.readCount || 0) - 1), 0),
+      finishedLastYear: d.log.filter(l => (l.event === 'finished' || l.event === 'reread') && Date.parse(l.at) >= yearAgo).length, pileToRead: pile,
+      readNotOwned: states.filter(x => x.status === 'read' && !rdCopiesOf(x).length).length, openConflicts: Object.values(d.conflicts).filter(c => !c.resolved).length };
+  };
+  const rdResume = () => {
+    const states = Object.values(rdLoad().states).filter(x => x.status === 'reading').sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
+    return states.slice(0, 10).map(x => ({ workKey: x.workKey, series: x.series, issue: x.issue, position: x.position || null, next: x.series ? rdSeriesProgress(x.series).next : null }));
+  };
+  const READING_API = Object.freeze({
+    keyOf: ref => { const k = rdKeys(ref); return k ? k.primary : null; },
+    statusOf: rdStatusOf, isRead: rdIsRead,
+    state: ref => { const f = rdFind(ref); return f ? JSON.parse(JSON.stringify(f.state)) : null; },
+    list: () => JSON.parse(JSON.stringify(Object.values(rdLoad().states))),
+    history: workKey => rdLoad().log.filter(l => !workKey || l.workKey === workKey).map(l => JSON.parse(JSON.stringify(l))),
+    setStatus: rdSetStatus, rate: rdRate, setPosition: rdSetPosition,
+    migrationPreview: () => { const p = rdMigrationPlan(); return { works: p.length, copies: p.reduce((a, x) => a + x.copies.length, 0), conflicts: p.filter(x => x.conflict).length, plan: JSON.parse(JSON.stringify(p)) }; },
+    migrate: rdMigrate, undoMigration: rdUndoMigration,
+    conflicts: () => JSON.parse(JSON.stringify(rdLoad().conflicts)), resolveConflict: rdResolveConflict,
+    seriesProgress: rdSeriesProgress, stats: rdStats, resume: rdResume,
+    undo: token => { const f = rdUndo.get(token); if (!f) return false; rdUndo.delete(token); f(); return true; }
+  });
+  // Geste depuis Collection (case « Lu » d'un exemplaire) : l'œuvre entière passe par Lecture, isRead reste écrit (double écriture transitoire, L-D2)
+  const rdFromCopyToggle = item => {
+    if (!item || item.isWishlist) return;
+    const f = rdFind(item);
+    rdCompatCache = null;
+    if (item.isRead) rdSetStatus(item, 'read', { source: 'user' });
+    else if (f && f.state.status === 'read') rdSetStatus(item, 'to_read', { source: 'user' });
+  };
+  const rdReadOfCopy = s => rdStatusOf(s) === 'read';
+
 
   // ---------- Premier cas : King in Black (Marvel, 2020-2021)
   // Faits repris : titres, numéros, ordre et classement requis/facultatif de Comic Book Reading Orders (consulté le 7/11/2026).
@@ -10568,7 +10767,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     const byBox = Object.entries(groupBy(owned, s => { const r = locationOf(s); const up = r.path.filter(n => n.level !== 'divider'); return up.length ? up.map(n => n.name).join(' > ') : (r.text || 'Non rangé'); })).map(([k, l]) => ({ label: k, v: l.length })).sort((a, b) => b.v - a.v).slice(0, 8);
 
-    const readN = owned.filter(s => s.isRead).length;
+    const readN = owned.filter(rdReadOfCopy).length;
     const rated = owned.filter(s => s.rating);
     const avgRating = rated.length ? rated.reduce((a, s) => a + s.rating, 0) / rated.length : 0;
     const keys = owned.filter(s => s.keyType && s.keyType !== 'none').length;
@@ -12980,6 +13179,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     // Lot 3.1b-1 : la sauvegarde complète est au format panel-bundle v1 ; l'ancien format reste disponible (D-23)
     $('backupJsonBtn').onclick = () => { bundleDownloadFull().catch(err => alert('Sauvegarde impossible : ' + (err && err.message || err))); };
     if ($('backupOptionsBtn')) $('backupOptionsBtn').onclick = () => openBundleExportDialog();
+    if ($('readingMigrateBtn')) $('readingMigrateBtn').onclick = () => openReadingMigrationDialog();
     const exportLegacyV3 = () => {
       const data = {
         format: 'panel-backup',
@@ -13301,13 +13501,17 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     },
     {
       id: 'reading', domain: bunDomainOf('reading_progress'), schema: 1,
-      export: async () => ({ progress: bunClone([...exProgress.values()]) }),
-      counts: s => ({ progress: (s.progress || []).length }),
+      export: async () => ({ progress: bunClone([...exProgress.values()]), works: bunClone(rdLoad()) }),
+      counts: s => ({ progress: (s.progress || []).length, works: Object.keys((s.works && s.works.states) || {}).length }),
       normalize: s => {
         if (!s || typeof s !== 'object' || !Array.isArray(s.progress)) throw new Error('Section Lecture illisible.');
         const ex = sanitizeExplorerData({ editorial: [], progress: s.progress });
         const lost = s.progress.length - ex.progress.length;
-        return { progress: ex.progress, anomalies: lost ? [lost + ' progression(s) illisible(s) ignorée(s)'] : [] };
+        const w = s.works && typeof s.works === 'object' && s.works.version === 1 && s.works.states && typeof s.works.states === 'object' ? s.works : null;
+        const works = w ? { version: 1, states: Object.fromEntries(Object.entries(w.states).filter(([k, v]) => typeof k === 'string' && k.length <= 400 && v && typeof v === 'object' && RD_STATUSES.includes(v.status)).map(([k, v]) => [k, JSON.parse(JSON.stringify(v))])),
+          log: Array.isArray(w.log) ? w.log.filter(l => l && typeof l === 'object' && typeof l.workKey === 'string').slice(-RD_LOG_MAX).map(l => JSON.parse(JSON.stringify(l))) : [], conflicts: w.conflicts && typeof w.conflicts === 'object' ? JSON.parse(JSON.stringify(w.conflicts)) : {} } : null;
+        const lostW = w ? Object.keys(w.states).length - Object.keys(works.states).length : 0;
+        return { progress: ex.progress, works, anomalies: [].concat(lost ? [lost + ' progression(s) illisible(s) ignorée(s)'] : [], lostW ? [lostW + ' état(s) de lecture illisible(s) ignoré(s)'] : []) };
       }
     },
     {
@@ -13519,6 +13723,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     let res = { ok: true, added: 0, conflicts: 0, undo: () => true };
     if (col || ex || rd) res = await applyBackupRestore(payload, { mode, allowWithoutSnapshot: !col });
     if (!res.ok) return Object.assign({ domains: want }, res);
+    // États de lecture par œuvre (lot L1) : fusion = œuvres absentes ajoutées (jamais d'écrasement) ; remplacement = contenu de la sauvegarde
+    const prevRd = rdRaw();
+    if (rd && rd.works) {
+      const cur = rdLoad();
+      const next = mode === 'replace' ? rd.works : { version: 1, states: Object.assign({}, rd.works.states, cur.states), log: cur.log.concat(rd.works.log.filter(l => !cur.log.some(x => x.id === l.id))), conflicts: Object.assign({}, rd.works.conflicts, cur.conflicts) };
+      rdSetRaw(JSON.stringify(next));
+    }
     // Achats groupés (lot F1) : fusion = lots absents ajoutés ; remplacement = liste de la sauvegarde ; rien si la sauvegarde n'en contient pas
     const prevAcq = bunLs(ACQ_KEY);
     if (col && Array.isArray(col.acquisitions)) {
@@ -13558,12 +13769,36 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       Object.entries(prevPrefs).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
       Object.entries(prevSecrets).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
       try { if (prevAcq === null) localStorage.removeItem(ACQ_KEY); else localStorage.setItem(ACQ_KEY, prevAcq); } catch (_) {}
+      rdSetRaw(prevRd);
       return true;
     });
     return { ok: true, mode, domains: want, added: res.added || 0, conflicts: res.conflicts || 0, total: physicalSingles.length, snapshotId: res.snapshotId || null, prefsSet, secrets, untouched, untouchedOk, fingerprints: after, undoToken: token };
   };
   const bundleUndo = async token => { const f = bunUndo.get(token); if (!f) return false; bunUndo.delete(token); await f(); renderSinglesCollection(); return true; };
 
+  // Lot L1 : fenêtre de regroupement de la lecture par œuvre (L-D2, L-D3 ; D-30)
+  const openReadingMigrationDialog = () => {
+    const box = bunModal('readingMigrationDialog');
+    const pv = READING_API.migrationPreview(), st = READING_API.stats();
+    const conf = pv.plan.filter(p => p.conflict).slice(0, 20);
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="readingMigTitle"><h2 id="readingMigTitle">Lecture par œuvre</h2>' +
+      '<p class="stat-sub">Un seul état de lecture par œuvre, partagé par tous ses exemplaires. Les cases « Lu » et les notes des fiches <b>restent en place</b> (au moins deux versions) ; rien n\'est supprimé.</p>' +
+      '<p>' + pv.works + ' œuvre(s) lue(s) à regrouper (' + pv.copies + ' exemplaire(s)) · ' + st.works + ' état(s) déjà enregistré(s), jamais réécrits.</p>' +
+      (conf.length ? '<p class="stat-sub">' + pv.conflicts + ' œuvre(s) avec des notes différentes : la plus récente est retenue (sinon la plus haute) ; les autres sont gardées pour rapprochement.</p><ul class="stat-sub">' +
+        conf.map(p => '<li>' + escapeHtml(p.label.series + ' ' + p.label.issue) + ' : ' + p.conflict.map(c => c.rating + '★').join(', ') + ' → ' + p.rating + '★</li>').join('') + '</ul>' : '') +
+      '<p class="stat-sub" data-msg role="status"></p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-go' + (pv.works ? '' : ' disabled') + '>Regrouper</button></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s);
+    q('[data-cancel]').onclick = () => box.classList.remove('open');
+    q('[data-go]').onclick = () => {
+      const r = READING_API.migrate();
+      q('[data-go]').disabled = true;
+      q('[data-msg]').textContent = r.ok ? r.created + ' œuvre(s) regroupée(s)' + (r.conflicts ? ', ' + r.conflicts + ' conflit(s) de notes à rapprocher' : '') + '.' : (r.error || 'Échec.');
+      if (r.ok && r.undoToken) showToastAction('Lecture regroupée par œuvre.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); showToast('Regroupement annulé.'); });
+      renderSinglesCollection();
+    };
+  };
   // Fenêtres : export par domaine (format, clés chiffrées) et restauration (aperçu, intégrité, choix des domaines)
   const bunModal = id => {
     let box = $(id);
@@ -13670,7 +13905,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const S1_MAX_REFS = 500, S1_MAX_ENTRIES = 2000;
   const s1Err = code => ({ ok: false, error: code });
   // Domaine Lecture : statut « lu » d'une œuvre. Provisoirement alimenté par isRead des exemplaires (A3, D-08) ; remplacé par L1 (L-D2) sans toucher à S1.
-  const readingStatusOf = matched => matched.owned.some(s => s.isRead);
+  const readingStatusOf = (matched, ref) => (ref ? rdIsRead(ref) : false) || (!(ref && rdFind(ref)) && matched.owned.some(s => s.isRead));
   const s1Ref = ref => ref && typeof ref === 'object' && typeof ref.series === 'string' && ref.series.trim() && ref.series.length <= 300 && (ref.issue === undefined || typeof ref.issue === 'string' || typeof ref.issue === 'number');
   const s1Available = () => Array.isArray(physicalSingles);
   // Domaine Collection : rapprochement d'une référence avec l'inventaire (titre exact + numéro + année cohérente, ou publication liée ; jamais par ressemblance).
@@ -13714,7 +13949,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const items = refs.map(ref => {
       const m = colMatch(colRef(ref), idx);
       // Liste blanche : aucun prix, valeur, état, emplacement, note, date d'achat ni identifiant d'exemplaire
-      const it = { owned: m.owned.length, wishlisted: m.wish.length > 0, inPullList: !!m.pull, read: readingStatusOf(m) };
+      const it = { owned: m.owned.length, wishlisted: m.wish.length > 0, inPullList: !!m.pull, read: readingStatusOf(m, colRef(ref)) };
       if (inc.has('unconfirmed')) it.unconfirmed = m.probable.length > 0;
       if (inc.has('seriesFollowed')) it.seriesFollowed = m.followed;
       if (inc.has('pullPending')) it.pullPending = m.pending;
@@ -13772,7 +14007,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const status = prog && GD_PROGRESS[prog.status] ? prog.status : '';
       const e = entries.get(id);
       const pub = e ? exResolve(e, pidx).pub : null;
-      const derived = !status && !!e && readingStatusOf(colMatch(colRef({ series: e.series, issue: e.issue, year: e.year ? String(e.year) : '', pubId: pub ? pub.id : '' }), idx));
+      const eRef = e ? colRef({ series: e.series, issue: e.issue, year: e.year ? String(e.year) : '', pubId: pub ? pub.id : '' }) : null;
+      const derived = !status && !!e && readingStatusOf(colMatch(eRef, idx), eRef);
       return { status: status || (derived ? 'read' : ''), derivedFromCollection: derived };
     });
     return { ok: true, items };
@@ -13854,6 +14090,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (!r || !r.ok) return s1Err('internal');
     return { ok: true, undoToken: r.unchanged ? undefined : s2Token(() => lecSetGuideProgress(entryId, prevStatus)) };
   };
+  // Marquer une œuvre lue / en cours / à lire (lot L1) : exécuté par Lecture ; aucun exemplaire n'est lu ni modifié
+  const cmdMarkRead = (ref, status, opts = {}) => {
+    const e = s2Guard(opts, () => (s1Ref(ref) && (status === '' || RD_STATUSES.includes(status)) ? null : s1Err('invalid_input'))); if (e) return e;
+    const r = rdSetStatus(colRef(ref), status, { source: 'user' });
+    if (!r.ok) return s1Err('invalid_input');
+    s2Refresh();
+    return { ok: true, status: r.status || '', undoToken: r.undoToken ? s2Token(() => { READING_API.undo(r.undoToken); }) : undefined };
+  };
   // Ouverture : la fiche est trouvée et affichée par Collection ; Explorer ne reçoit aucun identifiant d'exemplaire
   const cmdOpenItem = (ref, opts = {}) => {
     const e = s2Guard(opts, () => (s1Ref(ref) ? null : s1Err('invalid_input'))); if (e) return e;
@@ -13867,12 +14111,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const PERSONAL_CONTRACTS_V1 = Object.freeze({
     version: 1,
     lens: Object.freeze({ isEnabled: personalizeEnabled, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets, referencedPubs: lensReferencedPubs }),
-    commands: Object.freeze({ gesture: s2Gesture, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, openItem: cmdOpenItem, undo: cmdUndo }),
+    commands: Object.freeze({ gesture: s2Gesture, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, markRead: cmdMarkRead, openItem: cmdOpenItem, undo: cmdUndo }),
     settings: Object.freeze({ personalize: personalizeEnabled, setPersonalize })
   });
 
   window.Panel = {
     finance: FINANCE_API,
+    reading: READING_API,
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },

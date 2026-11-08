@@ -154,3 +154,9 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - F1-5 partiel : colonnes CSV ajoutées ; `Panel.finance` ; test 35 ; test 25 adapté à D-27.
   - Résultats : `npm run test:all` vert : front **34/34**, base 82/82, secrets 0, frontières 0. Sauvegardes `*.backup.20261108-f1`.
 
+- **L1 Lecture (mission « Autonomous night shift », D-30)** ([réalisation](directeur/06-specifications-F1-L1.md#b8-réalisation-de-l1-mission--autonomous-night-shift--8-novembre-2026)) :
+  - état par œuvre (`panel_reading_v1`), journal, compatibilité `isRead` sans écriture, lu sans possession, vente sans perte ;
+  - S1 `read` et S2 `markRead` par Lecture ; un geste pour tous les exemplaires ; `isRead` conservé ;
+  - migration conservatrice avec aperçu, conflits de notes, idempotence et annulation ; section `works` de la sauvegarde Lecture ;
+  - test 36. Résultats : `npm run test:all` vert : front **35/35**, base 82/82, secrets 0, frontières 0. Sauvegardes `*.backup.20261108-l1`.
+

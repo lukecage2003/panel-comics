@@ -3344,6 +3344,98 @@ const waitForCdp = async () => {
         ok: t35fail.length === 0
       });
 
+
+      // ─── Test 36 : lot L1 — domaine Lecture (état par œuvre, compatibilité isRead, migration conservatrice, S1/S2, sauvegarde) — docs/directeur/06 partie B, D-30 ───
+      // Données synthétiques ; collection, panel_reading_v1 et progression des guides rétablies à l'identique.
+      const t36 = await evalExpr(`(async () => {
+        const P = window.Panel, L = P.reading, r = {};
+        if (!L) return { api: false };
+        r.api = Object.isFrozen(L) && ['statusOf', 'setStatus', 'rate', 'setPosition', 'migrationPreview', 'migrate', 'undoMigration', 'resolveConflict', 'seriesProgress', 'stats', 'resume', 'history', 'undo'].every(k => typeof L[k] === 'function');
+        const RK = 'panel_reading_v1', prevRaw = localStorage.getItem(RK);
+        const fpC = await P.backup.fingerprint('collection'), fpR = await P.backup.fingerprint('reading');
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const base = { publisher: 'Image Comics', variant: 'Cover A', keyType: 'none', condition: '', coverYear: 2025, addedAt: '2026-01-01T00:00:00.000Z' };
+        const mk = (id, o) => Object.assign({ id, series: 'T36 Série', issue: '#1' }, base, o);
+        const ref = (series, issue) => ({ series, issue, year: 2025 });
+        try {
+          localStorage.removeItem(RK);
+          // Compatibilité : un exemplaire lu suffit pour l'œuvre ; aucune écriture
+          P.setPhysicalSingles([mk('a1', { isRead: true }), mk('a2', { isRead: false, variant: 'Cover B' }), mk('b1', { issue: '#2' }), mk('b2', { issue: '#2', variant: 'Cover B' }), mk('c3', { issue: '#3', isRead: true, disposal: { kind: 'sold', date: '2026-02-01', price: 5, fees: null, currency: 'EUR', note: '' } })]);
+          r.compat = L.statusOf(P.getPhysicalSingles()[1]) === 'read' && L.statusOf(ref('T36 Série', '#2')) === '' && localStorage.getItem(RK) === null;
+          // Un geste pour l'œuvre entière (deux exemplaires) ; les fiches ne sont pas modifiées par Lecture
+          const copies0 = JSON.stringify(P.getPhysicalSingles());
+          const s1 = L.setStatus(ref('T36 Série', '#2'), 'read');
+          const all = P.getPhysicalSingles();
+          r.oneGesture = s1.ok && L.isRead(all[2]) && L.isRead(all[3]) && JSON.stringify(all) === copies0 && L.history(s1.workKey).some(h => h.event === 'finished');
+          const rr = L.setStatus(ref('T36 Série', '#2'), 'read', { reread: true });
+          r.reread = rr.ok && L.state(ref('T36 Série', '#2')).readCount === 2 && L.history(s1.workKey).some(h => h.event === 'reread');
+          r.undo = L.undo(rr.undoToken) === true && L.state(ref('T36 Série', '#2')).readCount === 1;
+          r.badStatus = L.setStatus(ref('T36 Série', '#2'), 'lu').ok === false && L.setStatus({}, 'read').ok === false;
+          // Lu sans être possédé : visible dans Lecture et S1, absent de Collection
+          const nr = ref('T36 Lu non possédé', '#1');
+          L.setStatus(nr, 'read');
+          const C = P.contracts.personal.v1;
+          const st = C.lens.isEnabled() ? C.lens.statusFor([nr, ref('T36 Série', '#3'), ref('T36 Série', '#2')]) : null;
+          r.readNotOwned = L.stats().readNotOwned >= 1 && !P.getPhysicalSingles().some(s => s.series === nr.series) && (!st || (st.items[0].read === true && st.items[0].owned === 0));
+          // Exemplaire vendu : la lecture est conservée (S1 read), il n'est plus possédé
+          r.soldKeepsRead = !st || (st.items[1].read === true && st.items[1].owned === 0 && st.items[2].read === true && st.items[2].owned === 2);
+          // S2 markRead : refusé sans geste
+          r.markReadGesture = typeof C.commands.markRead === 'function' && C.commands.markRead(nr, 'reading', {}).error === 'gesture_required';
+          // Série dérivée, jamais stockée : prochain numéro
+          const sp = L.seriesProgress('T36 Série');
+          r.series = sp.known === 3 && sp.read === 3 && sp.next === null;
+          L.setStatus(ref('T36 Série', '#2'), 'reading');
+          L.setPosition(ref('T36 Série', '#2'), { page: 12, note: 'p. 12' });
+          const sp2 = L.seriesProgress('T36 Série');
+          r.resume = sp2.next === '#2' && L.resume().some(x => x.issue === '#2' && x.position && x.position.page === 12);
+          // Migration de isRead : aperçu, conflit de notes (la plus récente), fiches inchangées, idempotence, annulation durable
+          P.setPhysicalSingles([mk('m1', { series: 'T36 Mig', isRead: true, rating: 3, updatedAt: '2026-03-01T00:00:00.000Z' }), mk('m2', { series: 'T36 Mig', variant: 'Cover B', isRead: true, rating: 5, updatedAt: '2025-03-01T00:00:00.000Z' }),
+            mk('m3', { series: 'T36 Mig', issue: '#2', isRead: true, rating: 4 }), mk('m4', { series: 'T36 Mig', issue: '#3', isRead: false, rating: 2 }), mk('m5', { series: 'T36 Série', issue: '#2', isRead: true })]);
+          const before = JSON.stringify(P.getPhysicalSingles());
+          const pv = L.migrationPreview();
+          const p1 = pv.plan.find(p => p.label.series === 'T36 Mig' && p.label.issue === '#1');
+          r.migPreview = pv.works === 2 && pv.copies === 3 && pv.conflicts === 1 && p1 && p1.rating === 3 && p1.conflict.length === 2 && JSON.stringify(P.getPhysicalSingles()) === before;
+          const mg = L.migrate();
+          r.migrate = mg.ok && mg.created === 2 && mg.conflicts === 1 && JSON.stringify(P.getPhysicalSingles()) === before && L.state(ref('T36 Mig', '#1')).source === 'migrated:isRead' && L.state(ref('T36 Mig', '#1')).rating === 3
+            && L.state(ref('T36 Série', '#2')).status === 'reading'; // un état existant n'est jamais réécrit
+          r.migIdempotent = L.migrate().created === 0;
+          const cf = L.conflicts()[L.keyOf(ref('T36 Mig', '#1'))];
+          r.conflictKept = !!cf && cf.resolved === false && cf.candidates.map(c => c.rating).sort().join() === '3,5';
+          const rc = L.resolveConflict(L.keyOf(ref('T36 Mig', '#1')), 5);
+          r.resolve = rc.ok && L.state(ref('T36 Mig', '#1')).rating === 5 && L.history(L.keyOf(ref('T36 Mig', '#1'))).some(h => h.event === 'rating' && Array.isArray(h.discarded));
+          L.undo(rc.undoToken);
+          const um = L.undoMigration(mg.batch);
+          r.undoMigration = um.ok && um.removed === 2 && L.state(ref('T36 Mig', '#1')) === null && L.statusOf(ref('T36 Mig', '#1')) === 'read' && L.migrationPreview().works === 2;
+          // Sauvegarde Lecture (B1) : aller-retour des états par œuvre
+          L.migrate();
+          const ex = await P.backup.export({ domains: ['reading'] });
+          const v = await P.backup.validate(ex);
+          const w = v.sections.reading.norm.works;
+          r.bundle = !!w && JSON.stringify(Object.keys(w.states).sort()) === JSON.stringify(L.list().map(s => s.workKey).sort()) && w.log.length === L.history().length;
+          // Restauration : le cache relit la clé (pas d'état périmé en mémoire)
+          const rawNow = localStorage.getItem(RK);
+          localStorage.removeItem(RK);
+          r.cacheReload = L.list().length === 0;
+          localStorage.setItem(RK, rawNow);
+          r.cacheReload = r.cacheReload && L.list().length > 0;
+          r.form = !!document.getElementById('readingMigrateBtn');
+        } finally {
+          P.setPhysicalSingles(saved);
+          if (prevRaw === null) localStorage.removeItem(RK); else localStorage.setItem(RK, prevRaw);
+        }
+        r.finalCollection = (await P.backup.fingerprint('collection')) === fpC;
+        r.finalReading = (await P.backup.fingerprint('reading')) === fpR;
+        return r;
+      })()`);
+      console.log('Résultat Test 36:', JSON.stringify(t36));
+      const t36keys = ['api', 'compat', 'oneGesture', 'reread', 'undo', 'badStatus', 'readNotOwned', 'soldKeepsRead', 'markReadGesture', 'series', 'resume', 'migPreview', 'migrate', 'migIdempotent', 'conflictKept', 'resolve', 'undoMigration', 'bundle', 'cacheReload', 'form', 'finalCollection', 'finalReading'];
+      const t36fail = t36keys.filter(k => !t36 || t36[k] !== true);
+      if (t36fail.length) console.log('Test 36 — vérifications en échec :', t36fail.join(', '));
+      testResults.push({
+        test: 'Lecture L1 : état par œuvre partagé par les exemplaires, compatibilité isRead sans écriture, lu sans possession, vente sans perte, relecture, reprise, migration (aperçu, conflits de notes, idempotence, annulation), S1/S2, sauvegarde',
+        ok: t36fail.length === 0
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
