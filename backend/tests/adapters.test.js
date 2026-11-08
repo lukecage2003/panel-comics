@@ -146,4 +146,6 @@ test('compte : deux appareils, préférences fusionnées par HLC, horloge murale
   assert.equal(list.find(d => d.id === d2).revoked, true);
   await assert.rejects(acc.updateProfile({ handle: 'x' }), e => e.code === 'invalid');
   assert.throws(() => createHlc('bad tag!'));
+  assert.deepEqual(await acc.conflicts(), []);
+  await assert.rejects(acc.resolveConflict(d1, '00000000-0000-4000-8000-000000000000', 'local'), e => e.code === 'invalid');
 });

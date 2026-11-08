@@ -72,6 +72,10 @@ begin
   select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace and proname in ('my_roles','my_profile','update_profile','settings_get','settings_merge','register_device','list_devices','revoke_device')
     and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
   if n <> 8 then raise exception 'API du lot 3.3 : % fonction(s) conforme(s) sur 8', n; end if;
+  -- Lot 3.5 (migration 11, D-43) : liste et résolution des conflits, authenticated seulement
+  select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace and proname in ('list_conflicts','resolve_conflict')
+    and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
+  if n <> 2 then raise exception 'api.list_conflicts et api.resolve_conflict : security definer, search_path vide, authenticated seulement'; end if;
 
   select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;

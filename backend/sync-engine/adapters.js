@@ -99,7 +99,10 @@ function createSupabaseAccount(client, { schema = 'api' } = {}) {
     mergeSettings: (deviceId, prefs, hlc) => rpc('settings_merge', { p_device: deviceId, p_prefs: prefs, p_hlc: hlc }),
     registerDevice: (label, platform, appVersion) => rpc('register_device', { p_label: label, p_platform: platform, p_app_version: appVersion || null }),
     devices: () => rpc('list_devices'),
-    revokeDevice: id => rpc('revoke_device', { p_device: id })
+    revokeDevice: id => rpc('revoke_device', { p_device: id }),
+    // Lot 3.5 (migration 11) : conflits consignés, résolution réversible
+    conflicts: openOnly => rpc('list_conflicts', { p_open_only: openOnly !== false }),
+    resolveConflict: (deviceId, id, choice) => rpc('resolve_conflict', { p_device: deviceId, p_id: id, p_choice: choice })
   };
 }
 
