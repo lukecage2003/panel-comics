@@ -1594,7 +1594,7 @@ const waitForCdp = async () => {
         const e = N({ condition: 'NM 9.4 (Near Mint)', notes: 'Slab (société de gradation non précisée)' });
         r.normalize = a.grade.company === 'CGC' && a.grade.value === 9.8 && a.grade.slabbed && a.grade.labelType === 'universal' && !a.signature.signed &&
           b.grade.labelType === 'signature' && b.signature.signed && b.signature.by === 'Jim Lee' && b.signature.authenticated === 'CGC Signature Series' && b.grade.certNumber === '4123' && b.purchase.store === 'Convention' && b.fromNotes.length === 3 &&
-          c.grade.scale === 'estime' && c.grade.label === 'NM' && c.grade.value === 9.4 && c.purchase.price === 3.5 && c.purchase.date === '2025-02-01' && c.purchase.currency === 'USD' &&
+          c.grade.scale === 'estime' && c.grade.label === 'NM' && c.grade.value === 9.4 && c.purchase.price === 3.5 && c.purchase.date === '2025-02-01' && c.purchase.currency === null && /* D-27 (lot F1-0) : plus de devise USD inventée */
           d.grade.company === 'CBCS' && d.grade.value === 9.6 && d.signature.by === 'Artiste' && d.signature.authenticated === 'JSA' && d.purchase.store === 'Boutique' &&
           e.grade.slabbed && e.grade.company === null;
         const base = { condition: 'NM 9.4 (Near Mint)', keyType: 'none', isWishlist: false, notes: '', addedAt: '2026-01-01T00:00:00Z', box: 'Boîte 1' };
@@ -3234,6 +3234,116 @@ const waitForCdp = async () => {
         test: 'Frontières (lot 3.1b) : contrôle statique strict, Explorer via S1/S2 seulement, pages « d\'après votre collection » masquées sans S1, réglage désactivable à effet immédiat sans appel au fournisseur, fournisseur absent, aucune écriture',
         ok: t34fail.length === 0
       });
+
+      // ─── Test 35 : lot F1 — finances (devises explicites, frais, coût, sorties, plus-values réalisées, achats groupés) — docs/directeur/06 partie A ───
+      // Données synthétiques uniquement : la collection et les clés touchées sont sauvegardées puis rétablies à l'identique.
+      const t35 = await evalExpr(`(async () => {
+        const P = window.Panel, F = P.finance, r = {};
+        if (!F) return { api: false };
+        r.api = Object.isFrozen(F) && ['summary', 'byCurrency', 'dispose', 'restoreDisposal', 'previewLot', 'createLot', 'removeLot', 'undo', 'log', 'costOf', 'realizedGainOf'].every(k => typeof F[k] === 'function');
+        const KEYS = ['panel_acquisitions', 'panel_default_currency', 'panel_value_snapshots'];
+        const prevLs = KEYS.map(k => [k, localStorage.getItem(k)]);
+        const fp0 = await P.backup.fingerprint('collection');
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const base = { publisher: 'Image Comics', variant: 'Cover A', keyType: 'none', condition: '', coverYear: 2025, addedAt: '2026-11-01T00:00:00.000Z' };
+        const mk = (id, o) => Object.assign({ id, series: 'T35 ' + id, issue: '#1' }, base, o);
+        try {
+          // T-F1 : fiches anciennes (sans devise ni frais) — calcul identique à F0
+          P.setPhysicalSingles([mk('a', { purchasePrice: 10, estValue: 25 }), mk('b', { purchasePrice: null, estValue: 5 }), mk('c', { purchasePrice: 4, estValue: null }), mk('w', { isWishlist: true, estValue: 50 })]);
+          const s1 = F.summary();
+          r.legacyF0 = s1.ownedCount === 3 && s1.invested === 14 && s1.value === 30 && s1.gain === 15 && s1.gainBase === 1 && s1.mixed === false && JSON.stringify(s1.currencies) === '["none"]' && s1.costUnknown === 1 && s1.valueUnknown === 1;
+          // T-F2 : frais inclus dans le coût ; frais inconnus = coût partiel signalé, jamais inventé
+          P.setPhysicalSingles([mk('f', { purchasePrice: 10, acquisitionFees: 2, estValue: 20, purchaseCurrency: 'EUR' }), mk('g', { purchasePrice: 5, estValue: 6, purchaseCurrency: 'EUR' })]);
+          const s2 = F.summary();
+          r.fees = F.costOf(P.getPhysicalSingles()[0]) === 12 && s2.invested === 17 && s2.gain === 9 && s2.feesUnknown === 1 && JSON.stringify(s2.currencies) === '["EUR"]';
+          // T-F3 : deux devises — aucune somme mélangée, totaux neutralisés, détail par devise, pas de relevé quotidien
+          const snapBefore = localStorage.getItem('panel_value_snapshots');
+          P.setPhysicalSingles([mk('e', { purchasePrice: 10, estValue: 20, purchaseCurrency: 'EUR' }), mk('u', { purchasePrice: 7, estValue: 9, purchaseCurrency: 'USD' }), mk('x', { purchasePrice: 3, estValue: 8, purchaseCurrency: 'USD', valueCurrency: 'EUR' })]);
+          const s3 = F.summary();
+          r.twoCurrencies = s3.mixed === true && s3.value === null && s3.invested === null && s3.gain === null && s3.byCurrency.EUR.invested === 10 && s3.byCurrency.USD.invested === 10
+            && s3.byCurrency.EUR.value === 28 && s3.byCurrency.USD.value === 9 && s3.byCurrency.EUR.gain === 10 && s3.byCurrency.USD.gain === 2 && s3.byCurrency.EUR.gainBase === 1;
+          r.noMixedSnapshot = localStorage.getItem('panel_value_snapshots') === snapBefore;
+          r.mixedUi = /€/.test(document.getElementById('statSinglesValue').textContent) && /\\$/.test(document.getElementById('statSinglesValue').textContent);
+          // T-F4 : vente — plus-value réalisée = prix − frais de vente − coût ; la fiche reste, n'est plus possédée ; annulation exacte
+          P.setPhysicalSingles([mk('s', { purchasePrice: 10, acquisitionFees: 2, estValue: 20, purchaseCurrency: 'EUR' }), mk('k', { purchasePrice: 5, estValue: 6, purchaseCurrency: 'EUR' })]);
+          const before = JSON.stringify(P.getPhysicalSingles());
+          const d = F.dispose('s', { kind: 'sold', date: '2026-11-07', price: 30, fees: 3 });
+          const s4 = F.summary();
+          const sold = P.getPhysicalSingles().find(x => x.id === 's');
+          r.sale = d.ok === true && d.realizedGain === 15 && sold.disposal.currency === 'EUR' && s4.ownedCount === 1 && s4.realized === 15 && s4.soldCount === 1 && P.getPhysicalSingles().length === 2;
+          r.saleLog = F.log('s').some(h => h.field === 'disposal' && h.by === 'user');
+          r.saleUndo = F.undo(d.undoToken) === true && JSON.stringify(P.getPhysicalSingles()) === before && F.undo(d.undoToken) === false;
+          const gi = F.dispose('k', { kind: 'gift' });
+          r.giftNoGain = gi.ok && gi.realizedGain === null && F.summary().ownedCount === 1;
+          const rs = F.restoreDisposal('k');
+          r.restoreDisposal = rs.ok && F.summary().ownedCount === 2;
+          r.badKind = F.dispose('k', { kind: 'volé' }).ok === false;
+          // T-F5 : vente au coût inconnu ou dans une autre devise : plus-value inconnue (jamais 0)
+          P.setPhysicalSingles([mk('n', { purchasePrice: null, purchaseCurrency: 'EUR' }), mk('m', { purchasePrice: 4, purchaseCurrency: 'EUR' })]);
+          r.unknownCost = F.dispose('n', { kind: 'sold', price: 12 }).realizedGain === null && F.dispose('m', { kind: 'sold', price: 12, currency: 'USD' }).realizedGain === null;
+          // T-F6 : achat groupé — méthode par défaut D-29 (couverture si toutes connues), centimes exacts, reste sur la ligne la plus chère
+          const lot = [mk('l1', { coverPrice: 3.99 }), mk('l2', { coverPrice: 4.99 }), mk('l3', { coverPrice: 5.99 })];
+          P.setPhysicalSingles(lot.concat([mk('l4', {}), mk('l5', { purchasePrice: 9, purchaseCurrency: 'EUR' })]));
+          const lotBefore = JSON.stringify(P.getPhysicalSingles());
+          const acqBefore = localStorage.getItem('panel_acquisitions');
+          r.lotDefault = F.defaultMethod(['l1', 'l2', 'l3']) === 'cover' && F.defaultMethod(['l1', 'l4']) === 'equal';
+          const pv = F.previewLot({ copyIds: ['l1', 'l2', 'l3'], totalPaid: 10, fees: 1, currency: 'EUR' });
+          const cents = pv.lines.reduce((a, l) => a + Math.round(l.allocatedPrice * 100), 0), fcents = pv.lines.reduce((a, l) => a + Math.round(l.allocatedFees * 100), 0);
+          r.lotCover = pv.ok && pv.method === 'cover' && cents === 1000 && fcents === 100 && pv.remainderLine === 2 && pv.lines[0].allocatedPrice < pv.lines[2].allocatedPrice;
+          r.lotPreviewNoWrite = JSON.stringify(P.getPhysicalSingles()) === lotBefore && localStorage.getItem('panel_acquisitions') === acqBefore;
+          const eq = F.previewLot({ copyIds: ['l1', 'l2', 'l3'], totalPaid: 10, currency: 'EUR', method: 'equal' });
+          r.lotEqual = eq.ok && eq.lines.map(l => l.allocatedPrice).join() === '3.34,3.33,3.33' && eq.remainder === 0.01;
+          r.lotManual = F.previewLot({ copyIds: ['l1', 'l2'], totalPaid: 10, currency: 'EUR', method: 'manual', manual: [4, 5] }).ok === false
+            && F.previewLot({ copyIds: ['l1', 'l2'], totalPaid: 10, currency: 'EUR', method: 'manual', manual: [4, 6] }).ok === true;
+          r.lotCoverRefused = F.previewLot({ copyIds: ['l1', 'l4'], totalPaid: 10, currency: 'EUR', method: 'cover' }).ok === false && F.previewLot({ copyIds: ['l1'], totalPaid: 10 }).ok === false;
+          const cl = F.createLot({ copyIds: ['l1', 'l4', 'l5'], totalPaid: 30, currency: 'EUR', date: '2026-11-05', vendor: 'Convention test' });
+          const L = id => P.getPhysicalSingles().find(x => x.id === id);
+          r.lotCreate = cl.ok && cl.method === 'equal' && JSON.stringify(cl.written) === '["l1","l4"]' && JSON.stringify(cl.skipped) === '["l5"]' && L('l5').purchasePrice === 9 && !L('l5').acquisitionId
+            && L('l1').purchasePrice === 10 && L('l1').purchaseCurrency === 'EUR' && L('l1').acquisitionId === cl.id && L('l1').purchaseDate === '2026-11-05' && F.lots().length === JSON.parse(acqBefore || '[]').length + 1
+            && F.log('l1').some(h => h.by === 'lot' && h.field === 'purchasePrice');
+          r.lotUndo = F.undo(cl.undoToken) === true && JSON.stringify(P.getPhysicalSingles()) === lotBefore && localStorage.getItem('panel_acquisitions') === acqBefore;
+          const cl2 = F.createLot({ copyIds: ['l2', 'l3'], totalPaid: 8, currency: 'EUR', method: 'equal' });
+          const rm = F.removeLot(cl2.id, { removePrices: true });
+          r.lotRemove = rm.ok && rm.unlinked === 2 && !L('l2').acquisitionId && L('l2').purchasePrice === null && !F.lots().some(a => a.id === cl2.id);
+          F.undo(rm.undoToken);
+          r.lotRemoveUndo = L('l2').acquisitionId === cl2.id && L('l2').purchasePrice === 4 && F.lots().some(a => a.id === cl2.id);
+          // T-F7 : sauvegarde panel-bundle — lots, frais, sorties et journal conservés par la restauration (sanitizeImportedSingle)
+          F.dispose('l3', { kind: 'sold', price: 9, fees: 1 });
+          const bx = await P.backup.export({ domains: ['collection'] });
+          const v = await P.backup.validate(bx);
+          const items = v.sections.collection.norm.items, it3 = items.find(x => x.id === 'l3');
+          r.bundleRoundTrip = Array.isArray(bx.sections.collection.acquisitions) && bx.sections.collection.acquisitions.some(a => a.id === cl2.id)
+            && v.sections.collection.norm.acquisitions.some(a => a.id === cl2.id) && it3 && it3.disposal && it3.disposal.kind === 'sold' && it3.disposal.price === 9
+            && Array.isArray(it3.financeLog) && it3.financeLog.length === L('l3').financeLog.length && it3.acquisitionId === cl2.id && it3.purchaseCurrency === 'EUR';
+          // T-F8 : Explorer (S1) — un exemplaire sorti n'est plus « possédé »
+          const C = P.contracts.personal.v1;
+          const st = C.lens.isEnabled() ? C.lens.statusFor([{ series: 'T35 l3', issue: '#1', year: 2025 }, { series: 'T35 l2', issue: '#1', year: 2025 }]) : null;
+          r.lensDisposed = !st || (st.ok && st.items[0].owned === 0 && st.items[1].owned === 1);
+          // T-F9 : formulaire — champs présents, devise vide par défaut sans préférence, préférence mémorisée seulement par choix
+          localStorage.removeItem('panel_default_currency');
+          r.form = !!document.getElementById('singleCurrencySelect') && !!document.getElementById('singleFeesInput') && !!document.getElementById('singleDisposalKind') && !!document.querySelector('[data-sfilter="disposed"]');
+          const dc0 = F.defaultCurrency() === null && F.setDefaultCurrency('EUR') === 'EUR';
+          const va = await P.backup.validate(await P.backup.export({ domains: ['app'] }));
+          r.prefSynced = va.sections.app.norm.prefs.panel_default_currency === 'EUR';
+          r.defaultCurrency = dc0 && F.setDefaultCurrency('xx') === null && F.defaultCurrency() === null;
+        } finally {
+          P.setPhysicalSingles(saved);
+          prevLs.forEach(([k, val]) => { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); });
+        }
+        r.finalCollection = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      // T-F10 : plus aucune devise inventée dans le code (D-27)
+      t35.noUsdDefault = !/purchaseCurrency\)\s*\|\|\s*'USD'/.test(fs.readFileSync(path.join(__dirname, 'index.html'), 'utf8'));
+      console.log('Résultat Test 35:', JSON.stringify(t35));
+      const t35keys = ['api', 'legacyF0', 'fees', 'twoCurrencies', 'noMixedSnapshot', 'mixedUi', 'sale', 'saleLog', 'saleUndo', 'giftNoGain', 'restoreDisposal', 'badKind', 'unknownCost', 'lotDefault', 'lotCover', 'lotPreviewNoWrite', 'lotEqual', 'lotManual', 'lotCoverRefused', 'lotCreate', 'lotUndo', 'lotRemove', 'lotRemoveUndo', 'bundleRoundTrip', 'lensDisposed', 'form', 'defaultCurrency', 'prefSynced', 'finalCollection', 'noUsdDefault'];
+      const t35fail = t35keys.filter(k => !t35 || t35[k] !== true);
+      if (t35fail.length) console.log('Test 35 — vérifications en échec :', t35fail.join(', '));
+      testResults.push({
+        test: 'Finances F1 : devises explicites sans conversion, frais et coût, sorties de collection et plus-values réalisées, achats groupés (3 méthodes, annulation), sauvegarde, S1',
+        ok: t35fail.length === 0
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

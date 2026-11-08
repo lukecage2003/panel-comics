@@ -45,4 +45,5 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
 |---|---|---|---|---|---|---|
 | 3.1b-7 et 3.1b-8 | Terminé | Navigation conservée ; clôture documentaire | `test:all` : 82/82, 0, 0 couplage, 33/33 | D-26 à D-31 (recommandations appliquées sous délégation) | — | F1 |
+| F1 Finances | Terminé (F1-5 partiel) | `index.html` (`Panel.finance`, formulaire, filtre « Sorties », CSV, B1), test 35, test 25 adapté, `sw.js` | `test:all` : 82/82, 0, 0 couplage, 34/34 | D-27 à D-29 appliquées | Onglet Finances (U-D2) | L1 |
 

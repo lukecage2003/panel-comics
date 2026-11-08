@@ -2055,6 +2055,7 @@
           <button class="tab-btn" data-sfilter="Indé">Indés</button>
           <button class="tab-btn" data-sfilter="key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Key Issues</button>
           <button class="tab-btn" data-sfilter="graded"><svg class=ic aria-hidden=true><use href=#ic-gem /></svg> Gradés CGC</button>
+          <button class="tab-btn" data-sfilter="disposed" title="Exemplaires vendus, donnés, perdus ou échangés (fiches conservées)">Sorties</button>
           <button class="tab-btn" data-sfilter="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
         </div>
 
@@ -2456,13 +2457,13 @@
         <input id="singleCoverPriceInput" type="number" step="0.01" min="0" placeholder="3.99">
       </div>
       <div class="form-row">
-        <label for="singleEstValueInput">Valeur estimée actuelle ($)</label>
+        <label for="singleEstValueInput">Valeur estimée actuelle</label>
         <input id="singleEstValueInput" type="number" step="0.01" min="0" placeholder="Vide = cote automatique">
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-row">
-        <label for="singlePurchasePriceInput">Prix payé ($)</label>
+        <label for="singlePurchasePriceInput">Prix payé</label>
         <input id="singlePurchasePriceInput" type="number" step="0.01" min="0" placeholder="Montant réellement payé">
         <div class="purchase-helpers">
           <small id="purchasePrefillHint" class="stat-sub" hidden>Prérempli avec le prix de couverture : remplacez-le par le montant réellement payé.</small>
@@ -2474,6 +2475,31 @@
         <input id="singlePurchaseDateInput" type="date">
       </div>
     </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div class="form-row">
+        <label for="singleCurrencySelect">Devise de l'achat</label>
+        <select id="singleCurrencySelect" title="Aucune conversion : la valeur estimée est comprise dans la même devise">
+          <option value="">Non précisée</option>
+          <option value="EUR">EUR (€)</option><option value="USD">USD ($)</option><option value="GBP">GBP (£)</option><option value="CAD">CAD</option><option value="CHF">CHF</option><option value="JPY">JPY (¥)</option>
+        </select>
+        <small id="currencyFirstUseHint" class="stat-sub" hidden>Choisissez votre devise : elle sera proposée pour les prochains ajouts.</small>
+      </div>
+      <div class="form-row">
+        <label for="singleFeesInput">Frais d'acquisition</label>
+        <input id="singleFeesInput" type="number" step="0.01" min="0" placeholder="Port, commission… (vide = inconnu)">
+      </div>
+    </div>
+    <details class="form-row" id="singleDisposalBox">
+      <summary>Sortie de collection (vente, don, perte, échange)</summary>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px">
+        <div class="form-row"><label for="singleDisposalKind">Type de sortie</label>
+          <select id="singleDisposalKind"><option value="">Toujours dans la collection</option><option value="sold">Vendu</option><option value="gift">Donné</option><option value="lost">Perdu</option><option value="traded">Échangé</option></select></div>
+        <div class="form-row"><label for="singleDisposalDate">Date de sortie</label><input id="singleDisposalDate" type="date"></div>
+        <div class="form-row"><label for="singleDisposalPrice">Prix de vente</label><input id="singleDisposalPrice" type="number" step="0.01" min="0" placeholder="Vide = inconnu"></div>
+        <div class="form-row"><label for="singleDisposalFees">Frais de vente</label><input id="singleDisposalFees" type="number" step="0.01" min="0" placeholder="Commission, port…"></div>
+      </div>
+      <small class="stat-sub">La fiche est conservée (historique, plus-value réalisée) et reste visible dans le filtre « Sorties ». Remettre « Toujours dans la collection » l'y rétablit.</small>
+    </details>
     <div class="form-row">
       <label for="singleStoreInput">Acheté chez</label>
       <input id="singleStoreInput" maxlength="120" placeholder="ex : librairie, convention, eBay">
@@ -4833,7 +4859,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return m ? parseFloat(m[1]) : 0;
   };
   const isGradedCondition = c => /\b(cgc|cbcs|pgx)\b/i.test(c || '');
-  const isOwned = s => !s.isWishlist;
+  const isOwned = s => !s.isWishlist && !disposedOf(s); // lot F1 : une fiche sortie de la collection reste conservée mais n'est plus possédée
   const descNullLast = (x, y) => x === null && y === null ? 0 : x === null ? 1 : y === null ? -1 : y - x;
   // FINANCES (lot F0) — une donnée inconnue reste inconnue : jamais remplacée par le prix de couverture ni par zéro.
   // Prix de couverture et prix d'achat sont deux informations distinctes (décision D-18) : seul le prix payé compte dans l'investissement.
@@ -4845,16 +4871,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     list.forEach(s => { const v = fn(s); if (v !== null && v !== undefined && Number.isFinite(v)) { cents += toCents(v); n++; } });
     return { total: cents / 100, n, unknown: list.length - n };
   };
-  const gainOf = s => { const p = paidOf(s), v = valueOf(s); return p === null || v === null ? null : (toCents(v) - toCents(p)) / 100; };
+  const gainOf = s => { const p = costOf(s), v = valueOf(s); if (p === null || v === null) return null; const pc = purchaseCurOf(s), vc = valueCurOf(s); if ((pc || vc) && pc !== vc) return null; return (toCents(v) - toCents(p)) / 100; };
   const gainPct = (gain, cost) => gain === null || cost === null || !(cost > 0) ? null : Math.round((gain / cost) * 10000) / 100;
   const valueSourceOf = s => ['auto', 'market', 'manual'].includes(s && s.valueSource) ? s.valueSource : 'manual';
   const conditionKnown = s => !!String((s && s.condition) || '').trim();
-  const financeSummary = list => {
+  let financeSummary = list => {
     const owned = (list || []).filter(s => s && isOwned(s));
     const value = sumKnown(owned, valueOf);
-    const cost = sumKnown(owned, paidOf);
-    const both = owned.filter(s => paidOf(s) !== null && valueOf(s) !== null);
-    const bCost = sumKnown(both, paidOf).total, bValue = sumKnown(both, valueOf).total;
+    const cost = sumKnown(owned, costOf);
+    const both = owned.filter(s => gainOf(s) !== null);
+    const bCost = sumKnown(both, costOf).total, bValue = sumKnown(both, valueOf).total;
     const gain = both.length ? (toCents(bValue) - toCents(bCost)) / 100 : null;
     const src = { market: 0, manual: 0, auto: 0 }, srcN = { market: 0, manual: 0, auto: 0 };
     let lo = 0, hi = 0;
@@ -4880,6 +4906,215 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       conditionUnknown: owned.filter(s => !conditionKnown(s)).length
     };
   };
+  // Lot F1 : enveloppe de financeSummary — totaux par devise, plus-values réalisées, et totaux neutralisés si plusieurs devises
+  const financeSummaryF0 = financeSummary;
+  financeSummary = list => {
+    const base = financeSummaryF0(list);
+    const byCurrency = financeByCurrency(list || []);
+    const keys = Object.keys(byCurrency).filter(k => { const x = byCurrency[k]; return x.costKnown || x.valueKnown || x.realizedN; });
+    const mixed = keys.length > 1;
+    const disposed = (list || []).filter(s => s && !s.isWishlist && disposedOf(s));
+    const realizedList = disposed.map(realizedGainOf).filter(g => g !== null);
+    const out = Object.assign(base, { byCurrency, currencies: keys, mixed, disposedCount: disposed.length, soldCount: disposed.filter(s => s.disposal.kind === 'sold').length,
+      realizedBase: realizedList.length, realized: !mixed && realizedList.length ? realizedList.reduce((a, g) => a + toCents(g), 0) / 100 : null,
+      feesUnknown: (list || []).filter(s => s && isOwned(s) && paidOf(s) !== null && feesOf(s) === null).length });
+    if (mixed) Object.assign(out, { value: null, invested: null, gain: null, gainPct: null, gainCost: null, gainValue: null }); // aucune conversion implicite (D-28)
+    return out;
+  };
+  // ── Lot F1 : finances (docs/directeur/06 partie A ; D-18, D-27 à D-29) ──
+  // Cinq données distinctes : prix de couverture, prix payé, frais, coût d'acquisition, valeur estimée. Aucune conversion de devise.
+  // valueCurrency absente = même devise que l'achat (compatibilité F0 : une fiche ancienne se calcule exactement comme avant).
+  const FIN_CURRENCIES = ['EUR', 'USD', 'GBP', 'CAD', 'CHF', 'JPY'];
+  const FIN_DEFAULT_KEY = 'panel_default_currency';
+  const curNorm = c => (typeof c === 'string' && /^[A-Z]{3}$/.test(c)) ? c : null;
+  const purchaseCurOf = s => curNorm(s && s.purchaseCurrency);
+  const valueCurOf = s => curNorm(s && s.valueCurrency) || purchaseCurOf(s);
+  const feesOf = s => numOrNull(s && s.acquisitionFees);
+  const disposedOf = s => !!(s && s.disposal && typeof s.disposal === 'object' && !Array.isArray(s.disposal));
+  const costOf = s => { const p = paidOf(s); if (p === null) return null; const f = feesOf(s); return (toCents(p) + (f === null ? 0 : toCents(f))) / 100; };
+  const costPartialOf = s => paidOf(s) !== null && feesOf(s) === null && s && s.acquisitionFees === null; // frais déclarés inconnus
+  const realizedGainOf = s => {
+    if (!disposedOf(s) || s.disposal.kind !== 'sold') return null;
+    const pr = numOrNull(s.disposal.price), c = costOf(s);
+    if (pr === null || c === null) return null;
+    const dc = curNorm(s.disposal.currency), pc = purchaseCurOf(s);
+    if (dc && pc && dc !== pc) return null; // jamais de différence entre deux devises
+    const fe = numOrNull(s.disposal.fees);
+    return (toCents(pr) - (fe === null ? 0 : toCents(fe)) - toCents(c)) / 100;
+  };
+  const finDefaultCurrency = () => { try { return curNorm(localStorage.getItem(FIN_DEFAULT_KEY)); } catch (_) { return null; } };
+  const finSetDefaultCurrency = c => { const v = curNorm(c); try { if (v) localStorage.setItem(FIN_DEFAULT_KEY, v); else localStorage.removeItem(FIN_DEFAULT_KEY); } catch (_) {} return finDefaultCurrency(); };
+  const fmtCur = (n, cur) => {
+    const v = numOrNull(n);
+    if (v === null) return '—';
+    if (!cur || cur === 'none') return money(v);
+    try { return v.toLocaleString('fr-FR', { style: 'currency', currency: cur }); } catch (_) { return v.toFixed(2) + ' ' + cur; }
+  };
+  // Totaux par devise (« none » = non précisée) ; la plus-value n'est calculée que dans une même devise
+  const financeByCurrency = list => {
+    const b = {};
+    const g = k => b[k] || (b[k] = { invested: 0, costKnown: 0, value: 0, valueKnown: 0, gainCost: 0, gainValue: 0, gainBase: 0, realized: 0, realizedN: 0 });
+    (list || []).forEach(s => {
+      if (!s || s.isWishlist) return;
+      const pc = purchaseCurOf(s) || 'none';
+      if (disposedOf(s)) { const rg = realizedGainOf(s); if (rg !== null) { const x = g(pc); x.realized += toCents(rg); x.realizedN++; } return; }
+      const c = costOf(s), v = valueOf(s), vc = valueCurOf(s) || 'none';
+      if (c !== null) { const x = g(pc); x.invested += toCents(c); x.costKnown++; }
+      if (v !== null) { const x = g(vc); x.value += toCents(v); x.valueKnown++; }
+      if (c !== null && v !== null && pc === vc) { const x = g(pc); x.gainCost += toCents(c); x.gainValue += toCents(v); x.gainBase++; }
+    });
+    Object.values(b).forEach(x => {
+      x.gain = x.gainBase ? (x.gainValue - x.gainCost) / 100 : null;
+      ['invested', 'value', 'gainCost', 'gainValue', 'realized'].forEach(k => { x[k] = x[k] / 100; });
+      x.gainPct = gainPct(x.gain, x.gainCost);
+    });
+    return b;
+  };
+
+  // Journal financier (50 dernières modifications par fiche)
+  const finLog = (s, field, from, to, by) => {
+    s.financeLog = (Array.isArray(s.financeLog) ? s.financeLog : []).concat([{ at: new Date().toISOString(), field, from: from === undefined ? null : from, to: to === undefined ? null : to, by }]).slice(-50);
+  };
+  const FIN_FIELDS = ['purchasePrice', 'purchaseCurrency', 'acquisitionFees', 'coverCurrency', 'valueCurrency', 'acquisitionId'];
+  const finLogDiff = (prev, next, by) => {
+    if (!prev || !next) return;
+    FIN_FIELDS.forEach(k => { const a = prev[k] === undefined ? null : prev[k], b = next[k] === undefined ? null : next[k]; if (JSON.stringify(a) !== JSON.stringify(b)) finLog(next, k, a, b, by); });
+    const da = prev.disposal || null, db = next.disposal || null;
+    if (JSON.stringify(da) !== JSON.stringify(db)) finLog(next, 'disposal', da, db, by);
+  };
+  const finUndo = new Map();
+  const finToken = fn => { const t = 'fu_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); finUndo.set(t, fn); return t; };
+  const finUndoRun = token => { const f = finUndo.get(token); if (!f) return false; finUndo.delete(token); f(); persistSingles(); return true; };
+  const finCopy = id => physicalSingles.find(s => s && s.id === id) || null;
+  const finSnapshot = ids => new Map(ids.map(id => [id, JSON.parse(JSON.stringify(finCopy(id)))]));
+  const finRestore = snap => { snap.forEach((v, id) => { const i = physicalSingles.findIndex(s => s && s.id === id); if (i >= 0 && v) physicalSingles[i] = v; }); };
+
+  // Sorties de collection (vente, don, perte, échange) : la fiche est conservée, restaurable
+  const DISPOSAL_KINDS = { sold: 'Vendu', gift: 'Donné', lost: 'Perdu', traded: 'Échangé' };
+  const finCleanDisposal = d => {
+    if (!d || typeof d !== 'object' || !DISPOSAL_KINDS[d.kind]) return null;
+    return { kind: d.kind, date: /^\d{4}-\d{2}-\d{2}$/.test(d.date || '') ? d.date : null, price: numOrNull(d.price), fees: numOrNull(d.fees), currency: curNorm(d.currency), note: String(d.note || '').slice(0, 300) };
+  };
+  const finDispose = (id, d) => {
+    const s = finCopy(id);
+    if (!s || s.isWishlist) return { ok: false, error: 'Exemplaire possédé introuvable.' };
+    const clean = finCleanDisposal(d);
+    if (!clean) return { ok: false, error: 'Type de sortie invalide (vendu, donné, perdu, échangé).' };
+    if (clean.price !== null && clean.price < 0) return { ok: false, error: 'Prix de sortie négatif.' };
+    if (clean.currency === null && clean.price !== null) clean.currency = purchaseCurOf(s);
+    const snap = finSnapshot([id]);
+    const prev = JSON.parse(JSON.stringify(s));
+    s.disposal = clean; s.updatedAt = new Date().toISOString();
+    finLogDiff(prev, s, 'user');
+    persistSingles();
+    return { ok: true, realizedGain: realizedGainOf(s), undoToken: finToken(() => finRestore(snap)) };
+  };
+  const finRestoreDisposal = id => {
+    const s = finCopy(id);
+    if (!s || !disposedOf(s)) return { ok: false, error: 'Aucune sortie à annuler.' };
+    const snap = finSnapshot([id]);
+    const prev = JSON.parse(JSON.stringify(s));
+    delete s.disposal; s.updatedAt = new Date().toISOString();
+    finLogDiff(prev, s, 'user');
+    persistSingles();
+    return { ok: true, undoToken: finToken(() => finRestore(snap)) };
+  };
+
+  // Achats groupés (lots) : panel_acquisitions ; écrit seulement les prix payés vides, sauf confirmation par fiche
+  const ACQ_KEY = 'panel_acquisitions';
+  const acqList = () => { try { const v = JSON.parse(localStorage.getItem(ACQ_KEY) || '[]'); return Array.isArray(v) ? v : []; } catch (_) { return []; } };
+  const acqSave = list => { localStorage.setItem(ACQ_KEY, JSON.stringify(list)); };
+  const acqRawRestore = raw => { try { if (raw === null) localStorage.removeItem(ACQ_KEY); else localStorage.setItem(ACQ_KEY, raw); } catch (_) {} };
+  const acqDefaultMethod = copies => copies.length && copies.every(s => numOrNull(s.coverPrice) !== null && numOrNull(s.coverPrice) > 0) ? 'cover' : 'equal'; // D-29
+  const acqSplit = (copies, total, method, manual) => {
+    if (method === 'manual') {
+      const m = (manual || []).map(numOrNull);
+      if (m.length !== copies.length || m.some(x => x === null || x < 0)) throw new Error('Répartition manuelle incomplète.');
+      const c = m.map(toCents);
+      if (c.reduce((a, x) => a + x, 0) !== total) throw new Error('La répartition manuelle ne correspond pas au total.');
+      return { parts: c, remainder: 0, remainderLine: -1 };
+    }
+    let w;
+    if (method === 'equal') w = copies.map(() => 1);
+    else if (method === 'cover' || method === 'value') {
+      w = copies.map(s => method === 'cover' ? numOrNull(s.coverPrice) : valueOf(s));
+      if (w.some(x => x === null || !(x > 0))) throw new Error(method === 'cover' ? 'Méthode « couverture » impossible : une couverture est inconnue.' : 'Méthode « valeur » impossible : une valeur estimée manque.');
+      w = w.map(toCents);
+    } else throw new Error('Méthode de répartition inconnue.');
+    const sw = w.reduce((a, x) => a + x, 0);
+    const parts = w.map(x => Math.floor(total * x / sw));
+    const remainder = total - parts.reduce((a, x) => a + x, 0);
+    const remainderLine = w.indexOf(Math.max(...w)); // reste d'arrondi affecté à la ligne la plus chère, et affiché
+    parts[remainderLine] += remainder;
+    return { parts, remainder, remainderLine };
+  };
+  const acqPreview = (o = {}) => {
+    const ids = Array.isArray(o.copyIds) ? [...new Set(o.copyIds)] : [];
+    const copies = ids.map(finCopy);
+    if (!ids.length || copies.some(s => !s || s.isWishlist)) return { ok: false, error: 'Sélectionnez des exemplaires possédés.' };
+    const currency = curNorm(o.currency);
+    if (!currency) return { ok: false, error: 'Devise du lot obligatoire (un lot n\'a qu\'une devise).' };
+    const totalPaid = numOrNull(o.totalPaid), fees = numOrNull(o.fees);
+    if (totalPaid === null || totalPaid < 0 || (fees !== null && fees < 0)) return { ok: false, error: 'Montant du lot invalide.' };
+    const method = o.method || acqDefaultMethod(copies);
+    let sp, sf;
+    try { sp = acqSplit(copies, toCents(totalPaid), method, o.manual); sf = fees === null ? null : acqSplit(copies, toCents(fees), method === 'manual' ? 'equal' : method); }
+    catch (err) { return { ok: false, error: String(err.message || err), method }; }
+    const lines = copies.map((s, i) => {
+      const curMismatch = purchaseCurOf(s) && purchaseCurOf(s) !== currency && paidOf(s) !== null;
+      return { copyId: s.id, allocatedPrice: sp.parts[i] / 100, allocatedFees: sf ? sf.parts[i] / 100 : null, hasPrice: paidOf(s) !== null, curMismatch };
+    });
+    return { ok: true, method, currency, totalPaid, fees, lines, remainder: sp.remainder / 100, remainderLine: sp.remainderLine };
+  };
+  const acqCreate = (o = {}) => {
+    const pv = acqPreview(o);
+    if (!pv.ok) return pv;
+    const overwrite = new Set(Array.isArray(o.overwrite) ? o.overwrite : []);
+    const snap = finSnapshot(pv.lines.map(l => l.copyId));
+    const id = 'acq_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const at = new Date().toISOString();
+    const written = [], skipped = [];
+    pv.lines.forEach(l => {
+      const s = finCopy(l.copyId);
+      if (l.hasPrice && !overwrite.has(l.copyId)) { skipped.push(l.copyId); return; }
+      const prev = JSON.parse(JSON.stringify(s));
+      s.purchasePrice = l.allocatedPrice; s.acquisitionFees = l.allocatedFees; s.purchaseCurrency = pv.currency; s.acquisitionId = id; s.updatedAt = at;
+      if (o.date && /^\d{4}-\d{2}-\d{2}$/.test(o.date) && !s.purchaseDate) s.purchaseDate = o.date;
+      finLogDiff(prev, s, 'lot');
+      written.push(l.copyId);
+    });
+    const prevList = acqList(), prevRaw = localStorage.getItem(ACQ_KEY);
+    const rec = { id, date: /^\d{4}-\d{2}-\d{2}$/.test(o.date || '') ? o.date : null, vendor: String(o.vendor || '').slice(0, 120), currency: pv.currency, totalPaid: pv.totalPaid, fees: pv.fees,
+      allocation: pv.method, lines: pv.lines.map(l => ({ copyId: l.copyId, allocatedPrice: l.allocatedPrice, allocatedFees: l.allocatedFees, applied: written.includes(l.copyId) })), remainder: pv.remainder, createdAt: at, updatedAt: at };
+    acqSave(prevList.concat([rec]));
+    persistSingles();
+    return { ok: true, id, written, skipped, method: pv.method, remainder: pv.remainder, undoToken: finToken(() => { finRestore(snap); acqRawRestore(prevRaw); }) };
+  };
+  const acqRemove = (id, opts = {}) => {
+    const prevList = acqList(), prevRaw = localStorage.getItem(ACQ_KEY), rec = prevList.find(a => a.id === id);
+    if (!rec) return { ok: false, error: 'Lot introuvable.' };
+    const ids = physicalSingles.filter(s => s && s.acquisitionId === id).map(s => s.id);
+    const snap = finSnapshot(ids);
+    ids.forEach(cid => {
+      const s = finCopy(cid), prev = JSON.parse(JSON.stringify(s));
+      delete s.acquisitionId;
+      if (opts.removePrices) { const l = rec.lines.find(x => x.copyId === cid); if (l && paidOf(s) === l.allocatedPrice) { s.purchasePrice = null; s.acquisitionFees = null; } }
+      finLogDiff(prev, s, 'lot');
+    });
+    acqSave(prevList.filter(a => a.id !== id));
+    persistSingles();
+    return { ok: true, unlinked: ids.length, undoToken: finToken(() => { finRestore(snap); acqRawRestore(prevRaw); }) };
+  };
+  const FINANCE_API = Object.freeze({
+    currencies: FIN_CURRENCIES, defaultCurrency: finDefaultCurrency, setDefaultCurrency: finSetDefaultCurrency,
+    costOf: s => costOf(s), realizedGainOf: s => realizedGainOf(s), isDisposed: s => disposedOf(s),
+    summary: list => financeSummary(list || physicalSingles), byCurrency: list => financeByCurrency(list || physicalSingles),
+    dispose: finDispose, restoreDisposal: finRestoreDisposal,
+    lots: () => JSON.parse(JSON.stringify(acqList())), previewLot: acqPreview, createLot: acqCreate, removeLot: acqRemove, defaultMethod: ids => acqDefaultMethod((ids || []).map(finCopy).filter(Boolean)),
+    log: id => { const s = finCopy(id); return s && Array.isArray(s.financeLog) ? JSON.parse(JSON.stringify(s.financeLog)) : []; },
+    undo: finUndoRun, format: fmtCur
+  });
+
   const normSeries = str => (str || '').toLowerCase()
     .normalize('NFD').replace(/[̀-ͯ]/g, '')
     .replace(/\(\s*\d{4}\s*\)/g, '').replace(/\bvol(ume)?\.?\s*\d+\b/g, '')
@@ -5139,7 +5374,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const CAT_ISSUE_FIELDS = ['issue', 'title', 'coverYear', 'coverDate', 'releaseDate', 'coverPrice', 'keyType', 'keyNote', 'keyNotes'];
   const CAT_VARIANT_FIELDS = ['variant', 'coverUrl', 'coverMeta', 'coverHistory', 'coverLookup', 'fandomLookup', 'upc', 'barcode', 'isbn', 'printing', 'comicVineId', 'metronId', 'gcdId', 'coverSource', 'coverArtist', 'ratio'];
   const CAT_FIELDS = new Set([...CAT_SERIES_FIELDS, ...CAT_ISSUE_FIELDS, ...CAT_VARIANT_FIELDS]);
-  const COPY_FIELDS = new Set(['wish', 'pubId', 'pullId', 'condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency', 'locationId', 'locationAt', 'locationHistory', 'room', 'furniture']);
+  const COPY_FIELDS = new Set(['wish', 'pubId', 'pullId', 'condition', 'purchasePrice', 'purchaseDate', 'estValue', 'valueSource', 'valueHistory', 'valuation', 'marketSource', 'marketDate', 'marketValue', 'isWishlist', 'isRead', 'rating', 'notes', 'box', 'divider', 'location', 'addedAt', 'isProtected', 'signedBy', 'grade', 'gradingCompany', 'slab', 'store', 'tags', 'quantity', 'labelType', 'certNumber', 'signatureAuth', 'purchaseCurrency', 'acquisitionFees', 'valueCurrency', 'coverCurrency', 'acquisitionId', 'disposal', 'financeLog', 'locationId', 'locationAt', 'locationHistory', 'room', 'furniture']);
   const splitLegacySingle = s => {
     const catalogFields = {}, personal = {}, extra = {};
     Object.keys(s || {}).forEach(k => {
@@ -5177,7 +5412,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return {
       grade: { value, scale: slabbed ? 'certifie' : value !== null ? 'estime' : 'inconnu', company, slabbed, labelType, certNumber: certNumber || null, label: rawLabel },
       signature: { signed: !!signedBy || !!authenticated || s.keyType === 'signed', by: signedBy || null, authenticated: authenticated || null },
-      purchase: { price: numOrNull(s.purchasePrice), currency: txt(s.purchaseCurrency) || 'USD', date: txt(s.purchaseDate) || null, store: store || null },
+      purchase: { price: numOrNull(s.purchasePrice), currency: curNorm(txt(s.purchaseCurrency)) || null, date: txt(s.purchaseDate) || null, store: store || null },
       quantity: Math.max(1, parseInt(s.quantity, 10) || 1),
       fromNotes
     };
@@ -6478,6 +6713,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Instantané quotidien de la valeur de la collection (pour la courbe d'évolution)
   // Méthode 2 (lot F0) : seules les valeurs et les prix payés connus. Un relevé de l'ancienne méthode (sans « m ») n'est jamais réécrit.
   const recordValueSnapshot = fin => {
+    if (!fin || fin.mixed) return; // lot F1 : jamais de total entre devises différentes
     try {
       const snaps = JSON.parse(localStorage.getItem('panel_value_snapshots') || '{}') || {};
       const today = new Date().toISOString().slice(0, 10);
@@ -6612,11 +6848,46 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     pp.focus();
   });
 
+  // Lot F1 : champs financiers du formulaire. La devise n'est jamais posée sans choix (D-28) ; la préférence est mémorisée au premier choix.
+  const fillFinanceFormFields = item => {
+    const sel = $('singleCurrencySelect');
+    if (!sel) return;
+    const def = finDefaultCurrency();
+    sel.value = item ? (purchaseCurOf(item) || '') : (def || '');
+    if ($('currencyFirstUseHint')) $('currencyFirstUseHint').hidden = !!def;
+    if ($('singleFeesInput')) $('singleFeesInput').value = item ? (feesOf(item) ?? '') : '';
+    const d = item && disposedOf(item) ? item.disposal : null;
+    if ($('singleDisposalKind')) $('singleDisposalKind').value = d ? d.kind : '';
+    if ($('singleDisposalDate')) $('singleDisposalDate').value = d && d.date ? d.date : '';
+    if ($('singleDisposalPrice')) $('singleDisposalPrice').value = d && d.price !== null && d.price !== undefined ? d.price : '';
+    if ($('singleDisposalFees')) $('singleDisposalFees').value = d && d.fees !== null && d.fees !== undefined ? d.fees : '';
+    if ($('singleDisposalBox')) $('singleDisposalBox').open = !!d;
+  };
+  const applyFinanceFormFields = (target, prev) => {
+    const sel = $('singleCurrencySelect');
+    if (!sel || !target) return;
+    const before = prev ? JSON.parse(JSON.stringify(prev)) : null;
+    const cur = curNorm(sel.value);
+    if (cur) { target.purchaseCurrency = cur; if (!finDefaultCurrency()) finSetDefaultCurrency(cur); }
+    else if ('purchaseCurrency' in target) target.purchaseCurrency = null;
+    const fees = numOrNull($('singleFeesInput') && $('singleFeesInput').value);
+    if (fees !== null && fees >= 0) target.acquisitionFees = fees;
+    else if ('acquisitionFees' in target) target.acquisitionFees = null;
+    const kind = $('singleDisposalKind') ? $('singleDisposalKind').value : '';
+    if (kind && !target.isWishlist) {
+      const d = finCleanDisposal({ kind, date: $('singleDisposalDate').value || new Date().toISOString().slice(0, 10), price: $('singleDisposalPrice').value, fees: $('singleDisposalFees').value,
+        currency: (prev && prev.disposal && prev.disposal.currency) || cur, note: prev && prev.disposal ? prev.disposal.note : '' });
+      if (d) target.disposal = d;
+    } else if (target.disposal) delete target.disposal;
+    if (before) finLogDiff(before, target, 'user');
+    else if (cur || fees !== null) finLog(target, 'created', null, { purchaseCurrency: cur, acquisitionFees: fees }, 'user');
+  };
   // Réinitialise les champs étendus du formulaire (aucune valeur inventée)
   const resetExtendedSingleFields = () => {
     fillStructuredCopyFields(null);
     if ($('singleEstValueInput')) $('singleEstValueInput').value = '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = '';
+    fillFinanceFormFields(null);
     setPurchasePrefill(false);
     syncPurchasePrefill();
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = new Date().toISOString().slice(0, 10);
@@ -6759,6 +7030,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           updatedAt: new Date().toISOString()
         });
         applyStructuredCopyFields(physicalSingles[idx]);
+        applyFinanceFormFields(physicalSingles[idx], prevItem);
         applyCascadeLocation(physicalSingles[idx]);
         withCover(physicalSingles[idx], prevItem);
         applyFormValuation(physicalSingles[idx], prevEst);
@@ -6776,6 +7048,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         addedAt: new Date().toISOString()
       };
       applyStructuredCopyFields(newSingle);
+      applyFinanceFormFields(newSingle, null);
       applyCascadeLocation(newSingle);
       withCover(newSingle, null);
       applyFormValuation(newSingle, null);
@@ -7007,6 +7280,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     $('singleCoverPriceInput').value = numOrNull(item.coverPrice) ?? '';
     $('singleEstValueInput').value = numOrNull(item.estValue) ?? '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = numOrNull(item.purchasePrice) ?? '';
+    fillFinanceFormFields(item);
     setPurchasePrefill(false);
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = item.purchaseDate || '';
     if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = !!item.isRead;
@@ -7091,20 +7365,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   const updateSinglesStats = () => {
     const owned = physicalSingles.filter(isOwned);
-    const wish = physicalSingles.filter(s => !isOwned(s));
+    const wish = physicalSingles.filter(s => s.isWishlist);
     const fin = financeSummary(physicalSingles);
     recordValueSnapshot(fin);
     const series = buildSeriesIndex();
     const ownedSeries = series.filter(g => g.ownedCount > 0);
 
     $('statSinglesCount').textContent = owned.length;
-    $('statSinglesValue').textContent = fin.valueKnown ? money(fin.value) : '—';
+    const perCur = k => fin.currencies.filter(c => fin.byCurrency[c][k === 'value' ? 'valueKnown' : 'costKnown']).map(c => fmtCur(fin.byCurrency[c][k], c)).join(' · ') || '—';
+    const oneCur = !fin.mixed && fin.currencies.length === 1 && fin.currencies[0] !== 'none' ? fin.currencies[0] : null;
+    const fmtF = n => oneCur ? fmtCur(n, oneCur) : money(n);
+    $('statSinglesValue').textContent = fin.mixed ? perCur('value') : fin.valueKnown ? fmtF(fin.value) : '—';
     $('statSinglesValue').title = fin.valueKnown ? 'Marché ' + money(fin.bySource.market) + ' · saisie ' + money(fin.bySource.manual) + ' · cote auto ≈ ' + money(fin.bySource.auto) +
       (fin.countBySource.auto ? ' (fourchette ' + money(fin.autoLow) + ' – ' + money(fin.autoHigh) + ')' : '') + (fin.valueUnknown ? ' · ' + fin.valueUnknown + ' ex. sans valeur' : '') : 'Aucune valeur connue';
-    if ($('statSinglesInvested')) $('statSinglesInvested').textContent = fin.costKnown ? money(fin.invested) : '—';
-    if ($('statSinglesInvestedSub')) $('statSinglesInvestedSub').textContent = fin.costUnknown ? 'prix payés · ' + fin.costUnknown + ' inconnu(s)' : 'prix payés';
+    if ($('statSinglesInvested')) $('statSinglesInvested').textContent = fin.mixed ? perCur('invested') : fin.costKnown ? fmtF(fin.invested) : '—';
+    if ($('statSinglesInvestedSub')) $('statSinglesInvestedSub').textContent = (fin.costUnknown ? 'prix payés · ' + fin.costUnknown + ' inconnu(s)' : 'prix payés') + (fin.mixed ? ' · par devise, sans conversion' : '');
     if ($('statSinglesGain')) {
-      $('statSinglesGain').textContent = fin.gain === null ? '—' : (fin.gain >= 0 ? '+' : '-') + money(Math.abs(fin.gain));
+      $('statSinglesGain').textContent = fin.mixed ? fin.currencies.filter(c => fin.byCurrency[c].gain !== null).map(c => (fin.byCurrency[c].gain >= 0 ? '+' : '-') + fmtCur(Math.abs(fin.byCurrency[c].gain), c)).join(' · ') || '—'
+        : fin.gain === null ? '—' : (fin.gain >= 0 ? '+' : '-') + fmtF(Math.abs(fin.gain));
+      $('statSinglesGain').title = fin.realizedBase ? 'Plus-value réalisée (ventes) : ' + (fin.realized === null ? 'par devise' : (fin.realized >= 0 ? '+' : '-') + fmtF(Math.abs(fin.realized))) + ' sur ' + fin.realizedBase + ' vente(s)' : '';
       $('statSinglesGain').className = fin.gain === null ? '' : fin.gain >= 0 ? 'gain-pos' : 'gain-neg';
     }
     if ($('statSinglesGainPct')) {
@@ -7139,11 +7418,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const singleMatchesFilters = s => {
     // La wishlist a sa propre vue : les autres filtres ne montrent que les exemplaires possédés
     if (activeSingleFilter === 'wishlist') { if (!s.isWishlist) return false; }
-    else if (s.isWishlist) return false;
+    else if (activeSingleFilter === 'disposed') { if (s.isWishlist || !disposedOf(s)) return false; }
+    else if (s.isWishlist || disposedOf(s)) return false;
     if (activeSingleFilter === 'key' && (!s.keyType || s.keyType === 'none')) return false;
     if (activeSingleFilter === 'graded' && !isGradedCondition(s.condition)) return false;
     if (activeSingleFilter === 'Indé' && ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse'].includes(s.publisher)) return false;
-    if (!['all', 'key', 'graded', 'wishlist', 'Indé'].includes(activeSingleFilter) && s.publisher !== activeSingleFilter) return false;
+    if (!['all', 'key', 'graded', 'wishlist', 'disposed', 'Indé'].includes(activeSingleFilter) && s.publisher !== activeSingleFilter) return false;
 
     if (singlesReadFilter === 'read' && !s.isRead) return false;
     if (singlesReadFilter === 'unread' && s.isRead) return false;
@@ -7350,7 +7630,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     });
     return [...map.values()].map(g => {
       const owned = g.items.filter(isOwned);
-      const wish = g.items.filter(s => !isOwned(s));
+      const wish = g.items.filter(s => s.isWishlist);
       const ownedNums = new Set(owned.map(issueNumber).filter(n => Number.isInteger(n) && n >= 0));
       const wishNums = new Set(wish.map(issueNumber).filter(n => Number.isInteger(n) && n >= 0));
       const meta = seriesMeta[g.key] || {};
@@ -11612,14 +11892,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Priorité wishlist', 'Statut wishlist', 'Prix cible ($)', 'Pièce', 'Meuble', 'Boîte', 'Séparateur', 'Notes', 'Date ajout'];
+    const headers = ['Série', 'Numéro', 'Éditeur', 'Variante', 'Type Key', 'État', 'Prix couverture ($)', 'Prix payé ($)', 'Date achat', 'Valeur estimée ($)', 'Source de la cote', 'Année de parution', 'Lu', 'Note (/5)', 'Protégé', 'Wishlist', 'Priorité wishlist', 'Statut wishlist', 'Prix cible ($)', 'Pièce', 'Meuble', 'Boîte', 'Séparateur', 'Notes', 'Date ajout', 'Devise achat', 'Frais acquisition', 'Coût acquisition', 'Devise valeur', 'Lot', 'Sortie', 'Date sortie', 'Prix sortie', 'Frais sortie', 'Plus-value réalisée'];
     const rows = physicalSingles.map(s => [
       s.series, s.issue, s.publisher, s.variant, s.keyType || 'none', s.condition,
       numOrNull(s.coverPrice) ?? '', numOrNull(s.purchasePrice) ?? '', s.purchaseDate || '', numOrNull(s.estValue) ?? '',
       ({ auto: 'Cote auto', market: 'Marché (' + (s.marketSource || 'vente') + ')', manual: 'Saisie' })[s.valueSource] || '', s.coverYear || '',
       s.isRead ? 'Oui' : 'Non', s.rating || '', s.isProtected ? 'Oui' : 'Non', s.isWishlist ? 'Oui' : 'Non',
       ...(w => s.isWishlist ? [WISH_PRIORITY[w.priority], WISH_STATUS[w.status], w.targetPrice ?? ''] : ['', '', ''])(wishOf(s)),
-      ...(c => [c.room, c.furniture, c.box, c.divider])(locExportColumns(s)), s.notes || '', s.addedAt || ''
+      ...(c => [c.room, c.furniture, c.box, c.divider])(locExportColumns(s)), s.notes || '', s.addedAt || '',
+      purchaseCurOf(s) || '', feesOf(s) ?? '', costOf(s) ?? '', curNorm(s.valueCurrency) || '', s.acquisitionId || '',
+      ...(d => d ? [DISPOSAL_KINDS[d.kind], d.date || '', d.price ?? '', d.fees ?? '', realizedGainOf(s) ?? ''] : ['', '', '', '', ''])(disposedOf(s) ? s.disposal : null)
     ].map(csvCell));
 
     const csvContent = [headers.map(csvCell).join(','), ...rows.map(r => r.join(','))].join('\r\n');
@@ -11693,7 +11975,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       updatedAt: raw.updatedAt ? str(raw.updatedAt, 40) : undefined
     };
     // Champs non listés ci-dessus : conservés s'ils sont simples (texte, nombre, booléen) ou d'un type connu et sûr
-    const KEEP_OBJECTS = new Set(['coverMeta', 'valuation', 'coverLookup', 'fandomLookup', 'wish']);
+    const KEEP_OBJECTS = new Set(['coverMeta', 'valuation', 'coverLookup', 'fandomLookup', 'wish', 'disposal']);
     Object.keys(raw).forEach(k => {
       if (k in out || /^__|^(constructor|prototype)$/.test(k)) return;
       const v = raw[k];
@@ -11701,6 +11983,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       else if ((typeof v === 'number' && Number.isFinite(v)) || typeof v === 'boolean') out[k] = v;
       else if (k === 'coverHistory' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object' && isSafeImageUrl(h.url)).slice(-5).map(h => JSON.parse(JSON.stringify(h)));
       else if (k === 'locationHistory' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object').slice(-10).map(h => ({ nodeId: str(h.nodeId, 80), path: str(h.path, 400), at: str(h.at, 40) }));
+      else if (k === 'financeLog' && Array.isArray(v)) out[k] = v.filter(h => h && typeof h === 'object').slice(-50).map(h => { const j = JSON.stringify(h); return j.length <= 4000 ? JSON.parse(j) : { at: str(h.at, 40), field: str(h.field, 40), by: str(h.by, 20) }; });
       else if (k === 'tags' && Array.isArray(v)) out[k] = v.filter(t => typeof t === 'string').map(t => t.slice(0, 60)).slice(0, 50);
       else if (KEEP_OBJECTS.has(k) && v && typeof v === 'object' && !Array.isArray(v)) { const j = JSON.stringify(v); if (j.length <= 20000) out[k] = JSON.parse(j); }
     });
@@ -12922,7 +13205,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     { name: 'digital_legacy', domain: 'app', source: 'panel-library (PDF/CBZ), notes, annotations, marque-pages, dossiers', table: null, synced: false, reason: 'Jamais : hors périmètre produit, conservé localement' }
   ]);
   const SYNC_SECRET_KEYS = Object.freeze(['panel_comicvine_key', 'panel_metron_creds', 'panel_cv_proxy', 'panel_gcd_proxy', 'panel_metron_proxy']);
-  const SYNC_PREF_KEYS = Object.freeze(['panel_theme', 'panel_sound_effects', 'panel_haptic_feedback', 'panel_singles_view_mode', 'panel_explorer_personalize']);
+  const SYNC_PREF_KEYS = Object.freeze(['panel_theme', 'panel_sound_effects', 'panel_haptic_feedback', 'panel_singles_view_mode', 'panel_explorer_personalize', 'panel_default_currency']);
   const SYNC_DATA_COVER_MAX = 256 * 1024;
   const syncReadiness = async () => {
     const bytes = v => { try { return new Blob([typeof v === 'string' ? v : JSON.stringify(v)]).size; } catch (_) { return 0; } };
@@ -12999,7 +13282,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const BUNDLE_PROVIDERS = [
     {
       id: 'collection', domain: bunDomainOf('copies'), schema: 1,
-      export: async () => ({ singles: bunClone(physicalSingles), seriesMeta: bunClone(seriesMeta || {}), locations: exportLocations(), pulls: bunClone([...relPulls.values()]) }),
+      export: async () => ({ singles: bunClone(physicalSingles), seriesMeta: bunClone(seriesMeta || {}), locations: exportLocations(), pulls: bunClone([...relPulls.values()]), acquisitions: acqList() }),
       counts: s => ({ singles: (s.singles || []).length, seriesMeta: Object.keys(s.seriesMeta || {}).length, locations: ((s.locations && s.locations.nodes) || []).length, pulls: (s.pulls || []).length }),
       normalize: s => {
         if (!s || typeof s !== 'object' || !Array.isArray(s.singles)) throw new Error('Section Collection illisible.');
@@ -13011,6 +13294,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         return {
           items, invalid, seriesMeta: s.seriesMeta && typeof s.seriesMeta === 'object' && !Array.isArray(s.seriesMeta) ? s.seriesMeta : null,
           locations: sanitizeLocDoc(s.locations), pulls: rel ? rel.pulls : [],
+          acquisitions: Array.isArray(s.acquisitions) ? s.acquisitions.filter(a => a && typeof a === 'object' && typeof a.id === 'string' && Array.isArray(a.lines)).map(a => JSON.parse(JSON.stringify(a))) : null,
           anomalies: [].concat(invalid.length ? [invalid.length + ' fiche(s) illisible(s) ignorée(s)'] : [], dup.length ? [dup.length + ' identifiant(s) en double'] : [])
         };
       }
@@ -13235,6 +13519,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     let res = { ok: true, added: 0, conflicts: 0, undo: () => true };
     if (col || ex || rd) res = await applyBackupRestore(payload, { mode, allowWithoutSnapshot: !col });
     if (!res.ok) return Object.assign({ domains: want }, res);
+    // Achats groupés (lot F1) : fusion = lots absents ajoutés ; remplacement = liste de la sauvegarde ; rien si la sauvegarde n'en contient pas
+    const prevAcq = bunLs(ACQ_KEY);
+    if (col && Array.isArray(col.acquisitions)) {
+      const curA = acqList(), ids = new Set(curA.map(a => a.id));
+      acqSave(mode === 'replace' ? col.acquisitions : curA.concat(col.acquisitions.filter(a => !ids.has(a.id))));
+    }
     let prefsSet = 0;
     if (has('app')) {
       Object.entries(v.sections.app.norm.prefs).forEach(([k, val]) => {
@@ -13267,6 +13557,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       for (const st of Object.keys(BUNDLE_STORES)) await bunIdbDelete(st, [...idsAfter[st]].filter(id => !idsBefore[st].has(id) && !BUNDLE_STORES[st]().has(id)));
       Object.entries(prevPrefs).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
       Object.entries(prevSecrets).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
+      try { if (prevAcq === null) localStorage.removeItem(ACQ_KEY); else localStorage.setItem(ACQ_KEY, prevAcq); } catch (_) {}
       return true;
     });
     return { ok: true, mode, domains: want, added: res.added || 0, conflicts: res.conflicts || 0, total: physicalSingles.length, snapshotId: res.snapshotId || null, prefsSet, secrets, untouched, untouchedOk, fingerprints: after, undoToken: token };
@@ -13401,12 +13692,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const owned = [], wish = [], probable = [], seen = new Set();
     (idx.singles.get(k) || []).forEach(s => {
       if (seen.has(s.id)) return; seen.add(s.id);
+      if (s.disposal) return; // lot F1 : sorti de la collection
       const y = yearOk(colYear(s.coverYear) || colYear(s.releaseDate) || colYear(s.coverDate));
       const sure = (pubId && s.pubId === pubId) || y === true;
       if (sure) (s.isWishlist ? wish : owned).push(s);
       else if (y === null && !s.isWishlist) probable.push(s);
     });
-    if (pubId) physicalSingles.forEach(s => { if (s.pubId === pubId && !seen.has(s.id)) { seen.add(s.id); (s.isWishlist ? wish : owned).push(s); } });
+    if (pubId) physicalSingles.forEach(s => { if (s.pubId === pubId && !seen.has(s.id) && !s.disposal) { seen.add(s.id); (s.isWishlist ? wish : owned).push(s); } });
     return { owned, wish, probable, pull: !!pubId && idx.pulls.has(pubId), pending: !!pubId && !!idx.pending && idx.pending.has(pubId), followed: idx.followed.has(gdBase(ref.series)) };
   };
   // Statuts facultatifs (ajout compatible de v1, seulement sur demande : include) : unconfirmed (même titre et numéro, année absente de la fiche), seriesFollowed (série suivie),
@@ -13580,6 +13872,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   });
 
   window.Panel = {
+    finance: FINANCE_API,
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },

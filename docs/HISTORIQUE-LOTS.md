@@ -146,3 +146,11 @@ Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec op
 
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.
+
+- **F1 Finances (mission « Autonomous night shift », D-27 à D-29)** ([spécification et réalisation](directeur/06-specifications-F1-L1.md#a12-réalisation-de-f1-mission--autonomous-night-shift--8-novembre-2026)) :
+  - F1-0 : plus de `USD` inventé ; F1-1 : devise d'achat explicite, préférence au premier choix, totaux par devise sans conversion ;
+  - F1-2 : frais et coût d'acquisition ; F1-3 : achats groupés (4 méthodes, reste d'arrondi, annulation, sauvegarde) ;
+  - F1-4 : sorties de collection (vente, don, perte, échange), filtre « Sorties », plus-value réalisée, S1 ;
+  - F1-5 partiel : colonnes CSV ajoutées ; `Panel.finance` ; test 35 ; test 25 adapté à D-27.
+  - Résultats : `npm run test:all` vert : front **34/34**, base 82/82, secrets 0, frontières 0. Sauvegardes `*.backup.20261108-f1`.
+

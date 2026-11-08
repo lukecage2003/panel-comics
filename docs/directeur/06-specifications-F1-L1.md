@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 06 — Spécifications des lots F1 (finances) et L1 (lecture)
 
-Statut : **spécifications définitives, prêtes à valider** (8 novembre 2026, révision 2 : exports, cas limites, sous-lots ; analyse des décisions en partie C). F1 et L1 sont intégrés à la feuille de route (D-17) mais **non autorisés à démarrer**.
+Statut : **spécifications définitives, prêtes à valider** (8 novembre 2026, révision 2 : exports, cas limites, sous-lots ; analyse des décisions en partie C). F1 et L1 sont intégrés à la feuille de route (D-17). **Mise à jour du 8 novembre 2026 : F1 implémenté** (sous-lots F1-0 à F1-4, F1-5 en partie ; décisions D-27 à D-29), voir § A.12 ; L1 : voir § B.8.
 
 Ce document prolonge :
 - le modèle financier de [`02`](02-audit-financier.md) § 3 ;
@@ -305,3 +305,19 @@ Recommandation : option 2 au départ, sans changement de version IndexedDB.
 | Demander à l'utilisateur | Exact | Une question par œuvre concernée (rare) | Liste des conflits dans l'aperçu de migration |
 
 - **Recommandation : demander** dans l'aperçu de migration. À défaut de réponse : la plus récente, sinon la plus haute. La valeur écartée est consignée dans `ReadingLog`.
+
+## A.12 Réalisation de F1 (mission « Autonomous night shift », 8 novembre 2026)
+Implémenté localement et testé (test 35 de `run-all-tests.js`, suite complète au vert). Rien n'est réécrit au chargement : une fiche ancienne garde ses champs et se calcule comme en F0.
+
+| Sous-lot | Réalisé | Écarts |
+|---|---|---|
+| F1-0 (D-27) | La copie normalisée écrit `currency: null` au lieu de `'USD'` ; test « aucune devise inventée » | Le test 25 attendait `'USD'` : attente corrigée |
+| F1-1 (D-28) | `purchaseCurrency` (sélecteur « Devise de l'achat », vide = non précisée) ; préférence `panel_default_currency` posée au premier choix, puis proposée ; totaux par devise (`byCurrency`), `mixed` ; si plusieurs devises : totaux neutralisés (`null`), statistiques affichées par devise, aucun relevé quotidien | `coverCurrency` et `valueCurrency` acceptés et conservés, sans champ de saisie ; `valueCurrency` absente = devise de l'achat ; outil « appliquer la devise X à N fiches » non réalisé |
+| F1-2 | `acquisitionFees` ; coût = prix payé + frais ; frais inconnus comptés (`feesUnknown`) | `feesDetail` (détail des frais) non réalisé |
+| F1-3 (D-29) | `panel_acquisitions` : aperçu, méthodes `cover` (défaut si toutes les couvertures sont connues), `equal` (sinon), `value`, `manual` ; calcul en centimes, reste sur la ligne la plus chère et affiché ; une seule devise par lot ; écrit seulement les prix vides (sauf `overwrite` fiche par fiche) ; `financeLog` ; annulation ; suppression avec ou sans les prix répartis ; section `acquisitions` du fournisseur B1 Collection | Pas encore d'interface de saisie de lot : API `Panel.finance.previewLot / createLot / removeLot` |
+| F1-4 | `disposal` (vendu, donné, perdu, échangé) dans le formulaire et par `Panel.finance.dispose` ; `isOwned = !isWishlist && !disposal` ; filtre « Sorties » ; plus-value réalisée (même devise, coût connu) ; S1 ne compte plus un exemplaire sorti ; annulation exacte | Inspecteur : pas encore de bloc « Sortie » dédié |
+| F1-5 (partiel) | CSV : 10 colonnes ajoutées à la fin (devise, frais, coût, devise de valeur, lot, sortie, date, prix, frais, plus-value réalisée), en-têtes existants inchangés | Onglet Finances (U-D2), export Excel, « dépenses du mois » : non réalisés |
+
+API : `Panel.finance` (`summary`, `byCurrency`, `costOf`, `realizedGainOf`, `dispose`, `restoreDisposal`, `lots`, `previewLot`, `createLot`, `removeLot`, `defaultMethod`, `log`, `undo`, `defaultCurrency`, `setDefaultCurrency`, `format`).
+Risque résiduel : l'affichage d'un montant de devise non précisée garde le symbole « $ » hérité de F0 (aucun réétiquetage sans geste, D-28) ; seules les fiches en devise explicite s'affichent dans leur devise.
+
