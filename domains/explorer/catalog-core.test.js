@@ -2,7 +2,7 @@
 // Tests des fondations Explorer 2.0 : données synthétiques uniquement.
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { createCatalog } = require('./catalog-core');
+const { createCatalog, fuzzyMatch } = require('./catalog-core');
 
 const fixture = () => {
   const c = createCatalog();
@@ -112,4 +112,15 @@ test('performance : 50 000 entités, recherche sous 150 ms après indexation', (
   const ms = Number(process.hrtime.bigint() - t0) / 1e6;
   assert.ok(r.total > 0);
   assert.ok(ms < 150, ms + ' ms');
+});
+
+test('fuzzyMatch : exact, faute, inversion, préfixe, mots courts stricts', () => {
+  assert.equal(fuzzyMatch('king black', 'King in Black (2020)'), 0);
+  assert.equal(fuzzyMatch('kign in blakc', 'King in Black'), 1, 'inversions');
+  assert.equal(fuzzyMatch('kig', 'King in Black'), -1, 'moins de 4 lettres : strict');
+  assert.equal(fuzzyMatch('venmo', 'Venom #1'), 1);
+  assert.equal(fuzzyMatch('spidr', 'Spider-Man'), 1);
+  assert.equal(fuzzyMatch('absolu', 'Absolute Batman'), 0, 'sous-chaîne exacte');
+  assert.equal(fuzzyMatch('superman', 'Batman'), -1);
+  assert.equal(fuzzyMatch('', 'x'), -1);
 });

@@ -38,6 +38,16 @@ const within = (a, b, max) => {
   return prev[b.length] <= max;
 };
 
+// Correspondance tolérante d'une requête dans un texte libre, pour la recherche d'Explorer dans l'application :
+// 0 = tous les mots présents tels quels, 1 = présents à une faute ou une inversion près (ou en préfixe), -1 = absent
+const fuzzyMatch = (q, text) => {
+  const qt = norm(q).split(' ').filter(Boolean).slice(0, 8);
+  if (!qt.length) return -1;
+  const words = norm(text).split(' ').filter(Boolean), hay = ' ' + words.join(' ') + ' ';
+  if (qt.every(w => hay.includes(w))) return 0;
+  return qt.every(w => hay.includes(w) || (w.length >= 4 && words.some(x => x.startsWith(w) || within(w, x, w.length > 7 ? 2 : 1)))) ? 1 : -1;
+};
+
 function createCatalog() {
   const entities = new Map(), out = new Map(), inc = new Map();
   const index = { tokens: new Map(), grams: new Map(), dirty: true };
@@ -177,4 +187,4 @@ function createCatalog() {
   return { upsert, relate, get, page, readingOrder, search, recommend, news, stats, validate };
 }
 
-module.exports = { createCatalog, KINDS, RELATION_TYPES, norm };
+module.exports = { createCatalog, fuzzyMatch, KINDS, RELATION_TYPES, norm };

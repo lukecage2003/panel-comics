@@ -1663,6 +1663,7 @@ const waitForCdp = async () => {
       // ==========================================
       console.log('\n[TEST 26] Emplacements : hiérarchie, migration, affectation, déplacements, sauvegardes, persistance...');
       const t26a = await evalExpr(`Promise.race([(async () => {
+        window.__t26log = []; window.__t26t0 = performance.now();
         const P = window.Panel, L = P.locations, r = {};
         const wait = ms => new Promise(res => setTimeout(res, ms));
         localStorage.setItem('panel_test26_saved', JSON.stringify({ singles: P.getPhysicalSingles(), doc: L.doc(), last: localStorage.getItem('panel_last_location') }));
@@ -1682,7 +1683,7 @@ const waitForCdp = async () => {
         P.setPhysicalSingles(JSON.parse(JSON.stringify(fx)));
         await wait(300);
         const before = JSON.stringify(P.getPhysicalSingles());
-        window.__t26 = "1 Migration : sauvegarde + insta";
+        window.__t26 = "1 Migration : sauvegarde + insta"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Migration : sauvegarde + instantané, fiches inchangées, valeurs identiques regroupées, ambiguïtés signalées
         const m = await L.migrate();
         const sb1 = L.find('box', 'Short Box 1'), dc = L.find('divider', 'DC'), lbm = L.find('box', 'Long Box Marvel');
@@ -1696,19 +1697,19 @@ const waitForCdp = async () => {
           !doc.nodes.some(n => /tag[eè]re 2/i.test(n.name)) && doc.unresolved.some(u => u.kind === 'info' && u.value === 'Salon') && L.of(fx[7]).nodeId === sb1;
         const st = await P.catalog.status();
         r.backupExists = st.backups.some(b => b.id === m.backupId && b.count === fx.length);
-        window.__t26 = "2 Idempotence";
+        window.__t26 = "2 Idempotence"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Idempotence
         const ids1 = L.doc().nodes.map(n => n.id).sort().join(',');
         const m2 = await L.migrate({ force: true });
         const m3 = await L.migrate();
         r.idempotent = m2.ok && m3.already && L.doc().nodes.map(n => n.id).sort().join(',') === ids1 && JSON.stringify(P.getPhysicalSingles()) === before;
-        window.__t26 = "3 Création des quatre niveaux et";
+        window.__t26 = "3 Création des quatre niveaux et"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Création des quatre niveaux et relations
         const salon = L.create({ level: 'room', name: 'Salon' }), eta = L.create({ level: 'furniture', parentId: salon.node.id, name: 'Étagère', type: 'Étagère' });
         const b5 = L.create({ level: 'box', parentId: eta.node.id, name: 'Boîte 05', capacity: 150 }), mv = L.create({ level: 'divider', parentId: b5.node.id, name: 'Marvel' });
         r.create = [salon, eta, b5, mv].every(x => x.ok) && L.path(mv.node.id) === 'Salon > Étagère > Boîte 05 > Marvel' && b5.node.capacity === 150 &&
           !L.create({ level: 'divider', name: 'Orphelin' }).ok && !L.create({ level: 'box', parentId: salon.node.id, name: 'X' }).ok && !L.create({ level: 'furniture', parentId: salon.node.id, name: 'étagère' }).ok;
-        window.__t26 = "4 Affectation complète, partiell";
+        window.__t26 = "4 Affectation complète, partiell"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Affectation complète, partielle, modification
         L.assign(['l1'], mv.node.id);
         const a1 = P.getPhysicalSingles().find(x => x.id === 'l1');
@@ -1717,19 +1718,19 @@ const waitForCdp = async () => {
         r.partial = L.of(P.getPhysicalSingles().find(x => x.id === 'l2')).path.length === 1 && P.getPhysicalSingles().find(x => x.id === 'l2').box === '';
         L.assign(['l2'], b5.node.id);
         r.modify = L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l2')).nodeId) === 'Salon > Étagère > Boîte 05';
-        window.__t26 = "5 Déplacement d'une boîte : les ";
+        window.__t26 = "5 Déplacement d'une boîte : les "; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Déplacement d'une boîte : les comics suivent, aucune fiche réécrite
         const h8 = JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l8'));
         const mvBox = L.move(sb1, eta.node.id);
         r.moveBox = mvBox.ok && L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l8')).nodeId) === 'Salon > Étagère > Short Box 1' && JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l8')) === h8 &&
           !L.move(mv.node.id, salon.node.id).ok && L.move(dc, b5.node.id).ok && L.path(dc) === 'Salon > Étagère > Boîte 05 > DC';
-        window.__t26 = "6 Comptage, recherche, contenu, ";
+        window.__t26 = "6 Comptage, recherche, contenu, "; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Comptage, recherche, contenu, emplacements vides
         const c = L.counts();
         r.counts = c.byId[salon.node.id] === 3 && c.byId[b5.node.id] === 2 && c.byId[sb1] === 1 && c.none === 1 && c.unresolved === 2 && !(c.byId[sb1] > 1);
         const vide = L.create({ level: 'box', parentId: eta.node.id, name: 'Boîte vide' });
         r.search = L.search('boite 05').some(x => x.id === b5.node.id && x.path === 'Salon > Étagère > Boîte 05') && L.contents(b5.node.id).sort().join(',') === 'l1,l2' && L.unused().includes(vide.node.id) && !L.unused().includes(b5.node.id);
-        window.__t26 = "7 Recherche dans la collection p";
+        window.__t26 = "7 Recherche dans la collection p"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Recherche dans la collection par emplacement (filtre)
         P.renderSinglesCollection();
         const sel = document.getElementById('boxFilterSelect');
@@ -1738,7 +1739,7 @@ const waitForCdp = async () => {
         const shown = [...document.querySelectorAll('[data-sid]')].map(e => e.dataset.sid).filter(id => /^l\\d$/.test(id)).sort().join(',');
         r.filter = shown === 'l1,l2';
         sel.value = 'all'; sel.dispatchEvent(new Event('change', { bubbles: true }));
-        window.__t26 = "8 Renommage et réorganisation : ";
+        window.__t26 = "8 Renommage et réorganisation : "; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Renommage et réorganisation : fiches inchangées
         const g7 = JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l7'));
         const bureau = L.find('room', 'Bureau');
@@ -1747,7 +1748,7 @@ const waitForCdp = async () => {
         L.reorder(salon.node.id, -1);
         const order1 = L.tree().filter(x => x.level === 'room').map(x => x.name).join(',');
         r.rename = L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l7')).nodeId).startsWith('Bureau principal >') && JSON.stringify(P.getPhysicalSingles().find(x => x.id === 'l7')) === g7 && order0 !== order1;
-        window.__t26 = "9 Suppression sécurisée : jamais";
+        window.__t26 = "9 Suppression sécurisée : jamais"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Suppression sécurisée : jamais d'exemplaire supprimé
         const n0 = P.getPhysicalSingles().length;
         const d1 = L.remove(lbm);
@@ -1757,7 +1758,7 @@ const waitForCdp = async () => {
         r.safeDelete = d1.needsChoice && d1.count === 1 && d2.ok && L.of(P.getPhysicalSingles().find(x => x.id === 'l3')).status === 'deleted' && L.of(P.getPhysicalSingles().find(x => x.id === 'l3')).text.includes('(supprimé)') &&
           !d3.ok && d3.children >= 1 && d4.ok && d4.moved === 1 && P.getPhysicalSingles().find(x => x.id === 'l1').locationId === b5.node.id && P.getPhysicalSingles().length === n0 &&
           L.doc().nodes.some(n => n.id === mv.node.id && n.deletedAt) && L.restore(mv.node.id).ok;
-        window.__t26 = "10 Formulaire : sélection progres";
+        window.__t26 = "10 Formulaire : sélection progres"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Formulaire : sélection progressive filtrée, affectation à l'enregistrement
         const $ = id => document.getElementById(id);
         L.fillCascade(null);
@@ -1770,7 +1771,7 @@ const waitForCdp = async () => {
         await wait(200);
         const nf = P.getPhysicalSingles().find(x => x.series === 'Rangement Form Test');
         r.form = furnOpts.join(',') === eta.node.id && $('singleLocDivider').options.length >= 2 && !!nf && nf.locationId === b5.node.id && nf.box === 'Boîte 05';
-        window.__t26 = "11 Export / restauration JSON : h";
+        window.__t26 = "11 Export / restauration JSON : h"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Export / restauration JSON : hiérarchie et relations reconstruites, sans doublon
         const full = { format: 'panel-backup', version: 3, physicalSingles: P.getPhysicalSingles(), seriesMeta: {}, locations: L.doc() };
         const docJson = JSON.stringify(L.doc().nodes.map(n => [n.id, n.parentId, n.name, n.deletedAt]).sort());
@@ -1780,7 +1781,7 @@ const waitForCdp = async () => {
         const res2 = await P.applyBackupRestore(P.validateBackupPayload(JSON.parse(JSON.stringify(full))), { mode: 'merge' });
         r.restore = res1.ok && res2.ok && JSON.stringify(L.doc().nodes.map(n => [n.id, n.parentId, n.name, n.deletedAt]).sort()) === docJson &&
           P.getPhysicalSingles().find(x => x.id === 'l1').locationId === b5.node.id && L.path(L.of(P.getPhysicalSingles().find(x => x.id === 'l1')).nodeId) === 'Salon > Étagère > Boîte 05';
-        window.__t26 = "12 Export CSV puis réimport répét";
+        window.__t26 = "12 Export CSV puis réimport répét"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         if (!r.restore) r._restoreInfo = { res1: { ok: res1.ok, error: res1.error, added: res1.added }, res2ok: res2.ok, nodes: L.doc().nodes.length, expected: JSON.parse(docJson).length, l1: (P.getPhysicalSingles().find(x => x.id === 'l1') || {}).locationId };
         // Export CSV puis réimport répété : colonnes Pièce/Meuble/Boîte/Séparateur, aucun doublon
         const cols = L.exportColumns(P.getPhysicalSingles().find(x => x.id === 'l7'));
@@ -1795,7 +1796,7 @@ const waitForCdp = async () => {
         r.csv = cols.room === 'Bureau principal' && cols.box === 'Boîte 04' && it1[0].room === 'Bureau principal' && it1[0].divider === 'Séparateur DC' &&
           imported.every(x => L.of(x).status === 'legacy') && L.of(imported[0]).nodeId === L.of(P.getPhysicalSingles().find(x => x.id === 'l7')).nodeId &&
           afterFirst === nodesBefore + 3 && L.doc().nodes.length === afterFirst && L.path(L.of(imported[1]).nodeId) === 'Garage > Armoire > Boîte G';
-        window.__t26 = "13 Hors ligne : aucune requête ré";
+        window.__t26 = "13 Hors ligne : aucune requête ré"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         if (!r.csv) r._csvInfo = { mapping: P.detectCsvMapping(P.parseCsvText(csv).headers), it: it1.map(x => [x.room, x.furniture, x.box, x.divider]), st: imported.map(x => L.of(x).status), before: nodesBefore, afterFirst, now: L.doc().nodes.length };
         // Hors ligne : aucune requête réseau pendant les opérations
         const realFetch = window.fetch; let calls = 0;
@@ -1804,7 +1805,7 @@ const waitForCdp = async () => {
         L.assign(['l6'], off.node.id);
         window.fetch = realFetch;
         r.offlineOps = off.ok && calls === 0 && L.of(P.getPhysicalSingles().find(x => x.id === 'l6')).nodeId === off.node.id;
-        window.__t26 = "14 Copie IndexedDB : localStorage";
+        window.__t26 = "14 Copie IndexedDB : localStorage"; window.__t26log.push([window.__t26, Math.round(performance.now() - window.__t26t0)]);
         // Copie IndexedDB : localStorage effacé → emplacements repris
         await wait(300);
         await L.sync();
@@ -1817,8 +1818,10 @@ const waitForCdp = async () => {
         if (!r.idbRecovery && lsBackup) localStorage.setItem('panel_locations', lsBackup);
         r._expect = { l1: b5.node.id, l6: off.node.id, nodes: n1 };
         return r;
-      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t26 }), 60000))])`);
+      })(), new Promise(res => setTimeout(() => res({ blockedAt: window.__t26, stepsMs: window.__t26log }), 60000))])`);
       console.log('Résultat Test 26 (a):', JSON.stringify(t26a));
+      // Durées cumulées par étape : un dépassement du délai indique l'étape réellement lente (diagnostic de l'intermittence)
+      console.log('Test 26 étapes (ms):', JSON.stringify(await evalExpr('window.__t26log || []')));
       // Redémarrage complet hors ligne : la hiérarchie et les affectations sont relues depuis le stockage
       let t26b = {};
       try {
@@ -3434,6 +3437,149 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Lecture L1 : état par œuvre partagé par les exemplaires, compatibilité isRead sans écriture, lu sans possession, vente sans perte, relecture, reprise, migration (aperçu, conflits de notes, idempotence, annulation), S1/S2, sauvegarde',
         ok: t36fail.length === 0
+      });
+
+      // ─── Test 37 : vues Lecture (L1-4, U-D1 = L-C) et Finances (F1-5, U-D2 = Fi-A) — D-32 ───
+      // Données synthétiques ; collection et panel_reading_v1 rétablies à l'identique.
+      console.log('\n[TEST 37] Vues Lecture et Finances : navigation, statistiques, changement de statut et annulation, devises sans total mixte, inconnu « — »...');
+      const t37 = await evalExpr(`(async () => {
+        const P = window.Panel, L = P.reading, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const RK = 'panel_reading_v1', prevRaw = localStorage.getItem(RK);
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fpC = await P.backup.fingerprint('collection');
+        const m = new Date().toISOString().slice(0, 7) + '-02';
+        const base = { publisher: 'Image Comics', variant: 'Cover A', keyType: 'none', condition: '', coverYear: 2025, addedAt: '2026-01-01T00:00:00.000Z' };
+        const mk = (id, o) => Object.assign({ id, series: 'T37 Série', issue: '#1' }, base, o);
+        try {
+          localStorage.removeItem(RK);
+          P.setPhysicalSingles([
+            mk('v1', { purchasePrice: 4, purchaseCurrency: 'EUR', purchaseDate: m, isRead: true }),
+            mk('v2', { issue: '#2', purchasePrice: 5, purchaseCurrency: 'USD', purchaseDate: m }),
+            mk('v3', { issue: '#3' }),
+            mk('v4', { series: 'T37 Vendue', purchasePrice: 3, purchaseCurrency: 'EUR', disposal: { kind: 'sold', date: '2026-03-01', price: 9, fees: 1, currency: 'EUR', note: '' } })
+          ]);
+          await wait(200);
+          r.nav = !!document.getElementById('navSinglesReading') && !!document.getElementById('navSinglesFinances') && !!document.querySelector('#singlesSubnav [data-sview="reading"]') && !!document.querySelector('#singlesSubnav [data-sview="finances"]');
+          document.getElementById('navSinglesReading').click();
+          await wait(150);
+          const rv = document.getElementById('singlesReadingView');
+          r.readingShown = !rv.hidden && document.getElementById('singlesCollectionView').hidden && document.getElementById('mainTitleHeading').textContent === 'Lecture' && document.getElementById('navSinglesReading').classList.contains('active');
+          L.setStatus({ series: 'T37 Série', issue: '#2', year: 2025 }, 'reading');
+          document.querySelector('#readingFilterTabs [data-rdf="reading"]').click();
+          await wait(100);
+          const dash = document.getElementById('readingDashboard');
+          r.readingList = /T37 Série #2/.test(dash.querySelector('#readingList').textContent) && /Prochain numéro/.test(dash.textContent) && document.getElementById('badgeReadingNow').textContent === '1';
+          const btn = dash.querySelector('#readingList [data-rdset="read"]');
+          const before = L.statusOf({ series: 'T37 Série', issue: '#2', year: 2025 });
+          btn.click();
+          await wait(150);
+          const after = L.statusOf({ series: 'T37 Série', issue: '#2', year: 2025 });
+          r.setFromView = before === 'reading' && after === 'read' && P.getPhysicalSingles().find(x => x.id === 'v2').isRead === true && !!L.history().find(h => h.event === 'finished');
+          // Annulation par le bouton du message
+          const undoBtn = document.querySelector('#toastPopup button, .toast-action, [data-toast-action]');
+          if (undoBtn) { undoBtn.click(); await wait(100); }
+          r.undoFromView = !!undoBtn && L.statusOf({ series: 'T37 Série', issue: '#2', year: 2025 }) === 'reading' && P.getPhysicalSingles().find(x => x.id === 'v2').isRead === false;
+          document.querySelector('#readingFilterTabs [data-rdf="journal"]').click();
+          await wait(80);
+          r.journal = /commencé/.test(document.getElementById('readingList').textContent);
+          // XSS : un titre piégé reste du texte
+          L.setStatus({ series: 'T37 <img src=x onerror="window.__x37=1">', issue: '#1', year: 2025 }, 'to_read');
+          document.querySelector('#readingFilterTabs [data-rdf="all"]').click();
+          await wait(80);
+          r.xss = !window.__x37 && !document.querySelector('#readingDashboard img[src="x"]');
+          // Finances
+          document.getElementById('navSinglesFinances').click();
+          await wait(150);
+          const fd = document.getElementById('financeDashboard');
+          const txt = fd.textContent;
+          r.financeShown = !document.getElementById('singlesFinanceView').hidden && document.getElementById('mainTitleHeading').textContent === 'Finances';
+          r.byCurrency = !!fd.querySelector('.fin-table') && /EUR/.test(fd.querySelector('.fin-table').textContent) && /USD/.test(fd.querySelector('.fin-table').textContent);
+          r.noMixedTotal = /aucun total global/.test(txt) && P.finance.summary().invested === null;
+          r.coverage = /Coût connu : 2/.test(txt) && /inconnu : 1/.test(txt);
+          r.realized = /vendu/.test(txt) && /5,00/.test(txt);
+          r.spend = /Dépenses par mois/.test(txt) && /4,00/.test(txt);
+          const sel = document.getElementById('finDefaultCurrencySelect');
+          const prevCur = P.finance.defaultCurrency();
+          sel.value = 'CAD'; sel.dispatchEvent(new Event('change'));
+          r.defaultCurrency = P.finance.defaultCurrency() === 'CAD' && P.getPhysicalSingles().every(x => x.purchaseCurrency !== 'CAD');
+          P.finance.setDefaultCurrency(prevCur);
+          // Aucune écriture de Collection par la vue Finances
+          r.financeReadOnly = JSON.stringify(P.getPhysicalSingles().map(x => [x.id, x.purchasePrice, x.purchaseCurrency])) === JSON.stringify([['v1', 4, 'EUR'], ['v2', 5, 'USD'], ['v3', undefined, undefined], ['v4', 3, 'EUR']]);
+          document.getElementById('navAllSingles').click();
+          await wait(100);
+          r.back = !document.getElementById('singlesCollectionView').hidden && document.getElementById('singlesFinanceView').hidden && document.getElementById('singlesReadingView').hidden;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          P.setPhysicalSingles(saved);
+          if (prevRaw === null) localStorage.removeItem(RK); else localStorage.setItem(RK, prevRaw);
+          await wait(200);
+        }
+        r.finalCollection = (await P.backup.fingerprint('collection')) === fpC;
+        r.finalReading = localStorage.getItem(RK) === prevRaw;
+        return r;
+      })()`);
+      console.log('Résultat Test 37:', JSON.stringify(t37));
+      const t37keys = ['nav', 'readingShown', 'readingList', 'setFromView', 'undoFromView', 'journal', 'xss', 'financeShown', 'byCurrency', 'noMixedTotal', 'coverage', 'realized', 'spend', 'defaultCurrency', 'financeReadOnly', 'back', 'finalCollection', 'finalReading'];
+      const t37fail = t37keys.filter(k => !t37 || t37[k] !== true);
+      if (t37fail.length) console.log('Test 37 — vérifications en échec :', t37fail.join(', '));
+      testResults.push({
+        test: 'Vues Lecture et Finances (U-D1 L-C, U-D2 Fi-A) : navigation, statut depuis la vue et annulation, journal, XSS, devises sans total mixte, couverture, plus-value réalisée, dépenses du mois, devise par défaut, lecture seule',
+        ok: t37fail.length === 0
+      });
+
+      // ─── Test 38 : Explorer 2.0 intégré (D-33) — modules domains/ intégrés à l'identique, recherche tolérante, guides proches motivés ───
+      // Un guide synthétique est ajouté puis retiré ; King in Black et la collection sont rétablis.
+      console.log('\n[TEST 38] Explorer 2.0 : modules intégrés, recherche tolérante (fautes, inversions), mode strict, guides proches avec motifs, sans collection...');
+      const t38 = await evalExpr(`(async () => {
+        const P = window.Panel, X = P.explorer, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const D = window.PanelDomains;
+        r.domains = !!D && Object.isFrozen(D) && typeof D.catalogCore.fuzzyMatch === 'function' && typeof D.catalogCore.createCatalog === 'function' && typeof D.communityPolicy.shareCopy === 'function' && Object.isFrozen(D.catalogCore);
+        await X.load();
+        const ids = s => ((s.guides || {}).items || []);
+        r.exact = ids(X.search('King in Black')).includes('gd_king_in_black');
+        r.typo = ids(X.search('Kign in Blakc')).includes('gd_king_in_black');
+        r.strict = !ids(X.search('Kign in Blakc', { strict: true })).includes('gd_king_in_black');
+        r.noFalse = Object.keys(X.search('zzqx wvyk')).length === 0;
+        const kib = X.guide('gd_king_in_black');
+        let saved = false;
+        try {
+          const g = JSON.parse(JSON.stringify(kib));
+          g.id = 'gd_t38_near'; g.title = 'T38 Guide proche'; g.aliases = []; g.relations = []; g.prerequisites = []; g.editions = [];
+          g.orders = g.orders.slice(0, 1).map(o => Object.assign(o, { id: 'ord_t38', entries: o.entries.slice(10, 13).map((e, i) => Object.assign(e, { id: 'e_t38_' + i, pos: i + 1 })) }));
+          const sv = await X.save(g);
+          saved = !!(sv && (sv.ok || sv.guide || sv.id));
+          await wait(150);
+          const rel = X.related('gd_king_in_black') || [];
+          const hit = rel.find(x => x.id === 'gd_t38_near');
+          r.related = !!hit && hit.why.some(w => /série/.test(w)) && hit.score >= 2;
+          r.relatedNoSelf = !rel.some(x => x.id === 'gd_king_in_black');
+          await X.open('guide', 'gd_king_in_black');
+          await wait(150);
+          const sec = document.getElementById('exRelatedGuides');
+          r.relatedUi = !!sec && /T38 Guide proche/.test(sec.textContent) && /en commun/.test(sec.textContent);
+          // Les guides proches ne dépendent pas de la collection : identiques sans fournisseur S1
+          X.setPersonalProviderForTest(null);
+          r.noCollection = JSON.stringify(X.related('gd_king_in_black')) === JSON.stringify(rel);
+          X.setPersonalProviderForTest(undefined);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          await new Promise(res => { const q = indexedDB.open('panel-catalog'); q.onsuccess = () => { const db = q.result; const tx = db.transaction(['editorial'], 'readwrite'); tx.objectStore('editorial').delete('gd_t38_near'); if (kib) tx.objectStore('editorial').put(kib); tx.oncomplete = () => { db.close(); res(); }; tx.onerror = tx.onabort = () => { db.close(); res(); }; }; q.onerror = () => res(); });
+          await X.load();
+          { const nb = document.getElementById('navAllSingles'); if (nb) nb.click(); }
+        }
+        r.saved = saved;
+        r.cleanup = !X.guide('gd_t38_near') && JSON.stringify(X.guide('gd_king_in_black')) === JSON.stringify(kib);
+        return r;
+      })()`);
+      console.log('Résultat Test 38:', JSON.stringify(t38));
+      const t38keys = ['domains', 'exact', 'typo', 'strict', 'noFalse', 'saved', 'related', 'relatedNoSelf', 'relatedUi', 'noCollection', 'cleanup'];
+      const t38fail = t38keys.filter(k => !t38 || t38[k] !== true);
+      if (t38fail.length) console.log('Test 38 — vérifications en échec :', t38fail.join(', '));
+      testResults.push({
+        test: 'Explorer 2.0 intégré : modules domains/ identiques dans index.html, recherche tolérante (fautes, inversions) avec mode strict, guides proches motivés sans collection, nettoyage',
+        ok: t38fail.length === 0
       });
 
       console.log('\n==========================================');
