@@ -1633,6 +1633,7 @@
     .ex-res b { font-size: 14px; overflow-wrap: anywhere; }
     .ex-res small { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
     .ex-res[data-has-media] { flex-direction: row; align-items: center; gap: 10px; width: 100%; }
+    .ex-res-filter{display:inline-flex;gap:6px;align-items:center;font-size:12px;margin:0 0 8px 8px}.ex-res-filter select{font-size:12px;padding:2px 6px}
     .ex-res-thumb { width: 48px; height: 72px; object-fit: cover; border-radius: 3px; flex: none; background: #141413; }
     .ex-res-txt { display: flex; flex-direction: column; min-width: 0; }
     .ex-res-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
@@ -10825,7 +10826,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const strict = txt => { const t = ' ' + catNorm(txt) + ' '; return toks.every(w => t.includes(w)); };
     const test = txt => strict(txt) || (!!fz && fz(q, txt) === 1);
     const rank = txt => catNorm(txt).startsWith(nq) ? 0 : strict(txt) ? 1 : 2;
-    const put = (cat, list, label) => { const l = list.sort((a, b) => rank(label(a)) - rank(label(b)) || label(a).localeCompare(label(b), 'fr')); if (l.length) out[cat] = { total: l.length, items: l.slice(0, lim) }; };
+    // Filtre par éditeur (4.9) : seules les catégories qui portent un éditeur restent ; appliqué avant la limite, totaux exacts
+    const fp = opts.publisher ? catNorm(opts.publisher) : '';
+    const keep = (cat, x) => { if (!fp) return true; const p = exResPublishers(cat, x); return p.some(v => catNorm(v) === fp); };
+    const put = (cat, list, label) => { list = list.filter(x => keep(cat, x)); const l = list.sort((a, b) => rank(label(a)) - rank(label(b)) || label(a).localeCompare(label(b), 'fr')); if (l.length) out[cat] = { total: l.length, items: l.slice(0, lim) }; };
     const facets = exFacets();
     put('guides', exGuides().filter(g => test([g.title, g.originalTitle, g.publisher, (g.aliases || []).join(' '), (g.characters || []).map(c => c.name).join(' '), GD_CATEGORIES[g.category]].join(' '))), g => g.title);
     put('publications', [...relPubs.values()].filter(p => test([p.series, p.title, p.publisher, p.issue, '#' + p.issue, p.market, Object.values(p.externalIds || {}).join(' ')].join(' '))), p => p.series);
@@ -10836,6 +10840,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     put('editions', exGuides().flatMap(g => (g.editions || []).map(ed => Object.assign({ guideId: g.id, guideTitle: g.title }, ed))).filter(ed => test([ed.title, ed.publisher, ed.isbn, ed.guideTitle].join(' '))), ed => ed.title);
     return out;
   };
+  const exResPublishers = (cat, x) => cat === 'guides' || cat === 'publications' || cat === 'editions' ? (x.publisher ? [x.publisher] : []) : cat === 'series' ? (x.publishers || []) : cat === 'publishers' ? [x.name] : [];
   const EX_HIST_KEY = 'panel_explorer_recent';
   const exHistory = () => { try { const v = JSON.parse(localStorage.getItem(EX_HIST_KEY) || '[]'); return Array.isArray(v) ? v.filter(x => typeof x === 'string').slice(0, 8) : []; } catch (_) { return []; } };
   const exRemember = q => { const s = gdStr(q, 80); if (!s) return; try { localStorage.setItem(EX_HIST_KEY, JSON.stringify([s].concat(exHistory().filter(x => x !== s)).slice(0, 8))); } catch (_) {} };
@@ -10932,7 +10937,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exPubMini = p => '<button class="ex-pub" data-ex-pub="' + h(p.id) + '">' + exImg(p.cover && p.cover.url ? p.cover.url : placeholderCover(p.series, p.issue), relLabel(p), 'ex-pub-img', placeholderCover(p.series, p.issue)) +
     '<span><b>' + h(relLabel(p)) + '</b><small>' + h((p.market || '') + ' · ' + (p.publisher || '')) + '</small>' + relDateBadge(p) + '</span></button>';
   const exResultsHtml = () => {
-    const res = exSearch(exView.q, { limit: exView.cat ? 60 : 6 });
+    const all = exSearch(exView.q, { limit: 500 });
+    const pubs = [...new Set(Object.keys(all).flatMap(c => all[c].items.flatMap(x => exResPublishers(c, x))).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
+    if (exView.rpub && !pubs.some(p => catNorm(p) === catNorm(exView.rpub))) exView.rpub = '';
+    const res = exSearch(exView.q, { limit: exView.cat ? 60 : 6, publisher: exView.rpub });
+    const pubSel = pubs.length > 1 || exView.rpub ? '<label class="ex-res-filter">Éditeur <select data-ex-rpub aria-label="Filtrer les résultats par éditeur"><option value="">Tous</option>' + pubs.map(p => '<option value="' + h(p) + '"' + (catNorm(p) === catNorm(exView.rpub) ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select></label>' : '';
     const cats = Object.keys(EX_CATS).filter(c => res[c] && (!exView.cat || exView.cat === c));
     const chips = '<div class="ex-chips"><button class="ex-chip' + (!exView.cat ? ' active' : '') + '" data-ex-cat="">Tout</button>' + Object.keys(EX_CATS).filter(c => res[c]).map(c => '<button class="ex-chip' + (exView.cat === c ? ' active' : '') + '" data-ex-cat="' + c + '">' + EX_CATS[c] + ' <b>' + res[c].total + '</b></button>').join('') + '</div>';
     if (!cats.length) return '<div class="ex-empty"><b>Aucun résultat pour « ' + h(exView.q) + ' ».</b><br>La recherche porte sur le calendrier, les guides, les personnages, les créateurs et les éditeurs enregistrés dans Panel. Essayez un autre titre, un numéro (« venom 31 ») ou un ISBN. Vos exemplaires se cherchent dans Collection.</div>';
@@ -10948,7 +10957,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Cartes illustrées (D-40) : vignette résolue par entité, texte, description courte
     const desc = (c, x) => c === 'guides' && (x.synopsis || x.description) ? '<small class="ex-res-desc">' + h(String(x.synopsis || x.description).slice(0, 140)) + ((x.synopsis || x.description).length > 140 ? '…' : '') + '</small>' : '';
     const card = (c, x) => item(c, x).replace(/^(<button class="ex-res")/, '$1 data-has-media="1"').replace(/^(<button[^>]*>)/, (m0) => m0 + exMediaImg(c, x, 'ex-res-thumb', { w: 48, h: 72 }) + '<span class="ex-res-txt">').replace(/<\/button>$/, desc(c, x) + '</span></button>');
-    return chips + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => card(c, x)).join('') +
+    return chips + pubSel + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => card(c, x)).join('') +
       (!exView.cat && res[c].total > res[c].items.length ? '<button class="ex-more" data-ex-cat="' + c + '">Voir les ' + res[c].total + ' résultats</button>' : '') + '</section>').join('') + '</div>';
   };
   const exHomeHtml = () => {
@@ -11373,8 +11382,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (e.target.id !== 'exSearch') return;
       clearTimeout(wireExplorer.tm);
       const v = e.target.value;
-      wireExplorer.tm = setTimeout(() => { exView.q = v; exView.cat = ''; exRefreshResults(); }, 160);
+      wireExplorer.tm = setTimeout(() => { exView.q = v; exView.cat = ''; exView.rpub = ''; exRefreshResults(); }, 160);
     });
+    root.addEventListener('change', e => { if (e.target.matches && e.target.matches('[data-ex-rpub]')) { exView.rpub = e.target.value; exRefreshResults(); } });
     root.addEventListener('keydown', e => { if (e.target.id === 'exSearch' && e.key === 'Enter') { clearTimeout(wireExplorer.tm); exView.q = e.target.value; exRemember(exView.q); exRefreshResults(); } });
     root.addEventListener('change', async e => {
       const t = e.target;

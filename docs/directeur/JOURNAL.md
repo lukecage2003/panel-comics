@@ -57,3 +57,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **validation 3.7** (D-44) : matrice V1 à V14, V5 et V9 ajoutés, V8 approché par restauration PGlite ; base 118/118.
   - **3.6 suite** (D-45) : limitation de débit, purge planifiable, suppression de compte (Edge Function testée localement, non déployée), runbook d'incident.
   - **Community C-0** (D-46) : contrats Publish, Revoke et Feed codés et testés ; aperçu de l'envoi dans l'application, test 46.
+  - **Explorer 4.9** (D-47) : filtre des résultats par éditeur, test 47.

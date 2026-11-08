@@ -4062,6 +4062,45 @@ const waitForCdp = async () => {
         ok: t46fail.length === 0
       });
 
+      // ─── Test 47 : Explorer 4.9 (D-47) — filtre des résultats par éditeur, totaux exacts, réinitialisation ───
+      console.log('\n[TEST 47] Explorer : filtre des résultats par éditeur...');
+      const t47 = await evalExpr(`(async () => {
+        const r = {}; const wait = ms => new Promise(res => setTimeout(res, ms));
+        const hist = localStorage.getItem('panel_explorer_recent');
+        try {
+          document.getElementById('navExplorer').click(); await wait(150);
+          const s = document.getElementById('exSearch');
+          const run = async q => { s.value = q; s.dispatchEvent(new Event('input', { bubbles: true })); await wait(300); };
+          let found = '';
+          for (const q of ['marvel', 'comics', 'a', 'e', 'man', 'the', 'i']) { await run(q); const sel = document.querySelector('[data-ex-rpub]'); if (sel && sel.options.length >= 3) { found = q; break; } }
+          r.select = !!found;
+          if (found) {
+            const total = () => [...document.querySelectorAll('.ex-res-group h4 small')].reduce((a, x) => a + Number(x.textContent), 0);
+            const before = total();
+            const sel = document.querySelector('[data-ex-rpub]');
+            const pick = sel.options[1].value;
+            sel.value = pick; sel.dispatchEvent(new Event('change', { bubbles: true })); await wait(150);
+            const after = total();
+            const heads = [...document.querySelectorAll('.ex-res-group h4')].map(x => x.firstChild.textContent.trim());
+            r.filtered = after > 0 && after <= before && document.querySelector('[data-ex-rpub]').value === pick;
+            r.noUnpublished = !heads.some(x => x === 'Personnages' || x === 'Créateurs');
+            r.labelled = document.querySelector('[data-ex-rpub]').getAttribute('aria-label') === 'Filtrer les résultats par éditeur';
+            await run(found + ' ');
+            r.reset = !document.querySelector('[data-ex-rpub]') || document.querySelector('[data-ex-rpub]').value === '';
+          }
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (hist === null) localStorage.removeItem('panel_explorer_recent'); else localStorage.setItem('panel_explorer_recent', hist);
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 47:', JSON.stringify(t47));
+      const t47keys = ['select', 'filtered', 'noUnpublished', 'labelled', 'reset'];
+      const t47fail = t47keys.filter(k => !t47 || t47[k] !== true);
+      if (t47fail.length) console.log('Test 47 — vérifications en échec :', t47fail.join(', '));
+      testResults.push({ test: 'Explorer 4.9 : filtre des résultats par éditeur (avant la limite, totaux exacts), catégories sans éditeur masquées, libellé accessible, réinitialisé à la nouvelle recherche', ok: t47fail.length === 0 });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
