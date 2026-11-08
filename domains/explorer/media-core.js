@@ -193,7 +193,11 @@ function sanitizeEventBlock(raw, srcIds) {
     readingPos: Number.isInteger(l.readingPos) && l.readingPos > 0 ? l.readingPos : null
   }));
   const texts = list => (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)).map(c => ({ text: str(c.text || c.name, 600), sourceId: src(c.sourceId) }));
-  return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })) };
+  // Qualité documentaire (D-51) : divergences explicites entre sources, informations incertaines, publications non identifiées
+  const divergences = (Array.isArray(raw.divergences) ? raw.divergences : []).slice(0, 60).filter(d => d && str(d.text)).map(d => ({ topic: str(d.topic, 120), text: str(d.text, 600),
+    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))] }));
+  return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })),
+    divergences, uncertain: texts(raw.uncertain), unidentified: texts(raw.unidentified) };
 }
 
 const issueNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 9999; };
@@ -204,12 +208,84 @@ function eventView(guide) {
   const dated = main.filter(i => i.coverDate || i.releaseDate);
   const timeline = dated.slice().sort((a, b) => (a.releaseDate || a.coverDate).localeCompare(b.releaseDate || b.coverDate)).map(i => ({ series: ev.mainSeries.series, volume: ev.mainSeries.volume, issue: i.issue, date: i.releaseDate || i.coverDate, dateKind: i.releaseDate ? 'release' : 'cover' }));
   const groups = {};
-  (ev ? ev.links : []).forEach(l => { (groups[l.relation] = groups[l.relation] || []).push(Object.assign({ issueList: expandIssues(l.issues) }, l)); });
+  const merged = new Map();
+  (ev ? ev.links : []).forEach(l => {
+    const k = l.relation + '|' + seriesKey(l.series), list = expandIssues(l.issues), cur = merged.get(k);
+    if (!cur) { merged.set(k, Object.assign({}, l, { issueList: list.slice(), sourceIds: l.sourceId ? [l.sourceId] : [], notes: l.note ? [l.note] : [], perSource: [{ sourceId: l.sourceId, issues: list }] })); return; }
+    list.forEach(n => { if (!cur.issueList.includes(n)) cur.issueList.push(n); });
+    if (l.sourceId && !cur.sourceIds.includes(l.sourceId)) cur.sourceIds.push(l.sourceId);
+    if (l.note && !cur.notes.includes(l.note)) cur.notes.push(l.note);
+    if (!cur.volume && l.volume) cur.volume = l.volume;
+    cur.perSource.push({ sourceId: l.sourceId, issues: list });
+  });
+  merged.forEach(l => {
+    l.issueList.sort((a, b) => issueNum(a) - issueNum(b));
+    const withNums = l.perSource.filter(p => p.issues.length);
+    l.divergent = withNums.length > 1 && withNums.some(p => p.issues.length !== l.issueList.length);
+    l.note = l.notes.join(' ');
+    (groups[l.relation] = groups[l.relation] || []).push(l);
+  });
   Object.values(groups).forEach(g => g.sort((a, b) => (a.readingPos || 1e9) - (b.readingPos || 1e9) || a.series.localeCompare(b.series)));
   const orders = { publication: [], chronological: [], recommended: [], reference: [] };
   (guide && guide.orders || []).forEach(o => { if (orders[o.type]) orders[o.type].push(o); });
   const linkedIssues = Object.values(groups).reduce((n, g) => n + g.reduce((m, l) => m + l.issueList.length, 0), 0);
   return { main, timeline, groups, orders, counts: { main: main.length, linkedSeries: Object.values(groups).reduce((n, g) => n + g.length, 0), linkedIssues } };
+}
+
+// Recoupement (D-51) : par série et par numéro, compare ce que chaque source affirme ; rien n'est tranché ni supprimé.
+// corroborated : au moins deux sources, mêmes numéros et même relation ; divergent : numéros ou relation différents ; single : une seule source.
+const seriesKey = s => str(s, 200).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/\bthe\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+function crossCheck(guide) {
+  const ev = guide && guide.event, bySeries = new Map();
+  (ev ? ev.links : []).forEach(l => {
+    const k = seriesKey(l.series); if (!k) return;
+    const g = bySeries.get(k) || { series: l.series, volumes: new Set(), sources: new Map() };
+    if (l.volume) g.volumes.add(l.volume);
+    const s = g.sources.get(l.sourceId || '?') || { relations: new Set(), issues: new Map() };
+    s.relations.add(l.relation);
+    expandIssues(l.issues).forEach(n => { const r = s.issues.get(n) || new Set(); r.add(l.relation); s.issues.set(n, r); });
+    g.sources.set(l.sourceId || '?', s); bySeries.set(k, g);
+  });
+  const items = [];
+  bySeries.forEach(g => {
+    const srcs = [...g.sources.entries()], reasons = [];
+    const byRel = id => { const m = new Map(); g.sources.get(id).issues.forEach((rels, n) => rels.forEach(r => { const s = m.get(r) || new Set(); s.add(n); m.set(r, s); })); return m; };
+    const numbered = srcs.filter(([, s]) => s.issues.size).map(([id]) => ({ id, rel: byRel(id) }));
+    const all = new Set(); numbered.forEach(x => x.rel.forEach(set => set.forEach(n => all.add(n))));
+    // Même relation, numéros différents : comparaison relation par relation (une source sans préludes ne contredit pas une source qui en cite)
+    const rels = new Set(); numbered.forEach(x => x.rel.forEach((_, r) => rels.add(r)));
+    rels.forEach(r => {
+      const sets = numbered.filter(x => x.rel.has(r)).map(x => ({ sourceId: x.id, issues: [...x.rel.get(r)].sort((p, q) => issueNum(p) - issueNum(q)) }));
+      if (sets.length < 2) return;
+      const u = new Set(); sets.forEach(s => s.issues.forEach(n => u.add(n)));
+      const missing = [...u].filter(n => sets.some(s => !s.issues.includes(n))).sort((p, q) => issueNum(p) - issueNum(q));
+      if (missing.length) reasons.push({ code: 'issues', relation: r, issues: missing, detail: sets });
+    });
+    // Même numéro, relations différentes selon la source
+    const conflicts = [...all].filter(n => { const per = numbered.map(x => [...x.rel.entries()].filter(([, s]) => s.has(n)).map(([r]) => r)).filter(l => l.length);
+      return per.length > 1 && per.some(l => per.some(m => !l.some(r => m.includes(r)))); }).sort((p, q) => issueNum(p) - issueNum(q));
+    if (conflicts.length) reasons.push({ code: 'relation', issues: conflicts });
+    if (srcs.length > 1) { const sets = srcs.map(([, s]) => s.relations); if (sets.some(x => sets.some(y => ![...x].some(r => y.has(r))))) reasons.push({ code: 'relation_series' }); }
+    if (g.volumes.size > 1) reasons.push({ code: 'volume', volumes: [...g.volumes] });
+    items.push({ series: g.series, sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size });
+  });
+  items.sort((a, b) => a.series.localeCompare(b.series));
+  const stats = { corroborated: 0, divergent: 0, single: 0 };
+  items.forEach(i => { stats[i.status]++; });
+  const main = ev && ev.mainSeries ? ev.mainSeries.issues.length : 0;
+  const publications = main + [...bySeries.values()].reduce((n, g) => { const s = new Set(); g.sources.forEach(x => x.issues.forEach((_, k) => s.add(k))); return n + s.size; }, 0);
+  return { items, stats, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+}
+
+// Fusion d'un complément de recoupement dans un guide brut : ajoute sources, liens et notes de qualité, sans rien retirer ni réécrire
+function mergeCrossref(raw, cr) {
+  if (!raw || !cr) return raw;
+  const g = JSON.parse(JSON.stringify(raw)), ev = g.event = g.event || { links: [] };
+  g.sources = (g.sources || []).concat(JSON.parse(JSON.stringify(cr.sources || [])).filter(s => !(g.sources || []).some(x => x.id === s.id)));
+  ev.links = (ev.links || []).concat(JSON.parse(JSON.stringify(cr.links || [])));
+  ['divergences', 'uncertain', 'unidentified'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
+  g.seedVersion = (g.seedVersion || 1) + 1;
+  return g;
 }
 
 // Relations entre événements : signale (sans corriger) les cibles inconnues et les réciproques absentes
@@ -226,4 +302,4 @@ function checkEventRelations(guides) {
 }
 
 module.exports = { PROVIDER_KINDS, PROVIDERS, providerById, providerCanRun, VISUAL_TYPES, ENTITY_KINDS, VERIFICATION, MEDIA_STATUS, normalizeRef, classifyRef, displayable, pickRef, auditRefs,
-  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations };
+  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref };

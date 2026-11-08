@@ -38,3 +38,29 @@ Enrichissement progressif et reproductible : ajouter un objet à `domains/explor
 - Aucun visuel réel n'est fourni : les fiches affichent des remplacements typographiques tant que l'utilisateur n'ajoute pas de visuel.
 - Faits issus d'une seule source par fiche : à recouper.
 - Les numéros des tie-ins ne sont listés que si la source les précise.
+
+## 7. Enrichissement réel et recoupement (D-51, 8 novembre 2026)
+
+### 7.1 Sources réexaminées (accès réel le 8 novembre 2026)
+
+| Source | Accès constaté | Conditions et licence | Usage dans Panel |
+|---|---|---|---|
+| Comic Book Reading Orders (CBRO) | Pages publiques lisibles ; certaines pages réservées aux membres Patreon | Contenu protégé ; pas d'API | **Exploitée** : faits (séries, numéros) pour 8 événements ; ordre non reproduit ; aucune page pour Secret Wars (1984) |
+| Reading Orders (readingorders.com) | Pages publiques lisibles pour Crisis, Infinite Crisis, Blackest Night, Flashpoint, King in Black ; vides pour House of M, Infinity Gauntlet, Secret Wars (1984) ; Civil War en positions de lecture seulement | Pas de conditions affichées ; liens d'affiliation ; crédits images à Marvel et DC | **Exploitée** : faits pour 5 événements ; ordre non reproduit |
+| Comic Compass | Introuvable par recherche | — | Non exploitée |
+| French Comics Reading Order | Introuvable par recherche ; seuls des articles VF isolés trouvés | — | Non exploitée |
+| Marvel officiel, DC officiel | Pages de conditions inaccessibles à l'outil (HTTP 403) | Non vérifiées | Non exploitées |
+| Popverse, AIPT, ComicsXF, ComicBook.com, MDCU | Non consultés faute de budget ; sources d'actualité, pas de listes structurées | — | À étudier |
+| GCD (comics.org) | Site inaccessible à l'outil (HTTP 403) ; licence connue par la notice reproduite | Données CC BY-SA 4.0 ; couvertures « tous droits réservés aux ayants droit » | Données exploitables avec attribution, **couvertures exclues** |
+| Metron | Protection anti-robots (Anubis) ; API documentée par la bibliothèque mokkari | Compte et jeton requis ; 20 requêtes/min, quota quotidien | Bloquée (compte) |
+| Comic Vine | Page API lisible | Compte et clé ; **usage non commercial** ; pas de base concurrente ; lien retour ; pas de reproduction | Bloquée (compte, conditions) |
+| Open Library (covers) | Documentation lisible | Affichage autorisé pour sites publics, pas de collecte massive ; 100 req./5 min par IP hors cover ID/OLID ; licence des images **non précisée** | Candidate pour les **recueils** (ISBN) seulement, à décider ; jamais pour un numéro |
+| Google Books | Conditions partielles lisibles | Pas de facturation des utilisateurs ; retrait sur demande | Non exploitée |
+| Fandom | Page de licence refusée (HTTP 402) | Texte généralement CC BY-SA ; images au cas par cas | Non exploitée |
+| The Collector / collection.id, cataloggd | Non consultés | — | À étudier |
+
+### 7.2 Résultat
+- Neuf fiches ; huit recoupées avec un ou deux guides tiers (Secret Wars 1984 reste à source unique, signalé).
+- 706 publications citées au total (séries principales + numéros liés, toutes sources confondues) ; 111 séries recoupées par au moins deux sources sans écart (106 avec numéros concordants), 20 séries divergentes, 70 citées par une seule source.
+- Divergences conservées et expliquées dans chaque fiche (numéros, relation, titre) ; aucune n'est tranchée.
+- Aucune couverture ajoutée : aucune source étudiée ne fournit de couverture de numéro dans des conditions établies.

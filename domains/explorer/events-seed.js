@@ -16,7 +16,7 @@ const pubOrder = (key, series, volume, nums, publisher, srcId, year) => ({ id: '
 const base = (o) => Object.assign({ kind: 'guide', origin: 'seed', seedVersion: 1, featured: false, category: 'major_event', languages: ['en'], aliases: [], characters: [], prerequisites: [], editions: [],
   image: null, spoilerNote: '', completeness: 'partial', verifiedAt: '', createdAt: AT, updatedAt: AT }, o);
 
-const EVENT_SEEDS = Object.freeze([
+const RAW_SEEDS = [
   base({
     id: 'gd_secret_wars_1984', title: 'Marvel Super Heroes Secret Wars', originalTitle: 'Marvel Super Heroes Secret Wars', aliases: ['Secret Wars (1984)'], publisher: 'Marvel', periodStart: 1984, periodEnd: 1985,
     synopsis: 'Série limitée Marvel de douze numéros parue de 1984 à 1985, réunissant héros et vilains de l\'éditeur.',
@@ -169,7 +169,7 @@ const EVENT_SEEDS = Object.freeze([
         ...['Flashpoint: Batman – Knight of Vengeance', 'Flashpoint: Deadman and the Flying Graysons', 'Flashpoint: Citizen Cold', 'Flashpoint: Deathstroke & the Curse of the Ravager', 'Flashpoint: The Legion of Doom', 'Flashpoint: The Outsider']
           .map(s => ({ relation: 'tie_in', series: s, sourceId: 'src_wp_fp' }))] }
   })
-]);
+];
 
 // Complément documentaire de King in Black (guide livré depuis le lot 2.6) : série principale et tie-ins nommés par la source
 const KIB_SOURCE = wp('kib', 'King in Black', 'King_in_Black');
@@ -187,4 +187,5 @@ const KIB_EVENT = Object.freeze({ universe: 'Univers Marvel',
     { relation: 'related_series', series: 'King in Black Handbook', issues: '1', sourceId: 'src_wp_kib' },
     { relation: 'related_series', series: 'Venom', volume: 'Vol. 4', issues: '31-34', note: 'Requise selon l\'ordre de la source du guide, suivie de Venom #200 (également numéroté #35 selon cette source).', sourceId: 'src_cbro' }] });
 
+const EVENT_SEEDS = Object.freeze(RAW_SEEDS);
 module.exports = { EVENT_SEEDS, KIB_SOURCE, KIB_EVENT, SEED_RETRIEVED: '2026-11-08' };

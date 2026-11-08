@@ -1654,7 +1654,7 @@
     .ex-ev-group h4 { margin: 0 0 6px; } .ex-ev-links { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; } .ex-ev-links li { display: flex; flex-direction: column; gap: 3px; }
     .ex-ev-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
     .ex-timeline { list-style: none; margin: 0; padding: 0 0 0 14px; border-left: 2px solid var(--border, #2a2a35); } .ex-timeline li { margin: 0 0 8px; display: flex; flex-direction: column; } .ex-timeline time { font-size: 12px; color: var(--muted); }
-    .ex-ev-orders { margin: 0; padding-left: 18px; } .ex-ev-pub { margin: 10px 0 6px; }
+    .ex-ev-orders { margin: 0; padding-left: 18px; } .ex-quality details { margin: 8px 0; } .ex-quality summary { cursor: pointer; } .ex-ev-pub { margin: 10px 0 6px; }
     .ex-lb { max-width: 720px; width: calc(100vw - 32px); } .ex-lb-stage { display: flex; justify-content: center; background: #0d0d12; border-radius: 6px; padding: 8px; }
     .ex-lb-img { max-width: 100%; max-height: 62vh; height: auto; object-fit: contain; }
     .ex-lb-meta { display: grid; grid-template-columns: max-content 1fr; gap: 4px 12px; font-size: 13px; margin: 10px 0; } .ex-lb-meta dt { color: var(--muted); } .ex-lb-meta dd { margin: 0; overflow-wrap: anywhere; }
@@ -3625,7 +3625,11 @@ function sanitizeEventBlock(raw, srcIds) {
     readingPos: Number.isInteger(l.readingPos) && l.readingPos > 0 ? l.readingPos : null
   }));
   const texts = list => (Array.isArray(list) ? list : []).slice(0, 30).filter(c => c && str(c.text || c.name)).map(c => ({ text: str(c.text || c.name, 600), sourceId: src(c.sourceId) }));
-  return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })) };
+  // Qualité documentaire (D-51) : divergences explicites entre sources, informations incertaines, publications non identifiées
+  const divergences = (Array.isArray(raw.divergences) ? raw.divergences : []).slice(0, 60).filter(d => d && str(d.text)).map(d => ({ topic: str(d.topic, 120), text: str(d.text, 600),
+    sourceIds: [...new Set((Array.isArray(d.sourceIds) ? d.sourceIds : []).map(src).filter(Boolean))] }));
+  return { universe: str(raw.universe, 80), mainSeries, links, consequences: texts(raw.consequences), teams: texts(raw.teams).map(t => ({ name: t.text, sourceId: t.sourceId })),
+    divergences, uncertain: texts(raw.uncertain), unidentified: texts(raw.unidentified) };
 }
 
 const issueNum = v => { const n = parseFloat(String(v).replace(/[^0-9.]/g, '')); return Number.isFinite(n) ? n : 9999; };
@@ -3636,12 +3640,84 @@ function eventView(guide) {
   const dated = main.filter(i => i.coverDate || i.releaseDate);
   const timeline = dated.slice().sort((a, b) => (a.releaseDate || a.coverDate).localeCompare(b.releaseDate || b.coverDate)).map(i => ({ series: ev.mainSeries.series, volume: ev.mainSeries.volume, issue: i.issue, date: i.releaseDate || i.coverDate, dateKind: i.releaseDate ? 'release' : 'cover' }));
   const groups = {};
-  (ev ? ev.links : []).forEach(l => { (groups[l.relation] = groups[l.relation] || []).push(Object.assign({ issueList: expandIssues(l.issues) }, l)); });
+  const merged = new Map();
+  (ev ? ev.links : []).forEach(l => {
+    const k = l.relation + '|' + seriesKey(l.series), list = expandIssues(l.issues), cur = merged.get(k);
+    if (!cur) { merged.set(k, Object.assign({}, l, { issueList: list.slice(), sourceIds: l.sourceId ? [l.sourceId] : [], notes: l.note ? [l.note] : [], perSource: [{ sourceId: l.sourceId, issues: list }] })); return; }
+    list.forEach(n => { if (!cur.issueList.includes(n)) cur.issueList.push(n); });
+    if (l.sourceId && !cur.sourceIds.includes(l.sourceId)) cur.sourceIds.push(l.sourceId);
+    if (l.note && !cur.notes.includes(l.note)) cur.notes.push(l.note);
+    if (!cur.volume && l.volume) cur.volume = l.volume;
+    cur.perSource.push({ sourceId: l.sourceId, issues: list });
+  });
+  merged.forEach(l => {
+    l.issueList.sort((a, b) => issueNum(a) - issueNum(b));
+    const withNums = l.perSource.filter(p => p.issues.length);
+    l.divergent = withNums.length > 1 && withNums.some(p => p.issues.length !== l.issueList.length);
+    l.note = l.notes.join(' ');
+    (groups[l.relation] = groups[l.relation] || []).push(l);
+  });
   Object.values(groups).forEach(g => g.sort((a, b) => (a.readingPos || 1e9) - (b.readingPos || 1e9) || a.series.localeCompare(b.series)));
   const orders = { publication: [], chronological: [], recommended: [], reference: [] };
   (guide && guide.orders || []).forEach(o => { if (orders[o.type]) orders[o.type].push(o); });
   const linkedIssues = Object.values(groups).reduce((n, g) => n + g.reduce((m, l) => m + l.issueList.length, 0), 0);
   return { main, timeline, groups, orders, counts: { main: main.length, linkedSeries: Object.values(groups).reduce((n, g) => n + g.length, 0), linkedIssues } };
+}
+
+// Recoupement (D-51) : par série et par numéro, compare ce que chaque source affirme ; rien n'est tranché ni supprimé.
+// corroborated : au moins deux sources, mêmes numéros et même relation ; divergent : numéros ou relation différents ; single : une seule source.
+const seriesKey = s => str(s, 200).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/&/g, ' and ').replace(/\bthe\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+function crossCheck(guide) {
+  const ev = guide && guide.event, bySeries = new Map();
+  (ev ? ev.links : []).forEach(l => {
+    const k = seriesKey(l.series); if (!k) return;
+    const g = bySeries.get(k) || { series: l.series, volumes: new Set(), sources: new Map() };
+    if (l.volume) g.volumes.add(l.volume);
+    const s = g.sources.get(l.sourceId || '?') || { relations: new Set(), issues: new Map() };
+    s.relations.add(l.relation);
+    expandIssues(l.issues).forEach(n => { const r = s.issues.get(n) || new Set(); r.add(l.relation); s.issues.set(n, r); });
+    g.sources.set(l.sourceId || '?', s); bySeries.set(k, g);
+  });
+  const items = [];
+  bySeries.forEach(g => {
+    const srcs = [...g.sources.entries()], reasons = [];
+    const byRel = id => { const m = new Map(); g.sources.get(id).issues.forEach((rels, n) => rels.forEach(r => { const s = m.get(r) || new Set(); s.add(n); m.set(r, s); })); return m; };
+    const numbered = srcs.filter(([, s]) => s.issues.size).map(([id]) => ({ id, rel: byRel(id) }));
+    const all = new Set(); numbered.forEach(x => x.rel.forEach(set => set.forEach(n => all.add(n))));
+    // Même relation, numéros différents : comparaison relation par relation (une source sans préludes ne contredit pas une source qui en cite)
+    const rels = new Set(); numbered.forEach(x => x.rel.forEach((_, r) => rels.add(r)));
+    rels.forEach(r => {
+      const sets = numbered.filter(x => x.rel.has(r)).map(x => ({ sourceId: x.id, issues: [...x.rel.get(r)].sort((p, q) => issueNum(p) - issueNum(q)) }));
+      if (sets.length < 2) return;
+      const u = new Set(); sets.forEach(s => s.issues.forEach(n => u.add(n)));
+      const missing = [...u].filter(n => sets.some(s => !s.issues.includes(n))).sort((p, q) => issueNum(p) - issueNum(q));
+      if (missing.length) reasons.push({ code: 'issues', relation: r, issues: missing, detail: sets });
+    });
+    // Même numéro, relations différentes selon la source
+    const conflicts = [...all].filter(n => { const per = numbered.map(x => [...x.rel.entries()].filter(([, s]) => s.has(n)).map(([r]) => r)).filter(l => l.length);
+      return per.length > 1 && per.some(l => per.some(m => !l.some(r => m.includes(r)))); }).sort((p, q) => issueNum(p) - issueNum(q));
+    if (conflicts.length) reasons.push({ code: 'relation', issues: conflicts });
+    if (srcs.length > 1) { const sets = srcs.map(([, s]) => s.relations); if (sets.some(x => sets.some(y => ![...x].some(r => y.has(r))))) reasons.push({ code: 'relation_series' }); }
+    if (g.volumes.size > 1) reasons.push({ code: 'volume', volumes: [...g.volumes] });
+    items.push({ series: g.series, sourceIds: srcs.map(([id]) => id), numberSources: numbered.length, status: srcs.length < 2 ? 'single' : reasons.length ? 'divergent' : 'corroborated', reasons, issueCount: all.size });
+  });
+  items.sort((a, b) => a.series.localeCompare(b.series));
+  const stats = { corroborated: 0, divergent: 0, single: 0 };
+  items.forEach(i => { stats[i.status]++; });
+  const main = ev && ev.mainSeries ? ev.mainSeries.issues.length : 0;
+  const publications = main + [...bySeries.values()].reduce((n, g) => { const s = new Set(); g.sources.forEach(x => x.issues.forEach((_, k) => s.add(k))); return n + s.size; }, 0);
+  return { items, stats, publications, sources: [...new Set([].concat(...items.map(i => i.sourceIds)))].filter(x => x !== '?') };
+}
+
+// Fusion d'un complément de recoupement dans un guide brut : ajoute sources, liens et notes de qualité, sans rien retirer ni réécrire
+function mergeCrossref(raw, cr) {
+  if (!raw || !cr) return raw;
+  const g = JSON.parse(JSON.stringify(raw)), ev = g.event = g.event || { links: [] };
+  g.sources = (g.sources || []).concat(JSON.parse(JSON.stringify(cr.sources || [])).filter(s => !(g.sources || []).some(x => x.id === s.id)));
+  ev.links = (ev.links || []).concat(JSON.parse(JSON.stringify(cr.links || [])));
+  ['divergences', 'uncertain', 'unidentified'].forEach(k => { ev[k] = (ev[k] || []).concat(JSON.parse(JSON.stringify(cr[k] || []))); });
+  g.seedVersion = (g.seedVersion || 1) + 1;
+  return g;
 }
 
 // Relations entre événements : signale (sans corriger) les cibles inconnues et les réciproques absentes
@@ -3658,7 +3734,7 @@ function checkEventRelations(guides) {
 }
 
 module.exports = { PROVIDER_KINDS, PROVIDERS, providerById, providerCanRun, VISUAL_TYPES, ENTITY_KINDS, VERIFICATION, MEDIA_STATUS, normalizeRef, classifyRef, displayable, pickRef, auditRefs,
-  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations };
+  commonsSearchUrl, commonsParse, EVENT_RELATIONS, ORDER_KINDS, expandIssues, sanitizeEventBlock, eventView, checkEventRelations, crossCheck, seriesKey, mergeCrossref };
   return Object.freeze(module.exports); })();
   /* domains/explorer/events-seed.js */
   out.eventSeeds = (() => { const module = { exports: {} };
@@ -3680,7 +3756,7 @@ const pubOrder = (key, series, volume, nums, publisher, srcId, year) => ({ id: '
 const base = (o) => Object.assign({ kind: 'guide', origin: 'seed', seedVersion: 1, featured: false, category: 'major_event', languages: ['en'], aliases: [], characters: [], prerequisites: [], editions: [],
   image: null, spoilerNote: '', completeness: 'partial', verifiedAt: '', createdAt: AT, updatedAt: AT }, o);
 
-const EVENT_SEEDS = Object.freeze([
+const RAW_SEEDS = [
   base({
     id: 'gd_secret_wars_1984', title: 'Marvel Super Heroes Secret Wars', originalTitle: 'Marvel Super Heroes Secret Wars', aliases: ['Secret Wars (1984)'], publisher: 'Marvel', periodStart: 1984, periodEnd: 1985,
     synopsis: 'Série limitée Marvel de douze numéros parue de 1984 à 1985, réunissant héros et vilains de l\'éditeur.',
@@ -3833,7 +3909,7 @@ const EVENT_SEEDS = Object.freeze([
         ...['Flashpoint: Batman – Knight of Vengeance', 'Flashpoint: Deadman and the Flying Graysons', 'Flashpoint: Citizen Cold', 'Flashpoint: Deathstroke & the Curse of the Ravager', 'Flashpoint: The Legion of Doom', 'Flashpoint: The Outsider']
           .map(s => ({ relation: 'tie_in', series: s, sourceId: 'src_wp_fp' }))] }
   })
-]);
+];
 
 // Complément documentaire de King in Black (guide livré depuis le lot 2.6) : série principale et tie-ins nommés par la source
 const KIB_SOURCE = wp('kib', 'King in Black', 'King_in_Black');
@@ -3851,7 +3927,187 @@ const KIB_EVENT = Object.freeze({ universe: 'Univers Marvel',
     { relation: 'related_series', series: 'King in Black Handbook', issues: '1', sourceId: 'src_wp_kib' },
     { relation: 'related_series', series: 'Venom', volume: 'Vol. 4', issues: '31-34', note: 'Requise selon l\'ordre de la source du guide, suivie de Venom #200 (également numéroté #35 selon cette source).', sourceId: 'src_cbro' }] });
 
+const EVENT_SEEDS = Object.freeze(RAW_SEEDS);
 module.exports = { EVENT_SEEDS, KIB_SOURCE, KIB_EVENT, SEED_RETRIEVED: '2026-11-08' };
+  return Object.freeze(module.exports); })();
+  /* domains/explorer/events-crossref.js */
+  out.eventCrossref = (() => { const module = { exports: {} };
+'use strict';
+// Recoupement documentaire du catalogue (D-51) : faits relevés le 8 novembre 2026 sur deux guides tiers d'ordres de lecture,
+// Comic Book Reading Orders (CBRO) et Reading Orders (readingorders.com), en plus de Wikipédia (events-seed.js).
+// Règles :
+// - une entrée par source : la provenance de chaque série et de chaque numéro reste distincte ;
+// - seuls des faits sont repris (titres de séries, numéros, rattachement à l'événement) ; l'ordre de lecture propre à chaque guide
+//   n'est PAS reproduit (sélection et agencement protégés) : aucun readingPos, aucun ordre « guide tiers » recopié ;
+// - la relation (prélude, tie-in, série liée…) est celle que le guide indique ; quand il ne la précise pas, le choix est expliqué en note ;
+// - les écarts entre sources sont conservés et expliqués (divergences), jamais tranchés ;
+// - relevé par lecture outillée des pages publiques : des erreurs de transcription restent possibles, d'où le statut « non vérifié ».
+// Aucune image n'est reprise : les deux guides affichent des couvertures dont les droits appartiennent aux éditeurs.
+
+const LIC_GUIDE = 'Guide tiers protégé par le droit d\'auteur : seuls des faits (séries et numéros cités) sont repris ; l\'ordre de lecture du guide n\'est pas reproduit ; aucune image.';
+const cbro = (key, title, path) => ({ id: 'src_cbro_' + key, label: 'Comic Book Reading Orders — ' + title, url: 'https://comicbookreadingorders.com/' + path, retrievedAt: '2026-11-08', license: LIC_GUIDE, kind: 'guide' });
+const ro = (key, title, slug) => ({ id: 'src_ro_' + key, label: 'Reading Orders — ' + title, url: 'https://www.readingorders.com/reading-orders/' + slug, retrievedAt: '2026-11-08', license: LIC_GUIDE, kind: 'guide' });
+// [série, volume, numéros, note?]
+const L = (relation, sourceId, rows) => rows.map(([series, volume, issues, note]) => ({ relation, series, volume: volume || '', issues: issues || '', note: note || '', sourceId }));
+const D = (topic, text, sourceIds) => ({ topic, text, sourceIds });
+
+const CROSSREF = {
+  gd_infinity_gauntlet: {
+    sources: [cbro('ig', 'Infinity Gauntlet', 'marvel/events/infinity-gauntlet-reading-order/')],
+    links: [
+      ...L('prelude', 'src_cbro_ig', [['Silver Surfer', 'Vol. 3', '34-38, 40-50'], ['The Thanos Quest', '', '1-2'], ['Cloak and Dagger', 'Vol. 3', '17-18', 'Titre exact selon le guide : The Mutant Misadventures of Cloak and Dagger.'], ['Spider-Man', '', '17']]),
+      ...L('tie_in', 'src_cbro_ig', [['Silver Surfer', 'Vol. 3', '51-60'], ['Sleepwalker', '', '6-7'], ['Quasar', '', '26-27'], ['Doctor Strange, Sorcerer Supreme', '', '31-36'], ['The Incredible Hulk', 'Vol. 2', '383-385']]),
+      ...L('aftermath', 'src_cbro_ig', [['Warlock and the Infinity Watch', '', '1']])],
+    divergences: [
+      D('Silver Surfer Vol. 3', 'Wikipédia cite les #34-50 en prélude et #51-59 en tie-ins ; CBRO omet le #39 et ajoute le #60.', ['src_wp_ig', 'src_cbro_ig']),
+      D('Cloak and Dagger Vol. 3', 'Wikipédia classe le #18 parmi les tie-ins ; CBRO place les #17-18 avant l\'événement.', ['src_wp_ig', 'src_cbro_ig']),
+      D('Tie-ins de 1991', 'CBRO ajoute Incredible Hulk #383, Quasar #27 et Sleepwalker #6 aux numéros cités par Wikipédia.', ['src_wp_ig', 'src_cbro_ig'])],
+    uncertain: [{ text: 'Reading Orders n\'affiche pas de liste pour cet événement à la date du relevé.', sourceId: '' }]
+  },
+  gd_house_of_m: {
+    sources: [cbro('hom', 'House of M', 'marvel/events/house-of-m-reading-order/')],
+    links: [
+      ...L('prelude', 'src_cbro_hom', [['Excalibur', 'Vol. 3', '1-14', 'Le guide marque les #1-12 comme facultatifs.']]),
+      ...L('tie_in', 'src_cbro_hom', [['Fantastic Four: House of M', '', '1-3'], ['Iron Man: House of M', '', '1-3'], ['Spider-Man: House of M', '', '1-5'], ['Mutopia X', '', '1-4'],
+        ['Uncanny X-Men', '', '462-465'], ['New X-Men: Academy X', '', '16-19', 'Intitulé New X-Men (Vol. 2) par le guide.'], ['The Incredible Hulk', 'Vol. 2', '83-86'], ['Wolverine', 'Vol. 3', '33-35'],
+        ['Captain America', 'Vol. 5', '10'], ['Black Panther', 'Vol. 4', '7'], ['Cable & Deadpool', '', '17'], ['Exiles', '', '69-71'], ['New Thunderbolts', '', '11'], ['The Pulse', '', '10'],
+        ['The Pulse: House of M Special', '', '1'], ['Giant-Size Ms. Marvel', '', '1']]),
+      ...L('related_series', 'src_cbro_hom', [['Civil War: House of M', '', '1-5', 'Publiée en 2008-2009 ; listée par le guide avec l\'événement.'], ['House of M: Avengers', '', '1-5', 'Publiée en 2008 ; listée par le guide avec l\'événement.'],
+        ['House of M: Masters of Evil', '', '1-4', 'Publiée en 2009-2010 ; listée par le guide avec l\'événement.']])],
+    divergences: [
+      D('Mutopia X', 'Wikipédia cite cinq numéros, CBRO quatre (#1-4).', ['src_wp_hom', 'src_cbro_hom']),
+      D('Excalibur Vol. 3', 'Wikipédia classe les #11-12 parmi les tie-ins et les #13-14 en introduction ; CBRO place les #1-14 avant l\'événement.', ['src_wp_hom', 'src_cbro_hom'])],
+    uncertain: [{ text: 'La page Reading Orders consultée n\'affichait aucune liste.', sourceId: '' }]
+  },
+  gd_civil_war: {
+    sources: [cbro('cw', 'Civil War', 'marvel/events/civil-war-reading-order/')],
+    links: [
+      ...L('prelude', 'src_cbro_cw', [['Iron Man', 'Vol. 4', '1-6', 'Intitulé Invincible Iron Man (2005) par le guide.'], ['Secret War', '', '1-5'], ['New Avengers', '', '1-20'], ['New Warriors', 'Vol. 3', '1-6']]),
+      ...L('tie_in', 'src_cbro_cw', [['Civil War: Front Line', '', '1-11'], ['Civil War: X-Men', '', '1-4'], ['Civil War: Young Avengers/Runaways', '', '1-4'], ['Civil War: The Initiative', '', '1'],
+        ['Fallen Son: The Death of Captain America', '', '1-5'], ['Civil War: Opening Shot', '', '1'], ['New Avengers: Illuminati', '', '1', 'One-shot de 2006.'], ['Amazing Spider-Man', 'Vol. 2', '529-538'],
+        ['Fantastic Four', 'Vol. 3', '536-543'], ['Wolverine', 'Vol. 3', '42-48'], ['She-Hulk', 'Vol. 2', '8-9'], ['X-Factor', 'Vol. 3', '8-9'], ['New Avengers', '', '21-25'], ['New X-Men', 'Vol. 2', '28-31'],
+        ['Thunderbolts', '', '103-108'], ['Sensational Spider-Man', 'Vol. 2', '28-34'], ['Ms. Marvel', 'Vol. 2', '6-10'], ['Black Panther', 'Vol. 4', '18-25'], ['Heroes for Hire', 'Vol. 2', '1-3'],
+        ['Cable & Deadpool', '', '30-32'], ['Captain America', 'Vol. 5', '22-25'], ['Punisher War Journal', 'Vol. 2', '1-5'], ['Moon Knight', 'Vol. 5', '7-12'], ['Blade', 'Vol. 5', '5'],
+        ['Daily Bugle Special Edition: Civil War', '', '1'], ['Iron Man/Captain America: Casualties of War', '', '1'], ['Civil War Files', '', '1'], ['Civil War: Choosing Sides', '', '1'], ['Civil War: War Crimes', '', '1'],
+        ['Winter Soldier: Winter Kills', '', '1'], ['Civil War: The Return', '', '1'], ['Civil War: The Confession', '', '1'], ['Civil War: Battle Damage Report', '', '1'],
+        ['Invincible Iron Man', 'Vol. 2', '13-14', 'Numéros publiés en 2009, insérés dans la liste par le guide.']]),
+      ...L('aftermath', 'src_cbro_cw', [['Amazing Spider-Man', 'Vol. 2', '539-543', 'Le guide cite le #539 à la fois dans l\'événement et après.']])],
+    divergences: [
+      D('Tie-ins', 'Wikipédia ne nomme que cinq séries liées, sans numéros ; CBRO en détaille une quarantaine avec leurs numéros.', ['src_wp_cw', 'src_cbro_cw']),
+      D('Amazing Spider-Man #539', 'Le même guide (CBRO) le cite dans l\'événement et dans la suite.', ['src_cbro_cw'])],
+    uncertain: [{ text: 'Reading Orders affiche des positions de lecture et non des numéros : non exploité.', sourceId: '' }]
+  },
+  gd_crisis_infinite_earths: {
+    sources: [cbro('coie', 'Crisis on Infinite Earths', 'dc/events/crisis-on-infinite-earths-reading-order/'), ro('coie', 'Crisis on Infinite Earths', 'crisis-on-infinite-earths')],
+    links: [
+      ...L('prelude', 'src_cbro_coie', [['Action Comics', '', '560, 564'], ['All-Star Squadron', '', '40'], ['Amethyst', 'Vol. 2', '2'], ['Batman', '', '384'], ['Batman and the Outsiders', '', '14-15'],
+        ['Blue Devil', '', '5'], ['DC Comics Presents', '', '76, 78'], ['Detective Comics', '', '551'], ['G.I. Combat', '', '274-275'], ['Green Lantern', 'Vol. 2', '173, 176, 178'], ['Infinity, Inc.', '', '8'],
+        ['Jonah Hex', '', '90'], ['Justice League of America', '', '232, 234'], ['The New Teen Titans', '', '21'], ['The New Teen Titans Annual', '', '2'], ['Superman', '', '402-403'], ['Swamp Thing', 'Vol. 2', '30-31'],
+        ['Tales of the Legion of Super-Heroes', '', '317, 319, 320'], ['Tales of the Teen Titans', '', '47, 58'], ['The Flash', '', '338, 339, 350'], ['The Fury of Firestorm', '', '28'], ['Vigilante', '', '14'],
+        ['Warlord', '', '91'], ['Wonder Woman', '', '321, 323'], ['World\'s Finest Comics', '', '311']]),
+      ...L('crossover', 'src_cbro_coie', [['All-Star Squadron', '', '50-56'], ['Amethyst', 'Vol. 2', '13'], ['Batman', '', '389-391'], ['Blue Devil', '', '18'], ['DC Comics Presents', '', '86-88'],
+        ['Detective Comics', '', '556-558'], ['Green Lantern', 'Vol. 2', '194-198'], ['Infinity, Inc.', '', '18-24'], ['Infinity, Inc. Annual', '', '1'], ['Justice League of America', '', '244-245'],
+        ['Justice League of America Annual', '', '3'], ['Legion of Super-Heroes', 'Vol. 3', '16, 18'], ['The New Teen Titans', 'Vol. 2', '13'], ['The Omega Men', '', '31'], ['Superman', '', '414-415'],
+        ['Swamp Thing', 'Vol. 2', '44-46'], ['The Fury of Firestorm', '', '41-42'], ['Vigilante', '', '22'], ['Wonder Woman', '', '328-329']]),
+      ...L('crossover', 'src_ro_coie', [['All-Star Squadron', '', '50-56'], ['Amethyst', 'Vol. 2', '13', 'Intitulé Amethyst, Princess of Gemworld par le guide.'], ['Batman', '', '389-391'], ['Blue Devil', '', '17-18'],
+        ['DC Comics Presents', '', '78, 86-88'], ['Detective Comics', '', '556-558'], ['The Fury of Firestorm', '', '41-42'], ['Green Lantern', 'Vol. 2', '194-198'], ['Infinity, Inc.', '', '18-25'],
+        ['Infinity, Inc. Annual', '', '1'], ['Justice League of America', '', '244-245'], ['Justice League of America Annual', '', '3'], ['Legion of Super-Heroes', 'Vol. 3', '16-18'], ['The Losers Special', '', '1'],
+        ['The New Teen Titans', 'Vol. 2', '13-14'], ['The Omega Men', '', '31'], ['Swamp Thing', 'Vol. 2', '44-46', 'Intitulé The Saga of the Swamp Thing par le guide.'], ['Superman', '', '414-415'], ['The Flash', '', '350'],
+        ['Tales of the Teen Titans', '', '58'], ['Vigilante', '', '22'], ['Wonder Woman', '', '327-329']]),
+      ...L('related_series', 'src_cbro_coie', [['Legends of the DC Universe: Crisis on Infinite Earths', '', '1', 'One-shot de 1999.']]),
+      ...L('related_series', 'src_ro_coie', [['Legends of the DC Universe: Crisis on Infinite Earths', '', '1', 'One-shot de 1999.'], ['The Legend of Wonder Woman', '', '1-4', 'Publiée en 1986.']])],
+    divergences: [
+      D('Numéros des crossovers', 'Les deux guides diffèrent : Infinity, Inc. #18-24 (CBRO) ou #18-25 (Reading Orders) ; Wonder Woman #328-329 ou #327-329 ; Blue Devil #18 ou #17-18 ; Legion of Super-Heroes #16 et #18 ou #16-18 ; New Teen Titans Vol. 2 #13 ou #13-14.', ['src_cbro_coie', 'src_ro_coie']),
+      D('Préparation ou crossover', 'The Flash #350, Tales of the Teen Titans #58 et DC Comics Presents #78 sont placés avant l\'événement par CBRO, parmi les crossovers par Reading Orders.', ['src_cbro_coie', 'src_ro_coie']),
+      D('Séries croisées', 'Wikipédia nomme dix séries sans numéros ; certaines (History of the DC Universe) n\'apparaissent pas dans les guides.', ['src_wp_coie'])]
+  },
+  gd_infinite_crisis: {
+    sources: [cbro('ic', 'Infinite Crisis', 'dc/events/infinite-crisis-reading-order/'), ro('ic', 'Infinite Crisis', 'infinite-crisis')],
+    links: [
+      ...L('tie_in', 'src_cbro_ic', [['Gotham Central', '', '37-40'], ['JLA', '', '124-125'], ['Outsiders', 'Vol. 3', '29-33'], ['Teen Titans', 'Vol. 3', '29-33'], ['Teen Titans Annual', '', '1'],
+        ['Wonder Woman', 'Vol. 2', '222-226'], ['Superman', 'Vol. 2', '223-226'], ['Adventures of Superman', '', '646-649'], ['Firestorm', 'Vol. 3', '19-22'], ['Green Lantern', 'Vol. 4', '7-8'],
+        ['Birds of Prey', '', '86-91'], ['Aquaman', 'Vol. 6', '32-39', 'Renommée Aquaman: Sword of Atlantis à partir du #40 selon le guide.'], ['Green Arrow', 'Vol. 3', '54-59'], ['JSA Classified', '', '4, 8-9'],
+        ['JSA', '', '81-82'], ['Hawkman', 'Vol. 4', '47-49'], ['Robin', 'Vol. 2', '143-147'], ['Manhunter', 'Vol. 3', '16-19'], ['Nightwing', 'Vol. 2', '116-117'], ['Batman', '', '648-650'],
+        ['Batman Annual', '', '25'], ['Catwoman', 'Vol. 3', '52'], ['Action Comics', '', '836'], ['Superman/Batman', '', '26'], ['Superman', '', '712', 'Numéro cité par les deux guides ; publication bien postérieure à l\'événement.'],
+        ['Crisis Aftermath: The Spectre', '', '1-3'], ['Infinite Crisis Special: Day of Vengeance', '', '1'], ['Infinite Crisis Special: Rann-Thanagar War', '', '1'], ['Infinite Crisis Special: The OMAC Project', '', '1'],
+        ['Infinite Crisis Special: Villains United', '', '1'], ['Infinite Crisis Secret Files and Origins', '', '1']]),
+      ...L('tie_in', 'src_ro_ic', [['Gotham Central', '', '37-40'], ['JLA', '', '122-125'], ['Outsiders', 'Vol. 3', '29-33'], ['Teen Titans', 'Vol. 3', '29-33'], ['Teen Titans Annual', '', '1'],
+        ['Wonder Woman', 'Vol. 2', '222-226'], ['Superman', 'Vol. 2', '223-226'], ['Adventures of Superman', '', '645-649'], ['Firestorm', 'Vol. 3', '19-22'], ['Green Lantern', 'Vol. 4', '7-8'],
+        ['Birds of Prey', '', '86-91'], ['Aquaman', 'Vol. 6', '32-39'], ['Green Arrow', 'Vol. 3', '54-59'], ['JSA Classified', '', '4, 8-9'], ['JSA', '', '78-82'], ['Hawkman', 'Vol. 4', '47-49'],
+        ['Robin', 'Vol. 2', '143-147'], ['Manhunter', 'Vol. 3', '16-19'], ['Nightwing', 'Vol. 2', '116-117'], ['Batman', '', '648-650'], ['Batman Annual', '', '25'], ['Catwoman', 'Vol. 3', '52'],
+        ['Action Comics', '', '836'], ['Superman/Batman', '', '26'], ['Superman', '', '712'], ['Crisis Aftermath: The Spectre', '', '1-3'], ['Crisis Aftermath: The Battle for Blüdhaven', '', '1-6'],
+        ['Day of Vengeance', '', '5-6'], ['Infinite Crisis Special: Day of Vengeance', '', '1'], ['Infinite Crisis Special: Rann-Thanagar War', '', '1'], ['Infinite Crisis Special: The OMAC Project', '', '1'],
+        ['Infinite Crisis Special: Villains United', '', '1'], ['Infinite Crisis Secret Files and Origins', '', '1']])],
+    divergences: [
+      D('Numéros des tie-ins', 'JLA #124-125 (CBRO) ou #122-125 (Reading Orders) ; JSA #81-82 ou #78-82 ; Adventures of Superman #646-649 ou #645-649.', ['src_cbro_ic', 'src_ro_ic']),
+      D('Day of Vengeance', 'Wikipédia la classe parmi les préludes (sans numéros) ; Reading Orders cite les #5-6 dans l\'événement.', ['src_wp_ic', 'src_ro_ic']),
+      D('Superman #712', 'Cité par les deux guides alors que sa publication est bien postérieure à l\'événement : rattachement à vérifier.', ['src_cbro_ic', 'src_ro_ic'])],
+    unidentified: [{ text: 'Crisis Aftermath : Reading Orders cite cette entrée sans numéro identifiable.', sourceId: 'src_ro_ic' }]
+  },
+  gd_blackest_night: {
+    sources: [cbro('bn', 'Blackest Night', 'dc/events/blackest-night-reading-order/'), ro('bn', 'Blackest Night', 'blackest-night')],
+    links: [
+      ...['src_cbro_bn', 'src_ro_bn'].flatMap(s => L('tie_in', s, [['Green Lantern', 'Vol. 4', '43-52'], ['Green Lantern Corps', 'Vol. 2', '39-47'], ['Blackest Night: Tales of the Corps', '', '1-3'],
+        ['Blackest Night: Batman', '', '1-3'], ['Blackest Night: Superman', '', '1-3'], ['Blackest Night: Titans', '', '1-3'], ['Blackest Night: The Flash', '', '1-3'], ['Blackest Night: JSA', '', '1-3'],
+        ['Blackest Night: Wonder Woman', '', '1-3'], ['Adventure Comics', 'Vol. 2', '4-5, 7'], ['Titans', 'Vol. 2', '15'], ['Solomon Grundy', '', '7'], ['Superman/Batman', '', '66-67'], ['The Phantom Stranger', 'Vol. 2', '42'],
+        ['Suicide Squad', '', '67'], ['Secret Six', 'Vol. 3', '17-18'], ['Catwoman', 'Vol. 3', '83'], ['The Outsiders', 'Vol. 4', '24-25'], ['R.E.B.E.L.S.', 'Vol. 2', '10-11'], ['Doom Patrol', 'Vol. 5', '4-5'],
+        ['Booster Gold', 'Vol. 2', '26-27'], ['Teen Titans', 'Vol. 3', '77-78'], ['Weird Western Tales', '', '71'], ['Starman', 'Vol. 2', '81'], ['The Power of Shazam!', '', '48'], ['The Question', '', '37'],
+        ['Green Arrow and Black Canary', '', '30', s === 'src_ro_bn' ? 'Intitulé Green Arrow par le guide.' : ''], ['The Atom and Hawkman', '', '46']])),
+      ...L('tie_in', 'src_cbro_bn', [['Justice League of America', 'Vol. 2', '38-40']]),
+      ...L('tie_in', 'src_ro_bn', [['Justice League of America', 'Vol. 2', '39-40'], ['Untold Tales of Blackest Night', '', '1'], ['Action Comics', '', '890']]),
+      ...L('related_series', 'src_ro_bn', [['Blackest Night: Director\'s Cut', '', '1', 'Édition commentée de 2010.']])],
+    divergences: [
+      D('Justice League of America Vol. 2', 'CBRO cite les #38-40, Reading Orders les #39-40.', ['src_cbro_bn', 'src_ro_bn']),
+      D('Numéros présents dans un seul guide', 'Reading Orders ajoute Untold Tales of Blackest Night #1 et Action Comics #890.', ['src_ro_bn']),
+      D('Nature de l\'ordre', 'Reading Orders propose un ordre recommandé hiérarchisé (essentiel, recommandé, facultatif) ; il n\'est ni l\'ordre de publication ni la chronologie de l\'univers.', ['src_ro_bn'])]
+  },
+  gd_flashpoint: {
+    sources: [cbro('fp', 'Flashpoint', 'dc/events/flashpoint-reading-order/'), ro('fp', 'Flashpoint', 'flashpoint')],
+    links: [
+      ...['src_cbro_fp', 'src_ro_fp'].flatMap(s => [
+        ...L('prelude', s, [['The Flash', 'Vol. 3', '8-12']]),
+        ...L('tie_in', s, [['Flashpoint: Reverse-Flash', '', '1'], ['Flashpoint: Project Superman', '', '1-3'], ['Flashpoint: Wonder Woman and the Furies', '', '1-3'], ['Flashpoint: Green Arrow Industries', '', '1'],
+          ['Flashpoint: Lois Lane and the Resistance', '', '1-3'], ['Flashpoint: The Canterbury Cricket', '', '1'], ['Flashpoint: Deadman and the Flying Graysons', '', '1-3'], ['Flashpoint: Grodd of War', '', '1'],
+          ['Flashpoint: The Legion of Doom', '', '1-3'], ['Flashpoint: Abin Sur – The Green Lantern', '', '1-3'], ['Flashpoint: Hal Jordan', '', '1-3'], ['Flashpoint: The Outsider', '', '1-3'], ['Flashpoint: Secret Seven', '', '1-3'],
+          ['Flashpoint: Citizen Cold', '', '1-3'], ['Flashpoint: Deathstroke & the Curse of the Ravager', '', '1-3'], ['Flashpoint: Batman – Knight of Vengeance', '', '1-3'],
+          ['Flashpoint: Frankenstein and the Creatures of the Unknown', '', '1-3'], ['The World of Flashpoint', '', '1-3'], ['Flashpoint: Emperor Aquaman', '', '1-3'], ['Flashpoint: Kid Flash Lost', '', '1-3']]),
+        ...L('crossover', s, [['Booster Gold', 'Vol. 2', '44-47']])]),
+      ...L('related_series', 'src_ro_fp', [['The Flash: Rebirth', '', '1-6', 'Lecture préalable facultative proposée par ce guide.'], ['Time Masters: Vanishing Point', '', '1-6', 'Lecture préalable proposée par ce guide (#1-5 facultatifs).']])],
+    divergences: [D('Lectures préalables', 'Seul Reading Orders propose The Flash: Rebirth et Time Masters: Vanishing Point ; ce sont des conseils de lecture, pas des tie-ins.', ['src_ro_fp'])]
+  },
+  gd_secret_wars_1984: {
+    sources: [],
+    links: [],
+    uncertain: [{ text: 'Aucune page dédiée trouvée sur CBRO ni sur Reading Orders à la date du relevé : fiche à source unique.', sourceId: '' }]
+  }
+};
+
+// King in Black : la source CBRO du guide (src_cbro) existe déjà ; Reading Orders ajouté
+const KIB_CROSSREF = {
+  sources: [ro('kib', 'King in Black', 'king-in-black')],
+  links: [
+    ...L('tie_in', 'src_cbro', [['Symbiote Spider-Man: King in Black', '', '1-5'], ['King in Black: Namor', '', '1-5'], ['Atlantis Attacks', '', '5'], ['King in Black: Wiccan and Hulkling', '', '1'], ['The Union', '', '1-2'],
+      ['Black Cat', 'Vol. 2', '1-3'], ['Spider-Woman', 'Vol. 7', '7-8'], ['Guardians of the Galaxy', 'Vol. 6', '10'], ['King in Black: Ghost Rider', '', '1'], ['King in Black: Black Knight', '', '1'], ['King in Black: Black Panther', '', '1'],
+      ['King in Black: Iron Man/Doom', '', '1'], ['King in Black: Return of the Valkyries', '', '1-4'], ['King in Black: Planet of the Symbiotes', '', '1-3'], ['King in Black: Thunderbolts', '', '1-3'],
+      ['King in Black: Gwenom vs. Carnage', '', '1-3'], ['King in Black: Immortal Hulk', '', '1'], ['S.W.O.R.D.', 'Vol. 2', '2-4'], ['Daredevil', 'Vol. 6', '26-27'], ['Deadpool', 'Vol. 7', '10'], ['King in Black: Marauders', '', '1'],
+      ['Savage Avengers', '', '17-19'], ['Miles Morales: Spider-Man', '', '23'], ['King in Black: Captain America', '', '1'], ['King in Black: Scream', '', '1'], ['King in Black: Spider-Man', '', '1'],
+      ['Fantastic Four', 'Vol. 6', '29-30'], ['Avengers', 'Vol. 8', '45']]),
+    ...L('tie_in', 'src_ro_kib', [['Symbiote Spider-Man: King in Black', '', '1-5'], ['King in Black: Namor', '', '1-5'], ['Atlantis Attacks', '', '5'], ['King in Black: Wiccan and Hulkling', '', '1'], ['The Union', '', '1-2'],
+      ['Black Cat', 'Vol. 2', '1-3'], ['Spider-Woman', 'Vol. 7', '7-8'], ['Guardians of the Galaxy', 'Vol. 6', '10'], ['King in Black: Ghost Rider', '', '1'], ['King in Black: Black Knight', '', '1'], ['King in Black: Black Panther', '', '1'],
+      ['King in Black: Iron Man/Doom', '', '1', 'Intitulé Iron Man/Doctor Doom par le guide.'], ['King in Black: Return of the Valkyries', '', '1-4'], ['King in Black: Planet of the Symbiotes', '', '1-3'], ['King in Black: Thunderbolts', '', '1-3'],
+      ['King in Black: Gwenom vs. Carnage', '', '1-3'], ['King in Black: Immortal Hulk', '', '1'], ['S.W.O.R.D.', 'Vol. 2', '2-4'], ['Daredevil', 'Vol. 6', '26-27'], ['Deadpool', 'Vol. 7', '10'], ['King in Black: Marauders', '', '1'],
+      ['Savage Avengers', '', '17-19'], ['Miles Morales: Spider-Man', '', '23'], ['King in Black: Captain America', '', '1'], ['King in Black: Scream', '', '1'], ['King in Black: Spider-Man', '', '1', 'Intitulé King in Black: The Amazing Spider-Man par le guide.'],
+      ['Fantastic Four', 'Vol. 6', '29-30'], ['Avengers', 'Vol. 8', '45'], ['Beta Ray Bill', '', '1']]),
+    ...L('related_series', 'src_ro_kib', [['King in Black Handbook', '', '1'], ['Venom', 'Vol. 4', '1-12, 16-35', 'Lecture préalable proposée par ce guide ; #35 également numéroté #200.'],
+      ['Absolute Carnage', '', '1-5', 'Événement antérieur (2019) que ce guide range parmi les tie-ins.'], ['Web of Venom: Empyre\'s End', '', '1']])],
+  divergences: [
+    D('Atlantis Attacks', 'Wikipédia cite la série sans préciser de numéro ; les deux guides retiennent le #5.', ['src_wp_kib', 'src_cbro', 'src_ro_kib']),
+    D('Année de la série principale', 'CBRO date King in Black de 2021, Reading Orders de 2020 ; Wikipédia situe le #1 le 2 décembre 2020 (date de sortie) — l\'écart tient probablement à la date de couverture.', ['src_cbro', 'src_ro_kib', 'src_wp_kib']),
+    D('Venom Vol. 4', 'CBRO retient les #31-35 avec l\'événement ; Reading Orders conseille une lecture préalable beaucoup plus large (#1-12, 16-35).', ['src_cbro', 'src_ro_kib']),
+    D('Beta Ray Bill #1', 'Cité par Reading Orders seulement.', ['src_ro_kib'])]
+};
+
+module.exports = { CROSSREF, KIB_CROSSREF, CROSSREF_RETRIEVED: '2026-11-08' };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -11002,7 +11258,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     entries.forEach((e, i) => { e.pos = i + 1; });
     const at = '2026-11-07T00:00:00.000Z';
     return {
-      id: 'gd_king_in_black', kind: 'guide', schema: GD_SCHEMA, origin: 'seed', seedVersion: 2, featured: true,
+      id: 'gd_king_in_black', kind: 'guide', schema: GD_SCHEMA, origin: 'seed', seedVersion: 3, featured: true,
       category: 'major_event', title: 'King in Black', originalTitle: 'King in Black', aliases: ['Le Roi en Noir', 'KIB'], publisher: 'Marvel', periodStart: 2020, periodEnd: 2021,
       synopsis: 'Événement Marvel centré sur Knull, le dieu des symbiotes, et sur Venom. Le guide reprend l\'ordre de lecture de la source citée : la série King in Black et la série Venom y sont requises, les autres titres sont facultatifs.',
       description: 'Guide de démonstration : ordre de lecture de 65 numéros relevé auprès d\'une seule source, sans couvertures sous licence. Les correspondances françaises sont des pistes à vérifier.',
@@ -11117,8 +11373,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       // Catalogue initial (D-49) : King in Black complété, huit événements Marvel et DC ; un contenu modifié par l'utilisateur n'est jamais remplacé
       const ES = window.PanelDomains && window.PanelDomains.eventSeeds;
       const kib = gdSeedKib();
+      // Recoupement (D-51) : sources supplémentaires, liens par source, divergences ; fusion pure, version de contenu incrémentée
+      const CR = window.PanelDomains && window.PanelDomains.eventCrossref, MCx = window.PanelDomains && window.PanelDomains.mediaCore;
       if (ES) { kib.sources = kib.sources.concat([JSON.parse(JSON.stringify(ES.KIB_SOURCE))]); kib.event = JSON.parse(JSON.stringify(ES.KIB_EVENT)); }
-      const seeds = [kib].concat(ES ? ES.EVENT_SEEDS.map(x => JSON.parse(JSON.stringify(x))) : []).map(x => gdSanitize(x).guide).filter(Boolean);
+      const withCr = (x, cr) => CR && MCx && cr ? MCx.mergeCrossref(x, cr) : x;
+      const seeds = [withCr(kib, CR && CR.KIB_CROSSREF)].concat(ES ? ES.EVENT_SEEDS.map(x => withCr(JSON.parse(JSON.stringify(x)), CR && CR.CROSSREF[x.id])) : []).map(x => gdSanitize(x).guide).filter(Boolean);
       const toPut = [];
       seeds.forEach(seed => {
         const cur = exEditorial.get(seed.id);
@@ -11402,11 +11661,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const MC = exMC();
     if (!MC || !g.event) return '';
     const v = MC.eventView(g), ev = g.event, idx = exIssueIndex(), src = id => id ? ' <small class="ex-src-ref">(' + h(exSrcLabel(g, id) || id) + ')</small>' : '';
+    const srcs = ids => { const l = (ids || []).filter(Boolean); return l.length ? ' <small class="ex-src-ref">(' + l.map(id => h(exSrcLabel(g, id) || id)).join(' ; ') + ')</small>' : ''; };
     const ms = ev.mainSeries;
     const mainCards = ms ? v.main.map(i => { const x = idx.get(exIssueKey(ms.series, ms.volume, i.issue)) || { key: exIssueKey(ms.series, ms.volume, i.issue), series: ms.series, volume: ms.volume, issue: i.issue };
       return exIssueCard(x, [i.title, exDateLabel(i.releaseDate || i.coverDate, i.releaseDate ? 'release' : 'cover'), i.creators.map(c => c.name).join(', ')].filter(Boolean).join(' · ')); }).join('') : '';
     const groups = EX_REL_ORDER.filter(r => v.groups[r]).map(r => '<div class="ex-ev-group"><h4>' + h(MC.EVENT_RELATIONS[r]) + ' <small>' + v.groups[r].length + '</small></h4><ul class="ex-ev-links">' + v.groups[r].map(l => '<li>' +
-      '<b>' + h(l.series + (l.volume ? ' ' + l.volume : '')) + '</b>' + (l.readingPos ? ' <span class="ex-b">Position de lecture ' + l.readingPos + '</span>' : '') + src(l.sourceId) +
+      '<b>' + h(l.series + (l.volume ? ' ' + l.volume : '')) + '</b>' + (l.readingPos ? ' <span class="ex-b">Position de lecture ' + l.readingPos + '</span>' : '') + srcs(l.sourceIds || [l.sourceId]) +
+      (l.divergent ? ' <span class="ex-b is-probable" data-ex-divergent>Numéros différents selon les sources</span>' : '') +
       (l.issueList.length ? '<div class="ex-chips">' + l.issueList.slice(0, 40).map(n => '<button class="ex-chip" data-ex-go="issue" data-ex-id="' + h(exIssueKey(l.series, l.volume, n)) + '">#' + h(n) + '</button>').join('') + (l.issueList.length > 40 ? '<span class="ex-chip is-static">+' + (l.issueList.length - 40) + '</span>' : '') + '</div>' : '<small class="ex-note">Numéros non précisés par la source.</small>') +
       (l.note ? '<small class="ex-note">' + h(l.note) + '</small>' : '') + '</li>').join('') + '</ul></div>').join('');
     const timeline = v.timeline.length ? '<ol class="ex-timeline">' + v.timeline.map(p => '<li><time>' + h(exDateLabel(p.date, p.dateKind)) + '</time><button class="ex-link" data-ex-go="issue" data-ex-id="' + h(exIssueKey(p.series, p.volume, p.issue)) + '">' + h(p.series + ' #' + p.issue) + '</button></li>').join('') + '</ol>' +
@@ -11422,7 +11683,26 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       (ms ? '<section class="ex-sec"><h3>Série principale : ' + h(ms.series + (ms.volume ? ' ' + ms.volume : '')) + ' (' + v.main.length + ')' + src(ms.sourceId) + '</h3><div class="ex-iss-grid">' + mainCards + '</div></section>' : '') +
       (groups ? '<section class="ex-sec"><h3>Préludes, tie-ins et suites</h3><div class="ex-ev-groups">' + groups + '</div></section>' : '') +
       ((ev.consequences || []).length ? '<section class="ex-sec"><h3>Conséquences</h3><ul>' + ev.consequences.map(c => '<li>' + h(c.text) + src(c.sourceId) + '</li>').join('') + '</ul></section>' : '') +
-      '<div class="ex-ev-cols"><section class="ex-sec"><h3>Chronologie de publication</h3>' + timeline + '</section><section class="ex-sec"><h3>Ordres</h3>' + orders + '</section></div></section>';
+      '<div class="ex-ev-cols"><section class="ex-sec"><h3>Chronologie de publication</h3>' + timeline + '</section><section class="ex-sec"><h3>Ordres</h3>' + orders + '</section></div>' + exEventQuality(g) + '</section>';
+  };
+  // Qualité documentaire (D-51) : complétude, sources consultées, recoupement série par série, divergences expliquées, incertitudes
+  const EX_CC_REASON = { issues: 'numéros différents', relation: 'relation différente pour un même numéro', relation_series: 'rattachement différent', volume: 'volumes différents' };
+  const exEventQuality = g => {
+    const MC = exMC(); if (!MC || !g.event || !MC.crossCheck) return '';
+    const cc = MC.crossCheck(g), ev = g.event, lab = id => exSrcLabel(g, id) || id;
+    const kindLabel = s => s.kind === 'guide' ? 'Guide tiers' : s.kind === 'reference' ? 'Référence' : (s.kind || 'Source');
+    const li = x => '<li><b>' + h(x.series) + '</b> <small>' + h(x.sourceIds.map(lab).join(' ; ')) + '</small>' +
+      (x.reasons.length ? '<small class="ex-note">' + h(x.reasons.map(r => EX_CC_REASON[r.code] + (r.issues ? ' (#' + r.issues.join(', #') + ')' : '')).join(' ; ')) + '</small>' : '') +
+      (x.status === 'corroborated' && x.numberSources < 2 ? '<small class="ex-note">Série recoupée ; numéros fournis par une seule source.</small>' : '') + '</li>';
+    const div = cc.items.filter(x => x.status === 'divergent'), corr = cc.items.filter(x => x.status === 'corroborated');
+    return '<section class="ex-sec ex-quality" id="exEventQuality"><h3>Qualité documentaire</h3>' +
+      '<p class="ex-note">Complétude : <b>' + h(GD_COMPLETENESS[g.completeness] || g.completeness || 'non indiquée') + '</b> · ' + cc.publications + ' publication(s) citée(s) · séries recoupées : <b data-cc-corroborated>' + cc.stats.corroborated + '</b>, divergentes : <b data-cc-divergent>' + cc.stats.divergent + '</b>, une seule source : <b data-cc-single>' + cc.stats.single + '</b>. Aucune liste n\'est présentée comme exhaustive.</p>' +
+      '<h4>Sources consultées (' + (g.sources || []).length + ')</h4><ul class="ex-ev-links">' + (g.sources || []).map(s => '<li><span><span class="ex-b">' + h(kindLabel(s)) + '</span> ' + (s.url ? '<a href="' + h(s.url) + '" target="_blank" rel="noopener noreferrer">' + h(s.label) + '</a>' : h(s.label)) + (s.retrievedAt ? ' <small>relevé le ' + h(s.retrievedAt) + '</small>' : '') + '</span>' + (s.license ? '<small class="ex-note">' + h(s.license) + '</small>' : '') + '</li>').join('') + '</ul>' +
+      ((ev.divergences || []).length ? '<h4>Divergences entre sources (' + ev.divergences.length + ')</h4><ul class="ex-ev-links" data-ex-divergences>' + ev.divergences.map(d => '<li><b>' + h(d.topic) + '</b><small class="ex-note">' + h(d.text) + '</small><small>' + h(d.sourceIds.map(lab).join(' ; ')) + '</small></li>').join('') + '</ul>' : '') +
+      (div.length ? '<details data-cc-div-list><summary>Écarts détectés automatiquement (' + div.length + ')</summary><ul class="ex-ev-links">' + div.map(li).join('') + '</ul></details>' : '') +
+      (corr.length ? '<details><summary>Séries citées par plusieurs sources sans écart (' + corr.length + ')</summary><ul class="ex-ev-links">' + corr.map(li).join('') + '</ul></details>' : '') +
+      (((ev.uncertain || []).length + (ev.unidentified || []).length) ? '<h4>Informations incertaines et publications non identifiées</h4><ul>' + (ev.uncertain || []).concat(ev.unidentified || []).map(c => '<li>' + h(c.text) + (c.sourceId ? ' <small class="ex-src-ref">(' + h(lab(c.sourceId)) + ')</small>' : '') + '</li>').join('') + '</ul>' : '') +
+      '<p class="ex-note">Relevés par lecture outillée de pages publiques : à contrôler avant toute validation. Les ordres de lecture des guides tiers ne sont pas reproduits.</p></section>';
   };
   // Visionneuse commune : agrandissement, navigation, provenance et statut ; clavier (←, →, Échap)
   const exLbStore = new Map();

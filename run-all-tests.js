@@ -2469,7 +2469,7 @@ const waitForCdp = async () => {
         // Import / export
         window.__t29 = '9 import';
         const exp = X.exportGuides(['gd_king_in_black']);
-        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 5;
+        r.exportOk = exp.format === 'panel-guides' && exp.guides.length === 1 && exp.guides[0].orders[0].entries.length === 65 && exp.guides[0].orders[0].entries[0].id === ref.entries[0].id && exp.guides[0].sources.length === 6;
         const progBefore = JSON.stringify(X.progress(eid(3)));
         const file = JSON.stringify({ format: 'panel-guides', version: 1, guides: [
           { id: 'gd_t29_imp', title: 'T29 Importé', publisher: 'DC Comics', orders: [{ entries: [{ series: T, issue: '3', year: '2024' }] }] },
@@ -4223,6 +4223,35 @@ const waitForCdp = async () => {
       const t50fail = t50keys.filter(k => !t50 || t50[k] !== true);
       if (t50fail.length) console.log('Test 50 — vérifications en échec :', t50fail.join(', '));
       testResults.push({ test: 'Complétion des visuels (fixture fictive) : galerie, visionneuse accessible (Échap), audit, confirmation, retrait annulable, filtre par type, fournisseurs réseau inactifs', ok: t50fail.length === 0 });
+
+      console.log('\n[TEST 51] Recoupement documentaire : sources multiples, divergences conservées, qualité affichée...');
+      const t51 = await Promise.race([evalExpr(`(async () => {
+        const r = {}; const wait = () => Promise.resolve();
+        try {
+          document.getElementById('navExplorer').click(); await wait();
+          if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(); }
+          document.querySelector('#exSecEvents [data-ex-guide="gd_crisis_infinite_earths"]').click(); await wait();
+          const q = document.getElementById('exEventQuality');
+          r.section = !!q;
+          r.threeSources = /Sources consultées \\(3\\)/.test(q.textContent) && q.querySelectorAll('a[href^="https://"]').length >= 3;
+          r.counts = Number(q.querySelector('[data-cc-corroborated]').textContent) > 0 && Number(q.querySelector('[data-cc-divergent]').textContent) > 0;
+          r.divergences = q.querySelectorAll('[data-ex-divergences] li').length >= 2;
+          r.badge = document.querySelectorAll('#exEventSheet [data-ex-divergent]').length > 0;
+          r.notExhaustive = /Aucune liste n'est présentée comme exhaustive/.test(q.textContent);
+          r.noGuideOrder = !document.querySelector('#exEventSheet .ex-ev-links .ex-b') || ![...document.querySelectorAll('#exEventSheet .ex-ev-links .ex-b')].some(b => /Position de lecture/.test(b.textContent));
+          document.querySelector('#explorerRoot .ex-back').click(); await wait();
+          document.querySelector('#exSecEvents [data-ex-guide="gd_secret_wars_1984"]').click(); await wait();
+          const q2 = document.getElementById('exEventQuality');
+          r.singleSourceHonest = !!q2 && /Sources consultées \\(1\\)/.test(q2.textContent) && /source unique/.test(q2.textContent);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { document.getElementById('navAllSingles').click(); }
+        return r;
+      })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 60000))]);
+      console.log('Résultat Test 51:', JSON.stringify(t51));
+      const t51keys = ['section', 'threeSources', 'counts', 'divergences', 'badge', 'notExhaustive', 'noGuideOrder', 'singleSourceHonest'];
+      const t51fail = t51keys.filter(k => !t51 || t51[k] !== true);
+      if (t51fail.length) console.log('Test 51 — vérifications en échec :', t51fail.join(', '));
+      testResults.push({ test: 'Recoupement : trois sources citées, séries recoupées et divergentes comptées, divergences expliquées, aucune liste dite exhaustive, aucun ordre de guide recopié, fiche à source unique signalée', ok: t51fail.length === 0 });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

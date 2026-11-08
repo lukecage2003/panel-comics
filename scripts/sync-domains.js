@@ -11,7 +11,8 @@ const MODULES = [
   ['catalogCore', 'domains/explorer/catalog-core.js'],
   ['communityPolicy', 'domains/community/policy-core.js'],
   ['mediaCore', 'domains/explorer/media-core.js'],
-  ['eventSeeds', 'domains/explorer/events-seed.js']
+  ['eventSeeds', 'domains/explorer/events-seed.js'],
+  ['eventCrossref', 'domains/explorer/events-crossref.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

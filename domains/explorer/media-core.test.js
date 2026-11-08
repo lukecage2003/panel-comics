@@ -125,3 +125,44 @@ test('catalogue initial : 4 Marvel + 4 DC, une source par fiche, chaque lien sou
   assert.equal(kib.mainSeries.issues.length, 5); assert.equal(kib.mainSeries.issues[0].releaseDate, '2020-12-02');
   assert.ok(kib.links.every(l => l.sourceId));
 });
+
+test('recoupement : fixture FICTIVE — accord, numéros manquants, relation contradictoire, source unique', () => {
+  const ids = new Set(['src_fx_a', 'src_fx_b']);
+  const ev = M.sanitizeEventBlock({ mainSeries: { series: 'Fx Event', issues: [{ issue: '1' }] }, links: [
+    { relation: 'tie_in', series: 'Fx Tie', issues: '1-3', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'The Fx Tie', issues: '1-3', sourceId: 'src_fx_b' },
+    { relation: 'tie_in', series: 'Fx Gap', issues: '1-2', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fx Gap', issues: '1-3', sourceId: 'src_fx_b' },
+    { relation: 'prelude', series: 'Fx Rel', issues: '5', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fx Rel', issues: '5', sourceId: 'src_fx_b' },
+    { relation: 'prelude', series: 'Fx Pre', issues: '1-4', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fx Pre', issues: '9', sourceId: 'src_fx_a' }, { relation: 'tie_in', series: 'Fx Pre', issues: '9', sourceId: 'src_fx_b' },
+    { relation: 'tie_in', series: 'Fx Solo', issues: '1', sourceId: 'src_fx_a' }],
+    divergences: [{ topic: 'Fx', text: 'Écart fictif', sourceIds: ['src_fx_a', 'src_inconnue'] }] }, ids);
+  assert.deepEqual(ev.divergences[0].sourceIds, ['src_fx_a'], 'source inconnue retirée');
+  const cc = M.crossCheck({ event: ev }), by = s => cc.items.find(i => i.series === s);
+  assert.equal(by('Fx Tie').status, 'corroborated', '« The » ignoré dans la comparaison des titres');
+  assert.deepEqual(by('Fx Gap').reasons.find(r => r.code === 'issues').issues, ['3']);
+  assert.ok(by('Fx Rel').reasons.some(r => r.code === 'relation'));
+  assert.equal(by('Fx Pre').status, 'corroborated', 'une source sans préludes ne contredit pas celle qui en cite');
+  assert.equal(by('Fx Solo').status, 'single');
+  assert.deepEqual(cc.stats, { corroborated: 2, divergent: 2, single: 1 });
+  const v = M.eventView({ event: ev });
+  const gap = v.groups.tie_in.find(l => l.series === 'Fx Gap');
+  assert.deepEqual([gap.sourceIds.length, gap.issueList.length, gap.divergent], [2, 3, true], 'liens fusionnés, provenance conservée, écart signalé');
+});
+
+test('catalogue recoupé : sources par fiche, chaque lien rattaché à une source déclarée, aucun ordre de guide reproduit', () => {
+  const C = require('./events-crossref');
+  const merged = S.EVENT_SEEDS.map(g => M.mergeCrossref(g, C.CROSSREF[g.id]));
+  merged.forEach((g, i) => {
+    const ids = new Set(g.sources.map(s => s.id));
+    assert.ok(g.event.links.every(l => ids.has(l.sourceId)), g.id + ' : source déclarée');
+    assert.ok(g.event.links.every(l => !l.readingPos), g.id + ' : aucune position de lecture recopiée');
+    assert.ok(g.sources.every(s => /aucune image/.test(s.license)), g.id + ' : aucune image');
+    assert.equal(g.seedVersion, S.EVENT_SEEDS[i].seedVersion + 1);
+    assert.equal(g.image, null);
+  });
+  const stats = merged.map(g => M.crossCheck({ event: M.sanitizeEventBlock(g.event, new Set(g.sources.map(s => s.id))) }).stats);
+  const tot = stats.reduce((a, s) => ({ c: a.c + s.corroborated, d: a.d + s.divergent }), { c: 0, d: 0 });
+  assert.ok(tot.c >= 100 && tot.d >= 15, 'recoupements et divergences présents : ' + JSON.stringify(tot));
+  assert.equal(M.mergeCrossref(S.EVENT_SEEDS[0], null), S.EVENT_SEEDS[0]);
+  const kib = M.mergeCrossref({ seedVersion: 2, sources: [{ id: 'src_cbro' }, S.KIB_SOURCE], event: JSON.parse(JSON.stringify(S.KIB_EVENT)) }, C.KIB_CROSSREF);
+  assert.ok(kib.event.links.some(l => l.series === 'Atlantis Attacks' && l.issues === '5'));
+});
