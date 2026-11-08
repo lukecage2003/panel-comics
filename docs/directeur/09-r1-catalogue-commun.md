@@ -73,10 +73,20 @@ Ordre : identifiant externe déjà connu → série (titre, éditeur, année, vo
 - `domains/catalog/publication-core.test.js` : 15 tests sur fixtures fictives (identité stable, unicité, homonymes, variantes et réimpressions, éditions, identifiants externes et conflits, dates et provenance, manga, associations multiples, import réimporté sans doublon, fusion et annulation à l'identique, liaison manuelle, anciennes fiches incomplètes, sauvegarde et restauration, normalisation).
 - Test navigateur 52 : construction, fiches intactes, résolution des trois modules, idempotence, refus manga, index dans la sauvegarde, retour arrière et reconstruction identique.
 
-## 9. Limites et dépendances pour R2
+## 9. Interface (finition R1, D-56)
 
-- L'interface n'affiche pas encore l'identité commune (seule la vérification d'intégrité des Paramètres la résume) : affichage « possédé / annoncé / dans l'événement » sur les fiches à faire en R2.
-- Pas encore d'écran de résolution des doublons et des ambiguïtés : l'API existe (`duplicates`, `merge`, `relink`, `undo`, `history`).
+- **« Dans Panel »** : encadré dans l'inspecteur d'un exemplaire (Collection) et sur la fiche numéro d'Explorer. Il indique les exemplaires possédés et en wishlist, les annonces de Sorties avec leur date, les événements qui citent le numéro et leur relation, les dates de couverture, de mise en vente et FOC si elles sont connues, l'identifiant Panel et le statut de vérification. Sur la fiche Explorer, les événements, déjà listés, ne sont pas répétés.
+- **Écran « Catalogue commun »** (menu Plus) :
+  - rattachements à trancher : entrée ambiguë → choix de la série parmi les candidates (`chooseSeries`, le numéro est retrouvé ou créé dans cette série) ;
+  - séries en double possible : fusion d'une série sans année dans une série datée, après confirmation ;
+  - historique des dix dernières opérations ; bouton d'annulation de la dernière.
+- Rien n'est automatique ; aucune fiche de module n'est modifiée ; chaque opération est annulable à l'identique (test de domaine).
+- La vérification d'intégrité résume aussi le catalogue commun.
+
+## 10. Limites et dépendances
+
+- Dans la roadmap D-54, **R2 est l'Event Center v2** (niveaux de lecture, rôles, ordres versionnés, progression par niveau) ; il s'appuie sur les `pub_i_` de R1.
+- Le rattachement d'une fiche de Sorties n'est pas encore affiché sur sa propre fiche (seulement depuis Collection et Explorer).
 - Les recueils ne listent pas encore leur contenu (`contents` vide) ; les crédits ne sont repris que s'ils sont fournis.
 - Le catalogue lot 2.1 (`iss_`) reste en place et relié par correspondance ; sa clé n'est pas remplacée.
 - Les sorties hors marché US ne fournissent pas de date de mise en vente US (non confondues).

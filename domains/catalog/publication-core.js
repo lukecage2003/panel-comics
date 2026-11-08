@@ -310,7 +310,7 @@ const fromEventIssue = (series, volume, issue, publisher) => ({ series, volume, 
 // Construction ou mise à jour idempotente de l'index commun à partir des données des modules (aucune donnée source modifiée)
 // data : { copies: [], releases: [], eventIssues: [{ localId, series, volume, issue, publisher, sourceId }] }
 function buildFromModules(store, data, at) {
-  const report = { collection: count(), release: count(), explorer: count() };
+  const report = { collection: count(), release: count(), explorer: count(), review: [] };
   function count() { return { linked: 0, created: 0, probable: 0, ambiguous: 0, outOfScope: 0, rejected: 0, unchanged: 0 }; }
   const run = (module, localId, input, src, rep) => {
     if (!localId) return;
@@ -319,7 +319,12 @@ function buildFromModules(store, data, at) {
     const res = resolve(store, input, { source: src });
     if (res.status === 'out_of_scope') { rep.outOfScope++; return; }
     if (res.status === 'rejected' || res.status === 'not_found') { rep.rejected++; return; }
-    if (res.status === 'ambiguous') { rep.ambiguous++; return; }
+    if (res.status === 'ambiguous') {
+      rep.ambiguous++;
+      // À trancher à la main : jamais de choix automatique entre candidates (liste plafonnée)
+      if (report.review.length < 200) report.review.push({ module, localId: String(localId), issue: str(input.issue, 20), label: [input.series || input.title, input.issue ? '#' + String(input.issue).replace(/^#/, '') : '', input.variant || ''].filter(Boolean).join(' '), reason: res.reason, candidates: (res.candidates || []).map(id => canonical(store, id)) });
+      return;
+    }
     link(store, module, localId, res, at); rep.linked++;
     if (res.match === 'new') rep.created++; if (res.match === 'probable') rep.probable++;
   };
@@ -398,6 +403,26 @@ function relink(store, module, localId, pubId, opts = {}) {
   store.history = store.history.concat([op]).slice(-50);
   return { ok: true, opId: op.id };
 }
+// Choix manuel de la série pour une entrée ambiguë : le numéro est retrouvé (ou créé) dans cette série, puis la fiche y est liée ; annulable
+function chooseSeries(store, module, localId, seriesId, input, opts = {}) {
+  const sid = canonical(store, seriesId);
+  if (!store.series[sid]) return { ok: false, error: 'Série inconnue' };
+  const num = normIssue(input && input.issue);
+  if (!num) return relink(store, module, localId, sid, opts);
+  const ix = ixOf(store), rec = recorder(store), k = refKey(module, localId);
+  let issueId = ix.issueByKey.get(sid + '|' + num);
+  if (!issueId) {
+    issueId = 'pub_i_' + hash(sid + '|' + num);
+    rec.touch('issues', issueId);
+    store.issues[issueId] = { id: issueId, seriesId: sid, number: str(input.issue, 20).replace(/^#\s*/, '') || num, numberKey: num, externalIds: {}, sources: [], cover: { status: 'none', rights: 'unknown' }, createdAt: str(opts.at, 30) };
+    ix.issueByKey.set(sid + '|' + num, issueId);
+  }
+  rec.touch('refs', k);
+  store.refs[k] = { pub: issueId, match: 'manual', at: str(opts.at, 30) };
+  const op = { id: 'op_' + (++store.seq), op: 'choose', ref: k, into: issueId, at: str(opts.at, 30), before: rec.before };
+  store.history = store.history.concat([op]).slice(-50);
+  return { ok: true, opId: op.id, issueId };
+}
 // Annulation de la dernière opération (ordre inverse strict, pour ne jamais écraser une opération postérieure)
 function undo(store) {
   const op = store.history[store.history.length - 1];
@@ -426,5 +451,5 @@ const stats = store => ({ series: Object.keys(store.series).length, issues: Obje
 
 module.exports = { FORMAT, VERSION, SERIES_TYPES, VARIANT_KINDS, EDITION_FORMATS, EXT_SYSTEMS, VERIFICATION,
   normTitle, normPublisher, normIssue, normVariant, splitSeries, cleanExt, outOfScope,
-  emptyStore, loadStore, resolve, link, lookup, usages, relink, merge, undo, duplicateCandidates, describe, stats,
+  emptyStore, loadStore, resolve, link, lookup, usages, relink, chooseSeries, merge, undo, duplicateCandidates, describe, stats,
   fromCollectionCopy, fromRelease, fromEventIssue, buildFromModules };

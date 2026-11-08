@@ -4297,11 +4297,35 @@ const waitForCdp = async () => {
           await C.rollback(); r.rolledBack = (await C.stats()).refs === 0;
           await C.rebuild(); const after = singles.length ? await C.lookup('collection', singles[0].id) : null;
           r.reversible = (!before || (!!after && after.issueId === before.issueId)) && localStorage.getItem('panel_physical_singles') === singlesBefore;
+          // Interface : « Dans Panel » dans l'inspecteur de Collection et sur la fiche numéro d'Explorer ; écran du catalogue commun
+          const wait = ms => new Promise(res => setTimeout(res, ms));
+          const until = async (fn, n = 40) => { for (let i = 0; i < n; i++) { const v = fn(); if (v) return v; await wait(100); } return null; };
+          const one = P.getPhysicalSingles().find(x => x && x.id && x.series && x.issue);
+          if (one) {
+            P.openSingleInspector(one);
+            const b = await until(() => { const e = document.getElementById('inspectPubBox'); return e && e.dataset.pubState ? e : null; });
+            r.inspectorBox = !!b && b.dataset.pubState === 'linked' && !!b.querySelector('[data-pub-use="release"]') && !!b.querySelector('[data-pub-use="explorer"]') && /^pub_i_/.test(b.querySelector('[data-pub-id]').textContent);
+            document.getElementById('closeInspectorModalBtn').click();
+          } else r.inspectorBox = true;
+          document.getElementById('navExplorer').click(); await wait(150);
+          if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
+          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(200);
+          document.querySelector('#exEventSheet .ex-iss').click(); await wait(200);
+          const eb = await until(() => { const e = document.getElementById('exPubUsage'); return e && e.dataset.pubState ? e : null; });
+          r.explorerBox = !!eb && eb.dataset.pubState === 'linked' && !!eb.querySelector('[data-pub-use="collection"]') && !eb.querySelector('[data-pub-use="explorer"]');
+          document.querySelector('.ex-back').click(); await wait(100);
+          document.getElementById('navAllSingles').click(); await wait(100);
+          const histBefore = (await C.history()).length;
+          await C.openDialog();
+          const dlg = document.getElementById('pubCatalogDialog');
+          r.dialog = !!dlg && dlg.classList.contains('open') && !!dlg.querySelector('[data-pub-stats]') && /Rattachements à trancher/.test(dlg.textContent) && /Séries en double possible/.test(dlg.textContent) && (await C.history()).length === histBefore;
+          dlg.querySelector('[data-close]').click();
+          r.dialogClosed = !dlg.classList.contains('open') && localStorage.getItem('panel_physical_singles') === singlesBefore;
         } catch (e) { r.error = String(e && e.message || e); }
         return r;
       })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 60000))]);
       console.log('Résultat Test 52:', JSON.stringify(t52));
-      const t52keys = ['ready', 'built', 'legacyUntouched', 'collection', 'explorer', 'release', 'idempotent', 'mangaBlocked', 'backup', 'rolledBack', 'reversible'];
+      const t52keys = ['ready', 'built', 'legacyUntouched', 'collection', 'explorer', 'release', 'idempotent', 'mangaBlocked', 'backup', 'rolledBack', 'reversible', 'inspectorBox', 'explorerBox', 'dialog', 'dialogClosed'];
       const t52fail = t52keys.filter(k => !t52 || t52[k] !== true);
       if (t52fail.length) console.log('Test 52 — vérifications en échec :', t52fail.join(', '));
       testResults.push({ test: 'Catalogue commun (R1) : Collection, Sorties et Explorer résolus vers une identité partagée, fiches intactes, reconstruction idempotente, nouveaux mangas refusés, index sauvegardé, retour arrière et reconstruction identique', ok: t52fail.length === 0 });

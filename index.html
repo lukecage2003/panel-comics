@@ -2008,6 +2008,9 @@
         <button class="btn secondary" id="cleanDbBtn" title="Vérifier l'intégrité de la collection (ne supprime rien)" style="font-size: 12px;padding:8px 12px">
           <span><svg class=ic aria-hidden=true><use href=#ic-shield /></svg></span> Vérifier les données
         </button>
+        <button class="btn secondary" id="pubCatalogBtn" title="Catalogue commun : doublons possibles et rattachements à trancher (rien n'est automatique)" style="font-size: 12px;padding:8px 12px">
+          <span><svg class=ic aria-hidden=true><use href=#ic-shield /></svg></span> Catalogue commun
+        </button>
         <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveMenuBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><span><svg class=ic aria-hidden=true><use href=#ic-download /></svg></span> Anciens fichiers numériques</button>
           </div>
         </details>
@@ -4644,7 +4647,7 @@ const fromEventIssue = (series, volume, issue, publisher) => ({ series, volume, 
 // Construction ou mise à jour idempotente de l'index commun à partir des données des modules (aucune donnée source modifiée)
 // data : { copies: [], releases: [], eventIssues: [{ localId, series, volume, issue, publisher, sourceId }] }
 function buildFromModules(store, data, at) {
-  const report = { collection: count(), release: count(), explorer: count() };
+  const report = { collection: count(), release: count(), explorer: count(), review: [] };
   function count() { return { linked: 0, created: 0, probable: 0, ambiguous: 0, outOfScope: 0, rejected: 0, unchanged: 0 }; }
   const run = (module, localId, input, src, rep) => {
     if (!localId) return;
@@ -4653,7 +4656,12 @@ function buildFromModules(store, data, at) {
     const res = resolve(store, input, { source: src });
     if (res.status === 'out_of_scope') { rep.outOfScope++; return; }
     if (res.status === 'rejected' || res.status === 'not_found') { rep.rejected++; return; }
-    if (res.status === 'ambiguous') { rep.ambiguous++; return; }
+    if (res.status === 'ambiguous') {
+      rep.ambiguous++;
+      // À trancher à la main : jamais de choix automatique entre candidates (liste plafonnée)
+      if (report.review.length < 200) report.review.push({ module, localId: String(localId), issue: str(input.issue, 20), label: [input.series || input.title, input.issue ? '#' + String(input.issue).replace(/^#/, '') : '', input.variant || ''].filter(Boolean).join(' '), reason: res.reason, candidates: (res.candidates || []).map(id => canonical(store, id)) });
+      return;
+    }
     link(store, module, localId, res, at); rep.linked++;
     if (res.match === 'new') rep.created++; if (res.match === 'probable') rep.probable++;
   };
@@ -4732,6 +4740,26 @@ function relink(store, module, localId, pubId, opts = {}) {
   store.history = store.history.concat([op]).slice(-50);
   return { ok: true, opId: op.id };
 }
+// Choix manuel de la série pour une entrée ambiguë : le numéro est retrouvé (ou créé) dans cette série, puis la fiche y est liée ; annulable
+function chooseSeries(store, module, localId, seriesId, input, opts = {}) {
+  const sid = canonical(store, seriesId);
+  if (!store.series[sid]) return { ok: false, error: 'Série inconnue' };
+  const num = normIssue(input && input.issue);
+  if (!num) return relink(store, module, localId, sid, opts);
+  const ix = ixOf(store), rec = recorder(store), k = refKey(module, localId);
+  let issueId = ix.issueByKey.get(sid + '|' + num);
+  if (!issueId) {
+    issueId = 'pub_i_' + hash(sid + '|' + num);
+    rec.touch('issues', issueId);
+    store.issues[issueId] = { id: issueId, seriesId: sid, number: str(input.issue, 20).replace(/^#\s*/, '') || num, numberKey: num, externalIds: {}, sources: [], cover: { status: 'none', rights: 'unknown' }, createdAt: str(opts.at, 30) };
+    ix.issueByKey.set(sid + '|' + num, issueId);
+  }
+  rec.touch('refs', k);
+  store.refs[k] = { pub: issueId, match: 'manual', at: str(opts.at, 30) };
+  const op = { id: 'op_' + (++store.seq), op: 'choose', ref: k, into: issueId, at: str(opts.at, 30), before: rec.before };
+  store.history = store.history.concat([op]).slice(-50);
+  return { ok: true, opId: op.id, issueId };
+}
 // Annulation de la dernière opération (ordre inverse strict, pour ne jamais écraser une opération postérieure)
 function undo(store) {
   const op = store.history[store.history.length - 1];
@@ -4760,7 +4788,7 @@ const stats = store => ({ series: Object.keys(store.series).length, issues: Obje
 
 module.exports = { FORMAT, VERSION, SERIES_TYPES, VARIANT_KINDS, EDITION_FORMATS, EXT_SYSTEMS, VERIFICATION,
   normTitle, normPublisher, normIssue, normVariant, splitSeries, cleanExt, outOfScope,
-  emptyStore, loadStore, resolve, link, lookup, usages, relink, merge, undo, duplicateCandidates, describe, stats,
+  emptyStore, loadStore, resolve, link, lookup, usages, relink, chooseSeries, merge, undo, duplicateCandidates, describe, stats,
   fromCollectionCopy, fromRelease, fromEventIssue, buildFromModules };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
@@ -9102,6 +9130,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (same.length > 1 ? '<p class="inspect-copies-title">Exemplaires de cette variante (' + same.length + ')</p><ul>' +
           same.map((x, i) => '<li><button type="button" class="btn-link" data-copy-idx="' + i + '"' + (x === item ? ' aria-current="true"' : '') + '>' + escapeHtml(lineOf(x)) + '</button></li>').join('') + '</ul>' : '');
       cpBox.querySelectorAll('[data-copy-idx]').forEach(b => { b.onclick = () => { const t = same[Number(b.dataset.copyIdx)]; if (t && t !== item) openSingleInspector(t); }; });
+      // Catalogue commun (R1) : où ce numéro apparaît ailleurs dans Panel
+      let pubBox = $('inspectPubBox');
+      if (!pubBox) { pubBox = document.createElement('div'); pubBox.id = 'inspectPubBox'; pubBox.className = 'inspect-copies'; cpBox.insertAdjacentElement('afterend', pubBox); }
+      pubBox.innerHTML = '<p class="inspect-copies-title">Dans Panel</p><p class="stat-sub">Recherche…</p>';
+      if (item.id) pubFillUsage('collection', String(item.id), pubBox, { title: '<p class="inspect-copies-title">Dans Panel</p>' });
     }
 
     const diff = gainOf(item);
@@ -12627,12 +12660,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (!x) return exBack() + '<div class="ex-empty">Numéro introuvable.</div>';
       const ref = exIssueRef(key), st = exRefStatus(ref);
       const evs = x.guides.map(r => ({ r, g: exEditorial.get(r.id) })).filter(o => o.g);
+      setTimeout(() => pubFillUsage('explorer', key, document.getElementById('exPubUsage'), { title: '<h3>Dans Panel</h3>', events: false }), 0);
       return exBack() + '<header class="ex-phead has-media ex-issue-head">' + mediaImg(ref, { cls: 'ex-phead-img', kind: 'issue', alt: exIssueLabel(x), eager: true, fallback: mediaPlaceholder('issue', x.series, '#' + x.issue) }) + exMediaEditBtn('issue', key) +
         '<span class="ex-kicker">Numéro · ' + h(x.publisher || 'Éditeur non indiqué') + '</span><h2>' + h(exIssueLabel(x)) + '</h2>' +
         '<p class="ex-note">' + h([exDateLabel(x.date, x.dateKind), x.creators.map(c => c.name + (c.roles.length ? ' (' + c.roles.map(r => GD_ROLES[r] || r).join(', ') + ')' : '')).join(', ')].filter(Boolean).join(' · ') || 'Date et équipe créative non renseignées.') + '</p>' +
         '<p class="ex-note">Visuel : <span class="ex-b ex-st-' + h(st.code) + '" data-issue-status="' + h(st.code) + '">' + h(st.label) + '</span></p></header>' +
         (ref && !mediaFailed(ref.url) ? exGallery('Visuels du numéro', [{ ref, label: exIssueLabel(x) + ' — ' + (MEDIA_VTYPES[ref.visualType] || 'Couverture principale') }], 'Une couverture de recueil ou de réédition n\'est jamais présentée comme la couverture de ce numéro.') : '') +
         '<section class="ex-sec"><h3>Événements et guides</h3><ul class="ex-ev-links">' + evs.map(o => '<li><button class="ex-link" data-ex-guide="' + h(o.g.id) + '">' + h(o.g.title) + '</button> <span class="ex-b">' + h(exRelLabel(o.r.relation)) + '</span></li>').join('') + '</ul></section>' +
+        '<section class="ex-sec" id="exPubUsage" data-pub-key="' + h(key) + '"><h3>Dans Panel</h3><p class="ex-note">Recherche dans le catalogue commun…</p></section>' +
         '<section class="ex-sec"><h3>Série</h3><button class="ex-chip" data-ex-go="series" data-ex-id="' + h(gdBase(x.series)) + '">' + h(x.series + (x.volume ? ' ' + x.volume : '')) + '</button></section>';
     }
     if (exView.page === 'visuals') {
@@ -15671,6 +15706,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
 
     // Vérification d'intégrité : lecture seule. Ne supprime ni la collection ni les données numériques conservées.
+    if ($('pubCatalogBtn')) $('pubCatalogBtn').onclick = () => { const m = $('topMoreMenu'); if (m) m.open = false; openPubCatalogDialog(); };
     $('cleanDbBtn').onclick = async () => {
       const r = checkDataIntegrity();
       let cat = '';
@@ -16109,6 +16145,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     merge: (fromId, intoId, reason) => pubOp((P, s) => P.merge(s, fromId, intoId, { reason, at: new Date().toISOString() })),
     relink: (module, localId, pubId) => pubOp((P, s) => P.relink(s, module, localId, pubId, { at: new Date().toISOString() })),
     undo: () => pubOp((P, s) => P.undo(s)),
+    review: () => JSON.parse(JSON.stringify((pubLastReport && pubLastReport.review) || [])),
+    chooseSeries: (module, localId, seriesId, issue) => pubOp((P, s) => P.chooseSeries(s, module, localId, seriesId, { issue }, { at: new Date().toISOString() })),
+    summary: id => pubUsageSummary(id),
+    openDialog: () => openPubCatalogDialog(),
     exportData: async () => { const s = await pubLoad(); return s ? JSON.parse(JSON.stringify(s)) : null; },
     // Retour arrière : supprime uniquement l'index commun (et sa copie) ; aucune fiche de Collection, Sorties ou Explorer n'est touchée
     rollback: () => pubSerial(async () => {
@@ -16118,6 +16158,92 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       return { ok: true };
     })
   });
+  // ---------- Affichage : « Dans Panel » (où ce comic apparaît) et écran du catalogue commun
+  const PUB_VERIF = { recorded: 'relevé (une source)', concordant: 'concordant (plusieurs sources)', verified: 'vérifié (référence bibliographique)' };
+  const PUB_MODULES = { collection: 'Collection', release: 'Sorties', explorer: 'Explorer' };
+  const pubDate = d => /^\d{4}-\d{2}-\d{2}$/.test(d || '') ? relFmtDate(d) : (d || '');
+  const pubUsageSummary = async issueId => {
+    const P = pubCore(), s = await pubLoad();
+    if (!P || !s || !issueId) return null;
+    const u = P.usages(s, issueId), d = P.describe(s, issueId);
+    if (!d) return null;
+    const byId = new Map(physicalSingles.filter(x => x && x.id).map(x => [String(x.id), x]));
+    const copies = (u.collection || []).map(x => byId.get(x.localId)).filter(Boolean);
+    const releases = (u.release || []).map(x => relPubs.get(x.localId)).filter(Boolean);
+    let idx = null; try { idx = exIssueIndex(); } catch (_) {}
+    const events = [];
+    (u.explorer || []).forEach(x => { const e = idx && idx.get(x.localId); (e ? e.guides : []).forEach(g => { if (!events.some(v => v.id === g.id && v.relation === g.relation)) events.push({ id: g.id, title: g.title, relation: g.relation }); }); });
+    return { issueId: d.issue.id, label: d.label, verification: d.verification, variants: d.variants.length, dates: d.dates,
+      owned: copies.filter(x => !x.isWishlist).length, wish: copies.filter(x => x.isWishlist).length,
+      releases: releases.map(p => ({ id: p.id, title: p.title || p.series, date: (p.dates && (p.dates.actual || p.dates.current)) || '', cancelled: !!p.cancelled })), events };
+  };
+  const pubUsageHtml = (sum, opts) => {
+    opts = opts || {};
+    if (!sum) return '<p class="stat-sub" data-pub-state="unlinked">Pas encore relié au catalogue commun (titre ou numéro manquant, ou rattachement à trancher dans « Catalogue commun »).</p>';
+    const li = [];
+    if (opts.collection !== false) li.push('<li data-pub-use="collection"><b>Collection</b> : ' + (sum.owned ? sum.owned + ' exemplaire(s)' : 'non possédé') + (sum.wish ? ' · ' + sum.wish + ' en wishlist' : '') + '</li>');
+    li.push('<li data-pub-use="release"><b>Sorties</b> : ' + (sum.releases.length ? sum.releases.slice(0, 3).map(x => escapeHtml(x.title) + ' — ' + (x.date ? escapeHtml(pubDate(x.date)) : 'date inconnue') + (x.cancelled ? ' (annulé)' : '')).join(' ; ') : 'aucune annonce enregistrée') + '</li>');
+    if (opts.events !== false) li.push('<li data-pub-use="explorer"><b>Événements</b> : ' + (sum.events.length ? sum.events.map(e => escapeHtml(e.title) + ' (' + escapeHtml(exRelLabel(e.relation)) + ')').join(', ') : 'cité par aucun événement') + '</li>');
+    const dates = [sum.dates.cover ? 'couverture ' + pubDate(sum.dates.cover) : '', sum.dates.store ? 'mise en vente ' + pubDate(sum.dates.store) : '', sum.dates.foc ? 'FOC ' + pubDate(sum.dates.foc) : ''].filter(Boolean).join(' · ');
+    return '<ul class="pub-usage" style="list-style:none;padding:0;margin:6px 0;display:grid;gap:4px">' + li.join('') + '</ul>' +
+      '<p class="stat-sub">' + (dates ? escapeHtml(dates) + ' · ' : '') + 'Identifiant Panel <code data-pub-id>' + escapeHtml(sum.issueId) + '</code> · ' + escapeHtml(PUB_VERIF[sum.verification] || PUB_VERIF.recorded) + (sum.variants ? ' · ' + sum.variants + ' variante(s) ou réimpression(s) connue(s)' : '') + '</p>';
+  };
+  // Remplissage différé d'un encadré ; reconstruit l'index une fois si la fiche n'y figure pas encore
+  const pubFillUsage = async (module, localId, el, opts) => {
+    if (!el) return;
+    const tag = module + ':' + localId;
+    el.dataset.pubFor = tag;
+    try {
+      let x = await pubApi.lookup(module, localId);
+      if (!x) { await pubRebuild('affichage'); x = await pubApi.lookup(module, localId); }
+      if (el.dataset.pubFor !== tag || !el.isConnected) return;
+      const sum = x && x.issueId ? await pubUsageSummary(x.issueId) : null;
+      el.innerHTML = ((opts && opts.title) || '') + pubUsageHtml(sum, opts);
+      el.dataset.pubState = sum ? 'linked' : 'unlinked';
+    } catch (_) { el.dataset.pubState = 'error'; }
+  };
+  const pubSeriesLabel = x => x ? x.title + (x.volume ? ' Vol. ' + x.volume : '') + (x.year ? ' (' + x.year + ')' : '') + (x.publisher ? ' · ' + x.publisher : '') : '?';
+  const PUB_OPS = { merge: 'Fusion', relink: 'Liaison manuelle', choose: 'Série choisie' };
+  // Écran : rattachements ambigus à trancher, séries en double possible, historique et annulation. Rien n'est automatique.
+  const openPubCatalogDialog = async () => {
+    const box = bunModal('pubCatalogDialog');
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="pubCatalogTitle"><h2 id="pubCatalogTitle">Catalogue commun</h2><p class="stat-sub">Chargement…</p></div>';
+    box.classList.add('open');
+    const P = pubCore(), s = await pubLoad();
+    if (!P || !s) { box.querySelector('.stat-sub').textContent = 'Catalogue commun indisponible sur cet appareil.'; return; }
+    if (!pubLastReport) await pubRebuild('ouverture');
+    const st = P.stats(s), review = (pubLastReport && pubLastReport.review) || [], dups = P.duplicateCandidates(s);
+    const nIssues = sid => Object.values(s.issues).filter(i => i.seriesId === sid).length;
+    const reviewHtml = review.length ? '<ul class="pub-review" style="padding-left:18px">' + review.slice(0, 50).map((x, i) => '<li data-pub-review="' + i + '"><b>' + escapeHtml(x.label || x.localId) + '</b> <small>(' + escapeHtml(PUB_MODULES[x.module] || x.module) + ')</small><br>' +
+      (x.reason === 'series' ? x.candidates.map(c => '<button type="button" class="btn-link" data-pub-choose="' + i + '" data-sid="' + escapeHtml(c) + '">Rattacher à « ' + escapeHtml(pubSeriesLabel(s.series[c])) + ' »</button>').join(' · ')
+        : '<small>Identifiants externes contradictoires : ' + escapeHtml(x.candidates.join(', ')) + ' — à corriger dans la fiche d\'origine.</small>') + '</li>').join('') + '</ul>'
+      : '<p class="stat-sub" data-pub-review-empty>Aucun rattachement à trancher.</p>';
+    const dupHtml = dups.length ? '<ul style="padding-left:18px">' + dups.slice(0, 50).map((g, gi) => {
+      const list = g.series.map(id => s.series[id]).filter(Boolean), plain = list.filter(x => !x.year && !x.volume), dated = list.filter(x => x.year || x.volume);
+      return '<li data-pub-dup="' + gi + '">' + list.map(x => escapeHtml(pubSeriesLabel(x)) + ' <small>(' + nIssues(x.id) + ' numéro(s))</small>').join(' / ') + '<br>' +
+        plain.map(a => dated.map(b => '<button type="button" class="btn-link" data-pub-merge="' + escapeHtml(a.id) + '" data-into="' + escapeHtml(b.id) + '">Fusionner « ' + escapeHtml(a.title) + ' » sans année dans « ' + escapeHtml(pubSeriesLabel(b)) + ' »</button>').join(' · ')).join(' · ') + '</li>';
+    }).join('') + '</ul>' : '<p class="stat-sub" data-pub-dup-empty>Aucune série en double possible.</p>';
+    const hist = s.history.slice(-10).reverse();
+    const histHtml = hist.length ? '<ul style="padding-left:18px">' + hist.map(hh => '<li><small>' + escapeHtml((PUB_OPS[hh.op] || hh.op) + ' · ' + (hh.from ? pubSeriesLabel(s.series[hh.into]) || hh.into : hh.ref || '') + (hh.at ? ' · ' + new Date(hh.at).toLocaleString('fr-FR') : '')) + '</small></li>').join('') + '</ul>' : '<p class="stat-sub">Aucune opération.</p>';
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="pubCatalogTitle" style="max-height:85vh;overflow:auto">' +
+      '<h2 id="pubCatalogTitle">Catalogue commun</h2>' +
+      '<p class="stat-sub">Une même publication est partagée par Collection, Sorties et Explorer. Rien n\'est fusionné automatiquement, et vos fiches ne sont jamais modifiées : seul le rattachement change, et il est annulable.</p>' +
+      '<p data-pub-stats><b>' + st.series + '</b> série(s) · <b>' + st.issues + '</b> numéro(s) · <b>' + st.variants + '</b> variante(s) ou réimpression(s) · <b>' + st.editions + '</b> recueil(s) · <b>' + st.refs + '</b> fiche(s) reliée(s)</p>' +
+      '<h3>Rattachements à trancher (' + review.length + ')</h3>' + reviewHtml +
+      '<h3>Séries en double possible (' + dups.length + ')</h3>' + dupHtml +
+      '<h3>Historique</h3>' + histHtml +
+      '<p class="stat-sub" data-msg role="status"></p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-pub-undo' + (s.history.length ? '' : ' disabled') + '>Annuler la dernière opération</button><button class="btn" data-close>Fermer</button></div></div>';
+    const msg = tx => { const m = box.querySelector('[data-msg]'); if (m) m.textContent = tx; };
+    const after = async (res, ok) => { if (!res || !res.ok) { msg((res && res.error) || 'Opération impossible.'); return; } await pubRebuild('opération'); await openPubCatalogDialog(); showToast(ok); };
+    box.querySelector('[data-close]').onclick = () => box.classList.remove('open');
+    box.querySelector('[data-pub-undo]').onclick = async () => after(await pubApi.undo(), 'Dernière opération annulée.');
+    box.querySelectorAll('[data-pub-choose]').forEach(b => { b.onclick = async () => { const x = review[Number(b.dataset.pubChoose)]; if (x) after(await pubApi.chooseSeries(x.module, x.localId, b.dataset.sid, x.issue), 'Rattachement enregistré (annulable).'); }; });
+    box.querySelectorAll('[data-pub-merge]').forEach(b => { b.onclick = async () => {
+      if (!confirm('Fusionner ces deux séries ? Les numéros identiques seront réunis ; l\'opération est annulable.')) return;
+      after(await pubApi.merge(b.dataset.pubMerge, b.dataset.into, 'Fusion depuis l\'écran du catalogue commun'), 'Séries fusionnées (annulable).');
+    }; });
+  };
   window.addEventListener('load', () => setTimeout(schedulePubRebuild, 2500));
 
   const BUNDLE_PROVIDERS = [

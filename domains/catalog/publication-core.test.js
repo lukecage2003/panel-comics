@@ -36,6 +36,18 @@ test('séries homonymes : deux volumes distincts restent distincts ; sans discri
   assert.strictEqual(amb.status, 'ambiguous');
   assert.strictEqual(amb.candidates.length, 2);
   assert.strictEqual(P.stats(s).series, 2);
+  // Via les modules : l'entrée ambiguë est listée pour décision manuelle, puis une liaison manuelle la résout
+  const rep = P.buildFromModules(s, { copies: [{ id: 's_amb', series: 'Fixture Knight', issue: '1', publisher: 'Fixture Comics' }] }, 't');
+  assert.strictEqual(rep.review.length, 1);
+  assert.deepStrictEqual(rep.review[0].candidates.sort(), [v1.issueId, v2.issueId].sort().map(i => s.issues[i].seriesId).sort());
+  const before = JSON.stringify(s);
+  const ch = P.chooseSeries(s, 'collection', 's_amb', s.issues[v1.issueId].seriesId, { issue: '7' }, { at: 't' });
+  assert.ok(ch.ok && s.issues[ch.issueId].seriesId === s.issues[v1.issueId].seriesId);
+  assert.ok(P.undo(s).ok);
+  const back = JSON.parse(JSON.stringify(s)); back.seq = JSON.parse(before).seq;
+  assert.deepStrictEqual(back, JSON.parse(before));
+  assert.ok(P.relink(s, 'collection', 's_amb', v2.issueId).ok);
+  assert.strictEqual(P.buildFromModules(s, { copies: [{ id: 's_amb', series: 'Fixture Knight', issue: '1', publisher: 'Fixture Comics' }] }, 't2').review.length, 0);
 });
 
 test('variantes et réimpressions : identités propres, rattachées au même numéro', () => {
