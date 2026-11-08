@@ -233,7 +233,7 @@ Community → S3 ← Explorer
 - **Explorer** n'appelle ni Collection ni Lecture : il passe par S1 et S2, fournis par eux.
 - **Community** ne lit ni Collection ni Lecture : elle ne reçoit que des copies publiées.
 - **Aucun domaine** ne dépend d'un contrat de celui qui l'appelle.
-- **Contrôle :** `npm run check:boundaries` (côté client, mode strict au sous-lot 3.1b-6) et le test statique serveur prévu pour Community (B.9).
+- **Contrôle :** `npm run check:boundaries` (côté client, mode strict dans `npm run test:all` depuis le sous-lot 3.1b-6) et le test statique serveur prévu pour Community (B.9).
 
 **Roadmap consolidée.**
 - Phase 3 : 3.1 livré, puis 3.1b, puis 3.2 à 3.7.

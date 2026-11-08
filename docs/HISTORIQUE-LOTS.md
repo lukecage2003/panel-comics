@@ -134,6 +134,13 @@ Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec op
   - rapprochement selon la règle de S1 : « POSSÉDÉ ? » pour une fiche sans année, plus de « POSSÉDÉ » pour un numéro d'une autre année ;
   - test 34 enrichi ; test 11 : clic « Acheté » rejoué par CDP ; `check:boundaries` étendu au calendrier (0 couplage) ; B-17 reporté au lot 4.6.
   - Résultats : front **33/33**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-5`.
+- **3.1b-6 Tests de frontières et de régression** ([plan](directeur/05-preparation-lot-3.1b.md)) :
+  - `check:boundaries --strict` dans `npm run test:all` ; règles C, D et E, ponts admis nommés ; 0 couplage ; contrôle négatif à 5 couplages ;
+  - routeur de Collection : ouverture et rendu du calendrier par des crochets de vue (D1) ;
+  - test 34 clôturé : empreintes par domaine stables au redémarrage, après une restauration complète et après son annulation ;
+  - export du fournisseur `explorer` trié par identifiant (empreinte indépendante de l'ordre de stockage) ;
+  - 3.1b-7 (navigation) non engagé : N1 à N5 et une option mobile restent à valider.
+  - Résultats : `npm run test:all` vert : front **33/33**, base 82/82, secrets 0, frontières 0. Sauvegardes `*.backup.20261108-3.1b-6`.
 
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.

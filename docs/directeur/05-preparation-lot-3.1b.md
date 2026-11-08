@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 à 3.1b-5 livrés ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
+Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 à 3.1b-6 livrés ; 3.1b-7 (navigation) conditionnel, non engagé : N1 à N5 et une option mobile ne sont pas validées ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 
@@ -97,6 +97,7 @@ Documents de référence, qui font autorité :
 | Fichiers | `run-all-tests.js` (test **32** « Frontières », R1 à R10 ; le n° 31 est pris par `readiness()`) ; `scripts/check-boundaries.js` (existe en mode rapport) passé en `--strict` et ajouté à `test:all` |
 | Tests | Statique (accès interdits par domaine) ; dynamique (fournisseur absent, réglage S1 désactivé, visiteur) ; empreintes par domaine avant et après un démarrage et après une restauration |
 | Acceptation | Suite complète au vert (30 tests + nouveaux) ; `check:boundaries --strict` : 0 couplage |
+| Réalisation (8 novembre 2026) | **Livré.** Le test « Frontières » porte le n° **34** (32 et 33 étant pris). Statique : `check:boundaries --strict` ajouté à `npm run test:all` ; règles C (Explorer), E (calendrier) et D (tout le reste, avec 13 ponts nommés et justifiés : application, sauvegarde complète D4, Lecture, fournisseurs S1/S2) ; 0 couplage sur 749 fonctions ; contrôle négatif à 5 couplages injectés. D1 complété : le routeur de Collection ouvre et rend le calendrier par des crochets de vue (`registerViewHooks`), sans le connaître. Dynamique : fournisseur absent, réglage désactivé (3.1b-3 à 3.1b-5) ; le cas « visiteur » n'existe pas localement (P1-a, D-22 : le profil local est traité comme connecté), il correspond au fournisseur absent. Empreintes par domaine identiques avant et après un redémarrage, après une restauration complète en fusion et après son annulation. Le fournisseur `explorer` exporte guides et publications triés par identifiant : les magasins indexés étant relus dans l'ordre des clés, l'empreinte dépendait de l'ordre de stockage (contenu inchangé) |
 
 ### 3.1b-7 — Navigation (conditionnel)
 - **Seulement si** N1 à N5 et une option mobile (M-A à M-E) sont validées. Sinon, reporté au lot 4.9.

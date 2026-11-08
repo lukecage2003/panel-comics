@@ -7058,6 +7058,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Lot 3.1b-4 (D1) : vues hébergées dans la section commune mais possédées par un autre domaine (Explorer).
   // Le routeur de Collection les délègue sans les connaître ; chaque domaine lance lui-même son contenu. La disposition reste celle d'aujourd'hui jusqu'au lot 4.9 (navigation).
   const hostedViews = new Map();
+  // Lot 3.1b-6 (D1) : crochets d'ouverture et de rendu fournis par le domaine qui possède une vue de la section (calendrier = Explorer, A5) ; le routeur les appelle sans les connaître
+  const viewHooks = new Map();
+  const registerViewHooks = (name, hooks) => { if (hooks && (typeof hooks.open === 'function' || typeof hooks.render === 'function')) viewHooks.set(name, hooks); else viewHooks.delete(name); };
   const registerHostedView = (name, open) => { if (typeof open === 'function') hostedViews.set(name, open); else hostedViews.delete(name); };
   const showSinglesView = view => {
     activeSinglesView = view;
@@ -7083,7 +7086,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       $('mainTitleSub').textContent = titles[view][1];
     }
     renderSinglesCollection();
-    if (view === 'releases') loadReleasesForWeek();
+    { const hk = viewHooks.get(view); if (hk && typeof hk.open === 'function') hk.open(); }
   };
 
   const updateSinglesStats = () => {
@@ -7195,7 +7198,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     if (activeSinglesView === 'series') renderSeriesTracker();
     if (activeSinglesView === 'stats') renderStatsDashboard();
-    if (activeSinglesView === 'releases') { renderPullChips(); renderReleasesGrid(); }
+    if (activeSinglesView === 'releases') renderPullChips();
+    { const hk = viewHooks.get(activeSinglesView); if (hk && typeof hk.render === 'function') hk.render(); }
 
     const grid = $('singlesGrid');
     grid.innerHTML = '';
@@ -9146,6 +9150,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (seen && Date.now() - new Date(seen).getTime() < 12 * 3600000) return;
     await relSyncCurrent(true);
   };
+  registerViewHooks('releases', { open: () => loadReleasesForWeek(), render: () => renderReleasesGrid() });
 
   // ---------- Pull List : panneau
   const renderPullPanel = () => {
@@ -13025,7 +13030,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       id: 'explorer', domain: bunDomainOf('publications'), schema: 1,
       export: async () => {
         const r = exportReleaseData();
-        return { editorial: bunClone([...exEditorial.values()]), publications: r.publications, conflicts: r.conflicts, sync: r.sync, sourceCfg: r.sourceCfg };
+        // Ordre déterministe (3.1b-6) : les magasins indexés sont relus dans l'ordre des clés au démarrage ; trier par identifiant rend l'empreinte indépendante de l'ordre de stockage
+        const byId = (x, y) => String(x && x.id).localeCompare(String(y && y.id));
+        return { editorial: bunClone([...exEditorial.values()]).sort(byId), publications: r.publications.slice().sort(byId), conflicts: r.conflicts, sync: r.sync, sourceCfg: r.sourceCfg };
       },
       counts: s => ({ guides: (s.editorial || []).length, publications: (s.publications || []).length }),
       normalize: s => {
@@ -13575,7 +13582,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   window.Panel = {
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
-    views: { hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
+    views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
     backup: { collectionExport: exportCollectionBundle, exportCollectionJson: exportSinglesToJson, legacySinglesV2: exportSinglesLegacyV2Data, providers: () => BUNDLE_PROVIDERS.map(p => ({ id: p.id, domain: p.domain, schema: p.schema })), export: bundleExport, validate: bundleValidate, restore: bundleRestore, undo: bundleUndo, fingerprint: bunFingerprint, fingerprints: bunFingerprints, toV3: bundleToV3, fromLegacy: bundleFromLegacy, downloadFull: bundleDownloadFull, openExportDialog: openBundleExportDialog, openRestoreDialog: openBundleRestoreDialog },
     parseComicBarcode,
     computeCanvasDHash,

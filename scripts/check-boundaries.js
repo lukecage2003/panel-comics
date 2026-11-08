@@ -2,7 +2,7 @@
 'use strict';
 // Contrôle statique des frontières entre domaines (préparation du lot 3.1b, aucun changement de comportement).
 // Mode rapport (par défaut) : liste les couplages connus, code de sortie 0.
-// Mode strict (--strict, à activer au sous-lot 3.1b-6) : code de sortie 1 s'il reste un couplage interdit.
+// Mode strict (--strict, utilisé par npm run test:all depuis le sous-lot 3.1b-6) : code de sortie 1 s'il reste un couplage interdit.
 // Références : docs/phase4/02-frontieres-collection-explorer.md (C2-C10, D1-D4, E1-E5), docs/directeur/05-preparation-lot-3.1b.md.
 const fs = require('fs');
 const path = require('path');
@@ -72,12 +72,50 @@ const scan = (list, rules) => {
 scan(fns.filter(f => isExplorer(f.name)), PERSONAL);
 scan(fns.filter(f => isCalendar(f.name)), CALENDAR_PERSONAL);
 
+// Lot 3.1b-6 (D1 à D4) : Collection (et tout code hors Explorer et calendrier) ne lance ni ne lit Explorer directement.
+// Seuls les ponts nommés ci-dessous y sont admis, chacun pour une raison de conception.
+const EXPLORER_PRIVATE = [
+  { id: 'showExplorer', rule: 'D1 : lancement d’Explorer → registre des vues hébergées' },
+  { id: 'renderExplorer', rule: 'D1 : rendu d’Explorer → registre des vues hébergées' },
+  { id: 'wireExplorer', rule: 'D1 : Explorer se branche lui-même' },
+  { id: 'exOpenView', rule: 'D1 : point d’entrée d’Explorer → registre des vues hébergées' },
+  { id: 'loadExplorerData', rule: 'D1 : données d’Explorer chargées par Explorer' },
+  { id: 'renderReleasesGrid', rule: 'D1 : rendu du calendrier (Explorer) → crochets de vue' },
+  { id: 'loadReleasesForWeek', rule: 'D1 : ouverture du calendrier (Explorer) → crochets de vue' },
+  { id: 'exportExplorerData', rule: 'D2, D3 : export de Collection sans Explorer → fournisseurs de sauvegarde' },
+  { id: 'exportReleaseData', rule: 'D2, D3 : export de Collection sans calendrier → fournisseurs de sauvegarde' },
+  { id: 'mergeReleaseData', rule: 'D3 : restauration du calendrier par son fournisseur' },
+  { id: 'sanitizeReleaseData', rule: 'D3 : validation du calendrier par son fournisseur' },
+  { id: 'exEditorial', rule: 'D : guides éditoriaux (Explorer) → S1 / fournisseur' },
+  { id: 'exProgress', rule: 'D : progression (Lecture) → S1 guideProgress' },
+  { id: 'exResolve', rule: 'D : rapprochement éditorial (Explorer) → fournisseur S1' },
+  { id: 'exIndexBuild', rule: 'D : index éditorial (Explorer) → fournisseur S1' },
+  { id: 'gdExport', rule: 'D : export des guides (Explorer)' }
+];
+const D_BRIDGES = {
+  lecSetGuideProgress: 'Lecture, propriétaire de la progression (stockage partagé E5)',
+  exportExplorerData: 'Explorer : bloc de l’ancien format (D-23)',
+  mergeExplorerData: 'Explorer : bloc de l’ancien format (D-23)',
+  initReleases: 'Application : démarrage des modules',
+  validateBackupPayload: 'Application : sauvegarde complète (D4)',
+  applyBackupRestore: 'Application : restauration complète (D4)',
+  bindEvents: 'Application : boutons de sauvegarde complète (D4)',
+  bunReady: 'Application : fournisseurs de sauvegarde (D4)',
+  BUNDLE_PROVIDERS: 'Application : registre des fournisseurs de sauvegarde (D4)',
+  BUNDLE_STORES: 'Application : registre des fournisseurs de sauvegarde (D4)',
+  lensGuideProgress: 'Fournisseur S1',
+  cmdSetGuideProgress: 'Fournisseur S2',
+  PERSONAL_CONTRACTS_V1: 'Fournisseurs S1/S2 et API de test window.Panel'
+};
+const isOther = n => !isExplorer(n) && !isCalendar(n);
+scan(fns.filter(f => isOther(f.name) && !Object.prototype.hasOwnProperty.call(D_BRIDGES, f.name)), EXPLORER_PRIVATE);
+
 const strict = process.argv.includes('--strict');
 const byRule = {};
 findings.forEach(x => { (byRule[x.rule] = byRule[x.rule] || []).push(`${x.fn} l.${x.line}`); });
-console.log(`check-boundaries : ${fns.filter(f => isExplorer(f.name)).length} fonctions Explorer et ${fns.filter(f => isCalendar(f.name)).length} fonctions du calendrier analysées, ${findings.length} couplage(s) vers les données personnelles.`);
+console.log(`check-boundaries : ${fns.filter(f => isExplorer(f.name)).length} fonctions Explorer, ${fns.filter(f => isCalendar(f.name)).length} du calendrier et ${fns.filter(f => isOther(f.name)).length} autres (Collection, Lecture, Application ; ${Object.keys(D_BRIDGES).length} ponts admis) analysées, ${findings.length} couplage(s) entre domaines.`);
 for (const [rule, where] of Object.entries(byRule)) console.log(`  - ${rule} : ${where.join(', ')}`);
 if (strict && findings.length) { console.log('check-boundaries --strict : ÉCHEC (frontières non respectées).'); process.exitCode = 1; }
-else if (!strict) console.log('Mode rapport : aucun échec. Le mode --strict sera activé au sous-lot 3.1b-6.');
+else if (!strict) console.log('Mode rapport : aucun échec (npm run test:all utilise --strict).');
 
 module.exports = { findings };

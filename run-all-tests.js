@@ -3012,10 +3012,10 @@ const waitForCdp = async () => {
         const run = env => { try { return { code: 0, out: require('child_process').execFileSync(process.execPath, [path.join(__dirname, 'scripts', 'check-boundaries.js'), '--strict'], { env: Object.assign({}, process.env, env || {}), encoding: 'utf8' }) }; } catch (e) { return { code: e.status, out: String(e.stdout || '') }; } };
         const ok = run();
         const neg = path.join(require('os').tmpdir(), 'panel-t34-negatif.html');
-        fs.writeFileSync(neg, "<script>\n(() => {\n  const exT34Fuite = () => physicalSingles.length + relPulls.size;\n  const exT34Action = s => openSingleInspector(s);\n})();\n</script>\n");
+        fs.writeFileSync(neg, "<script>\n(() => {\n  const exT34Fuite = () => physicalSingles.length + relPulls.size;\n  const exT34Action = s => openSingleInspector(s);\n  const relT34Ecrit = () => physicalSingles.push({});\n  const colT34Lance = () => showExplorer();\n})();\n</script>\n");
         const bad = run({ BOUNDARIES_FILE: neg });
         try { fs.unlinkSync(neg); } catch (_) {}
-        return { staticStrict: ok.code === 0 && / 0 couplage/.test(ok.out), staticNegative: bad.code === 1 && /3 couplage/.test(bad.out) };
+        return { staticStrict: ok.code === 0 && / 0 couplage/.test(ok.out), staticNegative: bad.code === 1 && /5 couplage/.test(bad.out) && /relT34Ecrit/.test(bad.out) && /colT34Lance/.test(bad.out) };
       })();
       const t34a = await evalExpr(`(async () => {
         const P = window.Panel, X = P.explorer, C = P.contracts.personal.v1, r = {};
@@ -3197,13 +3197,37 @@ const waitForCdp = async () => {
         // Remise en état : collection d'avant, numéro de Pull List annulé (conservé dans l'historique), filtres effacés
         await q(`P.explorer.setPersonalProviderForTest(); P.setPhysicalSingles(window.__t34cSaved); for (const pl of R.pulls.all().filter(x => x.pubId === id && (x.status === 'planned' || x.status === 'available'))) await R.pulls.cancel(pl.id); document.getElementById('releasesSearch').value = ''; P.renderReleasesGrid(); document.getElementById('navAllSingles').click(); return true;`);
       }
-      Object.assign(t34a || {}, t34b || {}, t34c);
+      // 3.1b-6 : empreintes par domaine avant et après un redémarrage, et après une restauration complète (fusion) puis son annulation : rien ne change
+      const t34d = {};
+      const t34fp = () => evalExpr(`(async () => { const P = window.Panel; await P.releases.ready(); await P.explorer.load(); await new Promise(r => setTimeout(r, 300)); return await P.backup.fingerprints(); })()`);
+      const t34fp0 = await t34fp();
+      await send('Page.reload', { ignoreCache: false });
+      for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.backup && window.Panel.explorer) && document.readyState === "complete"')) break; }
+      await new Promise(r => setTimeout(r, 1500)); // fin des chargements asynchrones du démarrage
+      const t34fp1 = await t34fp();
+      const t34domains = ['collection', 'reading', 'explorer', 'app'];
+      t34d.fpRestart = !!t34fp0 && !!t34fp1 && t34domains.every(d => typeof t34fp0[d] === 'string' && t34fp0[d] === t34fp1[d]);
+      if (!t34d.fpRestart) console.log('Test 34 — empreintes avant/après redémarrage :', JSON.stringify(t34fp0), JSON.stringify(t34fp1));
+      Object.assign(t34d, await evalExpr(`(async () => {
+        const B = window.Panel.backup, doms = ${JSON.stringify(t34domains)}, r = {};
+        const fp0 = await B.fingerprints();
+        const b = await B.export({ domains: doms });
+        const v = await B.validate(JSON.parse(JSON.stringify(b)));
+        const res = await B.restore(v, { domains: doms, mode: 'merge' });
+        const fp1 = await B.fingerprints();
+        r.fpAfterRestore = res.ok === true && res.added === 0 && doms.every(d => fp1[d] === fp0[d]);
+        if (res.ok && res.undoToken) await B.undo(res.undoToken);
+        const fp2 = await B.fingerprints();
+        r.fpAfterUndo = doms.every(d => fp2[d] === fp0[d]);
+        return r;
+      })()`) || {});
+      Object.assign(t34a || {}, t34b || {}, t34c, t34d);
       const t34 = Object.assign({}, t34s, t34a);
       console.log('Résultat Test 34:', JSON.stringify(t34));
       const t34keys = ['staticStrict', 'staticNegative', 'personalOn', 'derivedTagged', 'seriesTagged', 'searchNoCollection', 'switchShown', 'switchImmediate', 'disabledEditorialOnly', 'disabledNoProviderCall',
         'reenabled', 'absentHome', 'absentGuide', 'absentSearch', 'absentRecos', 'noWrite',
         'hostedRegistered', 'collectionWithoutExplorer', 'collectionExportOnly', 'buttonCollectionOnly', 'explorerSelfLaunch', 'legacyV2', 'legacySplit', 'd4NoWrite',
-        'calSyntheticRefused', 'calWish', 'calConvertNoDuplicate', 'calPull', 'sheetCounts', 'sheetQuantity', 'calAbsentNoBadge', 'calAbsentNoWrite', 'calAbsentPullOnly', 'e3Undo'];
+        'calSyntheticRefused', 'calWish', 'calConvertNoDuplicate', 'calPull', 'sheetCounts', 'sheetQuantity', 'calAbsentNoBadge', 'calAbsentNoWrite', 'calAbsentPullOnly', 'e3Undo', 'fpRestart', 'fpAfterRestore', 'fpAfterUndo'];
       const t34fail = t34keys.filter(k => !t34 || t34[k] !== true);
       if (t34fail.length) console.log('Test 34 — vérifications en échec :', t34fail.join(', '));
       testResults.push({
