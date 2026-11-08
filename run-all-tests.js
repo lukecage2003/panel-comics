@@ -3651,6 +3651,105 @@ const waitForCdp = async () => {
         ok: t39fail.length === 0
       });
 
+      // ─── Test 40 : Corbeille (D-36) — retrait copié avant suppression, restauration, purge confirmée seulement ───
+      console.log('\n[TEST 40] Corbeille : retrait → corbeille, annulation, restauration depuis la fenêtre, purge exigeant confirmation...');
+      const t40 = await evalExpr(`(async () => {
+        const P = window.Panel, T = P.trash, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const TK = 'panel_trash_v1', prevRaw = localStorage.getItem(TK);
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fpC = await P.backup.fingerprint('collection');
+        const c0 = window.confirm;
+        try {
+          localStorage.removeItem(TK);
+          const mk = (id, n) => ({ id, series: 'T40 Série', issue: '#' + n, publisher: 'Image Comics', variant: 'Cover A', addedAt: '2026-01-01T00:00:00Z' });
+          P.setPhysicalSingles([mk('tr1', 1), mk('tr2', 2), mk('tr3', 3)]);
+          await wait(100);
+          r.api = Object.isFrozen(T) && typeof T.list === 'function' && T.purge('x').error === 'confirmation_required';
+          P.removeSingleWithUndo(P.getPhysicalSingles().find(s => s.id === 'tr2'));
+          r.removed = P.getPhysicalSingles().length === 2 && T.list().length === 1 && T.list()[0].item.id === 'tr2' && T.list()[0].index === 1;
+          r.toast = /corbeille/.test((document.getElementById('toastPopup') || {}).textContent || '');
+          r.count = !!document.getElementById('trashCount') && document.getElementById('trashCount').textContent === '1';
+          const ub = document.querySelector('#toastPopup .toast-action');
+          if (ub) ub.click();
+          await wait(50);
+          r.undo = !!ub && P.getPhysicalSingles().map(s => s.id).join() === 'tr1,tr2,tr3' && T.list().length === 0;
+          P.removeSingleWithUndo(P.getPhysicalSingles().find(s => s.id === 'tr3'));
+          P.removeSingleWithUndo(P.getPhysicalSingles().find(s => s.id === 'tr1'));
+          r.kept = T.list().length === 2 && T.list()[0].item.id === 'tr1' && P.getPhysicalSingles().length === 1;
+          document.getElementById('trashBtn').click();
+          const dlg = document.getElementById('trashDialog');
+          r.dialog = !!dlg && dlg.classList.contains('open') && dlg.querySelectorAll('[data-trash-restore]').length === 2;
+          dlg.querySelector('[data-trash-restore="tr3"]').click();
+          await wait(50);
+          r.restored = P.getPhysicalSingles().some(s => s.id === 'tr3') && T.list().length === 1;
+          window.confirm = () => false;
+          document.getElementById('trashDialog').querySelector('[data-trash-purge="tr1"]').click();
+          r.purgeCancelled = T.list().length === 1;
+          window.confirm = () => true;
+          document.getElementById('trashDialog').querySelector('[data-trash-purge="tr1"]').click();
+          r.purged = T.list().length === 0 && !P.getPhysicalSingles().some(s => s.id === 'tr1');
+          P.setPhysicalSingles([{ id: 'x40', series: '<img src=x onerror=window.__t40=1>', issue: '#1' }]);
+          P.removeSingleWithUndo(P.getPhysicalSingles()[0]);
+          T.open();
+          await wait(50);
+          r.xss = !document.querySelector('#trashDialog img') && !window.__t40;
+          r.notFound = T.restore('absent').error === 'not_found';
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.confirm = c0;
+          const d = document.getElementById('trashDialog'); if (d) d.classList.remove('open');
+          P.setPhysicalSingles(saved);
+          if (prevRaw === null) localStorage.removeItem(TK); else localStorage.setItem(TK, prevRaw);
+          await wait(200);
+        }
+        r.finalCollection = (await P.backup.fingerprint('collection')) === fpC;
+        r.finalTrash = localStorage.getItem(TK) === prevRaw;
+        return r;
+      })()`);
+      console.log('Résultat Test 40:', JSON.stringify(t40));
+      const t40keys = ['api', 'removed', 'toast', 'count', 'undo', 'kept', 'dialog', 'restored', 'purgeCancelled', 'purged', 'xss', 'notFound', 'finalCollection', 'finalTrash'];
+      const t40fail = t40keys.filter(k => !t40 || t40[k] !== true);
+      if (t40fail.length) console.log('Test 40 — vérifications en échec :', t40fail.join(', '));
+      testResults.push({
+        test: 'Corbeille : fiche copiée avant retrait, annulation, conservation après expiration du message, restauration depuis la fenêtre, purge seulement après confirmation, XSS, état restauré',
+        ok: t40fail.length === 0
+      });
+
+      // ─── Test 41 : Calendrier « comics uniquement » (lot 4.6, D-37) — manga masqué, jamais supprimé ───
+      console.log('\n[TEST 41] Calendrier : périmètre comics, manga masqué par défaut, réaffichable, données inchangées...');
+      const t41 = await evalExpr(`(async () => {
+        const P = window.Panel, Rl = P.releases, r = {};
+        await Rl.ready();
+        const before = JSON.stringify(Rl.all());
+        r.predicate = Rl.outOfScope({ format: 'manga', publisher: 'Glénat' }) === true && Rl.outOfScope({ format: 'comic', publisher: 'Kana' }) === true &&
+          Rl.outOfScope({ format: 'comic', publisher: 'Kurokawa' }) === true && Rl.outOfScope({ format: 'comic', publisher: 'Image Comics' }) === false && Rl.outOfScope(null) === false;
+        const base = { range: null, pullOnly: false, q: '', market: '', publisher: '', format: '', status: '' };
+        const all = Rl.all(), outN = all.filter(p => Rl.outOfScope(p)).length;
+        const masked = Rl.query(Object.assign({}, base, { includeOutOfScope: false }));
+        const full = Rl.query(Object.assign({}, base, { includeOutOfScope: true }));
+        r.masking = !masked.some(p => Rl.outOfScope(p)) && full.length === masked.length + outN && full.length === all.length;
+        r.explicitManga = Rl.query(Object.assign({}, base, { format: 'manga' })).length === all.filter(p => p.format === 'manga').length;
+        const cb = document.getElementById('releasesShowOutOfScope');
+        r.control = !!cb && cb.checked === false;
+        Rl.query(base);
+        r.counter = document.getElementById('releasesOutOfScopeCount').textContent === String(outN);
+        cb.checked = true;
+        r.toggle = Rl.query(base).length === all.length;
+        cb.checked = false;
+        r.unchanged = JSON.stringify(Rl.all()) === before;
+        r.outN = outN; r.total = all.length;
+        return r;
+      })()`);
+      console.log('Résultat Test 41:', JSON.stringify(t41));
+      const t41keys = ['predicate', 'masking', 'explicitManga', 'control', 'counter', 'toggle', 'unchanged'];
+      const t41fail = t41keys.filter(k => !t41 || t41[k] !== true);
+      if (t41fail.length) console.log('Test 41 — vérifications en échec :', t41fail.join(', '));
+      testResults.push({
+        test: 'Calendrier comics uniquement : manga et éditeurs manga masqués par défaut, compteur, case de réaffichage, filtre explicite, aucune donnée modifiée',
+        ok: t41fail.length === 0
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -25,7 +25,7 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 | 3.2 | Projet cloud, authentification, CSP, hébergement, sécurité Android | Adaptateurs Supabase prêts et testés localement (D-35) ; projet cloud à créer par l'utilisateur |
 | 3.3 | Profils, préférences, appareils, rôles serveur (prérequis d'Explorer 2.0) | À faire |
 | 3.4 | Moteur de synchronisation, migration d'une collection existante | Préparé localement le 8 novembre 2026 (RPC, moteur, tests PGlite) ; branchement et migration après 3.2 |
-| 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille et interface à faire |
+| 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille locale livrée le 8 novembre 2026 (D-36) ; interface des conflits après 3.2 |
 | 3.6 | Sauvegardes, restauration, suppression de compte, RGPD | Préparé localement le 8 novembre 2026 (export, effacement, purge ; D-35) ; suppression du compte auth et purge planifiée après 3.2 |
 | 3.7 | Validation Web + Android, bêta fermée | À faire |
 
@@ -44,8 +44,8 @@ Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans 
 - Renouvellement de la clé Comic Vine.
 - Signature Android de publication ; réglage de `allowBackup` (prérequis du lot 3.2).
 - Purge des anciennes clés Marvel/Vision (**nécessite l'accord de l'utilisateur**).
-- Retrait des secrets des exports JSON par défaut (prévu au lot 3.2 ou 3.6).
-- Mise en conformité du calendrier actuel (lot 2.4) avec la règle « comics uniquement » (format `manga`, éditeurs Kana et Kurokawa) : lots 4.6 et 4.9, par masquage, sans suppression. Cas limites M1 à M4 (BD franco-belge, manhwa et manhua, manga non japonais, adaptations) **à trancher**.
+- ``Retrait des secrets des exports JSON par défaut`` : fait au lot 3.1b (sauvegardes par domaine sans secrets).
+- Mise en conformité du calendrier actuel (lot 2.4) avec la règle « comics uniquement » (format `manga`, éditeurs Kana et Kurokawa) : lots 4.6 et 4.9, par masquage, sans suppression. **Masquage livré le 8 novembre 2026 (D-37, test 41).** Cas limites M1 à M4 (BD franco-belge, manhwa et manhua, manga non japonais, adaptations) **à trancher**.
 - Changement de navigation N1 à N5 (Explorer et Sorties hors du bloc Collection) : **en attente de validation explicite**.
 - Sauvegarde par domaine (B1) : **principe approuvé** ; spécification dans [`phase4/06`](phase4/06-sauvegardes-par-domaine.md) ; réalisation prévue au lot 3.1b ; options B1-a à B1-c à trancher.
 - Le lot 2.7, envisagé à l'origine, n'a pas été réalisé ; ses sujets figurent ci-dessus.

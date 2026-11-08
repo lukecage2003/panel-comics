@@ -1832,6 +1832,7 @@
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
       <button class="btn secondary" id="backupOptionsBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Sauvegarder un seul domaine (Collection, Lecture, Explorer), au format compatible, ou avec vos clés chiffrées">Sauvegarde par domaine…</button>
+      <button class="btn secondary" id="trashBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Fiches retirées, restaurables">Corbeille (<span id="trashCount">0</span>)</button>
       <button class="btn secondary" id="readingMigrateBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Regrouper « lu » et les notes par œuvre (Lecture). Les fiches ne sont pas modifiées.">Lecture par œuvre…</button>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
       <button class="btn secondary" id="openDataAdminBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Sources & données</button>
@@ -2000,6 +2001,7 @@
           <select class="field-input rel-sel" id="relStatus" aria-label="Statut"></select>
           <input class="field-input" id="releasesSearch" type="search" placeholder="Série ou titre…" style="width:150px" aria-label="Filtrer par série ou titre">
           <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer"><input type="checkbox" id="releasesPullOnly" style="accent-color:var(--gold)"> Ma pull list seulement</label>
+          <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer" title="Panel couvre les comics : le manga est masqué, jamais supprimé (lot 4.6)"><input type="checkbox" id="releasesShowOutOfScope" style="accent-color:var(--gold)"> Afficher le hors périmètre (<span id="releasesOutOfScopeCount">0</span>)</label>
           <span class="rel-filters-actions">
             <button class="btn secondary rel-mini" id="relSyncBtn">Actualiser (Comic Vine)</button>
             <button class="btn secondary rel-mini" id="relAddPubBtn">+ Publication</button>
@@ -6838,19 +6840,66 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     el._t = setTimeout(() => el.classList.remove('show'), 6500);
   };
 
+  // Corbeille (lot 3.5, D-36) : une fiche retirée y est copiée AVANT d'être retirée ; si la copie échoue, rien n'est retiré.
+  // Seul un geste explicite et confirmé supprime définitivement une fiche de la corbeille ; aucune purge automatique.
+  const TRASH_KEY = 'panel_trash_v1';
+  const trashLoad = () => { try { const d = JSON.parse(localStorage.getItem(TRASH_KEY) || 'null'); if (d && d.version === 1 && Array.isArray(d.items)) return d; } catch (_) {} return { version: 1, items: [] }; };
+  const trashSave = d => { localStorage.setItem(TRASH_KEY, JSON.stringify(d)); };
+  const trashPut = (item, index) => {
+    const d = trashLoad();
+    d.items = d.items.filter(x => !(x.item && x.item.id === item.id));
+    d.items.unshift({ removedAt: new Date().toISOString(), index, item: JSON.parse(JSON.stringify(item)) });
+    trashSave(d); // lève une erreur si le stockage est plein : l'appelant n'a alors rien retiré
+  };
+  const trashTake = id => { const d = trashLoad(); const i = d.items.findIndex(x => x.item && x.item.id === id); if (i < 0) return null; const [x] = d.items.splice(i, 1); trashSave(d); return x; };
+  const trashRestore = id => {
+    const x = trashLoad().items.find(y => y.item && y.item.id === id);
+    if (!x) return { ok: false, error: 'not_found' };
+    if (physicalSingles.some(s => s.id === id)) { trashTake(id); return { ok: true, already: true }; }
+    physicalSingles.splice(Math.min(Number(x.index) || 0, physicalSingles.length), 0, JSON.parse(JSON.stringify(x.item)));
+    persistSingles();
+    trashTake(id);
+    return { ok: true };
+  };
+  const trashPurge = (id, confirmed) => {
+    if (confirmed !== true) return { ok: false, error: 'confirmation_required' };
+    return trashTake(id) ? { ok: true } : { ok: false, error: 'not_found' };
+  };
   const removeSingleWithUndo = item => {
     const idx = physicalSingles.findIndex(s => s.id === item.id);
     if (idx < 0) return;
+    try { trashPut(physicalSingles[idx], idx); }
+    catch (e) { showToast('Retrait impossible : la corbeille n\'a pas pu enregistrer la fiche (stockage plein). Rien n\'a été retiré.'); return; }
     const [removed] = physicalSingles.splice(idx, 1);
     persistSingles();
     renderSinglesCollection();
-    showToastAction(`« ${removed.series} ${removed.issue} » retiré.`, 'Annuler', () => {
-      physicalSingles.splice(Math.min(idx, physicalSingles.length), 0, removed);
-      persistSingles();
+    showToastAction(`« ${removed.series} ${removed.issue} » placé dans la corbeille.`, 'Annuler', () => {
+      trashRestore(removed.id);
       renderSinglesCollection();
       showToast('Exemplaire restauré.');
     });
   };
+  const openTrashDialog = () => {
+    let box = $('trashDialog');
+    if (!box) { box = document.createElement('div'); box.id = 'trashDialog'; box.className = 'modal-backdrop'; document.body.appendChild(box); }
+    const d = trashLoad();
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="trashTitle"><h2 id="trashTitle">Corbeille</h2>' +
+      '<p class="stat-sub">Les fiches retirées sont conservées ici sans limite de durée. « Restaurer » les remet dans la collection ; seule « Supprimer définitivement », confirmée, les efface.</p>' +
+      (d.items.length ? '<div data-list>' + d.items.map(x => '<div class="top-item" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:0"><b>' + escapeHtml((x.item.series || '') + ' ' + (x.item.issue || '')) + '</b><span class="stat-sub" style="display:block">' + escapeHtml(x.item.variant || '') + ' · retiré le ' + new Date(x.removedAt).toLocaleString('fr-FR') + '</span></span>' +
+        '<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-trash-restore="' + escapeHtml(x.item.id) + '">Restaurer</button> <button class="btn secondary" style="font-size:12px;padding:3px 8px;color:var(--red)" data-trash-purge="' + escapeHtml(x.item.id) + '">Supprimer définitivement</button></div>').join('') + '</div>'
+        : '<div class="notice-box">La corbeille est vide.</div>') +
+      '<div class="modal-btns"><button class="btn secondary" data-close>Fermer</button></div></div>';
+    box.classList.add('open');
+    box.querySelector('[data-close]').onclick = () => box.classList.remove('open');
+    box.querySelectorAll('[data-trash-restore]').forEach(b => { b.onclick = () => { const r = trashRestore(b.dataset.trashRestore); renderSinglesCollection(); openTrashDialog(); showToast(r.ok ? 'Exemplaire restauré.' : 'Restauration impossible.'); }; });
+    box.querySelectorAll('[data-trash-purge]').forEach(b => { b.onclick = () => { if (!window.confirm('Supprimer définitivement cette fiche ? Cette action ne peut pas être annulée.')) return; trashPurge(b.dataset.trashPurge, true); renderSinglesCollection(); openTrashDialog(); }; });
+  };
+  const TRASH_API = Object.freeze({
+    list: () => JSON.parse(JSON.stringify(trashLoad().items)),
+    restore: trashRestore,
+    purge: trashPurge,
+    open: () => openTrashDialog()
+  });
 
   // Sélecteur d'étoiles réutilisable
   const renderStarInput = (el, value, onChange) => {
@@ -7871,6 +7920,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (activeSinglesView === 'community') renderCommunityView();
     if ($('badgeCommunityDrafts')) $('badgeCommunityDrafts').textContent = commLoad().drafts.length;
     if ($('badgeReadingNow')) $('badgeReadingNow').textContent = rdStats().reading;
+    if ($('trashCount')) $('trashCount').textContent = trashLoad().items.length;
     if (activeSinglesView === 'releases') renderPullChips();
     { const hk = viewHooks.get(activeSinglesView); if (hk && typeof hk.render === 'function') hk.render(); }
 
@@ -9639,6 +9689,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Panneaux d'autres domaines affichés dans la vue calendrier (Pull List de Collection, A5) : le calendrier les rafraîchit sans les connaître
   const relHostedPanels = [];
   const registerReleasesPanel = fn => { if (typeof fn === 'function' && !relHostedPanels.includes(fn)) relHostedPanels.push(fn); };
+  // Périmètre « comics uniquement » (lot 4.6, D-37) : le manga (format, ou éditeur spécialisé) est masqué par défaut, jamais supprimé ni modifié
+  const REL_OUT_OF_SCOPE_PUBLISHERS = new Set(['kana', 'kurokawa']);
+  const relOutOfScope = p => !!p && (p.format === 'manga' || REL_OUT_OF_SCOPE_PUBLISHERS.has(catNorm(p.publisher)));
   const relQuery = (opts = {}) => {
     const range = opts.range === undefined ? relRange() : opts.range;
     const q = catNorm(opts.q !== undefined ? opts.q : (($('releasesSearch') && $('releasesSearch').value) || ''));
@@ -9646,7 +9699,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const market = opts.market !== undefined ? opts.market : relView.market, publisher = opts.publisher !== undefined ? opts.publisher : relView.publisher;
     const format = opts.format !== undefined ? opts.format : relView.format, status = opts.status !== undefined ? opts.status : relView.status;
     const today = relToday();
+    const showOut = opts.includeOutOfScope !== undefined ? !!opts.includeOutOfScope : (!!($('releasesShowOutOfScope') && $('releasesShowOutOfScope').checked) || format === 'manga');
+    let hiddenOut = 0;
     const list = [...relPubs.values()].filter(p => {
+      if (!showOut && relOutOfScope(p)) { hiddenOut++; return false; }
       const d = p.dates.current;
       if (range) { if (!d || d < range[0] || d > range[1]) return false; }
       if (market && p.market !== market) return false;
@@ -9656,6 +9712,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (q && !catNorm(p.series + ' ' + p.title + ' ' + p.publisher).includes(q)) return false;
       return true;
     });
+    if ($('releasesOutOfScopeCount') && opts.includeOutOfScope === undefined) $('releasesOutOfScopeCount').textContent = hiddenOut;
     let lens = null;
     if (pullOnly) lens = relLensMap(list); // sans S1 : aucun résultat pour « Ma pull list » (indisponible)
     return list.filter(p => !pullOnly || (lens && relIsPulled(lens.get(p.id)))).sort((a, b) => (a.dates.current || '9999').localeCompare(b.dates.current || '9999') || a.series.localeCompare(b.series, 'fr') || (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
@@ -9999,6 +10056,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('releasesNextWeekBtn')) $('releasesNextWeekBtn').onclick = () => shift(1);
     if ($('releasesThisWeekBtn')) $('releasesThisWeekBtn').onclick = () => { relView.anchor = relView.period === 'week' ? startOfWeek(new Date()) : new Date(); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
     if ($('releasesPullOnly')) $('releasesPullOnly').onchange = rerender;
+    if ($('releasesShowOutOfScope')) $('releasesShowOutOfScope').onchange = rerender;
     if ($('releasesSearch')) $('releasesSearch').oninput = rerender;
     [['relMarket', 'market'], ['relPublisher', 'publisher'], ['relFormat', 'format'], ['relStatus', 'status']].forEach(([id, k]) => { if ($(id)) $(id).onchange = e => { relView[k] = e.target.value; if (k === 'market') relView.publisher = ''; rerender(); }; });
     if ($('relMode')) $('relMode').onchange = e => { relView.mode = e.target.value; if (relView.mode === 'month' && relView.period === 'week') relView.period = 'month'; rerender(); };
@@ -13478,6 +13536,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if ($('navSinglesReading')) $('navSinglesReading').onclick = () => goSingles('reading');
     if ($('navSinglesFinances')) $('navSinglesFinances').onclick = () => goSingles('finances');
     if ($('navSinglesCommunity')) $('navSinglesCommunity').onclick = () => goSingles('community');
+    if ($('trashBtn')) $('trashBtn').onclick = () => openTrashDialog();
     if ($('navExplorer')) $('navExplorer').onclick = () => goSingles('explorer');
     $('singlesSubnav').onclick = e => {
       const b = e.target.closest('[data-sview]');
@@ -14716,6 +14775,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     finance: FINANCE_API,
     reading: READING_API,
     community: COMMUNITY_API,
+    trash: TRASH_API,
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
@@ -14817,6 +14877,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       reloadFromDb: () => loadReleaseData(true),
       upsert: async (raw, source) => { await loadReleaseData(); const r = relUpsert(raw, { source: source || 'manual' }); if (r.pub) await relPut('publications', [r.pub]); return r; },
       edit: relEdit, get: id => relPubs.get(id) || null, all: () => [...relPubs.values()], query: opts => relQuery(opts || {}),
+      outOfScope: p => relOutOfScope(typeof p === 'string' ? relPubs.get(p) : p),
       statusOf: (p, today) => relStatusOf(typeof p === 'string' ? relPubs.get(p) : p, today),
       addRelation: relAddRelation, removeRelation: relRemoveRelation, relationsOf: relRelationsOf, suggest: relSuggest,
       connectors: () => Object.values(RELEASE_CONNECTORS).map(c => ({ id: c.id, label: c.label, markets: c.markets, kind: c.kind, automated: c.automated, available: c.available(), terms: c.terms })),

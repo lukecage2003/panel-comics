@@ -173,4 +173,5 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - **Communauté** : « Partager… » depuis une fiche, copie en liste blanche, brouillons locaux, vue Communauté, aucune publication (D-34), test 39 ;
   - **backend** : adaptateurs Supabase, migration 9 (export, effacement, purge ; D-35), `adapters.test.js`, `privacy.test.js` ;
   - **test 26** : attente infinie possible corrigée (`snapshotSingles` sans `onabort`), durées par étape journalisées.
-
+  - **corbeille** (D-36) : fiche copiée avant retrait, restauration, purge confirmée seulement, test 40 ;
+  - **calendrier comics uniquement** (D-37) : manga masqué par défaut, réaffichable, test 41.
