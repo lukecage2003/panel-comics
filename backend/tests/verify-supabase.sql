@@ -54,6 +54,13 @@ begin
     and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
   if n <> 2 then raise exception 'api.sync_push et api.sync_pull : security definer, search_path vide, authenticated seulement'; end if;
 
+  -- Lot 3.6 (migration 9, D-35) : export et effacement pour authenticated seulement ; purge réservée au service
+  select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace and proname in ('export_my_data','delete_my_data')
+    and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
+  if n <> 2 then raise exception 'api.export_my_data et api.delete_my_data : security definer, search_path vide, authenticated seulement'; end if;
+  select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace and proname = 'purge_tombstones' and (has_function_privilege('authenticated', oid, 'execute') or has_function_privilege('anon', oid, 'execute'));
+  if n <> 0 then raise exception 'app.purge_tombstones ne doit être exécutable par aucun client'; end if;
+
   select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;
 

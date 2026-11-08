@@ -20,7 +20,7 @@ async function fingerprint(db) {
   ].join('\n---\n');
 }
 
-test('huit migrations horodatées, dans l\'ordre attendu', () => {
+test('neuf migrations horodatées, dans l\'ordre attendu', () => {
   assert.deepEqual(H.migrationFiles(), [
     '20261107000001_app_schema.sql',
     '20261107000002_profiles_settings_devices.sql',
@@ -29,7 +29,8 @@ test('huit migrations horodatées, dans l\'ordre attendu', () => {
     '20261107000005_rls_policies.sql',
     '20261107000006_rev_triggers.sql',
     '20261108000007_hardening.sql',
-    '20261109000008_sync_rpc.sql'
+    '20261109000008_sync_rpc.sql',
+    '20261109000009_privacy_purge.sql'
   ]);
 });
 

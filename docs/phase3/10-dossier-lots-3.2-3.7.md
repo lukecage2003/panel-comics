@@ -181,3 +181,12 @@ Aucun de ces prérequis n'est engagé à ce jour.
 
 Restant, avec un service externe ou une décision : projet Supabase et `verify-supabase.sql` réel (3.2), authentification réelle (3.2/3.3), branchement du moteur dans `index.html` et migration d'une collection existante (3.4, après 3.2), corbeille et interface de conflits (3.5), purge et RGPD (3.6), validation Web + Android (3.7).
 
+## 10. Suite locale : adaptateurs (3.2/3.4) et lot 3.6 (mission « Autonomous full project execution », 8 novembre 2026)
+**Statut : implémenté et validé localement (PGlite) ; jamais exécuté contre Supabase ; synchronisation réelle non activée.** Décision : D-35.
+
+| Élément | Réalisé | Reste |
+|---|---|---|
+| `backend/sync-engine/adapters.js` | `createSupabaseTransport(client)` (noms des paramètres de la migration 8, erreurs `session_expired` / `device_revoked` / `network` / `invalid`), `createSupabaseSession(client)` (expiration avec marge, rafraîchissement, abonnement), `createWebStorage(localStorage, clé)` | Client supabase-js réel, clés publiques et URL du projet (3.2), branchement dans `index.html` |
+| Migration 9 | `api.export_my_data()` ; `api.delete_my_data('SUPPRIMER MES DONNÉES')` ; `app.purge_tombstones(user, ≥ 7 jours)` réservé au service | Suppression du compte auth (API d'administration Supabase), tâche planifiée de purge, durée de conservation à valider (juridique) |
+| Tests | `adapters.test.js` (5) : deux appareils convergent par le transport Supabase, session expirée puis rafraîchie, coupure réseau rejouée sans doublon ; `privacy.test.js` (3) ; `verify-supabase.sql` étendu | `verify-supabase.sql` sur un vrai projet |
+

@@ -16,7 +16,7 @@ backend/
   .env.example            noms de variables, sans valeur (jamais de clé de service)
   supabase/
     config.toml           configuration de la Supabase CLI, sans secret
-    migrations/           8 migrations horodatées, appliquées dans l'ordre (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4)
+    migrations/           9 migrations horodatées (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4 ; 9e : export, effacement, purge, lot 3.6)
     seed.sql              données fictives (@exemple.test)
   tests/
     auth-stub.sql         schéma auth minimal (en test seulement ; Supabase fournit le vrai)
@@ -31,6 +31,7 @@ backend/
     verify-supabase.sql   contrôle du schéma, réutilisable sur Supabase local (psql)
   sync-engine/
     engine.js             moteur client (outbox, lots, pages, reprise) ; transport et stockage injectés, aucun appel réseau
+    adapters.js           adaptateurs Supabase : transport RPC (api.sync_push / sync_pull), session (supabase-js), stockage Web ; testés avec un faux client adossé à PGlite
 ```
 
 ## Schéma `app` (données personnelles uniquement)

@@ -167,3 +167,10 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
 
 - **Fondations Explorer 2.0 et Communauté (mission « Autonomous night shift »)** ([réalisation](directeur/07-conception-explorer-2.0-community.md)) : modules autonomes `domains/explorer/catalog-core.js` et `domains/community/policy-core.js`, non branchés ; `npm run test:domains` : **16/16**, ajouté à `test:all`.
 
+- **Mission « Autonomous full project execution » (8 novembre 2026)** :
+  - vues **Lecture** et **Finances** dans la section Collection (D-32 : U-D1 = L-C, U-D2 = Fi-A), tests 37 ;
+  - **Explorer 2.0 intégré** : modules `domains/` intégrés par `scripts/sync-domains.js`, recherche tolérante, « Guides proches » (D-33), test 38 ;
+  - **Communauté** : « Partager… » depuis une fiche, copie en liste blanche, brouillons locaux, vue Communauté, aucune publication (D-34), test 39 ;
+  - **backend** : adaptateurs Supabase, migration 9 (export, effacement, purge ; D-35), `adapters.test.js`, `privacy.test.js` ;
+  - **test 26** : attente infinie possible corrigée (`snapshotSingles` sans `onabort`), durées par étape journalisées.
+
