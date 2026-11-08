@@ -41,3 +41,8 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | 3.1b-2 Contrats S1 et S2 | Terminé | `Panel.contracts.personal.v1`, test 33, réglage `panel_explorer_personalize` (préférence), `sw.js` | Front 32/32 ; base 82/82 ; secrets 0 | — | — | 3.1b-3 |
 | 3.1b-1 Sauvegardes par domaine | Terminé | `index.html` (`Panel.backup`, fenêtres d'export et de restauration), test 32, test 29 adapté, `sw.js` | Front 31/31 ; base 82/82 ; secrets 0 | — | — | 3.1b-2 |
 
+## 8-9 novembre 2026 — mission « Autonomous night shift »
+| Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
+|---|---|---|---|---|---|---|
+| 3.1b-7 et 3.1b-8 | Terminé | Navigation conservée ; clôture documentaire | `test:all` : 82/82, 0, 0 couplage, 33/33 | D-26 à D-31 (recommandations appliquées sous délégation) | — | F1 |
+

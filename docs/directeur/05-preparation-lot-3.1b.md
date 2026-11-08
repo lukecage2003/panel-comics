@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 à 3.1b-6 livrés ; 3.1b-7 (navigation) conditionnel, non engagé : N1 à N5 et une option mobile ne sont pas validées ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
+Statut : **lot clos** (D-26). Historique du statut : en cours d'exécution (lancé le 8 novembre 2026, D-21 ; 3.1b-1 à 3.1b-6 livrés ; 3.1b-7 (navigation) conditionnel, non engagé : N1 à N5 et une option mobile ne sont pas validées ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 

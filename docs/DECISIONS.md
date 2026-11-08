@@ -46,19 +46,22 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | 08/11/2026 | D-23 (B1-a) | L'ancien format d'export (`panel-backup` v3, `panel-singles` v2) reste proposé pendant deux versions, puis en lecture seule ; la lecture des anciens fichiers reste toujours possible | Utilisateur | En vigueur |
 | 08/11/2026 | D-24 (B1-b) | Secrets exclus des exports par défaut ; option explicite pour les inclure, chiffrés par un mot de passe saisi par l'utilisateur | Utilisateur | En vigueur |
 | 08/11/2026 | D-25 (B1-c) | Nom du format : `panel-bundle` v1 | Utilisateur | En vigueur |
+| 08/11/2026 | D-26 | **Lot 3.1b clos** : 3.1b-1 à 3.1b-6 livrés ; 3.1b-7 non engagé, la navigation actuelle est conservée (N1 à N5, M-A à M-E et U-D1 non validées, reporté au lot 4.9) | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur |
+| 08/11/2026 | D-27 (F1-0) | La copie normalisée du catalogue écrit `null` au lieu de `'USD'` quand la devise d'achat est inconnue (application de D-18) | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur |
+| 08/11/2026 | D-28 (F-D2 = C) | Devise choisie au premier usage, EUR proposé ; préférence `panel_default_currency` ; anciennes fiches « non précisée », jamais réétiquetées sans geste ; aucune conversion | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur, révisable |
+| 08/11/2026 | D-29 (F-D4) | Lot : répartition proportionnelle à la couverture si toutes les couvertures sont connues, égale sinon ; méthode affichée et modifiable avant validation | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur, révisable |
+| 08/11/2026 | D-30 (L-D1 à L-D3) | Lecture stockée en localStorage `panel_reading_v1` ; migration de `isRead` avec conservation (champ gardé, lecture de compatibilité) ; notes divergentes : conservées, signalées pour rapprochement, la plus récente puis la plus haute retenue par défaut, sans écrasement | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur, révisable |
+| 08/11/2026 | D-31 (T1 à T4) | Lot 3.4 : écritures par `sync_push` (security definer) seulement, pierres tombales sans suppression physique, ordre UPDATE puis INSERT, `app.skip_rev` ; synchronisation réelle non activée | Recommandation documentée appliquée sous la délégation de l'utilisateur (mission « Autonomous night shift ») ; réversible | En vigueur (local) |
 | 07/11/2026 | D-16 | Seuil k ≥ 10 pour S3 : **proposition**, pas une garantie d'anonymat | Utilisateur | À valider juridiquement et techniquement |
 
 ## Décisions en attente
 | # | Sujet | Document |
 |---|---|---|
-| T1 à T4 | Écritures par `sync_push` seulement, pierres tombales sans suppression physique, ordre UPDATE puis INSERT, `app.skip_rev` (techniques, au début du lot 3.4) | [`phase3/10`](phase3/10-dossier-lots-3.2-3.7.md) |
-| F1-0 | Accord pour écrire `null` au lieu de `'USD'` dans la copie normalisée (application de D-18) | [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.11 |
 | Supabase local | Installation de Docker et de la CLI Supabase par l'utilisateur, pour la validation de référence | [`phase3/09`](phase3/09-audit-cloture-lot-3.1.md) |
 | N1-N5, M-A à M-E | Navigation de bureau et mobile | [`03`](phase4/03-changement-navigation.md) |
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |
 | R2 | Compte, domaine, workers, Cloudflare Images, plafond | [`07`](phase4/07-architecture-images-r2.md) § 11 |
 | Phase 3 | Région, formule, SMTP, hébergement, stockage sécurisé Android, `allowBackup`, CAPTCHA | [`phase3/02-architecture-cible.md`](phase3/02-architecture-cible.md) |
-| F-D1, F-D2, F-D3, F-D4, F-D5, F-D6 (F-D2 et F-D4 explicitement ouvertes) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 ; options F-D2 : [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.4 |
-| L-D1 à L-D3 | Stockage de la lecture, migration de `isRead`, conflit de notes | [`directeur/06`](directeur/06-specifications-F1-L1.md) § B.7 |
+| F-D1, F-D3, F-D5, F-D6 (F-D2 et F-D4 : D-28, D-29) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 ; options F-D2 : [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.4 |
 | U-D1 à U-D3 | Place de la Lecture et des Finances dans la navigation, identité d'œuvre | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | Juridique | Liste de [`phase3/05`](phase3/05-sauvegardes-confidentialite.md) § 4.4, droits des sources, consentement S3 | — |
