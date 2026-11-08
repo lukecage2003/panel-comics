@@ -23,7 +23,9 @@ const PATTERNS = [
 // Exception de contexte : une empreinte de commit Git dans une URL de dépôt (« /+/<sha>/ », « /commit/<sha> »…) n'est pas une clé.
 // Cas rencontré : android-app/android/app/build.gradle (commentaire généré par Capacitor, lien googlesource).
 const CONTEXT_OK = {
-  'clé hexadécimale de 40 caractères (format Comic Vine)': (line, idx) => /(\/\+\/|\/commit\/|\/blob\/|\/tree\/)$/.test(line.slice(0, idx))
+  'clé hexadécimale de 40 caractères (format Comic Vine)': (line, idx) => /(\/\+\/|\/commit\/|\/blob\/|\/tree\/)$/.test(line.slice(0, idx)),
+  // Base Supabase LOCALE (Docker) : identifiants publics par défaut postgres:postgres sur 127.0.0.1 / localhost uniquement.
+  'URL avec identifiants': (line, idx) => /^postgres(ql)?:\/\/postgres:postgres@(127\.0\.0\.1|localhost)(:\d+)?\//.test(line.slice(idx))
 };
 
 // Liste blanche explicite : chaque exception est justifiée.

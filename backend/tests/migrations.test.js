@@ -20,14 +20,15 @@ async function fingerprint(db) {
   ].join('\n---\n');
 }
 
-test('six migrations horodatées, dans l\'ordre attendu', () => {
+test('sept migrations horodatées, dans l\'ordre attendu', () => {
   assert.deepEqual(H.migrationFiles(), [
     '20261107000001_app_schema.sql',
     '20261107000002_profiles_settings_devices.sql',
     '20261107000003_personal_domains.sql',
     '20261107000004_sync_tables.sql',
     '20261107000005_rls_policies.sql',
-    '20261107000006_rev_triggers.sql'
+    '20261107000006_rev_triggers.sql',
+    '20261108000007_hardening.sql'
   ]);
 });
 
@@ -100,5 +101,17 @@ test('seed : données fictives seulement, chargées sans erreur', async () => {
   const db = await H.freshDb({ seed: true });
   const n = (await db.query('select count(*)::int n from app.copies')).rows[0].n;
   assert.equal(n, 2);
+  await db.close();
+});
+
+test('verify-supabase.sql : passe sur le schéma migré et détecte un écart', async () => {
+  const sql = fs.readFileSync(path.join(__dirname, 'verify-supabase.sql'), 'utf8');
+  const db = await H.freshDb();
+  await db.exec(sql);
+  await db.exec('alter table app.pulls disable row level security');
+  await assert.rejects(db.exec(sql), /RLS désactivée/);
+  await db.exec('alter table app.pulls enable row level security');
+  await db.exec('grant select on app.copies to anon');
+  await assert.rejects(db.exec(sql), /anon a des droits/);
   await db.close();
 });

@@ -23,6 +23,14 @@ test('ignore une empreinte de commit dans une URL de dépôt', () => {
   assert.equal(scanText(`https://android.googlesource.com/platform/+/${FAKE.hex}/tools`).length, 0);
 });
 
+test('identifiants par défaut de la base Supabase locale tolérés, mais pas sur un autre hôte', () => {
+  assert.equal(scanText('psql "postgresql://postgres:postgres@127.0.0.1:54322/postgres"').length, 0);
+  const remote = 'postgresql://' + 'postgres:postgres' + '@db.exemple.test:5432/postgres';
+  assert.ok(scanText(remote).some(x => x.name === 'URL avec identifiants'));
+  const other = 'postgresql://' + 'postgres:autre' + '@127.0.0.1:54322/postgres';
+  assert.ok(scanText(other).some(x => x.name === 'URL avec identifiants'), 'autre mot de passe en local : signalé');
+});
+
 test('ne révèle jamais la valeur entière', () => {
   for (const f of scanText(FAKE.jwt + '\n' + FAKE.hex)) {
     assert.ok(!f.masked.includes(FAKE.jwt) && !f.masked.includes(FAKE.hex));

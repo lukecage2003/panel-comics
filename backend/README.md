@@ -16,7 +16,7 @@ backend/
   .env.example            noms de variables, sans valeur (jamais de clé de service)
   supabase/
     config.toml           configuration de la Supabase CLI, sans secret
-    migrations/           6 migrations horodatées, appliquées dans l'ordre
+    migrations/           7 migrations horodatées, appliquées dans l'ordre (la 7e : durcissement après audit)
     seed.sql              données fictives (@exemple.test)
   tests/
     auth-stub.sql         schéma auth minimal (en test seulement ; Supabase fournit le vrai)
@@ -26,6 +26,8 @@ backend/
     triggers.test.js      rev monotone par utilisateur, updated_at
     migrations.test.js    ordre, rejeu déterministe, conventions, seed
     secrets.test.js       sensibilité et masquage du détecteur de secrets
+    hardening.test.js     défauts corrigés par la migration 7, rev sous transaction, privilèges
+    verify-supabase.sql   contrôle du schéma, réutilisable sur Supabase local (psql)
 ```
 
 ## Schéma `app` (données personnelles uniquement)
@@ -48,7 +50,7 @@ backend/
 ## Écarts connus entre PGlite et Supabase
 - **Schéma `auth` simulé :** le vrai fournit des colonnes et fonctions supplémentaires ; seuls `auth.users(id)` et `auth.uid()` sont utilisés.
 - **Version de PostgreSQL :** PGlite 0.5.11 embarque PostgreSQL 18.6, alors que `config.toml` vise 17. Aucune fonctionnalité propre à la 18 n'est utilisée.
-- **Validation de référence :** `supabase db reset` sous Docker n'a pas été exécuté (ni Docker ni la CLI ne sont installés). À faire avant le lot 3.2.
+- **Validation de référence :** `supabase db reset` sous Docker n'a pas été exécuté (ni Docker ni la CLI ne sont installés). Procédure prête : [`docs/phase3/09`](../docs/phase3/09-audit-cloture-lot-3.1.md) § 6.
 - **Upserts et révisions :** un `INSERT … ON CONFLICT DO UPDATE` déclenche `BEFORE INSERT` puis `BEFORE UPDATE` ; il consomme donc deux révisions. Elles restent strictement croissantes, avec un trou. Le lot 3.4 (`sync_push`) devra en tenir compte, ou utiliser un `UPDATE` puis un `INSERT` explicites.
 
 ## Runbooks

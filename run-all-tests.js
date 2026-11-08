@@ -910,12 +910,18 @@ const waitForCdp = async () => {
         res.undo = undone >= 7 && /cv-old/.test(L('f6').coverUrl) && !L('f1').coverUrl && L('f5').coverUrl === manualUrl;
         res.undoNoRefetch = !P.coverCounts().pending;
         // Quota Fandom plein : pause automatique annoncée, aucune requête
+        // Stabilisation (échec intermittent du 8 novembre 2026) : runCoverJob() ne fait rien si un traitement
+        // précédent tourne encore ; on attend donc que la file soit au repos avant de remplir le quota.
+        P.pauseCoverJob();
+        for (let i = 0; i < 60 && P.getCoverJob().running; i++) await new Promise(r => setTimeout(r, 50));
+        res.quotaIdleBefore = !P.getCoverJob().running;
         P.resetFandomStateForTest();
         P.setPhysicalSingles([{ ...base, id: 'q1', series: 'Absolute Batman (2024)', issue: '#1', variant: 'Cover B Jae Lee Variant', coverUrl: img('cv-q'), coverLookup: { status: 'regular' } }]);
         P.fillFandomQuotaForTest();
         const before = calls.fandom;
         await P.runCoverJob();
         res.quota = P.getCoverJob().phase === 'quota' && calls.fandom === before && /quota Fandom/.test(document.getElementById('coverJobBar').innerText);
+        if (!res.quota) res.quotaDiag = { phase: P.getCoverJob().phase, running: P.getCoverJob().running, fandomDelta: calls.fandom - before, bar: (document.getElementById('coverJobBar').innerText || '').slice(0, 80) };
         P.pauseCoverJob();
         // Fiche : Fandom + Comic Vine fusionnés, meilleure variante marquée, sources indiquées
         P.resetFandomStateForTest();
