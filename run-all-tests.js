@@ -3582,6 +3582,75 @@ const waitForCdp = async () => {
         ok: t38fail.length === 0
       });
 
+      // ─── Test 39 : Communauté (D-34) — partage = copie en liste blanche, brouillons locaux, aucune requête, aucune publication ───
+      console.log('\n[TEST 39] Communauté : copie limitée (ni prix, ni valeur, ni emplacement, ni notes), validation (liens, données personnelles), brouillons locaux, annulation, XSS, aucune requête...');
+      const t39 = await evalExpr(`(async () => {
+        const P = window.Panel, C = P.community, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const CK = 'panel_community_drafts_v1', prevRaw = localStorage.getItem(CK);
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fpC = await P.backup.fingerprint('collection');
+        let net = 0; const f0 = window.fetch, x0 = XMLHttpRequest.prototype.open;
+        window.fetch = function () { net++; return f0.apply(this, arguments); };
+        XMLHttpRequest.prototype.open = function () { net++; return x0.apply(this, arguments); };
+        try {
+          localStorage.removeItem(CK);
+          P.setPhysicalSingles([{ id: 'c39', series: 'T39 Série', issue: '#4', publisher: 'Image Comics', variant: 'Cover B', coverYear: 2024, condition: 'NM 9.4', purchasePrice: 12, purchaseCurrency: 'EUR', estValue: 40, notes: 'note privée', box: 'Boîte secrète', location: 'Boîte secrète', storeName: 'Boutique X', keyType: 'none', addedAt: '2026-01-01T00:00:00Z' }]);
+          await wait(100);
+          r.api = Object.isFrozen(C) && C.configured === false && C.publish().error === 'not_configured';
+          const cp = C.copyOf('c39');
+          r.whitelist = JSON.stringify(Object.keys(cp.copy).sort()) === JSON.stringify(['grade', 'issue', 'publisher', 'series', 'variant', 'volumeYear']) &&
+            ['purchasePrice', 'estValue', 'notes', 'box', 'location', 'storeName'].every(k => cp.excluded.includes(k)) && !JSON.stringify(cp.copy).includes('secrète') && !JSON.stringify(cp.copy).includes('12');
+          r.linkRefused = C.validate('voir https://exemple.test', 'public', [cp.copy]).ok === false;
+          r.personalWarn = C.validate('écrivez à x@exemple.test', 'private', [cp.copy]).warnings.includes('adresse e-mail');
+          r.extraFieldRefused = C.validate('x', 'private', [Object.assign({}, cp.copy, { price: 3 })]).ok === false;
+          // Parcours dans l'interface : inspecteur → Partager… → brouillon
+          const it = P.getPhysicalSingles()[0];
+          C.share('c39');
+          await wait(100);
+          const dlg = document.getElementById('communityShareDialog');
+          r.dialog = !!dlg && dlg.classList.contains('open') && /Jamais partagé/.test(dlg.textContent) && /purchasePrice/.test(dlg.querySelector('[data-excluded]').textContent) && !/Boîte secrète/.test(dlg.querySelector('[data-copied]').textContent);
+          dlg.querySelector('[data-text]').value = 'Mon numéro préféré <img src=x onerror="window.__x39=1">';
+          dlg.querySelector('[data-vis]').value = 'followers';
+          dlg.querySelector('[data-save]').click();
+          await wait(100);
+          const ds = C.drafts();
+          r.draftSaved = ds.length === 1 && ds[0].visibility === 'followers' && ds[0].status === 'draft' && !JSON.stringify(ds[0]).includes('note privée') && !dlg.classList.contains('open');
+          document.getElementById('navSinglesCommunity').click();
+          await wait(120);
+          const cv = document.getElementById('communityDashboard');
+          r.view = !document.getElementById('singlesCommunityView').hidden && /non configuré/.test(cv.textContent) && /T39 Série #4/.test(cv.textContent) && document.getElementById('badgeCommunityDrafts').textContent === '1';
+          r.xss = !window.__x39 && !cv.querySelector('img[src="x"]');
+          cv.querySelector('[data-draft-del]').click();
+          await wait(80);
+          r.removed = C.drafts().length === 0;
+          const ub = document.querySelector('#toastPopup .toast-action');
+          if (ub) { ub.click(); await wait(80); }
+          r.undo = !!ub && C.drafts().length === 1;
+          r.noNetwork = net === 0;
+          r.collectionUntouched = JSON.stringify(P.getPhysicalSingles()[0]) === JSON.stringify(it);
+          document.getElementById('navAllSingles').click();
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.fetch = f0; XMLHttpRequest.prototype.open = x0;
+          const d = document.getElementById('communityShareDialog'); if (d) d.classList.remove('open');
+          P.setPhysicalSingles(saved);
+          if (prevRaw === null) localStorage.removeItem(CK); else localStorage.setItem(CK, prevRaw);
+          await wait(200);
+        }
+        r.finalCollection = (await P.backup.fingerprint('collection')) === fpC;
+        r.finalDrafts = localStorage.getItem(CK) === prevRaw;
+        return r;
+      })()`);
+      console.log('Résultat Test 39:', JSON.stringify(t39));
+      const t39keys = ['api', 'whitelist', 'linkRefused', 'personalWarn', 'extraFieldRefused', 'dialog', 'draftSaved', 'view', 'xss', 'removed', 'undo', 'noNetwork', 'collectionUntouched', 'finalCollection', 'finalDrafts'];
+      const t39fail = t39keys.filter(k => !t39 || t39[k] !== true);
+      if (t39fail.length) console.log('Test 39 — vérifications en échec :', t39fail.join(', '));
+      testResults.push({
+        test: 'Communauté : partage = copie en liste blanche (ni prix, valeur, emplacement, notes), liens et données personnelles contrôlés, brouillon local via l\'inspecteur, vue, XSS, retrait annulable, aucune requête ni publication',
+        ok: t39fail.length === 0
+      });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -1799,6 +1799,10 @@
           <div class="nav-btn-content"><span class="icon">◧</span> Lecture</div>
           <span class="nav-badge" id="badgeReadingNow">0</span>
         </button>
+        <button class="nav-btn" id="navSinglesCommunity" title="Brouillons de partage : rien n'est publié tant qu'aucun service communautaire n'est configuré">
+          <div class="nav-btn-content"><span class="icon">◎</span> Communauté</div>
+          <span class="nav-badge" id="badgeCommunityDrafts">0</span>
+        </button>
         <button class="nav-btn" id="navSinglesFinances" title="Coût, valeur et plus-values par devise, sans conversion">
           <div class="nav-btn-content"><span class="icon">¤</span> Finances</div>
         </button>
@@ -1906,6 +1910,7 @@
         <button class="tab-btn" data-sview="stats">Stats</button>
         <button class="tab-btn" data-sview="reading">Lecture</button>
         <button class="tab-btn" data-sview="finances">Finances</button>
+        <button class="tab-btn" data-sview="community">Communauté</button>
       </nav>
       <!-- BANDEAU STATISTIQUES COLLECTION PHYSIQUE -->
       <div class="singles-stats-bar">
@@ -2017,6 +2022,12 @@
       <div id="singlesReadingView" hidden>
         <div class="section-head"><div><p>L'état de lecture appartient à l'œuvre : un geste vaut pour tous vos exemplaires, et un numéro lu sans être possédé est conservé.</p></div></div>
         <div id="readingDashboard"></div>
+      </div>
+
+      <!-- ===== VUE : COMMUNAUTÉ (brouillons locaux, D-34) ===== -->
+      <div id="singlesCommunityView" hidden>
+        <div class="section-head"><div><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></div></div>
+        <div id="communityDashboard"></div>
       </div>
 
       <!-- ===== VUE : FINANCES (F1-5) ===== -->
@@ -2705,6 +2716,7 @@
       <div style="display:flex;gap:6px">
         <button class="btn secondary" id="inspectDeleteBtn" style="color:var(--red);border-color:var(--magenta-fill)"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg> Retirer</button>
         <button class="btn secondary" id="inspectWishlistToggleBtn"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
+        <button class="btn secondary" id="inspectShareBtn" title="Préparer un partage (copie limitée, brouillon local, rien n'est publié)">Partager…</button>
       </div>
       <div style="display:flex;gap:6px">
         <button class="btn secondary" id="inspectCloseBtn">Fermer</button>
@@ -7580,6 +7592,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       renderSinglesCollection();
     });
 
+    if ($('inspectShareBtn')) $('inspectShareBtn').onclick = () => openShareDialog([item]);
     // Bouton Wishlist : bascule wishlist <-> possédé
     const wishBtn = $('inspectWishlistToggleBtn');
     if (wishBtn) {
@@ -7710,11 +7723,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const registerHostedView = (name, open) => { if (typeof open === 'function') hostedViews.set(name, open); else hostedViews.delete(name); };
   const showSinglesView = view => {
     activeSinglesView = view;
-    const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView', reading: 'singlesReadingView', finances: 'singlesFinanceView' };
+    const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView', reading: 'singlesReadingView', finances: 'singlesFinanceView', community: 'singlesCommunityView' };
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-explorer', view === 'explorer');
     if (view === 'explorer') ['mobSingles', 'mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.remove('active'));
     Object.entries(map).forEach(([v, id]) => { if ($(id)) $(id).hidden = v !== view; });
-    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances' };
+    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
     $$('#navSinglesBlock .nav-btn').forEach(b => b.classList.remove('active'));
     const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : navMap[view];
     if ($(navId)) $(navId).classList.add('active');
@@ -7726,6 +7739,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       releases: ['Calendrier & pull list', 'Sorties américaines et francophones, reports, annulations et votre pull list'],
       stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
       reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
+      community: ['Communauté', 'Brouillons de partage préparés sur cet appareil ; aucune publication sans service configuré'],
       finances: ['Finances', 'Coût d\'acquisition, valeur, plus-values latentes et réalisées, par devise'],
       explorer: ['Explorer', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
     };
@@ -7854,6 +7868,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (activeSinglesView === 'stats') renderStatsDashboard();
     if (activeSinglesView === 'reading') renderReadingView();
     if (activeSinglesView === 'finances') renderFinanceView();
+    if (activeSinglesView === 'community') renderCommunityView();
+    if ($('badgeCommunityDrafts')) $('badgeCommunityDrafts').textContent = commLoad().drafts.length;
     if ($('badgeReadingNow')) $('badgeReadingNow').textContent = rdStats().reading;
     if (activeSinglesView === 'releases') renderPullChips();
     { const hk = viewHooks.get(activeSinglesView); if (hk && typeof hk.render === 'function') hk.render(); }
@@ -11198,6 +11214,102 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('finDefaultCurrencySelect')) $('finDefaultCurrencySelect').onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };
   };
 
+  // ── Communauté (D-34) : brouillons locaux. La politique (liste blanche, validation) vient du module domains/community intégré.
+  // Aucune requête réseau, aucune publication ; un futur service distant recevra seulement ces copies, après un geste explicite.
+  const COMM_KEY = 'panel_community_drafts_v1', COMM_MAX = 200;
+  const commPolicy = () => (window.PanelDomains && window.PanelDomains.communityPolicy) || null;
+  const commLoad = () => {
+    try { const d = JSON.parse(localStorage.getItem(COMM_KEY) || 'null'); if (d && d.version === 1 && Array.isArray(d.drafts)) return d; } catch (_) {}
+    return { version: 1, drafts: [] };
+  };
+  const commSave = d => { localStorage.setItem(COMM_KEY, JSON.stringify(d)); };
+  // Copie d'un exemplaire : les champs sont d'abord renommés vers le vocabulaire public, puis filtrés par la liste blanche
+  const commCopyOf = item => {
+    const P = commPolicy();
+    if (!P || !item) return null;
+    const src = { series: item.series, issue: item.issue, volumeYear: item.coverYear ? String(item.coverYear) : undefined, publisher: item.publisher, variant: item.variant, coverUrl: item.coverUrl, grade: item.condition };
+    Object.keys(src).forEach(k => { if (src[k] === undefined || src[k] === null || src[k] === '') delete src[k]; });
+    const r = P.shareCopy(src);
+    // Liste des champs de la fiche qui ne seront jamais partagés (affichée à l'utilisateur)
+    const excluded = Object.keys(item).filter(k => !['series', 'issue', 'coverYear', 'publisher', 'variant', 'coverUrl', 'condition'].includes(k) && item[k] !== undefined && item[k] !== null && item[k] !== '' && !(Array.isArray(item[k]) && !item[k].length));
+    return { copy: Object.assign({}, r.copy), excluded: excluded.concat(r.dropped.map(x => ({ volumeYear: 'coverYear', grade: 'condition' })[x] || x)).filter((v, i, a) => a.indexOf(v) === i).sort() };
+  };
+  const COMM_VIS = { private: 'Moi seul', followers: 'Mes abonnés', public: 'Public' };
+  const commValidate = (text, visibility, items) => {
+    const P = commPolicy();
+    if (!P) return { ok: false, errors: ['Module Communauté indisponible.'], warnings: [] };
+    // Aucun compte communautaire : l'auteur est traité comme un compte neuf (liens refusés, D-34)
+    return P.validatePost({ id: 'local', createdAt: null }, { text, visibility, items }, Date.now());
+  };
+  const commSaveDraft = (draft) => {
+    const d = commLoad(), now = new Date().toISOString();
+    const v = commValidate(draft.text, draft.visibility, draft.items);
+    if (!v.ok) return { ok: false, errors: v.errors, warnings: v.warnings };
+    if (!draft.id && d.drafts.length >= COMM_MAX) return { ok: false, errors: ['Limite de ' + COMM_MAX + ' brouillons atteinte.'], warnings: [] };
+    const prevRaw = localStorage.getItem(COMM_KEY);
+    const rec = { id: draft.id || ('cd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)), text: String(draft.text).slice(0, 5000), visibility: draft.visibility, items: draft.items, warnings: v.warnings, status: 'draft', createdAt: draft.createdAt || now, updatedAt: now };
+    const i = d.drafts.findIndex(x => x.id === rec.id);
+    if (i >= 0) d.drafts[i] = rec; else d.drafts.unshift(rec);
+    commSave(d);
+    return { ok: true, id: rec.id, warnings: v.warnings, undo: () => { if (prevRaw === null) localStorage.removeItem(COMM_KEY); else localStorage.setItem(COMM_KEY, prevRaw); } };
+  };
+  const commRemoveDraft = id => {
+    const prevRaw = localStorage.getItem(COMM_KEY), d = commLoad(), n = d.drafts.length;
+    d.drafts = d.drafts.filter(x => x.id !== id);
+    if (d.drafts.length === n) return { ok: false };
+    commSave(d);
+    return { ok: true, undo: () => { if (prevRaw === null) localStorage.removeItem(COMM_KEY); else localStorage.setItem(COMM_KEY, prevRaw); } };
+  };
+  const openShareDialog = (items, existing) => {
+    const box = bunModal('communityShareDialog');
+    const copies = existing ? existing.items.map(c => ({ copy: c, excluded: [] })) : items.map(commCopyOf).filter(Boolean);
+    if (!copies.length) { showToast('Partage indisponible.'); return; }
+    const ex = [...new Set(copies.flatMap(c => c.excluded))];
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="commShareTitle"><h2 id="commShareTitle">Préparer un partage</h2>' +
+      '<p class="stat-sub">Brouillon enregistré <b>sur cet appareil seulement</b>. Aucun service communautaire n\'est configuré : rien n\'est publié ni envoyé.</p>' +
+      '<p class="stat-sub" style="margin-top:8px"><b>Copié :</b></p><ul class="stat-sub" data-copied>' + copies.map(c => '<li>' + Object.entries(c.copy).map(([k, v]) => escapeHtml(k) + ' : ' + escapeHtml(v)).join(' · ') + '</li>').join('') + '</ul>' +
+      (ex.length ? '<p class="stat-sub"><b>Jamais partagé :</b> <span data-excluded>' + ex.map(escapeHtml).join(', ') + '</span></p>' : '') +
+      '<label class="stat-sub" style="display:block;margin-top:8px">Message<textarea class="field-input" data-text rows="4" maxlength="5000" style="width:100%">' + escapeHtml(existing ? existing.text : '') + '</textarea></label>' +
+      '<label class="stat-sub" style="display:block;margin-top:6px">Visibilité prévue <select class="field-input" data-vis style="width:auto">' + Object.entries(COMM_VIS).map(([k, l]) => '<option value="' + k + '"' + ((existing ? existing.visibility : 'private') === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label>' +
+      '<p class="stat-sub" data-msg role="status" style="margin-top:6px"></p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>Enregistrer le brouillon</button></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s);
+    const check = () => { const v = commValidate(q('[data-text]').value, q('[data-vis]').value, copies.map(c => c.copy)); q('[data-msg]').textContent = v.errors.concat(v.warnings.map(w => 'Attention : ' + w + ' dans le message.')).join(' '); return v; };
+    q('[data-text]').oninput = check;
+    q('[data-cancel]').onclick = () => box.classList.remove('open');
+    q('[data-save]').onclick = () => {
+      const r = commSaveDraft({ id: existing && existing.id, createdAt: existing && existing.createdAt, text: q('[data-text]').value, visibility: q('[data-vis]').value, items: copies.map(c => c.copy) });
+      if (!r.ok) { q('[data-msg]').textContent = r.errors.join(' '); return; }
+      box.classList.remove('open');
+      renderSinglesCollection();
+      showToastAction('Brouillon enregistré sur cet appareil (non publié).', 'Annuler', () => { r.undo(); renderSinglesCollection(); });
+    };
+  };
+  const renderCommunityView = () => {
+    const host = $('communityDashboard');
+    if (!host) return;
+    const d = commLoad();
+    host.innerHTML = '<div class="notice-box">Service communautaire : <b>non configuré</b>. Publication, abonnements, blocages et signalements fonctionneront avec un compte (lots 3.2 et 3.3) ; les règles sont déjà appliquées à vos brouillons.</div>' +
+      (d.drafts.length ? d.drafts.map(x => '<div class="top-item" data-draft="' + escapeHtml(x.id) + '" style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap"><span style="flex:1;min-width:0"><b>' + escapeHtml(x.items.map(c => [c.series, c.issue].filter(Boolean).join(' ')).join(', ') || 'Brouillon') + '</b>' +
+        '<span class="stat-sub" style="display:block">' + escapeHtml(COMM_VIS[x.visibility] || x.visibility) + ' · brouillon local · ' + new Date(x.updatedAt).toLocaleString('fr-FR') + (x.warnings && x.warnings.length ? ' · attention : ' + escapeHtml(x.warnings.join(', ')) : '') + '</span>' +
+        (x.text ? '<span class="stat-sub" style="display:block;white-space:pre-wrap">' + escapeHtml(x.text.slice(0, 400)) + '</span>' : '') + '</span>' +
+        '<span><button class="btn secondary" style="font-size:12px;padding:3px 8px" data-draft-edit="' + escapeHtml(x.id) + '">Modifier</button> <button class="btn secondary" style="font-size:12px;padding:3px 8px" data-draft-del="' + escapeHtml(x.id) + '">Retirer</button></span></div>').join('')
+        : '<div class="notice-box" style="margin-top:8px">Aucun brouillon. Ouvrez une fiche, puis « Partager… ».</div>');
+    host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
+    host.querySelectorAll('[data-draft-del]').forEach(b => { b.onclick = () => { const r = commRemoveDraft(b.dataset.draftDel); if (!r.ok) return; renderSinglesCollection(); showToastAction('Brouillon retiré.', 'Annuler', () => { r.undo(); renderSinglesCollection(); }); }; });
+  };
+  const COMMUNITY_API = Object.freeze({
+    configured: false,
+    copyOf: id => { const it = physicalSingles.find(x => x.id === id); return it ? commCopyOf(it) : null; },
+    validate: commValidate,
+    drafts: () => JSON.parse(JSON.stringify(commLoad().drafts)),
+    saveDraft: d => { const r = commSaveDraft(d); return r.ok ? { ok: true, id: r.id, warnings: r.warnings } : r; },
+    removeDraft: id => commRemoveDraft(id).ok,
+    share: id => { const it = physicalSingles.find(x => x.id === id); if (it) openShareDialog([it]); return !!it; },
+    publish: () => ({ ok: false, error: 'not_configured' }) // aucune publication possible sans service (D-34)
+  });
+
   const renderStatsDashboard = () => {
     const host = $('statsDashboard');
     if (!host) return;
@@ -13365,6 +13477,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navSinglesStats').onclick = () => goSingles('stats');
     if ($('navSinglesReading')) $('navSinglesReading').onclick = () => goSingles('reading');
     if ($('navSinglesFinances')) $('navSinglesFinances').onclick = () => goSingles('finances');
+    if ($('navSinglesCommunity')) $('navSinglesCommunity').onclick = () => goSingles('community');
     if ($('navExplorer')) $('navExplorer').onclick = () => goSingles('explorer');
     $('singlesSubnav').onclick = e => {
       const b = e.target.closest('[data-sview]');
@@ -14602,6 +14715,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   window.Panel = {
     finance: FINANCE_API,
     reading: READING_API,
+    community: COMMUNITY_API,
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
