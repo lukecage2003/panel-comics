@@ -180,3 +180,4 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - **visuels** (D-40) : module commun (provenance, remplacement typographique, cache des échecs, compléments manuels), recherche illustrée, pages d'entité, galeries, test 43 ;
   - **périmètre comics** (D-41) : cas limites M1 à M4 ; **navigation 4.9** (D-42) : section Explorer, Pull List, barre mobile à cinq boutons, test 44.
 | Lot 3.5 local : conflits | Terminé localement (non validé sur Supabase) | migration 11, `backend/tests/conflicts.test.js`, `adapters.js`, `index.html` (centre des conflits), `run-all-tests.js` (test 45) | base 115/115, front 44/44 | D-43 | Projet Supabase (3.2) | Lot 3.6 local |
+| Lot 3.7 local : matrice V1 à V14 | Préparé localement (aucune validation réelle) | `sync.test.js` (V5, V9), `restore.test.js` (V8 approché), `docs/phase3/11-matrice-validation-3.7.md` | base 118/118 | D-44 | Projet Supabase, appareil Android | Explorer, Communauté |

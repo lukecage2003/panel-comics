@@ -54,3 +54,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | Lot 3.3 local | Terminé localement (non validé sur Supabase) | migration 10, `backend/tests/roles.test.js`, `adapters.js` (`createHlc`, `createSupabaseAccount`), `verify-supabase.sql` | base 111/111, adaptateurs 6/6 | D-38 | Projet Supabase (3.2) | Brouillons Communauté dans les sauvegardes |
 | Sauvegardes Communauté, visuels, M1-M4, navigation 4.9 | Terminé localement | `index.html`, `run-all-tests.js` (tests 42 à 44), `sw.js` | voir commit | D-39 à D-42 | Sources d'images sous licence, données éditoriales DC | Interface des conflits |
   - **conflits 3.5** (D-43) : résolution serveur réversible (migration 11, V2 et V6 sur PGlite), centre des conflits dans l'application, test 45 ; front 44/44.
+  - **validation 3.7** (D-44) : matrice V1 à V14, V5 et V9 ajoutés, V8 approché par restauration PGlite ; base 118/118.

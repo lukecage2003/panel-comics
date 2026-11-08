@@ -312,3 +312,54 @@ test('multi-appareils : 3 appareils, 150 opérations aléatoires avec coupures, 
   const server = (await db.query('select id, data from app.copies where user_id = $1 and deleted_at is null order by id', [uid])).rows;
   assert.equal(server.length, (fp.copies || []).length, 'le serveur et les appareils ont les mêmes fiches');
 });
+
+// Lot 3.7 (local) : scénarios restants de phase3/10 § 7 réalisables sans service externe
+const W = n => '4444444' + n + '-4444-4444-8444-44444444444' + n;
+test('V5 : appareil hors ligne prolongé (simulé) — modifications des deux côtés, envoi puis réception avec fusion, convergence', async () => {
+  const uid = W(1); await H.createUsers(db, uid);
+  let offline = false;
+  const down = () => offline;
+  const a = await device(uid, 'A', { beforePush: down, beforePull: down }), b = await device(uid, 'B');
+  a.engine.upsert('copies', 'o_1', { series: 'Hellboy', grade: 8.0 }); await a.engine.sync(); await b.engine.sync();
+  offline = true; // « trois jours » sans réseau : le temps réel n'intervient pas dans le protocole (révisions, pas d'horloge murale)
+  for (let i = 0; i < 12; i++) a.engine.upsert('copies', 'off_' + i, { n: i });
+  a.engine.upsert('copies', 'o_1', { notes: 'relu hors ligne' });
+  const fail = await a.engine.sync();
+  assert.equal(fail.ok, false); assert.equal(fail.push.reason, 'network');
+  assert.equal(a.engine.pending(), 13, 'outbox intacte pendant la coupure');
+  for (let i = 0; i < 8; i++) b.engine.upsert('locations', 'box_' + i, { name: 'Boîte ' + i });
+  b.engine.upsert('copies', 'o_1', { grade: 9.2 }); await b.engine.sync();
+  offline = false;
+  const ok = await a.engine.sync();
+  assert.equal(ok.ok, true); assert.equal(a.engine.pending(), 0);
+  assert.equal((await conflicts(uid, 'o_1')).length, 0, 'champs différents : fusion sans conflit');
+  await b.engine.sync();
+  assert.deepEqual(a.engine.fingerprint(), b.engine.fingerprint());
+  const o = a.engine.local('copies', 'o_1').data;
+  assert.equal(o.grade, 9.2); assert.equal(o.notes, 'relu hors ligne'); assert.equal(o.series, 'Hellboy');
+  assert.equal(Object.keys(a.engine.fingerprint().locations).length, 8);
+});
+
+test('V9 : effacement du compte côté serveur — zéro ligne dans les tables personnelles, état local de l\'appareil conservé et exportable', async () => {
+  const uid = W(2); await H.createUsers(db, uid);
+  const st = memoryStorage();
+  const a = await device(uid, 'A', {}, st);
+  for (let i = 0; i < 5; i++) a.engine.upsert('copies', 'd_' + i, { n: i });
+  a.engine.upsert('pulls', 'pl_1', { series: 'Saga' });
+  await a.engine.sync();
+  const before = JSON.stringify(a.engine.fingerprint());
+  await H.asUser(db, uid);
+  const r = (await db.query("select api.delete_my_data('SUPPRIMER MES DONNÉES') as r")).rows[0].r;
+  assert.equal(r.status, 'deleted');
+  await H.asAdmin(db);
+  for (const t of H.APP_TABLES) {
+    const n = (await db.query(`select count(*)::int n from app.${t} where user_id = $1`, [uid])).rows[0].n;
+    assert.equal(n, 0, t);
+  }
+  assert.equal(JSON.stringify(a.engine.fingerprint()), before, 'copie locale intacte (conservée sur demande de l\'utilisateur)');
+  assert.ok(st.snapshot().rows && Object.keys(st.snapshot().rows).length === 6, 'état local exportable');
+  a.engine.upsert('copies', 'd_new', { n: 99 });
+  const again = await a.engine.push();
+  assert.equal(again.ok, false, 'appareil effacé : aucun renvoi silencieux vers le serveur');
+  assert.equal(again.reason, 'device_revoked'); assert.equal(a.engine.pending(), 1, 'modification locale conservée');
+});
