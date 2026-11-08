@@ -425,8 +425,8 @@ const waitForCdp = async () => {
         window.Panel.renderReleasesGrid();
         const cards = document.querySelectorAll('#releasesGrid .release-card');
         const pullFiltered = cards.length === 1 && cards[0].classList.contains('pulled');
-        cards[0].querySelector('[data-buy]').click();
-        const bought = window.Panel.getPhysicalSingles().some(s => s.series === 'Invincible' && s.issue === '#8' && !s.isWishlist);
+        // Lot 3.1b-5 : le bouton « Acheté » passe par S2, qui refuse les clics synthétiques ; il est rejoué ci-dessous par un vrai clic (attente inchangée)
+        const bought = null;
         document.getElementById('releasesPullOnly').checked = false;
 
         // Statistiques
@@ -452,6 +452,16 @@ const waitForCdp = async () => {
 
         return { missingOk, legacyOk, wishAdded, chipNowWish, pullFiltered, bought, statsCards, before, afterDelete, afterUndo, listMode, persisted };
       })()`);
+      // « Acheté » : vrai clic (CDP), même carte, même attente qu'avant le lot 3.1b-5
+      if (t11) {
+        await evalExpr(`(() => { document.getElementById('navSinglesReleases').click(); window.Panel.showSinglesView('releases'); document.getElementById('releasesPullOnly').checked = true; window.Panel.renderReleasesGrid(); return true; })()`);
+        const t11sel = '#releasesGrid .release-card [data-buy]';
+        await evalExpr(`(() => { const b = document.querySelector(${JSON.stringify(t11sel)}); if (b) b.scrollIntoView({ block: "center" }); return !!b; })()`);
+        await new Promise(r => setTimeout(r, 500)); // défilement doux terminé avant la mesure
+        const t11p = await evalExpr(`(() => { const b = document.querySelector(${JSON.stringify(t11sel)}); if (!b) return null; b.scrollIntoView({ block: 'center' }); const q = b.getBoundingClientRect(); return { x: Math.round(q.left + q.width / 2), y: Math.round(q.top + q.height / 2) }; })()`);
+        if (t11p) { await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: t11p.x, y: t11p.y, button: 'left', clickCount: 1 }); await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: t11p.x, y: t11p.y, button: 'left', clickCount: 1 }); await new Promise(r => setTimeout(r, 400)); }
+        t11.bought = !!t11p && await evalExpr(`(() => { const ok = window.Panel.getPhysicalSingles().some(s => s.series === 'Invincible' && s.issue === '#8' && !s.isWishlist); document.getElementById('releasesPullOnly').checked = false; return ok; })()`);
+      }
       console.log('Résultat Test 11:', t11);
       testResults.push({
         test: 'Séries & complétion, pull list, sorties, stats, annulation, vue liste',
@@ -3118,12 +3128,82 @@ const waitForCdp = async () => {
         r.d4NoWrite = (await B.fingerprint('collection')) === fp0;
         return r;
       })()`);
-      Object.assign(t34a || {}, t34b || {});
+      // 3.1b-5 (E1, E3, E4) : calendrier via S1/S2 ; clics synthétiques refusés ; vrais clics : ajout, conversion sans doublon, prix jamais inventé ; annulation d'import prudente
+      const t34c = {};
+      const t34click = async sel => {
+        const okSel = await evalExpr('(() => { const b = document.querySelector(' + JSON.stringify(sel) + '); if (b) b.scrollIntoView({ block: "center" }); return !!b && !b.disabled; })()');
+        if (!okSel) return false;
+        await new Promise(r => setTimeout(r, 500));
+        const p = await evalExpr('(() => { const b = document.querySelector(' + JSON.stringify(sel) + '); if (!b) return null; const q = b.getBoundingClientRect(); return { x: Math.round(q.left + q.width / 2), y: Math.round(q.top + q.height / 2) }; })()');
+        if (!p) return false;
+        await send('Input.dispatchMouseEvent', { type: 'mousePressed', x: p.x, y: p.y, button: 'left', clickCount: 1 });
+        await send('Input.dispatchMouseEvent', { type: 'mouseReleased', x: p.x, y: p.y, button: 'left', clickCount: 1 });
+        await new Promise(r => setTimeout(r, 500));
+        return true;
+      };
+      const t34pub = await evalExpr(`(async () => {
+        const P = window.Panel, R = P.releases;
+        await R.ready();
+        window.__t34cSaved = P.getPhysicalSingles().slice();
+        const d = new Date(), iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        const up = await R.upsert({ series: 'T34 Calendrier', issue: '1', publisher: 'Image', market: 'US', date: iso }, 'manual');
+        document.getElementById('navSinglesReleases').click();
+        P.showSinglesView('releases');
+        document.getElementById('releasesPullOnly').checked = false;
+        document.getElementById('releasesSearch').value = 'T34 Calendrier';
+        R.view({ mode: 'grid', period: 'week', anchor: new Date() });
+        return up && up.pub ? up.pub.id : null;
+      })()`);
+      if (t34pub) {
+        const card = '#releasesGrid .release-card[data-id="' + t34pub + '"] ';
+        const q = (expr) => evalExpr('(async () => { const P = window.Panel, R = P.releases, B = P.backup, id = ' + JSON.stringify(t34pub) + ', card = document.querySelector(' + JSON.stringify(card.trim()) + '); const mine = () => P.getPhysicalSingles().filter(s => s.pubId === id); ' + expr + ' })()');
+        // Clics synthétiques (non isTrusted) : S2 refuse, aucune écriture
+        t34c.calSyntheticRefused = await q(`const fp = await B.fingerprint('collection'); if (!card) return false; ['[data-wish]', '[data-buy]', '[data-pulladd]', '[data-pull]'].forEach(s => card.querySelector(s).click()); await new Promise(r => setTimeout(r, 400)); return (await B.fingerprint('collection')) === fp && mine().length === 0;`);
+        // Vrai clic « Wish » : une fiche wishlist créée par Collection, badge et bouton à jour
+        await t34click(card + '[data-wish]');
+        t34c.calWish = await q(`const c = document.querySelector(${JSON.stringify(card.trim())}); return mine().length === 1 && mine()[0].isWishlist === true && !!c && c.textContent.includes('WISHLIST') && c.querySelector('[data-wish]').disabled === true;`);
+        // Vrai clic « Acheté » : la fiche wishlist est convertie (même identifiant), aucun doublon, prix payé jamais inventé
+        const wishId = await q(`return mine()[0] ? mine()[0].id : null;`);
+        await t34click(card + '[data-buy]');
+        t34c.calConvertNoDuplicate = await q(`const m = mine(); const c = document.querySelector(${JSON.stringify(card.trim())}); return m.length === 1 && m[0].id === ${JSON.stringify(wishId)} && m[0].isWishlist === false && m[0].purchasePrice == null && !!c && c.textContent.includes('POSSÉDÉ') && c.querySelector('[data-buy]').disabled === true;`);
+        // Vrai clic « + Pull » : numéro en attente dans la Pull List (écrit par Collection)
+        await t34click(card + '[data-pulladd]');
+        t34c.calPull = await q(`const c = document.querySelector(${JSON.stringify(card.trim())}); return R.pulls.all().some(x => x.pubId === id && (x.status === 'planned' || x.status === 'available')) && !!c && c.querySelector('[data-pulladd]').textContent.includes('✓');`);
+        // Fiche publication : comptes via S1 (E4) ; « Collection » ×2 par un vrai clic : 2 nouvelles fiches, prix jamais inventé
+        t34c.sheetCounts = await q(`R.openSheet(id); const el = document.querySelector('[data-pub-mine]'); return !!el && el.textContent.includes('Dans votre collection : 1 exemplaire(s)') && el.textContent.includes('wishlist : non');`);
+        await evalExpr(`(() => { const i = document.getElementById('pubActQty'); if (i) i.value = '2'; return !!i; })()`);
+        await t34click('#pubToCollection');
+        t34c.sheetQuantity = await q(`const m = mine().filter(s => !s.isWishlist); const el = document.querySelector('[data-pub-mine]'); document.getElementById('pubModal').classList.remove('open'); return m.length === 3 && m.every(s => s.purchasePrice == null) && !!el && el.textContent.includes(': 3 exemplaire(s)');`);
+        // Fournisseur absent : aucun badge, aucun bouton désactivé ; vrai clic : action refusée, aucune écriture ; « Ma pull list » sans résultat
+        await evalExpr(`(() => { window.Panel.explorer.setPersonalProviderForTest(null); window.Panel.renderReleasesGrid(); return true; })()`);
+        const fpA = await evalExpr(`window.Panel.backup.fingerprint('collection')`);
+        t34c.calAbsentNoBadge = await q(`return !!card && !card.querySelector('.release-flag') && !card.querySelector('[data-buy]').disabled && card.querySelector('[data-pulladd]').textContent.includes('+ Pull');`);
+        await t34click(card + '[data-wish]');
+        t34c.calAbsentNoWrite = (await evalExpr(`window.Panel.backup.fingerprint('collection')`)) === fpA && await q(`return mine().filter(s => s.isWishlist).length === 0;`);
+        t34c.calAbsentPullOnly = await q(`document.getElementById('releasesPullOnly').checked = true; P.renderReleasesGrid(); const n = document.querySelectorAll('#releasesGrid .release-card').length; document.getElementById('releasesPullOnly').checked = false; return n === 0;`);
+        // E3 : question agrégée oui/non ; sans fournisseur, l'annulation d'import conserve toutes les publications ajoutées
+        t34c.e3Undo = await q(`
+          const NL = String.fromCharCode(10), D = P.data, X = P.explorer, L = P.contracts.personal.v1.lens;
+          const rp = L.referencedPubs([id, 'pub_inconnue_t34']);
+          const shapeOk = rp.ok === true && JSON.stringify(rp.items) === '[true,false]';
+          const imp = async s => { const pl = await D.plan({ text: ['editeur;serie;numero;date_annoncee', 'Image;' + s + ';1;2030-01-15'].join(NL), name: 't34-e3.csv' }); await D.apply(pl); return pl; };
+          const tag = Date.now().toString(36), n1 = 'T34 Annulation Prudente ' + tag, n2 = 'T34 Annulation Normale ' + tag; const p1 = await imp(n1); const id1 = (R.all().find(x => x.series === n1) || {}).id;
+          X.setPersonalProviderForTest(null);
+          const u1 = await D.undo(p1.id);
+          X.setPersonalProviderForTest();
+          const p2 = await imp(n2);
+          const u2 = await D.undo(p2.id);
+          return shapeOk && !!id1 && u1.ok && u1.removed === 0 && u1.kept.includes(id1) && !!R.get(id1) && u2.ok && u2.removed === 1 && !R.all().some(x => x.series === n2);`);
+        // Remise en état : collection d'avant, numéro de Pull List annulé (conservé dans l'historique), filtres effacés
+        await q(`P.explorer.setPersonalProviderForTest(); P.setPhysicalSingles(window.__t34cSaved); for (const pl of R.pulls.all().filter(x => x.pubId === id && (x.status === 'planned' || x.status === 'available'))) await R.pulls.cancel(pl.id); document.getElementById('releasesSearch').value = ''; P.renderReleasesGrid(); document.getElementById('navAllSingles').click(); return true;`);
+      }
+      Object.assign(t34a || {}, t34b || {}, t34c);
       const t34 = Object.assign({}, t34s, t34a);
       console.log('Résultat Test 34:', JSON.stringify(t34));
       const t34keys = ['staticStrict', 'staticNegative', 'personalOn', 'derivedTagged', 'seriesTagged', 'searchNoCollection', 'switchShown', 'switchImmediate', 'disabledEditorialOnly', 'disabledNoProviderCall',
         'reenabled', 'absentHome', 'absentGuide', 'absentSearch', 'absentRecos', 'noWrite',
-        'hostedRegistered', 'collectionWithoutExplorer', 'collectionExportOnly', 'buttonCollectionOnly', 'explorerSelfLaunch', 'legacyV2', 'legacySplit', 'd4NoWrite'];
+        'hostedRegistered', 'collectionWithoutExplorer', 'collectionExportOnly', 'buttonCollectionOnly', 'explorerSelfLaunch', 'legacyV2', 'legacySplit', 'd4NoWrite',
+        'calSyntheticRefused', 'calWish', 'calConvertNoDuplicate', 'calPull', 'sheetCounts', 'sheetQuantity', 'calAbsentNoBadge', 'calAbsentNoWrite', 'calAbsentPullOnly', 'e3Undo'];
       const t34fail = t34keys.filter(k => !t34 || t34[k] !== true);
       if (t34fail.length) console.log('Test 34 — vérifications en échec :', t34fail.join(', '));
       testResults.push({

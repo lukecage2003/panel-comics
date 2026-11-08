@@ -40,19 +40,42 @@ const PERSONAL = [
   { id: 'exProgress', rule: 'C10 : lecture de la progression (Lecture) → S1 guideProgress', allow: ['exEditorial', 'loadExplorerData'] }
 ];
 
+// Lot 3.1b-5 (E1 à E5) : calendrier éditorial, publications et sources = Explorer (A5). Pull List, wishlist et conversions = Collection (relMakeSingle, addPub*, *Pull*).
+const CALENDAR_FNS = ['renderReleasesGrid', 'renderReleasesWeekLabel', 'renderPubSheet', 'openPubSheet', 'loadReleaseData', 'loadReleasesForWeek', 'syncReleases', 'importReleaseRows', 'importReleaseText',
+  'exportReleasesCsv', 'exportReleaseData', 'sanitizeReleaseData', 'mergeReleaseData', 'wireReleaseControls', 'renderDataAdmin', 'openDataAdmin', 'wireDataAdmin'];
+const COLLECTION_IN_CALENDAR = ['relMakeSingle'];
+const isCalendar = n => !isExplorer(n) && !COLLECTION_IN_CALENDAR.includes(n) && (/^(rel|da|src|prov|cv)[A-Z]/.test(n) || CALENDAR_FNS.includes(n));
+// Stockage partagé (E5) et ancien format d'export (D-23) : seuls usages admis de la Pull List depuis le calendrier
+const E5_ALLOW = ['relPubs', 'loadReleaseData', 'exportReleaseData', 'mergeReleaseData', 'sanitizeReleaseData'];
+const CALENDAR_PERSONAL = PERSONAL.filter(p => !['exProgress', "put('collection'", "exPut('readprog'"].includes(p.id)).map(p => (p.id === 'relPulls' ? Object.assign({}, p, { rule: 'E1, E3 : Pull List (Collection) → S1 pullPending / referencedPubs', allow: E5_ALLOW }) : p)).concat([
+  { id: 'addPubToCollection', rule: 'E1 : écriture de Collection → S2 addToCollection' },
+  { id: 'addPull(', rule: 'E1 : écriture de la Pull List → S2 addToPullList' },
+  { id: 'togglePull', rule: 'E1 : abonnement à une série → S2 followSeries' },
+  { id: 'wishToCollection', rule: 'E1 : conversion (Collection) → S2 addToCollection' },
+  { id: 'pickUpPull', rule: 'E1 : conversion (Collection) → S2' },
+  { id: 'editSingleIssue', rule: 'E1 : fiche d\'exemplaire (Collection) → S2' },
+  { id: 'renderPullPanel', rule: 'A5 : panneau Pull List (Collection) → registre des panneaux hébergés' },
+  { id: 'ownsIssue', rule: 'E4 : possession (Collection) → S1 statusFor' },
+  { id: 'relCopiesOf', rule: 'E4 : exemplaires d\'une publication → S1 statusFor (owned: n)' }
+]);
+
 const findings = [];
-for (const f of fns.filter(f => isExplorer(f.name))) {
-  for (let i = f.start; i <= f.end; i++) {
-    const line = src[i];
-    if (/^\s*\/\//.test(line)) continue;
-    for (const p of PERSONAL) if (line.includes(p.id) && !(p.allow && p.allow.includes(f.name))) findings.push({ fn: f.name, line: i + 1, id: p.id, rule: p.rule });
+const scan = (list, rules) => {
+  for (const f of list) {
+    for (let i = f.start; i <= f.end; i++) {
+      const line = src[i];
+      if (/^\s*\/\//.test(line)) continue;
+      for (const p of rules) if (line.includes(p.id) && !(p.allow && p.allow.includes(f.name))) findings.push({ fn: f.name, line: i + 1, id: p.id, rule: p.rule });
+    }
   }
-}
+};
+scan(fns.filter(f => isExplorer(f.name)), PERSONAL);
+scan(fns.filter(f => isCalendar(f.name)), CALENDAR_PERSONAL);
 
 const strict = process.argv.includes('--strict');
 const byRule = {};
 findings.forEach(x => { (byRule[x.rule] = byRule[x.rule] || []).push(`${x.fn} l.${x.line}`); });
-console.log(`check-boundaries : ${fns.filter(f => isExplorer(f.name)).length} fonctions Explorer analysées, ${findings.length} couplage(s) vers les données personnelles.`);
+console.log(`check-boundaries : ${fns.filter(f => isExplorer(f.name)).length} fonctions Explorer et ${fns.filter(f => isCalendar(f.name)).length} fonctions du calendrier analysées, ${findings.length} couplage(s) vers les données personnelles.`);
 for (const [rule, where] of Object.entries(byRule)) console.log(`  - ${rule} : ${where.join(', ')}`);
 if (strict && findings.length) { console.log('check-boundaries --strict : ÉCHEC (frontières non respectées).'); process.exitCode = 1; }
 else if (!strict) console.log('Mode rapport : aucun échec. Le mode --strict sera activé au sous-lot 3.1b-6.');

@@ -127,6 +127,13 @@ Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec op
   - l'ancien export `panel-singles` v2 reste proposé pendant deux versions (D-23), reconstruit par les fournisseurs ;
   - test 34 enrichi : Collection sans Explorer (navigation, export, restauration), bouton JSON, ancien export, anciens fichiers répartis par domaine.
   - Résultats : front **33/33**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-4`.
+- **3.1b-5 Calendrier (Explorer) séparé de la Pull List (Collection) (E1 à E5)** ([réalisation](phase4/05-contrats-s1-s6.md#consommation-par-le-calendrier-sous-lot-31b-5-8-novembre-2026)) :
+  - boutons du calendrier et de la fiche publication via S2 (jeton de geste) ; Collection écrit ses fiches et sa Pull List ;
+  - badges, « ✓ Pull », filtre « Ma pull list » et comptes de la fiche via S1 (ajouts compatibles `pullPending`, `seriesSubscribed`) ;
+  - annulation d'import par la question agrégée `referencedPubs`, prudente sans fournisseur (E3) ;
+  - rapprochement selon la règle de S1 : « POSSÉDÉ ? » pour une fiche sans année, plus de « POSSÉDÉ » pour un numéro d'une autre année ;
+  - test 34 enrichi ; test 11 : clic « Acheté » rejoué par CDP ; `check:boundaries` étendu au calendrier (0 couplage) ; B-17 reporté au lot 4.6.
+  - Résultats : front **33/33**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-5`.
 
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.
