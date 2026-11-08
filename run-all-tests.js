@@ -2489,7 +2489,9 @@ const waitForCdp = async () => {
         const rs = await X.restore({ editorial: [{ id: 'gd_t29_rest', title: 'T29 Restauré' }, Object.assign({}, X.guide('gd_t29_other'), { title: 'Écrasé ?' })], progress: [{ id: eid(4), status: 'read' }, { id: eid(3), status: 'to_read' }] }, 'merge');
         r.restoreMerge = rs.added === 2 && X.guide('gd_t29_other').title === 'T29 Autre' && X.progress(eid(3)).status === 'read' && X.progress(eid(4)).status === 'read' && !!X.guide('gd_t29_rest');
         const fullHas = await new Promise(res => { const orig = URL.createObjectURL; let got = null; URL.createObjectURL = b => { got = b; return 'blob:t29'; }; const a0 = HTMLAnchorElement.prototype.click; HTMLAnchorElement.prototype.click = function () {};
-          try { document.getElementById('backupJsonBtn').click(); } catch (_) {} URL.createObjectURL = orig; HTMLAnchorElement.prototype.click = a0; if (!got) return res(false); got.text().then(t => { const d = JSON.parse(t); res(!!d.explorer && d.explorer.editorial.some(g => g.id === 'gd_t29_saga') && d.releases !== undefined); }); });
+          URL.createObjectURL = orig; HTMLAnchorElement.prototype.click = a0;
+          // Lot 3.1b-1 (D-25) : la sauvegarde complète est au format panel-bundle ; guides et calendrier sont dans la section explorer
+          P.backup.export({ legacyDigital: true }).then(d => res(!!document.getElementById('backupJsonBtn') && !!d.sections.explorer && d.sections.explorer.editorial.some(g => g.id === 'gd_t29_saga') && Array.isArray(d.sections.explorer.publications))).catch(() => res(false)); });
         r.fullBackup = fullHas;
         // Seconde ouverture de la base : aucune migration destructive
         r.seedIdempotent = (await X.load()) === true && X.guides().filter(g => g.id === 'gd_king_in_black').length === 1 && X.guide('gd_king_in_black').description === 'Note locale T29';
@@ -2749,6 +2751,150 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Synchronisation (lot 3.1) : Panel.sync.readiness() en lecture seule (localStorage et IndexedDB inchangés), groupé par domaine, secrets exclus, synchronisation désactivée',
         ok: !!t31 && t31fail.length === 0
+      });
+      // ─── Test 32 : lot 3.1b-1 — sauvegardes par domaine (B1, panel-bundle v1) : tests R1 à R9 de docs/phase4/06 § 9 ───
+      // Non destructif : chaque restauration est annulée et l'empreinte finale de chaque domaine est comparée à l'initiale.
+      const t32 = await Promise.race([evalExpr(`(async () => {
+        const P = window.Panel, B = P && P.backup, r = {};
+        if (!B) return { api: false };
+        if (P.pauseCoverJob) P.pauseCoverJob();
+        r.api = ['export', 'validate', 'restore', 'undo', 'fingerprints', 'toV3', 'fromLegacy'].every(k => typeof B[k] === 'function');
+        r.providers = JSON.stringify(B.providers().map(p => p.id + ':' + p.domain)) === JSON.stringify(['collection:collection', 'reading:reading', 'explorer:explorer', 'app:app']);
+        const digitalKeys = ['panel_folders', 'panel_bookmarks', 'panel_theories', 'panel_reading_positions', 'panel_comic_notes', 'panel_comic_annotations'];
+        const digital = () => JSON.stringify(digitalKeys.map(k => localStorage.getItem(k)));
+        const digital0 = digital();
+        const fp0 = await B.fingerprints();
+        const clone = o => JSON.parse(JSON.stringify(o));
+        // R2 : export complet, intégrité vérifiée, remplacement par sa propre sauvegarde ⇒ empreintes identiques
+        const full = await B.export({ legacyDigital: true });
+        r.format = full.format === 'panel-bundle' && full.version === 1 && ['collection', 'reading', 'explorer', 'app', 'legacyDigital'].every(k => full.sections[k] !== undefined && full.manifest[k]);
+        const v = await B.validate(clone(full));
+        r.integrity = ['collection', 'reading', 'explorer', 'app'].every(k => v.sections[k].integrity === 'vérifiée' && v.sections[k].countsOk === true);
+        r.countsMatch = full.manifest.collection.count.singles === P.getPhysicalSingles().length;
+        const rr = await B.restore(v, { mode: 'replace' });
+        // La restauration normalise les fiches (valeurs par défaut équivalentes : null, '', false) : R2 vérifie que chaque valeur renseignée est conservée
+        const fpR2 = await B.fingerprints();
+        const reX = (await B.export({ legacyDigital: true })).sections;
+        const byId = new Map(reX.collection.singles.map(s => [s.id, s]));
+        const empty = x => x === null || x === undefined || x === '' || x === false;
+        const kept = full.sections.collection.singles.every(s => { const y = byId.get(s.id); return !!y && Object.keys(s).every(k => empty(s[k]) || JSON.stringify(s[k]) === JSON.stringify(y[k])); });
+        const ids = k => JSON.stringify((full.sections.collection[k] || { nodes: [] }).nodes ? full.sections.collection[k].nodes.map(n => n.id).sort() : full.sections.collection[k].map(n => n.id).sort());
+        const ids2 = k => JSON.stringify((reX.collection[k] || { nodes: [] }).nodes ? reX.collection[k].nodes.map(n => n.id).sort() : reX.collection[k].map(n => n.id).sort());
+        r.r2 = rr.ok === true && byId.size === full.sections.collection.singles.length && kept && ids('locations') === ids2('locations') && ids('pulls') === ids2('pulls')
+          && fpR2.reading === fp0.reading && fpR2.app === fp0.app && reX.explorer.editorial.length === full.sections.explorer.editorial.length && reX.explorer.publications.length === full.sections.explorer.publications.length;
+        const rr2 = await B.restore(await B.validate(await B.export()), { mode: 'replace' });
+        r.r2idempotent = rr2.ok && JSON.stringify(await B.fingerprints()) === JSON.stringify(fpR2);
+        if (rr2.ok) await B.undo(rr2.undoToken);
+        if (!r.r2) {
+          r.r2diff = Object.keys(fp0).filter(k => fp0[k] !== fpR2[k]);
+          const after = (await B.export({ domains: ['collection'] })).sections.collection;
+          const b0 = full.sections.collection;
+          const i = b0.singles.findIndex((s, j) => JSON.stringify(s) !== JSON.stringify(after.singles[j]));
+          if (i >= 0) { const a = b0.singles[i], b = after.singles[i] || {}; r.r2single = [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(k => JSON.stringify(a[k]) !== JSON.stringify(b[k])).slice(0, 12); }
+          r.r2other = ['seriesMeta', 'locations', 'pulls'].filter(k => JSON.stringify(b0[k]) !== JSON.stringify(after[k]));
+        }
+        if (rr.ok) await B.undo(rr.undoToken);
+        // Diagnostic : écart restant après l'annulation de R2
+        { const fpU = await B.fingerprints(); r.afterUndoDiff = Object.keys(fp0).filter(k => fp0[k] !== fpU[k]);
+          if (r.afterUndoDiff.length) { const after = (await B.export({ domains: ['collection'] })).sections.collection, b0 = full.sections.collection;
+            r.afterUndoParts = ['singles', 'seriesMeta', 'locations', 'pulls'].filter(k => JSON.stringify(b0[k]) !== JSON.stringify(after[k]));
+            const i = b0.singles.findIndex((s, j) => JSON.stringify(s) !== JSON.stringify(after.singles[j]));
+            if (i >= 0) { const x = b0.singles[i], y = after.singles[i] || {}; r.afterUndoKeys = [...new Set([...Object.keys(x), ...Object.keys(y)])].filter(k => JSON.stringify(x[k]) !== JSON.stringify(y[k])).map(k => k + '=' + JSON.stringify(x[k]) + '→' + JSON.stringify(y[k])).slice(0, 6); }
+            r.afterUndoLen = [b0.singles.length, after.singles.length, (b0.locations.nodes || []).length, (after.locations.nodes || []).length]; } }
+        // R3 + R6 : section Collection seule (une fiche en plus) ; les autres domaines inchangés ; annulation
+        const bc = clone(full); delete bc.manifest.collection;
+        bc.sections.collection.singles.push({ id: 's_t32_fake', series: 'T32 Série fictive', issue: '#1', publisher: 'Test' });
+        const rc = await B.restore(await B.validate(bc), { domains: ['collection'] });
+        const fpC = await B.fingerprints();
+        r.r3collection = rc.ok && rc.added === 1 && rc.untouchedOk === true && P.getPhysicalSingles().some(s => s.id === 's_t32_fake') && fpC.reading === fp0.reading && fpC.explorer === fp0.explorer && fpC.app === fp0.app && fpC.collection !== fp0.collection;
+        r.r6undo = rc.ok && (await B.undo(rc.undoToken)) === true && (await B.fingerprint('collection')) === fp0.collection && !P.getPhysicalSingles().some(s => s.id === 's_t32_fake');
+        // R3 : Explorer seul (guide en plus) puis Lecture seule (progression en plus)
+        const be = clone(full); delete be.manifest.explorer;
+        be.sections.explorer.editorial.push({ id: 'gd_t32_guide', title: 'T32 Guide fictif' });
+        const re = await B.restore(await B.validate(be), { domains: ['explorer'] });
+        r.r3explorer = re.ok && re.untouchedOk === true && (await B.fingerprint('collection')) === fp0.collection && (await B.fingerprint('explorer')) !== fp0.explorer;
+        if (re.ok) await B.undo(re.undoToken);
+        const bl = clone(full); delete bl.manifest.reading;
+        bl.sections.reading.progress.push({ id: 'ek_t32progress', status: 'read', at: '2026-11-08T00:00:00Z', history: [] });
+        const rl = await B.restore(await B.validate(bl), { domains: ['reading'] });
+        r.r3reading = rl.ok && rl.untouchedOk === true && (await B.fingerprint('collection')) === fp0.collection && (await B.fingerprint('explorer')) === fp0.explorer;
+        if (rl.ok) await B.undo(rl.undoToken);
+        // Fiches ajoutées puis annulées : absentes d'IndexedDB
+        const idbHas = async (store, id) => { const db = await new Promise(res => { const q = indexedDB.open('panel-catalog'); q.onsuccess = () => res(q.result); q.onerror = () => res(null); }); if (!db) return null; try { return await new Promise(res => { const g = db.transaction(store, 'readonly').objectStore(store).get(id); g.onsuccess = () => res(!!g.result); g.onerror = () => res(null); }); } finally { db.close(); } };
+        r.undoIdb = (await idbHas('editorial', 'gd_t32_guide')) === false && (await idbHas('readprog', 'ek_t32progress')) === false;
+        // R4 : fichier altéré (empreinte fausse) : refus sans confirmation, rien n'est modifié
+        const ba = clone(full);
+        if (ba.sections.collection.singles.length) ba.sections.collection.singles[0].notes = 'altéré T32'; else ba.sections.collection.seriesMeta = { t32: { name: 'altéré' } };
+        const va = await B.validate(ba);
+        const ra = await B.restore(va, { domains: ['collection'] });
+        r.r4altered = va.sections.collection.integrity === 'altérée' && ra.ok === false && ra.needsAlteredConfirmation === true && (await B.fingerprint('collection')) === fp0.collection;
+        // R5 : référence non résolue (pull vers une publication absente) : conservée, jamais supprimée
+        const bp = clone(full); delete bp.manifest.collection;
+        bp.sections.collection.pulls.push({ id: 'pl_t32_orphan', pubId: 'pbc_t32_absente', status: 'planned', quantity: 1, ref: { series: 'T32', issue: '#9' } });
+        const rp = await B.restore(await B.validate(bp), { domains: ['collection'] });
+        const exp5 = await B.export({ domains: ['collection'] });
+        r.r5orphan = rp.ok && exp5.sections.collection.pulls.some(p => p.id === 'pl_t32_orphan' && p.pubId === 'pbc_t32_absente');
+        if (rp.ok) await B.undo(rp.undoToken);
+        // R7 : conversion inverse bundle → panel-backup v3, relisible par la restauration actuelle
+        const v3 = B.toV3(clone(full));
+        const pv3 = P.validateBackupPayload(clone(v3));
+        r.r7 = v3.format === 'panel-backup' && v3.version === 3 && pv3.items.length === v.sections.collection.norm.items.length && pv3.explorer.editorial.length === v.sections.explorer.norm.editorial.length && pv3.releases.pulls.length === v.sections.collection.norm.pulls.length;
+        // R1 : ancien fichier v3 découpé en mémoire par domaine : mêmes comptes que la restauration actuelle
+        const vl = await B.validate(B.fromLegacy(clone(v3)));
+        r.r1legacy = vl.sections.collection.norm.items.length === pv3.items.length && vl.sections.explorer.norm.publications.length === pv3.releases.publications.length && vl.sections.reading.norm.progress.length === pv3.explorer.progress.length;
+        // R8 : garde-fou — remplacement qui retirerait plus de 10 % de la collection : confirmation renforcée exigée
+        const b20 = clone(full); delete b20.manifest.collection;
+        for (let i = 0; i < 20; i++) b20.sections.collection.singles.push({ id: 's_t32_g' + i, series: 'T32 Garde-fou', issue: '#' + (i + 1), publisher: 'Test' });
+        const r20 = await B.restore(await B.validate(b20), { domains: ['collection'] });
+        const bEmpty = clone(full); delete bEmpty.manifest.collection; bEmpty.sections.collection.singles = [];
+        const fpG = await B.fingerprint('collection');
+        const rg = await B.restore(await B.validate(bEmpty), { domains: ['collection'], mode: 'replace' });
+        r.r8guard = r20.ok && rg.ok === false && rg.needsConfirmation === true && rg.removed >= 20 && (await B.fingerprint('collection')) === fpG;
+        if (r20.ok) await B.undo(r20.undoToken);
+        // R9 : Explorer absent : export et restauration de Collection seuls
+        const bNoEx = await B.export({ without: ['explorer'] });
+        const vNoEx = await B.validate(clone(bNoEx));
+        const rNoEx = await B.restore(vNoEx, { domains: ['collection'] });
+        r.r9 = bNoEx.sections.explorer === undefined && !!vNoEx.sections.collection && rNoEx.ok === true && rNoEx.added === 0 && (await B.fingerprint('collection')) === fp0.collection;
+        if (rNoEx.ok) await B.undo(rNoEx.undoToken);
+        r.onlyDomain = JSON.stringify(Object.keys((await B.export({ domains: ['reading'] })).sections)) === JSON.stringify(['reading']);
+        // Secrets (D-24) : exclus par défaut ; option chiffrée ; mauvais mot de passe refusé ; clé présente jamais écrasée
+        const SK = 'panel_gcd_proxy', prevSK = localStorage.getItem(SK), fakeSK = 'https://relais-t32.exemple.test/gcd';
+        localStorage.setItem(SK, fakeSK);
+        r.secretsExcludedByDefault = !JSON.stringify(full).includes(fakeSK) && !JSON.stringify(await B.export()).includes(fakeSK);
+        const bs = await B.export({ domains: ['app'], secretsPassword: 'motdepasse-t32' });
+        r.secretsEncrypted = !!bs.sections.secrets && bs.manifest.secrets.encrypted === true && !JSON.stringify(bs).includes(fakeSK);
+        localStorage.removeItem(SK);
+        const vs = await B.validate(clone(bs));
+        const rBad = await B.restore(vs, { domains: ['app'], secretsPassword: 'mauvais-mot' });
+        r.secretsWrongPassword = rBad.ok === false && localStorage.getItem(SK) === null;
+        const rGood = await B.restore(vs, { domains: ['app'], secretsPassword: 'motdepasse-t32' });
+        r.secretsRestored = rGood.ok && rGood.secrets.restored >= 1 && localStorage.getItem(SK) === fakeSK;
+        localStorage.setItem(SK, 'https://autre-t32.exemple.test');
+        const rKeep = await B.restore(vs, { domains: ['app'], secretsPassword: 'motdepasse-t32' });
+        r.secretsNotOverwritten = rKeep.ok && rKeep.secrets.kept >= 1 && localStorage.getItem(SK) === 'https://autre-t32.exemple.test';
+        if (prevSK === null) localStorage.removeItem(SK); else localStorage.setItem(SK, prevSK);
+        // Fenêtres
+        B.openExportDialog();
+        const dlgE = document.getElementById('bundleExportDialog');
+        r.uiExport = !!dlgE && dlgE.classList.contains('open') && dlgE.querySelectorAll('input[name=bunDom]').length === 4 && !!dlgE.querySelector('input[name=bunFmt][value=v3]') && !!document.getElementById('backupOptionsBtn');
+        dlgE.classList.remove('open');
+        B.openRestoreDialog(v, 'test-t32.json');
+        const dlgR = document.getElementById('bundleRestoreDialog');
+        r.uiRestore = !!dlgR && dlgR.classList.contains('open') && dlgR.querySelectorAll('input[name=bunRDom]').length === 4 && !!dlgR.querySelector('input[name=bunRMode][value=merge]:checked');
+        dlgR.classList.remove('open');
+        // État final : chaque domaine revenu à son empreinte initiale ; données numériques héritées intactes
+        r.finalRestored = JSON.stringify(await B.fingerprints()) === JSON.stringify(fp0);
+        r.digitalUntouched = digital() === digital0;
+        return r;
+      })()`), new Promise(res => setTimeout(() => res({ timeout: true }), 120000))]);
+      console.log('Résultat Test 32:', JSON.stringify(t32));
+      const t32keys = ['api', 'providers', 'format', 'integrity', 'countsMatch', 'r2', 'r2idempotent', 'r3collection', 'r6undo', 'r3explorer', 'r3reading', 'undoIdb', 'r4altered', 'r5orphan', 'r7', 'r1legacy', 'r8guard', 'r9', 'onlyDomain', 'secretsExcludedByDefault', 'secretsEncrypted', 'secretsWrongPassword', 'secretsRestored', 'secretsNotOverwritten', 'uiExport', 'uiRestore', 'finalRestored', 'digitalUntouched'];
+      const t32fail = t32keys.filter(k => !t32 || t32[k] !== true);
+      if (t32fail.length) console.log('Test 32 — vérifications en échec :', t32fail.join(', '));
+      testResults.push({
+        test: 'Sauvegardes par domaine (lot 3.1b-1) : panel-bundle v1, intégrité sha256, restauration d\'un domaine seul, annulation, altération refusée, références conservées, conversion v3, anciens fichiers, garde-fou, Explorer absent, clés chiffrées',
+        ok: !!t32 && t32fail.length === 0
       });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

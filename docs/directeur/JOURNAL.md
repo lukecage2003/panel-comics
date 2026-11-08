@@ -30,3 +30,9 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | E. Explorer 2.0 et Community | Consolidé | [`07`](07-conception-explorer-2.0-community.md) révision 2 | — | — | Phase 3, M1 à M4, juridique | Validation |
 | F. Cohérence | Terminé | Nombres de tests, statuts, index, décisions en attente | Liens : voir rapport | — | — | Commit local |
 
+## 8 novembre 2026 — lot 3.1b (lancé, D-21)
+| Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
+|---|---|---|---|---|---|---|
+| 3.1b-0 Préalables | Terminé | DECISIONS D-21 à D-25 ; copies `*.backup.20261108-3.1b-0` | Front 30/30 (référence) | D-21 à D-25 | — | — |
+| 3.1b-1 Sauvegardes par domaine | Terminé | `index.html` (`Panel.backup`, fenêtres d'export et de restauration), test 32, test 29 adapté, `sw.js` | Front 31/31 ; base 82/82 ; secrets 0 | — | — | 3.1b-2 |
+

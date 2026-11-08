@@ -99,5 +99,16 @@ Repris après la validation de G1 (D-20) ; F0 validé (D-19).
 - **Documents** : plan définitif de 3.1b ([`directeur/05`](directeur/05-preparation-lot-3.1b.md)), dossier des lots 3.2 à 3.7 ([`phase3/10`](phase3/10-dossier-lots-3.2-3.7.md)), spécifications F1 et L1 révisées avec l'analyse de F-D2, F-D4, L-D1 à L-D3 ([`directeur/06`](directeur/06-specifications-F1-L1.md)), conception Explorer 2.0 et Community consolidée ([`directeur/07`](directeur/07-conception-explorer-2.0-community.md)).
 - **Non exécuté** : validation sous Supabase local (Docker absent) ; procédure dans l'audit.
 
+### Lot 3.1b — Séparation des domaines côté client (lancé le 8 novembre 2026, D-21)
+Décisions : P1-a (D-22), B1-a deux versions (D-23), B1-b secrets exclus avec option chiffrée (D-24), B1-c `panel-bundle` (D-25). Navigation (3.1b-7) reportée au lot 4.9 ; filtre comics des Sorties reporté au lot 4.6.
+- **3.1b-1 Sauvegardes par domaine** ([spécification et réalisation](phase4/06-sauvegardes-par-domaine.md) § 11) :
+  - format `panel-bundle` v1 : fournisseurs Collection, Lecture, Explorer et Application ; manifeste avec comptes et sha256 ;
+  - restauration d'un domaine seul, avec aperçu, fusion par défaut, garde-fou au-delà de 50 fiches ou 10 %, et annulation ;
+  - export au format compatible v3 toujours proposé ; clés exportées seulement chiffrées (AES-GCM, PBKDF2) et sur demande ;
+  - anciens fichiers v3 et v2 relus comme avant ;
+  - test 32 (R1 à R9) ; test 29 adapté au nouveau format de la sauvegarde complète ;
+  - défaut trouvé par le test et corrigé : l'annulation d'une restauration doit reprendre une copie profonde et suspendre la resynchronisation des emplacements, sinon l'état d'avant n'est pas rétabli à l'identique.
+  - Résultats : front **31/31**, base 82/82, secrets 0. Sauvegardes `*.backup.20261108-3.1b-0` créées ; aucune supprimée.
+
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.

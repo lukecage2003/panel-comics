@@ -41,23 +41,24 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | 07/11/2026 | D-18 | **Prix de couverture et prix d'achat restent deux informations distinctes.** À l'ajout d'un comic, le prix de couverture **préremplit** le champ prix d'achat (modifiable) ; le prix d'achat enregistré est le montant réellement payé et seul lui sert à l'investissement ; jamais de conversion automatique en arrière-plan ni de confusion dans les calculs ; une donnée financière inconnue reste inconnue (ni couverture, ni zéro) | Utilisateur | En vigueur |
 | 08/11/2026 | D-19 | **Lot F0 validé** (commits `3ad4988` et `9c3324f`) | Utilisateur | En vigueur |
 | 08/11/2026 | D-20 (G1) | **Documents d'architecture validés** (frontières, contrats S1-S6, B1, images R2, navigation, périmètre comics) : condition G1 remplie, le lot 3.1 peut reprendre et est autorisé. 3.1b, P1, B1-a/b/c, F-D2, F-D4, F1 et L1 restent soumis à approbation | Utilisateur | En vigueur |
+| 08/11/2026 | D-21 | **Lot 3.1b lancé** (« Lancer 3.1b ») ; sous-lots 3.1b-0 à 3.1b-6 ; 3.1b-7 (navigation) reporté au lot 4.9 faute de décision N, M et U-D1 ; filtre comics des Sorties (B-17) reporté au lot 4.6 faute de décision M1 à M4 | Utilisateur | En vigueur |
+| 08/11/2026 | D-22 (P1-a) | Le profil local sans compte est traité comme connecté pour S1 : aucun changement visible, les badges restent | Utilisateur | En vigueur |
+| 08/11/2026 | D-23 (B1-a) | L'ancien format d'export (`panel-backup` v3, `panel-singles` v2) reste proposé pendant deux versions, puis en lecture seule ; la lecture des anciens fichiers reste toujours possible | Utilisateur | En vigueur |
+| 08/11/2026 | D-24 (B1-b) | Secrets exclus des exports par défaut ; option explicite pour les inclure, chiffrés par un mot de passe saisi par l'utilisateur | Utilisateur | En vigueur |
+| 08/11/2026 | D-25 (B1-c) | Nom du format : `panel-bundle` v1 | Utilisateur | En vigueur |
 | 07/11/2026 | D-16 | Seuil k ≥ 10 pour S3 : **proposition**, pas une garantie d'anonymat | Utilisateur | À valider juridiquement et techniquement |
 
 ## Décisions en attente
 | # | Sujet | Document |
 |---|---|---|
-| P1 | Utilisateurs locaux sans compte et S1 | [`05`](phase4/05-contrats-s1-s6.md) § 3 |
-| G2 | Création du lot 3.1b (identique à la ligne « 3.1b » ci-dessous) | [`08`](phase4/08-plan-execution.md) |
 | T1 à T4 | Écritures par `sync_push` seulement, pierres tombales sans suppression physique, ordre UPDATE puis INSERT, `app.skip_rev` (techniques, au début du lot 3.4) | [`phase3/10`](phase3/10-dossier-lots-3.2-3.7.md) |
 | F1-0 | Accord pour écrire `null` au lieu de `'USD'` dans la copie normalisée (application de D-18) | [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.11 |
 | Supabase local | Installation de Docker et de la CLI Supabase par l'utilisateur, pour la validation de référence | [`phase3/09`](phase3/09-audit-cloture-lot-3.1.md) |
 | N1-N5, M-A à M-E | Navigation de bureau et mobile | [`03`](phase4/03-changement-navigation.md) |
-| B1-a à B1-c | Ancien format, secrets, nom du format | [`06`](phase4/06-sauvegardes-par-domaine.md) § 10 |
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |
 | R2 | Compte, domaine, workers, Cloudflare Images, plafond | [`07`](phase4/07-architecture-images-r2.md) § 11 |
 | Phase 3 | Région, formule, SMTP, hébergement, stockage sécurisé Android, `allowBackup`, CAPTCHA | [`phase3/02-architecture-cible.md`](phase3/02-architecture-cible.md) |
 | F-D1, F-D2, F-D3, F-D4, F-D5, F-D6 (F-D2 et F-D4 explicitement ouvertes) | Modèle financier, devise, ancienneté des estimations, lots, stockage serveur, libellés | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 ; options F-D2 : [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.4 |
 | L-D1 à L-D3 | Stockage de la lecture, migration de `isRead`, conflit de notes | [`directeur/06`](directeur/06-specifications-F1-L1.md) § B.7 |
-| 3.1b | Lancement du lot 3.1b | [`directeur/05`](directeur/05-preparation-lot-3.1b.md) ; [`phase4/08`](phase4/08-plan-execution.md) § 5 |
 | U-D1 à U-D3 | Place de la Lecture et des Finances dans la navigation, identité d'œuvre | [`directeur/04`](directeur/04-backlog-feuille-de-route-decisions.md) § 4 |
 | Juridique | Liste de [`phase3/05`](phase3/05-sauvegardes-confidentialite.md) § 4.4, droits des sources, consentement S3 | — |

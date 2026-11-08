@@ -1,6 +1,6 @@
 # Sauvegardes indépendantes par domaine (B1) — spécification
 
-Statut : **principe approuvé par l'utilisateur le 7 novembre 2026 ; spécification documentée, non implémentée**. Le format de sauvegarde actuel **n'est pas modifié** dans le code. La réalisation est prévue au lot 3.1b ([`08-plan-execution.md`](08-plan-execution.md)).
+Statut : **implémenté au sous-lot 3.1b-1 (8 novembre 2026)**. Décisions : B1-a deux versions (D-23), B1-b secrets exclus et option chiffrée (D-24), B1-c `panel-bundle` (D-25). API : `Panel.backup` ; tests R1 à R9 : test 32 de `run-all-tests.js` (R10 : la suite complète). Écarts avec ce document : voir § 11.
 
 Légende : **[Fait]** · **[Décidé]** · **[Reco.]** · **[À valider]**.
 
@@ -114,3 +114,21 @@ Règles inter-domaines :
 - **B1-a** : durée de maintien de l'export à l'ancien format (proposé : deux versions).
 - **B1-b** : export facultatif et chiffré des secrets, ou exclusion définitive.
 - **B1-c** : nom définitif du format (`panel-bundle`).
+
+## 11. Réalisation (sous-lot 3.1b-1, 8 novembre 2026)
+- **Fournisseurs** : `collection`, `reading`, `explorer`, `app`. Le domaine de chacun vient de `SYNC_DOMAINS` (lot 3.1) : une seule source de vérité.
+- **Sections spéciales** :
+  - `legacyDigital` : données des anciens fichiers numériques. Exportée, jamais restaurée, comme aujourd'hui.
+  - `secrets` : uniquement sur demande explicite. Chiffrement AES-GCM 256, clé dérivée du mot de passe saisi par PBKDF2-SHA256 (310 000 itérations), 8 caractères au minimum. Une clé déjà présente n'est jamais écrasée.
+- **Profil local** (`relMeta.profile`) : rangé dans la section `app`.
+- **Interface** :
+  - « Export JSON » produit le `panel-bundle` complet ;
+  - « Sauvegarde par domaine… » permet de choisir les domaines, le format compatible v3 (D-23) et les clés chiffrées ;
+  - la restauration d'un `panel-bundle` affiche, par domaine, les comptes, l'intégrité et une case à cocher. L'annulation est proposée dans le message de fin.
+- **Anciens fichiers** (v3, v2, tableau) : ils suivent toujours l'ancienne restauration, sans changement. `Panel.backup.fromLegacy` fait le découpage en mémoire (R1).
+- **Restauration** : elle réutilise `applyBackupRestore`, qui accepte désormais `items: null` pour ne pas toucher à la Collection et renvoie une fonction d'annulation. Le garde-fou exige une confirmation saisie (« REMPLACER ») au-delà de 50 fiches ou de 10 % de la collection.
+- **Pas de nouvelle base ni de nouveau store** ; aucune donnée existante réécrite au chargement.
+- **Écarts** :
+  - un fichier `panel-bundle` ne peut pas encore être reconverti par l'interface (seulement par `Panel.backup.toV3`) ;
+  - l'export JSON de la Collection (`panel-singles` v2) est séparé au sous-lot 3.1b-4.
+

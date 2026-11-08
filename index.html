@@ -1817,6 +1817,7 @@
         <button class="btn secondary" id="restoreJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Restaurer</button>
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
+      <button class="btn secondary" id="backupOptionsBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Sauvegarder un seul domaine (Collection, Lecture, Explorer), au format compatible, ou avec vos clés chiffrées">Sauvegarde par domaine…</button>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
       <button class="btn secondary" id="openDataAdminBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Sources & données</button>
       <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
@@ -10727,6 +10728,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   // Données de l'ancienne bibliothèque numérique : conservées intactes dans le stockage local,
   // relues telles quelles pour rester présentes dans les sauvegardes (jamais modifiées ni effacées)
+  let bundleLegacyExporter = null; // export à l'ancien format panel-backup v3 (D-23), défini dans bindEvents
   const DIGITAL_LS_KEYS = { folders: 'panel_folders', bookmarks: 'panel_bookmarks', theories: 'panel_theories', readingPositions: 'panel_reading_positions', comicNotes: 'panel_comic_notes', comicAnnotations: 'panel_comic_annotations' };
   const readStoredDigitalData = () => {
     const out = {};
@@ -11619,11 +11621,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const snapId = await snapshotSingles(mode === 'replace' ? 'Avant remplacement par une sauvegarde' : 'Avant fusion d\'une sauvegarde');
     if (!snapId && !opts.allowWithoutSnapshot) throw new Error('Instantané de sécurité impossible (stockage indisponible) : restauration annulée, rien n\'a été modifié.');
     const prevSingles = physicalSingles, prevMeta = seriesMeta, prevLocDoc = JSON.parse(JSON.stringify(locDoc));
+    // Copie profonde pour l'annulation explicite (lot 3.1b-1) : la fusion des emplacements (locSyncLegacy) modifie les fiches en place
+    const undoSingles = JSON.parse(JSON.stringify(physicalSingles)), undoMeta = JSON.parse(JSON.stringify(seriesMeta || {}));
     let relMerged = null, exMerged = null;
+    // Lot 3.1b-1 : items === null ⇒ la section Collection n'est pas restaurée (restauration d'un autre domaine seul)
+    const withCollection = Array.isArray(payload.items);
     clearTimeout(locSyncTimer);
     try {
       let added = 0, conflicts = 0;
-      if (mode === 'replace') {
+      if (!withCollection) { /* exemplaires et séries suivies laissés tels quels */ }
+      else if (mode === 'replace') {
         physicalSingles = payload.items.slice();
         added = physicalSingles.length;
         if (payload.seriesMeta) seriesMeta = JSON.parse(JSON.stringify(payload.seriesMeta));
@@ -11642,8 +11649,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           seriesMeta = meta;
         }
       }
-      persist();
-      saveSeriesMeta();
+      if (withCollection) { persist(); saveSeriesMeta(); }
       // Emplacements de la sauvegarde : ajoutés (fusion) ou rétablis (remplacement) ; aucun emplacement actuel supprimé
       if (payload.locations) mergeLocDoc(payload.locations, mode);
       // Calendrier et pull list : ajoutés (fusion) ou rétablis (remplacement) ; rien n'est supprimé
@@ -11652,8 +11658,18 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (payload.explorer) { await loadExplorerData(); exMerged = mergeExplorerData(payload.explorer, mode); await exMerged.write; }
       // Vérification : ce qui est relu doit correspondre à ce qui vient d'être écrit
       const back = JSON.parse(localStorage.getItem('panel_physical_singles') || '[]');
-      if (!opts.persist && back.length !== physicalSingles.length) throw new Error('Écriture incomplète du stockage local.');
-      return { ok: true, mode, added, conflicts, total: physicalSingles.length, snapshotId: snapId };
+      if (withCollection && !opts.persist && back.length !== physicalSingles.length) throw new Error('Écriture incomplète du stockage local.');
+      // Annulation explicite (lot 3.1b-1) : retour à l'état d'avant, en mémoire et dans le stockage
+      const undo = () => {
+        physicalSingles = undoSingles; seriesMeta = undoMeta;
+        locDoc = prevLocDoc; locInvalidate(); saveLocDoc();
+        if (relMerged) relMerged.undo();
+        if (exMerged) exMerged.undo();
+        persistSingles(); saveSeriesMeta();
+        clearTimeout(locSyncTimer); // l'état d'avant est rétabli tel quel, sans resynchronisation des emplacements
+        return true;
+      };
+      return { ok: true, mode, added, conflicts, total: physicalSingles.length, snapshotId: snapId, undo };
     } catch (err) {
       physicalSingles = prevSingles;
       seriesMeta = prevMeta;
@@ -11706,7 +11722,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (file.size > BACKUP_MAX_BYTES) { alert('Fichier trop volumineux pour une sauvegarde Panel (60 Mo maximum).'); return; }
     const r = new FileReader();
     r.onload = ev => {
-      let payload;
+      let payload, parsed = null;
+      try { parsed = JSON.parse(ev.target.result); } catch (_) { parsed = null; }
+      // Lot 3.1b-1 : format par domaine panel-bundle v1 (D-25) ; les anciens formats suivent le chemin existant
+      if (parsed && typeof parsed === 'object' && parsed.format === 'panel-bundle') {
+        bundleValidate(parsed).then(v => openBundleRestoreDialog(v, file.name))
+          .catch(err => alert('Restauration impossible : ' + (err && err.message || err) + '\nRien n\'a été modifié.'));
+        return;
+      }
       try { payload = validateBackupPayload(JSON.parse(ev.target.result)); }
       catch (err) { alert('Restauration impossible : ' + (err instanceof SyntaxError ? 'le fichier n\'est pas un JSON valide (incomplet ou corrompu ?).' : err.message) + '\nRien n\'a été modifié.'); return; }
       openRestoreDialog(payload, file.name);
@@ -12558,7 +12581,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     });
 
     // Sauvegarde & Export JSON
-    $('backupJsonBtn').onclick = () => {
+    // Lot 3.1b-1 : la sauvegarde complète est au format panel-bundle v1 ; l'ancien format reste disponible (D-23)
+    $('backupJsonBtn').onclick = () => { bundleDownloadFull().catch(err => alert('Sauvegarde impossible : ' + (err && err.message || err))); };
+    if ($('backupOptionsBtn')) $('backupOptionsBtn').onclick = () => openBundleExportDialog();
+    const exportLegacyV3 = () => {
       const data = {
         format: 'panel-backup',
         version: 3,
@@ -12575,8 +12601,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       a.href = URL.createObjectURL(blob);
       a.download = `panel_sauvegarde_complete_${new Date().toISOString().slice(0, 10)}.json`;
       a.click();
-      showToast('Sauvegarde complète exportée !');
+      showToast('Sauvegarde complète exportée (format compatible) !');
     };
+    bundleLegacyExporter = exportLegacyV3;
 
     $('restoreJsonBtn').onclick = () => $('backupFileInput').click();
     $('backupFileInput').onchange = e => {
@@ -12837,8 +12864,398 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
   };
 
+  // ── Lot 3.1b-1 : sauvegardes par domaine (B1 : D-13 ; D-23 ancien format deux versions ; D-24 secrets ; D-25 panel-bundle) ──
+  // Spécification : docs/phase4/06-sauvegardes-par-domaine.md. Le service ne connaît que le contrat BackupProvider.v1.
+  // Propriété des données : le champ domain de SYNC_DOMAINS (une seule source de vérité, docs/directeur/05 § 5).
+  const BUNDLE_FORMAT = 'panel-bundle', BUNDLE_VERSION = 1, BUNDLE_KDF_ITER = 310000;
+  const BUNDLE_LABELS = { collection: 'Collection', reading: 'Lecture', explorer: 'Explorer', app: 'Application (préférences)' };
+  const BUNDLE_RESTORE_ORDER = ['explorer', 'collection', 'reading', 'app'];
+  const bunClone = v => JSON.parse(JSON.stringify(v === undefined ? null : v));
+  const bunDomainOf = name => { const d = SYNC_DOMAINS.find(x => x.name === name); return d ? d.domain : null; };
+  const bunLs = k => { try { return localStorage.getItem(k); } catch (_) { return null; } };
+  const bunSha256 = async str => {
+    try {
+      if (!(window.crypto && crypto.subtle)) return null;
+      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+      return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
+    } catch (_) { return null; }
+  };
+  const bunReady = async () => { try { await loadReleaseData(); } catch (_) {} try { await loadExplorerData(); } catch (_) {} };
+
+  // Fournisseurs : export() en lecture seule, counts(), normalize() = validation et nettoyage sans effet
+  const BUNDLE_PROVIDERS = [
+    {
+      id: 'collection', domain: bunDomainOf('copies'), schema: 1,
+      export: async () => ({ singles: bunClone(physicalSingles), seriesMeta: bunClone(seriesMeta || {}), locations: exportLocations(), pulls: bunClone([...relPulls.values()]) }),
+      counts: s => ({ singles: (s.singles || []).length, seriesMeta: Object.keys(s.seriesMeta || {}).length, locations: ((s.locations && s.locations.nodes) || []).length, pulls: (s.pulls || []).length }),
+      normalize: s => {
+        if (!s || typeof s !== 'object' || !Array.isArray(s.singles)) throw new Error('Section Collection illisible.');
+        const items = [], invalid = [];
+        s.singles.forEach((raw, i) => { const it = sanitizeImportedSingle(raw); if (it) items.push(it); else invalid.push(i + 1); });
+        const ids = new Set(), dup = [];
+        items.forEach(it => { if (ids.has(it.id)) dup.push(it.id); ids.add(it.id); });
+        const rel = sanitizeReleaseData({ publications: [], pulls: s.pulls || [], conflicts: [] });
+        return {
+          items, invalid, seriesMeta: s.seriesMeta && typeof s.seriesMeta === 'object' && !Array.isArray(s.seriesMeta) ? s.seriesMeta : null,
+          locations: sanitizeLocDoc(s.locations), pulls: rel ? rel.pulls : [],
+          anomalies: [].concat(invalid.length ? [invalid.length + ' fiche(s) illisible(s) ignorée(s)'] : [], dup.length ? [dup.length + ' identifiant(s) en double'] : [])
+        };
+      }
+    },
+    {
+      id: 'reading', domain: bunDomainOf('reading_progress'), schema: 1,
+      export: async () => ({ progress: bunClone([...exProgress.values()]) }),
+      counts: s => ({ progress: (s.progress || []).length }),
+      normalize: s => {
+        if (!s || typeof s !== 'object' || !Array.isArray(s.progress)) throw new Error('Section Lecture illisible.');
+        const ex = sanitizeExplorerData({ editorial: [], progress: s.progress });
+        const lost = s.progress.length - ex.progress.length;
+        return { progress: ex.progress, anomalies: lost ? [lost + ' progression(s) illisible(s) ignorée(s)'] : [] };
+      }
+    },
+    {
+      id: 'explorer', domain: bunDomainOf('publications'), schema: 1,
+      export: async () => {
+        const r = exportReleaseData();
+        return { editorial: bunClone([...exEditorial.values()]), publications: r.publications, conflicts: r.conflicts, sync: r.sync, sourceCfg: r.sourceCfg };
+      },
+      counts: s => ({ guides: (s.editorial || []).length, publications: (s.publications || []).length }),
+      normalize: s => {
+        if (!s || typeof s !== 'object') throw new Error('Section Explorer illisible.');
+        const ex = sanitizeExplorerData({ editorial: s.editorial || [], progress: [] });
+        const rel = sanitizeReleaseData({ publications: s.publications || [], pulls: [], conflicts: s.conflicts || [] });
+        const lost = ((s.editorial || []).length - ex.editorial.length) + ((s.publications || []).length - (rel ? rel.publications.length : 0));
+        return { editorial: ex.editorial, publications: rel ? rel.publications : [], conflicts: rel ? rel.conflicts : [], anomalies: lost ? [lost + ' fiche(s) éditoriale(s) illisible(s) ignorée(s)'] : [] };
+      }
+    },
+    {
+      id: 'app', domain: 'app', schema: 1,
+      export: async () => {
+        const prefs = {};
+        SYNC_PREF_KEYS.forEach(k => { const v = bunLs(k); if (v !== null) prefs[k] = v; });
+        return { prefs, profile: relMeta && relMeta.profile ? bunClone(relMeta.profile) : null };
+      },
+      counts: s => ({ prefs: Object.keys(s.prefs || {}).length }),
+      normalize: s => {
+        if (!s || typeof s !== 'object') throw new Error('Section Application illisible.');
+        const prefs = {};
+        Object.entries(s.prefs || {}).forEach(([k, v]) => { if (SYNC_PREF_KEYS.includes(k) && typeof v === 'string' && v.length <= 200) prefs[k] = v; });
+        return { prefs, anomalies: [] };
+      }
+    }
+  ];
+  const bunProvider = id => BUNDLE_PROVIDERS.find(p => p.id === id) || null;
+  // Empreinte des données du domaine ; le compteur d'écriture locDoc.rev (incrémenté à chaque sauvegarde) n'est pas une donnée
+  const bunFingerprint = async id => { const p = bunProvider(id); if (!p) return null; await bunReady(); const d = await p.export(); if (d && d.locations && typeof d.locations === 'object') delete d.locations.rev; return stableHash(stableJson(d)); };
+  const bunFingerprints = async () => { const out = {}; for (const p of BUNDLE_PROVIDERS) out[p.id] = await bunFingerprint(p.id); return out; };
+
+  // Secrets (D-24) : exclus par défaut ; sur demande explicite, chiffrés AES-GCM 256 (clé dérivée PBKDF2-SHA256 du mot de passe saisi)
+  const bunB64 = u8 => { let s = ''; u8.forEach(b => { s += String.fromCharCode(b); }); return btoa(s); };
+  const bunUnB64 = s => Uint8Array.from(atob(String(s || '')), c => c.charCodeAt(0));
+  const bunKey = async (password, salt, iterations) => {
+    const base = await crypto.subtle.importKey('raw', new TextEncoder().encode(password), 'PBKDF2', false, ['deriveKey']);
+    return crypto.subtle.deriveKey({ name: 'PBKDF2', salt, iterations, hash: 'SHA-256' }, base, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']);
+  };
+  const bunEncryptSecrets = async password => {
+    if (!(window.crypto && crypto.subtle)) throw new Error('Chiffrement indisponible dans ce navigateur : les clés ne sont pas exportées.');
+    if (typeof password !== 'string' || password.length < 8) throw new Error('Mot de passe de chiffrement : 8 caractères au minimum.');
+    const values = {};
+    SYNC_SECRET_KEYS.forEach(k => { const v = bunLs(k); if (v !== null) values[k] = v; });
+    const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    const key = await bunKey(password, salt, BUNDLE_KDF_ITER);
+    const ct = await crypto.subtle.encrypt({ name: 'AES-GCM', iv }, key, new TextEncoder().encode(JSON.stringify(values)));
+    return { alg: 'AES-GCM-256', kdf: 'PBKDF2-SHA256', iterations: BUNDLE_KDF_ITER, salt: bunB64(salt), iv: bunB64(iv), data: bunB64(new Uint8Array(ct)), count: Object.keys(values).length };
+  };
+  const bunDecryptSecrets = async (sec, password) => {
+    if (!sec || sec.alg !== 'AES-GCM-256' || sec.kdf !== 'PBKDF2-SHA256') throw new Error('Section des clés : format inconnu.');
+    const iterations = Math.max(100000, Math.min(5000000, parseInt(sec.iterations, 10) || 0));
+    let plain;
+    try {
+      const key = await bunKey(String(password || ''), bunUnB64(sec.salt), iterations);
+      plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: bunUnB64(sec.iv) }, key, bunUnB64(sec.data));
+    } catch (_) { throw new Error('Mot de passe incorrect ou section des clés altérée : aucune clé restaurée.'); }
+    const obj = JSON.parse(new TextDecoder().decode(plain));
+    const out = {};
+    Object.entries(obj || {}).forEach(([k, v]) => { if (SYNC_SECRET_KEYS.includes(k) && typeof v === 'string' && v.length <= 4000) out[k] = v; });
+    return out;
+  };
+
+  // Export : sections demandées (toutes par défaut), manifeste avec comptes et sha256 de la sérialisation stable
+  const bundleExport = async (opts = {}) => {
+    await bunReady();
+    const ids = (opts.domains && opts.domains.length ? opts.domains : BUNDLE_PROVIDERS.map(p => p.id)).filter(id => bunProvider(id));
+    const exclude = new Set(opts.without || []);
+    const sections = {}, manifest = {};
+    for (const id of ids) {
+      if (exclude.has(id)) continue;
+      const p = bunProvider(id);
+      const data = await p.export();
+      sections[id] = data;
+      manifest[id] = { provider: id, domain: p.domain, schema: p.schema, count: p.counts(data), sha256: await bunSha256(stableJson(data)) };
+    }
+    if (opts.legacyDigital) {
+      const d = readStoredDigitalData();
+      sections.legacyDigital = d;
+      manifest.legacyDigital = { provider: 'app', domain: 'app', schema: 1, count: { keys: Object.keys(d).length }, sha256: await bunSha256(stableJson(d)) };
+    }
+    if (opts.secretsPassword) {
+      const s = await bunEncryptSecrets(opts.secretsPassword);
+      sections.secrets = s;
+      manifest.secrets = { provider: 'app', domain: 'app', schema: 1, count: { keys: s.count }, sha256: await bunSha256(stableJson(s)), encrypted: true };
+    }
+    return {
+      format: BUNDLE_FORMAT, version: BUNDLE_VERSION, createdAt: new Date().toISOString(),
+      app: { version: (typeof APP_VERSION !== 'undefined' ? APP_VERSION : null), platform: IS_NATIVE_APP ? 'android' : 'web' },
+      manifest, sections
+    };
+  };
+  const bunDownload = (obj, name) => {
+    const blob = new Blob([JSON.stringify(obj, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+  };
+  const bundleDownloadFull = async () => {
+    const b = await bundleExport({ legacyDigital: true });
+    bunDownload(b, 'panel_sauvegarde_complete_' + new Date().toISOString().slice(0, 10) + '.json');
+    showToast('Sauvegarde complète exportée (panel-bundle, par domaine) !');
+    return b;
+  };
+
+  // Conversion inverse panel-bundle → panel-backup v3 (R7 : relisible par l'ancienne restauration)
+  const bundleToV3 = b => {
+    const s = (b && b.sections) || {};
+    const c = s.collection || {}, r = s.reading || {}, e = s.explorer || {}, a = s.app || {};
+    return Object.assign({ format: 'panel-backup', version: 3 }, s.legacyDigital || {}, {
+      physicalSingles: c.singles || [], seriesMeta: c.seriesMeta || {}, locations: c.locations || undefined,
+      releases: { schema: REL_SCHEMA, publications: e.publications || [], pulls: c.pulls || [], conflicts: e.conflicts || [], profile: a.profile || null, sync: e.sync || {}, sourceCfg: e.sourceCfg || {} },
+      explorer: { schema: GD_SCHEMA, editorial: e.editorial || [], progress: r.progress || [] },
+      exportedAt: b && b.createdAt || null
+    });
+  };
+  // Découpage en mémoire d'un ancien fichier (v3 ou v2) par domaine ; le fichier d'origine n'est jamais réécrit
+  const bundleFromLegacy = d => {
+    if (!d || typeof d !== 'object') throw new Error('Le fichier ne contient pas une sauvegarde Panel.');
+    const list = Array.isArray(d) ? d : (d.physicalSingles || d.singles || []);
+    const rel = d.releases || {}, ex = d.explorer || {};
+    const legacyDigital = {};
+    Object.keys(DIGITAL_LS_KEYS).forEach(k => { if (d[k] !== undefined) legacyDigital[k] = d[k]; if (d[k + 'Raw'] !== undefined) legacyDigital[k + 'Raw'] = d[k + 'Raw']; });
+    return {
+      format: BUNDLE_FORMAT, version: BUNDLE_VERSION, createdAt: d.exportedAt || null, migratedFrom: (d.format || 'tableau') + (d.version ? ' v' + d.version : ''), manifest: {},
+      sections: {
+        collection: { singles: list, seriesMeta: d.seriesMeta || {}, locations: d.locations || null, pulls: rel.pulls || [] },
+        reading: { progress: ex.progress || [] },
+        explorer: { editorial: ex.editorial || [], publications: rel.publications || [], conflicts: rel.conflicts || [], sync: rel.sync || {}, sourceCfg: rel.sourceCfg || {} },
+        app: { prefs: {}, profile: rel.profile || null },
+        legacyDigital
+      }
+    };
+  };
+
+  // Validation : structure, empreintes, comptes, nettoyage par fournisseur. Ne modifie rien.
+  const bundleValidate = async b => {
+    if (!b || typeof b !== 'object' || b.format !== BUNDLE_FORMAT) throw new Error('Le fichier n\'est pas une sauvegarde panel-bundle.');
+    if (Number(b.version) > BUNDLE_VERSION) throw new Error('Sauvegarde créée par une version plus récente de Panel (panel-bundle v' + b.version + ').');
+    if (!b.sections || typeof b.sections !== 'object' || Array.isArray(b.sections)) throw new Error('Sauvegarde incomplète : aucune section.');
+    const manifest = b.manifest && typeof b.manifest === 'object' ? b.manifest : {};
+    const out = { createdAt: b.createdAt || null, sections: {}, unknown: [], secrets: null, legacyDigital: b.sections.legacyDigital !== undefined, raw: b };
+    for (const [id, data] of Object.entries(b.sections)) {
+      const m = manifest[id] || null;
+      const sha = m && m.sha256 ? await bunSha256(stableJson(data)) : null;
+      const integrity = !m || !m.sha256 ? 'non vérifiable' : sha === null ? 'non vérifiable' : sha === m.sha256 ? 'vérifiée' : 'altérée';
+      if (id === 'secrets') { out.secrets = { integrity, count: (data && data.count) || 0, data }; continue; }
+      if (id === 'legacyDigital') continue;
+      const p = bunProvider(id);
+      if (!p) { out.unknown.push(id); continue; }
+      let norm = null, error = null;
+      try { norm = p.normalize(data); } catch (err) { error = String(err.message || err); }
+      const counts = error ? null : p.counts(data);
+      const countsOk = !m || !m.count || !counts ? null : stableJson(m.count) === stableJson(counts);
+      out.sections[id] = { id, label: BUNDLE_LABELS[id], integrity, counts, countsOk, norm, error, anomalies: norm ? norm.anomalies : [error] };
+    }
+    if (!Object.keys(out.sections).length && !out.secrets) throw new Error('Aucune section restaurable dans la sauvegarde.');
+    return out;
+  };
+
+  // Restauration : domaines choisis seulement ; fusion par défaut ; instantané ; garde-fou ; annulation par jeton
+  const bunUndo = new Map();
+  const bunIdbIds = async store => { try { const db = await openCatalogDb(); return db && db.objectStoreNames.contains(store) ? new Set((await idbAll(db, store)).map(x => x && x.id).filter(Boolean)) : new Set(); } catch (_) { return new Set(); } };
+  const bunIdbDelete = async (store, ids) => {
+    if (!ids.length) return;
+    const db = await openCatalogDb();
+    if (db && db.objectStoreNames.contains(store)) await idbWrite(db, [store], tx => ids.forEach(id => tx.objectStore(store).delete(id)));
+  };
+  const BUNDLE_STORES = { publications: () => relPubs, pulls: () => relPulls, editorial: () => exEditorial, readprog: () => exProgress };
+  const bundleRestore = async (v, opts = {}) => {
+    const mode = opts.mode === 'replace' ? 'replace' : 'merge';
+    const want = (opts.domains && opts.domains.length ? opts.domains : Object.keys(v.sections)).filter(id => v.sections[id] && !v.sections[id].error);
+    if (!want.length && !opts.secretsPassword) return { ok: false, error: 'Aucun domaine sélectionné.' };
+    const altered = want.filter(id => v.sections[id].integrity === 'altérée');
+    if (altered.length && !opts.acceptAltered) return { ok: false, needsAlteredConfirmation: true, altered, error: 'Section(s) altérée(s) : ' + altered.map(id => BUNDLE_LABELS[id]).join(', ') + '. Confirmation explicite requise.' };
+    await bunReady();
+    const has = id => want.includes(id);
+    const col = has('collection') ? v.sections.collection.norm : null;
+    // Garde-fou anti-cataclysme (06 § 8) : remplacement qui retirerait plus de 50 fiches ou plus de 10 % de la collection
+    if (col && mode === 'replace') {
+      const inc = new Set(col.items.map(x => x.id));
+      const removed = physicalSingles.filter(x => !inc.has(x.id)).length;
+      if ((removed > 50 || (physicalSingles.length && removed / physicalSingles.length > 0.1)) && !opts.confirmLoss) {
+        return { ok: false, needsConfirmation: true, removed, current: physicalSingles.length, incoming: col.items.length, error: 'Ce remplacement retirerait ' + removed + ' exemplaire(s) : confirmation renforcée requise.' };
+      }
+    }
+    const before = await bunFingerprints();
+    const idsBefore = {};
+    for (const st of Object.keys(BUNDLE_STORES)) idsBefore[st] = await bunIdbIds(st);
+    const ex = has('explorer') ? v.sections.explorer.norm : null, rd = has('reading') ? v.sections.reading.norm : null;
+    const payload = {
+      items: col ? col.items : null, invalid: col ? col.invalid : [], seriesMeta: col ? col.seriesMeta : null, locations: col ? col.locations : null,
+      releases: (col || ex) ? { publications: ex ? ex.publications : [], pulls: col ? col.pulls : [], conflicts: ex ? ex.conflicts : [] } : null,
+      explorer: (ex || rd) ? { editorial: ex ? ex.editorial : [], progress: rd ? rd.progress : [] } : null
+    };
+    // Préférences (Application) : fusion = seulement les clés absentes ; remplacement = valeurs de la sauvegarde
+    const prevPrefs = {};
+    SYNC_PREF_KEYS.forEach(k => { prevPrefs[k] = bunLs(k); });
+    let res = { ok: true, added: 0, conflicts: 0, undo: () => true };
+    if (col || ex || rd) res = await applyBackupRestore(payload, { mode, allowWithoutSnapshot: !col });
+    if (!res.ok) return Object.assign({ domains: want }, res);
+    let prefsSet = 0;
+    if (has('app')) {
+      Object.entries(v.sections.app.norm.prefs).forEach(([k, val]) => {
+        if (mode === 'replace' || bunLs(k) === null) { try { localStorage.setItem(k, val); prefsSet++; } catch (_) {} }
+      });
+    }
+    // Clés chiffrées (D-24) : écrites seulement si absentes ; une clé déjà présente n'est jamais écrasée sans opts.overwriteSecrets
+    const secrets = { restored: 0, kept: 0 };
+    const prevSecrets = {};
+    if (opts.secretsPassword && v.secrets) {
+      let vals;
+      try { vals = await bunDecryptSecrets(v.secrets.data, opts.secretsPassword); }
+      catch (err) { res.undo(); return { ok: false, domains: want, error: String(err.message || err), rolledBack: true }; }
+      Object.entries(vals).forEach(([k, val]) => {
+        prevSecrets[k] = bunLs(k);
+        if (prevSecrets[k] === null || (opts.overwriteSecrets && prevSecrets[k] !== val)) { try { localStorage.setItem(k, val); secrets.restored++; } catch (_) {} }
+        else secrets.kept++;
+      });
+    }
+    // Contrôle après restauration : les domaines non choisis sont inchangés (empreintes)
+    const after = await bunFingerprints();
+    const untouched = BUNDLE_PROVIDERS.map(p => p.id).filter(id => !want.includes(id));
+    const untouchedOk = untouched.every(id => before[id] === after[id]);
+    const idsAfter = {};
+    for (const st of Object.keys(BUNDLE_STORES)) idsAfter[st] = new Set(BUNDLE_STORES[st]().keys());
+    const token = 'bun_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    bunUndo.set(token, async () => {
+      res.undo();
+      // Fiches ajoutées par cette restauration dans IndexedDB : retirées (l'état d'avant ne les contenait pas)
+      for (const st of Object.keys(BUNDLE_STORES)) await bunIdbDelete(st, [...idsAfter[st]].filter(id => !idsBefore[st].has(id) && !BUNDLE_STORES[st]().has(id)));
+      Object.entries(prevPrefs).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
+      Object.entries(prevSecrets).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
+      return true;
+    });
+    return { ok: true, mode, domains: want, added: res.added || 0, conflicts: res.conflicts || 0, total: physicalSingles.length, snapshotId: res.snapshotId || null, prefsSet, secrets, untouched, untouchedOk, fingerprints: after, undoToken: token };
+  };
+  const bundleUndo = async token => { const f = bunUndo.get(token); if (!f) return false; bunUndo.delete(token); await f(); renderSinglesCollection(); return true; };
+
+  // Fenêtres : export par domaine (format, clés chiffrées) et restauration (aperçu, intégrité, choix des domaines)
+  const bunModal = id => {
+    let box = $(id);
+    if (!box) { box = document.createElement('div'); box.id = id; box.className = 'modal-backdrop'; document.body.appendChild(box); }
+    return box;
+  };
+  const openBundleExportDialog = () => {
+    const box = bunModal('bundleExportDialog');
+    const secretsPresent = SYNC_SECRET_KEYS.filter(k => bunLs(k) !== null).length;
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bundleExportTitle">' +
+      '<h2 id="bundleExportTitle">Sauvegarde par domaine</h2>' +
+      '<p class="stat-sub">Chaque domaine est sauvegardé dans sa propre section, restaurable seule. Les PDF et CBZ ne sont jamais inclus.</p>' +
+      ['collection', 'reading', 'explorer', 'app'].map(id => '<label class="restore-opt"><input type="checkbox" name="bunDom" value="' + id + '" checked> <span><b>' + BUNDLE_LABELS[id] + '</b></span></label>').join('') +
+      '<label class="restore-opt"><input type="checkbox" name="bunLegacy" checked> <span><b>Données des anciens fichiers numériques</b><br><small>Marque-pages, notes, positions (comme la sauvegarde complète actuelle)</small></span></label>' +
+      '<fieldset style="border:0;padding:0;margin:8px 0"><legend class="stat-sub">Format</legend>' +
+      '<label class="restore-opt"><input type="radio" name="bunFmt" value="bundle" checked> <span><b>panel-bundle v1 (recommandé)</b></span></label>' +
+      '<label class="restore-opt"><input type="radio" name="bunFmt" value="v3"> <span><b>Format compatible (panel-backup v3)</b><br><small>Sauvegarde complète à l\'ancien format, proposée pendant deux versions</small></span></label></fieldset>' +
+      '<label class="restore-opt"><input type="checkbox" name="bunSecrets"' + (secretsPresent ? '' : ' disabled') + '> <span><b>Inclure mes clés et identifiants, chiffrés</b><br><small>' + (secretsPresent ? secretsPresent + ' clé(s) enregistrée(s). Exclues par défaut. Sans le mot de passe, elles sont illisibles et irrécupérables.' : 'Aucune clé enregistrée sur cet appareil.') + '</small></span></label>' +
+      '<div data-pw hidden><input type="password" autocomplete="new-password" placeholder="Mot de passe (8 caractères minimum)" data-pw1 style="width:100%;margin:4px 0"><input type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe" data-pw2 style="width:100%;margin:4px 0"></div>' +
+      '<p class="stat-sub" data-msg role="status"></p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-cancel>Annuler</button><button class="btn" data-go>Exporter</button></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s);
+    const sync = () => {
+      const v3 = q('input[name=bunFmt]:checked').value === 'v3';
+      box.querySelectorAll('input[name=bunDom], input[name=bunLegacy]').forEach(i => { i.disabled = v3; });
+      q('input[name=bunSecrets]').disabled = v3 || !secretsPresent;
+      q('[data-pw]').hidden = !(q('input[name=bunSecrets]').checked && !q('input[name=bunSecrets]').disabled);
+    };
+    box.querySelectorAll('input').forEach(i => { i.onchange = sync; });
+    q('[data-cancel]').onclick = () => box.classList.remove('open');
+    q('[data-go]').onclick = async () => {
+      const msg = q('[data-msg]');
+      if (q('input[name=bunFmt]:checked').value === 'v3') { if (bundleLegacyExporter) bundleLegacyExporter(); box.classList.remove('open'); return; }
+      const domains = [...box.querySelectorAll('input[name=bunDom]:checked')].map(i => i.value);
+      if (!domains.length) { msg.textContent = 'Choisissez au moins un domaine.'; return; }
+      let secretsPassword = null;
+      if (!q('[data-pw]').hidden) {
+        const a = q('[data-pw1]').value, b = q('[data-pw2]').value;
+        if (a.length < 8) { msg.textContent = 'Mot de passe : 8 caractères au minimum.'; return; }
+        if (a !== b) { msg.textContent = 'Les deux mots de passe diffèrent.'; return; }
+        secretsPassword = a;
+      }
+      q('[data-go]').disabled = true;
+      try {
+        const b = await bundleExport({ domains, legacyDigital: q('input[name=bunLegacy]').checked, secretsPassword });
+        const all = domains.length === 4;
+        bunDownload(b, 'panel_sauvegarde_' + (all ? 'complete' : domains.join('-')) + '_' + new Date().toISOString().slice(0, 10) + '.json');
+        box.classList.remove('open');
+        showToast('Sauvegarde exportée : ' + domains.map(id => BUNDLE_LABELS[id]).join(', ') + (secretsPassword ? ' + clés chiffrées' : '') + '.');
+      } catch (err) { msg.textContent = String(err.message || err); q('[data-go]').disabled = false; }
+    };
+    sync();
+  };
+  const openBundleRestoreDialog = (v, fileName) => {
+    const box = bunModal('bundleRestoreDialog');
+    const when = v.createdAt ? new Date(v.createdAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
+    const ids = BUNDLE_RESTORE_ORDER.filter(id => v.sections[id]);
+    const countTxt = c => c ? Object.entries(c).map(([k, n]) => n + ' ' + ({ singles: 'exemplaire(s)', seriesMeta: 'série(s) suivie(s)', locations: 'emplacement(s)', pulls: 'pull(s)', progress: 'progression(s)', guides: 'guide(s)', publications: 'publication(s)', prefs: 'préférence(s)' })[k]).join(', ') : '';
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bundleRestoreTitle">' +
+      '<h2 id="bundleRestoreTitle">Restaurer une sauvegarde par domaine</h2>' +
+      '<p><b>' + escapeHtml(fileName || 'Sauvegarde') + '</b> · ' + escapeHtml(when) + '</p>' +
+      ids.map(id => { const s = v.sections[id]; return '<label class="restore-opt"><input type="checkbox" name="bunRDom" value="' + id + '"' + (s.error ? ' disabled' : ' checked') + '> <span><b>' + escapeHtml(s.label) + '</b> — ' + escapeHtml(s.error || countTxt(s.counts)) +
+        '<br><small>Intégrité : ' + escapeHtml(s.integrity) + (s.countsOk === false ? ' · comptes différents du manifeste' : '') + (s.anomalies && s.anomalies.length && !s.error ? ' · ' + escapeHtml(s.anomalies.join(' ; ')) : '') + '</small></span></label>'; }).join('') +
+      (v.unknown.length ? '<p class="stat-sub">Section(s) inconnue(s), conservée(s) dans le fichier et ignorée(s) : ' + escapeHtml(v.unknown.join(', ')) + '.</p>' : '') +
+      (v.legacyDigital ? '<p class="stat-sub">Les données des anciens fichiers numériques ne sont pas restaurées ; celles déjà présentes restent intactes.</p>' : '') +
+      (v.secrets ? '<label class="restore-opt"><input type="checkbox" name="bunRSecrets"> <span><b>Restaurer les clés chiffrées</b> (' + v.secrets.count + ')<br><small>Une clé déjà présente sur cet appareil n\'est pas remplacée.</small></span></label><div data-pw hidden><input type="password" autocomplete="current-password" placeholder="Mot de passe de la sauvegarde" data-pw1 style="width:100%;margin:4px 0"></div>' : '') +
+      '<label class="restore-opt"><input type="radio" name="bunRMode" value="merge" checked> <span><b>Fusionner (recommandé)</b><br><small>Ajoute ce qui manque. Rien d\'existant n\'est modifié ni supprimé.</small></span></label>' +
+      '<label class="restore-opt"><input type="radio" name="bunRMode" value="replace"> <span><b>Remplacer les domaines cochés</b><br><small>Les autres domaines ne sont pas touchés.</small></span></label>' +
+      '<p class="stat-sub">Un instantané de la collection est pris avant toute modification ; la restauration peut être annulée.</p><p class="stat-sub" data-msg role="status"></p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-cancel>Annuler</button><button class="btn" data-go>Restaurer</button></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s);
+    if (q('input[name=bunRSecrets]')) q('input[name=bunRSecrets]').onchange = e => { q('[data-pw]').hidden = !e.target.checked; };
+    q('[data-cancel]').onclick = () => box.classList.remove('open');
+    q('[data-go]').onclick = async () => {
+      const domains = [...box.querySelectorAll('input[name=bunRDom]:checked')].map(i => i.value);
+      const mode = q('input[name=bunRMode]:checked').value;
+      const wantSecrets = q('input[name=bunRSecrets]') && q('input[name=bunRSecrets]').checked;
+      const opts = { domains, mode, secretsPassword: wantSecrets ? q('[data-pw1]').value : null };
+      if (mode === 'replace' && !confirm('Remplacer les domaines : ' + domains.map(id => BUNDLE_LABELS[id]).join(', ') + ' ? (annulation possible)')) return;
+      q('[data-go]').disabled = true;
+      let res = await bundleRestore(v, opts);
+      if (!res.ok && res.needsAlteredConfirmation && confirm(res.error + '\nRestaurer malgré tout ?')) res = await bundleRestore(v, Object.assign(opts, { acceptAltered: true }));
+      if (!res.ok && res.needsConfirmation) {
+        const typed = prompt(res.error + '\nCollection actuelle : ' + res.current + ' · sauvegarde : ' + res.incoming + '.\nTapez REMPLACER pour confirmer.');
+        if (typed === 'REMPLACER') res = await bundleRestore(v, Object.assign(opts, { confirmLoss: true }));
+      }
+      if (!res.ok) { q('[data-msg]').textContent = res.error || 'Restauration annulée : rien n\'a été modifié.'; q('[data-go]').disabled = false; return; }
+      box.classList.remove('open');
+      renderSinglesCollection();
+      showToastAction('Restauré : ' + res.domains.map(id => BUNDLE_LABELS[id]).join(', ') + ' (' + res.added + ' ajout(s))' + (res.secrets.restored ? ', ' + res.secrets.restored + ' clé(s)' : '') + '.', 'Annuler', () => { bundleUndo(res.undoToken).then(ok => showToast(ok ? 'Restauration annulée.' : 'Annulation impossible.')); });
+    };
+  };
+
   window.Panel = {
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
+    backup: { providers: () => BUNDLE_PROVIDERS.map(p => ({ id: p.id, domain: p.domain, schema: p.schema })), export: bundleExport, validate: bundleValidate, restore: bundleRestore, undo: bundleUndo, fingerprint: bunFingerprint, fingerprints: bunFingerprints, toV3: bundleToV3, fromLegacy: bundleFromLegacy, downloadFull: bundleDownloadFull, openExportDialog: openBundleExportDialog, openRestoreDialog: openBundleRestoreDialog },
     parseComicBarcode,
     computeCanvasDHash,
     computeCanvasColorProfile,

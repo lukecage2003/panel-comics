@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **plan d'exécution final, prêt à lancer après approbation** (8 novembre 2026, révisé après le lot 3.1).
+Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 livré). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 
