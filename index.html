@@ -14120,7 +14120,20 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // Spécification : docs/phase4/06-sauvegardes-par-domaine.md. Le service ne connaît que le contrat BackupProvider.v1.
   // Propriété des données : le champ domain de SYNC_DOMAINS (une seule source de vérité, docs/directeur/05 § 5).
   const BUNDLE_FORMAT = 'panel-bundle', BUNDLE_VERSION = 1, BUNDLE_KDF_ITER = 310000;
-  const BUNDLE_LABELS = { collection: 'Collection', reading: 'Lecture', explorer: 'Explorer', app: 'Application (préférences)' };
+  const BUNDLE_LABELS = { collection: 'Collection', reading: 'Lecture', explorer: 'Explorer', community: 'Communauté (brouillons locaux)', app: 'Application (préférences)' };
+  // Brouillons relus à la restauration : identifiant borné, texte revalidé par la politique, exemplaires refiltrés par la liste blanche
+  const bunCommDrafts = list => {
+    const P = commPolicy(); const out = []; let lost = 0;
+    (Array.isArray(list) ? list : []).forEach(d => {
+      if (!P || !d || typeof d !== 'object' || typeof d.id !== 'string' || !/^[A-Za-z0-9_-]{1,60}$/.test(d.id) || typeof d.text !== 'string') { lost++; return; }
+      const items = (Array.isArray(d.items) ? d.items : []).slice(0, 20).map(c => P.shareCopy(c && typeof c === 'object' ? c : {}).copy);
+      const v = commValidate(d.text, d.visibility, items);
+      if (!v.ok) { lost++; return; }
+      out.push({ id: d.id, text: d.text.slice(0, 5000), visibility: d.visibility, items, warnings: v.warnings, status: 'draft', createdAt: typeof d.createdAt === 'string' ? d.createdAt : null, updatedAt: typeof d.updatedAt === 'string' ? d.updatedAt : null });
+    });
+    return { drafts: out.slice(0, COMM_MAX), lost: lost + Math.max(0, out.length - COMM_MAX) };
+  };
+  const bunTrashItems = list => (Array.isArray(list) ? list : []).map(x => x && typeof x === 'object' && x.item ? { removedAt: typeof x.removedAt === 'string' ? x.removedAt : null, index: Number(x.index) || 0, item: sanitizeImportedSingle(x.item) } : null).filter(x => x && x.item);
   const BUNDLE_RESTORE_ORDER = ['explorer', 'collection', 'reading', 'app'];
   const bunClone = v => JSON.parse(JSON.stringify(v === undefined ? null : v));
   const bunDomainOf = name => { const d = SYNC_DOMAINS.find(x => x.name === name); return d ? d.domain : null; };
@@ -14138,7 +14151,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const BUNDLE_PROVIDERS = [
     {
       id: 'collection', domain: bunDomainOf('copies'), schema: 1,
-      export: async () => ({ singles: bunClone(physicalSingles), seriesMeta: bunClone(seriesMeta || {}), locations: exportLocations(), pulls: bunClone([...relPulls.values()]), acquisitions: acqList() }),
+      export: async () => ({ singles: bunClone(physicalSingles), seriesMeta: bunClone(seriesMeta || {}), locations: exportLocations(), pulls: bunClone([...relPulls.values()]), acquisitions: acqList(), trash: bunClone(trashLoad().items) }),
       counts: s => ({ singles: (s.singles || []).length, seriesMeta: Object.keys(s.seriesMeta || {}).length, locations: ((s.locations && s.locations.nodes) || []).length, pulls: (s.pulls || []).length }),
       normalize: s => {
         if (!s || typeof s !== 'object' || !Array.isArray(s.singles)) throw new Error('Section Collection illisible.');
@@ -14151,6 +14164,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           items, invalid, seriesMeta: s.seriesMeta && typeof s.seriesMeta === 'object' && !Array.isArray(s.seriesMeta) ? s.seriesMeta : null,
           locations: sanitizeLocDoc(s.locations), pulls: rel ? rel.pulls : [],
           acquisitions: Array.isArray(s.acquisitions) ? s.acquisitions.filter(a => a && typeof a === 'object' && typeof a.id === 'string' && Array.isArray(a.lines)).map(a => JSON.parse(JSON.stringify(a))) : null,
+          trash: Array.isArray(s.trash) ? bunTrashItems(s.trash) : null,
           anomalies: [].concat(invalid.length ? [invalid.length + ' fiche(s) illisible(s) ignorée(s)'] : [], dup.length ? [dup.length + ' identifiant(s) en double'] : [])
         };
       }
@@ -14185,6 +14199,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const rel = sanitizeReleaseData({ publications: s.publications || [], pulls: [], conflicts: s.conflicts || [] });
         const lost = ((s.editorial || []).length - ex.editorial.length) + ((s.publications || []).length - (rel ? rel.publications.length : 0));
         return { editorial: ex.editorial, publications: rel ? rel.publications : [], conflicts: rel ? rel.conflicts : [], anomalies: lost ? [lost + ' fiche(s) éditoriale(s) illisible(s) ignorée(s)'] : [] };
+      }
+    },
+    {
+      id: 'community', domain: 'community', schema: 1,
+      export: async () => ({ drafts: bunClone(commLoad().drafts) }),
+      counts: s => ({ drafts: (s.drafts || []).length }),
+      normalize: s => {
+        if (!s || typeof s !== 'object' || !Array.isArray(s.drafts)) throw new Error('Section Communauté illisible.');
+        const r = bunCommDrafts(s.drafts);
+        return { drafts: r.drafts, anomalies: r.lost ? [r.lost + ' brouillon(s) illisible(s) ou non conforme(s) ignoré(s)'] : [] };
       }
     },
     {
@@ -14392,6 +14416,21 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const curA = acqList(), ids = new Set(curA.map(a => a.id));
       acqSave(mode === 'replace' ? col.acquisitions : curA.concat(col.acquisitions.filter(a => !ids.has(a.id))));
     }
+    // Corbeille (D-36) : fusion = fiches absentes ajoutées ; remplacement = corbeille de la sauvegarde ; rien si la sauvegarde n'en contient pas
+    const prevTrash = bunLs(TRASH_KEY);
+    if (col && Array.isArray(col.trash)) {
+      const curT = trashLoad().items, tids = new Set(curT.map(x => x.item.id));
+      try { trashSave({ version: 1, items: mode === 'replace' ? col.trash : curT.concat(col.trash.filter(x => !tids.has(x.item.id))) }); } catch (_) {}
+    }
+    // Brouillons Communauté (D-39) : même règle ; jamais publiés
+    const prevComm = bunLs(COMM_KEY);
+    let draftsSet = 0;
+    if (has('community')) {
+      const inc = v.sections.community.norm.drafts, curD = commLoad().drafts, dids = new Set(curD.map(x => x.id));
+      const next = mode === 'replace' ? inc : curD.concat(inc.filter(x => !dids.has(x.id))).slice(0, COMM_MAX);
+      draftsSet = mode === 'replace' ? inc.length : next.length - curD.length;
+      try { commSave({ version: 1, drafts: next }); } catch (_) { draftsSet = 0; }
+    }
     let prefsSet = 0;
     if (has('app')) {
       Object.entries(v.sections.app.norm.prefs).forEach(([k, val]) => {
@@ -14425,10 +14464,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       Object.entries(prevPrefs).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
       Object.entries(prevSecrets).forEach(([k, val]) => { try { if (val === null) localStorage.removeItem(k); else localStorage.setItem(k, val); } catch (_) {} });
       try { if (prevAcq === null) localStorage.removeItem(ACQ_KEY); else localStorage.setItem(ACQ_KEY, prevAcq); } catch (_) {}
+      try { if (prevTrash === null) localStorage.removeItem(TRASH_KEY); else localStorage.setItem(TRASH_KEY, prevTrash); } catch (_) {}
+      try { if (prevComm === null) localStorage.removeItem(COMM_KEY); else localStorage.setItem(COMM_KEY, prevComm); } catch (_) {}
       rdSetRaw(prevRd);
       return true;
     });
-    return { ok: true, mode, domains: want, added: res.added || 0, conflicts: res.conflicts || 0, total: physicalSingles.length, snapshotId: res.snapshotId || null, prefsSet, secrets, untouched, untouchedOk, fingerprints: after, undoToken: token };
+    return { ok: true, mode, domains: want, added: res.added || 0, conflicts: res.conflicts || 0, total: physicalSingles.length, snapshotId: res.snapshotId || null, prefsSet, draftsSet, secrets, untouched, untouchedOk, fingerprints: after, undoToken: token };
   };
   const bundleUndo = async token => { const f = bunUndo.get(token); if (!f) return false; bunUndo.delete(token); await f(); renderSinglesCollection(); return true; };
 
@@ -14467,7 +14508,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bundleExportTitle">' +
       '<h2 id="bundleExportTitle">Sauvegarde par domaine</h2>' +
       '<p class="stat-sub">Chaque domaine est sauvegardé dans sa propre section, restaurable seule. Les PDF et CBZ ne sont jamais inclus.</p>' +
-      ['collection', 'reading', 'explorer', 'app'].map(id => '<label class="restore-opt"><input type="checkbox" name="bunDom" value="' + id + '" checked> <span><b>' + BUNDLE_LABELS[id] + '</b></span></label>').join('') +
+      ['collection', 'reading', 'explorer', 'community', 'app'].map(id => '<label class="restore-opt"><input type="checkbox" name="bunDom" value="' + id + '" checked> <span><b>' + BUNDLE_LABELS[id] + '</b></span></label>').join('') +
       '<label class="restore-opt"><input type="checkbox" name="bunLegacy" checked> <span><b>Données des anciens fichiers numériques</b><br><small>Marque-pages, notes, positions (comme la sauvegarde complète actuelle)</small></span></label>' +
       '<fieldset style="border:0;padding:0;margin:8px 0"><legend class="stat-sub">Format</legend>' +
       '<label class="restore-opt"><input type="radio" name="bunFmt" value="bundle" checked> <span><b>panel-bundle v1 (recommandé)</b></span></label>' +

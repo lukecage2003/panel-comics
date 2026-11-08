@@ -2776,7 +2776,7 @@ const waitForCdp = async () => {
         if (!B) return { api: false };
         if (P.pauseCoverJob) P.pauseCoverJob();
         r.api = ['export', 'validate', 'restore', 'undo', 'fingerprints', 'toV3', 'fromLegacy'].every(k => typeof B[k] === 'function');
-        r.providers = JSON.stringify(B.providers().map(p => p.id + ':' + p.domain)) === JSON.stringify(['collection:collection', 'reading:reading', 'explorer:explorer', 'app:app']);
+        r.providers = JSON.stringify(B.providers().map(p => p.id + ':' + p.domain)) === JSON.stringify(['collection:collection', 'reading:reading', 'explorer:explorer', 'community:community', 'app:app']);
         const digitalKeys = ['panel_folders', 'panel_bookmarks', 'panel_theories', 'panel_reading_positions', 'panel_comic_notes', 'panel_comic_annotations'];
         const digital = () => JSON.stringify(digitalKeys.map(k => localStorage.getItem(k)));
         const digital0 = digital();
@@ -2894,7 +2894,7 @@ const waitForCdp = async () => {
         // Fenêtres
         B.openExportDialog();
         const dlgE = document.getElementById('bundleExportDialog');
-        r.uiExport = !!dlgE && dlgE.classList.contains('open') && dlgE.querySelectorAll('input[name=bunDom]').length === 4 && !!dlgE.querySelector('input[name=bunFmt][value=v3]') && !!document.getElementById('backupOptionsBtn');
+        r.uiExport = !!dlgE && dlgE.classList.contains('open') && dlgE.querySelectorAll('input[name=bunDom]').length === 5 && !!dlgE.querySelector('input[name=bunFmt][value=v3]') && !!document.getElementById('backupOptionsBtn');
         dlgE.classList.remove('open');
         B.openRestoreDialog(v, 'test-t32.json');
         const dlgR = document.getElementById('bundleRestoreDialog');
@@ -3748,6 +3748,72 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Calendrier comics uniquement : manga et éditeurs manga masqués par défaut, compteur, case de réaffichage, filtre explicite, aucune donnée modifiée',
         ok: t41fail.length === 0
+      });
+
+      // ─── Test 42 : Sauvegardes par domaine — brouillons Communauté et corbeille (D-39) ───
+      console.log('\n[TEST 42] Sauvegardes : domaine Communauté (brouillons revalidés), corbeille dans Collection, fusion, remplacement, annulation...');
+      const t42 = await evalExpr(`(async () => {
+        const P = window.Panel, B = P.backup, C = P.community, T = P.trash, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const CK = 'panel_community_drafts_v1', TK = 'panel_trash_v1';
+        const prevC = localStorage.getItem(CK), prevT = localStorage.getItem(TK);
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fp0 = await B.fingerprints();
+        const clone = o => JSON.parse(JSON.stringify(o));
+        try {
+          localStorage.removeItem(CK); localStorage.removeItem(TK);
+          r.provider = B.providers().some(p => p.id === 'community' && p.domain === 'community');
+          const s1 = C.saveDraft({ text: 'Ma pile du mois', visibility: 'private', items: [{ series: 'T42', issue: '#1' }] });
+          P.setPhysicalSingles([{ id: 't42a', series: 'T42 Série', issue: '#1' }, { id: 't42b', series: 'T42 Série', issue: '#2' }]);
+          await wait(50);
+          P.removeSingleWithUndo(P.getPhysicalSingles().find(s => s.id === 't42b'));
+          const bk = await B.export({ domains: ['community', 'collection'] });
+          r.exported = s1.ok && bk.sections.community.drafts.length === 1 && bk.manifest.community.count.drafts === 1 && Array.isArray(bk.sections.collection.trash) && bk.sections.collection.trash.length === 1;
+          // Sauvegarde trafiquée : brouillon avec lien (compte neuf : refusé), identifiant hostile, champ privé dans un exemplaire
+          const evil = clone(bk);
+          evil.sections.community.drafts.push({ id: 'cd_lien', text: 'Voir https://exemple.test', visibility: 'public', items: [] });
+          evil.sections.community.drafts.push({ id: '<x>', text: 'ok', visibility: 'private', items: [] });
+          evil.sections.community.drafts.push({ id: 'cd_prix', text: 'Lot', visibility: 'private', items: [{ series: 'T42', issue: '#3', purchasePrice: 99, location: 'Boîte 1' }] });
+          delete evil.manifest; // intégrité recalculée impossible : section non vérifiée mais lisible
+          const vEvil = await B.validate(clone(Object.assign({}, bk, { sections: evil.sections })));
+          const normC = vEvil.sections.community.norm;
+          r.sanitized = !!normC && normC.drafts.length === 2 && !normC.drafts.some(d => d.id === 'cd_lien' || d.id === '<x>') &&
+            !JSON.stringify(normC.drafts).includes('purchasePrice') && !JSON.stringify(normC.drafts).includes('Boîte 1') && normC.anomalies.length === 1;
+          // Fusion dans un état vide
+          localStorage.removeItem(CK); localStorage.removeItem(TK);
+          const v = await B.validate(clone(bk));
+          r.integrity = v.sections.community.integrity === 'vérifiée' && v.sections.community.countsOk === true;
+          const m = await B.restore(v, { mode: 'merge', domains: ['community', 'collection'] });
+          r.merged = m.ok === true && m.draftsSet === 1 && C.drafts().length === 1 && T.list().length === 1 && T.list()[0].item.id === 't42b';
+          // Fusion répétée : idempotente
+          const m2 = await B.restore(await B.validate(clone(bk)), { mode: 'merge', domains: ['community'] });
+          r.idempotent = m2.ok === true && m2.draftsSet === 0 && C.drafts().length === 1;
+          // Remplacement puis annulation exacte
+          const before = localStorage.getItem(CK);
+          C.saveDraft({ text: 'Autre brouillon', visibility: 'private', items: [] });
+          const rawBefore = localStorage.getItem(CK);
+          const rp = await B.restore(await B.validate(clone(bk)), { mode: 'replace', domains: ['community'] });
+          r.replaced = rp.ok === true && C.drafts().length === 1 && rp.untouchedOk === true;
+          r.undo = (await B.undo(rp.undoToken)) === true && localStorage.getItem(CK) === rawBefore && before !== rawBefore;
+          r.noPublish = C.publish().error === 'not_configured';
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          P.setPhysicalSingles(saved);
+          if (prevC === null) localStorage.removeItem(CK); else localStorage.setItem(CK, prevC);
+          if (prevT === null) localStorage.removeItem(TK); else localStorage.setItem(TK, prevT);
+          await wait(200);
+        }
+        const fp1 = await B.fingerprints();
+        r.finalState = Object.keys(fp0).every(k => fp0[k] === fp1[k]);
+        return r;
+      })()`);
+      console.log('Résultat Test 42:', JSON.stringify(t42));
+      const t42keys = ['provider', 'exported', 'sanitized', 'integrity', 'merged', 'idempotent', 'replaced', 'undo', 'noPublish', 'finalState'];
+      const t42fail = t42keys.filter(k => !t42 || t42[k] !== true);
+      if (t42fail.length) console.log('Test 42 — vérifications en échec :', t42fail.join(', '));
+      testResults.push({
+        test: 'Sauvegardes : domaine Communauté (brouillons revalidés, liens et champs privés écartés), corbeille dans Collection, fusion idempotente, remplacement annulable, aucun autre domaine touché',
+        ok: t42fail.length === 0
       });
 
       console.log('\n==========================================');
