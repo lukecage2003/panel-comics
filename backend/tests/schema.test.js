@@ -11,7 +11,7 @@ test.after(async () => { await db.close(); });
 const COMMON = ['user_id', 'id', 'data', 'field_revs', 'rev', 'deleted_at', 'created_at', 'updated_at', 'updated_by_device', 'schema_version'];
 const EXPECTED_COLUMNS = {
   profiles: ['user_id', 'handle', 'display_name', 'avatar_path', 'bio', 'locale', 'preferred_market', 'created_at', 'updated_at'],
-  user_settings: ['user_id', 'prefs', 'notifications', 'privacy', 'rev', 'updated_at'],
+  user_settings: ['user_id', 'prefs', 'notifications', 'privacy', 'rev', 'updated_at', 'prefs_hlc'],
   devices: ['id', 'user_id', 'label', 'platform', 'app_version', 'created_at', 'last_seen_at', 'last_sync_rev', 'revoked_at'],
   copies: [...COMMON, 'series_key', 'issue_number', 'is_wishlist'],
   locations: [...COMMON, 'parent_id', 'kind'],
@@ -24,9 +24,9 @@ const EXPECTED_COLUMNS = {
   sync_conflicts: ['id', 'user_id', 'entity', 'entity_id', 'field', 'local_value', 'server_value', 'base_rev', 'server_rev', 'device_id', 'created_at', 'resolved_at', 'resolution']
 };
 
-test('le schéma app contient exactement les 12 tables prévues', async () => {
+test('le schéma app contient exactement les 14 tables prévues (12 personnelles + rôles serveur du lot 3.3)', async () => {
   const r = await db.query("select table_name from information_schema.tables where table_schema = 'app' order by 1");
-  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES].sort());
+  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log'].sort());
 });
 
 test('aucun schéma réservé (catalog, editorial, media, signals, community) n\'est créé', async () => {
@@ -75,7 +75,7 @@ test('index (user_id, rev) et index des politiques présents', async () => {
 test('toutes les clés étrangères vers auth.users sont en cascade', async () => {
   const r = await db.query(`select conrelid::regclass::text as tbl, confdeltype from pg_constraint
     where contype = 'f' and connamespace = 'app'::regnamespace`);
-  assert.equal(r.rows.length, 12);
+  assert.equal(r.rows.length, 13); // 12 tables personnelles + staff_roles (lot 3.3)
   for (const x of r.rows) assert.equal(x.confdeltype, 'c', x.tbl);
 });
 

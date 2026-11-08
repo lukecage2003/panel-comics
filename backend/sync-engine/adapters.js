@@ -70,4 +70,37 @@ function createWebStorage(storage, key) {
   };
 }
 
-module.exports = { mapRpcError, createSupabaseTransport, createSupabaseSession, createWebStorage };
+// Horloge logique hybride (lot 3.3, D-38) : « 13 chiffres ms - 4 chiffres compteur - appareil », comparable par ordre lexical.
+// Monotone même si l'horloge murale recule ; observe() intègre une horloge reçue pour ne jamais produire une valeur plus ancienne.
+function createHlc(deviceTag, { now = () => Date.now() } = {}) {
+  if (!/^[A-Za-z0-9_-]{1,64}$/.test(String(deviceTag || ''))) throw new Error('identifiant d\'appareil invalide pour l\'horloge');
+  let last = 0, count = 0;
+  const fmt = () => String(last).padStart(13, '0') + '-' + String(count).padStart(4, '0') + '-' + deviceTag;
+  return {
+    tick() { const t = now(); if (t > last) { last = t; count = 0; } else { count++; if (count > 9999) { last++; count = 0; } } return fmt(); },
+    observe(h) { const m = /^(\d{13})-(\d{4})-/.exec(String(h || '')); if (!m) return; const t = Number(m[1]), c = Number(m[2]); if (t > last || (t === last && c > count)) { last = t; count = c; } }
+  };
+}
+
+// Compte (lot 3.3) : profil, préférences fusionnées par HLC, appareils ; noms de paramètres identiques à la migration 10
+function createSupabaseAccount(client, { schema = 'api' } = {}) {
+  if (!client || typeof client.schema !== 'function') throw new Error('client Supabase requis');
+  const rpc = async (fn, args) => {
+    let res;
+    try { res = await client.schema(schema).rpc(fn, args || {}); } catch (e) { throw mapRpcError(e); }
+    if (res && res.error) throw mapRpcError(res.error);
+    return res ? res.data : null;
+  };
+  return {
+    profile: () => rpc('my_profile'),
+    updateProfile: patch => rpc('update_profile', { p_patch: patch }),
+    roles: () => rpc('my_roles'),
+    settings: () => rpc('settings_get'),
+    mergeSettings: (deviceId, prefs, hlc) => rpc('settings_merge', { p_device: deviceId, p_prefs: prefs, p_hlc: hlc }),
+    registerDevice: (label, platform, appVersion) => rpc('register_device', { p_label: label, p_platform: platform, p_app_version: appVersion || null }),
+    devices: () => rpc('list_devices'),
+    revokeDevice: id => rpc('revoke_device', { p_device: id })
+  };
+}
+
+module.exports = { mapRpcError, createSupabaseTransport, createSupabaseSession, createWebStorage, createHlc, createSupabaseAccount };

@@ -190,3 +190,14 @@ Restant, avec un service externe ou une décision : projet Supabase et `verify-s
 | Migration 9 | `api.export_my_data()` ; `api.delete_my_data('SUPPRIMER MES DONNÉES')` ; `app.purge_tombstones(user, ≥ 7 jours)` réservé au service | Suppression du compte auth (API d'administration Supabase), tâche planifiée de purge, durée de conservation à valider (juridique) |
 | Tests | `adapters.test.js` (5) : deux appareils convergent par le transport Supabase, session expirée puis rafraîchie, coupure réseau rejouée sans doublon ; `privacy.test.js` (3) ; `verify-supabase.sql` étendu | `verify-supabase.sql` sur un vrai projet |
 
+## 11. Lot 3.3 local (8 novembre 2026, suite de la mission)
+**Statut : implémenté et validé localement (PGlite) ; jamais exécuté contre Supabase.** Décision : D-38.
+
+| Élément | Réalisé | Reste |
+|---|---|---|
+| Rôles | `app.staff_roles`, `app.staff_role_log`, `app.has_role`, `app.grant_role` / `app.revoke_role` (service seulement) | Attribution du premier administrateur (geste manuel du propriétaire, après 3.2) |
+| Frontière A10 | Un administrateur ne voit ni ne modifie aucune ligne d'autrui dans les 12 tables personnelles ; aucune politique ne cite un rôle ; contrôle ajouté à `verify-supabase.sql` | `verify-supabase.sql` sur un vrai projet |
+| Profil, préférences | `api.my_profile`, `api.update_profile`, `api.settings_get`, `api.settings_merge` (HLC par clé, sans boucle) | Copie des préférences locales vers `user_settings` au premier branchement |
+| Appareils | `api.register_device` (20 actifs au plus), `api.list_devices`, `api.revoke_device` ; appareil révoqué refusé par `settings_merge` et `sync_push` | Écran Compte et Appareils (affiché seulement avec un projet configuré) |
+| Client | `createSupabaseAccount(client)`, `createHlc(appareil)` (monotone, `observe()`) | Client supabase-js réel |
+

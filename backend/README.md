@@ -16,7 +16,7 @@ backend/
   .env.example            noms de variables, sans valeur (jamais de clé de service)
   supabase/
     config.toml           configuration de la Supabase CLI, sans secret
-    migrations/           9 migrations horodatées (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4 ; 9e : export, effacement, purge, lot 3.6)
+    migrations/           10 migrations horodatées (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4 ; 9e : export, effacement, purge, lot 3.6 ; 10e : rôles, profil, préférences HLC, appareils, lot 3.3)
     seed.sql              données fictives (@exemple.test)
   tests/
     auth-stub.sql         schéma auth minimal (en test seulement ; Supabase fournit le vrai)

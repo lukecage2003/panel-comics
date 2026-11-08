@@ -108,3 +108,42 @@ test('stockage Web : clé contrôlée, état relu après redémarrage', () => {
   st.save({ version: 1, outbox: [{ op_id: 'x' }] });
   assert.deepEqual(createWebStorage(ls, 'panel_sync_test_device').load().outbox, [{ op_id: 'x' }]);
 });
+
+// Lot 3.3 (D-38) : adaptateur de compte et horloge logique hybride, via un faux client générique (notation nommée PostgreSQL)
+const { createHlc, createSupabaseAccount } = require('../sync-engine/adapters');
+function genericClient(userId) {
+  const calls = [];
+  const rpc = async (fn, args) => {
+    calls.push(fn);
+    await H.asUser(db, userId);
+    const keys = Object.keys(args);
+    const sql = 'select api.' + fn + '(' + keys.map((k, i) => k + ' => $' + (i + 1)).join(', ') + ') as r';
+    const vals = keys.map(k => (args[k] !== null && typeof args[k] === 'object') ? JSON.stringify(args[k]) : args[k]);
+    try { return { data: (await db.query(sql, vals)).rows[0].r, error: null }; }
+    catch (e) { return { data: null, error: { code: e.code, message: e.message } }; }
+  };
+  return { calls, schema: () => ({ rpc }) };
+}
+
+test('compte : deux appareils, préférences fusionnées par HLC, horloge murale qui recule, révocation → device_revoked', async () => {
+  const acc = createSupabaseAccount(genericClient(H.USER_A));
+  const p = await acc.updateProfile({ display_name: 'A', preferred_market: 'FR' });
+  assert.equal(p.display_name, 'A');
+  assert.deepEqual(await acc.roles(), []);
+  const d1 = await acc.registerDevice('Web', 'web', '1'), d2 = await acc.registerDevice('Android', 'android');
+  let wall = 1800000000000;
+  const h1 = createHlc('d1', { now: () => wall }), h2 = createHlc('d2', { now: () => wall });
+  await acc.mergeSettings(d1, { theme: 'dark' }, { theme: h1.tick() });
+  wall -= 60000; // horloge de l'appareil 2 en retard d'une minute
+  const s = await acc.settings();
+  for (const k of Object.keys(s.hlc)) h2.observe(s.hlc[k]);
+  const r = await acc.mergeSettings(d2, { theme: 'light' }, { theme: h2.tick() });
+  assert.deepEqual(r.applied, ['theme'], 'après observe(), l\'appareil en retard écrit quand même après');
+  assert.equal(r.prefs.theme, 'light');
+  await acc.revokeDevice(d2);
+  await assert.rejects(acc.mergeSettings(d2, { theme: 'x' }, { theme: h2.tick() }), e => e.code === 'device_revoked');
+  const list = await acc.devices();
+  assert.equal(list.find(d => d.id === d2).revoked, true);
+  await assert.rejects(acc.updateProfile({ handle: 'x' }), e => e.code === 'invalid');
+  assert.throws(() => createHlc('bad tag!'));
+});

@@ -175,3 +175,4 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - **test 26** : attente infinie possible corrigée (`snapshotSingles` sans `onabort`), durées par étape journalisées.
   - **corbeille** (D-36) : fiche copiée avant retrait, restauration, purge confirmée seulement, test 40 ;
   - **calendrier comics uniquement** (D-37) : manga masqué par défaut, réaffichable, test 41.
+  - **lot 3.3 local** (D-38) : migration 10 (rôles sans accès aux données personnelles, profil, préférences HLC, appareils), `roles.test.js`, adaptateur de compte.

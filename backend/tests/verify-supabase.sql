@@ -5,7 +5,7 @@
 do $$
 declare
   n int;
-  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','sync_conflicts','sync_ops','user_settings','user_sync_state'];
+  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','staff_role_log','staff_roles','sync_conflicts','sync_ops','user_settings','user_sync_state'];
   got text[];
 begin
   select array_agg(relname::text order by relname) into got from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r';
@@ -15,7 +15,7 @@ begin
   if n <> 0 then raise exception 'RLS désactivée sur % table(s)', n; end if;
 
   select count(*) into n from pg_policies where schemaname = 'app';
-  if n <> 36 then raise exception 'Nombre de politiques : % (36 attendues : 8 tables x 4 + 3 lectures + reading_states en lecture)', n; end if;
+  if n <> 37 then raise exception 'Nombre de politiques : % (37 attendues : 8 tables x 4 + 3 lectures + reading_states en lecture + staff_roles en lecture)', n; end if;
 
   select count(*) into n from pg_policies where schemaname = 'app' and not (roles @> array['authenticated']::name[]);
   if n <> 0 then raise exception '% politique(s) ne visent pas authenticated', n; end if;
@@ -34,7 +34,7 @@ begin
     raise exception 'revoked_at ou last_sync_rev modifiable par authenticated';
   end if;
 
-  select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace
+  select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace and proname <> 'has_role'
     and (has_function_privilege('anon', oid, 'execute') or has_function_privilege('authenticated', oid, 'execute'));
   if n <> 0 then raise exception '% fonction(s) app exécutable(s) par un client', n; end if;
 
@@ -61,8 +61,20 @@ begin
   select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace and proname = 'purge_tombstones' and (has_function_privilege('authenticated', oid, 'execute') or has_function_privilege('anon', oid, 'execute'));
   if n <> 0 then raise exception 'app.purge_tombstones ne doit être exécutable par aucun client'; end if;
 
+  -- Lot 3.3 (migration 10, D-38) : rôles écrits par le service seulement ; seul app.has_role est exécutable (authenticated) ; aucune politique ne dépend d'un rôle (A10)
+  if has_table_privilege('authenticated', 'app.staff_roles', 'insert,update,delete') or has_table_privilege('authenticated', 'app.staff_role_log', 'select,insert,update,delete') then
+    raise exception 'staff_roles ou staff_role_log modifiable par un client';
+  end if;
+  select count(*) into n from pg_proc where pronamespace = 'app'::regnamespace and proname = 'has_role' and (has_function_privilege('anon', oid, 'execute') or not prosecdef);
+  if n <> 0 then raise exception 'app.has_role : security definer, jamais anon'; end if;
+  select count(*) into n from pg_policies where schemaname = 'app' and (qual ilike '%has_role%' or with_check ilike '%has_role%');
+  if n <> 0 then raise exception 'une politique de app.* dépend d''un rôle (A10)'; end if;
+  select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace and proname in ('my_roles','my_profile','update_profile','settings_get','settings_merge','register_device','list_devices','revoke_device')
+    and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
+  if n <> 8 then raise exception 'API du lot 3.3 : % fonction(s) conforme(s) sur 8', n; end if;
+
   select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;
 
-  raise notice 'verify-supabase : schéma app conforme (12 tables, 36 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
+  raise notice 'verify-supabase : schéma app conforme (14 tables, 37 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
 end $$;
