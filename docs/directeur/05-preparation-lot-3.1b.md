@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1, 3.1b-2 et 3.1b-3 livrés ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
+Statut : **en cours d'exécution** (lancé le 8 novembre 2026, D-21 ; 3.1b-1 à 3.1b-4 livrés ; tests : 32 « Sauvegardes par domaine », 33 « Contrats S1 et S2 », le test « Frontières » prend le n° 34). Ancien statut : plan d'exécution final (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 
@@ -76,6 +76,7 @@ Documents de référence, qui font autorité :
 | Changements | `goSingles` n'appelle plus Explorer directement ; les exports Collection ne contiennent plus que Collection, et l'ancien export complet reste disponible (B1-a) |
 | Tests | R9 : Collection démarre, exporte et restaure avec Explorer désactivé ; anciens fichiers v2 et v3 avec bloc `explorer` relus et répartis vers le bon domaine |
 | Acceptation | Critère X2, partie Collection |
+| Réalisation (8 novembre 2026) | **Livré.** D1 : registre des vues hébergées (`registerHostedView`) ; `goSingles` délègue la vue `explorer` sans connaître Explorer, qui s'enregistre et se lance lui-même (`exOpenView`) ; `showSinglesView` n'appelle plus `showExplorer`. Disposition inchangée jusqu'au lot 4.9. D2 et D3 : le bouton « JSON » de Collection exporte un `panel-bundle` avec la seule section `collection` ; l'ancien `panel-singles` v2 (avec guides et calendrier) reste proposé pendant deux versions (D-23), par l'action « Ancien format » et dans la fenêtre d'export, reconstruit à partir des fournisseurs. D4 : la sauvegarde complète reste un service de l'application, déjà par fournisseurs (3.1b-1). Tests ajoutés au test 34 |
 
 ### 3.1b-5 — Séparation du calendrier éditorial (Explorer) et de la Pull List (Collection) (E1 à E5)
 | | |

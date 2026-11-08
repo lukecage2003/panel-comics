@@ -7055,6 +7055,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   let singlesRenderSig = '';
   let openSeriesKey = null;
 
+  // Lot 3.1b-4 (D1) : vues hébergées dans la section commune mais possédées par un autre domaine (Explorer).
+  // Le routeur de Collection les délègue sans les connaître ; chaque domaine lance lui-même son contenu. La disposition reste celle d'aujourd'hui jusqu'au lot 4.9 (navigation).
+  const hostedViews = new Map();
+  const registerHostedView = (name, open) => { if (typeof open === 'function') hostedViews.set(name, open); else hostedViews.delete(name); };
   const showSinglesView = view => {
     activeSinglesView = view;
     const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView' };
@@ -7080,7 +7084,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     renderSinglesCollection();
     if (view === 'releases') loadReleasesForWeek();
-    if (view === 'explorer') showExplorer().catch(() => {});
   };
 
   const updateSinglesStats = () => {
@@ -9898,6 +9901,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     await Promise.all([loadExplorerData(), loadReleaseData()]);
     renderExplorer();
   };
+  // Point d'entrée propre à Explorer (D1) : la vue est affichée dans la section commune, puis Explorer charge et rend son contenu
+  const exOpenView = () => {
+    if (activeModule !== 'singles') switchModule('singles');
+    showSinglesView('explorer');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    return showExplorer().catch(() => {});
+  };
+  registerHostedView('explorer', exOpenView);
 
   // ---------- Édition des guides (formulaire simple, brouillon validé à l'enregistrement)
   let gdDraft = null, gdDraftOrder = 0, gdPendingPlan = null;
@@ -11570,20 +11581,31 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     showToast('Inventaire CSV téléchargé !');
   };
 
-  // EXPORT JSON (collection + métadonnées séries/pull list)
-  const exportSinglesToJson = () => {
+  // EXPORT JSON de Collection (lot 3.1b-4, D2 et D3) : panel-bundle v1 avec la seule section collection (exemplaires, séries suivies, emplacements, pull list).
+  // Ni guides, ni progression, ni calendrier : ils ont leurs propres sections. L'ancien export panel-singles v2 reste proposé pendant deux versions (D-23).
+  const exportCollectionBundle = () => bundleExport({ domains: ['collection'] });
+  const exportSinglesToJson = async () => {
     if (!physicalSingles.length) {
       showToast('Votre collection de singles est vide.');
       return;
     }
-    const payload = { format: 'panel-singles', version: 2, exportedAt: new Date().toISOString(), singles: physicalSingles, seriesMeta, locations: exportLocations(), releases: exportReleaseData(), explorer: exportExplorerData() };
-    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'panel_singles_backup_' + new Date().toISOString().slice(0, 10) + '.json';
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-    showToast('Sauvegarde JSON de votre collection téléchargée !');
+    try {
+      const b = await exportCollectionBundle();
+      bunDownload(b, 'panel_collection_' + new Date().toISOString().slice(0, 10) + '.json');
+      showToastAction('Sauvegarde JSON de votre collection téléchargée (Collection seule).', 'Ancien format', () => { exportSinglesLegacyV2().catch(err => showToast('Export impossible : ' + (err && err.message || err))); });
+    } catch (err) { showToast('Export impossible : ' + (err && err.message || err)); }
+  };
+  // Ancien export complet panel-singles v2 (D-23) : reconstruit à partir des fournisseurs, sans appel direct de Collection vers Explorer
+  const bundleToSinglesV2 = b => {
+    const v3 = bundleToV3(b);
+    return { format: 'panel-singles', version: 2, exportedAt: v3.exportedAt || new Date().toISOString(), singles: v3.physicalSingles, seriesMeta: v3.seriesMeta, locations: v3.locations, releases: v3.releases, explorer: v3.explorer };
+  };
+  const exportSinglesLegacyV2Data = async () => bundleToSinglesV2(await bundleExport({ domains: ['collection', 'reading', 'explorer', 'app'] }));
+  const exportSinglesLegacyV2 = async () => {
+    const d = await exportSinglesLegacyV2Data();
+    bunDownload(d, 'panel_singles_backup_' + new Date().toISOString().slice(0, 10) + '.json');
+    showToast('Sauvegarde de la collection à l\'ancien format (panel-singles v2) téléchargée.');
+    return d;
   };
 
   // Nettoyage d'un exemplaire importé (fichier externe = données non fiables)
@@ -12315,6 +12337,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $$('#singlesFilterTabs .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sfilter === f));
     };
     const goSingles = (view, filter) => {
+      if (hostedViews.has(view)) { hostedViews.get(view)(); return; } // vue d'un autre domaine (D1)
       if (activeModule !== 'singles') switchModule('singles');
       if (filter) setSinglesFilterTab(filter);
       showSinglesView(view);
@@ -13213,7 +13236,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       '<label class="restore-opt"><input type="checkbox" name="bunLegacy" checked> <span><b>Données des anciens fichiers numériques</b><br><small>Marque-pages, notes, positions (comme la sauvegarde complète actuelle)</small></span></label>' +
       '<fieldset style="border:0;padding:0;margin:8px 0"><legend class="stat-sub">Format</legend>' +
       '<label class="restore-opt"><input type="radio" name="bunFmt" value="bundle" checked> <span><b>panel-bundle v1 (recommandé)</b></span></label>' +
-      '<label class="restore-opt"><input type="radio" name="bunFmt" value="v3"> <span><b>Format compatible (panel-backup v3)</b><br><small>Sauvegarde complète à l\'ancien format, proposée pendant deux versions</small></span></label></fieldset>' +
+      '<label class="restore-opt"><input type="radio" name="bunFmt" value="v3"> <span><b>Format compatible (panel-backup v3)</b><br><small>Sauvegarde complète à l\'ancien format, proposée pendant deux versions</small></span></label>' +
+      '<label class="restore-opt"><input type="radio" name="bunFmt" value="v2"> <span><b>Ancien export de la collection (panel-singles v2)</b><br><small>Collection avec guides et calendrier, comme avant le lot 3.1b ; proposé pendant deux versions</small></span></label></fieldset>' +
       '<label class="restore-opt"><input type="checkbox" name="bunSecrets"' + (secretsPresent ? '' : ' disabled') + '> <span><b>Inclure mes clés et identifiants, chiffrés</b><br><small>' + (secretsPresent ? secretsPresent + ' clé(s) enregistrée(s). Exclues par défaut. Sans le mot de passe, elles sont illisibles et irrécupérables.' : 'Aucune clé enregistrée sur cet appareil.') + '</small></span></label>' +
       '<div data-pw hidden><input type="password" autocomplete="new-password" placeholder="Mot de passe (8 caractères minimum)" data-pw1 style="width:100%;margin:4px 0"><input type="password" autocomplete="new-password" placeholder="Confirmer le mot de passe" data-pw2 style="width:100%;margin:4px 0"></div>' +
       '<p class="stat-sub" data-msg role="status"></p>' +
@@ -13221,7 +13245,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     box.classList.add('open');
     const q = s => box.querySelector(s);
     const sync = () => {
-      const v3 = q('input[name=bunFmt]:checked').value === 'v3';
+      const v3 = q('input[name=bunFmt]:checked').value !== 'bundle';
       box.querySelectorAll('input[name=bunDom], input[name=bunLegacy]').forEach(i => { i.disabled = v3; });
       q('input[name=bunSecrets]').disabled = v3 || !secretsPresent;
       q('[data-pw]').hidden = !(q('input[name=bunSecrets]').checked && !q('input[name=bunSecrets]').disabled);
@@ -13231,6 +13255,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     q('[data-go]').onclick = async () => {
       const msg = q('[data-msg]');
       if (q('input[name=bunFmt]:checked').value === 'v3') { if (bundleLegacyExporter) bundleLegacyExporter(); box.classList.remove('open'); return; }
+      if (q('input[name=bunFmt]:checked').value === 'v2') { box.classList.remove('open'); exportSinglesLegacyV2().catch(err => showToast('Export impossible : ' + (err && err.message || err))); return; }
       const domains = [...box.querySelectorAll('input[name=bunDom]:checked')].map(i => i.value);
       if (!domains.length) { msg.textContent = 'Choisissez au moins un domaine.'; return; }
       let secretsPassword = null;
@@ -13470,7 +13495,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   window.Panel = {
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
-    backup: { providers: () => BUNDLE_PROVIDERS.map(p => ({ id: p.id, domain: p.domain, schema: p.schema })), export: bundleExport, validate: bundleValidate, restore: bundleRestore, undo: bundleUndo, fingerprint: bunFingerprint, fingerprints: bunFingerprints, toV3: bundleToV3, fromLegacy: bundleFromLegacy, downloadFull: bundleDownloadFull, openExportDialog: openBundleExportDialog, openRestoreDialog: openBundleRestoreDialog },
+    views: { hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
+    backup: { collectionExport: exportCollectionBundle, exportCollectionJson: exportSinglesToJson, legacySinglesV2: exportSinglesLegacyV2Data, providers: () => BUNDLE_PROVIDERS.map(p => ({ id: p.id, domain: p.domain, schema: p.schema })), export: bundleExport, validate: bundleValidate, restore: bundleRestore, undo: bundleUndo, fingerprint: bunFingerprint, fingerprints: bunFingerprints, toV3: bundleToV3, fromLegacy: bundleFromLegacy, downloadFull: bundleDownloadFull, openExportDialog: openBundleExportDialog, openRestoreDialog: openBundleRestoreDialog },
     parseComicBarcode,
     computeCanvasDHash,
     computeCanvasColorProfile,

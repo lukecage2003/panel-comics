@@ -34,6 +34,7 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 | Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
 |---|---|---|---|---|---|---|
 | 3.1b-0 Préalables | Terminé | DECISIONS D-21 à D-25 ; copies `*.backup.20261108-3.1b-0` | Front 30/30 (référence) | D-21 à D-25 | — | — |
+| 3.1b-4 Découplage Collection → Explorer | Terminé | `index.html` (vues hébergées, export JSON de Collection, ancien export v2), test 34 enrichi, `sw.js` | Front 33/33 ; base 82/82 ; secrets 0 ; frontières 0 | — | — | 3.1b-5 |
 | 3.1b-3 Découplage Explorer → Collection | Terminé | `index.html` (Explorer via S1/S2, `collectionFacets`, réglage), test 34, test 29 (A7, clics CDP), `check-boundaries.js` étendu, `sw.js` | Front 33/33 ; base 82/82 ; secrets 0 ; frontières 0 | — | — | 3.1b-4 |
 | 3.1b-2 Contrats S1 et S2 | Terminé | `Panel.contracts.personal.v1`, test 33, réglage `panel_explorer_personalize` (préférence), `sw.js` | Front 32/32 ; base 82/82 ; secrets 0 | — | — | 3.1b-3 |
 | 3.1b-1 Sauvegardes par domaine | Terminé | `index.html` (`Panel.backup`, fenêtres d'export et de restauration), test 32, test 29 adapté, `sw.js` | Front 31/31 ; base 82/82 ; secrets 0 | — | — | 3.1b-2 |

@@ -131,4 +131,5 @@ Règles inter-domaines :
 - **Écarts** :
   - un fichier `panel-bundle` ne peut pas encore être reconverti par l'interface (seulement par `Panel.backup.toV3`) ;
   - l'export JSON de la Collection (`panel-singles` v2) est séparé au sous-lot 3.1b-4.
+- **Sous-lot 3.1b-4 (8 novembre 2026)** : le bouton « JSON » de Collection produit un `panel-bundle` v1 réduit à la section `collection` (`panel_collection_AAAA-MM-JJ.json`) ; l'ancien `panel-singles` v2 reste proposé pendant deux versions (D-23) : action « Ancien format » après l'export et option de la fenêtre « Sauvegarde par domaine ». Il est reconstruit à partir des fournisseurs, avec le même contenu qu'avant (vérifié par le test 34). Les anciens fichiers v2 et v3 restent lisibles et sont répartis par domaine.
 

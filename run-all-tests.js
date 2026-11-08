@@ -3070,10 +3070,60 @@ const waitForCdp = async () => {
         r.noWrite = (await fps()) === fp0;
         return r;
       })()`);
+      // 3.1b-4 (D1 à D4) : Collection fonctionne sans Explorer ; l'export JSON de Collection ne contient que Collection ; ancien export v2 toujours proposé
+      const t34b = await evalExpr(`(async () => {
+        const P = window.Panel, X = P.explorer, B = P.backup, r = {};
+        await P.releases.ready(); await X.load();
+        const vis = id => { const el = document.getElementById(id); return !!el && !el.hidden && el.getClientRects().length > 0; };
+        const fp0 = await B.fingerprint('collection');
+        r.hostedRegistered = P.views.hosted().includes('explorer');
+        // Explorer retiré du routeur : la navigation de Collection, son export et sa restauration fonctionnent
+        P.views.setHostedForTest('explorer', null);
+        document.getElementById('navAllSingles').click();
+        const v1 = vis('singlesCollectionView');
+        document.getElementById('navSinglesSeries').click();
+        const v2 = vis('singlesSeriesView');
+        document.getElementById('navSinglesStats').click();
+        const v3 = vis('singlesStatsView');
+        const cb = await B.collectionExport();
+        const cv = await B.validate(JSON.parse(JSON.stringify(cb)));
+        const cr = await B.restore(cv, { domains: ['collection'] });
+        r.collectionWithoutExplorer = v1 && v2 && v3 && !P.views.hosted().includes('explorer') && cr.ok === true && cr.added === 0;
+        if (cr.ok && cr.undoToken) await B.undo(cr.undoToken);
+        r.collectionExportOnly = JSON.stringify(Object.keys(cb.sections)) === JSON.stringify(['collection']) && JSON.stringify(Object.keys(cb.manifest)) === JSON.stringify(['collection']) &&
+          cb.format === 'panel-bundle' && Array.isArray(cb.sections.collection.singles) && cb.sections.collection.singles.length === P.getPhysicalSingles().length && !('explorer' in cb.sections.collection) && !('releases' in cb.sections.collection);
+        // Bouton « JSON » de Collection : fichier téléchargé = Collection seule
+        const got = await new Promise(res => {
+          const o = URL.createObjectURL, c0 = HTMLAnchorElement.prototype.click; let blob = null;
+          URL.createObjectURL = b => { blob = b; return 'blob:t34'; }; HTMLAnchorElement.prototype.click = function () {};
+          document.getElementById('exportSinglesJsonBtn').click();
+          let n = 0; const iv = setInterval(async () => { if (blob || ++n > 40) { clearInterval(iv); URL.createObjectURL = o; HTMLAnchorElement.prototype.click = c0; res(blob ? JSON.parse(await blob.text()) : null); } }, 50);
+        });
+        r.buttonCollectionOnly = !P.getPhysicalSingles().length || (!!got && got.format === 'panel-bundle' && JSON.stringify(Object.keys(got.sections)) === JSON.stringify(['collection']));
+        // Explorer rétabli : il se lance lui-même depuis la navigation
+        P.views.setHostedForTest('explorer');
+        document.getElementById('navExplorer').click();
+        for (let i = 0; i < 40 && !document.getElementById('exSecGuides'); i++) await new Promise(res => setTimeout(res, 50));
+        r.explorerSelfLaunch = P.views.hosted().includes('explorer') && vis('singlesExplorerView') && !!document.getElementById('exSecGuides');
+        document.getElementById('navAllSingles').click();
+        // Ancien export panel-singles v2 (D-23), reconstruit par les fournisseurs : même contenu qu'avant
+        const old = await B.legacySinglesV2();
+        const exb = X.backup(), rel = P.releases.exportData();
+        r.legacyV2 = old.format === 'panel-singles' && old.version === 2 && old.singles.length === P.getPhysicalSingles().length && old.releases.publications.length === rel.publications.length &&
+          old.releases.pulls.length === rel.pulls.length && old.explorer.editorial.length === exb.editorial.length && old.explorer.progress.length === exb.progress.length && !!P.validateBackupPayload(old).explorer;
+        // Ancien fichier v2 avec blocs explorer et releases : relu et réparti vers le bon domaine
+        const sp = B.fromLegacy(JSON.parse(JSON.stringify(old)));
+        r.legacySplit = sp.sections.collection.singles.length === old.singles.length && sp.sections.explorer.editorial.length === old.explorer.editorial.length &&
+          sp.sections.reading.progress.length === old.explorer.progress.length && sp.sections.explorer.publications.length === old.releases.publications.length && sp.sections.collection.pulls.length === old.releases.pulls.length;
+        r.d4NoWrite = (await B.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      Object.assign(t34a || {}, t34b || {});
       const t34 = Object.assign({}, t34s, t34a);
       console.log('Résultat Test 34:', JSON.stringify(t34));
       const t34keys = ['staticStrict', 'staticNegative', 'personalOn', 'derivedTagged', 'seriesTagged', 'searchNoCollection', 'switchShown', 'switchImmediate', 'disabledEditorialOnly', 'disabledNoProviderCall',
-        'reenabled', 'absentHome', 'absentGuide', 'absentSearch', 'absentRecos', 'noWrite'];
+        'reenabled', 'absentHome', 'absentGuide', 'absentSearch', 'absentRecos', 'noWrite',
+        'hostedRegistered', 'collectionWithoutExplorer', 'collectionExportOnly', 'buttonCollectionOnly', 'explorerSelfLaunch', 'legacyV2', 'legacySplit', 'd4NoWrite'];
       const t34fail = t34keys.filter(k => !t34 || t34[k] !== true);
       if (t34fail.length) console.log('Test 34 — vérifications en échec :', t34fail.join(', '));
       testResults.push({
