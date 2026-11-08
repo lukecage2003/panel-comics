@@ -9,7 +9,7 @@ Mise à jour : 7 novembre 2026. Historique détaillé : [`HISTORIQUE-LOTS.md`](H
 | 1 | Stabilisation, protection des données, retrait de la partie numérique | Clôturée |
 | 2 | Collection, catalogue, emplacements, calendrier, sources de données, Explorer et guides (lots 2.1 à 2.6) | **Clôturée le 7 novembre 2026** |
 | 3 | Comptes, profils, synchronisation local-first, sauvegardes, RGPD | **En cours** : lot 3.1 livré le 8 novembre 2026, en attente de validation |
-| 4 | **Explorer 2.0** : catalogue éditorial multi-éditeurs, Key Issues, classements, système central d'images (Cloudflare R2), administration et contributions (lots 4.1 à 4.11) | **Spécifiée** ([cahier des charges](phase4/00-explorer-2.0-cahier-des-charges.md), [analyse](phase4/01-analyse-et-impacts.md)), non commencée |
+| 4 | **Explorer 2.0** : catalogue éditorial multi-éditeurs, Key Issues, classements, système central d'images (Cloudflare R2), administration et contributions (lots 4.1 à 4.11) | **Commencée localement** le 8 novembre 2026 : recherche tolérante et guides proches (D-33), sorties comics uniquement (D-37, D-41), navigation 4.9 (D-42), système de visuels local (D-40) ; catalogue partagé, R2 et contributions en attente des sources et du backend |
 | 5 | **Community** : domaine social indépendant (publications, discussions, profils communautaires) | Frontières réservées ; non planifiée |
 
 ## Plan directeur 2.0 (7 novembre 2026)
@@ -25,7 +25,7 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 | 3.2 | Projet cloud, authentification, CSP, hébergement, sécurité Android | Adaptateurs Supabase prêts et testés localement (D-35) ; projet cloud à créer par l'utilisateur |
 | 3.3 | Profils, préférences, appareils, rôles serveur (prérequis d'Explorer 2.0) | Préparé localement le 8 novembre 2026 (migration 10, D-38, `roles.test.js`) ; écran Compte branché après 3.2 |
 | 3.4 | Moteur de synchronisation, migration d'une collection existante | Préparé localement le 8 novembre 2026 (RPC, moteur, tests PGlite) ; branchement et migration après 3.2 |
-| 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille locale livrée le 8 novembre 2026 (D-36) ; interface des conflits après 3.2 |
+| 3.5 | Conflits, multi-appareils, corbeille | Conflits par champ et multi-appareils simulés préparés localement ; corbeille locale livrée le 8 novembre 2026 (D-36) ; résolution serveur réversible (migration 11) et centre des conflits livrés localement le 8 novembre 2026 (D-43), non validés sur Supabase |
 | 3.6 | Sauvegardes, restauration, suppression de compte, RGPD | Préparé localement le 8 novembre 2026 (export, effacement, purge ; D-35) ; suppression du compte auth et purge planifiée après 3.2 |
 | 3.7 | Validation Web + Android, bêta fermée | À faire |
 
@@ -45,7 +45,7 @@ Lots 4.1 (audit et architecture) à 4.11 (qualité et lancement), décrits dans 
 - Signature Android de publication ; réglage de `allowBackup` (prérequis du lot 3.2).
 - Purge des anciennes clés Marvel/Vision (**nécessite l'accord de l'utilisateur**).
 - ``Retrait des secrets des exports JSON par défaut`` : fait au lot 3.1b (sauvegardes par domaine sans secrets).
-- Mise en conformité du calendrier actuel (lot 2.4) avec la règle « comics uniquement » (format `manga`, éditeurs Kana et Kurokawa) : lots 4.6 et 4.9, par masquage, sans suppression. **Masquage livré le 8 novembre 2026 (D-37, test 41).** Cas limites M1 à M4 (BD franco-belge, manhwa et manhua, manga non japonais, adaptations) **à trancher**.
-- Changement de navigation N1 à N5 (Explorer et Sorties hors du bloc Collection) : **en attente de validation explicite**.
+- Mise en conformité du calendrier actuel (lot 2.4) avec la règle « comics uniquement » (format `manga`, éditeurs Kana et Kurokawa) : lots 4.6 et 4.9, par masquage, sans suppression. **Masquage livré le 8 novembre 2026 (D-37, test 41).** Cas limites M1 à M4 **tranchés sous délégation** le 8 novembre 2026 selon les propositions de [`phase4/04`](phase4/04-perimetre-sorties-comics.md) (D-41, test 44).
+- Changement de navigation N1 à N5 : **réalisé le 8 novembre 2026** (D-42, test 44), sauf N3 (routeur séparé), non engagé.
 - Sauvegarde par domaine (B1) : **principe approuvé** ; spécification dans [`phase4/06`](phase4/06-sauvegardes-par-domaine.md) ; réalisation prévue au lot 3.1b ; options B1-a à B1-c à trancher.
 - Le lot 2.7, envisagé à l'origine, n'a pas été réalisé ; ses sujets figurent ci-dessus.

@@ -55,3 +55,6 @@ Un éditeur **mixte** (qui publie des comics et des mangas) ne suffit **jamais**
 | M4 | Comics adaptés d'une licence manga ou d'un anime, publiés par un éditeur de comics (par exemple au format single) | Comic ou manga ? | Proposition : `comic` si l'œuvre est publiée en tant que comic par un éditeur de comics ; validation éditoriale en cas de doute |
 | M5 | Éditeurs mixtes (Glénat, Delcourt, Ankama) | Classement par collection | Classement au niveau de la publication ou de la collection (§ 3) |
 | M6 | Mangas présents dans une collection personnelle ou dans la Pull List | Hors Sorties | Collection n'est pas concernée par la règle : rien n'est changé dans Collection ; une entrée de Pull List liée à une publication masquée reste intacte et visible dans Collection |
+
+## Décision du 8 novembre 2026 (D-41)
+Les propositions M1 à M4 ci-dessus sont appliquées sous délégation, **par masquage** (jamais de suppression) : règles `REL_SCOPE_RULES` dans `index.html` (`manga`, `manhwa`, `bd`), compteur détaillé par motif dans le calendrier, case « Afficher le hors périmètre ». Un éditeur mixte (Glénat, Delcourt, Humanoïdes Associés, Ankama) n'est jamais masqué sur son seul nom : seul le format `manga` le fait. Tests 41 et 44.

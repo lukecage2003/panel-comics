@@ -1,6 +1,6 @@
 # Phase 4 · 03 — Changement de navigation : Explorer et Sorties (décisions A5 et A6)
 
-Statut : **documenté, non implémenté**. Le **principe** d'une entrée Explorer indépendante dans la navigation principale est **confirmé par l'utilisateur** (7 novembre 2026). Les changements précis N1 à N5 et l'organisation mobile (§ 6) **restent à valider** : aucune modification de l'interface sans validation explicite. Réalisation proposée au lot 3.1b (séparation des domaines côté client), sinon au lot 4.9 ; voir [`08-plan-execution.md`](08-plan-execution.md).
+Statut : **implémenté le 8 novembre 2026** (D-42, test 44 : N1, N2, N4 avec l'option M-A, N5 ; N3 non engagé, Explorer reste hébergé par `goSingles`). Historique : Le **principe** d'une entrée Explorer indépendante dans la navigation principale est **confirmé par l'utilisateur** (7 novembre 2026). Les changements précis N1 à N5 et l'organisation mobile (§ 6) **restent à valider** : aucune modification de l'interface sans validation explicite. Réalisation proposée au lot 3.1b (séparation des domaines côté client), sinon au lot 4.9 ; voir [`08-plan-execution.md`](08-plan-execution.md).
 
 ## 1. Situation actuelle [Fait]
 Barre latérale (bureau), `index.html` l. 1761-1800 :

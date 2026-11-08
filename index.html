@@ -1632,6 +1632,20 @@
     .ex-res { display: flex; flex-direction: column; align-items: flex-start; text-align: left; border: 0; background: transparent; padding: 7px 8px; border-radius: 4px; cursor: pointer; font-family: inherit; color: #111111; min-width: 0; }
     .ex-res b { font-size: 14px; overflow-wrap: anywhere; }
     .ex-res small { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+    .ex-res[data-has-media] { flex-direction: row; align-items: center; gap: 10px; width: 100%; }
+    .ex-res-thumb { width: 48px; height: 72px; object-fit: cover; border-radius: 3px; flex: none; background: #141413; }
+    .ex-res-txt { display: flex; flex-direction: column; min-width: 0; }
+    .ex-res-desc { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-phead.has-media { display: grid; grid-template-columns: 140px minmax(0, 1fr); column-gap: 18px; align-items: start; }
+    .ex-phead.has-media > :not(.ex-phead-img):not(.ex-media-edit) { grid-column: 2; }
+    .ex-phead-img { grid-row: 1 / span 6; width: 140px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 5px; background: #141413; }
+    .ex-media-edit { grid-column: 1; grid-row: 7; margin-top: 8px; font-size: 12px; padding: 4px 8px; }
+    .ex-gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+    .ex-gal-item { margin: 0; }
+    .ex-gal-img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 4px; background: #141413; display: block; }
+    .ex-gal-item figcaption { font-size: 12px; margin-top: 4px; display: flex; flex-direction: column; overflow-wrap: anywhere; }
+    .ex-gal-item figcaption small { color: var(--muted); }
+    @media (max-width: 560px) { .ex-phead.has-media { grid-template-columns: 96px minmax(0, 1fr); } .ex-phead-img { width: 96px; } .ex-gallery { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); } }
     .ex-res:hover, .ex-res:focus-visible { background: #FFF4C2; }
     .ex-more { border: 0; background: transparent; color: #111111; text-decoration: underline; font-size: 13px; text-align: left; padding: 6px 8px; cursor: pointer; }
     .ex-featured { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
@@ -1771,21 +1785,28 @@
 
     <!-- NAVIGATION COLLECTION PHYSIQUE SINGLES -->
     <div id="navSinglesBlock">
-      <div class="nav-label">Collection Physique</div>
-      <nav class="nav-list">
+      <!-- Lot 4.9 (D-42) : Explorer est une entrée propre de la navigation principale (A6) ; les sorties éditoriales y sont rattachées (A5) -->
+      <div class="nav-label" id="navExplorerLabel">Explorer</div>
+      <nav class="nav-list" aria-label="Explorer">
+        <button class="nav-btn" id="navExplorer">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span> Accueil Explorer</div>
+        </button>
+        <button class="nav-btn" id="navSinglesReleases" title="Sorties de comics (mangas exclus), reports et annulations">
+          <div class="nav-btn-content"><span class="icon">★</span> Sorties & calendrier</div>
+        </button>
+      </nav>
+      <div class="nav-label" style="margin-top:14px">Collection Physique</div>
+      <nav class="nav-list" aria-label="Collection">
         <button class="nav-btn active" id="navAllSingles">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg></span> Ma collection</div>
           <span class="nav-badge" id="badgeSinglesTotal">0</span>
-        </button>
-        <button class="nav-btn" id="navExplorer">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span> Explorer & guides</div>
         </button>
         <button class="nav-btn" id="navSinglesSeries">
           <div class="nav-btn-content"><span class="icon">▤</span> Séries & complétion</div>
           <span class="nav-badge" id="badgeSeriesIncomplete">0</span>
         </button>
-        <button class="nav-btn" id="navSinglesReleases">
-          <div class="nav-btn-content"><span class="icon">★</span> Calendrier & pull list</div>
+        <button class="nav-btn" id="navSinglesPullList" title="Séries suivies et prochaines sorties de votre pull list">
+          <div class="nav-btn-content"><span class="icon">⚑</span> Pull List</div>
           <span class="nav-badge" id="badgePullCount">0</span>
         </button>
         <button class="nav-btn" id="navSinglesWishlist">
@@ -1832,6 +1853,7 @@
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
       <button class="btn secondary" id="backupOptionsBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Sauvegarder un seul domaine (Collection, Lecture, Explorer), au format compatible, ou avec vos clés chiffrées">Sauvegarde par domaine…</button>
+      <button class="btn secondary" id="conflictsBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Notes de lecture, sources du calendrier, synchronisation">Conflits (<span id="conflictCount">0</span>)</button>
       <button class="btn secondary" id="trashBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Fiches retirées, restaurables">Corbeille (<span id="trashCount">0</span>)</button>
       <button class="btn secondary" id="readingMigrateBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Regrouper « lu » et les notes par œuvre (Lecture). Les fiches ne sont pas modifiées.">Lecture par œuvre…</button>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
@@ -2181,6 +2203,10 @@
   <button class="mobile-dock-btn" id="mobWishlist">
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg></span>
     <span>Wishlist</span>
+  </button>
+  <button class="mobile-dock-btn" id="mobExplorer">
+    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span>
+    <span>Explorer</span>
   </button>
 </nav>
 
@@ -4006,7 +4032,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const src = COVER_SOURCE_LABEL[v.source] || 'Actuelle';
       const conf = v.source === 'manual' ? 'protégée' : v.match ? (v.confidence === 'approchee' ? 'approchée' : 'correspond') : '';
       card.innerHTML =
-        '<img src="' + escapeHtml(v.url) + '" alt="' + escapeHtml(v.name) + '" loading="lazy" data-fallback="' + escapeHtml(fb) + '" onerror="this.onerror=null;this.src=this.dataset.fallback">' +
+        '<img src="' + escapeHtml(v.url) + '" alt="' + escapeHtml(v.name) + '" loading="lazy" data-fallback="' + escapeHtml(fb) + '" onerror="panelMediaFail(this)">' +
         '<span class="variant-src-badge src-' + escapeHtml(v.source || 'current') + '">' + escapeHtml(src) + (conf ? ' · ' + conf : '') + '</span>' +
         '<span class="variant-label">' + escapeHtml(v.name) + '</span>' +
         '<div class="variant-check-badge"><svg class=ic aria-hidden=true><use href=#ic-check /></svg></div>';
@@ -5208,9 +5234,100 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   const isSafeImageUrl = u => /^(https?:\/\/|data:image\/|blob:)/i.test(String(u || '').trim());
 
+  // ---------- Visuels (D-40) : une référence garde sa provenance { url, source, sourceUrl, attribution, refId, rights, verified, manual }.
+  // Aucune image n'est inventée ni associée par défaut : sans visuel connu, un remplacement typographique annonce « visuel à compléter ».
+  // Une URL en échec est mémorisée 7 jours (500 au plus) : elle n'est plus redemandée, le remplacement s'affiche directement.
+  const MEDIA_FAIL_KEY = 'panel_media_failed_v1', MEDIA_REFS_KEY = 'panel_media_refs_v1', MEDIA_FAIL_TTL = 7 * 86400000;
+  const MEDIA_KINDS = { event: 'Événement', saga: 'Saga', series: 'Série', issue: 'Numéro', character: 'Personnage', team: 'Équipe', creator: 'Créateur', publisher: 'Éditeur', guide: 'Guide de lecture', edition: 'Édition', publication: 'Publication' };
+  let mediaFailCache = null;
+  const mediaFailLoad = () => {
+    if (mediaFailCache) return mediaFailCache;
+    let d = {}; try { d = JSON.parse(localStorage.getItem(MEDIA_FAIL_KEY) || '{}') || {}; } catch (_) {}
+    const now = Date.now();
+    mediaFailCache = new Map(Object.entries(d).filter(([u, ts]) => typeof ts === 'number' && now - ts < MEDIA_FAIL_TTL));
+    return mediaFailCache;
+  };
+  const mediaFailed = url => !!url && !/^data:/i.test(String(url)) && mediaFailLoad().has(String(url));
+  const mediaMarkFailed = url => {
+    if (!url || /^data:/i.test(String(url))) return;
+    const m = mediaFailLoad(); m.set(String(url), Date.now());
+    while (m.size > 500) m.delete(m.keys().next().value);
+    try { localStorage.setItem(MEDIA_FAIL_KEY, JSON.stringify(Object.fromEntries(m))); } catch (_) {}
+  };
+  // Gestionnaire d'erreur commun des balises <img> : mémorise l'échec, puis affiche le remplacement (jamais d'image cassée)
+  window.panelMediaFail = img => {
+    try {
+      if (!img || img.dataset.mediaDone) return;
+      img.dataset.mediaDone = '1';
+      const src = img.getAttribute('src');
+      if (src && !/^data:/i.test(src)) mediaMarkFailed(src);
+      if (img.dataset.fallback && img.getAttribute('src') !== img.dataset.fallback) { img.src = img.dataset.fallback; img.classList.add('is-fallback'); }
+      else img.style.visibility = 'hidden';
+    } catch (_) {}
+  };
+  const mediaEsc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  // Remplacement typographique par type d'entité : initiales, type, titre ; jamais une image générique présentée comme réelle
+  const mediaPlaceholder = (kind, title, sub) => {
+    const name = String(title || '').trim() || '?';
+    const ini = name.replace(/[^A-Za-zÀ-ÿ0-9 ]/g, ' ').split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+    const words = name.toUpperCase().split(/\s+/).slice(0, 8), lines = [];
+    words.forEach(w => { if (lines.length && (lines[lines.length - 1] + ' ' + w).length <= 16) lines[lines.length - 1] += ' ' + w; else lines.push(w.slice(0, 18)); });
+    const label = (MEDIA_KINDS[kind] || 'Visuel').toUpperCase();
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="300" height="400" viewBox="0 0 300 400"><defs><pattern id="p" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.4" fill="#2C2C2A"/></pattern></defs>' +
+      '<rect width="300" height="400" fill="#141413"/><rect width="300" height="400" fill="url(#p)"/><rect x="0" y="0" width="300" height="34" fill="#FFD400"/>' +
+      '<text x="14" y="23" font-family="Arial" font-weight="700" font-size="14" letter-spacing="2" fill="#141413">' + mediaEsc(label) + '</text>' +
+      '<text x="150" y="190" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="800" font-size="96" fill="#2E2E2B">' + mediaEsc(ini) + '</text>' +
+      lines.slice(0, 3).map((l, i) => '<text x="14" y="' + (292 + i * 26) + '" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="700" font-size="24" fill="#F3F2EE">' + mediaEsc(l) + '</text>').join('') +
+      (sub ? '<text x="14" y="372" font-family="Arial" font-size="12" fill="#BDBAB0">' + mediaEsc(String(sub).slice(0, 40)) + '</text>' : '') +
+      '<text x="14" y="390" font-family="Arial" font-size="10" letter-spacing="1" fill="#8A877E">VISUEL À COMPLÉTER</text></svg>';
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  };
+  const mediaHttps = u => { const s = String(u || '').trim(); return /^https:\/\/[^\s"'<>]{4,1500}$/i.test(s) ? s : ''; };
+  const mediaStr = (v, n) => typeof v === 'string' ? v.trim().slice(0, n) : '';
+  const mediaSanitizeRef = r => {
+    if (!r || typeof r !== 'object') return null;
+    const url = mediaHttps(r.url), source = mediaStr(r.source, 120);
+    if (!url || !source) return null;
+    return { url, source, sourceUrl: mediaHttps(r.sourceUrl), attribution: mediaStr(r.attribution, 200), refId: mediaStr(r.refId, 120), rights: mediaStr(r.rights, 300),
+      manual: true, verified: false, at: typeof r.at === 'string' ? r.at.slice(0, 40) : null };
+  };
+  const mediaRefsLoad = () => { try { const d = JSON.parse(localStorage.getItem(MEDIA_REFS_KEY) || 'null'); if (d && d.version === 1 && d.refs && typeof d.refs === 'object') return d; } catch (_) {} return { version: 1, refs: {} }; };
+  const mediaRefsSave = d => localStorage.setItem(MEDIA_REFS_KEY, JSON.stringify(d));
+  const mediaRefKey = (kind, key) => MEDIA_KINDS[kind] && typeof key === 'string' && key && key.length <= 200 ? kind + ':' + key : null;
+  const mediaGetRef = (kind, key) => { const k = mediaRefKey(kind, key); const r = k ? mediaRefsLoad().refs[k] : null; return r ? Object.assign({}, r) : null; };
+  // Complément manuel : https seulement, source obligatoire, confirmation explicite que le visuel correspond et peut être affiché
+  const mediaSetRef = (kind, key, ref, opts = {}) => {
+    const k = mediaRefKey(kind, key);
+    if (!k) return { ok: false, error: 'invalid_entity' };
+    if (opts.confirmed !== true) return { ok: false, error: 'confirmation_required' };
+    const clean = mediaSanitizeRef(Object.assign({}, ref, { at: new Date().toISOString() }));
+    if (!clean) return { ok: false, error: 'invalid_ref' };
+    const prevRaw = localStorage.getItem(MEDIA_REFS_KEY), d = mediaRefsLoad();
+    d.refs[k] = clean;
+    try { mediaRefsSave(d); } catch (_) { return { ok: false, error: 'storage_full' }; }
+    if (mediaFailCache) { mediaFailCache.delete(clean.url); try { localStorage.setItem(MEDIA_FAIL_KEY, JSON.stringify(Object.fromEntries(mediaFailCache))); } catch (_) {} }
+    return { ok: true, undo: () => { if (prevRaw === null) localStorage.removeItem(MEDIA_REFS_KEY); else localStorage.setItem(MEDIA_REFS_KEY, prevRaw); } };
+  };
+  const mediaRemoveRef = (kind, key) => {
+    const k = mediaRefKey(kind, key), prevRaw = localStorage.getItem(MEDIA_REFS_KEY), d = mediaRefsLoad();
+    if (!k || !d.refs[k]) return { ok: false };
+    delete d.refs[k]; mediaRefsSave(d);
+    return { ok: true, undo: () => { if (prevRaw === null) localStorage.removeItem(MEDIA_REFS_KEY); else localStorage.setItem(MEDIA_REFS_KEY, prevRaw); } };
+  };
+  const mediaCredit = ref => !ref ? '' : [ref.attribution, ref.source ? 'Source : ' + ref.source : '', ref.rights ? 'Droits : ' + ref.rights : '', ref.manual ? 'ajout manuel, non vérifié' : (ref.verified ? 'vérifié' : '')].filter(Boolean).join(' · ');
+  // Balise <img> commune : chargement différé, décodage asynchrone, remplacement direct si l'URL a déjà échoué, crédit en infobulle
+  const mediaImg = (ref, o = {}) => {
+    const fb = o.fallback || mediaPlaceholder(o.kind, o.alt);
+    const ok = ref && ref.url && isSafeImageUrl(ref.url) && !mediaFailed(ref.url);
+    const credit = ok ? mediaCredit(ref) : '';
+    return '<img class="' + mediaEsc(o.cls || 'media-img') + '" src="' + mediaEsc(ok ? ref.url : fb) + '" alt="' + mediaEsc(o.alt || '') + '" loading="' + (o.eager ? 'eager' : 'lazy') + '" decoding="async"' +
+      (o.w ? ' width="' + Number(o.w) + '"' : '') + (o.h ? ' height="' + Number(o.h) + '"' : '') + ' data-fallback="' + mediaEsc(fb) + '"' + (ok ? '' : ' data-media-placeholder="1"') +
+      (credit ? ' title="' + mediaEsc(credit) + '"' : '') + ' onerror="panelMediaFail(this)">';
+  };
+
   const coverFor = s => {
     const u = (s && s.coverUrl) || '';
-    if (!u || !isSafeImageUrl(u) || (u === LEGACY_DEFAULT_COVER && !/ultimate spider/i.test(s.series || ''))) {
+    if (!u || !isSafeImageUrl(u) || mediaFailed(u) || (u === LEGACY_DEFAULT_COVER && !/ultimate spider/i.test(s.series || ''))) {
       return placeholderCover(s && s.series, s && s.issue);
     }
     return u;
@@ -5219,7 +5336,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Balise <img> sûre avec repli automatique sur la couverture générée
   const coverImgTag = (s, extra = '') => {
     const fb = placeholderCover(s.series, s.issue);
-    return `<img src="${escapeHtml(coverFor(s))}" data-fallback="${escapeHtml(fb)}" alt="${escapeHtml((s.series || '') + ' ' + (s.issue || ''))}" loading="lazy" onerror="this.onerror=null;this.src=this.dataset.fallback" ${extra}>`;
+    return `<img src="${escapeHtml(coverFor(s))}" data-fallback="${escapeHtml(fb)}" alt="${escapeHtml((s.series || '') + ' ' + (s.issue || ''))}" loading="lazy" onerror="panelMediaFail(this)" ${extra}>`;
   };
 
   const numOrNull = v => {
@@ -7774,18 +7891,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     activeSinglesView = view;
     const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView', reading: 'singlesReadingView', finances: 'singlesFinanceView', community: 'singlesCommunityView' };
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-explorer', view === 'explorer');
-    if (view === 'explorer') ['mobSingles', 'mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.remove('active'));
+    ['mobSingles', 'mobSeries', 'mobWishlist', 'mobExplorer'].forEach(b => { if (!$(b)) return; if (view === 'explorer') $(b).classList.toggle('active', b === 'mobExplorer'); else if (b === 'mobExplorer') $(b).classList.remove('active'); });
     Object.entries(map).forEach(([v, id]) => { if ($(id)) $(id).hidden = v !== view; });
     const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
     $$('#navSinglesBlock .nav-btn').forEach(b => b.classList.remove('active'));
-    const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : navMap[view];
+    const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : view === 'releases' && $('releasesPullOnly') && $('releasesPullOnly').checked ? 'navSinglesPullList' : navMap[view];
     if ($(navId)) $(navId).classList.add('active');
     const subKey = view === 'collection' && activeSingleFilter === 'wishlist' ? 'wishlist' : view;
     $$('#singlesSubnav .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sview === subKey));
     const titles = {
       collection: ['Ma collection', 'Inventaire physique : singles, variantes, grading et rangement'],
       series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
-      releases: ['Calendrier & pull list', 'Sorties américaines et francophones, reports, annulations et votre pull list'],
+      releases: ['Sorties & calendrier', 'Sorties de comics américaines et francophones, reports, annulations ; « Ma pull list seulement » pour vos séries suivies'],
       stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
       reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
       community: ['Communauté', 'Brouillons de partage préparés sur cet appareil ; aucune publication sans service configuré'],
@@ -7921,6 +8038,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('badgeCommunityDrafts')) $('badgeCommunityDrafts').textContent = commLoad().drafts.length;
     if ($('badgeReadingNow')) $('badgeReadingNow').textContent = rdStats().reading;
     if ($('trashCount')) $('trashCount').textContent = trashLoad().items.length;
+    if ($('conflictCount')) $('conflictCount').textContent = conflictOpenCounts().total;
     if (activeSinglesView === 'releases') renderPullChips();
     { const hk = viewHooks.get(activeSinglesView); if (hk && typeof hk.render === 'function') hk.render(); }
 
@@ -9690,8 +9808,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const relHostedPanels = [];
   const registerReleasesPanel = fn => { if (typeof fn === 'function' && !relHostedPanels.includes(fn)) relHostedPanels.push(fn); };
   // Périmètre « comics uniquement » (lot 4.6, D-37) : le manga (format, ou éditeur spécialisé) est masqué par défaut, jamais supprimé ni modifié
-  const REL_OUT_OF_SCOPE_PUBLISHERS = new Set(['kana', 'kurokawa']);
-  const relOutOfScope = p => !!p && (p.format === 'manga' || REL_OUT_OF_SCOPE_PUBLISHERS.has(catNorm(p.publisher)));
+  // Cas limites tranchés sous délégation (D-41), selon les propositions de docs/phase4/04 : M1 BD franco-belge exclue (éditeurs d'albums), sauf éditions
+  // françaises de comics ; M2 manhwa, manhua, webtoons exclus ; M3 manga non japonais exclu (format manga) ; M4 comic adapté d'un manga, publié par un
+  // éditeur de comics : conservé. Éditeur mixte (Glénat, Delcourt, Humanoïdes, Ankama…) : jamais masqué sur le seul nom ; seul le format décide.
+  const REL_SCOPE_RULES = [
+    { id: 'manga', label: 'Manga', publishers: ['kana', 'kurokawa', 'ki oon', 'pika', 'pika edition', 'kaze', 'kaze manga', 'tonkam', 'akata', 'doki doki', 'ototo', 'naban', 'meian', 'viz media', 'viz', 'kodansha', 'kodansha usa', 'yen press', 'seven seas', 'tokyopop', 'vertical'] },
+    { id: 'manhwa', label: 'Manhwa, manhua, webtoon (M2)', publishers: ['delitoon', 'webtoon', 'webtoon unscrolled', 'tapas', 'ize press', 'kbooks'] },
+    { id: 'bd', label: 'Bande dessinée franco-belge (M1)', publishers: ['dargaud', 'dupuis', 'casterman', 'le lombard', 'lombard', 'blake et mortimer'] }
+  ];
+  const REL_SCOPE_INDEX = new Map(REL_SCOPE_RULES.flatMap(rule => rule.publishers.map(n => [n, rule.id])));
+  const relOutOfScopeReason = p => { if (!p) return null; if (p.scope === 'in') return null; if (p.format === 'manga') return 'manga'; return REL_SCOPE_INDEX.get(catNorm(p.publisher)) || null; };
+  const relOutOfScope = p => !!relOutOfScopeReason(p);
   const relQuery = (opts = {}) => {
     const range = opts.range === undefined ? relRange() : opts.range;
     const q = catNorm(opts.q !== undefined ? opts.q : (($('releasesSearch') && $('releasesSearch').value) || ''));
@@ -9700,9 +9827,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const format = opts.format !== undefined ? opts.format : relView.format, status = opts.status !== undefined ? opts.status : relView.status;
     const today = relToday();
     const showOut = opts.includeOutOfScope !== undefined ? !!opts.includeOutOfScope : (!!($('releasesShowOutOfScope') && $('releasesShowOutOfScope').checked) || format === 'manga');
-    let hiddenOut = 0;
+    let hiddenOut = 0; const hiddenBy = {};
     const list = [...relPubs.values()].filter(p => {
-      if (!showOut && relOutOfScope(p)) { hiddenOut++; return false; }
+      if (!showOut && relOutOfScope(p)) { hiddenOut++; const rs = relOutOfScopeReason(p); hiddenBy[rs] = (hiddenBy[rs] || 0) + 1; return false; }
       const d = p.dates.current;
       if (range) { if (!d || d < range[0] || d > range[1]) return false; }
       if (market && p.market !== market) return false;
@@ -9712,7 +9839,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (q && !catNorm(p.series + ' ' + p.title + ' ' + p.publisher).includes(q)) return false;
       return true;
     });
-    if ($('releasesOutOfScopeCount') && opts.includeOutOfScope === undefined) $('releasesOutOfScopeCount').textContent = hiddenOut;
+    if ($('releasesOutOfScopeCount') && opts.includeOutOfScope === undefined) {
+      $('releasesOutOfScopeCount').textContent = hiddenOut;
+      const lbl = $('releasesOutOfScopeCount').closest('label');
+      if (lbl) lbl.title = 'Panel couvre les comics : hors périmètre masqué, jamais supprimé (D-37, D-41)' + (hiddenOut ? ' — ' + REL_SCOPE_RULES.filter(x => hiddenBy[x.id]).map(x => x.label + ' : ' + hiddenBy[x.id]).join(', ') : '');
+    }
     let lens = null;
     if (pullOnly) lens = relLensMap(list); // sans S1 : aucun résultat pour « Ma pull list » (indisponible)
     return list.filter(p => !pullOnly || (lens && relIsPulled(lens.get(p.id)))).sort((a, b) => (a.dates.current || '9999').localeCompare(b.dates.current || '9999') || a.series.localeCompare(b.series, 'fr') || (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
@@ -10256,6 +10387,38 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     rdSave();
     return { ok: true, undoToken: rdToken(() => rdSetRaw(raw)) };
   };
+  // Centre des conflits (lot 3.5, D-43) : un seul endroit pour tout ce qui attend une décision ; chaque choix est annulable, rien n'est supprimé
+  const conflictOpenCounts = () => {
+    let rd = 0, rel = 0;
+    try { rd = Object.values(rdLoad().conflicts).filter(c => c && !c.resolved).length; } catch (_) {}
+    try { rel = relConflictList().filter(c => c.status === 'open').length; } catch (_) {}
+    return { reading: rd, releases: rel, sync: 0, total: rd + rel };
+  };
+  const openConflictCenter = () => {
+    const box = bunModal('conflictCenterDialog'), n = conflictOpenCounts(), d = rdLoad();
+    const open = Object.entries(d.conflicts).filter(([, c]) => c && !c.resolved);
+    const label = k => { const st = d.states[k]; const ref = st && typeof rdRefOfState === 'function' ? rdRefOfState(st) : null; return ref && ref.series ? ref.series + (ref.issue ? ' ' + ref.issue : '') : k; };
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="conflictCenterTitle"><h2 id="conflictCenterTitle">Conflits à examiner</h2>' +
+      '<p class="stat-sub">Chaque choix est annulable ; la valeur écartée reste consignée.</p>' +
+      '<h3 style="font-size:15px;margin:14px 0 6px">Notes de lecture (' + n.reading + ')</h3>' +
+      (open.length ? open.map(([k, c]) => '<div class="top-item" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap" data-rd-conflict="' + escapeHtml(k) + '"><span style="flex:1;min-width:0"><b>' + escapeHtml(label(k)) + '</b><span class="stat-sub" style="display:block">Notes différentes entre exemplaires ; retenue : ' + escapeHtml(String(c.chosen)) + '★</span></span>' +
+        [...new Set((c.candidates || []).map(x => x.rating))].map(r => '<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rd-pick="' + escapeHtml(k) + '" data-rating="' + Number(r) + '">' + Number(r) + '★</button>').join(' ') + '</div>').join('')
+        : '<div class="notice-box">Aucune note à rapprocher.</div>') +
+      '<h3 style="font-size:15px;margin:14px 0 6px">Calendrier et sources (' + n.releases + ')</h3>' +
+      (n.releases ? '<button class="btn secondary" data-open-conflicts data-close-center>Examiner les ' + n.releases + ' conflit(s) de sources</button>' : '<div class="notice-box">Aucun conflit de sources.</div>') +
+      '<h3 style="font-size:15px;margin:14px 0 6px">Synchronisation</h3>' +
+      '<div class="notice-box">Synchronisation non configurée : aucun conflit serveur. Une fois un compte relié, les conflits consignés par le serveur apparaîtront ici avec le choix « cet appareil » ou « serveur », réversible.</div>' +
+      '<div class="modal-btns"><button class="btn secondary" data-close>Fermer</button></div></div>';
+    box.classList.add('open');
+    box.querySelector('[data-close]').onclick = () => box.classList.remove('open');
+    const cc = box.querySelector('[data-close-center]'); if (cc) cc.addEventListener('click', () => box.classList.remove('open'));
+    box.querySelectorAll('[data-rd-pick]').forEach(b => { b.onclick = () => {
+      const r = rdResolveConflict(b.dataset.rdPick, b.dataset.rating);
+      renderSinglesCollection(); openConflictCenter();
+      if (r.ok) showToastAction('Note retenue : ' + b.dataset.rating + '★.', 'Annuler', () => { const f = rdUndo.get(r.undoToken); if (f) { rdUndo.delete(r.undoToken); f(); } renderSinglesCollection(); if ($('conflictCenterDialog') && $('conflictCenterDialog').classList.contains('open')) openConflictCenter(); });
+      else showToast(r.error || 'Choix impossible.');
+    }; });
+  };
   // Dérivés : série (jamais stockée), « prochain numéro », reprise, statistiques
   const rdSeriesProgress = series => {
     const base = gdBase(series), nums = new Map();
@@ -10655,6 +10818,56 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exGuideImg = g => g.image && g.image.url ? g.image.url : exArt(g.title, (g.publisher || '') + (g.periodStart ? ' · ' + g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '-' + g.periodEnd : '') : ''));
   const exImg = (url, alt, cls, fallback) => '<img class="' + (cls || 'ex-img') + '" src="' + h(url) + '" alt="' + h(alt || '') + '" loading="lazy" decoding="async" data-fallback="' + h(fallback || '') + '">';
   const exBack = () => '<button class="btn secondary ex-back" data-ex-go="home">← Explorer</button>';
+  // Visuel d'une entité Explorer (D-40) : complément manuel d'abord, puis données des sources (guide, calendrier), sinon remplacement
+  const exPubRef = p => p && p.cover && p.cover.url ? { url: p.cover.url, source: relSourceLabel(p.cover.source), rights: p.cover.rights || srcImageRights(p.cover.source) || '', refId: p.id, verified: p.cover.source !== 'manual' } : null;
+  const exSeriesCovers = key => {
+    const out = [], seen = new Set();
+    const push = (ref, label, n) => { if (!ref || !ref.url || seen.has(ref.url) || mediaFailed(ref.url)) return; seen.add(ref.url); out.push({ ref, label, n: issueNumber(n) || 0 }); };
+    exGuides().forEach(g => (g.orders || []).forEach(o => o.entries.forEach(e => { if (gdBase(e.series) === key && e.cover && e.cover.url) push({ url: e.cover.url, source: e.cover.source || 'Guide « ' + g.title + ' »', rights: e.cover.rights || '', refId: e.id }, e.series + ' #' + gdIssue(e.issue), e.issue); })));
+    relPubs.forEach(p => { if (gdBase(p.series) === key) push(exPubRef(p), relLabel(p), p.issue); });
+    return out.sort((a, b) => a.n - b.n);
+  };
+  const exMediaOf = (kind, x) => {
+    if (!x) return { ref: null, kind: 'guide', alt: '' };
+    if (kind === 'guides' || kind === 'guide') {
+      const k = x.category === 'event' ? 'event' : 'guide';
+      return { ref: x.image && x.image.url ? { url: x.image.url, source: x.image.source || 'Guide', rights: x.image.rights || '', verified: !x.image.manual, manual: !!x.image.manual } : null, kind: k, alt: x.title, fallback: exArt(x.title, x.publisher), sub: x.publisher };
+    }
+    if (kind === 'publications' || kind === 'publication') return { ref: exPubRef(x), kind: 'publication', alt: relLabel(x), fallback: placeholderCover(x.series, x.issue) };
+    if (kind === 'series') { const man = mediaGetRef('series', x.key); const c = exSeriesCovers(x.key)[0]; return { ref: man || (c ? c.ref : null), kind: 'series', alt: x.name, fallback: placeholderCover(x.name, '') }; }
+    if (kind === 'characters' || kind === 'character') return { ref: mediaGetRef('character', x.key), kind: 'character', alt: x.name };
+    if (kind === 'creators' || kind === 'creator') return { ref: mediaGetRef('creator', x.key), kind: 'creator', alt: x.name, sub: (x.roles || []).map(r => GD_ROLES[r] || r).join(', ') };
+    if (kind === 'publishers' || kind === 'publisher') return { ref: mediaGetRef('publisher', x.key), kind: 'publisher', alt: x.name };
+    if (kind === 'editions' || kind === 'edition') return { ref: x.cover && x.cover.url ? { url: x.cover.url, source: x.cover.source || 'Guide', rights: x.cover.rights || '', verified: x.status === 'verified' } : null, kind: 'edition', alt: x.title, fallback: placeholderCover(x.title, '') };
+    return { ref: null, kind: 'guide', alt: '' };
+  };
+  const exMediaImg = (kind, x, cls, extra) => { const m = exMediaOf(kind, x); return mediaImg(m.ref, Object.assign({ cls, kind: m.kind, alt: m.alt, fallback: m.fallback || mediaPlaceholder(m.kind, m.alt, m.sub) }, extra || {})); };
+  // Galerie de couvertures (séries, événements) : seulement des visuels réels issus des données, jamais de remplacement
+  const exGallery = (title, items, note) => items.length ? '<section class="ex-sec"><h3>' + h(title) + ' (' + items.length + ')</h3>' + (note ? '<p class="ex-note">' + h(note) + '</p>' : '') +
+    '<div class="ex-gallery">' + items.slice(0, 24).map(c => '<figure class="ex-gal-item">' + mediaImg(c.ref, { cls: 'ex-gal-img', alt: c.label, fallback: placeholderCover(c.label, '') }) + '<figcaption>' + h(c.label) + (c.ref.source ? '<small>' + h(c.ref.source) + '</small>' : '') + '</figcaption></figure>').join('') + '</div></section>' : '';
+  const exMediaEditBtn = (kind, key) => '<button class="btn secondary ex-media-edit" data-ex-media="' + h(kind) + '" data-ex-id="' + h(key) + '">' + (mediaGetRef(kind, key) ? 'Modifier le visuel' : 'Compléter le visuel') + '</button>';
+  const exMediaDialog = (kind, key, name) => {
+    const box = bunModal('exMediaDialog'), cur = mediaGetRef(kind, key) || {};
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="exMediaTitle"><h2 id="exMediaTitle">Visuel : ' + h(name) + '</h2>' +
+      '<p class="stat-sub">Indiquez une image dont l\'affichage est autorisé (couverture, visuel officiel de l\'éditeur, source sous licence). Elle reste sur cet appareil, marquée « ajout manuel, non vérifié », avec sa source.</p>' +
+      '<label class="gd-field">Adresse de l\'image (https)<input data-m="url" value="' + h(cur.url || '') + '"></label>' +
+      '<label class="gd-field">Source (obligatoire)<input data-m="source" value="' + h(cur.source || '') + '" placeholder="ex. Marvel.com, catalogue de l\'éditeur"></label>' +
+      '<label class="gd-field">Page d\'origine (https)<input data-m="sourceUrl" value="' + h(cur.sourceUrl || '') + '"></label>' +
+      '<label class="gd-field">Attribution<input data-m="attribution" value="' + h(cur.attribution || '') + '" placeholder="ex. couverture de …"></label>' +
+      '<label class="gd-field">Droits ou licence<input data-m="rights" value="' + h(cur.rights || '') + '"></label>' +
+      '<label class="restore-opt"><input type="checkbox" data-m="confirm"> <span>Je confirme que ce visuel représente bien « ' + h(name) + ' » et que son affichage est autorisé.</span></label>' +
+      '<p class="stat-sub" data-msg role="status"></p><div class="modal-btns">' + (cur.url ? '<button class="btn secondary" data-remove>Retirer</button>' : '') + '<button class="btn secondary" data-close>Fermer</button><button class="btn" data-save>Enregistrer</button></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s), val = k => q('[data-m="' + k + '"]').value;
+    q('[data-close]').onclick = () => box.classList.remove('open');
+    q('[data-save]').onclick = () => {
+      const r = mediaSetRef(kind, key, { url: val('url'), source: val('source'), sourceUrl: val('sourceUrl'), attribution: val('attribution'), rights: val('rights') }, { confirmed: q('[data-m="confirm"]').checked });
+      if (!r.ok) { q('[data-msg]').textContent = ({ confirmation_required: 'Cochez la confirmation.', invalid_ref: 'Adresse https et source obligatoires.', storage_full: 'Stockage plein.' })[r.error] || 'Enregistrement impossible.'; return; }
+      box.classList.remove('open'); renderExplorer();
+      showToastAction('Visuel enregistré.', 'Annuler', () => { r.undo(); renderExplorer(); });
+    };
+    if (q('[data-remove]')) q('[data-remove]').onclick = () => { const r = mediaRemoveRef(kind, key); box.classList.remove('open'); renderExplorer(); if (r.ok) showToastAction('Visuel retiré.', 'Annuler', () => { r.undo(); renderExplorer(); }); };
+  };
   const exGuideCard = (g, big) => {
     const n = ((g.orders || [])[0] || { entries: [] }).entries.length;
     return '<button class="ex-gcard' + (big ? ' is-big' : '') + '" data-ex-guide="' + h(g.id) + '">' + exImg(exGuideImg(g), g.title, 'ex-gcard-img', exArt(g.title, g.publisher)) +
@@ -10677,7 +10890,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (c === 'publishers') return '<button class="ex-res" data-ex-go="publisher" data-ex-id="' + h(x.key) + '"><b>' + h(x.name) + '</b><small>' + h((x.market ? REL_MARKETS[x.market] ? REL_MARKETS[x.market].label : x.market : '') + (x.owned ? ' · ' + x.owned + ' possédé(s)' : '')) + '</small></button>';
       return '<button class="ex-res" data-ex-guide="' + h(x.guideId) + '"><b>' + h(x.title) + '</b><small>' + h((x.publisher || '') + (x.isbn ? ' · ISBN ' + x.isbn : '') + ' · ' + (GD_VERIF[x.status] || '') + ' · guide ' + x.guideTitle) + '</small></button>';
     };
-    return chips + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => item(c, x)).join('') +
+    // Cartes illustrées (D-40) : vignette résolue par entité, texte, description courte
+    const desc = (c, x) => c === 'guides' && (x.synopsis || x.description) ? '<small class="ex-res-desc">' + h(String(x.synopsis || x.description).slice(0, 140)) + ((x.synopsis || x.description).length > 140 ? '…' : '') + '</small>' : '';
+    const card = (c, x) => item(c, x).replace(/^(<button class="ex-res")/, '$1 data-has-media="1"').replace(/^(<button[^>]*>)/, (m0) => m0 + exMediaImg(c, x, 'ex-res-thumb', { w: 48, h: 72 }) + '<span class="ex-res-txt">').replace(/<\/button>$/, desc(c, x) + '</span></button>');
+    return chips + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => card(c, x)).join('') +
       (!exView.cat && res[c].total > res[c].items.length ? '<button class="ex-more" data-ex-cat="' + c + '">Voir les ' + res[c].total + ' résultats</button>' : '') + '</section>').join('') + '</div>';
   };
   const exHomeHtml = () => {
@@ -10788,6 +11004,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div class="ex-gstats"><span><b>' + st.total + '</b> entrées</span><span><b>' + st.essential + '</b> essentielles</span>' + (personal ? '<span><b>' + st.owned + '</b> possédées</span><span><b>' + st.read + '</b> lues</span><span><b>' + st.missing + '</b> manquantes</span>' : '') + '</div>' +
         '<div class="ex-row">' + (!personal ? '' : next ? '<button class="btn" data-ex-next="' + h(next.id) + '">Reprendre : ' + h(next.series + ' #' + next.issue) + '</button>' : '<span class="ex-b is-owned">Guide terminé</span>') +
         '<button class="btn secondary" data-ex-edit="' + h(g.id) + '">Modifier</button><button class="btn secondary" data-ex-export="' + h(g.id) + '">Exporter</button></div></div></header>' +
+      ((() => { const keyCov = (order ? order.entries : []).filter(e => e.importance === 'essential').map(e => ({ e, c: exCoverOf(e, matches.get(e.id)) })).filter(x => !x.c.placeholder && !mediaFailed(x.c.url)).map(x => ({ ref: { url: x.c.url, source: x.c.source, rights: x.c.rights }, label: x.e.series + ' #' + x.e.issue })); return keyCov.length >= 2 ? exGallery('Couvertures clés', keyCov, 'Numéros essentiels de ce guide, avec la source de chaque couverture.') : ''; })()) +
       '<div class="ex-gcols"><div class="ex-gmain">' +
         '<div class="da-tabs ex-otabs">' + (g.orders || []).map(o => '<button class="da-tab' + (o.id === (order && order.id) ? ' active' : '') + '" data-ex-order="' + h(o.id) + '">' + h(o.label) + '</button>').join('') + '</div>' +
         (order ? '<p class="ex-note">' + h(GD_ORDER_TYPES[order.type]) + (order.sourceId ? ' · source : ' + h(exSrcLabel(g, order.sourceId)) : ' · décision éditoriale') + (order.derivedFrom ? ' · dérivé de « ' + h(((g.orders || []).find(o => o.id === order.derivedFrom) || {}).label || '') + ' »' : '') + '</p>' : '<p class="ex-note">Aucun ordre de lecture.</p>') +
@@ -10822,7 +11039,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const up = relQuery({ range: [relToday(), isoDate(new Date(Date.now() + 60 * 86400000))], market: '', publisher: p.name, format: '', status: '', q: '', pullOnly: false }).slice(0, 12);
       const gids = guides.filter(g => catNorm(relPublisher(g.publisher).name) === key).map(g => g.id);
       const chars = exCharacters().filter(c => c.guides.some(id => gids.includes(id))), crea = exCreators(facets).filter(c => c.guides.some(id => gids.includes(id)));
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h((REL_MARKETS[p.market] || {}).label || 'Autre marché') + '</span><h2>' + h(p.name) + '</h2><p class="ex-note">Présentation éditoriale non renseignée. ' + p.pubs + ' publication(s) au calendrier, ' + gids.length + ' guide(s).</p>' + (personal ? '<p class="ex-note">' + tag + ' ' + p.owned + ' exemplaire(s) possédé(s).</p>' : '') + '</header>' +
+      return exBack() + '<header class="ex-phead has-media">' + exMediaImg('publisher', p, 'ex-phead-img', { eager: true }) + exMediaEditBtn('publisher', p.key) + '<span class="ex-kicker">' + h((REL_MARKETS[p.market] || {}).label || 'Autre marché') + '</span><h2>' + h(p.name) + '</h2><p class="ex-note">Présentation éditoriale non renseignée. ' + p.pubs + ' publication(s) au calendrier, ' + gids.length + ' guide(s).</p>' + (personal ? '<p class="ex-note">' + tag + ' ' + p.owned + ' exemplaire(s) possédé(s).</p>' : '') + '</header>' +
         '<section class="ex-sec"><h3>Guides et événements</h3>' + glist(gids) + '</section>' +
         '<section class="ex-sec"><h3>À paraître (60 jours)</h3>' + (up.length ? '<div class="ex-pubgrid">' + up.map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune sortie enregistrée.</p>') + '</section>' +
         '<section class="ex-sec"><h3>Séries (' + ser.length + ')</h3>' + (ser.length ? '<div class="ex-chips">' + ser.slice(0, 80).map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + '</button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') + '</section>' +
@@ -10832,7 +11049,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (exView.page === 'character') {
       const c = exCharacters().find(x => x.key === key);
       if (!c) return exBack() + '<div class="ex-empty">Personnage introuvable.</div>';
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">Personnage</span><h2>' + h(c.name) + '</h2><p class="ex-note">' + (c.verified ? 'Présence vérifiée par une source.' : 'Présence citée dans un guide, non vérifiée.') + ' Panel n\'affiche ni chronologie ni relation non sourcée.</p></header>' +
+      return exBack() + '<header class="ex-phead has-media">' + exMediaImg('character', c, 'ex-phead-img', { eager: true }) + exMediaEditBtn('character', c.key) + '<span class="ex-kicker">Personnage</span><h2>' + h(c.name) + '</h2><p class="ex-note">' + (c.verified ? 'Présence vérifiée par une source.' : 'Présence citée dans un guide, non vérifiée.') + ' Panel n\'affiche ni chronologie ni relation non sourcée.</p></header>' +
         '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>';
     }
     if (exView.page === 'creator') {
@@ -10841,7 +11058,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const covers = personal ? c.covers : [];
       const collab = new Map();
       c.guides.forEach(id => (exEditorial.get(id).creators || []).forEach(o => { if (catNorm(o.name) !== key) collab.set(catNorm(o.name), o.name); }));
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(c.roles.map(r => GD_ROLES[r] || r).join(' · ') || 'Créateur') + '</span><h2>' + h(c.name) + '</h2><p class="ex-note">Bibliographie limitée aux données présentes dans Panel (guides' + (personal ? ' et, d\'après votre collection, couvertures' : '') + ').</p></header>' +
+      return exBack() + '<header class="ex-phead has-media">' + exMediaImg('creator', c, 'ex-phead-img', { eager: true }) + exMediaEditBtn('creator', c.key) + '<span class="ex-kicker">' + h(c.roles.map(r => GD_ROLES[r] || r).join(' · ') || 'Créateur') + '</span><h2>' + h(c.name) + '</h2><p class="ex-note">Bibliographie limitée aux données présentes dans Panel (guides' + (personal ? ' et, d\'après votre collection, couvertures' : '') + ').</p></header>' +
         '<section class="ex-sec"><h3>Événements et guides</h3>' + glist(c.guides) + '</section>' +
         (collab.size ? '<section class="ex-sec"><h3>Collaborations citées</h3><div class="ex-chips">' + [...collab.entries()].map(([k, n]) => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(k) + '">' + h(n) + '</button>').join('') + '</div></section>' : '') +
         (covers.length ? '<section class="ex-sec"><h3>Couvertures dans votre collection (' + covers.length + ') ' + tag + '</h3><div class="ex-chips">' + covers.slice(0, 60).map(s => '<button class="ex-chip" data-ex-open="1" data-series="' + h(s.series) + '" data-issue="' + h(s.issue) + '" data-year="' + h(s.year || '') + '">' + h(s.series + ' #' + gdIssue(s.issue)) + '</button>').join('') + '</div></section>' : '');
@@ -10850,9 +11067,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const x = exSeriesList(facets).find(s => s.key === key);
       if (!x) return exBack() + '<div class="ex-empty">Série introuvable.</div>';
       const pubs = [...relPubs.values()].filter(p => gdBase(p.series) === key).sort((a, b) => (issueNumber(a.issue) || 0) - (issueNumber(b.issue) || 0));
-      return exBack() + '<header class="ex-phead"><span class="ex-kicker">' + h(x.publishers.join(' · ') || 'Éditeur inconnu') + (x.from ? ' · ' + x.from + (x.to && x.to !== x.from ? '–' + x.to : '') : '') + '</span><h2>' + h(x.name) + '</h2>' +
+      return exBack() + '<header class="ex-phead has-media">' + exMediaImg('series', x, 'ex-phead-img', { eager: true }) + exMediaEditBtn('series', x.key) + '<span class="ex-kicker">' + h(x.publishers.join(' · ') || 'Éditeur inconnu') + (x.from ? ' · ' + x.from + (x.to && x.to !== x.from ? '–' + x.to : '') : '') + '</span><h2>' + h(x.name) + '</h2>' +
         '<p class="ex-note">' + x.pubs + ' publication(s) au calendrier.</p>' + (x.personal ? '<p class="ex-note">' + tag + ' ' + x.owned + ' exemplaire(s) possédé(s)' + (x.wish ? ', ' + x.wish + ' en wishlist' : '') + (x.variants ? ', ' + x.variants + ' variante(s)' : '') + '.</p>' : '') + '</header>' +
         (x.personal && x.issues.length ? '<section class="ex-sec"><h3>Numéros possédés ' + tag + '</h3><div class="ex-chips">' + x.issues.map(n => '<span class="ex-chip is-static">#' + h(n) + '</span>').join('') + '</div></section>' : '') +
+        exGallery('Galerie de couvertures', exSeriesCovers(key), 'Couvertures issues des guides et du calendrier, avec leur source.') +
         '<section class="ex-sec"><h3>Publications et éditions</h3>' + (pubs.length ? '<div class="ex-pubgrid">' + pubs.slice(0, 60).map(exPubMini).join('') + '</div>' : '<p class="ex-note">Aucune publication au calendrier.</p>') + '</section>' +
         '<section class="ex-sec"><h3>Guides de lecture</h3>' + glist(x.guides) + '</section>';
     }
@@ -11095,7 +11313,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const root = $('explorerRoot');
     if (!root) return;
     wireGuideEditor();
-    root.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && t.dataset.fallback && t.src !== t.dataset.fallback) { t.src = t.dataset.fallback; t.classList.add('is-fallback'); } }, true);
+    root.addEventListener('error', e => { const t = e.target; if (t && t.tagName === 'IMG' && !t.dataset.mediaDone) { const src = t.getAttribute('src'); if (src && !/^data:/i.test(src)) mediaMarkFailed(src); if (t.dataset.fallback && t.src !== t.dataset.fallback) { t.src = t.dataset.fallback; t.classList.add('is-fallback'); } t.dataset.mediaDone = '1'; } }, true);
     root.addEventListener('input', e => {
       if (e.target.id !== 'exSearch') return;
       clearTimeout(wireExplorer.tm);
@@ -11119,6 +11337,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
       else if (d.exQ) { exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
       else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
+      else if (d.exMedia) { const names = { character: () => (exCharacters().find(x => x.key === d.exId) || {}).name, creator: () => (exCreators().find(x => x.key === d.exId) || {}).name, publisher: () => (exPublishers().find(x => x.key === d.exId) || {}).name, series: () => (exSeriesList().find(x => x.key === d.exId) || {}).name }; exMediaDialog(d.exMedia, d.exId, (names[d.exMedia] ? names[d.exMedia]() : '') || d.exId); }
       else if (d.exGuide) exGo('guide', d.exGuide);
       else if (d.exGo) exGo(d.exGo, d.exId || '');
       else if (d.exPub) openPubSheet(d.exPub);
@@ -13079,13 +13298,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('singlesViewSection').hidden = false;
       $('mainTitleHeading').textContent = 'Ma Collection de Singles US';
       $('mainTitleSub').textContent = 'Gestionnaire d’inventaire physique avec scan de codes-barres UPC';
-      ['mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.remove('active')); $('mobSingles').classList.add('active');
+      ['mobSeries', 'mobWishlist', 'mobExplorer'].forEach(b => $(b) && $(b).classList.remove('active')); $('mobSingles').classList.add('active');
       showSinglesView(activeSinglesView);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     $('mobSingles').onclick = () => switchModule('singles');
-    const setDockActive = id => ['mobSingles', 'mobSeries', 'mobWishlist'].forEach(b => $(b) && $(b).classList.toggle('active', b === id));
+    const setDockActive = id => ['mobSingles', 'mobSeries', 'mobWishlist', 'mobExplorer'].forEach(b => $(b) && $(b).classList.toggle('active', b === id));
+    if ($('mobExplorer')) $('mobExplorer').onclick = () => { $('navExplorer').click(); setDockActive('mobExplorer'); };
     $('mobSeries').onclick = () => { $('navSinglesSeries').click(); setDockActive('mobSeries'); };
     $('mobWishlist').onclick = () => { $('navSinglesWishlist').click(); setDockActive('mobWishlist'); };
     // « Importer » : collection (CSV/Excel) ; la sauvegarde JSON reste dans Outils et Paramètres
@@ -13531,12 +13751,15 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navAllSingles').onclick = () => goSingles('collection', activeSingleFilter === 'wishlist' ? 'all' : null);
     $('navSinglesWishlist').onclick = () => goSingles('collection', 'wishlist');
     $('navSinglesSeries').onclick = () => goSingles('series');
-    $('navSinglesReleases').onclick = () => goSingles('releases');
+    const relSetPullOnly = on => { const cb = $('releasesPullOnly'); if (cb && cb.checked !== on) { cb.checked = on; if (typeof cb.onchange === 'function') cb.onchange(); } };
+    $('navSinglesReleases').onclick = () => { relSetPullOnly(false); goSingles('releases'); };
+    if ($('navSinglesPullList')) $('navSinglesPullList').onclick = () => { relSetPullOnly(true); goSingles('releases'); };
     $('navSinglesStats').onclick = () => goSingles('stats');
     if ($('navSinglesReading')) $('navSinglesReading').onclick = () => goSingles('reading');
     if ($('navSinglesFinances')) $('navSinglesFinances').onclick = () => goSingles('finances');
     if ($('navSinglesCommunity')) $('navSinglesCommunity').onclick = () => goSingles('community');
     if ($('trashBtn')) $('trashBtn').onclick = () => openTrashDialog();
+    if ($('conflictsBtn')) $('conflictsBtn').onclick = () => openConflictCenter();
     if ($('navExplorer')) $('navExplorer').onclick = () => goSingles('explorer');
     $('singlesSubnav').onclick = e => {
       const b = e.target.closest('[data-sview]');
@@ -14190,7 +14413,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const r = exportReleaseData();
         // Ordre déterministe (3.1b-6) : les magasins indexés sont relus dans l'ordre des clés au démarrage ; trier par identifiant rend l'empreinte indépendante de l'ordre de stockage
         const byId = (x, y) => String(x && x.id).localeCompare(String(y && y.id));
-        return { editorial: bunClone([...exEditorial.values()]).sort(byId), publications: r.publications.slice().sort(byId), conflicts: r.conflicts, sync: r.sync, sourceCfg: r.sourceCfg };
+        return { editorial: bunClone([...exEditorial.values()]).sort(byId), publications: r.publications.slice().sort(byId), conflicts: r.conflicts, sync: r.sync, sourceCfg: r.sourceCfg, mediaRefs: bunClone(mediaRefsLoad().refs) };
       },
       counts: s => ({ guides: (s.editorial || []).length, publications: (s.publications || []).length }),
       normalize: s => {
@@ -14198,7 +14421,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const ex = sanitizeExplorerData({ editorial: s.editorial || [], progress: [] });
         const rel = sanitizeReleaseData({ publications: s.publications || [], pulls: [], conflicts: s.conflicts || [] });
         const lost = ((s.editorial || []).length - ex.editorial.length) + ((s.publications || []).length - (rel ? rel.publications.length : 0));
-        return { editorial: ex.editorial, publications: rel ? rel.publications : [], conflicts: rel ? rel.conflicts : [], anomalies: lost ? [lost + ' fiche(s) éditoriale(s) illisible(s) ignorée(s)'] : [] };
+        // Visuels complétés à la main (D-40) : clé type:identifiant valide, référence revalidée (https, source)
+        const mediaRefs = s.mediaRefs && typeof s.mediaRefs === 'object' ? {} : null; // absent des anciennes sauvegardes : rien n'est touché
+        if (mediaRefs) Object.entries(s.mediaRefs).forEach(([k, ref]) => { const i = k.indexOf(':'); const clean = i > 0 && mediaRefKey(k.slice(0, i), k.slice(i + 1)) === k ? mediaSanitizeRef(ref) : null; if (clean) mediaRefs[k] = clean; });
+        return { editorial: ex.editorial, publications: rel ? rel.publications : [], conflicts: rel ? rel.conflicts : [], mediaRefs, anomalies: lost ? [lost + ' fiche(s) éditoriale(s) illisible(s) ignorée(s)'] : [] };
       }
     },
     {
@@ -14422,6 +14648,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const curT = trashLoad().items, tids = new Set(curT.map(x => x.item.id));
       try { trashSave({ version: 1, items: mode === 'replace' ? col.trash : curT.concat(col.trash.filter(x => !tids.has(x.item.id))) }); } catch (_) {}
     }
+    // Visuels complétés (D-40) : fusion = clés absentes ajoutées ; remplacement = visuels de la sauvegarde
+    const prevMedia = bunLs(MEDIA_REFS_KEY);
+    if (ex && ex.mediaRefs) {
+      const cur = mediaRefsLoad().refs;
+      try { mediaRefsSave({ version: 1, refs: mode === 'replace' ? ex.mediaRefs : Object.assign({}, ex.mediaRefs, cur) }); } catch (_) {}
+    }
     // Brouillons Communauté (D-39) : même règle ; jamais publiés
     const prevComm = bunLs(COMM_KEY);
     let draftsSet = 0;
@@ -14466,6 +14698,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       try { if (prevAcq === null) localStorage.removeItem(ACQ_KEY); else localStorage.setItem(ACQ_KEY, prevAcq); } catch (_) {}
       try { if (prevTrash === null) localStorage.removeItem(TRASH_KEY); else localStorage.setItem(TRASH_KEY, prevTrash); } catch (_) {}
       try { if (prevComm === null) localStorage.removeItem(COMM_KEY); else localStorage.setItem(COMM_KEY, prevComm); } catch (_) {}
+      try { if (prevMedia === null) localStorage.removeItem(MEDIA_REFS_KEY); else localStorage.setItem(MEDIA_REFS_KEY, prevMedia); } catch (_) {}
       rdSetRaw(prevRd);
       return true;
     });
@@ -14816,7 +15049,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     finance: FINANCE_API,
     reading: READING_API,
     community: COMMUNITY_API,
+    media: Object.freeze({ placeholder: mediaPlaceholder, img: mediaImg, failed: mediaFailed, markFailed: mediaMarkFailed, ref: mediaGetRef, setRef: mediaSetRef, removeRef: mediaRemoveRef, refs: () => JSON.parse(JSON.stringify(mediaRefsLoad().refs)), credit: mediaCredit, kinds: () => Object.keys(MEDIA_KINDS) }),
     trash: TRASH_API,
+    conflicts: Object.freeze({ counts: () => conflictOpenCounts(), open: () => openConflictCenter() }),
     contracts: { personal: { v1: PERSONAL_CONTRACTS_V1 } },
     sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     views: { hooks: () => [...viewHooks.keys()], hosted: () => [...hostedViews.keys()], setHostedForTest: (name, open) => { if (open === undefined) { if (name === 'explorer') registerHostedView('explorer', exOpenView); } else registerHostedView(name, open); return [...hostedViews.keys()]; } },
@@ -14919,6 +15154,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       upsert: async (raw, source) => { await loadReleaseData(); const r = relUpsert(raw, { source: source || 'manual' }); if (r.pub) await relPut('publications', [r.pub]); return r; },
       edit: relEdit, get: id => relPubs.get(id) || null, all: () => [...relPubs.values()], query: opts => relQuery(opts || {}),
       outOfScope: p => relOutOfScope(typeof p === 'string' ? relPubs.get(p) : p),
+      scopeReason: p => relOutOfScopeReason(typeof p === 'string' ? relPubs.get(p) : p), scopeRules: () => JSON.parse(JSON.stringify(REL_SCOPE_RULES)),
       statusOf: (p, today) => relStatusOf(typeof p === 'string' ? relPubs.get(p) : p, today),
       addRelation: relAddRelation, removeRelation: relRemoveRelation, relationsOf: relRelationsOf, suggest: relSuggest,
       connectors: () => Object.values(RELEASE_CONNECTORS).map(c => ({ id: c.id, label: c.label, markets: c.markets, kind: c.kind, automated: c.automated, available: c.available(), terms: c.terms })),

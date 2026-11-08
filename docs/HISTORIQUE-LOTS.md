@@ -176,3 +176,7 @@ Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans 
   - **corbeille** (D-36) : fiche copiée avant retrait, restauration, purge confirmée seulement, test 40 ;
   - **calendrier comics uniquement** (D-37) : manga masqué par défaut, réaffichable, test 41.
   - **lot 3.3 local** (D-38) : migration 10 (rôles sans accès aux données personnelles, profil, préférences HLC, appareils), `roles.test.js`, adaptateur de compte.
+  - **sauvegardes** (D-39) : domaine Communauté et corbeille, test 42 ;
+  - **visuels** (D-40) : module commun (provenance, remplacement typographique, cache des échecs, compléments manuels), recherche illustrée, pages d'entité, galeries, test 43 ;
+  - **périmètre comics** (D-41) : cas limites M1 à M4 ; **navigation 4.9** (D-42) : section Explorer, Pull List, barre mobile à cinq boutons, test 44.
+| Lot 3.5 local : conflits | Terminé localement (non validé sur Supabase) | migration 11, `backend/tests/conflicts.test.js`, `adapters.js`, `index.html` (centre des conflits), `run-all-tests.js` (test 45) | base 115/115, front 44/44 | D-43 | Projet Supabase (3.2) | Lot 3.6 local |

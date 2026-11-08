@@ -313,7 +313,7 @@ const waitForCdp = async () => {
         // Interface : plus de lecteur, de bibliothèque numérique ni de bouton « Lire »
         const absent = ['readerModal', 'importModal', 'digitalViewSection', 'navDigitalBlock', 'switchDigital', 'inspectReadBtn', 'mobAll', 'folderModal'];
         r.uiRemoved = absent.every(id => !document.getElementById(id)) && !document.querySelector('[data-read], [data-read-cv]') && !window.pdfjsLib && !P.openReader && !P.importDigitalFiles;
-        r.collectionHome = !document.getElementById('singlesViewSection').hidden && document.querySelectorAll('.mobile-dock-btn').length === 4;
+        r.collectionHome = !document.getElementById('singlesViewSection').hidden && document.querySelectorAll('.mobile-dock-btn').length === 5; // cinq boutons depuis la navigation 4.9 (D-42), sans bouton numérique
         // Données numériques existantes : une fiche IndexedDB « pages » + des clés localStorage de test
         const KEYS = ['panel_folders', 'panel_bookmarks', 'panel_theories', 'panel_reading_positions', 'panel_comic_notes', 'panel_comic_annotations'];
         const saved = {};
@@ -3723,7 +3723,7 @@ const waitForCdp = async () => {
         await Rl.ready();
         const before = JSON.stringify(Rl.all());
         r.predicate = Rl.outOfScope({ format: 'manga', publisher: 'Glénat' }) === true && Rl.outOfScope({ format: 'comic', publisher: 'Kana' }) === true &&
-          Rl.outOfScope({ format: 'comic', publisher: 'Kurokawa' }) === true && Rl.outOfScope({ format: 'comic', publisher: 'Image Comics' }) === false && Rl.outOfScope(null) === false;
+          Rl.outOfScope({ format: 'comic', publisher: 'Kurokawa' }) === true && Rl.outOfScope({ format: 'comic', publisher: 'Image Comics' }) === false && Rl.outOfScope(null) === false && Rl.outOfScope({ format: 'album', publisher: 'Dargaud' }) === true && Rl.outOfScope({ format: 'tpb', publisher: 'Urban Comics' }) === false;
         const base = { range: null, pullOnly: false, q: '', market: '', publisher: '', format: '', status: '' };
         const all = Rl.all(), outN = all.filter(p => Rl.outOfScope(p)).length;
         const masked = Rl.query(Object.assign({}, base, { includeOutOfScope: false }));
@@ -3814,6 +3814,206 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'Sauvegardes : domaine Communauté (brouillons revalidés, liens et champs privés écartés), corbeille dans Collection, fusion idempotente, remplacement annulable, aucun autre domaine touché',
         ok: t42fail.length === 0
+      });
+
+      // ─── Test 43 : Visuels (D-40) — cartes illustrées, provenance, remplacement typographique, cache des échecs, compléments manuels ───
+      console.log('\n[TEST 43] Visuels : résultats illustrés, pages d\'entité, provenance, remplacement sans image cassée, URL en échec non redemandée...');
+      const t43 = await evalExpr(`(async () => {
+        const P = window.Panel, M = P.media, X = P.explorer, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const RK = 'panel_media_refs_v1', FK = 'panel_media_failed_v1';
+        const prevR = localStorage.getItem(RK), prevF = localStorage.getItem(FK);
+        const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fp0 = await P.backup.fingerprints();
+        const BAD = 'https://127.0.0.1:9/t43-' + Date.now() + '.jpg';
+        try {
+          r.api = Object.isFrozen(M) && M.kinds().includes('event') && M.kinds().includes('character');
+          const ph = decodeURIComponent(M.placeholder('character', 'Spider-Man'));
+          r.placeholder = ph.startsWith('data:image/svg+xml') && ph.includes('PERSONNAGE') && ph.includes('VISUEL À COMPLÉTER') && !ph.includes('<script');
+          r.refValidation = M.setRef('character', 'k', { url: 'http://x.test/a.jpg', source: 'S' }, { confirmed: true }).error === 'invalid_ref' &&
+            M.setRef('character', 'k', { url: 'javascript:alert(1)', source: 'S' }, { confirmed: true }).error === 'invalid_ref' &&
+            M.setRef('character', 'k', { url: 'https://x.test/a.jpg' }, { confirmed: true }).error === 'invalid_ref' &&
+            M.setRef('character', 'k', { url: 'https://x.test/a.jpg', source: 'S' }).error === 'confirmation_required' &&
+            M.setRef('nope', 'k', { url: 'https://x.test/a.jpg', source: 'S' }, { confirmed: true }).error === 'invalid_entity';
+          await X.load();
+          const guides = X.guides();
+          r.guides = guides.map(g => g.title).slice(0, 8);
+          await X.open('home');
+          await wait(200);
+          // Recherche : chaque résultat porte une vignette (visuel réel ou remplacement typographique), aucune image sans source d'affichage
+          const s = document.getElementById('exSearch');
+          s.value = guides[0].title.split(' ')[0];
+          s.dispatchEvent(new Event('input', { bubbles: true }));
+          await wait(600);
+          const res = [...document.querySelectorAll('#explorerRoot .ex-res')];
+          r.results = res.length;
+          r.searchCards = res.length > 0 && res.every(b => b.dataset.hasMedia === '1' && b.querySelector('img.ex-res-thumb') && b.querySelector('img.ex-res-thumb').getAttribute('src'));
+          r.lazy = res.every(b => b.querySelector('img').getAttribute('loading') === 'lazy');
+          // Page de guide, puis page de personnage : visuel en tête, remplacement annoncé, bouton de complément
+          await X.open('guide', guides[0].id);
+          await wait(200);
+          const chip = document.querySelector('#explorerRoot [data-ex-go="character"]');
+          r.hasCharacter = !!chip;
+          if (chip) {
+            const key = chip.dataset.exId, name = chip.textContent.trim();
+            chip.click(); await wait(200);
+            const img0 = document.querySelector('#explorerRoot .ex-phead-img');
+            r.entityPlaceholder = !!img0 && img0.dataset.mediaPlaceholder === '1' && /^data:image\\/svg/.test(img0.getAttribute('src')) && !!document.querySelector('#explorerRoot .ex-media-edit');
+            // Fenêtre de complément : confirmation exigée
+            document.querySelector('#explorerRoot .ex-media-edit').click();
+            const dlg = document.getElementById('exMediaDialog');
+            dlg.querySelector('[data-m="url"]').value = BAD; dlg.querySelector('[data-m="source"]').value = 'Test 43';
+            dlg.querySelector('[data-save]').click();
+            r.dialogConfirm = dlg.classList.contains('open') && /confirmation/i.test(dlg.querySelector('[data-msg]').textContent) && M.ref('character', key) === null;
+            dlg.querySelector('[data-m="confirm"]').checked = true;
+            dlg.querySelector('[data-save]').click();
+            await wait(100);
+            const ref = M.ref('character', key);
+            r.saved = !dlg.classList.contains('open') && !!ref && ref.url === BAD && ref.manual === true && ref.verified === false && ref.source === 'Test 43';
+            const img1 = document.querySelector('#explorerRoot .ex-phead-img');
+            // L'adresse locale échoue aussitôt : l'image peut déjà être remplacée ; le crédit (infobulle) et la balise générée portent la provenance
+            const html = M.img({ url: 'https://exemple.test/couverture.jpg', source: 'Test 43', rights: 'CC BY' }, { alt: name, kind: 'character' });
+            r.provenance = !!img1 && (img1.getAttribute('src') === BAD || img1.dataset.mediaDone === '1') && /Source : Test 43/.test(img1.title) && /non vérifié/.test(img1.title) && html.includes('https://exemple.test/couverture.jpg') && html.includes('loading="lazy"') && html.includes('Droits : CC BY');
+            // Échec de chargement : remplacement immédiat, URL mémorisée, plus jamais redemandée
+            img1.dispatchEvent(new Event('error'));
+            await wait(50);
+            r.fallback = /^data:image\\/svg/.test(img1.getAttribute('src')) && M.failed(BAD) === true;
+            await X.open('character', key); await wait(150);
+            const img2 = document.querySelector('#explorerRoot .ex-phead-img');
+            r.notRefetched = !!img2 && img2.getAttribute('src') !== BAD && img2.dataset.mediaPlaceholder === '1';
+            // Sauvegarde : visuels complétés dans le domaine Explorer
+            const bk = await P.backup.export({ domains: ['explorer'] });
+            r.backup = !!bk.sections.explorer.mediaRefs && !!bk.sections.explorer.mediaRefs['character:' + key];
+            r.removed = M.removeRef('character', key).ok === true && M.ref('character', key) === null;
+            r.entityName = name.length > 0;
+          }
+          // Collection : une couverture en échec n'est plus demandée, remplacement de couverture à la place
+          P.setPhysicalSingles([{ id: 't43c', series: 'T43 Série', issue: '#1', coverUrl: BAD }]);
+          document.getElementById('navAllSingles').click();
+          await wait(300);
+          const cimg = [...document.querySelectorAll('img')].find(i => (i.alt || '').includes('T43 Série'));
+          r.collectionFallback = !!cimg && cimg.getAttribute('src') !== BAD && /^data:image\\/svg/.test(cimg.getAttribute('src'));
+          r.noBrokenOnPage = [...document.querySelectorAll('#explorerRoot img, #singlesGrid img')].every(i => !!i.getAttribute('src'));
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          const d = document.getElementById('exMediaDialog'); if (d) d.classList.remove('open');
+          P.setPhysicalSingles(saved);
+          if (prevR === null) localStorage.removeItem(RK); else localStorage.setItem(RK, prevR);
+          if (prevF === null) localStorage.removeItem(FK); else localStorage.setItem(FK, prevF);
+          await wait(200);
+        }
+        const fp1 = await P.backup.fingerprints();
+        r.finalState = Object.keys(fp0).every(k => fp0[k] === fp1[k]);
+        return r;
+      })()`);
+      console.log('Résultat Test 43:', JSON.stringify(t43));
+      const t43keys = ['api', 'placeholder', 'refValidation', 'searchCards', 'lazy', 'hasCharacter', 'entityPlaceholder', 'dialogConfirm', 'saved', 'provenance', 'fallback', 'notRefetched', 'backup', 'removed', 'collectionFallback', 'noBrokenOnPage', 'finalState'];
+      const t43fail = t43keys.filter(k => !t43 || t43[k] !== true);
+      if (t43fail.length) console.log('Test 43 — vérifications en échec :', t43fail.join(', '));
+      testResults.push({
+        test: 'Visuels : résultats de recherche illustrés, pages d\'entité avec visuel ou remplacement annoncé, complément manuel sourcé et confirmé, crédit affiché, échec mémorisé sans nouvelle requête, couverture de Collection, sauvegarde',
+        ok: t43fail.length === 0
+      });
+
+      // ─── Test 44 : Navigation générale (lot 4.9, D-42) et cas limites du périmètre comics (D-41) ───
+      console.log('\n[TEST 44] Navigation : section Explorer, Sorties & calendrier, Pull List, barre mobile à cinq boutons ; cas limites M1 à M4...');
+      const t44 = await evalExpr(`(async () => {
+        const P = window.Panel, Rl = P.releases, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const cb = document.getElementById('releasesPullOnly'), cb0 = cb ? cb.checked : false;
+        try {
+          // Cas limites
+          const o = (format, publisher) => Rl.scopeReason({ format, publisher });
+          r.m1 = o('album', 'Dargaud') === 'bd' && o('album', 'Dupuis') === 'bd' && o('album', 'Casterman') === 'bd' && o('album', 'Urban Comics') === null && o('tpb', 'Panini Comics') === null && o('album', 'Les Humanoïdes Associés') === null;
+          r.m2 = o('other', 'Delitoon') === 'manhwa' && o('tpb', 'Ize Press') === 'manhwa' && o('other', 'Webtoon') === 'manhwa';
+          r.m3 = o('manga', 'Glénat') === 'manga' && o('manga', 'Ankama') === 'manga' && o('tpb', 'Seven Seas') === 'manga';
+          r.m4 = o('single', 'IDW Publishing') === null && o('single', 'Dark Horse') === null && o('tpb', 'Glénat') === null && o('tpb', 'Delcourt') === null;
+          r.rules = Rl.scopeRules().map(x => x.id).join() === 'manga,manhwa,bd';
+          // Navigation
+          const explorerLbl = document.getElementById('navExplorerLabel');
+          const btns = [...document.querySelectorAll('#navSinglesBlock .nav-btn')].map(b => b.id);
+          r.explorerSection = !!explorerLbl && btns.indexOf('navExplorer') < btns.indexOf('navAllSingles') && btns.indexOf('navSinglesReleases') < btns.indexOf('navAllSingles') && btns.includes('navSinglesPullList');
+          r.labels = /Accueil Explorer/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull List/.test(document.getElementById('navSinglesPullList').textContent);
+          r.badgeOnPullList = !!document.querySelector('#navSinglesPullList #badgePullCount') && !document.querySelector('#navSinglesReleases .nav-badge');
+          document.getElementById('navSinglesPullList').click(); await wait(150);
+          r.pullListView = !document.getElementById('singlesReleasesView').hidden && cb.checked === true && document.getElementById('navSinglesPullList').classList.contains('active') && !document.getElementById('navSinglesReleases').classList.contains('active');
+          document.getElementById('navSinglesReleases').click(); await wait(150);
+          r.releasesView = !document.getElementById('singlesReleasesView').hidden && cb.checked === false && document.getElementById('navSinglesReleases').classList.contains('active');
+          document.getElementById('navExplorer').click(); await wait(300);
+          r.explorerView = !document.getElementById('singlesExplorerView').hidden && document.getElementById('navExplorer').classList.contains('active');
+          const dock = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')].map(b => b.id);
+          r.dock = dock.join() === 'mobSingles,mobSeries,mobScan,mobWishlist,mobExplorer';
+          r.dockActive = document.getElementById('mobExplorer').classList.contains('active');
+          document.getElementById('navAllSingles').click(); await wait(150);
+          r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobExplorer').classList.contains('active');
+          // Liens profonds conservés
+          r.deepLink = (await P.explorer.open('home')) === 'home';
+          document.getElementById('navAllSingles').click(); await wait(100);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { if (cb && cb.checked !== cb0) { cb.checked = cb0; if (cb.onchange) cb.onchange(); } }
+        return r;
+      })()`);
+      // Barre mobile à 375 px : cinq cibles d'au moins 44 px, aucune ne déborde
+      await send('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
+      await new Promise(res => setTimeout(res, 400));
+      const t44m = await evalExpr(`(() => { const bs = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')]; const rs = bs.map(b => b.getBoundingClientRect()); return { n: bs.length, visible: getComputedStyle(document.querySelector('.mobile-dock')).display !== 'none', minW: Math.min(...rs.map(x => x.width)), minH: Math.min(...rs.map(x => x.height)), inside: rs.every(x => x.left >= 0 && x.right <= window.innerWidth + 0.5), overflow: document.documentElement.scrollWidth <= window.innerWidth + 1 }; })()`);
+      await send('Emulation.clearDeviceMetricsOverride', {});
+      t44.mobile375 = !!t44m && t44m.n === 5 && t44m.visible && t44m.minW >= 44 && t44m.minH >= 44 && t44m.inside;
+      console.log('Résultat Test 44:', JSON.stringify(t44), JSON.stringify(t44m));
+      const t44keys = ['m1', 'm2', 'm3', 'm4', 'rules', 'explorerSection', 'labels', 'badgeOnPullList', 'pullListView', 'releasesView', 'explorerView', 'dock', 'dockActive', 'backToCollection', 'deepLink', 'mobile375'];
+      const t44fail = t44keys.filter(k => !t44 || t44[k] !== true);
+      if (t44fail.length) console.log('Test 44 — vérifications en échec :', t44fail.join(', '));
+      testResults.push({
+        test: 'Navigation 4.9 : section Explorer (accueil, sorties), Pull List avec son badge, vues et entrée active cohérentes, barre mobile à cinq boutons utilisable à 375 px, liens profonds ; cas limites M1 à M4',
+        ok: t44fail.length === 0
+      });
+
+      // ─── Test 45 : Centre des conflits (lot 3.5, D-43) — notes de lecture à rapprocher, sources du calendrier, synchronisation ───
+      console.log('\n[TEST 45] Centre des conflits : compteur, rapprochement d\'une note annulable, lien vers les conflits de sources, état restauré...');
+      const t45 = await evalExpr(`(async () => {
+        const P = window.Panel, r = {};
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const RK = 'panel_reading_v1', prev = localStorage.getItem(RK);
+        try {
+          r.api = Object.isFrozen(P.conflicts) && typeof P.conflicts.counts === 'function';
+          const base = P.conflicts.counts();
+          const d = prev ? JSON.parse(prev) : { version: 1, states: {}, log: [], conflicts: {} };
+          d.states['loc:t45 serie#1@'] = { workKey: 'loc:t45 serie#1@', series: 'T45 Série', issue: '#1', status: 'read', rating: 4, updatedAt: '2026-01-01T00:00:00Z' };
+          d.conflicts['loc:t45 serie#1@'] = { kind: 'rating', candidates: [{ rating: 4 }, { rating: 2 }], chosen: 4, at: '2026-01-01T00:00:00Z', resolved: false };
+          localStorage.setItem(RK, JSON.stringify(d));
+          document.getElementById('navAllSingles').click(); await wait(100);
+          const c1 = P.conflicts.counts();
+          r.count = c1.reading === base.reading + 1 && document.getElementById('conflictCount').textContent === String(c1.total);
+          document.getElementById('conflictsBtn').click();
+          const dlg = document.getElementById('conflictCenterDialog');
+          r.dialog = !!dlg && dlg.classList.contains('open') && !!dlg.querySelector('[data-rd-pick="loc:t45 serie#1@"][data-rating="2"]') && /Synchronisation non configurée/.test(dlg.textContent);
+          dlg.querySelector('[data-rd-pick="loc:t45 serie#1@"][data-rating="2"]').click();
+          await wait(50);
+          const after = JSON.parse(localStorage.getItem(RK));
+          r.resolved = after.states['loc:t45 serie#1@'].rating === 2 && after.conflicts['loc:t45 serie#1@'].resolved === true && P.conflicts.counts().reading === base.reading;
+          r.logged = after.log.some(l => l.workKey === 'loc:t45 serie#1@' && l.kind === 'rating' || (l.workKey === 'loc:t45 serie#1@' && /rating/.test(JSON.stringify(l))));
+          const ub = document.querySelector('#toastPopup .toast-action');
+          if (ub) ub.click();
+          await wait(50);
+          const undone = JSON.parse(localStorage.getItem(RK));
+          r.undo = !!ub && undone.states['loc:t45 serie#1@'].rating === 4 && undone.conflicts['loc:t45 serie#1@'].resolved === false;
+          r.releasesLink = P.conflicts.counts().releases === 0 || !!document.querySelector('#conflictCenterDialog [data-open-conflicts]');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          const dl = document.getElementById('conflictCenterDialog'); if (dl) dl.classList.remove('open');
+          if (prev === null) localStorage.removeItem(RK); else localStorage.setItem(RK, prev);
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
+        r.finalState = localStorage.getItem(RK) === prev;
+        return r;
+      })()`);
+      console.log('Résultat Test 45:', JSON.stringify(t45));
+      const t45keys = ['api', 'count', 'dialog', 'resolved', 'logged', 'undo', 'releasesLink', 'finalState'];
+      const t45fail = t45keys.filter(k => !t45 || t45[k] !== true);
+      if (t45fail.length) console.log('Test 45 — vérifications en échec :', t45fail.join(', '));
+      testResults.push({
+        test: 'Centre des conflits : compteur dans la barre latérale, note de lecture rapprochée et journalisée, annulation exacte, lien vers les conflits de sources, synchronisation annoncée non configurée',
+        ok: t45fail.length === 0
       });
 
       console.log('\n==========================================');
