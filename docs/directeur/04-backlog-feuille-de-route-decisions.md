@@ -79,7 +79,7 @@ F0 → 3.1 → 3.1b → F1 → L1 → 3.2 … 3.7 → 4.1 … 4.11 → C-0 …
 | Contenu | B-01 à B-06, B-24 ; tests T-F2 à T-F4, T-F8 à T-F10 ; revue au navigateur B-25 |
 | Hors périmètre | Frais, devises, lots, sorties (F1) ; séparation des domaines (3.1b) ; aucun nouveau stockage |
 | Sauvegarde | Copies datées de `index.html` et `run-all-tests.js` avant modification ; les copies `*.backup.20261107-lot31` sont conservées |
-| Critères de validation | 28 tests existants verts et nouveaux tests verts ; empreinte de `panel_physical_singles` et de `panel_value_snapshots` identique avant et après chargement ; aucun « $0.00 » pour une valeur inconnue ; « Investi » n'inclut aucun prix de couverture ; capture bureau et mobile du tableau de bord |
+| Critères de validation | Tous les tests existants verts (30 au 8 novembre 2026) et nouveaux tests verts ; empreinte de `panel_physical_singles` et de `panel_value_snapshots` identique avant et après chargement ; aucun « $0.00 » pour une valeur inconnue ; « Investi » n'inclut aucun prix de couverture ; capture bureau et mobile du tableau de bord |
 | Retour arrière | Revenir au commit précédent : aucune donnée n'a changé de format |
 
 ## 3. Contradictions et hypothèses relevées

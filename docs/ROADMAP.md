@@ -20,8 +20,8 @@ Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 
 | Lot | Contenu | Statut |
 |---|---|---|
-| 3.1 | Fondations backend (migrations, RLS, tests sans Docker), préparation du client, sans compte cloud | **Livré le 8 novembre 2026, en attente de validation** (G1 validé, D-20) : [`backend/`](../backend/README.md), [runbooks](phase3/runbooks/), `Panel.sync.readiness()` ([cahier des charges](phase3/07-lot-3.1-cahier-des-charges.md)) |
-| 3.1b | Séparation des domaines côté client : sauvegardes par domaine (B1), contrats S1 et S2 locaux, réacheminement des couplages, navigation si validée | **Proposé, à valider** ([plan](phase4/08-plan-execution.md)) |
+| 3.1 | Fondations backend (migrations, RLS, tests sans Docker), préparation du client, sans compte cloud | **Livré le 8 novembre 2026 et audité** ([audit de clôture](phase3/09-audit-cloture-lot-3.1.md), migration 7 de durcissement), en attente de validation (G1 validé, D-20) : [`backend/`](../backend/README.md), [runbooks](phase3/runbooks/), `Panel.sync.readiness()` ([cahier des charges](phase3/07-lot-3.1-cahier-des-charges.md)) |
+| 3.1b | Séparation des domaines côté client : sauvegardes par domaine (B1), contrats S1 et S2 locaux, réacheminement des couplages, navigation si validée | **Plan définitif, non autorisé** ([plan](directeur/05-preparation-lot-3.1b.md)) |
 | 3.2 | Projet cloud, authentification, CSP, hébergement, sécurité Android | À faire |
 | 3.3 | Profils, préférences, appareils, rôles serveur (prérequis d'Explorer 2.0) | À faire |
 | 3.4 | Moteur de synchronisation, migration d'une collection existante | À faire |

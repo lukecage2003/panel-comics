@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 06 — Spécifications des lots F1 (finances) et L1 (lecture)
 
-Statut : **spécification à valider** (8 novembre 2026). F1 et L1 sont intégrés à la feuille de route (D-17) mais **non autorisés à démarrer**.
+Statut : **spécifications définitives, prêtes à valider** (8 novembre 2026, révision 2 : exports, cas limites, sous-lots ; analyse des décisions en partie C). F1 et L1 sont intégrés à la feuille de route (D-17) mais **non autorisés à démarrer**.
 
 Ce document prolonge :
 - le modèle financier de [`02`](02-audit-financier.md) § 3 ;
@@ -61,7 +61,7 @@ Achats groupés : une liste `panel_acquisitions` (localStorage, puis un fourniss
 Aujourd'hui :
 - tout s'affiche en « $ » ;
 - aucune devise n'est enregistrée ;
-- l'export écrit `purchaseCurrency: 'USD'` par défaut (l. ~5164), ce qui affirme une devise jamais saisie.
+- la copie normalisée du catalogue écrit `currency: … || 'USD'` par défaut (`index.html` l. 5176, vérifié le 8 novembre 2026), ce qui affirme une devise jamais saisie.
 
 | Option | Conséquences | Risques |
 |---|---|---|
@@ -112,6 +112,45 @@ Recommandation (non approuvée) : **C**, avec EUR proposé dans le sélecteur.
   - Suite complète au vert.
   - Aucune donnée existante modifiée au chargement : empreinte identique.
   - Toute écriture financière est journalisée et peut être annulée.
+
+### A.9 Exports et statistiques
+- **CSV et Excel** : une colonne par donnée distincte, sans jamais en fusionner deux :
+  - prix de couverture et devise ;
+  - prix payé et devise ;
+  - frais, coût d'acquisition, identifiant de lot ;
+  - valeur estimée, source et date ;
+  - sortie : type, date, prix, frais.
+
+  Une cellule vide signifie « inconnu », jamais 0.
+- **JSON (B1)** : les champs tels qu'ils sont enregistrés, `panel_acquisitions` compris, dans le fournisseur Collection.
+- **Statistiques** :
+  - tout total est **par devise**, avec son taux de couverture (« 412 / 530 fiches avec un coût connu ») ;
+  - la plus-value réalisée est séparée de la plus-value latente ;
+  - les sorties sont exclues de la possession, mais restent dans les dépenses historiques.
+
+### A.10 Cas limites et anciennes données
+| Cas | Règle |
+|---|---|
+| Ancienne fiche (aucun nouveau champ) | Calcul identique à F0 ; devise « non précisée » ; aucune réécriture au chargement |
+| Gratuit (cadeau reçu, prix 0) | `purchasePrice: 0` est un coût connu, distinct de `null` |
+| Lot dont une fiche a déjà un prix payé | Fiche non modifiée sans confirmation ; répartition sur les autres lignes, écart affiché |
+| Lot à couverture inconnue sur certaines lignes | La méthode « couverture » est refusée pour ce lot ; « égale » ou « manuelle » sont proposées |
+| Reste d'arrondi | Affecté à la ligne la plus chère et affiché (`02` § 3.4) |
+| Lot en plusieurs devises | Refusé : un lot n'a qu'une devise |
+| Vente d'une partie d'un lot | Chaque fiche porte sa part ; plus-value calculée par fiche |
+| Échange (`traded`) | `disposal.price` = valeur convenue si elle est saisie, sinon `null` (pas de plus-value réalisée) |
+| Remboursement ou retour | Annulation de la sortie (restauration) ou modification du prix payé, journalisée |
+| Valeur estimée sans date (anciennes fiches) | `valuedAt` absent, affiché « date inconnue » (F-D3) ; jamais daté du jour automatiquement |
+
+### A.11 Sous-lots d'implémentation (après 3.1b et l'autorisation de F1)
+| Sous-lot | Contenu | Prérequis |
+|---|---|---|
+| F1-0 | Écrire `null` au lieu de `'USD'` dans la copie normalisée (l. 5176) ; test « aucune devise inventée ». Applicable seul, **sur accord explicite**, avant F1 | Accord (application de D-18) |
+| F1-1 | Devises (`coverCurrency`, `purchaseCurrency`), totaux par devise, sélecteur | **F-D2** |
+| F1-2 | Frais et coût d'acquisition (`acquisitionFees`, `feesDetail`), coût partiel affiché | F1-1 |
+| F1-3 | Lots (`panel_acquisitions`), aperçu, journal, annulation | **F-D4** ; fournisseur B1 Collection (3.1b-1) |
+| F1-4 | Sorties et ventes (`disposal`) ; `isOwned` (9 occurrences à revoir) ; vue « Sorties » ; plus-value réalisée | F1-2 |
+| F1-5 | Onglet Finances, exports CSV et Excel, statistiques par devise | U-D2 ; F1-1 à F1-4 |
 
 ---
 
@@ -174,6 +213,26 @@ Recommandation : option 2 au départ, sans changement de version IndexedDB.
 - La sauvegarde Lecture (B1) fait un aller-retour à l'identique.
 - **Acceptation.** Aucune donnée `isRead`, `rating` ou `readprog` perdue ; suite complète au vert.
 
+### B.6 bis Granularités et cas particuliers
+| Cas | Règle |
+|---|---|
+| Par numéro | `workKey` d'un numéro : l'unité de base |
+| Par série | **Dérivée**, jamais stockée : lus ÷ numéros connus de la série (catalogue S5, à défaut exemplaires et pulls) ; « prochain numéro » = le premier non lu |
+| Recueil | Œuvre à part entière ; le marquer lu **propose** de marquer ses numéros (relations S5), avec un aperçu ; jamais automatiquement |
+| Éditions multiples (VO / VF) | Œuvres distinctes, reliées par `edition_relation` ; aucune propagation, suggestion « lu en VO » |
+| Plusieurs exemplaires d'une même édition | Un seul état (même `workKey`) |
+| Lecture numérique | **Hors périmètre** : aucun lecteur. Une œuvre lue ailleurs, sous n'importe quelle forme, reçoit un `ReadingState` ordinaire |
+| Possédé non lu | Dérivé : S1 `owned` et `status ≠ read` (liste « pile à lire ») |
+| Lu non possédé | `ReadingState` sans exemplaire : cas normal, invisible dans Collection |
+
+### B.6 ter Sous-lots d'implémentation (après 3.1b et l'autorisation de L1)
+| Sous-lot | Contenu | Prérequis |
+|---|---|---|
+| L1-1 | Domaine Lecture : `ReadingState` et `ReadingLog` ; lecture de compatibilité de `isRead` (aucune écriture) ; fournisseur B1 Lecture | **L-D1** ; 3.1b-1 |
+| L1-2 | S1 `read` et S2 `markRead` / `setGuideProgress` exécutés par Lecture | 3.1b-2 |
+| L1-3 | Migration de `isRead` : aperçu, sauvegarde, idempotence, annulation | **L-D2**, **L-D3** ; autorisation explicite |
+| L1-4 | Entrée Lecture, reprise, « prochain numéro », statistiques | **U-D1** |
+
 ### B.7 Décisions propres à L1
 | # | Question | Recommandation |
 |---|---|---|
@@ -181,3 +240,68 @@ Recommandation : option 2 au départ, sans changement de version IndexedDB.
 | L-D2 | Migration de `isRead` vers Lecture, et conservation des champs d'origine | Migrer avec conservation pendant deux versions |
 | L-D3 | Note en conflit entre exemplaires | Garder la plus récente, et l'ancienne dans le journal |
 | U-D1, U-D3 | Place de la Lecture dans la navigation ; identité d'œuvre | Voir [`04`](04-backlog-feuille-de-route-decisions.md) § 4 |
+
+---
+
+## Partie C — Analyse des décisions ouvertes (aucune n'est prise ici)
+
+### F-D2 — Devise
+- **Problème.** Aucune devise n'est enregistrée. L'interface affiche « $ » et le catalogue écrit `USD` par défaut, alors que les achats sont probablement en euros. Un total qui mélange des devises est faux sans le signaler.
+- **Options** (détail en A.4) :
+
+| Option | Avantages | Inconvénients | Conséquences techniques |
+|---|---|---|---|
+| A. EUR par défaut | Juste pour un collectionneur français ; aucune question | Fausse pour les achats en $ non corrigés | Défaut `'EUR'` sur les nouvelles fiches ; anciennes fiches à `null` |
+| B. USD par défaut | Cohérente avec l'affichage actuel | Fausse pour les achats en € ; prolonge la confusion | Défaut `'USD'`, à expliquer dans l'interface |
+| C. Choix au premier usage | Aucune hypothèse ; une seule question | Un écran de plus au premier ajout | Préférence `defaultPurchaseCurrency`, synchronisée par `user_settings.prefs` |
+| D. Statu quo | Rien à faire | Le problème demeure, et le `USD` inventé aussi | Seul F1-0 |
+
+- **Recommandation : C**, avec EUR proposé, et F1-0 dans tous les cas.
+
+### F-D4 — Méthode de répartition par défaut d'un lot
+- **Problème.** Le prix d'un lot doit être réparti entre ses fiches. La méthode fixe le coût, donc les plus-values, de chacune.
+- **Options** :
+
+| Option | Avantages | Inconvénients | Conséquences techniques |
+|---|---|---|---|
+| Proportionnelle à la couverture | Reflète le prix facial ; simple | Impossible si une couverture est inconnue ; sous-évalue les keys | Refus du lot si une couverture manque (A.10) |
+| Égale | Toujours possible | Grossière pour un lot hétérogène | Aucune |
+| Proportionnelle à la valeur estimée | Reflète le marché | Dépend d'estimations absentes ou anciennes | Exige `estValue` sur toutes les lignes |
+| Pas de défaut (choix obligatoire) | Aucune méthode cachée | Un choix de plus à chaque lot | Sélecteur obligatoire |
+
+- **Recommandation :** proportionnelle à la couverture si toutes les couvertures sont connues, égale sinon. La méthode est toujours affichée et modifiable avant validation.
+
+### L-D1 — Stockage de l'état de lecture par œuvre
+- **Problème.** Le nouvel état de lecture a besoin d'un emplacement local.
+- **Options** :
+
+| Option | Avantages | Inconvénients | Conséquences techniques |
+|---|---|---|---|
+| localStorage `panel_reading_v1` | Aucune version IndexedDB ; simple | Quota partagé (5 à 10 Mo) ; réécriture complète à chaque changement | Moins de 1 Mo estimé pour 10 000 œuvres ; passage à IndexedDB possible plus tard, par une migration additive |
+| Nouveau store IndexedDB | Aucun quota serré ; écriture par fiche | Hausse de version de `panel-catalog` (v5) : migration à autoriser, risque sur les bases existantes | `onupgradeneeded` additif, testé sur une copie |
+
+- **Recommandation : localStorage.**
+
+### L-D2 — Migration de `isRead`
+- **Problème.** La lecture est portée par l'exemplaire. Migrer clarifie la propriété (A3), mais déplace des données utilisateur.
+- **Options** :
+
+| Option | Avantages | Inconvénients | Conséquences techniques |
+|---|---|---|---|
+| Lecture de compatibilité seule | Aucun risque | Deux sources indéfiniment ; la synchronisation consoliderait Collection comme propriétaire | Fusion au moment de la lecture |
+| Migration, `isRead` conservé deux versions | Propriété claire ; retour arrière simple | Double écriture transitoire | Aperçu, sauvegarde, idempotence ; la table de lecture est synchronisée au lot 3.4 |
+| Migration avec suppression de `isRead` | Modèle propre tout de suite | **Destructif** ; retour arrière difficile | Écarté sans autorisation expresse |
+
+- **Recommandation : migration avec conservation**, avant le lot 3.4 si possible ([`phase3/10`](../phase3/10-dossier-lots-3.2-3.7.md) § 4.4).
+
+### L-D3 — Notes différentes entre exemplaires d'une même œuvre
+- **Problème.** Deux exemplaires d'une même œuvre peuvent porter des notes différentes. L'état par œuvre n'en garde qu'une.
+- **Options** :
+
+| Option | Avantages | Inconvénients | Conséquences techniques |
+|---|---|---|---|
+| La plus récente | Reflète l'avis actuel | Date de note souvent inconnue sur les anciennes fiches | Repli sur la plus haute faute de date |
+| La plus haute | Simple, déterministe | Arbitraire | Aucune |
+| Demander à l'utilisateur | Exact | Une question par œuvre concernée (rare) | Liste des conflits dans l'aperçu de migration |
+
+- **Recommandation : demander** dans l'aperçu de migration. À défaut de réponse : la plus récente, sinon la plus haute. La valeur écartée est consignée dans `ReadingLog`.

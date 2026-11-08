@@ -1,6 +1,6 @@
 # Phase 3 · 06 — Feuille de route : comptes, profils, synchronisation local-first
 
-Statut : **proposition à valider**. Sept lots, ajustables. Chaque lot s'arrête sur une validation de l'utilisateur avant le suivant.
+Statut : **feuille de route en vigueur** (lot 3.1 livré le 8 novembre 2026, audité : [`09`](09-audit-cloture-lot-3.1.md) ; dossier technique des lots 3.2 à 3.7 : [`10`](10-dossier-lots-3.2-3.7.md)). Sept lots, ajustables. Chaque lot s'arrête sur une validation de l'utilisateur avant le suivant.
 
 Principe directeur : **Panel reste pleinement utilisable sans compte et sans réseau**. Le cloud est une option qui protège et relie les appareils ; il ne devient jamais un prérequis.
 
@@ -37,7 +37,7 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 - **Risques** :
   - différences entre PGlite et le Postgres de Supabase (extensions, rôles) → tests rejoués avec Supabase local dès que Docker est disponible ;
   - RLS contournée par un superutilisateur pendant les tests → tests sous un rôle non privilégié.
-- **Tests** : tests SQL (schéma, contraintes, RLS entre deux utilisateurs, déclencheurs `rev`), détection de secrets, suite existante (28 tests) inchangée.
+- **Tests** : tests SQL (schéma, contraintes, RLS entre deux utilisateurs, déclencheurs `rev`), détection de secrets, suite existante inchangée (28 tests à la rédaction, 30 au 8 novembre 2026).
 - **Critères d'acceptation** : voir `07` § 7 (mesurables).
 - **Livrables** : `backend/`, scripts npm, documentation et runbooks, rapport.
 - **Validation utilisateur** : relecture du schéma et du rapport ; exécution d'une commande de test documentée.
@@ -55,7 +55,7 @@ Détail complet : [`07-lot-3.1-cahier-des-charges.md`](07-lot-3.1-cahier-des-cha
 - **Changements de données** : `panel-sync/state` (liaison du compte) ; profil local lié, jamais supprimé.
 - **Risques** : XSS → vol de jeton (d'où la CSP) ; e-mails classés comme spam ; App Links mal configurés.
 - **Tests** : parcours d'authentification complets (Web, Android), CSP sans violation dans la suite existante, énumération de comptes impossible, déconnexion qui conserve les données.
-- **Critères d'acceptation** : 28 tests et plus au vert ; aucune violation CSP ; aucune clé de service dans le client ; jetons Android hors de localStorage.
+- **Critères d'acceptation** : tous les tests existants (30 au 8 novembre 2026) et les nouveaux au vert ; aucune violation CSP ; aucune clé de service dans le client ; jetons Android hors de localStorage.
 - **Livrables** : écran Compte, module `panel-cloud-auth.js`, configuration de l'hébergement, runbook « créer un projet ».
 - **Validation utilisateur** : création d'un compte de test, connexion sur deux appareils, réinitialisation du mot de passe.
 

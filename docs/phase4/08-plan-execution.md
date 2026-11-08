@@ -87,7 +87,7 @@ Contenu de [`../phase3/06-roadmap-phase3.md`](../phase3/06-roadmap-phase3.md), a
 | Migration des données | 3.4 | Migration en sept étapes, vérifiée ([`../phase3/04-synchronisation.md`](../phase3/04-synchronisation.md) § 6) |
 | Synchronisation, conflits | 3.4, 3.5 | Aucune perte silencieuse |
 | Sécurité, permissions | 3.1, 3.2, 3.3, 3.6 | RLS, CSP, rôles sans accès personnel |
-| Non-régression | Tous | 29 tests existants (28 + test 30 du lot F0) + nouveaux, toujours au vert |
+| Non-régression | Tous | Tests existants (30 front et 82 base au 8 novembre 2026) + nouveaux, toujours au vert |
 | Retour arrière | Tous | Copies de sécurité, commits locaux, aucune opération destructive |
 
 ## 3. Phase 4 — Explorer 2.0
@@ -118,7 +118,7 @@ Mise à jour du 8 novembre 2026 : **G1 validé (D-20), le lot 3.1 a repris et a 
 | G1 | Documents d'architecture cohérents et validés par l'utilisateur (frontières, contrats, B1, images, navigation, périmètre comics) **Validé le 8 novembre 2026 (D-20)** |
 | G2 | Décision sur le lot 3.1b (création, contenu, place dans le plan) | Placement approuvé (D-17) ; implémentation **suspendue** jusqu'à approbation explicite |
 | G3 | Décision P1 (utilisateurs locaux et S1) — nécessaire avant 3.1b, pas avant 3.1 | **À valider** |
-| G4 | Arbre Git propre, suite de tests au vert avant de commencer | 29/29 le 8 novembre 2026 (finition F0) ; arbre propre après le commit de cette mission ; à relancer au démarrage |
+| G4 | Arbre Git propre, suite de tests au vert avant de commencer | 30/30 front et 82/82 base le 8 novembre 2026 (audit de clôture du lot 3.1) ; arbre propre après le commit de cette mission ; à relancer au démarrage |
 | G5 | Copies de sécurité `*.backup.20261107-lot31` présentes | Présentes (plus les copies `*.backup.20261107-f0`) |
 | G6 | Aucun engagement financier ni compte cloud requis par le lot 3.1 | Conforme |
 | G7 | Prompt du lot 3.1 mis à jour (champ `domain`, schémas réservés, documents à lire) | Fait dans [`../phase3/08-lot-3.1-prompt.md`](../phase3/08-lot-3.1-prompt.md) |

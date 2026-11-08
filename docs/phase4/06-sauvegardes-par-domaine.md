@@ -108,7 +108,7 @@ Règles inter-domaines :
 | R7 | Conversion inverse bundle → v3 : relisible par la version actuelle |
 | R8 | Garde-fou : une restauration en mode remplacement d'une base de 500 fiches par 10 fiches exige la confirmation renforcée |
 | R9 | Explorer absent (fournisseur non déclaré) : l'export et la restauration de Collection fonctionnent |
-| R10 | Les 28 tests existants restent verts, en particulier « Protection des données » et la restauration JSON fidèle |
+| R10 | Tous les tests existants (30 au 8 novembre 2026) restent verts, en particulier « Protection des données » et la restauration JSON fidèle |
 
 ## 10. Décisions ouvertes
 - **B1-a** : durée de maintien de l'export à l'ancien format (proposé : deux versions).

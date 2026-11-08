@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 05 — Dossier de préparation du lot 3.1b (séparation des domaines côté client)
 
-Statut : **préparation technique** (8 novembre 2026).
+Statut : **plan d'exécution final, prêt à lancer après approbation** (8 novembre 2026, révisé après le lot 3.1).
 - **Le lot 3.1b est suspendu** jusqu'à approbation explicite de l'utilisateur (D-17). Rien n'est implémenté.
 - Ce dossier découpe le lot défini dans [`phase4/08`](../phase4/08-plan-execution.md) § 2 en sous-lots courts. Il ne refait pas la conception.
 
@@ -19,8 +19,8 @@ Documents de référence, qui font autorité :
   - Pas de nouvelle version de base IndexedDB, pas de nouveau store.
   - Les clés localStorage existantes sont conservées. Une empreinte par domaine est prise avant et après chaque sous-lot.
 - **Comportement identique**, sauf A7 (retrait de « Ma collection » de la recherche d'Explorer) et la navigation, seulement si elle est validée.
-- **Tests.** Les tests ciblés du sous-lot, puis la suite complète, actuellement 29 tests, dont le test 30 (finances).
-- **Numéros de ligne.** Ceux de [`phase4/02`](../phase4/02-frontieres-collection-explorer.md) datent d'avant F0 : décalage d'environ +80 à +100 lignes. Ils sont à relocaliser par nom de fonction (`exIndexBuild`, `exSearch`, `relMakeSingle`, `pullStatusOf`, `goSingles`…).
+- **Tests.** Les tests ciblés du sous-lot, puis la suite complète : 30 tests front (dont 30, finances, et 31, `readiness()`), 82 tests de base de données (`npm run test:db`), `npm run check:secrets` et `npm run check:boundaries`.
+- **Numéros de ligne.** Ceux de [`phase4/02`](../phase4/02-frontieres-collection-explorer.md) datent d'avant F0. La carte à jour est au § 4 ; `npm run check:boundaries` la régénère à tout moment.
 
 ## 1. Sous-lots
 
@@ -29,8 +29,8 @@ Documents de référence, qui font autorité :
 |---|---|
 | Objectif | Lever les décisions bloquantes et figer la référence |
 | Dépendances | Approbation de 3.1b ; P1 (pour 3.1b-2) ; B1-a, B1-b, B1-c (pour 3.1b-1) ; N et M (pour 3.1b-7 seulement) |
-| Actions | Suite complète à 29/29 ; relevé des empreintes de `panel_physical_singles`, `panel-catalog` (comptes par store) et `panel-library` ; inventaire des sauvegardes ; relocalisation des couplages C1 à C10, D1 à D4 et E1 à E5 par fonction |
-| Acceptation | Tableau des couplages à jour, avec les lignes réelles ; décisions consignées dans `DECISIONS.md` |
+| Actions | Suite complète au vert ; relevé des empreintes de `panel_physical_singles`, `panel-catalog` (comptes par store) et `panel-library` ; inventaire des sauvegardes. **Fait le 8 novembre 2026** : relocalisation des couplages (§ 4) et outil `scripts/check-boundaries.js` |
+| Acceptation | Décisions consignées dans `DECISIONS.md` ; `check:boundaries` relancé au démarrage (15 couplages attendus) |
 
 ### 3.1b-1 — Sauvegardes par domaine (B1)
 | | |
@@ -91,9 +91,9 @@ Documents de référence, qui font autorité :
 | | |
 |---|---|
 | Objectif | Rendre la séparation vérifiable de façon permanente |
-| Fichiers | `run-all-tests.js` (test 31 « Frontières », R1 à R10) ; éventuellement un petit script statique `scripts/check-boundaries.js` sans dépendance |
+| Fichiers | `run-all-tests.js` (test **32** « Frontières », R1 à R10 ; le n° 31 est pris par `readiness()`) ; `scripts/check-boundaries.js` (existe en mode rapport) passé en `--strict` et ajouté à `test:all` |
 | Tests | Statique (accès interdits par domaine) ; dynamique (fournisseur absent, réglage S1 désactivé, visiteur) ; empreintes par domaine avant et après un démarrage et après une restauration |
-| Acceptation | Suite complète au vert (29 tests + nouveaux) |
+| Acceptation | Suite complète au vert (30 tests + nouveaux) ; `check:boundaries --strict` : 0 couplage |
 
 ### 3.1b-7 — Navigation (conditionnel)
 - **Seulement si** N1 à N5 et une option mobile (M-A à M-E) sont validées. Sinon, reporté au lot 4.9.
@@ -121,3 +121,41 @@ Documents de référence, qui font autorité :
 | B1-c | Nom du format | 3.1b-1 | `panel-bundle` / autre | `panel-bundle` |
 | N1-N5, M-A à M-E, U-D1 | Navigation bureau et mobile, place de la Lecture | 3.1b-7 seulement | Voir [`03`](../phase4/03-changement-navigation.md) et [`03` du plan directeur](03-plan-directeur-produit-ux-architecture.md) § 3.2 | Décider ensemble ou reporter à 4.9 |
 | M1-M4 | Périmètre comics des Sorties | Filtre B-17 dans 3.1b-5 | Voir [`phase4/04`](../phase4/04-perimetre-sorties-comics.md) § 5 | Trancher avant 3.1b-5, sinon reporter le filtre au lot 4.6 |
+
+## 4. Carte des couplages vérifiée (8 novembre 2026, `npm run check:boundaries`)
+36 fonctions Explorer analysées, **15 couplages** vers les données personnelles, tous déjà répertoriés dans [`phase4/02`](../phase4/02-frontieres-collection-explorer.md) :
+
+| Règle | Fonction (ligne) | Sous-lot |
+|---|---|---|
+| C2-C6 : lecture de `physicalSingles` | `exIndexBuild` (9507), `exMatch` (9532), `exCreators` (9575), `exSeriesList` (9581), `exPublishers` (9591), `exSearch` (9610), `exEntityHtml` (9817, 9829), `wireExplorer` (10083) | 3.1b-3 |
+| C8 : lecture de `relPulls` | `exIndexBuild` (9510), **`exRecos` (9626)**, ce dernier absent de `02` | 3.1b-3 |
+| C9 : actions de Collection | `wireExplorer` (10083 `openSingleInspector`, 10086 `addPubToWishlist`) | 3.1b-3 |
+| C10 : écriture de la progression | `exSetProgress` (9499, `exPut('readprog')`) | 3.1b-3 (via S2) |
+| A7 : « Ma collection » dans la recherche | `exSearch` (9610) | 3.1b-3 |
+
+Autres points, hors du périmètre du script :
+- **D1** : `goSingles` (12255) héberge `showExplorer` (9865).
+- **D2 et D3** : `exportExplorerData` et `sanitizeExplorerData` (10027-10028), appelés par l'export de Collection.
+- **E1** : `addPubToWishlist` (8753), `addPubToCollection` (8764), `wishToCollection` (8775), `collectionToWishlist` (8784).
+- **E2** : `pullStatusOf` (8801), `pickUpPull` (8869).
+- **E4** : `relCopiesOf` (9163).
+- `renderStatsDashboard` lit `physicalSingles` : c'est Collection, ce n'est pas un couplage.
+
+## 5. Contrats : dépendances cachées relevées
+| Point | Risque | Mesure dans le plan |
+|---|---|---|
+| S1 `statusFor().read` | Aujourd'hui, `read` vient de `isRead`, **un champ de l'exemplaire** (Collection). S1 consoliderait alors la lecture comme propriété de Collection, contrairement à A3 | En 3.1b-2, S1 lit `read` via une fonction `readingStatusOf(ref)` du domaine Lecture, alimentée provisoirement par `isRead`. Son implémentation changera avec L1 (L-D2), sans toucher à S1 |
+| S2 `setGuideProgress` | Explorer écrit encore dans `readprog` (C10) | La commande S2 est exécutée par le domaine Lecture (propriétaire), et non par Collection |
+| E3, annulation d'import | Le calendrier inspecterait l'inventaire | Question S1 agrégée « référencé : oui ou non » par identifiant de publication, sans aucune fiche renvoyée |
+| C5 et C6, pages créateurs, séries et éditeurs | Contenu **dérivé de l'inventaire**, présenté comme éditorial | Alimentées par S1 et marquées « d'après votre collection » jusqu'au lot 4.3 ; masquées si S1 est indisponible (P1) |
+| Sauvegardes (B1) et synchronisation (lot 3.4) | Deux registres de domaines : `BackupProvider.v1` et `SYNC_DOMAINS` (lot 3.1) | En 3.1b-1, les fournisseurs reprennent le champ `domain` de `SYNC_DOMAINS` : une seule source de vérité pour la propriété des données |
+
+Aucune dépendance circulaire : Collection → S5 (catalogue en lecture) ; Explorer → S1 et S2 (fournis par Collection et Lecture) ; Lecture → S5. Aucun domaine n'appelle un contrat de celui qui l'appelle.
+
+## 6. Lancement
+Après approbation, et dans cet ordre :
+1. Consigner l'approbation de 3.1b, P1 et B1-a/b/c dans `DECISIONS.md`.
+2. Exécuter 3.1b-0 à 3.1b-6, un sous-lot par commit local. Chaque sous-lot se termine par ses tests ciblés et la suite complète.
+3. 3.1b-7 seulement si N, M et U-D1 sont validées.
+
+Sans P1, seul 3.1b-1 est réalisable, à condition que B1 soit tranchée.

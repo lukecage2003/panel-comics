@@ -1,6 +1,6 @@
 # Plan directeur 2.0 · 07 — Conception Explorer 2.0 et Community
 
-Statut : **conception à valider** (8 novembre 2026). Aucune implémentation n'est prévue dans cette mission.
+Statut : **conception consolidée, à valider** (8 novembre 2026, révision 2 : architecture des pages, performances, abus de Community, architecture partagée). Aucune implémentation.
 
 - **Explorer 2.0** est déjà spécifié en détail dans le [cahier des charges](../phase4/00-explorer-2.0-cahier-des-charges.md) (révision 5), les [frontières](../phase4/02-frontieres-collection-explorer.md), les [contrats](../phase4/05-contrats-s1-s6.md), les [images R2](../phase4/07-architecture-images-r2.md) et le [plan d'exécution](../phase4/08-plan-execution.md). La partie A **ne les répète pas** : elle en fait la synthèse et comble les manques demandés (sagas, personnages et équipes, actualités, recommandations, recherche).
 - **Community** n'avait qu'une réservation (C-0, contrats réservés). La partie B en est la **conception complète**, qui sert de document C-0.
@@ -79,6 +79,35 @@ Chaque fiche porte :
   - Glissement vers l'encyclopédie : maîtrisé par des fiches courtes et le périmètre D-12.
   - Coûts R2 : plafond à fixer (décision R2).
 - **Tests** : critères 1 à 31 du cahier ; Explorer complet sans collection ; aucune donnée personnelle dans les réponses ; aucun mangas publié (`medium`) ; recherche sans catégorie personnelle.
+
+### A.7 Architecture des pages et découverte
+Le parcours est guidé par les **relations** entre entités, plutôt que par une liste de fiches : chaque fiche ouvre au moins trois portes vers d'autres entités. C'est ce qui distingue Explorer d'une encyclopédie statique.
+
+| Page | Contenu principal | Portes de sortie |
+|---|---|---|
+| Accueil Explorer | À la une (éditorial), sorties de la semaine, événement en cours, guides populaires (S3), « reprendre » (S1, facultatif) | Événement, sortie, guide |
+| Événement ou saga | Résumé court, **ordre de lecture** (principal, tie-ins, facultatifs), personnages et créateurs, éditions VO/VF | Numéro, personnage, guide, critiques (Community) |
+| Série | Volumes, arcs (sagas), Key Issues, créateurs par période, prochaines sorties | Numéro, saga, créateur |
+| Numéro | Couverture (S4), crédits, Key facts sourcés, éditions et recueils qui le contiennent, événement | Série, créateur, édition, « ajouter à ma Pull List » ou « à ma wishlist » (S2) |
+| Personnage ou équipe | Fiche courte, « par où commencer », événements marquants, équipes datées | Guide, événement, série |
+| Créateur ou éditeur | Bibliographie de comics, séries marquantes, sorties à venir | Série, numéro |
+| Sorties (calendrier) | Semaine et mois, par marché et éditeur, reports et annulations | Numéro, série |
+| Classements | Commerciaux sourcés, communautaires agrégés (S3) | Numéro, série |
+| Recherche globale | Résultats regroupés par type d'entité, alias, VO/VF, fautes tolérées ; **aucune catégorie personnelle** (A7) | Toutes |
+
+**Recommandations.** Elles sont éditoriales (« si vous avez aimé X »), relationnelles (même créateur, même événement, suite) et, en option, personnalisées **sur l'appareil** via S1 (« pas encore lu »). Aucun profil n'est calculé côté serveur. Chaque recommandation affiche son motif (« même scénariste »).
+
+**Actualités.** Activées seulement avec une source licenciée ou une rédaction interne. Chaque actualité est liée à une entité, porte une date d'expiration et n'apparaît jamais sans source.
+
+### A.8 Performances et extensibilité
+| Sujet | Règle |
+|---|---|
+| Données | Catalogue S5 servi en lecture seule et mis en cache (service worker et IndexedDB d'Explorer, séparée de Collection) ; pages paginées ; index de recherche par lots |
+| Images | Miniatures S4 aux dimensions fixes (R2), chargement différé, image de remplacement |
+| Hors ligne | Les fiches consultées et l'ordre de lecture restent disponibles hors ligne ; les sorties portent la date de leur dernière actualisation |
+| Budget | Accueil interactif en moins de 2 s sur un mobile moyen ; recherche en moins de 150 ms sur 50 000 entités, en local |
+| Extensibilité | Nouveaux types d'entités par schéma (`kind`) et relations génériques (`relation(from, to, type)`), sans nouvelle table par type ; `medium` filtre le périmètre (D-12) |
+| Absence de Collection | Toutes les pages fonctionnent avec S1 `unavailable` : badges masqués, rien d'autre ne change (critère X2) |
 
 ---
 
@@ -160,9 +189,55 @@ Chaque table porte `deleted_at` pour la suppression douce et le droit à l'effac
 - Le retrait d'une publication la supprime partout.
 - Limites de débit, blocage effectif dans les deux sens, contenu signalé masqué après décision, export et effacement complets.
 
+### B.9 bis Matrice des abus
+| Risque | Prévention | Détection | Réponse |
+|---|---|---|---|
+| Spam | Limites de débit ; nouveaux comptes limités (pas de liens pendant 7 jours) ; e-mail vérifié | Signalements, volume anormal | Masquage, puis suspension |
+| Harcèlement | Blocage mutuel, mentions désactivables, messages privés absents en C-1 à C-3 | Signalements | Masquage immédiat pour la personne visée, modération humaine, sanctions graduées |
+| Faux comptes | Vérification de l'e-mail ; CAPTCHA à l'inscription (décision de la Phase 3) | Inscriptions groupées (même appareil, même réseau) | Suspension, réputation remise à zéro |
+| Contenus illicites | Conditions d'utilisation, signalement en un geste | File de modération prioritaire | Retrait, conservation de la preuve selon l'avis juridique |
+| Manipulation des classements | Classements communautaires agrégés S3 avec un **seuil k** (à valider) ; une seule voix par compte ancien ; comptes récents exclus | Pics de votes corrélés | Exclusion des votes suspects, classement recalculé |
+| Exposition de données personnelles | Rien n'est public par défaut ; publication par copie explicite (`CommunityPublish.v1`) ; aperçu de ce qui devient public | Test statique : aucune jointure `community` ↔ `app` | Retrait ; incident consigné |
+| Détournement des statistiques de collection | **Aucune donnée de collection (valeur, quantité, emplacement) n'est publiable** ; la réputation ne dépend jamais de la valeur ; S3 publie des signaux agrégés, jamais individuels | Revue des contrats S3 | Refus de toute fonctionnalité qui exposerait une collection individuelle |
+
 ### B.10 Décisions à prendre plus tard (non bloquantes aujourd'hui)
 - Contenus autorisés : critiques seules au départ, ou discussions dès C-2 ?
 - Âge minimum.
 - Modération : interne, communautaire ou mixte.
 - Réputation : visible ou non.
 - Groupes de magasins : ouverts ou non.
+
+---
+
+## Partie C — Architecture partagée et cohérence
+
+| Service commun | Propriétaire | Consommé par | Règle de cohérence |
+|---|---|---|---|
+| Catalogue canonique (S5) | Explorer (rédaction, 4.10) | Collection (lecture : rattachement des exemplaires), Lecture (`workKey`), Community (`entity_ref`) | Lecture seule pour les consommateurs ; une correction proposée par un utilisateur passe par une contribution (Community C-5), puis l'outil éditorial |
+| Registre média (S4) | Service commun | Explorer, Collection (couvertures), Community (avatars) | Droits par source ; une couverture manuelle de Collection reste privée |
+| Identité et rôles (S6) | Phase 3 (`auth.users`, `profiles`, `app.has_role`) | Tous | Les rôles éditoriaux et de modération ne lisent jamais `app.*` |
+| Recherche | Chaque domaine indexe ses propres données | Explorer (catalogue), Collection (inventaire, sur l'appareil) | Deux recherches distinctes ; jamais d'index mixte (A7) |
+| Signaux agrégés (S3) | Service commun | Explorer (classements), Community | Agrégats seulement ; seuil k (D-16, à valider) ; consentement selon l'avis juridique |
+| Permissions | RLS par schéma | — | `app` : personnel ; `catalog`, `editorial`, `media` : publics en lecture, écriture réservée aux rôles ; `community` : visibilité par ligne |
+| Synchronisation | Phase 3 (lot 3.4) | Collection, Lecture, préférences | Seules les données personnelles se synchronisent. Explorer et Community sont des données serveur, non synchronisées par l'outbox |
+
+**Graphe des dépendances (acyclique).**
+```
+Identité/rôles (S6) ← tous
+Catalogue (S5) ← Collection, Lecture, Explorer, Community
+Média (S4) ← Explorer, Collection, Community
+Collection, Lecture → S1/S2 → Explorer
+Collection, Lecture → CommunityPublish → Community → CommunityFeed → Explorer
+Community → S3 ← Explorer
+```
+- **Explorer** n'appelle ni Collection ni Lecture : il passe par S1 et S2, fournis par eux.
+- **Community** ne lit ni Collection ni Lecture : elle ne reçoit que des copies publiées.
+- **Aucun domaine** ne dépend d'un contrat de celui qui l'appelle.
+- **Contrôle :** `npm run check:boundaries` (côté client, mode strict au sous-lot 3.1b-6) et le test statique serveur prévu pour Community (B.9).
+
+**Roadmap consolidée.**
+- Phase 3 : 3.1 livré, puis 3.1b, puis 3.2 à 3.7.
+- Phase 4 Explorer : 4.1, puis 4.2 à 4.11 ([`phase4/08`](../phase4/08-plan-execution.md)).
+- Community : C-0 (ce document), puis C-1 à C-5 (B.8).
+
+F1 et L1 s'insèrent après 3.1b ; L1 de préférence **avant** le lot 3.4 (voir [`phase3/10`](../phase3/10-dossier-lots-3.2-3.7.md) § 4.4).

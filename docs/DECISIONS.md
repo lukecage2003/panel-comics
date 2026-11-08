@@ -47,7 +47,10 @@ En cas de contradiction : `02` (frontières) et `05` (contrats) priment sur le c
 | # | Sujet | Document |
 |---|---|---|
 | P1 | Utilisateurs locaux sans compte et S1 | [`05`](phase4/05-contrats-s1-s6.md) § 3 |
-| G2 | Création du lot 3.1b | [`08`](phase4/08-plan-execution.md) |
+| G2 | Création du lot 3.1b (identique à la ligne « 3.1b » ci-dessous) | [`08`](phase4/08-plan-execution.md) |
+| T1 à T4 | Écritures par `sync_push` seulement, pierres tombales sans suppression physique, ordre UPDATE puis INSERT, `app.skip_rev` (techniques, au début du lot 3.4) | [`phase3/10`](phase3/10-dossier-lots-3.2-3.7.md) |
+| F1-0 | Accord pour écrire `null` au lieu de `'USD'` dans la copie normalisée (application de D-18) | [`directeur/06`](directeur/06-specifications-F1-L1.md) § A.11 |
+| Supabase local | Installation de Docker et de la CLI Supabase par l'utilisateur, pour la validation de référence | [`phase3/09`](phase3/09-audit-cloture-lot-3.1.md) |
 | N1-N5, M-A à M-E | Navigation de bureau et mobile | [`03`](phase4/03-changement-navigation.md) |
 | B1-a à B1-c | Ancien format, secrets, nom du format | [`06`](phase4/06-sauvegardes-par-domaine.md) § 10 |
 | M1-M4 | BD franco-belge, manhwa et manhua, manga non japonais, adaptations | [`04`](phase4/04-perimetre-sorties-comics.md) § 5 |

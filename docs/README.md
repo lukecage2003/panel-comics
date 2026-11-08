@@ -16,4 +16,6 @@ Mise à jour : 7 novembre 2026. Les documents qui font autorité, et leur ordre 
 | Plan directeur : conception Explorer 2.0 et Community | [`directeur/07-conception-explorer-2.0-community.md`](directeur/07-conception-explorer-2.0-community.md) |
 | Journal d'avancement des missions | [`directeur/JOURNAL.md`](directeur/JOURNAL.md) |
 | Phase 3 : comptes, synchronisation, sauvegardes, RGPD | [`phase3/README.md`](phase3/README.md) |
+| Phase 3 : audit de clôture du lot 3.1 | [`phase3/09-audit-cloture-lot-3.1.md`](phase3/09-audit-cloture-lot-3.1.md) |
+| Phase 3 : dossier technique des lots 3.2 à 3.7 | [`phase3/10-dossier-lots-3.2-3.7.md`](phase3/10-dossier-lots-3.2-3.7.md) |
 | Phase 4 : Explorer 2.0, frontières, contrats, sauvegardes par domaine, images R2, plan d'exécution | [`phase4/README.md`](phase4/README.md) |

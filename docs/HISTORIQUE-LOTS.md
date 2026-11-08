@@ -89,5 +89,15 @@ Repris après la validation de G1 (D-20) ; F0 validé (D-19).
 - **Suite du front** : premier passage à 29/30, avec un échec intermittent du contrôle `quota` du test 18 (Fandom, sans lien avec le lot) ; second passage à **30/30**.
 - **Sauvegardes** : `*.backup.20261108-lot31` pour `index.html`, `run-all-tests.js` et `sw.js` ; aucune sauvegarde supprimée.
 
+### Audit de clôture du lot 3.1 et préparation des lots suivants (8 novembre 2026)
+- **Défauts démontrés et corrigés** (migration 7 `hardening`, [audit](phase3/09-audit-cloture-lot-3.1.md)) :
+  - D1 : un appareil révoqué pouvait être réactivé par l'utilisateur ; droits par colonne sur `devices` ;
+  - D2 : `field_revs` sans limite de taille ;
+  - D3 : colonnes extraites sans limite de longueur.
+- **Tests** : base 82/82 (dont `hardening.test.js`) ; `verify-supabase.sql` en lecture seule ; secrets 0 ; front 30/30, test 18 stabilisé.
+- **Outils** : `npm run check:boundaries` (15 couplages relevés, mode rapport).
+- **Documents** : plan définitif de 3.1b ([`directeur/05`](directeur/05-preparation-lot-3.1b.md)), dossier des lots 3.2 à 3.7 ([`phase3/10`](phase3/10-dossier-lots-3.2-3.7.md)), spécifications F1 et L1 révisées avec l'analyse de F-D2, F-D4, L-D1 à L-D3 ([`directeur/06`](directeur/06-specifications-F1-L1.md)), conception Explorer 2.0 et Community consolidée ([`directeur/07`](directeur/07-conception-explorer-2.0-community.md)).
+- **Non exécuté** : validation sous Supabase local (Docker absent) ; procédure dans l'audit.
+
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.

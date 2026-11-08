@@ -19,3 +19,14 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
 |---|---|---|---|---|---|---|
 | Validations | Terminé | DECISIONS : D-19 (F0 validé), D-20 (G1 validé) | — | D-19, D-20 | — | — |
 | Lot 3.1 | Livré, en attente de validation | backend/, scripts/check-secrets.js, package.json, runbooks, `Panel.sync.readiness()`, test 31 | Base : 71/71 ; secrets : 0 ; front : 30/30 au deuxième passage (premier passage : 29/30, échec intermittent du contrôle `quota` du test 18) | — | Validation de référence sous Docker non exécutée | Validation du lot 3.1, puis lot 3.2 (projet Supabase créé par l'utilisateur) ou 3.1b |
+
+## 8 novembre 2026 — mission « Méga mission d'accélération »
+| Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
+|---|---|---|---|---|---|---|
+| A. Audit de clôture 3.1 | Terminé | Migration 7 (D1 à D3), `hardening.test.js`, `verify-supabase.sql`, `check-boundaries.js`, test 18 stabilisé, [`phase3/09`](../phase3/09-audit-cloture-lot-3.1.md) | Base 82/82 ; front 30/30 ; secrets 0 | — | Supabase local non exécuté (Docker absent) | Installation de Docker par l'utilisateur, puis procédure de l'audit |
+| B. Plan final 3.1b | Terminé (analyse seule) | [`05`](05-preparation-lot-3.1b.md) : carte des couplages, dépendances cachées, ordre | `check:boundaries` : 15 couplages | — | Approbation de 3.1b, P1, B1-a/b/c | Décisions |
+| C. Lots 3.2 à 3.7 | Terminé (documentation) | [`phase3/10`](../phase3/10-dossier-lots-3.2-3.7.md) | — | T1 à T4 recommandées, non prises | Services externes non autorisés | — |
+| D. F1 et L1 | Spécifications définitives | [`06`](06-specifications-F1-L1.md) révision 2, partie C | — | Aucune (F-D2, F-D4, L-D1 à L-D3 analysées) | Décisions de l'utilisateur | Choix |
+| E. Explorer 2.0 et Community | Consolidé | [`07`](07-conception-explorer-2.0-community.md) révision 2 | — | — | Phase 3, M1 à M4, juridique | Validation |
+| F. Cohérence | Terminé | Nombres de tests, statuts, index, décisions en attente | Liens : voir rapport | — | — | Commit local |
+
