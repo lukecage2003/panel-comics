@@ -1,0 +1,31 @@
+# Configuration locale de la Supabase CLI (lot 3.1). Aucun secret ici.
+# Les clés sont générées localement par `supabase start` et ne sont jamais versionnées.
+project_id = "panel-local"
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "app"]
+extra_search_path = ["public", "extensions"]
+
+[db]
+port = 54322
+major_version = 17
+
+[db.seed]
+enabled = true
+sql_paths = ["./seed.sql"]
+
+[auth]
+enabled = true
+site_url = "http://localhost:5199"
+enable_signup = false
+
+[storage]
+enabled = false
+
+[realtime]
+enabled = false
+
+[studio]
+enabled = false

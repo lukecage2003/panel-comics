@@ -28,3 +28,10 @@ android-app/android/capacitor-cordova-android-plugins/build/
 *.backup*
 _backups/
 .impeccable/detect*.json
+
+# Backend (lot 3.1) : l'exemple de variables est versionné, jamais un vrai .env
+!backend/.env.example
+backend/.temp/
+backend/supabase/.branches/
+backend/supabase/.temp/
+backend/tests/report.txt

@@ -67,5 +67,27 @@ Autorisé le 7 novembre 2026 (décision D-17), **livré le 8 novembre 2026, en a
 ## Phase 3 — Comptes, profils et synchronisation local-first
 Conception livrée le 7 novembre 2026 (voir [`phase3/`](phase3/), commit `93f15db`). Le lot 3.1 a été lancé par l'utilisateur le 7 novembre 2026, puis suspendu le même jour avant toute modification de code (copies de sécurité `*.backup.20261107-lot31` créées, non versionnées), pour intégrer la correction « séparation stricte Collection / Explorer ».
 
+### Lot 3.1 — Fondations backend et préparation du client (8 novembre 2026, en attente de validation)
+Repris après la validation de G1 (D-20) ; F0 validé (D-19).
+- **Backend** ([`backend/`](../backend/README.md)) :
+  - 6 migrations compatibles Supabase, schéma `app` et ses 11 tables (aucune autre ; schémas Explorer et Community non créés) ;
+  - RLS sur 100 % des tables, politiques par opération, tables techniques en lecture seule, `anon` sans droit ;
+  - révision `rev` par utilisateur (`security definer`, `search_path` vide) et `updated_at` ;
+  - contraintes de taille et d'identifiant, cascade à la suppression d'un compte.
+- **Tests sans Docker** (PGlite 0.5.11, PostgreSQL 18.6, rôles non privilégiés vérifiés) : 71 tests en 13 à 23 s environ, dont :
+  - 1 000 écritures de révision ;
+  - un test de mutation (RLS désactivée ⇒ fuite détectée) ;
+  - une sauvegarde puis une restauration locale (`dumpDataDir`).
+- **Secrets** : `npm run check:secrets` donne 0 correspondance dans les fichiers suivis. Un faux positif, une empreinte de commit dans une URL de `build.gradle`, est écarté par une exception de contexte.
+- **Client** :
+  - `SYNC_DOMAINS` et `Panel.sync.readiness()`, en lecture seule et groupés par domaine ;
+  - `PANEL_SYNC_ENABLED = false` ; aucune interface, aucun réseau ;
+  - test 31 : localStorage et IndexedDB identiques avant et après l'appel ;
+  - `sw.js` passe en `panel-2026-11-08-lot31`.
+- **Constat pour le lot 3.4** : un upsert en conflit consomme deux révisions (`BEFORE INSERT` puis `BEFORE UPDATE`). L'ordre reste strictement croissant, avec un trou.
+- **Non exécuté** : `supabase db reset` sous Docker (ni Docker ni la CLI ne sont installés).
+- **Suite du front** : premier passage à 29/30, avec un échec intermittent du contrôle `quota` du test 18 (Fandom, sans lien avec le lot) ; second passage à **30/30**.
+- **Sauvegardes** : `*.backup.20261108-lot31` pour `index.html`, `run-all-tests.js` et `sw.js` ; aucune sauvegarde supprimée.
+
 ## Phase 4 — Explorer 2.0
 Cahier des charges fourni par l'utilisateur le 7 novembre 2026 et archivé dans [`phase4/`](phase4/). Révision 2 du 7 novembre 2026 : séparation stricte Collection / Explorer ([frontières et contrats](phase4/02-frontieres-collection-explorer.md)). Révision 3 du même jour : décisions A3, A5, A6 et A7, contrats S1 à S6 détaillés, domaine Community indépendant, [changement de navigation](phase4/03-changement-navigation.md) documenté sans être implémenté. Révision 4 : Sorties limitées aux comics, mangas japonais exclus ([périmètre](phase4/04-perimetre-sorties-comics.md)). Révision 5 (finalisation architecturale) : sauvegardes par domaine (B1, principe approuvé), contrats S1 à S6 de référence, architecture des images R2, propositions de navigation mobile, audit final des dépendances (E1 à E5 ajoutés), plan d'exécution et [journal des décisions](DECISIONS.md). Aucun code modifié. Non commencée ; prérequis : Phase 3.

@@ -111,11 +111,11 @@ Contenu de [`../phase3/06-roadmap-phase3.md`](../phase3/06-roadmap-phase3.md), a
 - Implémentation : pas avant la fin de la Phase 3 et le lot 4.10.
 
 ## 5. Critères d'acceptation pour reprendre le lot 3.1
-Mise à jour du 8 novembre 2026 : **le lot 3.1 ne peut pas reprendre tant que G1 n'est pas validé**. Rappel : le lot 3.1 porte sur les fondations backend (migrations, PGlite, RLS) ; la séparation des domaines côté client est le lot 3.1b ([préparation](../directeur/05-preparation-lot-3.1b.md)).
+Mise à jour du 8 novembre 2026 : **G1 validé (D-20), le lot 3.1 a repris et a été livré le jour même** (en attente de validation). Rappel : le lot 3.1 porte sur les fondations backend (migrations, PGlite, RLS) ; la séparation des domaines côté client est le lot 3.1b ([préparation](../directeur/05-preparation-lot-3.1b.md)).
 
 | # | Critère | Statut au 8 novembre 2026 |
 |---|---|---|
-| G1 | Documents d'architecture cohérents et validés par l'utilisateur (frontières, contrats, B1, images, navigation, périmètre comics) Rédigés ; **validation attendue — bloquant** |
+| G1 | Documents d'architecture cohérents et validés par l'utilisateur (frontières, contrats, B1, images, navigation, périmètre comics) **Validé le 8 novembre 2026 (D-20)** |
 | G2 | Décision sur le lot 3.1b (création, contenu, place dans le plan) | Placement approuvé (D-17) ; implémentation **suspendue** jusqu'à approbation explicite |
 | G3 | Décision P1 (utilisateurs locaux et S1) — nécessaire avant 3.1b, pas avant 3.1 | **À valider** |
 | G4 | Arbre Git propre, suite de tests au vert avant de commencer | 29/29 le 8 novembre 2026 (finition F0) ; arbre propre après le commit de cette mission ; à relancer au démarrage |

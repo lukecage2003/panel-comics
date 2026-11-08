@@ -2691,6 +2691,59 @@ const waitForCdp = async () => {
         test: 'Finances (lot F0) : aucune substitution par le prix de couverture ou zéro, inconnu affiché « — », ventilation par source, couverture, gratuit, moins-value, préremplissage du prix d\'achat (D-18), historique ancien conservé',
         ok: !!t30 && t30fail.length === 0
       });
+
+      // ─── Test 31 : lot 3.1 — rapport de préparation de la synchronisation (lecture seule) ───
+      const t31 = await evalExpr(`(async () => {
+        const P = window.Panel, r = {};
+        if (!P || !P.sync) return { api: false };
+        r.api = typeof P.sync.readiness === 'function' && Array.isArray(P.sync.domains);
+        r.disabled = P.sync.isEnabled() === false;
+        // Empreinte avant : toutes les clés localStorage et le nombre de fiches de chaque store IndexedDB existant
+        const lsPrint = () => { const o = {}; for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); o[k] = localStorage.getItem(k); } return JSON.stringify(Object.keys(o).sort().map(k => [k, o[k]])); };
+        const idbCounts = async () => {
+          const out = {};
+          const dbs = indexedDB.databases ? await indexedDB.databases() : [];
+          for (const d of dbs) {
+            const db = await new Promise(res => { const q = indexedDB.open(d.name); q.onsuccess = () => res(q.result); q.onerror = () => res(null); });
+            if (!db) continue;
+            const key = d.name + '@' + db.version;
+            out[key] = {};
+            for (const s of Array.from(db.objectStoreNames)) {
+              out[key][s] = await new Promise(res => { const c = db.transaction(s, 'readonly').objectStore(s).count(); c.onsuccess = () => res(c.result); c.onerror = () => res(-1); });
+            }
+            db.close();
+          }
+          return JSON.stringify(out);
+        };
+        const ls0 = lsPrint(), idb0 = await idbCounts();
+        let rep;
+        try { rep = await P.sync.readiness(); } catch (e) { return Object.assign(r, { error: String(e) }); }
+        const ls1 = lsPrint(), idb1 = await idbCounts();
+        r.lsUnchanged = ls0 === ls1;
+        r.idbUnchanged = idb0 === idb1;
+        r.shape = !!rep && rep.version === 1 && rep.enabled === false && typeof rep.byDomain === 'object' && typeof rep.counts === 'object'
+          && typeof rep.ids === 'object' && typeof rep.oversizedDataCovers === 'object' && Array.isArray(rep.excludedKeys) && typeof rep.estimatedKb === 'number';
+        r.domains = ['collection', 'reading', 'explorer', 'app'].every(d => Array.isArray(rep.byDomain[d]));
+        r.domainField = P.sync.domains.every(d => ['collection', 'reading', 'explorer', 'app'].includes(d.domain));
+        r.copiesCount = rep.counts.copies === P.getPhysicalSingles().length;
+        r.secretsExcluded = P.sync.domains.filter(d => d.name === 'secrets' || d.name === 'digital_legacy').every(d => d.synced === false && d.table === null)
+          && rep.excludedKeys.some(k => k.key === 'panel_comicvine_key') && rep.excludedKeys.some(k => k.key === 'panel_metron_creds');
+        const cvk = localStorage.getItem('panel_comicvine_key');
+        r.noSecretValues = !cvk || !JSON.stringify(rep).includes(cvk);
+        r.explorerNotSynced = rep.byDomain.explorer.every(d => d.synced === false);
+        r.pullsInCollection = P.sync.domains.find(d => d.name === 'pulls').domain === 'collection';
+        r.readingDomain = P.sync.domains.find(d => d.name === 'reading_progress').domain === 'reading';
+        r.idsReport = typeof rep.ids.problems === 'number' && rep.ids.total === P.getPhysicalSingles().length;
+        return r;
+      })()`);
+      console.log('Résultat Test 31:', JSON.stringify(t31));
+      const t31keys = ['api', 'disabled', 'lsUnchanged', 'idbUnchanged', 'shape', 'domains', 'domainField', 'copiesCount', 'secretsExcluded', 'noSecretValues', 'explorerNotSynced', 'pullsInCollection', 'readingDomain', 'idsReport'];
+      const t31fail = t31keys.filter(k => !t31 || t31[k] !== true);
+      if (t31fail.length) console.log('Test 31 — vérifications en échec :', t31fail.join(', '));
+      testResults.push({
+        test: 'Synchronisation (lot 3.1) : Panel.sync.readiness() en lecture seule (localStorage et IndexedDB inchangés), groupé par domaine, secrets exclus, synchronisation désactivée',
+        ok: !!t31 && t31fail.length === 0
+      });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

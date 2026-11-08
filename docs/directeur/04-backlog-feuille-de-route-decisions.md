@@ -59,7 +59,7 @@ Les numéros de ligne renvoient à `index.html`.
 ## 2. Feuille de route
 | Étape | Lots | Statut |
 |---|---|---|
-| 1. Corrections avant de continuer | **F0** (B-01 à B-06, B-24, B-25) | **Approuvé (D-17), livré le 8 novembre 2026, en attente de validation** ; ajout de D-18 (préremplissage du prix d'achat) |
+| 1. Corrections avant de continuer | **F0** (B-01 à B-06, B-24, B-25) | **Approuvé (D-17), livré et validé le 8 novembre 2026 (D-19)** ; ajout de D-18 (préremplissage du prix d'achat) |
 | 2. Conception et finition | Décisions F-D1 à F-D6, U-D1 à U-D3 ; N et M ; B-20 à B-22 | En attente |
 | 3. Architecture | **3.1** → **3.1b** (B-07, B-15, B-17 si M1 à M4 tranchées), dans l'ordre de [`phase4/08`](../phase4/08-plan-execution.md) | Lot 3.1 suspendu ; reprise seulement sur votre instruction |
 | 4. Développement fonctionnel | **F1** (B-10 à B-14) après 3.1b, pour que le fournisseur Collection de B1 sauvegarde d'emblée les nouveaux champs ; **L1** (B-16) après 3.1b ; puis 3.2 à 3.7, puis 4.1 à 4.11 | Proposé |

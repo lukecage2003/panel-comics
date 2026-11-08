@@ -13,3 +13,9 @@
 | 5. Explorer 2.0 et Community | Conçus, non implémentés | [`07`](07-conception-explorer-2.0-community.md) | — | — | Phase 3, 3.1b, M1 à M4, juridique | Validation de la conception |
 
 Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.20261107-f0`, réalisées avant F0, couvrent `index.html`, `run-all-tests.js` et `sw.js`. Les copies `*.backup.20261107-lot31` et `_backups/` sont intactes ; aucune n'a été supprimée.
+
+## 8 novembre 2026 — validation F0 et G1, lot 3.1
+| Étape | État | Modifications | Tests | Décisions | Points bloquants | Prochaine action |
+|---|---|---|---|---|---|---|
+| Validations | Terminé | DECISIONS : D-19 (F0 validé), D-20 (G1 validé) | — | D-19, D-20 | — | — |
+| Lot 3.1 | Livré, en attente de validation | backend/, scripts/check-secrets.js, package.json, runbooks, `Panel.sync.readiness()`, test 31 | Base : 71/71 ; secrets : 0 ; front : 30/30 au deuxième passage (premier passage : 29/30, échec intermittent du contrôle `quota` du test 18) | — | Validation de référence sous Docker non exécutée | Validation du lot 3.1, puis lot 3.2 (projet Supabase créé par l'utilisateur) ou 3.1b |

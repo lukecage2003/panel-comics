@@ -1,0 +1,18 @@
+{
+  "name": "panel-comics",
+  "private": true,
+  "description": "Panel by Primestone — outillage de développement (backend Phase 3). L'application reste index.html sans dépendance d'exécution.",
+  "license": "UNLICENSED",
+  "scripts": {
+    "test:db": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=backend/tests/report.txt \"backend/tests/*.test.js\"",
+    "check:secrets": "node scripts/check-secrets.js",
+    "test:front": "node run-all-tests.js",
+    "test:all": "npm run test:db && npm run check:secrets && node run-all-tests.js"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "0.5.11"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

@@ -300,6 +300,17 @@ Accès : entrée **Explorer & guides** du rail latéral, ou onglet **Explorer** 
 - **Sécurité** : tout texte est échappé ; les URL d'images et de sources n'acceptent que https ; les liens externes sont en `noopener noreferrer`. Aucune clé, aucune collecte automatique, aucun téléchargement d'images depuis les sites de référence.
 - **Performances** : les couvertures sont chargées en différé (`loading="lazy"`), avec une image de remplacement en cas d'erreur. La liste est affichée par tranches de 60 entrées, la recherche est temporisée (160 ms) et les données sont chargées une seule fois en mémoire.
 
+## 🗄️ Backend (Phase 3 · lot 3.1)
+Fondations du futur backend, **sans compte cloud ni envoi réseau** : schéma PostgreSQL compatible Supabase (schéma `app`, 11 tables, RLS sur toutes les tables, révision serveur par utilisateur), versionné dans [`backend/`](backend/) et testé sans Docker grâce à PGlite.
+
+```bash
+npm ci
+npm run test:db
+npm run check:secrets
+```
+
+Côté application, `Panel.sync.readiness()` décrit en lecture seule ce qui serait synchronisé, par domaine (Collection, Lecture, Explorer, application). La synchronisation est désactivée (`PANEL_SYNC_ENABLED = false`). Détails : [`backend/README.md`](backend/README.md) ; runbooks : [`docs/phase3/runbooks/`](docs/phase3/runbooks/).
+
 ## 📲 Application installable (PWA)
 
 Panel s'installe comme une application (icône d'accueil, plein écran, hors ligne) sur téléphone, tablette et ordinateur.

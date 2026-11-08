@@ -12762,7 +12762,83 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   });
 
   // API Publique Panel (Inspection, Moteur d'Analyse & Automatisation)
+  // ── Lot 3.1 : préparation de la synchronisation (lecture seule, aucune requête réseau, aucune interface) ──
+  // Registre déclaratif conforme à docs/phase3/04-synchronisation.md § 1 et aux frontières de docs/phase4/02.
+  // domain : propriétaire de la donnée (collection, reading, explorer, app). Rien n'est envoyé tant que PANEL_SYNC_ENABLED est faux.
+  const PANEL_SYNC_ENABLED = false;
+  const SYNC_DOMAINS = Object.freeze([
+    { name: 'copies', domain: 'collection', source: 'localStorage panel_physical_singles (wishlist incluse)', table: 'app.copies', synced: true, reason: 'Donnée personnelle essentielle' },
+    { name: 'series_follows', domain: 'collection', source: 'localStorage panel_series_meta', table: 'app.series_follows', synced: true, reason: 'Préférence de suivi personnelle' },
+    { name: 'locations', domain: 'collection', source: 'localStorage panel_locations (nœuds)', table: 'app.locations', synced: true, reason: 'Organisation personnelle, pierres tombales existantes' },
+    { name: 'pulls', domain: 'collection', source: 'IndexedDB panel-catalog/pulls', table: 'app.pulls', synced: true, reason: 'Pull List personnelle (D-09) ; la publication n\'est pas transférée' },
+    { name: 'reading_progress', domain: 'reading', source: 'IndexedDB panel-catalog/readprog', table: 'app.reading_progress', synced: true, reason: 'Progression personnelle (domaine Lecture), jamais propriété d\'Explorer' },
+    { name: 'user_guides', domain: 'reading', source: 'IndexedDB panel-catalog/editorial (créés ou modifiés)', table: 'app.user_guides (lot 3.4)', synced: false, reason: 'Reporté au lot 3.4, facultatif' },
+    { name: 'prefs', domain: 'app', source: 'localStorage panel_theme, panel_sound_effects, panel_haptic_feedback, panel_singles_view_mode', table: 'app.user_settings.prefs', synced: true, reason: 'Confort multi-appareil' },
+    { name: 'catalog', domain: 'collection', source: 'IndexedDB panel-catalog (séries, numéros, variantes)', table: null, synced: false, reason: 'Recalculable depuis les exemplaires' },
+    { name: 'publications', domain: 'explorer', source: 'IndexedDB panel-catalog/publications', table: null, synced: false, reason: 'Licence Comic Vine non commerciale ; avis juridique requis' },
+    { name: 'value_snapshots', domain: 'collection', source: 'localStorage panel_value_snapshots', table: null, synced: false, reason: 'À décider au lot 3.4' },
+    { name: 'device', domain: 'app', source: 'caches, quotas, journaux du scanner, file de scan, historique de recherche', table: null, synced: false, reason: 'Propre à l\'appareil, recalculable' },
+    { name: 'secrets', domain: 'app', source: 'clés et identifiants (Comic Vine, Metron, relais)', table: null, synced: false, reason: 'Jamais : secrets propres à l\'appareil' },
+    { name: 'digital_legacy', domain: 'app', source: 'panel-library (PDF/CBZ), notes, annotations, marque-pages, dossiers', table: null, synced: false, reason: 'Jamais : hors périmètre produit, conservé localement' }
+  ]);
+  const SYNC_SECRET_KEYS = Object.freeze(['panel_comicvine_key', 'panel_metron_creds', 'panel_cv_proxy', 'panel_gcd_proxy', 'panel_metron_proxy']);
+  const SYNC_PREF_KEYS = Object.freeze(['panel_theme', 'panel_sound_effects', 'panel_haptic_feedback', 'panel_singles_view_mode']);
+  const SYNC_DATA_COVER_MAX = 256 * 1024;
+  const syncReadiness = async () => {
+    const bytes = v => { try { return new Blob([typeof v === 'string' ? v : JSON.stringify(v)]).size; } catch (_) { return 0; } };
+    const ls = k => { try { return localStorage.getItem(k); } catch (_) { return null; } };
+    // Lecture IndexedDB seulement si la base est déjà ouverte par l'application (aucune création ni mise à niveau ici).
+    let db = null;
+    try { db = catalogDbPromise ? await catalogDbPromise : null; } catch (_) { db = null; }
+    const pulls = db ? await idbAll(db, 'pulls') : null;
+    const readprog = db ? await idbAll(db, 'readprog') : null;
+    const editorial = db ? await idbAll(db, 'editorial') : null;
+    const singles = Array.isArray(physicalSingles) ? physicalSingles : [];
+    const liveLoc = (locDoc && Array.isArray(locDoc.nodes)) ? locDoc.nodes : [];
+    const follows = Object.keys(seriesMeta || {});
+    const userGuides = editorial ? editorial.filter(g => g && (g.origin !== 'seed' || g.editedAt)) : null;
+    const prefs = SYNC_PREF_KEYS.filter(k => ls(k) !== null);
+    const bigCovers = singles.filter(x => x && typeof x.coverUrl === 'string' && x.coverUrl.startsWith('data:') && x.coverUrl.length > SYNC_DATA_COVER_MAX)
+      .map(x => ({ id: x.id, series: x.series, issue: x.issue, kb: Math.round(x.coverUrl.length / 1024) }));
+    const counts = {
+      copies: singles.length,
+      wishlist: singles.filter(x => x && x.isWishlist).length,
+      series_follows: follows.length,
+      locations: liveLoc.length,
+      pulls: pulls ? pulls.length : null,
+      reading_progress: readprog ? readprog.length : null,
+      user_guides: userGuides ? userGuides.length : null,
+      prefs: prefs.length
+    };
+    const volumeKb = {
+      copies: Math.round(bytes(singles.map(x => (x && typeof x.coverUrl === 'string' && x.coverUrl.length > SYNC_DATA_COVER_MAX) ? Object.assign({}, x, { coverUrl: '' }) : x)) / 1024),
+      series_follows: Math.round(bytes(seriesMeta || {}) / 1024),
+      locations: Math.round(bytes(liveLoc) / 1024),
+      pulls: pulls ? Math.round(bytes(pulls) / 1024) : null,
+      reading_progress: readprog ? Math.round(bytes(readprog) / 1024) : null,
+      prefs: Math.round(bytes(prefs.map(k => ls(k))) / 1024)
+    };
+    const byDomain = {};
+    SYNC_DOMAINS.forEach(d => {
+      (byDomain[d.domain] = byDomain[d.domain] || []).push({ name: d.name, table: d.table, synced: d.synced, reason: d.reason, count: counts[d.name] !== undefined ? counts[d.name] : null, kb: volumeKb[d.name] !== undefined ? volumeKb[d.name] : null });
+    });
+    const ids = idRepairReport();
+    return {
+      version: 1,
+      enabled: PANEL_SYNC_ENABLED,
+      generatedAt: new Date().toISOString(),
+      catalogDbOpen: !!db,
+      byDomain,
+      counts,
+      ids: { total: singles.length, problems: (ids.items || []).length, items: (ids.items || []).slice(0, 50) },
+      oversizedDataCovers: { thresholdKb: SYNC_DATA_COVER_MAX / 1024, count: bigCovers.length, items: bigCovers.slice(0, 50) },
+      excludedKeys: SYNC_SECRET_KEYS.map(k => ({ key: k, present: ls(k) !== null })),
+      estimatedKb: Object.values(volumeKb).reduce((a, v) => a + (v || 0), 0)
+    };
+  };
+
   window.Panel = {
+    sync: { domains: SYNC_DOMAINS, readiness: syncReadiness, isEnabled: () => PANEL_SYNC_ENABLED },
     parseComicBarcode,
     computeCanvasDHash,
     computeCanvasColorProfile,
