@@ -18,6 +18,9 @@ Audit global et financier, backlog P0 à P3 : [`directeur/04-backlog-feuille-de-
 ## Rebaseline produit (8 novembre 2026, proposé)
 Vision en six piliers, modèle de données cible, roadmap **R0 à R10** et critères d'acceptation : [`directeur/08-rebaseline-produit.md`](directeur/08-rebaseline-produit.md) (D-54). Une fois validée, cette roadmap ordonne les lots des phases 3 à 5 ci-dessous.
 
+## PRD V1 (13 novembre 2026, proposé)
+Vision sociale en trois piliers (Collection, Reading, Community), audit vérifié, phases 0 à 6 qui reprennent R0 à R10 : [`prd/PANEL_ROADMAP.md`](prd/PANEL_ROADMAP.md) (D-58).
+
 ## Phase 3 — lots proposés
 Détail : [`phase3/06-roadmap-phase3.md`](phase3/06-roadmap-phase3.md).
 

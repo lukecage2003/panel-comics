@@ -14,6 +14,7 @@ Mise à jour : 7 novembre 2026. Les documents qui font autorité, et leur ordre 
 | Plan directeur : préparation du lot 3.1b (non autorisé) | [`directeur/05-preparation-lot-3.1b.md`](directeur/05-preparation-lot-3.1b.md) |
 | Plan directeur : spécifications F1 (finances) et L1 (lecture) | [`directeur/06-specifications-F1-L1.md`](directeur/06-specifications-F1-L1.md) |
 | Plan directeur : conception Explorer 2.0 et Community | [`directeur/07-conception-explorer-2.0-community.md`](directeur/07-conception-explorer-2.0-community.md) |
+| **PRD V1 (13 novembre 2026)** : vision, audit, spécifications, architecture, données, API, UX, sécurité, roadmap, tests d'acceptation | [`prd/PANEL_PRD_V1.md`](prd/PANEL_PRD_V1.md) |
 | Journal d'avancement des missions | [`directeur/JOURNAL.md`](directeur/JOURNAL.md) |
 | Phase 3 : comptes, synchronisation, sauvegardes, RGPD | [`phase3/README.md`](phase3/README.md) |
 | Phase 3 : audit de clôture du lot 3.1 | [`phase3/09-audit-cloture-lot-3.1.md`](phase3/09-audit-cloture-lot-3.1.md) |
