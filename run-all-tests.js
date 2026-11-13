@@ -3942,7 +3942,7 @@ const waitForCdp = async () => {
           document.getElementById('navExplorer').click(); await wait(300);
           r.explorerView = !document.getElementById('singlesExplorerView').hidden && document.getElementById('navExplorer').classList.contains('active');
           const dock = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')].map(b => b.id);
-          r.dock = dock.join() === 'mobSingles,mobSeries,mobScan,mobWishlist,mobExplorer';
+          r.dock = dock.join() === 'mobSingles,mobSeries,mobScan,mobCommunity,mobExplorer';
           r.dockActive = document.getElementById('mobExplorer').classList.contains('active');
           document.getElementById('navAllSingles').click(); await wait(150);
           r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobExplorer').classList.contains('active');
