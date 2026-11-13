@@ -1074,7 +1074,7 @@
     .list-head { background: transparent; border-color: transparent; cursor: default; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); padding-top: 0; padding-bottom: 0; }
     .list-head:hover { background: transparent; border-color: transparent; }
     @media (max-width: 860px) {
-      .single-row { grid-template-columns: 44px minmax(0, 1fr) 80px 70px; }
+      .single-row { grid-template-columns: 44px minmax(0, 1fr) 80px 70px auto; gap: 10px; }
       .single-row .hide-sm { display: none; }
     }
 
@@ -2173,6 +2173,18 @@
     .live-teaser-list li { padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--ink, #fff) 5%, transparent); } .live-teaser-list b { display: block; }
     .live-teaser-note { grid-column: 1 / -1; margin: 0; }
     @media (max-width: 700px) { .live-teaser { grid-template-columns: 1fr; } }
+    /* D-62 : passe responsive mobile (cibles tactiles, vue liste) */
+    @media (max-width: 600px) {
+      .single-row { grid-template-columns: 40px minmax(0, 1fr) auto auto; gap: 8px; padding: 6px 8px 6px 6px; }
+      .single-row > :nth-child(5) { display: none; }
+      .single-row .row-actions { gap: 6px; }
+      .read-dot, .card-action-btn { min-height: 34px; }
+      .card-action-btn { min-width: 34px; }
+      .rel-mini, #manageLocationsBtn, #pullManAdd { min-height: 36px; }
+      .search-input { min-height: 32px; }
+      input[type="checkbox"] { min-width: 20px; min-height: 20px; }
+      .row-actions .read-dot { padding: 2px 9px; }
+    }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -8417,6 +8429,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return (h1 >>> 0).toString(36) + (h2 >>> 0).toString(36);
   };
   const catNorm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+  const volNoYear = v => String(v).replace(/\s*\(\d{4}\)$/, '');
   const catYearOf = name => { const m = String(name || '').match(/\((1[89]\d{2}|20\d{2})(?:\s*-[^)]*)?\)/); return m ? Number(m[1]) : null; };
   const catVolumeOf = (name, vol) => {
     const m = String(name || '').match(/\bvol(?:ume)?\.?\s*(\d+)\b/i);
@@ -13772,14 +13785,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           let list = [];
           try { list = await fn(name + ' 1'); } catch (_) {}
           // Série au nom exact d'abord, puis nom qui commence par l'événement ; rééditions et produits dérivés écartés
-          const score = x => { const v = catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')).replace(/^the /, ''); if (/facsimile|anniversary|true believers|director s cut|rivals|omnibus|treasury|poster|sketch/.test(v)) return 0; return v === want ? 3 : v.startsWith(want + ' ') || want.startsWith(v + ' ') ? 2 : 0; };
+          const score = x => { const v = catNorm(volNoYear(x.volume)).replace(/^the /, ''); if (/facsimile|anniversary|true believers|director s cut|rivals|omnibus|treasury|poster|sketch/.test(v)) return 0; return v === want ? 3 : v.startsWith(want + ' ') || want.startsWith(v + ' ') ? 2 : 0; };
           // Année de parution cohérente avec l'événement (évite un homonyme d'un autre éditeur ou d'une autre époque)
           const y0 = Number(g.periodStart) || 0, y1 = Number(g.periodEnd) || y0;
           const yearOk = x => { const y = Number(String(x.date || '').slice(0, 4)); return !y0 || (y >= y0 - 1 && y <= y1 + 1); };
           hit = (list || []).filter(x => x.cover && String(x.issue).replace(/^#/, '') === '1' && score(x) > 0 && yearOk(x)).sort((a, b) => score(b) - score(a) || String(a.date || '9').localeCompare(String(b.date || '9')))[0] || null;
           if (hit) { hit.source = hit.source || (fn === searchMetronIssuesList ? 'Metron' : 'Comic Vine'); break; }
         }
-        store[g.id] = hit ? { url: hit.cover, source: hit.source, label: String(hit.volume).replace(/\s*\(\d{4}\)$/, '') + ' #1', at: now } : { url: '', at: now };
+        store[g.id] = hit ? { url: hit.cover, source: hit.source, label: volNoYear(hit.volume) + ' #1', at: now } : { url: '', at: now };
         if (hit) found++;
       }
     } finally { exAutoBusy = false; exAutoSave(); }
@@ -16873,8 +16886,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const [cvR, mtR] = await Promise.allSettled([searchComicVineIssuesList(query), searchMetronIssuesList(query)]);
         const cvHits = cvR.status === 'fulfilled' && cvR.value ? cvR.value.map(x => Object.assign({ source: 'Comic Vine' }, x)) : [];
         const mtHits = mtR.status === 'fulfilled' && mtR.value ? mtR.value : [];
-        const seen = new Set(cvHits.map(x => catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')) + '#' + String(x.issue).trim()));
-        const hits = cvHits.concat(mtHits.filter(x => !seen.has(catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')) + '#' + String(x.issue).trim())));
+        const seen = new Set(cvHits.map(x => catNorm(volNoYear(x.volume)) + '#' + String(x.issue).trim()));
+        const hits = cvHits.concat(mtHits.filter(x => !seen.has(catNorm(volNoYear(x.volume)) + '#' + String(x.issue).trim())));
         const srcLabel = [cvHits.length ? cvHits.length + ' Comic Vine' : '', mtHits.length ? mtHits.length + ' Metron' : ''].filter(Boolean).join(' · ');
         if (!hits || hits.length === 0) {
           statusEl.textContent = 'Aucun comic trouvé pour « ' + query + ' »' + (relayStatus && !relayStatus.cv && !relayStatus.metron ? ' : aucune base n\'est configurée sur le serveur local (clé Comic Vine ou compte Metron).' : '.');
@@ -16920,7 +16933,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('decodedBarcodeBadge').querySelector('strong').textContent = item.volume + ' #' + item.issue;
       if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = item.source || 'Comic Vine';
 
-      item = Object.assign({}, item, { volume: String(item.volume).replace(/\s*\(\d{4}\)$/, '') });
+      item = Object.assign({}, item, { volume: volNoYear(item.volume) });
       $('singleSeriesInput').value = item.volume;
       $('singleIssueInput').value = '#' + item.issue;
       $('quickCoverSearchInput').value = item.volume;
