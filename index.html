@@ -10059,8 +10059,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     ['Panini Comics', 'FR', ['panini', 'panini france', 'panini comics france']], ['Urban Comics', 'FR', ['urban']],
     ['Delcourt', 'FR', ['delcourt comics', 'editions delcourt']], ['Glénat', 'FR', ['glenat comics', 'editions glenat']],
     ['Bliss Comics', 'FR', ['bliss']], ['HiComics', 'FR', ['hi comics']], ['Komics Initiative', 'FR', []], ['Vestron', 'FR', []],
-    ['Les Humanoïdes Associés', 'FR', ['humanoides associes', 'les humanoides associes']], ['Dargaud', 'FR', []], ['Dupuis', 'FR', []],
-    ['Casterman', 'FR', []], ['Ankama', 'FR', ['ankama editions']], ['Kana', 'FR', []], ['Kurokawa', 'FR', []]
+    ['Les Humanoïdes Associés', 'FR', ['humanoides associes', 'les humanoides associes']]
+    // Comics uniquement : éditeurs manga (Kana, Kurokawa, Ankama) et BD franco-belge (Dargaud, Dupuis, Casterman) retirés de la liste proposée
   ];
   const REL_FORMATS = { single: 'Single issue', album: 'Album', tpb: 'TPB / recueil', hc: 'Hardcover', integrale: 'Intégrale', omnibus: 'Omnibus', deluxe: 'Deluxe', kiosque: 'Kiosque / magazine', manga: 'Manga', other: 'Autre' };
   const REL_STATUS = { announced: 'Annoncé', upcoming: 'À venir', available: 'Disponible', delayed: 'Reporté', cancelled: 'Annulé', unknown: 'Date inconnue' };
@@ -11546,8 +11546,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!gridEl) return;
     renderReleasesWeekLabel();
     if ($('relSyncInfo')) $('relSyncInfo').textContent = relView.syncing ? 'Actualisation Comic Vine en cours…' : relSyncInfoText();
-    const pubsAll = [...relPubs.values()];
-    const markets = [...new Set(pubsAll.map(p => p.market).filter(Boolean).concat(Object.keys(REL_MARKETS)))];
+    // Comics US et francophones uniquement : les éditeurs manga, manhwa ou BD (hors périmètre) ne sont jamais proposés, les fiches restent conservées
+    const pubsAll = [...relPubs.values()].filter(p => !relOutOfScopeReason(p));
+    const markets = Object.keys(REL_MARKETS);
     relFillSelect('relMarket', [['', 'Tous les marchés']].concat(markets.map(m => [m, (REL_MARKETS[m] || {}).label || m])), relView.market);
     const pubs = [...new Set(pubsAll.filter(p => !relView.market || p.market === relView.market).map(p => p.publisher).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
     relFillSelect('relPublisher', [['', 'Tous les éditeurs']].concat(pubs.map(x => [x, x])), relView.publisher);
@@ -12394,7 +12395,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exPublishers = (facets = exFacets()) => {
     const m = new Map();
     REL_PUBLISHERS.forEach(([name, market]) => { if (!m.has(catNorm(name))) m.set(catNorm(name), { key: catNorm(name), name, market, owned: 0, pubs: 0, guides: 0, known: true }); });
-    const get = name => { const pb = relPublisher(name); const k = catNorm(pb.name); if (!k) return null; if (!m.has(k)) m.set(k, { key: k, name: pb.name, market: pb.market, owned: 0, pubs: 0, guides: 0, known: false }); return m.get(k); };
+    const get = name => { const pb = relPublisher(name); const k = catNorm(pb.name); if (!k || REL_SCOPE_INDEX.has(k) || REL_SCOPE_INDEX.has(catNorm(name || ''))) return null; if (!m.has(k)) m.set(k, { key: k, name: pb.name, market: pb.market, owned: 0, pubs: 0, guides: 0, known: false }); return m.get(k); };
     if (facets) facets.publishers.forEach(p => { const x = get(p.name); if (x) x.owned += p.owned; });
     relPubs.forEach(p => { const x = get(p.publisher); if (x) x.pubs++; });
     exGuides().forEach(g => { const x = get(g.publisher); if (x) x.guides++; });
