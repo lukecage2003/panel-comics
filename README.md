@@ -8,16 +8,20 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 
 ---
 
-## 📌 État du projet (mis à jour le 7 novembre 2026, clôture de la Phase 2)
+## 📌 État du projet (mis à jour le 13 novembre 2026)
 
-- **Vision** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
+- **Référence produit** : [`docs/prd/PANEL_PRD_V1.md`](docs/prd/PANEL_PRD_V1.md) (D-58) : plateforme sociale de comics en trois piliers (Collection, Reading, Community), lancement francophone, modèle freemium ; roadmap en phases 0 à 6 ([`docs/prd/PANEL_ROADMAP.md`](docs/prd/PANEL_ROADMAP.md)).
+- **Périmètre** : comics uniquement, éditeurs américains et français de comics. Manga, manhwa, webtoon et BD franco-belge exclus (données existantes conservées et masquées).
+- **Décision d'architecture (13 novembre 2026)** : on garde ce client (`index.html` + `domains/**`), pas de migration Next.js. Backend Supabase préparé dans `backend/` (12 migrations), **non déployé** : comptes, synchronisation et communauté attendent la création du projet cloud par l'utilisateur.
+- **Livré depuis le 7 novembre** : lots 3.1 et 3.1b, Explorer 2.0 local, finances F0/F1, lecture L1, catalogue commun (D-55, D-56), Event Center v2 (D-57), mode sombre (D-53). Les puces ci-dessous datent de la clôture de la Phase 2 (historique).
+- **Vision (7 novembre)** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
 - **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
 - **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), **Phase 2 clôturée** : lots 2.1 à 2.6 validés (le lot 2.6 « Explorer & guides de lecture » a été validé le 7 novembre 2026 après huit contrôles fonctionnels, commit `fe19e3c`). Historique détaillé : [`docs/HISTORIQUE-LOTS.md`](docs/HISTORIQUE-LOTS.md).
 - **En cours** : préparation de la Phase 3 (comptes, profils, synchronisation local-first). Conception livrée dans [`docs/phase3/`](docs/phase3/), en attente de validation ; aucun code de la Phase 3 n'est écrit.
 - **Index de la documentation** : [`docs/README.md`](docs/README.md) (dont le plan directeur 2.0, [`docs/directeur/`](docs/directeur/04-backlog-feuille-de-route-decisions.md)).
 - **Feuille de route** : [`docs/ROADMAP.md`](docs/ROADMAP.md) ; journal des décisions : [`docs/DECISIONS.md`](docs/DECISIONS.md) ; plan d'exécution : [`docs/phase4/08-plan-execution.md`](docs/phase4/08-plan-execution.md). Le lot 2.7 un temps envisagé n'a pas été réalisé : la Phase 2 se clôt au lot 2.6.
 - **Limites connues conservées de la Phase 2** : le guide King in Black est une démonstration non exhaustive ; les sources d'images sous licence restent à identifier ; les correspondances VO/VF sont en partie non vérifiées ; les actualités ne sont pas activées (pas de source ni de CMS) ; ReadingOrders.com, Comic Compass et French Comics Reading Order n'ont pas été consultés.
-- **Tests** : `node run-all-tests.js` (Edge sans interface), 30 tests (au 8 novembre 2026). Base de données : `npm run test:db` (PGlite, sans Docker) ; secrets : `npm run check:secrets` ; frontières : `npm run check:boundaries`.
+- **Tests** : `node run-all-tests.js` (Edge sans interface), 52 tests (au 13 novembre 2026) ; domaines : `npm run test:domains` (55). Base de données : `npm run test:db` (PGlite, sans Docker) ; secrets : `npm run check:secrets` ; frontières : `npm run check:boundaries`.
 - **Points de vigilance** : les fiches sans identifiant ou en double sont signalées (`Panel.catalog.idReport()` propose un identifiant de remplacement, sans rien appliquer). Les entrées de catalogue sans exemplaire sont conservées, et les exemplaires supprimés gardent une pierre tombale. Les instantanés de collection restent limités aux 8 derniers (comportement antérieur).
 - **Décisions en attente** : renouvellement de la clé Comic Vine, signature Android de publication, option `allowBackup`, purge des anciennes clés Marvel/Vision.
 
