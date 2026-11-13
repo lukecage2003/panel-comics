@@ -327,7 +327,7 @@ const waitForCdp = async () => {
         const snapBefore = KEYS.map(k => localStorage.getItem(k)).join('|');
         // Actions courantes de l'app : vérification, rendu de la collection, rafraîchissement des boutons
         P.checkDataIntegrity && P.checkDataIntegrity();
-        document.getElementById('mobSeries').click();
+        document.getElementById('mobReleases').click();
         document.getElementById('mobSingles').click();
         await new Promise(res => setTimeout(res, 300));
         r.dataPreserved = (await tx('readonly', st => st.count())) === countBefore && KEYS.map(k => localStorage.getItem(k)).join('|') === snapBefore;
@@ -3730,13 +3730,10 @@ const waitForCdp = async () => {
         const full = Rl.query(Object.assign({}, base, { includeOutOfScope: true }));
         r.masking = !masked.some(p => Rl.outOfScope(p)) && full.length === masked.length + outN && full.length === all.length;
         r.explicitManga = Rl.query(Object.assign({}, base, { format: 'manga' })).length === all.filter(p => p.format === 'manga').length;
-        const cb = document.getElementById('releasesShowOutOfScope');
-        r.control = !!cb && cb.checked === false;
-        Rl.query(base);
-        r.counter = document.getElementById('releasesOutOfScopeCount').textContent === String(outN);
-        cb.checked = true;
-        r.toggle = Rl.query(base).length === all.length;
-        cb.checked = false;
+        // Comics uniquement : plus aucun réglage pour réafficher le manga, ni format manga proposé dans les filtres
+        r.control = !document.getElementById('releasesShowOutOfScope') && ![...document.querySelectorAll('#relFormat option')].some(o => o.value === 'manga');
+        r.counter = !document.getElementById('releasesOutOfScopeCount');
+        r.toggle = !Rl.query(base).some(p => Rl.outOfScope(p));
         r.unchanged = JSON.stringify(Rl.all()) === before;
         r.outN = outN; r.total = all.length;
         return r;
@@ -3942,7 +3939,7 @@ const waitForCdp = async () => {
           document.getElementById('navExplorer').click(); await wait(300);
           r.explorerView = !document.getElementById('singlesExplorerView').hidden && document.getElementById('navExplorer').classList.contains('active');
           const dock = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')].map(b => b.id);
-          r.dock = dock.join() === 'mobSingles,mobSeries,mobScan,mobCommunity,mobExplorer';
+          r.dock = dock.join() === 'mobSingles,mobReleases,mobScan,mobCommunity,mobExplorer';
           r.dockActive = document.getElementById('mobExplorer').classList.contains('active');
           document.getElementById('navAllSingles').click(); await wait(150);
           r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobExplorer').classList.contains('active');
