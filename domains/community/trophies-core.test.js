@@ -62,3 +62,9 @@ test('profil local : nettoyage et pseudo valide', () => {
   assert.ok(!T.validHandle('a<script>'));
   assert.strictEqual(T.titleFor(1), 'Nouvelle recrue');
 });
+
+test('profil : top 3 personnages et runs nettoyés', () => {
+  const p = T.sanitizeProfile({ handle: 'a b', topCharacters: ['Storm', 'storm', '', 'Venom', 'Thor', 'Loki', '<x>'], topRuns: 'pas un tableau' });
+  assert.deepStrictEqual(p.topCharacters, ['Storm', 'Venom', 'Thor']);
+  assert.deepStrictEqual(p.topRuns, []);
+});

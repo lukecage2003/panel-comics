@@ -1968,28 +1968,211 @@
     .month-col > div { border-radius: 6px 6px 2px 2px !important; background: linear-gradient(180deg, var(--cyan-fill), color-mix(in srgb, var(--vibranium) 55%, var(--cyan-fill))) !important; }
     @media (prefers-reduced-motion: reduce) { .comic-card, .series-track-card, .ex-card, .btn, .cbox { transition: none !important; } .comic-card:hover, .cbox:hover { transform: none !important; } }
 
-    /* Boîtes de comics (vue « Boîtes » de la collection) */
-    .cbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 34px 22px; padding: 26px 2px 8px; }
-    .cbox { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; color: inherit; font: inherit; transition: transform .4s var(--ease-spring); }
-    .cbox:hover { transform: translateY(-6px); }
-    .cbox:focus-visible { outline: 3px solid var(--cyan-fill); outline-offset: 6px; border-radius: 14px; }
-    .cbox-comics { position: absolute; left: 7%; right: 7%; bottom: calc(100% - 16px); height: 54px; display: flex; align-items: flex-end; gap: 2px; z-index: 0; }
-    .cbox-sliver { flex: 1; height: var(--h); min-width: 4px; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 92%, #fff), var(--c)); box-shadow: inset -1px 0 0 rgba(0,0,0,.25); overflow: hidden; transition: transform .4s var(--ease-spring); }
-    .cbox-sliver img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-    .cbox:hover .cbox-sliver:nth-child(3n+1) { transform: translateY(-7px); }
-    .cbox:hover .cbox-sliver:nth-child(4n+2) { transform: translateY(-4px); }
-    .cbox-body { position: relative; z-index: 1; display: block; aspect-ratio: 1.45 / 1; border-radius: 10px 10px 14px 14px;
-      background: linear-gradient(180deg, #efe4cc 0%, #e4d5b5 55%, #d6c49f 100%);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -10px 18px rgba(120,90,40,.18), 0 18px 34px rgba(0,0,0,.28), 0 2px 4px rgba(0,0,0,.2); color: #2a2318; }
-    .cbox-lid { position: absolute; left: -2%; right: -2%; top: 0; height: 15%; border-radius: 9px 9px 3px 3px; background: linear-gradient(180deg, #f6edd9, #e7d9bb); box-shadow: 0 3px 6px rgba(90,60,20,.22); }
-    .cbox-handle { position: absolute; left: 50%; top: 24%; width: 26%; height: 9%; transform: translateX(-50%); border-radius: 999px; background: #3a2f22; box-shadow: inset 0 3px 5px rgba(0,0,0,.6); opacity: .85; }
-    .cbox-label { position: absolute; left: 10%; right: 10%; bottom: 13%; padding: 9px 12px 10px; border-radius: 8px; background: #fffdf7; box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 4px 10px rgba(80,60,30,.15); transform: rotate(-1.2deg); display: flex; flex-direction: column; gap: 2px; }
-    .cbox-label small { font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; }
-    .cbox-label b { font-family: var(--font-title); font-size: 17px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; color: #1d1810; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    /* Boîtes de comics (vue « Boîtes ») : short box en carton imprimé, comics en pochette qui dépassent, porte-étiquette, inclinaison 3D */
+    .cbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 46px 28px; padding: 18px 4px 14px; }
+    .cbox { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; color: inherit; font: inherit; perspective: 900px; }
+    .cbox:focus-visible { outline: 3px solid var(--cyan-fill); outline-offset: 8px; border-radius: 16px; }
+    .cbox-stage { position: relative; display: block; padding-top: 104%; transform-style: preserve-3d; transform-origin: 50% 100%; transition: transform .55s var(--ease-spring); }
+    .cbox:hover .cbox-stage, .cbox:focus-visible .cbox-stage { transform: rotateX(9deg) translateY(-6px); }
+    .cbox-stage::after { content: ""; position: absolute; left: 6%; right: 6%; bottom: -14px; height: 22px; border-radius: 50%; background: radial-gradient(closest-side, rgba(0,0,0,.45), transparent); filter: blur(4px); z-index: 0; }
+    .cbox-back { position: absolute; left: 3%; right: 3%; top: 40%; height: 14%; border-radius: 8px 8px 0 0; background: linear-gradient(180deg, #b49d73, #8c7550); z-index: 1; }
+    .cbox-comics { position: absolute; left: 6%; right: 6%; top: 2%; height: 58%; display: flex; align-items: flex-end; justify-content: center; z-index: 2; }
+    .cbox-book { position: relative; flex: 0 0 auto; height: 100%; aspect-ratio: 2 / 3; margin-left: var(--ov, -26%); border-radius: 3px 3px 0 0; overflow: hidden;
+      background: linear-gradient(160deg, color-mix(in srgb, var(--c) 82%, #fff) 0%, var(--c) 45%, color-mix(in srgb, var(--c) 55%, #000) 100%);
+      box-shadow: -2px 0 6px rgba(0,0,0,.35), inset 0 0 0 1px rgba(255,255,255,.18); transform: translateY(var(--y, 0px)) rotate(var(--r, 0deg)); transform-origin: 50% 100%;
+      transition: transform .5s var(--ease-spring); transition-delay: calc(var(--i) * 28ms); }
+    .cbox-book:first-child { margin-left: 0; }
+    .cbox-book:nth-child(3n+2) { filter: brightness(.86) saturate(1.1); } .cbox-book:nth-child(3n) { filter: brightness(1.08); }
+    .cbox:hover .cbox-book { transform: translateY(calc(var(--y, 0px) - 16px)) rotate(var(--r, 0deg)); }
+    .cbox-book img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .cbox-book b { position: absolute; left: 8%; top: 6%; font: 800 13px var(--font-title); color: #fff; letter-spacing: -0.02em; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+    .cbox-book em { position: absolute; left: 8%; right: 8%; top: 22%; font: 800 22px var(--font-title); font-style: normal; color: rgba(255,255,255,.88); letter-spacing: -0.04em; line-height: .9; }
+    .cbox-book i { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.38) 40%, transparent 52%), linear-gradient(180deg, rgba(255,255,255,.12), transparent 30%); pointer-events: none; }
+    .cbox-front { position: absolute; left: 0; right: 0; top: 46%; bottom: 0; z-index: 3; display: block; border-radius: 6px 6px 14px 14px; color: #2a2318;
+      background: linear-gradient(180deg, #f1e6cf 0%, #e6d6b4 60%, #d4c098 100%);
+      box-shadow: inset 0 2px 0 rgba(255,255,255,.65), inset 0 -14px 22px rgba(120,90,40,.2), 0 1px 0 rgba(0,0,0,.08); }
+    .cbox-front::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 9px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, #fbf4e4, #e9dbbd); box-shadow: 0 2px 4px rgba(90,60,20,.25); }
+    .cbox-print { position: absolute; left: 7%; top: 12%; font: 800 9px var(--font-ui); letter-spacing: .28em; color: rgba(60,45,25,.55); text-transform: uppercase; }
+    .cbox-print::after { content: ""; display: block; width: 26px; height: 2px; margin-top: 4px; background: linear-gradient(90deg, var(--vibranium), var(--cyan-fill)); border-radius: 2px; }
+    .cbox-handle { position: absolute; right: 7%; top: 11%; width: 22%; height: 8%; border-radius: 999px; background: #2d241a; box-shadow: inset 0 3px 6px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.5); }
+    .cbox-holder { position: absolute; left: 7%; right: 7%; bottom: 16%; padding: 4px; border-radius: 9px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 2px 6px rgba(80,60,30,.2); }
+    .cbox-label { display: flex; flex-direction: column; gap: 2px; padding: 8px 11px 9px; border-radius: 6px; background: #fffdf7; transform: rotate(-.8deg); box-shadow: 0 1px 2px rgba(0,0,0,.1); }
+    .cbox-label small { font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8a7556; }
+    .cbox-label b { font-family: "Segoe Print", "Bradley Hand", "Marker Felt", var(--font-title); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #1a1610; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
     .cbox-label em { font-style: normal; font-size: 11.5px; color: #5d503d; font-variant-numeric: tabular-nums; }
-    .cbox-gauge { position: absolute; left: 10%; right: 10%; bottom: 6%; height: 4px; border-radius: 999px; background: rgba(60,45,25,.18); overflow: hidden; }
-    .cbox-gauge i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #1d1810, var(--vibranium)); }
-    .cbox-multi { position: absolute; top: 18%; right: 6%; font-size: 10.5px; font-weight: 700; background: #1d1810; color: #f6edd9; border-radius: 999px; padding: 2px 8px; }
+    .cbox-gauge { position: absolute; left: 7%; right: 7%; bottom: 7%; height: 4px; border-radius: 999px; background: rgba(60,45,25,.2); overflow: hidden; }
+    .cbox-gauge i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2a2318, var(--vibranium)); }
+    .cbox-multi { position: absolute; top: -10px; right: 10px; z-index: 4; font-size: 10.5px; font-weight: 800; background: #1d1810; color: #f6edd9; border-radius: 999px; padding: 3px 9px; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
+    /* Boîte ouverte : on feuillette les comics comme dans un bac */
+    .cbox-dig { grid-column: 1 / -1; display: flex; align-items: flex-end; overflow-x: auto; padding: 56px 120px 28px 28px; margin-top: 8px; border-radius: 22px; min-height: 0; scroll-snap-type: x proximity;
+      background: linear-gradient(180deg, color-mix(in srgb, var(--ink) 4%, transparent) 0, color-mix(in srgb, var(--ink) 4%, transparent) 42%, #d9c7a2 42%, #c4ac83 100%); box-shadow: inset 0 -18px 30px rgba(90,60,20,.25); }
+    .dig-book { position: relative; flex: 0 0 auto; width: 176px; aspect-ratio: 2 / 3; margin-left: -104px; border: 0; padding: 0; border-radius: 6px; overflow: hidden; cursor: pointer; scroll-snap-align: start;
+      background: linear-gradient(160deg, color-mix(in srgb, var(--c) 82%, #fff), var(--c) 50%, color-mix(in srgb, var(--c) 55%, #000)); color: #fff; font: inherit; text-align: left;
+      box-shadow: -6px 0 14px rgba(0,0,0,.35); transform: rotate(var(--r, 0deg)); transform-origin: 50% 100%; transition: transform .45s var(--ease-spring), margin .45s var(--ease-spring), box-shadow .3s; }
+    .dig-book:first-child { margin-left: 0; }
+    .dig-book:hover, .dig-book:focus-visible { transform: translateY(-48px) rotate(0deg) scale(1.06); margin-right: 76px; z-index: 5; box-shadow: 0 24px 40px rgba(0,0,0,.45); outline: none; }
+    .dig-book img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .dig-book i { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 28%, rgba(255,255,255,.32) 38%, transparent 50%); pointer-events: none; }
+    .dig-book .dig-num { position: absolute; left: 10px; top: 8px; font: 800 28px var(--font-title); letter-spacing: -0.04em; text-shadow: 0 2px 6px rgba(0,0,0,.5); }
+    .dig-book .dig-cap { position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 10px 9px; font-size: 11.5px; line-height: 1.25; background: linear-gradient(180deg, transparent, rgba(0,0,0,.8)); }
+    .dig-book .dig-cap b { display: block; font-size: 12.5px; }
+    .cbox-open-actions { display: flex; gap: 8px; margin-left: auto; align-items: center; }
+    /* Séries : frise du run et cartes plus lisibles */
+    .run-strip { display: flex; flex-wrap: wrap; gap: 3px; margin: 8px 0 6px; }
+    .run-strip i { width: 10px; height: 14px; border-radius: 2px; background: var(--vibranium); box-shadow: inset 0 -3px 0 rgba(0,0,0,.18); }
+    .run-strip i.rs-miss { background: transparent; box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--ink, #fff) 28%, transparent); }
+    .run-strip i.rs-wish { background: transparent; box-shadow: inset 0 0 0 1.5px var(--orange, #ff9f0a); }
+    .run-strip.dense i { width: 6px; height: 10px; }
+    .series-track-card { transition: transform .35s var(--ease-spring), box-shadow .3s; }
+    .series-track-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+    .series-track-card > img { box-shadow: 0 8px 18px rgba(0,0,0,.35); border-radius: 6px; }
+    /* Communauté : les planches (fil façon réseau social, mais en cases de BD) */
+    .pl-studio { border-radius: 22px; padding: 20px; margin: 6px 0 14px; color: #fff; background: radial-gradient(circle at 1px 1px, rgba(255,255,255,.08) 1px, transparent 1.5px) 0 0 / 9px 9px, linear-gradient(135deg, #1b1340, #3a1f7a 55%, #7C5CFF); box-shadow: var(--shadow-lift); }
+    .pl-studio-head small { font-size: 10px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; opacity: .75; }
+    .pl-studio-head h3 { margin: 4px 0 6px; font: 800 24px var(--font-title); letter-spacing: -0.03em; color: #fff; }
+    .pl-studio-head p { margin: 0; max-width: 680px; font-size: 13.5px; line-height: 1.5; opacity: .85; }
+    .pl-templates { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 12px; margin-top: 16px; }
+    .pl-tpl { display: flex; flex-direction: column; gap: 4px; padding: 12px; border-radius: 16px; border: 1px solid rgba(255,255,255,.18); background: rgba(255,255,255,.08); color: #fff; text-align: left; font: inherit; cursor: pointer; transition: transform .35s var(--ease-spring), background .2s; }
+    .pl-tpl:hover:not(:disabled) { transform: translateY(-3px) rotate(-.6deg); background: rgba(255,255,255,.16); }
+    .pl-tpl:disabled { opacity: .5; cursor: not-allowed; }
+    .pl-tpl b { font: 800 15px var(--font-title); letter-spacing: -0.02em; }
+    .pl-tpl small { font-size: 12px; opacity: .8; line-height: 1.35; }
+    .pl-tpl-covers { display: flex; height: 62px; margin-bottom: 6px; }
+    .pl-tpl-covers > * { width: 42px; height: 62px; border-radius: 4px; overflow: hidden; margin-right: -12px; box-shadow: 0 4px 10px rgba(0,0,0,.4); border: 2px solid #fff; object-fit: cover; }
+    .pl-face { position: relative; display: block; width: 100%; height: 100%; background: linear-gradient(160deg, color-mix(in srgb, var(--c) 80%, #fff), var(--c) 50%, color-mix(in srgb, var(--c) 55%, #000)); color: #fff; }
+    .pl-face b { position: absolute; left: 8%; top: 6%; font: 800 clamp(10px, 2.2vw, 20px) var(--font-title); }
+    .pl-face em { position: absolute; left: 8%; bottom: 8%; font: 800 clamp(12px, 3vw, 30px) var(--font-title); font-style: normal; letter-spacing: -0.04em; }
+    .pl-notice { margin-bottom: 12px; }
+    .pl-feed { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 18px; align-items: start; }
+    .pl-card { border-radius: 20px; padding: 14px; background: var(--card, var(--bg-secondary)); box-shadow: var(--shadow-soft); border: 1px solid var(--hair); }
+    .pl-head { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .pl-avatar { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 13px; color: #fff; background: linear-gradient(135deg, var(--pf), color-mix(in srgb, var(--pf) 50%, #000)); box-shadow: 0 0 0 2px var(--bg, #000), 0 0 0 4px var(--pf); }
+    .pl-who { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+    .pl-who small { font-size: 11px; color: var(--muted); }
+    .pl-kind { font: 800 10px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; background: #ffd60a; color: #111; transform: rotate(2deg); }
+    .pl-panels { display: grid; gap: 6px; padding: 6px; border-radius: 8px; background: #111; }
+    .pl-panels.pl-n1 { grid-template-columns: 1fr; } .pl-panels.pl-n2 { grid-template-columns: 1fr 1fr; } .pl-panels.pl-n3 { grid-template-columns: 1.3fr 1fr; } .pl-panels.pl-n3 .pl-panel:first-child { grid-row: span 2; aspect-ratio: auto; } .pl-panels.pl-n4 { grid-template-columns: 1fr 1fr; }
+    .pl-panel { position: relative; margin: 0; overflow: hidden; border: 3px solid #fff; background: #222; aspect-ratio: 2 / 3; transform: rotate(var(--t, 0deg)); }
+    .pl-panels.pl-n1 .pl-panel { aspect-ratio: 4 / 5; transform: none; }
+    .pl-panel img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .pl-panel figcaption { position: absolute; left: 6px; top: 6px; max-width: calc(100% - 12px); padding: 2px 6px; font: 800 10.5px var(--font-ui); text-transform: uppercase; letter-spacing: .04em; background: #ffd60a; color: #111; border: 2px solid #111; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .pl-title { margin: 10px 2px 0; font-weight: 700; font-size: 14px; }
+    .pl-bubble { position: relative; margin: 12px 4px 4px; padding: 10px 14px; border-radius: 18px; background: #fff; color: #111; border: 2.5px solid #111; font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
+    .pl-bubble::before { content: ""; position: absolute; left: 22px; top: -12px; border: 6px solid transparent; border-bottom: 10px solid #111; }
+    .pl-bubble::after { content: ""; position: absolute; left: 24px; top: -7px; border: 4px solid transparent; border-bottom: 7px solid #fff; }
+    .pl-warn { color: var(--orange); }
+    .pl-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; margin-top: 12px; }
+    .pl-fx { display: flex; gap: 6px; }
+    .pl-fx span { font: 900 italic 12px var(--font-title); letter-spacing: .02em; padding: 3px 7px; color: #111; background: #ffd60a; border: 2px solid #111; border-radius: 4px; transform: rotate(-3deg); opacity: .55; }
+    .pl-fx span:nth-child(2) { background: #5ac8fa; transform: rotate(2deg); } .pl-fx span:nth-child(3) { background: #ff6b6b; } .pl-fx span:nth-child(4) { background: #c4b5ff; transform: rotate(3deg); }
+    .pl-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .pl-actions .btn { font-size: 12px; padding: 4px 9px; }
+    @media (max-width: 600px) { .pl-feed { grid-template-columns: 1fr; } .pl-studio { padding: 16px; } .pl-studio-head h3 { font-size: 20px; } }
+    /* Finances : tableau de bord */
+    .fin-hero { margin: 4px 0 18px; }
+    .fin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .fin-kpi { padding: 16px 18px; border-radius: 18px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); box-shadow: var(--shadow-soft); display: flex; flex-direction: column; gap: 4px; }
+    .fin-kpi:first-child { background: linear-gradient(135deg, #1b1340, #3a1f7a 60%, #7C5CFF); color: #fff; border-color: transparent; }
+    .fin-kpi small { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
+    .fin-kpi b { font: 800 28px var(--font-title); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .fin-kpi span { font-size: 12px; opacity: .75; }
+    .fin-kpi.is-up b { color: #30d158; } .fin-kpi.is-down b { color: #ff453a; }
+    .fin-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 12px; }
+    .fin-panel { padding: 16px 18px; border-radius: 18px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); }
+    .fin-panel h4 { margin: 0 0 10px; font: 700 14px var(--font-title); }
+    .fin-vs { display: grid; grid-template-columns: 56px 1fr auto; gap: 10px; align-items: center; margin: 8px 0; font-size: 12.5px; }
+    .fin-vs > div, .fin-budget > div { height: 10px; border-radius: 999px; background: color-mix(in srgb, var(--ink, #fff) 10%, transparent); overflow: hidden; }
+    .fin-vs i, .fin-budget i { display: block; height: 100%; border-radius: inherit; background: color-mix(in srgb, var(--ink, #fff) 45%, transparent); }
+    .fin-vs.is-value i { background: linear-gradient(90deg, var(--vibranium), var(--cyan-fill)); }
+    .fin-vs b { font-variant-numeric: tabular-nums; }
+    .fin-budget span { display: block; margin-top: 6px; font-size: 12.5px; color: var(--muted); }
+    .fin-budget i { background: linear-gradient(90deg, #30d158, var(--vibranium)); }
+    .fin-budget.is-over i { background: #ff453a; }
+    .fin-mini { font-size: 12px !important; padding: 4px 10px !important; margin-top: 10px; }
+    .fin-top { display: grid; grid-template-columns: 34px 1fr auto; gap: 10px; align-items: center; padding: 6px 0; cursor: pointer; border-bottom: 1px solid var(--hair); }
+    .fin-top:last-child { border-bottom: 0; }
+    .fin-top img { width: 34px; height: 50px; object-fit: cover; border-radius: 4px; }
+    .fin-top span { min-width: 0; display: flex; flex-direction: column; } .fin-top b { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; } .fin-top small { font-size: 11.5px; color: var(--muted); }
+    .fin-top em { font-style: normal; font-weight: 800; color: #30d158; font-variant-numeric: tabular-nums; }
+    .fin-note { margin-top: 8px; }
+    /* Recherche multi-sources (Comic Vine + Metron) */
+    .cv-hit { display: flex; gap: 10px; align-items: center; padding: 8px; border-radius: 12px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); transition: border-color .2s, transform .3s var(--ease-spring); }
+    .cv-hit:hover { border-color: var(--vibranium); transform: translateY(-2px); }
+    .cv-src { display: inline-block; padding: 1px 6px; border-radius: 999px; font-size: 10.5px; font-weight: 700; background: color-mix(in srgb, var(--vibranium) 18%, transparent); color: var(--vibranium); }
+    /* Fiche d'événement : en-tête compact pour que l'essentiel reste au premier écran */
+    .ex-ghero { grid-template-columns: 200px minmax(0, 1fr) !important; align-items: start; }
+    .ex-ghero > .ex-ghero-img { grid-column: 1; grid-row: 1; aspect-ratio: 2 / 3; height: auto !important; min-height: 0 !important; }
+    .ex-ghero > .ex-media-edit { grid-column: 1; grid-row: 2; justify-self: start; margin: 0 0 12px 12px; }
+    .ex-ghero > .ex-ghero-txt { grid-column: 2; grid-row: 1 / span 2; }
+    @media (max-width: 600px) { .ex-ghero { grid-template-columns: 110px minmax(0, 1fr) !important; gap: 12px !important; } .ex-ghero > .ex-media-edit { margin-left: 8px; font-size: 11px; } }
+    /* Explorer : rails d'affiches des événements */
+    .ex-ev-rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(168px, 200px); gap: 14px; overflow-x: auto; padding: 4px 2px 16px; scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: thin; }
+    .ex-poster { position: relative; display: block; aspect-ratio: 2 / 3; border: 0; padding: 0; border-radius: 16px; overflow: hidden; cursor: pointer; scroll-snap-align: start; background: #111; color: #fff; text-align: left; font: inherit; box-shadow: var(--shadow-soft); transition: transform .4s var(--ease-spring), box-shadow .3s; }
+    .ex-poster:hover, .ex-poster:focus-visible { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-lift); outline: none; }
+    .ex-poster:focus-visible { box-shadow: 0 0 0 3px var(--vibranium), var(--shadow-lift); }
+    .ex-poster-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .ex-poster-shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0) 38%, rgba(0,0,0,.55) 62%, rgba(0,0,0,.92) 100%); }
+    .ex-poster-year { position: absolute; top: 10px; left: 10px; padding: 3px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; background: rgba(0,0,0,.55); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
+    .ex-poster-body { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px; display: flex; flex-direction: column; gap: 3px; }
+    .ex-poster-body b { font: 800 17px/1.15 var(--font-title); letter-spacing: -0.02em; text-shadow: 0 1px 6px rgba(0,0,0,.6); }
+    .ex-poster-body small { font-size: 11.5px; opacity: .85; }
+    .ex-poster-body em { display: none; }
+    .ex-poster-body small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    @media (max-width: 600px) { .ex-ev-rail { grid-auto-columns: 46%; gap: 10px; } .ex-poster-body b { font-size: 15px; } }
+    /* Profil : rang cosmique, top 3, échelle */
+    .pf-rank { display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; align-items: center; margin-top: 16px; padding: 16px; border-radius: 18px; color: #fff; background: linear-gradient(135deg, #20242c, #3a4150); }
+    .pf-rank.is-abstrait { background: linear-gradient(135deg, #1d1035, #5b2a86); } .pf-rank.is-forces { background: linear-gradient(135deg, #0d1b2a, #1b4965 60%, #5fa8d3); }
+    .pf-rank.is-terrain { background: linear-gradient(135deg, #2b1100, #9a3412 55%, #f59e0b); } .pf-rank.is-equilibre { background: linear-gradient(135deg, #0b2b26, #0f766e 55%, #a7f3d0); }
+    .pf-rank.is-sommet { background: radial-gradient(circle at 70% 20%, #fff7cc, transparent 40%), linear-gradient(135deg, #3b0764, #7C5CFF 50%, #f5d0fe); }
+    .pf-rank-badge { display: grid; place-items: center; width: 82px; height: 82px; border-radius: 50%; background: rgba(255,255,255,.12); box-shadow: inset 0 0 0 2px rgba(255,255,255,.35), 0 0 30px rgba(124,92,255,.35); text-align: center; line-height: 1; }
+    .pf-rank-badge small { font-size: 9px; letter-spacing: .14em; text-transform: uppercase; opacity: .75; } .pf-rank-badge b { font: 800 28px var(--font-title); } .pf-rank-badge span { font-size: 10px; opacity: .7; }
+    .pf-rank-main { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .pf-rank-main > small:first-child { font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase; opacity: .75; font-weight: 700; }
+    .pf-rank-main > b { font: 800 26px/1.1 var(--font-title); letter-spacing: -0.03em; }
+    .pf-rank-main > small:last-child { font-size: 12px; opacity: .85; }
+    .pf-rank .pf-tiers { grid-column: 1 / -1; }
+    .pf-top3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0; }
+    .pf-podium { padding: 14px; border-radius: 18px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); }
+    .pf-podium h4 { margin: 0 0 10px; font: 700 14px var(--font-title); }
+    .pf-podium ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: end; }
+    .pf-podium li { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; }
+    .pf-podium li.pf-pod-1 { order: 2; } .pf-podium li.pf-pod-2 { order: 1; } .pf-podium li.pf-pod-3 { order: 3; }
+    .pf-pod-cover, .pf-pod-mono { display: block; width: 100%; aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; box-shadow: 0 8px 18px rgba(0,0,0,.35); }
+    .pf-pod-1 .pf-pod-cover, .pf-pod-1 .pf-pod-mono { transform: scale(1.08); transform-origin: bottom; }
+    .pf-pod-cover img { width: 100%; height: 100%; object-fit: cover; }
+    .pf-pod-mono { display: grid; place-items: center; aspect-ratio: 1; border-radius: 50%; font: 800 22px var(--font-title); color: #fff; background: linear-gradient(135deg, color-mix(in srgb, var(--c) 80%, #fff), color-mix(in srgb, var(--c) 60%, #000)); }
+    .pf-pod-rank { position: absolute; top: -8px; left: -4px; width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 12px; color: #111; background: #ffd60a; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+    .pf-pod-2 .pf-pod-rank { background: #d1d5db; } .pf-pod-3 .pf-pod-rank { background: #d97706; color: #fff; }
+    .pf-podium li b { font-size: 12.5px; line-height: 1.25; }
+    .pf-top3-empty { margin: 16px 0; padding: 14px 16px; border-radius: 16px; border: 1px dashed var(--hair); color: var(--muted); font-size: 13.5px; }
+    .pf-top3 fieldset, .pf-top3 legend { all: unset; }
+    .pf-form .pf-top3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; border: 0; padding: 0; margin: 0; }
+    .pf-form .pf-top3 legend { grid-column: 1 / -1; font-size: 12.5px; font-weight: 700; padding: 0; margin-bottom: 4px; }
+    .pf-ladder { margin: 6px 0 18px; padding: 12px 16px; border-radius: 18px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); }
+    .pf-ladder summary { cursor: pointer; font-weight: 700; } .pf-ladder summary small { font-weight: 400; color: var(--muted); margin-left: 6px; }
+    .pf-ladder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; margin-top: 12px; }
+    .pf-lad-tier { padding: 10px; border-radius: 14px; background: color-mix(in srgb, var(--ink, #fff) 4%, transparent); }
+    .pf-lad-tier h5 { margin: 0 0 6px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); }
+    .pf-lad-rank { display: grid; grid-template-columns: 26px 1fr auto; gap: 6px; align-items: baseline; padding: 3px 4px; border-radius: 8px; font-size: 12.5px; }
+    .pf-lad-rank i { font-style: normal; font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; } .pf-lad-rank small { font-size: 10.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .pf-lad-rank.is-done { opacity: .55; } .pf-lad-rank.is-current { background: var(--vibranium); color: #fff; font-weight: 700; } .pf-lad-rank.is-current i, .pf-lad-rank.is-current small { color: #fff; }
+    .pf-xp-title { margin: 14px 0 6px; font-size: 13px; }
+    .pf-xp-rules { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+    .pf-xp-rules span { padding: 5px 9px; border-radius: 999px; font-size: 12px; background: color-mix(in srgb, var(--vibranium) 14%, transparent); }
+    .pf-xp-rules span b { color: var(--vibranium); } .pf-xp-rules em { font-style: normal; color: var(--muted); font-size: 11px; }
+    .pf-xp-rules span.is-pending { background: transparent; border: 1px dashed var(--hair); }
+    @media (max-width: 600px) { .pf-rank { grid-template-columns: 1fr; text-align: left; } .pf-rank-badge { width: 64px; height: 64px; } .pf-rank-main > b { font-size: 21px; } .pf-form .pf-top3 { grid-template-columns: 1fr; } }
+    /* Communauté : annonce des débats en direct */
+    .live-teaser { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: center; margin: 0 0 14px; padding: 18px 20px; border-radius: 22px; border: 1px solid var(--hair); background: radial-gradient(circle at 90% 10%, color-mix(in srgb, #ff375f 22%, transparent), transparent 45%), var(--card, var(--bg-secondary)); }
+    .live-teaser h3 { margin: 6px 0; font: 800 21px var(--font-title); letter-spacing: -0.02em; }
+    .live-teaser p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
+    .live-dot { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ff375f; background: color-mix(in srgb, #ff375f 14%, transparent); }
+    .live-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #ff375f; animation: livePulse 1.6s ease-in-out infinite; }
+    @keyframes livePulse { 50% { opacity: .3; } }
+    .live-teaser-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; }
+    .live-teaser-list li { padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--ink, #fff) 5%, transparent); } .live-teaser-list b { display: block; }
+    .live-teaser-note { grid-column: 1 / -1; margin: 0; }
+    @media (max-width: 700px) { .live-teaser { grid-template-columns: 1fr; } }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -2060,6 +2243,38 @@
     .release-card .comic-caption { padding-top: 10px; }
     .rel-status, .rel-market { border-radius: 999px !important; }
     @media (max-width: 600px) { .rel-week { gap: 2px; padding: 4px; } .rel-day { padding: 8px 0; } .rel-day b { font-size: 18px; } .rel-day span { font-size: 9.5px; } .rel-day.is-ncbd em { display: none; } }
+    /* Explorer : cartes lisibles (titre en casse normale, sans répétition), sections aérées */
+    .ex-gcard { border-radius: 18px !important; border-color: var(--hair) !important; box-shadow: var(--shadow-soft); }
+    .ex-gcard:hover { border-color: transparent !important; }
+    .ex-gcard-img { aspect-ratio: 16 / 10 !important; }
+    .ex-gcard-body { padding: 12px 14px 14px !important; gap: 4px !important; }
+    .ex-gcard-body b { font-family: var(--font-title) !important; text-transform: none !important; font-size: 18px !important; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2 !important; }
+    .ex-gcard.is-big .ex-gcard-body b { font-size: 24px !important; }
+    .ex-kicker { font-size: 10.5px !important; letter-spacing: .1em !important; color: var(--muted) !important; font-weight: 700; }
+    .ex-meta { color: var(--ink-dim) !important; font-size: 12.5px !important; }
+    .ex-ggrid { gap: 16px !important; }
+    .ex-sec { margin-top: 34px !important; }
+    .ex-sec-head h3, .ex-sec > h3 { font-size: 26px !important; letter-spacing: -0.025em !important; font-weight: 700 !important; }
+    .ex-sec-head p { color: var(--muted) !important; font-size: 14px !important; max-width: 760px; }
+    .ex-chip { border-radius: 999px !important; padding: 7px 14px !important; border-color: var(--hair) !important; background: color-mix(in srgb, var(--ink) 5%, transparent) !important; }
+    .ex-chip:hover, .ex-chip.active { background: var(--cyan-fill) !important; color: #111 !important; }
+    .ex-unitile, .ex-reco, .ex-pub { border-radius: 16px !important; border-color: var(--hair) !important; }
+    .ex-ev-pub { font-size: 13px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 2px 10px !important; }
+    .limited-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 14px 18px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--orange, #f59e0b) 45%, transparent); background: color-mix(in srgb, var(--orange, #f59e0b) 12%, var(--bg-card)); font-size: 14px; line-height: 1.5; }
+    .limited-banner > .ic { width: 22px; height: 22px; color: var(--orange, #f59e0b); flex: 0 0 auto; }
+    .limited-banner > div { flex: 1; }
+    .limited-banner span { color: var(--ink-dim); }
+    /* Collection ⇄ Séries : un seul espace, deux regards */
+    .coll-seg-wrap { display: none; align-items: center; gap: 14px; flex-wrap: wrap; margin: 4px 0 14px; }
+    #singlesViewSection.is-coll-family .coll-seg-wrap { display: flex; }
+    .coll-seg { display: inline-flex; padding: 4px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 7%, transparent); border: 1px solid var(--hair); }
+    .coll-seg button { border: 0; background: transparent; color: var(--ink-dim); font: 600 14px var(--font-ui); padding: 8px 18px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: background .25s var(--ease-spring), color .2s; }
+    .coll-seg button.is-on { background: var(--bg-card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.18), 0 4px 12px rgba(0,0,0,.12); }
+    .coll-seg-badge:empty { display: none; }
+    .coll-seg-badge { font-size: 11px; font-weight: 700; min-width: 20px; padding: 1px 6px; border-radius: 999px; background: var(--cyan-fill); color: #111; }
+    .coll-seg-hint { margin: 0; color: var(--muted); font-size: 13px; }
+    #navSinglesSeries { display: none !important; }
+    #singlesSubnav [data-sview="series"] { display: none !important; }
     #singlesBoxesBtn.is-on { background: var(--cyan-fill) !important; color: #111 !important; border-color: var(--cyan-fill) !important; }
     @media (max-width: 600px) { .cbox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 12px; padding-top: 34px; } .cbox-label b { font-size: 14px; } .cbox-label { padding: 6px 8px; } .cbox-open-head { flex-wrap: wrap; } }
   </style>
@@ -2262,6 +2477,14 @@
           <strong id="statSinglesWishlist">0</strong>
           <small class="stat-sub" id="statSinglesWishlistSub">$0 estimés</small>
         </div>
+      </div>
+
+      <div class="coll-seg-wrap">
+        <div class="coll-seg" role="tablist" aria-label="Regards sur la collection">
+          <button role="tab" data-coll-seg="collection" class="is-on" aria-selected="true">Mes exemplaires</button>
+          <button role="tab" data-coll-seg="series" aria-selected="false">Mes séries <span class="coll-seg-badge" id="collSegSeriesBadge"></span></button>
+        </div>
+        <p class="coll-seg-hint" id="collSegHint">Chaque comic que vous possédez, exemplaire par exemplaire (état, variante, valeur, rangement).</p>
       </div>
 
       <div class="cover-job-bar" id="coverJobBar" hidden></div>
@@ -5158,9 +5381,11 @@ module.exports = { LEVELS, LEVEL_KEYS, LEVEL_DEF, ROLES, ROLE_OF, AUTHOR, SELECT
 const norm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
 
 const SCOPE_RULES = Object.freeze([
-  Object.freeze({ id: 'manga', label: 'Manga', publishers: Object.freeze(['kana', 'kurokawa', 'ki oon', 'pika', 'pika edition', 'kaze', 'kaze manga', 'tonkam', 'akata', 'doki doki', 'ototo', 'naban', 'meian', 'viz media', 'viz', 'kodansha', 'kodansha usa', 'yen press', 'seven seas', 'tokyopop', 'vertical']) }),
+  Object.freeze({ id: 'manga', label: 'Manga', publishers: Object.freeze(['kana', 'kurokawa', 'ki oon', 'pika', 'pika edition', 'kaze', 'kaze manga', 'tonkam', 'akata', 'doki doki', 'ototo', 'naban', 'meian', 'viz media', 'viz', 'kodansha', 'kodansha usa', 'yen press', 'seven seas', 'tokyopop', 'vertical', 'kodansha comics', 'square enix manga', 'square enix', 'yen on', 'j novel club', 'denpa', 'ghost ship', 'airship', 'one peace books', 'udon manga', 'shueisha', 'shogakukan', 'kioon', 'soleil manga', 'mangetsu', 'noeve grafx', 'crunchyroll']) }),
   Object.freeze({ id: 'manhwa', label: 'Manhwa, manhua, webtoon (M2)', publishers: Object.freeze(['delitoon', 'webtoon', 'webtoon unscrolled', 'tapas', 'ize press', 'kbooks']) }),
-  Object.freeze({ id: 'bd', label: 'Bande dessinée franco-belge (M1)', publishers: Object.freeze(['dargaud', 'dupuis', 'casterman', 'le lombard', 'lombard', 'blake et mortimer']) })
+  Object.freeze({ id: 'bd', label: 'Bande dessinée franco-belge (M1)', publishers: Object.freeze(['dargaud', 'dupuis', 'casterman', 'le lombard', 'lombard', 'blake et mortimer', 'ankama', 'bamboo', 'soleil', 'futuropolis', 'rue de sevres', 'gallimard bd', 'fluide glacial']) }),
+  // Tout autre éditeur nommé, absent de la liste des éditeurs de comics US et FR (romans, jeunesse, magazines, éditeurs étrangers…)
+  Object.freeze({ id: 'other', label: 'Éditeur hors comics US et FR', publishers: Object.freeze([]) })
 ]);
 const SCOPE_INDEX = new Map(SCOPE_RULES.flatMap(rule => rule.publishers.map(n => [n, rule.id])));
 
@@ -5171,6 +5396,17 @@ const PUBLISHERS = Object.freeze([
   ['Titan Comics', 'US', ['titan']], ['Mad Cave Studios', 'US', ['mad cave']], ['Skybound', 'US', ['skybound entertainment']],
   ['Valiant', 'US', ['valiant entertainment']], ['Archie Comics', 'US', ['archie']], ['AWA Studios', 'US', ['awa']],
   ['Ahoy Comics', 'US', ['ahoy']], ['Vault Comics', 'US', ['vault']], ['Mad Cave', 'US', []],
+  ['Zenescope', 'US', ['zenescope entertainment']], ['Ablaze', 'US', ['ablaze publishing']], ['AfterShock Comics', 'US', ['aftershock']],
+  ['Scout Comics', 'US', ['scout']], ['Source Point Press', 'US', ['source point']], ['Behemoth Comics', 'US', ['behemoth']],
+  ['Massive Publishing', 'US', ['massive']], ['Antarctic Press', 'US', []], ['Lion Forge', 'US', []], ['Fantagraphics', 'US', ['fantagraphics books']],
+  ['Top Shelf', 'US', ['top shelf productions']], ['Papercutz', 'US', []], ['Heavy Metal', 'US', []], ['Bad Idea', 'US', []],
+  ['DSTLRY', 'US', []], ['Whatnot Publishing', 'US', ['whatnot']], ['Floating World Comics', 'US', []], ['Image Comics Skybound', 'US', []],
+  ['Marvel Comics Group', 'US', []], ['DC Black Label', 'US', ['vertigo', 'wildstorm', 'dc vertigo']], ['Dark Horse Books', 'US', []],
+  ['Humanoids', 'US', ['humanoids inc']], ['Aspen Comics', 'US', ['aspen mlt', 'aspen']], ['Coffin Comics', 'US', []], ['Keenspot', 'US', []],
+  ['Abrams ComicArts', 'US', ['abrams']], ['First Second', 'US', ['first second books']], ['Drawn & Quarterly', 'US', ['drawn and quarterly']],
+  ['Image', 'US', []], ['Free Comic Book Day', 'US', ['fcbd']], ['Titan Books', 'US', []], ['Udon Entertainment', 'US', ['udon']],
+  ['Huginn & Muninn', 'FR', ['huginn muninn', 'huginn et muninn']], ['Akileos', 'FR', []], ['Snorgleux', 'FR', ['snorgleux comics']],
+  ['Black River', 'FR', []], ['Ankama Comics', 'FR', []], ['404 Comics', 'FR', ['404 editions']], ['Graph Zeppelin', 'FR', []], ['Delirium', 'FR', ['editions delirium']],
   ['Panini Comics', 'FR', ['panini', 'panini france', 'panini comics france']], ['Urban Comics', 'FR', ['urban']],
   ['Delcourt', 'FR', ['delcourt comics', 'editions delcourt']], ['Glénat', 'FR', ['glenat comics', 'editions glenat']],
   ['Bliss Comics', 'FR', ['bliss']], ['HiComics', 'FR', ['hi comics']], ['Komics Initiative', 'FR', []], ['Vestron', 'FR', []],
@@ -5178,13 +5414,19 @@ const PUBLISHERS = Object.freeze([
 ].map(x => Object.freeze([x[0], x[1], Object.freeze(x[2])])));
 
 const MARKETS = Object.freeze(['US', 'FR']);
+// Liste blanche : noms et alias normalisés des éditeurs de comics US et FR
+const PUBLISHER_KEYS = new Set(PUBLISHERS.flatMap(([n, , al]) => [norm(n)].concat(al)));
 
 // Raison d'exclusion d'une publication ({ format, publisher, scope }) ; null = dans le périmètre
 const scopeReason = p => {
   if (!p) return null;
   if (p.scope === 'in') return null;
   if (p.format === 'manga') return 'manga';
-  return SCOPE_INDEX.get(norm(p.publisher)) || null;
+  const k = norm(p.publisher);
+  if (!k) return null; // éditeur absent : rien ne permet de l'écarter
+  const known = SCOPE_INDEX.get(k);
+  if (known) return known;
+  return PUBLISHER_KEYS.has(k) ? null : 'other';
 };
 const isOutOfScope = p => !!scopeReason(p);
 // Éditeur exclu par son nom (pour ne jamais le proposer dans une liste)
@@ -5555,11 +5797,92 @@ const sanitizeProfile = p => {
   const s = (v, n) => String(v || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, n);
   const color = /^#[0-9a-f]{6}$/i.test(String(p && p.color || '')) ? p.color : '#7C5CFF';
   const handle = s(p && p.handle, 24).replace(/\s+/g, '_');
-  return { handle, displayName: s(p && p.displayName, 40), bio: s(p && p.bio, 160), favorite: s(p && p.favorite, 60), color, createdAt: (p && p.createdAt) || null };
+  // Top 3 personnages et top 3 runs : trois entrées au plus, sans doublon ni vide
+  const top3 = v => (Array.isArray(v) ? v : []).map(x => s(x, 60)).filter((x, i, a) => x && a.findIndex(y => y.toLowerCase() === x.toLowerCase()) === i).slice(0, 3);
+  return { handle, displayName: s(p && p.displayName, 40), bio: s(p && p.bio, 160), favorite: s(p && p.favorite, 60), color, topCharacters: top3(p && p.topCharacters), topRuns: top3(p && p.topRuns), createdAt: (p && p.createdAt) || null };
 };
 const validHandle = h => /^[A-Za-z0-9_.À-ſ-]{3,24}$/.test(String(h || ''));
 
 module.exports = { TIERS, ERAS, DEFS, eraOf, completeRuns, tierFor, computeTrophies, titleFor, sanitizeProfile, validHandle };
+  return Object.freeze(module.exports); })();
+  /* domains/community/ranks-core.js */
+  out.ranksCore = (() => { const module = { exports: {} };
+'use strict';
+// Rangs du compte Panel (D-61) : une échelle très longue, de l'humain ordinaire jusqu'au sommet cosmique.
+//  - Points (XP) gagnés par l'activité : collection, lecture, avis, runs complets, trophées, et activité sociale
+//    (abonnés, réactions, commentaires, planches publiées, débats) qui ne compte qu'une fois les comptes en ligne actifs.
+//  - Les rangs cosmiques suivent la hiérarchie présentée par House of Ideal (d'après les vidéos de Maki,
+//    classement de fans, non officiel) : l'abstrait, les forces, le terrain, l'équilibre, le sommet.
+//  - Module pur : aucune donnée stockée ni envoyée.
+
+// Barème des points. `social: true` : activité qui n'existe qu'avec un compte en ligne (0 tant qu'il n'y en a pas).
+const XP_RULES = [
+  { id: 'owned', label: 'Numéro dans la collection', xp: 5 },
+  { id: 'read', label: 'Numéro lu', xp: 8 },
+  { id: 'reread', label: 'Relecture', xp: 3 },
+  { id: 'rated', label: 'Note donnée à un numéro', xp: 4 },
+  { id: 'reviewed', label: 'Avis écrit (40 caractères ou plus)', xp: 15 },
+  { id: 'runs', label: 'Run complet', xp: 60 },
+  { id: 'keys', label: 'Key issue possédé', xp: 20 },
+  { id: 'trophyXp', label: 'Paliers de trophées', xp: 1 },
+  { id: 'planches', label: 'Planche préparée', xp: 6 },
+  { id: 'followers', label: 'Abonné gagné', xp: 10, social: true },
+  { id: 'reactions', label: 'Réaction reçue (POW!, WOW!…)', xp: 2, social: true },
+  { id: 'comments', label: 'Commentaire reçu', xp: 3, social: true },
+  { id: 'published', label: 'Planche publiée', xp: 12, social: true },
+  { id: 'debates', label: 'Débat en direct animé', xp: 40, social: true }
+];
+
+// Échelle terrestre (avant le cosmique), puis la hiérarchie cosmique de bas en haut.
+const EARTH = [
+  'Civil', 'Témoin d\'un combat', 'Justicier de quartier', 'Athlète de haut niveau', 'Humain entraîné', 'Maître des arts martiaux',
+  'Humain optimisé', 'Super-soldat', 'Agent augmenté', 'Mutant latent', 'Mutant de classe Bêta', 'Mutant de classe Alpha',
+  'Mutant de classe Oméga', 'Inhumain révélé', 'Sorcier initié', 'Sorcier suprême', 'Dieu d\'Asgard', 'Héraut cosmique'
+];
+// Tiers cosmiques (chaque liste va du rang le plus bas au plus haut du tier)
+const COSMIC = [
+  { id: 'abstrait', label: 'L\'abstrait', names: ['Destiny', 'Numinus', 'Unbeing', 'Origin', 'Anomaly', 'Mirage'] },
+  { id: 'forces', label: 'Les forces', names: ['Les Elder Gods', 'Witchcraft', 'L\'Anti-All', 'Lifebringer One', 'Knull', 'L\'Enigma Force'] },
+  { id: 'terrain', label: 'Le terrain', names: ['Opal Luna Saturnyne', 'L\'Étranger', 'Les Watchers', 'Les Aspirants', 'Les Célestes', 'Galactus', 'Le Black Winter', 'Les Beyonders', 'The Lost One'] },
+  { id: 'equilibre', label: 'L\'équilibre', names: ['Némésis', 'Le Premier Firmament', 'Griever', 'Queen of Nevers', 'Then', 'Now', 'Eulogy', 'Expediency', 'Epiphany', 'Enmity', 'Empathy', 'Entropy', 'Abraxas', 'Epoch', 'Eon', 'Beacon', 'Sara Grey', 'The Preordained', 'Continuum', 'L\'In-Betweener', 'Mistress Love', 'Master Hate', 'Powers That Be', 'The Natural Order of Things', 'Lord Chaos', 'Master Order'] },
+  { id: 'sommet', label: 'Le sommet', names: ['Life', 'Oblivion', 'Death', 'Infinity', 'Eternity', 'Le Phénix', 'Le Tribunal Vivant', 'One Below All', 'Divine Creator', 'Le Fulcrum', 'The One Above All'] }
+];
+const ERA_TERRE = { id: 'terre', label: 'Terre' };
+
+// XP nécessaire pour atteindre le rang n (1 = Civil, 0 XP). Croissance forte : le sommet demande des années d'activité.
+const xpForRank = n => n <= 1 ? 0 : Math.round(30 * Math.pow(n - 1, 2.25) / 10) * 10;
+
+const RANKS = (() => {
+  const out = [];
+  EARTH.forEach(name => out.push({ name, tier: ERA_TERRE.id, tierLabel: ERA_TERRE.label, cosmic: false }));
+  COSMIC.forEach(t => t.names.forEach(name => out.push({ name, tier: t.id, tierLabel: t.label, cosmic: true })));
+  return out.map((r, i) => Object.freeze(Object.assign(r, { rank: i + 1, xp: xpForRank(i + 1) })));
+})();
+const TIER_IDS = [ERA_TERRE.id].concat(COSMIC.map(t => t.id));
+
+const nonNeg = v => Math.max(0, Math.floor(Number(v) || 0));
+
+// activity : { owned, read, reread, rated, reviewed, runs, keys, trophyXp, planches, followers, reactions, comments, published, debates }
+// options.online : vrai seulement si un compte en ligne fournit l'activité sociale (sinon elle vaut 0)
+const computeRank = (activity = {}, options = {}) => {
+  const online = !!options.online;
+  const breakdown = XP_RULES.map(r => {
+    const count = r.social && !online ? 0 : nonNeg(activity[r.id]);
+    return { id: r.id, label: r.label, unit: r.xp, count, xp: count * r.xp, social: !!r.social, pending: !!r.social && !online };
+  });
+  const xp = breakdown.reduce((a, b) => a + b.xp, 0);
+  let i = 0;
+  while (i + 1 < RANKS.length && RANKS[i + 1].xp <= xp) i++;
+  const cur = RANKS[i], next = RANKS[i + 1] || null;
+  return {
+    xp, rank: cur, next, total: RANKS.length,
+    progress: next ? Math.max(0, Math.min(1, (xp - cur.xp) / (next.xp - cur.xp))) : 1,
+    toNext: next ? next.xp - xp : 0,
+    breakdown
+  };
+};
+
+module.exports = { XP_RULES, EARTH, COSMIC, RANKS, TIER_IDS, xpForRank, computeRank };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -5704,13 +6027,47 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Aucune clé n'est livrée avec l'application : clé personnelle saisie dans les Paramètres (gardée sur l'appareil),
   // sinon le relais serveur (serve.js) ajoute la clé côté serveur. Les appareils qui avaient déjà une clé la gardent.
   const getCvKey = () => (localStorage.getItem('panel_comicvine_key') || '').trim();
+  // Relais locaux (serve.js) : vérifiés une fois au démarrage ; null = pas encore vérifié
+  let relayStatus = null;
+  const probeRelays = async () => {
+    if (!/^https?:$/.test(location.protocol) || !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || navigator.webdriver) return null;
+    try {
+      const r = await fetch(location.origin + '/api/status', { cache: 'no-store' });
+      const j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
+      relayStatus = j && j.ok ? { cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd } : { cv: false, metron: false, gcd: false };
+    } catch (_) { relayStatus = { cv: false, metron: false, gcd: false }; }
+    return relayStatus;
+  };
   const cvRelayBase = () => {
     const custom = (localStorage.getItem('panel_cv_proxy') || '').trim();
     if (custom) return custom.replace(/\/$/, '');
     if (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) return '';
+    if (relayStatus && !relayStatus.cv) return ''; // relais absent ou sans clé : outils Comic Vine signalés indisponibles au lieu d'échouer
     return /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ? location.origin + '/api/cv' : '';
   };
   const cvAvailable = () => !!(getCvKey() || cvRelayBase());
+  // Mode limité : ouvert comme fichier, ou serveur sans relais. On l'explique au lieu de laisser les outils échouer.
+  const showLimitedModeBanner = reasons => {
+    if (navigator.webdriver || !reasons.length) return;
+    try { if (sessionStorage.getItem('panel_limited_dismissed') === '1') return; } catch (_) {}
+    const main = document.querySelector('main');
+    if (!main || $('limitedModeBanner')) return;
+    const el = document.createElement('div');
+    el.id = 'limitedModeBanner'; el.className = 'limited-banner'; el.setAttribute('role', 'status');
+    el.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-alert /></svg><div><b>Mode limité</b> : ' + reasons.map(escapeHtml).join(' ; ') +
+      '.<br><span>Pour tout activer, double-cliquez <b>Lancer Panel.cmd</b> dans le dossier de Panel (ou lancez <code>node serve.js</code>), puis ouvrez <b>http://localhost:8080</b>.</span></div><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
+    el.querySelector('button').onclick = () => { el.remove(); try { sessionStorage.setItem('panel_limited_dismissed', '1'); } catch (_) {} };
+    main.prepend(el);
+  };
+  if (location.protocol === 'file:') setTimeout(() => showLimitedModeBanner(['ouvert comme fichier, le navigateur bloque la caméra (scanners), le mode hors ligne et les relais Comic Vine, GCD et Metron (recherche, couvertures, identification des variantes)']), 0);
+  probeRelays().then(st => {
+    if (!st) return;
+    const missing = [];
+    if (!st.cv && !getCvKey()) missing.push('Comic Vine non configuré (recherche, couvertures, sorties et cotes indisponibles) : ajoutez la clé dans .secrets/comicvine.json ou dans Paramètres');
+    if (!st.metron) missing.push('Metron non configuré (identification exacte des variantes au scan) : node serve.js --metron');
+    showLimitedModeBanner(missing.length && !st.cv && !getCvKey() ? missing : []);
+    if (!st.cv && !getCvKey()) { try { renderSinglesCollection(); } catch (_) {} }
+  });
   if (false) {
   }
 
@@ -7210,6 +7567,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (custom) return custom.replace(/\/$/, '');
     if (IS_NATIVE_APP) return 'app:/metron';
     return /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ? location.origin + '/api/metron' : '';
+  };
+  // Recherche par titre dans Metron (base communautaire ouverte) via le relais local ; [] si non configuré
+  const searchMetronIssuesList = async query => {
+    const base = metronProxyBase();
+    if (!base || metronUnavailable || (relayStatus && !relayStatus.metron)) return [];
+    const d = await metronFetcher(base + '/search?q=' + encodeURIComponent(String(query).trim()));
+    if (d && d.error && /non configur|refus/.test(d.error)) { metronUnavailable = true; return []; }
+    return (d && Array.isArray(d.results) ? d.results : []).map(x => ({
+      id: 'metron-' + x.id, volume: x.series + (x.year ? ' (' + x.year + ')' : ''), issue: x.number || '1', title: '', cover: x.image || '', date: x.date || '', variantsCount: 1, source: 'Metron'
+    }));
   };
   const lookupMetron = async parsed => {
     const base = metronProxyBase();
@@ -10101,6 +10468,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Vue « Boîtes » : regroupement choisi (run, personnage, éditeur, emplacement) et boîte ouverte
   let singlesBoxBy = (() => { try { return localStorage.getItem('panel_singles_box_by') || 'run'; } catch (_) { return 'run'; } })();
   let singlesOpenBox = null;
+  let singlesDigMode = true;
   let singlesReadFilter = 'all';
   const SINGLES_PAGE = 120;
   let singlesRenderLimit = SINGLES_PAGE;
@@ -10123,6 +10491,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     ['mobSingles', 'mobReleases', 'mobCommunity', 'mobExplorer'].forEach(b => $(b) && $(b).classList.toggle('active', b === dockId));
     // Les chiffres de la collection ne s'affichent que sur la page Collection
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('hide-coll-stats', view !== 'collection');
+    // Collection et Séries sont deux regards sur la même collection : un sélecteur commun les relie
+    if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-coll-family', view === 'collection' || view === 'series');
+    document.querySelectorAll('[data-coll-seg]').forEach(b => { const on = b.dataset.collSeg === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); });
+    if ($('collSegHint')) $('collSegHint').textContent = view === 'series' ? 'Vos runs : numéros possédés, manquants et ce qu\'il reste pour les compléter.' : 'Chaque comic que vous possédez, exemplaire par exemplaire (état, variante, valeur, rangement).';
     Object.entries(map).forEach(([v, id]) => { if ($(id)) $(id).hidden = v !== view; });
     const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
     $$('#navSinglesBlock .nav-btn').forEach(b => b.classList.remove('active'));
@@ -10258,27 +10630,53 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // RENDU DE LA COLLECTION PHYSIQUE DE SINGLES AVEC FILTRAGE, RÉPARTITION & TRI
   // Boîtes de comics : façade carton, étiquette manuscrite, tranches des numéros qui dépassent, jauge de remplissage
   const CBOX_PUB_COLORS = { 'Marvel': '#e23636', 'DC Comics': '#0476f2', 'DC': '#0476f2', 'Image Comics': '#f2a900', 'Image': '#f2a900', 'Dark Horse': '#4b4b4b', 'IDW Publishing': '#2e7d6b', 'BOOM! Studios': '#d6336c', 'Urban Comics': '#1f1f1f', 'Panini Comics': '#c8102e' };
+  const cboxInitials = t => String(t || '?').replace(/^(the|a|an|les?|la)\s+/i, '').split(/[\s:\-–]+/).filter(Boolean).slice(0, 2).map(w => w[0]).join('').toUpperCase() || '?';
+  const cboxHue = x => CBOX_PUB_COLORS[x.publisher] || ('hsl(' + ([...String(x.series || '')].reduce((h, ch) => (h * 31 + ch.charCodeAt(0)) % 360, 7)) + ' 45% 42%)');
+  const cboxBookFace = x => x.coverUrl ? coverImgTag(x) : '<b>' + escapeHtml(cboxInitials(x.series)) + '</b><em>#' + escapeHtml(String(x.issue || '?')) + '</em>';
   const renderCollectionBoxes = (grid, boxes) => {
     grid.className = 'cbox-grid';
     if (!boxes.length) { grid.innerHTML = '<div class="empty-box"><h2>Aucune boîte</h2><p>Les boîtes regroupent les exemplaires possédés ; la wishlist n\'y figure pas.</p></div>'; return; }
     const mode = window.PanelDomains.collectionBoxes.MODES[boxes[0].mode];
     grid.innerHTML = boxes.map((b, i) => {
-      const slivers = b.items.slice(0, 16).map((x, j) => '<span class="cbox-sliver" style="--h:' + (78 + ((j * 37 + i * 11) % 22)) + '%;--c:' + (CBOX_PUB_COLORS[x.publisher] || '#8a8a8a') + '">' + (x.coverUrl ? coverImgTag(x) : '') + '</span>').join('');
+      const shown = b.items.slice(0, 9);
+      const ov = shown.length > 1 ? Math.round(((1 - 0.49) / (shown.length - 1) - 0.49) * 100) : 0; // chevauchement (en % de la largeur du bac) pour que tout tienne dans la boîte
+      const books = shown.map((x, j) => {
+        const r = ((j * 37 + i * 13) % 7) - 3, y = ((j * 23 + i * 7) % 5) * 3;
+        return '<span class="cbox-book" style="--c:' + cboxHue(x) + ';--i:' + j + ';--r:' + (r * 0.8).toFixed(1) + 'deg;--y:' + y + 'px">' + cboxBookFace(x) + '<i></i></span>';
+      }).join('');
       const v = sumKnown(b.items, valueOf);
       return '<button class="cbox" data-box="' + escapeHtml(b.key) + '" aria-label="Ouvrir la boîte ' + escapeHtml(b.label) + ', ' + b.count + ' numéros">' +
-        '<span class="cbox-comics" aria-hidden="true">' + slivers + '</span>' +
-        '<span class="cbox-body"><span class="cbox-lid"></span><span class="cbox-handle" aria-hidden="true"></span>' +
-          '<span class="cbox-label"><small>' + escapeHtml(mode) + '</small><b>' + escapeHtml(b.label) + '</b>' +
-          '<em>' + b.count + ' numéro' + (b.count > 1 ? 's' : '') + (b.runs > 1 ? ' · ' + b.runs + ' runs' : '') + (v.n ? ' · ' + money(v.total) : '') + '</em></span>' +
-          '<span class="cbox-gauge" title="' + b.count + ' / ' + window.PanelDomains.collectionBoxes.BOX_CAPACITY * b.boxes + ' places (short box)"><i style="width:' + Math.round(b.fill * 100) + '%"></i></span>' +
-          (b.boxes > 1 ? '<span class="cbox-multi">×' + b.boxes + ' boîtes</span>' : '') +
-        '</span></button>';
+        '<span class="cbox-stage">' +
+          '<span class="cbox-back" aria-hidden="true"></span>' +
+          '<span class="cbox-comics" aria-hidden="true" style="--ov:' + Math.max(-46, Math.min(-6, ov)) + '%">' + books + '</span>' +
+          '<span class="cbox-front"><span class="cbox-print" aria-hidden="true">Panel · short box</span><span class="cbox-handle" aria-hidden="true"></span>' +
+            '<span class="cbox-holder"><span class="cbox-label"><small>' + escapeHtml(mode) + '</small><b>' + escapeHtml(b.label) + '</b>' +
+            '<em>' + b.count + ' numéro' + (b.count > 1 ? 's' : '') + (b.runs > 1 ? ' · ' + b.runs + ' runs' : '') + (v.n ? ' · ' + money(v.total) : '') + '</em></span></span>' +
+            '<span class="cbox-gauge" title="' + b.count + ' / ' + window.PanelDomains.collectionBoxes.BOX_CAPACITY * b.boxes + ' places (short box)"><i style="width:' + Math.max(3, Math.round(b.fill * 100)) + '%"></i></span>' +
+          '</span>' +
+        '</span>' +
+        (b.boxes > 1 ? '<span class="cbox-multi">×' + b.boxes + ' boîtes</span>' : '') +
+        '</button>';
     }).join('');
-    grid.querySelectorAll('.cbox').forEach(el => { el.onclick = () => { singlesOpenBox = el.dataset.box; renderSinglesCollection(); }; });
+    grid.querySelectorAll('.cbox').forEach(el => { el.onclick = () => { singlesOpenBox = el.dataset.box; singlesDigMode = true; renderSinglesCollection(); }; });
+  };
+  // Boîte ouverte : on feuillette les numéros comme dans un bac de comic shop
+  const renderBoxDig = (items) => {
+    const wrap = document.createElement('div');
+    wrap.className = 'cbox-dig';
+    wrap.setAttribute('role', 'list');
+    wrap.setAttribute('aria-label', 'Numéros de la boîte, à feuilleter');
+    const sorted = items.slice().sort((a, b) => String(a.series || '').localeCompare(String(b.series || '')) || (issueNumber(a) || 0) - (issueNumber(b) || 0)).slice(0, 240);
+    wrap.innerHTML = sorted.map((x, j) => '<button class="dig-book" role="listitem" data-dig="' + j + '" style="--c:' + cboxHue(x) + ';--r:' + ((((j * 29) % 5) - 2) * 0.7).toFixed(1) + 'deg">' +
+      (x.coverUrl ? coverImgTag(x) : '<span class="dig-num">#' + escapeHtml(String(x.issue || '?')) + '</span>') +
+      '<span class="dig-cap"><b>' + escapeHtml(x.series || 'Sans titre') + ' #' + escapeHtml(String(x.issue || '?')) + '</b>' + escapeHtml([x.variant, x.condition].filter(Boolean).join(' · ')) + '</span><i></i></button>').join('');
+    wrap.querySelectorAll('[data-dig]').forEach(el => { el.onclick = () => openSingleInspector(sorted[+el.dataset.dig]); });
+    return wrap;
   };
 
   const renderSinglesCollection = () => {
     updateSinglesStats();
+    if ($('collSegSeriesBadge') && $('badgeSeriesIncomplete')) { const n = $('badgeSeriesIncomplete').textContent.trim(); $('collSegSeriesBadge').textContent = n && n !== '0' ? n : ''; }
     renderCoverJobBar();
     updateBoxesList();
 
@@ -10363,9 +10761,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (openBoxHeader) {
       const head = document.createElement('div');
       head.className = 'cbox-open-head';
-      head.innerHTML = '<button class="btn secondary" data-box-back>‹ Toutes les boîtes</button><div><small>' + escapeHtml(window.PanelDomains.collectionBoxes.MODES[openBoxHeader.mode]) + '</small><h3>' + escapeHtml(openBoxHeader.label) + '</h3></div><span class="cbox-open-meta">' + openBoxHeader.count + ' numéro(s)' + (openBoxHeader.runs > 1 ? ' · ' + openBoxHeader.runs + ' runs' : '') + '</span>';
+      head.innerHTML = '<button class="btn secondary" data-box-back>‹ Toutes les boîtes</button><div><small>' + escapeHtml(window.PanelDomains.collectionBoxes.MODES[openBoxHeader.mode]) + '</small><h3>' + escapeHtml(openBoxHeader.label) + '</h3></div><span class="cbox-open-actions"><span class="cbox-open-meta">' + openBoxHeader.count + ' numéro(s)' + (openBoxHeader.runs > 1 ? ' · ' + openBoxHeader.runs + ' runs' : '') + '</span><button class="btn secondary" data-box-dig aria-pressed="' + singlesDigMode + '">' + (singlesDigMode ? 'Voir en grille' : 'Feuilleter le bac') + '</button></span>';
       head.querySelector('[data-box-back]').onclick = () => { singlesOpenBox = null; renderSinglesCollection(); };
+      head.querySelector('[data-box-dig]').onclick = () => { singlesDigMode = !singlesDigMode; renderSinglesCollection(); };
       frag.appendChild(head);
+      if (singlesDigMode) { grid.className = 'cbox-grid is-open'; frag.appendChild(renderBoxDig(filtered)); grid.appendChild(frag); return; }
     }
 
     if (singlesViewMode === 'list') {
@@ -10620,6 +11020,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
   };
 
+  // Frise du run : une case par numéro (possédé, manquant, en wishlist), lisible d'un coup d'œil
+  const seriesRunStrip = g => {
+    if (!g.isRun || !(g.end >= g.start)) return '';
+    const span = g.end - g.start + 1;
+    if (span > 120) return '';
+    const miss = new Set(g.missing), wish = new Set((g.wish || []).map(x => issueNumber(x)).filter(n => n != null));
+    let cells = '';
+    for (let n = g.start; n <= g.end; n++) {
+      const st = miss.has(n) ? (wish.has(n) ? 'wish' : 'miss') : 'own';
+      cells += '<i class="rs-' + st + '" title="#' + n + (st === 'own' ? ' possédé' : st === 'wish' ? ' en wishlist' : ' manquant') + '"></i>';
+    }
+    return '<div class="run-strip' + (span > 40 ? ' dense' : '') + '" aria-label="' + (span - g.missing.length) + ' numéros possédés sur ' + span + '">' + cells + '</div>';
+  };
   const renderSeriesTracker = () => {
     const gridEl = $('seriesTrackGrid');
     if (!gridEl) return;
@@ -10652,6 +11065,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
             '<button class="pull-star' + (g.pulled ? ' on' : '') + '" data-pull title="Suivre en pull list" aria-label="Suivre en pull list">★</button></h3>' +
           '<div class="series-track-meta"><span>' + escapeHtml(g.publisher || '') + '</span><span>' + g.ownedCount + ' possédé(s)</span>' + (g.wish.length ? '<span style="color:var(--orange)">' + g.wish.length + ' en wishlist</span>' : '') + '<span>' + money(g.value) + '</span></div>' +
           '<div class="progress-track"><div class="progress-fill" style="width:' + g.completion + '%"></div></div>' +
+          seriesRunStrip(g) +
           '<div class="missing-line' + (!g.isRun ? ' sparse' : g.missing.length ? '' : ' complete') + '">' +
             (g.ownedCount === 0 ? 'Aucun exemplaire possédé'
               : !g.isRun ? 'Numéros épars : ' + (compressRanges([...g.ownedNums].sort((x, y) => x - y)) || g.owned.map(x => x.issue || x.variant).join(', '))
@@ -13131,12 +13545,27 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // ---------- Interface
   const exView = { page: 'home', id: '', q: '', cat: '', guideCat: '', order: '', imp: '', hideOptional: false, hideRead: false, publisher: '', lang: 'vo', simple: false, spoilers: false, limit: 60, focus: '' };
   const h = escapeHtml;
+  // Affiche générée (D-59) quand aucun visuel réel n'existe : propre à chaque titre (teinte, géométrie, monogramme),
+  // couleur de l'éditeur, motif triangulaire discret. Le titre n'y est pas répété : il est lisible sous l'affiche.
   const exArt = (title, sub) => {
-    const t = String(title || 'Panel').toUpperCase().slice(0, 28).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const s = String(sub || '').toUpperCase().slice(0, 30).replace(/[&<>"']/g, '');
-    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><defs><pattern id="d" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="4.5" cy="4.5" r="1.6" fill="#2A2A28"/></pattern></defs>' +
-      '<rect width="640" height="360" fill="#111"/><rect width="640" height="360" fill="url(#d)"/><polygon points="420,0 640,0 640,360 300,360" fill="#FFD400"/><polygon points="455,0 470,0 350,360 335,360" fill="#111"/>' +
-      '<text x="32" y="300" font-family="Barlow Condensed,Arial Narrow,Arial" font-weight="800" font-size="46" fill="#F3F2EE">' + t + '</text><text x="34" y="330" font-family="Arial" font-size="15" letter-spacing="3" fill="#FFD400">' + s + '</text></svg>';
+    const esc = v => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const name = String(title || 'Panel');
+    let hash = 0; for (let i = 0; i < name.length; i++) hash = (hash * 31 + name.charCodeAt(i)) >>> 0;
+    const pub = String(sub || '').toLowerCase();
+    const base = /marvel/.test(pub) ? [356, 78] : /\bdc\b|dc comics/.test(pub) ? [214, 82] : /image/.test(pub) ? [38, 90] : [256, 70];
+    const hue = (base[0] + (hash % 28) - 14 + 360) % 360, sat = base[1];
+    const c1 = 'hsl(' + hue + ',' + sat + '%,46%)', c2 = 'hsl(' + ((hue + 40) % 360) + ',' + (sat - 10) + '%,14%)', c3 = 'hsl(' + ((hue + 300) % 360) + ',70%,62%)';
+    const ini = name.replace(/[^A-Za-zÀ-ÿ0-9 ]/g, ' ').split(/\s+/).filter(w => w.length > 2 || /\d/.test(w)).slice(0, 3).map(w => w[0]).join('').toUpperCase() || name[0].toUpperCase();
+    const ang = 20 + (hash % 50), off = (hash >> 3) % 160;
+    const tri = Array.from({ length: 9 }, (_, i) => { const x = 330 + ((i * 97 + off) % 300), y = 30 + ((i * 61 + hash) % 280), s = 26 + ((i * 13 + hash) % 40); return '<polygon points="' + x + ',' + (y - s) + ' ' + (x + s) + ',' + (y + s) + ' ' + (x - s) + ',' + (y + s) + '" fill="none" stroke="#fff" stroke-opacity="' + (0.06 + (i % 3) * 0.04).toFixed(2) + '" stroke-width="2"/>'; }).join('');
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360"><defs>' +
+      '<linearGradient id="g" gradientTransform="rotate(' + ang + ')"><stop offset="0" stop-color="' + c1 + '"/><stop offset="1" stop-color="' + c2 + '"/></linearGradient>' +
+      '<radialGradient id="r" cx="0.8" cy="0.15" r="0.7"><stop offset="0" stop-color="' + c3 + '" stop-opacity=".55"/><stop offset="1" stop-color="' + c3 + '" stop-opacity="0"/></radialGradient>' +
+      '<pattern id="t" width="28" height="48" patternUnits="userSpaceOnUse"><path d="M0 48 L14 24 L28 48 M0 0 L14 24 L28 0" fill="none" stroke="#fff" stroke-opacity=".05" stroke-width="1.2"/></pattern></defs>' +
+      '<rect width="640" height="360" fill="url(#g)"/><rect width="640" height="360" fill="url(#t)"/><rect width="640" height="360" fill="url(#r)"/>' + tri +
+      '<text x="36" y="250" font-family="-apple-system,Segoe UI,Helvetica,Arial" font-weight="800" font-size="168" letter-spacing="-8" fill="#fff" fill-opacity=".92">' + esc(ini) + '</text>' +
+      '<rect x="36" y="286" width="54" height="4" rx="2" fill="#fff" fill-opacity=".85"/>' +
+      '<text x="36" y="322" font-family="-apple-system,Segoe UI,Helvetica,Arial" font-weight="600" font-size="17" letter-spacing="3" fill="#fff" fill-opacity=".8">' + esc(String(sub || '').toUpperCase().slice(0, 34)) + '</text></svg>';
     return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   };
   const exGuideImg = g => g.image && g.image.url ? g.image.url : exArt(g.title, (g.publisher || '') + (g.periodStart ? ' · ' + g.periodStart + (g.periodEnd && g.periodEnd !== g.periodStart ? '-' + g.periodEnd : '') : ''));
@@ -13320,12 +13749,48 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.onkeydown = e => { if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight' && items.length > 1) { i = (i + 1) % items.length; show(); } else if (e.key === 'ArrowLeft' && items.length > 1) { i = (i - 1 + items.length) % items.length; show(); } };
     box.classList.add('open'); show();
   };
+  // Visuels réels des événements (D-61) : la couverture du n°1 de la série principale, cherchée une fois dans Comic Vine
+  // ou Metron via le relais local, gardée sur l'appareil et marquée « association automatique ». Jamais d'image inventée.
+  const EX_AUTO_KEY = 'panel_ex_autocovers_v4';
+  let exAuto = null, exAutoBusy = false;
+  const exAutoLoad = () => { if (!exAuto) { try { exAuto = JSON.parse(localStorage.getItem(EX_AUTO_KEY) || '{}') || {}; } catch (_) { exAuto = {}; } } return exAuto; };
+  const exAutoSave = () => { try { localStorage.setItem(EX_AUTO_KEY, JSON.stringify(exAuto)); } catch (_) {} };
+  const exAutoRef = g => { const a = exAutoLoad()[g.id]; return a && a.url && isSafeImageUrl(a.url) ? { url: a.url, source: a.source + ' · couverture de ' + a.label, rights: 'Couverture de l\'éditeur, affichée à titre d\'illustration', verified: false, auto: true } : null; };
+  const exAutoResolve = async evs => {
+    if (exAutoBusy || navigator.webdriver || !relayStatus || !(relayStatus.cv || relayStatus.metron)) return;
+    const store = exAutoLoad(), now = Date.now();
+    const todo = evs.filter(g => !mediaGetRef('event', g.id) && !(g.image && g.image.url) && !(store[g.id] && (store[g.id].url || now - store[g.id].at < 7 * 864e5))).slice(0, 8);
+    if (!todo.length) return;
+    exAutoBusy = true;
+    let found = 0;
+    try {
+      for (const g of todo) {
+        const name = String(g.originalTitle || g.title || '').replace(/\s*\(.*?\)\s*/g, ' ').trim();
+        const want = catNorm(name).replace(/^the /, '');
+        let hit = null;
+        for (const fn of [searchComicVineIssuesList, searchMetronIssuesList]) {
+          let list = [];
+          try { list = await fn(name + ' 1'); } catch (_) {}
+          // Série au nom exact d'abord, puis nom qui commence par l'événement ; rééditions et produits dérivés écartés
+          const score = x => { const v = catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')).replace(/^the /, ''); if (/facsimile|anniversary|true believers|director s cut|rivals|omnibus|treasury|poster|sketch/.test(v)) return 0; return v === want ? 3 : v.startsWith(want + ' ') || want.startsWith(v + ' ') ? 2 : 0; };
+          // Année de parution cohérente avec l'événement (évite un homonyme d'un autre éditeur ou d'une autre époque)
+          const y0 = Number(g.periodStart) || 0, y1 = Number(g.periodEnd) || y0;
+          const yearOk = x => { const y = Number(String(x.date || '').slice(0, 4)); return !y0 || (y >= y0 - 1 && y <= y1 + 1); };
+          hit = (list || []).filter(x => x.cover && String(x.issue).replace(/^#/, '') === '1' && score(x) > 0 && yearOk(x)).sort((a, b) => score(b) - score(a) || String(a.date || '9').localeCompare(String(b.date || '9')))[0] || null;
+          if (hit) { hit.source = hit.source || (fn === searchMetronIssuesList ? 'Metron' : 'Comic Vine'); break; }
+        }
+        store[g.id] = hit ? { url: hit.cover, source: hit.source, label: String(hit.volume).replace(/\s*\(\d{4}\)$/, '') + ' #1', at: now } : { url: '', at: now };
+        if (hit) found++;
+      }
+    } finally { exAutoBusy = false; exAutoSave(); }
+    if (found && document.getElementById('singlesExplorerView') && !document.getElementById('singlesExplorerView').hidden) renderExplorer();
+  };
   const exMediaOf = (kind, x) => {
     if (!x) return { ref: null, kind: 'guide', alt: '' };
     if (kind === 'guides' || kind === 'guide') {
       const k = exIsEvent(x) ? 'event' : 'guide', man = mediaGetRef('event', x.id);
       if (man) return { ref: man, kind: k, alt: x.title, fallback: exArt(x.title, x.publisher), sub: x.publisher };
-      return { ref: x.image && x.image.url ? { url: x.image.url, source: x.image.source || 'Guide', rights: x.image.rights || '', verified: !x.image.manual, manual: !!x.image.manual } : null, kind: k, alt: x.title, fallback: exArt(x.title, x.publisher), sub: x.publisher };
+      return { ref: x.image && x.image.url ? { url: x.image.url, source: x.image.source || 'Guide', rights: x.image.rights || '', verified: !x.image.manual, manual: !!x.image.manual } : (k === 'event' ? exAutoRef(x) : null), kind: k, alt: x.title, fallback: exArt(x.title, x.publisher), sub: x.publisher };
     }
     if (kind === 'publications' || kind === 'publication') return { ref: exPubRef(x), kind: 'publication', alt: relLabel(x), fallback: placeholderCover(x.series, x.issue) };
     if (kind === 'series') { const man = mediaGetRef('series', x.key); const c = exSeriesCovers(x.key)[0]; return { ref: man || (c ? c.ref : null), kind: 'series', alt: x.name, fallback: placeholderCover(x.name, '') }; }
@@ -13369,6 +13834,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       showToastAction('Visuel enregistré.', 'Annuler', () => { r.undo(); renderExplorer(); });
     };
     if (q('[data-remove]')) q('[data-remove]').onclick = () => { const r = mediaRemoveRef(kind, key); box.classList.remove('open'); renderExplorer(); if (r.ok) showToastAction('Visuel retiré.', 'Annuler', () => { r.undo(); renderExplorer(); }); };
+  };
+  const exEventPoster = g => {
+    const n = ((g.orders || [])[0] || { entries: [] }).entries.length;
+    const m = exMediaOf('guide', g);
+    const years = g.periodStart ? String(g.periodStart) + (g.periodEnd && g.periodEnd !== g.periodStart ? '–' + g.periodEnd : '') : '';
+    return '<button class="ex-poster" role="listitem" data-ex-guide="' + h(g.id) + '"' + (m.ref && m.ref.auto ? ' title="Visuel : ' + h(m.ref.source) + ' (association automatique)"' : '') + '>' + exMediaImg('guide', g, 'ex-poster-img') +
+      '<span class="ex-poster-shade"></span>' +
+      (years ? '<span class="ex-poster-year">' + h(years) + '</span>' : '') +
+      '<span class="ex-poster-body"><b>' + h(g.title) + '</b><small>' + (n ? n + ' numéro' + (n > 1 ? 's' : '') + ' à lire' : 'Ordre de lecture') + (exEventFacts(g) ? ' · ' + h(exEventFacts(g)) : '') + '</small>' +
+      (m.ref && m.ref.auto ? '<em>' + h(m.ref.source) + '</em>' : '') + '</span></button>';
   };
   const exGuideCard = (g, big) => {
     const n = ((g.orders || [])[0] || { entries: [] }).entries.length;
@@ -13417,14 +13892,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const chars = exCharacters(), creators = exCreators(facets).slice(0, 24);
     const series = exSeriesList(facets).filter(x => x.owned || x.pubs).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 12);
     const gCats = Object.keys(GD_CATEGORIES).filter(c => guides.some(g => g.category === c));
-    const shown = guides.filter(g => !exView.guideCat || g.category === exView.guideCat);
+    // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
+    const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
     return (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
       sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
       (() => { const evs = guides.filter(exIsEvent); if (!evs.length) return ''; const by = p => evs.filter(g => catNorm(relPublisher(g.publisher).name) === catNorm(relPublisher(p).name)).sort((a, b) => (a.periodStart || 0) - (b.periodStart || 0));
         const missing = evs.filter(g => !exMediaOf('guide', g).ref).length;
-        return sec('exSecEvents', 'Événements Marvel et DC', 'Fiches documentaires : série principale, tie-ins, chronologie, ordres et sources. ' + missing + ' sur ' + evs.length + ' sans visuel établi.',
-          ['Marvel', 'DC'].map(p => { const l = by(p); return l.length ? '<h4 class="ex-ev-pub">' + h(p) + ' <small>' + l.length + '</small></h4><div class="ex-ggrid">' + l.map(g => exGuideCard(g)).join('') + '</div>' : ''; }).join('') +
+        setTimeout(() => exAutoResolve(evs), 400);
+        return sec('exSecEvents', 'Les grands événements', 'Crossovers Marvel et DC, de la série principale aux tie-ins, avec ordre de lecture et sources. Faites défiler, touchez une affiche pour ouvrir l\'événement.',
+          ['Marvel', 'DC'].map(p => { const l = by(p); return l.length ? '<h4 class="ex-ev-pub">' + h(p) + ' <small>' + l.length + ' événements</small></h4><div class="ex-ev-rail" role="list">' + l.map(exEventPoster).join('') + '</div>' : ''; }).join('') +
+          (missing ? '<p class="ex-note">' + missing + ' affiche(s) sans couverture établie' + (relayStatus && (relayStatus.cv || relayStatus.metron) ? ' : Panel cherche la couverture du n°1 dans Comic Vine et Metron.' : ' : lancez Panel avec « Lancer Panel.cmd » pour récupérer les couvertures réelles.') + '</p>' : '') +
           '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>'); })() +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
         (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
@@ -14027,6 +14505,50 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ── Vue Finances (F1-5 ; U-D2 = Fi-A, D-32) : par devise, sans conversion ; lecture seule hors du choix de la devise par défaut ──
+  // Budget mensuel (préférence locale, par devise ; aucune donnée de collection modifiée)
+  const FIN_BUDGET_KEY = 'panel_fin_budget';
+  const finBudgetGet = cur => { try { const b = JSON.parse(localStorage.getItem(FIN_BUDGET_KEY) || '{}'); return b[cur] > 0 ? b[cur] : null; } catch (_) { return null; } };
+  const finBudgetSet = (cur, n) => { try { const b = JSON.parse(localStorage.getItem(FIN_BUDGET_KEY) || '{}'); if (n) b[cur] = n; else delete b[cur]; localStorage.setItem(FIN_BUDGET_KEY, JSON.stringify(b)); } catch (_) {} };
+  const financeHeroHtml = (all, by) => {
+    const curs = Object.keys(by).filter(c => c !== 'none');
+    const cur = finDefaultCurrency() && by[finDefaultCurrency()] ? finDefaultCurrency() : (curs.sort((a, b) => (by[b].costKnown + by[b].valueKnown) - (by[a].costKnown + by[a].valueKnown))[0] || 'none');
+    const x = by[cur] || { invested: 0, value: 0, gain: null, costKnown: 0, valueKnown: 0, gainCost: 0 };
+    const inCur = all.filter(s => !disposedOf(s) && (purchaseCurOf(s) || 'none') === cur);
+    const avg = x.costKnown ? x.invested / x.costKnown : null;
+    const gainPct = x.gain !== null && x.gainCost ? Math.round(x.gain / x.gainCost * 1000) / 10 : null;
+    const mKey = new Date().toISOString().slice(0, 7);
+    const monthSpent = inCur.reduce((a, s) => { const c = costOf(s); return c !== null && String(s.purchaseDate || s.addedAt || '').slice(0, 7) === mKey ? a + toCents(c) : a; }, 0) / 100;
+    const budget = finBudgetGet(cur);
+    const bPct = budget ? Math.min(100, Math.round(monthSpent / budget * 100)) : 0;
+    const gains = inCur.map(s => ({ s, g: gainOf(s) })).filter(o => o.g !== null && o.g > 0).sort((a, b) => b.g - a.g).slice(0, 5);
+    const pubs = {};
+    inCur.forEach(s => { const c = costOf(s); if (c === null) return; const k = s.publisher || 'Éditeur inconnu'; pubs[k] = (pubs[k] || 0) + toCents(c); });
+    const pubRows = Object.entries(pubs).map(([k, v]) => [k, v / 100]).sort((a, b) => b[1] - a[1]).slice(0, 6);
+    const pubMax = Math.max(1, ...pubRows.map(r => r[1]));
+    const vMax = Math.max(x.invested, x.value, 1);
+    const kpi = (label, val, sub, cls) => '<div class="fin-kpi' + (cls ? ' ' + cls : '') + '"><small>' + label + '</small><b>' + val + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>';
+    return '<section class="fin-hero">' +
+      '<div class="fin-kpis">' +
+        kpi('Investi', fmtCur(x.costKnown ? x.invested : null, cur), x.costKnown + ' numéro(s) avec prix') +
+        kpi('Valeur estimée', fmtCur(x.valueKnown ? x.value : null, cur), x.valueKnown + ' numéro(s) estimé(s)') +
+        kpi('Plus-value latente', x.gain === null ? '—' : (x.gain >= 0 ? '+' : '') + fmtCur(x.gain, cur), gainPct === null ? 'sur les numéros dont prix et valeur sont connus' : (gainPct >= 0 ? '+' : '') + gainPct + ' %', x.gain === null ? '' : x.gain >= 0 ? 'is-up' : 'is-down') +
+        kpi('Prix moyen', avg === null ? '—' : fmtCur(Math.round(avg * 100) / 100, cur), 'par numéro, frais compris') +
+      '</div>' +
+      '<div class="fin-row">' +
+        '<div class="fin-panel"><h4>Valeur contre investissement</h4>' +
+          '<div class="fin-vs"><span>Investi</span><div><i style="width:' + (x.invested / vMax * 100) + '%"></i></div><b>' + fmtCur(x.costKnown ? x.invested : null, cur) + '</b></div>' +
+          '<div class="fin-vs is-value"><span>Valeur</span><div><i style="width:' + (x.value / vMax * 100) + '%"></i></div><b>' + fmtCur(x.valueKnown ? x.value : null, cur) + '</b></div>' +
+          '<h4 style="margin-top:16px">Budget du mois</h4>' +
+          (budget ? '<div class="fin-budget' + (monthSpent > budget ? ' is-over' : '') + '"><div><i style="width:' + bPct + '%"></i></div><span>' + fmtCur(monthSpent, cur) + ' dépensés sur ' + fmtCur(budget, cur) + (monthSpent > budget ? ' · dépassé de ' + fmtCur(Math.round((monthSpent - budget) * 100) / 100, cur) : ' · reste ' + fmtCur(Math.round((budget - monthSpent) * 100) / 100, cur)) + '</span></div>'
+            : '<p class="stat-sub">' + fmtCur(monthSpent, cur) + ' dépensés ce mois-ci. Fixez un budget pour suivre vos achats du mercredi.</p>') +
+          (cur !== 'none' ? '<button class="btn secondary fin-mini" data-fin-budget="' + escapeHtml(cur) + '">' + (budget ? 'Modifier le budget' : 'Fixer un budget mensuel') + '</button>' : '') +
+        '</div>' +
+        '<div class="fin-panel"><h4>Meilleures plus-values</h4>' + (gains.length ? gains.map(o => '<div class="fin-top" data-id="' + escapeHtml(o.s.id) + '">' + coverImgTag(o.s) + '<span><b>' + escapeHtml(o.s.series || '') + ' ' + escapeHtml(o.s.issue || '') + '</b><small>payé ' + fmtCur(costOf(o.s), cur) + ' · vaut ' + fmtCur(valueOf(o.s), cur) + '</small></span><em>+' + fmtCur(o.g, cur) + '</em></div>').join('') : '<p class="stat-sub">Renseignez le prix payé et une estimation (bouton « Revaloriser ») pour voir vos meilleures affaires.</p>') + '</div>' +
+        '<div class="fin-panel"><h4>Dépenses par éditeur</h4>' + (pubRows.length ? pubRows.map(([k, v]) => '<div class="hbar-row"><span title="' + escapeHtml(k) + '">' + escapeHtml(k) + '</span><div class="hbar"><div style="width:' + (v / pubMax * 100) + '%;background:' + (CBOX_PUB_COLORS[k] || 'var(--vibranium)') + '"></div></div><span class="hbar-val">' + fmtCur(v, cur) + '</span></div>').join('') : '<p class="stat-sub">Aucun prix payé renseigné.</p>') + '</div>' +
+      '</div>' +
+      (curs.length > 1 ? '<p class="stat-sub fin-note">Tableau de bord en ' + escapeHtml(cur) + ' ; les autres devises sont détaillées plus bas, sans conversion.</p>' : '') +
+    '</section>';
+  };
   const renderFinanceView = () => {
     const host = $('financeDashboard');
     if (!host) return;
@@ -14046,7 +14568,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const disposed = all.filter(disposedOf).sort((a, b) => String(b.disposal.date || '').localeCompare(String(a.disposal.date || '')));
     const KIND = { sold: 'vendu', given: 'donné', lost: 'perdu', traded: 'échangé' };
     const lots = acqList();
-    host.innerHTML = `<div class="stats-grid">
+    host.innerHTML = financeHeroHtml(all, by) + `<div class="stats-grid">
       <div class="stats-card"><h3>Par devise</h3>${rows ? `<table class="fin-table" style="width:100%;font-size:13px;border-collapse:collapse"><thead><tr><th align="left">Devise</th><th align="left">Coût</th><th align="left">Valeur</th><th align="left">Latente</th><th align="left">Réalisée</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="stat-sub">Aucun montant connu.</p>'}
         ${sum.mixed ? '<p class="stat-sub" style="margin-top:8px">Plusieurs devises : aucun total global (pas de conversion automatique).</p>' : ''}</div>
       <div class="stats-card"><h3>Couverture des données</h3><p class="stat-sub" style="line-height:1.7">Exemplaires possédés : <b>${owned.length}</b><br>Coût connu : <b>${sum.costKnown}</b> (${pct(sum.costKnown, owned.length)}) · inconnu : <b>${sum.costUnknown}</b><br>Valeur connue : <b>${sum.valueKnown}</b> (${pct(sum.valueKnown, owned.length)}) · inconnue : <b>${sum.valueUnknown}</b><br>Frais non renseignés : <b>${sum.feesUnknown}</b><br>Sorties de collection : <b>${sum.disposedCount}</b> (dont ${sum.soldCount} vente(s))</p>
@@ -14057,6 +14579,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     </div>`;
     host.querySelectorAll('[data-id]').forEach(el => { el.style.cursor = 'pointer'; el.onclick = () => { const it = physicalSingles.find(x => x.id === el.dataset.id); if (it) openSingleInspector(it); }; });
     if ($('finDefaultCurrencySelect')) $('finDefaultCurrencySelect').onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };
+    const bb = host.querySelector('[data-fin-budget]');
+    if (bb) bb.onclick = () => {
+      const cur = bb.dataset.finBudget, v = prompt('Budget mensuel en ' + cur + ' (vide pour retirer)', finBudgetGet(cur) || '');
+      if (v === null) return;
+      const n = Number(String(v).replace(',', '.'));
+      if (String(v).trim() && !(n > 0)) { showToast('Montant invalide.'); return; }
+      finBudgetSet(cur, String(v).trim() ? n : null); renderFinanceView();
+    };
   };
 
   // ── Communauté (D-34) : brouillons locaux. La politique (liste blanche, validation) vient du module domains/community intégré.
@@ -14080,6 +14610,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return { copy: Object.assign({}, r.copy), excluded: excluded.concat(r.dropped.map(x => ({ volumeYear: 'coverYear', grade: 'condition' })[x] || x)).filter((v, i, a) => a.indexOf(v) === i).sort() };
   };
   const COMM_VIS = { private: 'Moi seul', followers: 'Mes abonnés', public: 'Public' };
+  // Planches : le format de publication de Panel (une case de BD par numéro, une bulle pour le message)
+  const PLANCHE_KINDS = { pull: 'Pull du mercredi', shelfie: 'Shelfie de boîte', gem: 'Pépite', read: 'Je viens de lire', free: 'Planche libre' };
+  const PLANCHE_FX = ['POW!', 'WOW!', 'BAM!', 'KRAK!'];
   const commValidate = (text, visibility, items) => {
     const P = commPolicy();
     if (!P) return { ok: false, errors: ['Module Communauté indisponible.'], warnings: [] };
@@ -14093,6 +14626,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!draft.id && d.drafts.length >= COMM_MAX) return { ok: false, errors: ['Limite de ' + COMM_MAX + ' brouillons atteinte.'], warnings: [] };
     const prevRaw = localStorage.getItem(COMM_KEY);
     const rec = { id: draft.id || ('cd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6)), text: String(draft.text).slice(0, 5000), visibility: draft.visibility, items: draft.items, warnings: v.warnings, status: 'draft', createdAt: draft.createdAt || now, updatedAt: now };
+    if (PLANCHE_KINDS[draft.kind]) rec.kind = draft.kind;
     const i = d.drafts.findIndex(x => x.id === rec.id);
     if (i >= 0) d.drafts[i] = rec; else d.drafts.unshift(rec);
     commSave(d);
@@ -14105,16 +14639,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     commSave(d);
     return { ok: true, undo: () => { if (prevRaw === null) localStorage.removeItem(COMM_KEY); else localStorage.setItem(COMM_KEY, prevRaw); } };
   };
-  const openShareDialog = (items, existing) => {
+  const openShareDialog = (items, existing, preset) => {
     const box = bunModal('communityShareDialog');
     const copies = existing ? existing.items.map(c => ({ copy: c, excluded: [] })) : items.map(commCopyOf).filter(Boolean);
     if (!copies.length) { showToast('Partage indisponible.'); return; }
     const ex = [...new Set(copies.flatMap(c => c.excluded))];
-    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="commShareTitle"><h2 id="commShareTitle">Préparer un partage</h2>' +
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="commShareTitle"><h2 id="commShareTitle">' + (preset && PLANCHE_KINDS[preset.kind] ? 'Nouvelle planche : ' + escapeHtml(PLANCHE_KINDS[preset.kind]) : 'Préparer un partage') + '</h2>' +
       '<p class="stat-sub">Brouillon enregistré <b>sur cet appareil seulement</b>. Aucun service communautaire n\'est configuré : rien n\'est publié ni envoyé.</p>' +
       '<p class="stat-sub" style="margin-top:8px"><b>Copié :</b></p><ul class="stat-sub" data-copied>' + copies.map(c => '<li>' + Object.entries(c.copy).map(([k, v]) => escapeHtml(k) + ' : ' + escapeHtml(v)).join(' · ') + '</li>').join('') + '</ul>' +
       (ex.length ? '<p class="stat-sub"><b>Jamais partagé :</b> <span data-excluded>' + ex.map(escapeHtml).join(', ') + '</span></p>' : '') +
-      '<label class="stat-sub" style="display:block;margin-top:8px">Message<textarea class="field-input" data-text rows="4" maxlength="5000" style="width:100%">' + escapeHtml(existing ? existing.text : '') + '</textarea></label>' +
+      '<label class="stat-sub" style="display:block;margin-top:8px">Message<textarea class="field-input" data-text rows="4" maxlength="5000" style="width:100%">' + escapeHtml(existing ? existing.text : (preset && preset.text) || '') + '</textarea></label>' +
       '<label class="stat-sub" style="display:block;margin-top:6px">Visibilité prévue <select class="field-input" data-vis style="width:auto">' + Object.entries(COMM_VIS).map(([k, l]) => '<option value="' + k + '"' + ((existing ? existing.visibility : 'private') === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label>' +
       '<p class="stat-sub" data-msg role="status" style="margin-top:6px"></p>' +
       '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>Enregistrer le brouillon</button></div></div>';
@@ -14124,7 +14658,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     q('[data-text]').oninput = check;
     q('[data-cancel]').onclick = () => box.classList.remove('open');
     q('[data-save]').onclick = () => {
-      const r = commSaveDraft({ id: existing && existing.id, createdAt: existing && existing.createdAt, text: q('[data-text]').value, visibility: q('[data-vis]').value, items: copies.map(c => c.copy) });
+      const r = commSaveDraft({ id: existing && existing.id, createdAt: existing && existing.createdAt, kind: existing ? existing.kind : preset && preset.kind, text: q('[data-text]').value, visibility: q('[data-vis]').value, items: copies.map(c => c.copy) });
       if (!r.ok) { q('[data-msg]').textContent = r.errors.join(' '); return; }
       box.classList.remove('open');
       renderSinglesCollection();
@@ -14152,6 +14686,45 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const profileSave = p => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(window.PanelDomains.trophiesCore.sanitizeProfile(p))); return true; } catch (_) { return false; } };
   const TROPHY_ICONS = { box: 'ic-box', stack: 'ic-layers', one: 'ic-star', key: 'ic-key', shield: 'ic-shield', orbit: 'ic-globe', book: 'ic-book', loop: 'ic-refresh', calendar: 'ic-calendar', archive: 'ic-folder', clock: 'ic-hourglass', hourglass: 'ic-hourglass', mask: 'ic-gem' };
   let profileEditing = false;
+  // Rang du compte (domains/community/ranks-core.js) : points calculés depuis l'activité réelle ; l'activité sociale vaut 0 sans compte en ligne
+  const pfRank = (owned, tr) => {
+    const log = rdLoad().log, drafts = commLoad().drafts;
+    return window.PanelDomains.ranksCore.computeRank({
+      owned: owned.length, read: log.filter(l => l.event === 'finished').length, reread: log.filter(l => l.event === 'reread').length,
+      rated: owned.filter(x => x.rating).length, reviewed: drafts.filter(d => d.kind === 'read' && String(d.text || '').trim().length >= 40).length,
+      runs: window.PanelDomains.trophiesCore.completeRuns(owned), keys: owned.filter(x => x.keyType && x.keyType !== 'none').length,
+      trophyXp: tr.xp, planches: drafts.length
+    }, { online: false });
+  };
+  const PF_TIER_CLASS = { terre: 'is-terre', abstrait: 'is-abstrait', forces: 'is-forces', terrain: 'is-terrain', equilibre: 'is-equilibre', sommet: 'is-sommet' };
+  const pfRankHtml = (rk, tr) => '<div class="pf-rank ' + PF_TIER_CLASS[rk.rank.tier] + '">' +
+      '<div class="pf-rank-badge"><small>Rang</small><b>' + rk.rank.rank + '</b><span>/ ' + rk.total + '</span></div>' +
+      '<div class="pf-rank-main"><small>' + escapeHtml(rk.rank.tierLabel) + '</small><b>' + escapeHtml(rk.rank.name) + '</b>' +
+        '<span class="tr-bar pf-xp"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' +
+        '<small>' + rk.xp.toLocaleString('fr-FR') + ' XP' + (rk.next ? ' · encore ' + rk.toNext.toLocaleString('fr-FR') + ' XP pour devenir <b>' + escapeHtml(rk.next.name) + '</b>' : ' · sommet atteint') + ' · ' + tr.unlocked + ' / ' + tr.total + ' trophées</small></div>' +
+      '<div class="pf-tiers">' + window.PanelDomains.trophiesCore.TIERS.map(t => '<span class="pf-tier is-' + t.id + '"><i></i>' + tr.byTier[t.id] + ' ' + escapeHtml(t.label) + '</span>').join('') + '</div></div>';
+  // Suggestions du top 3 : personnages et séries les plus présents dans la collection
+  const pfSuggest = () => {
+    const owned = physicalSingles.filter(isOwned), ch = new Map(), rn = new Map();
+    owned.forEach(x => { const c = window.PanelDomains.collectionBoxes.characterOf(x); if (c) ch.set(c, (ch.get(c) || 0) + 1); if (x.series) rn.set(x.series, (rn.get(x.series) || 0) + 1); });
+    const top = m => [...m.entries()].sort((a, b) => b[1] - a[1]).slice(0, 30).map(e => e[0]);
+    return { chars: top(ch), runs: top(rn) };
+  };
+  const pfTop3Html = p => {
+    if (!p || (!p.topCharacters.length && !p.topRuns.length)) return '<div class="pf-top3-empty">Ajoutez votre <b>top 3 personnages</b> et votre <b>top 3 runs</b> avec « Modifier » : ils s\'afficheront ici, sur votre future page publique.</div>';
+    const coverFor3 = name => { const it = physicalSingles.filter(isOwned).filter(x => catNorm(x.series).includes(catNorm(name)) || catNorm(name).includes(catNorm(x.series))).sort((a, b) => (issueNumber(a) || 0) - (issueNumber(b) || 0))[0]; return it ? coverImgTag(it) : '<span class="pl-face" style="--c:' + cboxHue({ series: name }) + '"><b>' + escapeHtml(cboxInitials(name)) + '</b></span>'; };
+    const col = (title, list, withCover) => list.length ? '<div class="pf-podium"><h4>' + title + '</h4><ol>' + list.map((x, i) => '<li class="pf-pod-' + (i + 1) + '">' + (withCover ? '<span class="pf-pod-cover">' + coverFor3(x) + '</span>' : '<span class="pf-pod-mono" style="--c:' + cboxHue({ series: x }) + '">' + escapeHtml(cboxInitials(x)) + '</span>') + '<span class="pf-pod-rank">' + (i + 1) + '</span><b>' + escapeHtml(x) + '</b></li>').join('') + '</ol></div>' : '';
+    return '<section class="pf-top3">' + col('Top 3 personnages', p.topCharacters, false) + col('Top 3 runs', p.topRuns, true) + '</section>';
+  };
+  // Échelle complète des rangs, repliée : le rang actuel est mis en évidence
+  const pfLadderHtml = rk => {
+    const R = window.PanelDomains.ranksCore;
+    const groups = R.TIER_IDS.map(t => ({ t, list: R.RANKS.filter(x => x.tier === t) }));
+    return '<details class="pf-ladder"><summary>Échelle des ' + R.RANKS.length + ' rangs, de Civil à The One Above All <small>et comment gagner des points</small></summary>' +
+      '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : '') + '"><i>' + x.rank + '</i>' + escapeHtml(x.name) + '<small>' + x.xp.toLocaleString('fr-FR') + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
+      '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString('fr-FR') + ' → ' + b.xp.toLocaleString('fr-FR') + ' XP</em>') + '</span>').join('') + '</div>' +
+      '<p class="stat-sub">Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
+  };
   const renderCommunityProfile = () => {
     const host = $('communityProfile');
     if (!host) return;
@@ -14159,6 +14732,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const owned = physicalSingles.filter(isOwned);
     const picked = (() => { try { return [...relPulls.values()].filter(x => x.status === 'picked').reduce((a, x) => a + (Number(x.quantity) || 1), 0); } catch (_) { return 0; } })();
     const r = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked, characterOf: window.PanelDomains.collectionBoxes.characterOf });
+    const rk = pfRank(owned, r);
     const p = profileLoad();
     const initials = p ? (p.displayName || p.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
     const form = (pp) => '<form class="pf-form" id="profileForm">' +
@@ -14167,6 +14741,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<label>Personnage favori<input class="field-input" name="favorite" maxlength="60" value="' + escapeHtml(pp ? pp.favorite : '') + '" placeholder="ex. Black Panther"></label>' +
       '<label>Couleur<input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#7C5CFF') + '"></label>' +
       '<label class="pf-wide">Bio<textarea class="field-input" name="bio" maxlength="160" rows="2">' + escapeHtml(pp ? pp.bio : '') + '</textarea></label>' +
+      '<fieldset class="pf-wide pf-top3"><legend>Mon top 3 personnages</legend>' + [0, 1, 2].map(i => '<input class="field-input" name="topCharacters" list="pfCharList" maxlength="60" placeholder="' + (i + 1) + '." value="' + escapeHtml(pp && pp.topCharacters[i] || '') + '">').join('') + '</fieldset>' +
+      '<fieldset class="pf-wide pf-top3"><legend>Mon top 3 runs</legend>' + [0, 1, 2].map(i => '<input class="field-input" name="topRuns" list="pfRunList" maxlength="60" placeholder="' + (i + 1) + '. ex. Immortal Hulk (Ewing)" value="' + escapeHtml(pp && pp.topRuns[i] || '') + '">').join('') + '</fieldset>' +
+      '<datalist id="pfCharList">' + pfSuggest().chars.map(c => '<option value="' + escapeHtml(c) + '">').join('') + '</datalist><datalist id="pfRunList">' + pfSuggest().runs.map(c => '<option value="' + escapeHtml(c) + '">').join('') + '</datalist>' +
       '<div class="pf-wide pf-actions"><button class="btn" type="submit">' + (pp ? 'Enregistrer' : 'Créer mon profil') + '</button>' + (pp ? '<button class="btn secondary" type="button" data-pf-cancel>Annuler</button>' : '') +
       '<span class="stat-sub">Profil enregistré sur cet appareil uniquement. Le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec la synchronisation.</span></div></form>';
     const tierCls = t => t.tier ? 'is-' + t.tier : 'is-locked';
@@ -14180,16 +14757,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (p && !profileEditing
           ? '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
-        '<div class="pf-level"><div class="pf-level-num"><small>Niveau</small><b>' + r.level + '</b></div><div class="pf-level-main"><b>' + escapeHtml(TC.titleFor(r.level)) + '</b><span class="tr-bar pf-xp"><i style="width:' + Math.round(r.levelProgress * 100) + '%"></i></span><small>' + r.xp + ' XP · niveau ' + (r.level + 1) + ' à ' + r.nextLevelXp + ' XP · ' + r.unlocked + ' / ' + r.total + ' trophées</small></div>' +
-          '<div class="pf-tiers">' + TC.TIERS.map(t => '<span class="pf-tier is-' + t.id + '"><i></i>' + r.byTier[t.id] + ' ' + escapeHtml(t.label) + '</span>').join('') + '</div></div>' +
-      '</section>' +
+        pfRankHtml(rk, r) +
+      '</section>' + pfTop3Html(p) + pfLadderHtml(rk) +
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
     const f = host.querySelector('#profileForm');
     if (f) f.onsubmit = ev => {
       ev.preventDefault();
-      const fd = Object.fromEntries(new FormData(f).entries());
+      const fdata = new FormData(f), fd = Object.fromEntries(fdata.entries());
+      fd.topCharacters = fdata.getAll('topCharacters'); fd.topRuns = fdata.getAll('topRuns');
       if (!TC.validHandle(String(fd.handle || '').trim().replace(/\s+/g, '_'))) { showToast('Pseudo : 3 à 24 lettres, chiffres, point, tiret ou souligné.'); return; }
       profileSave(Object.assign({}, fd, { createdAt: (p && p.createdAt) || new Date().toISOString() }));
       profileEditing = false; renderCommunityProfile(); showToast(p ? 'Profil mis à jour.' : 'Profil créé sur cet appareil.');
@@ -14197,17 +14774,57 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ed = host.querySelector('[data-pf-edit]'); if (ed) ed.onclick = () => { profileEditing = true; renderCommunityProfile(); };
     const ca = host.querySelector('[data-pf-cancel]'); if (ca) ca.onclick = () => { profileEditing = false; renderCommunityProfile(); };
   };
+  // Idées de planches calculées à partir de la collection (rien n'est enregistré tant que l'utilisateur ne valide pas)
+  const plancheSuggestions = () => {
+    const owned = physicalSingles.filter(isOwned);
+    const out = [];
+    const week = Date.now() - 7 * 864e5;
+    const recent = owned.slice().sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
+    const fresh = recent.filter(x => new Date(x.addedAt || 0).getTime() >= week);
+    const pull = (fresh.length ? fresh : recent).slice(0, 4);
+    if (pull.length) out.push({ kind: 'pull', items: pull, text: 'Mon pull de la semaine : ' + pull.map(x => [x.series, x.issue].filter(Boolean).join(' #')).join(', ') + '.' });
+    try {
+      const boxes = window.PanelDomains.collectionBoxes.buildBoxes(owned, 'run').sort((a, b) => b.count - a.count);
+      if (boxes[0] && boxes[0].count >= 2) out.push({ kind: 'shelfie', items: boxes[0].items.slice(0, 4), text: 'Ma boîte ' + boxes[0].label + ' : ' + boxes[0].count + ' numéros rangés.' });
+    } catch (_) {}
+    const gem = owned.filter(x => x.keyType && x.keyType !== 'none').sort((a, b) => descNullLast(valueOf(a), valueOf(b)))[0] || owned.filter(x => valueOf(x) !== null).sort((a, b) => valueOf(b) - valueOf(a))[0];
+    if (gem) out.push({ kind: 'gem', items: [gem], text: 'Ma pépite : ' + [gem.series, gem.issue].filter(Boolean).join(' #') + (gem.variant ? ' (' + gem.variant + ')' : '') + '.' });
+    const lastRead = owned.filter(rdReadOfCopy).sort((a, b) => new Date(b.readAt || b.addedAt || 0) - new Date(a.readAt || a.addedAt || 0))[0];
+    if (lastRead) out.push({ kind: 'read', items: [lastRead], text: 'Je viens de lire ' + [lastRead.series, lastRead.issue].filter(Boolean).join(' #') + '. Verdict : ' });
+    return out;
+  };
+  const plancheFace = c => c.coverUrl ? coverImgTag(c) : '<span class="pl-face" style="--c:' + cboxHue(c) + '"><b>' + escapeHtml(cboxInitials(c.series)) + '</b><em>' + escapeHtml(String(c.issue || '').replace(/^#?/, '#')) + '</em></span>';
+  const planchePanels = items => '<div class="pl-panels pl-n' + Math.min(items.length, 4) + '">' + items.slice(0, 4).map((c, i) => '<figure class="pl-panel" style="--t:' + ((i % 2 ? 1 : -1) * (0.6 + i * 0.3)).toFixed(1) + 'deg">' + plancheFace(c) + '<figcaption>' + escapeHtml([c.series, c.issue].filter(Boolean).join(' ')) + '</figcaption></figure>').join('') + '</div>';
   const renderCommunityView = () => {
     try { renderCommunityProfile(); } catch (_) {}
     const host = $('communityDashboard');
     if (!host) return;
     const d = commLoad();
-    host.innerHTML = '<div class="notice-box">Service communautaire : <b>non configuré</b>. Publication, abonnements, blocages et signalements fonctionneront avec un compte (lots 3.2 et 3.3) ; les règles sont déjà appliquées à vos brouillons.</div>' +
-      (d.drafts.length ? d.drafts.map(x => '<div class="top-item" data-draft="' + escapeHtml(x.id) + '" style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap"><span style="flex:1;min-width:0"><b>' + escapeHtml(x.items.map(c => [c.series, c.issue].filter(Boolean).join(' ')).join(', ') || 'Brouillon') + '</b>' +
-        '<span class="stat-sub" style="display:block">' + escapeHtml(COMM_VIS[x.visibility] || x.visibility) + ' · brouillon local · ' + new Date(x.updatedAt).toLocaleString('fr-FR') + (x.warnings && x.warnings.length ? ' · attention : ' + escapeHtml(x.warnings.join(', ')) : '') + '</span>' +
-        (x.text ? '<span class="stat-sub" style="display:block;white-space:pre-wrap">' + escapeHtml(x.text.slice(0, 400)) + '</span>' : '') + '</span>' +
-        '<span><button class="btn secondary" style="font-size:12px;padding:3px 8px" data-draft-edit="' + escapeHtml(x.id) + '">Modifier</button> <button class="btn secondary" style="font-size:12px;padding:3px 8px" data-draft-del="' + escapeHtml(x.id) + '">Retirer</button> <button class="btn secondary" style="font-size:12px;padding:3px 8px" data-draft-preview="' + escapeHtml(x.id) + '" title="Contenu exact qui serait envoyé (CommunityPublish.v1) ; rien n\'est envoyé">Aperçu de l\'envoi</button></span></div>').join('')
-        : '<div class="notice-box" style="margin-top:8px">Aucun brouillon. Ouvrez une fiche, puis « Partager… ».</div>');
+    const prof = profileLoad();
+    const who = prof ? '@' + prof.handle : 'vous';
+    const avatar = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'P';
+    const sugg = plancheSuggestions();
+    const planche = x => '<article class="pl-card" data-draft="' + escapeHtml(x.id) + '">' +
+        '<header class="pl-head"><span class="pl-avatar" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(avatar) + '</span><span class="pl-who"><b>' + escapeHtml(who) + '</b><small>' + escapeHtml(COMM_VIS[x.visibility] || x.visibility) + ' · brouillon local · ' + new Date(x.updatedAt).toLocaleString('fr-FR') + '</small></span>' +
+        '<span class="pl-kind">' + escapeHtml(PLANCHE_KINDS[x.kind] || PLANCHE_KINDS.free) + '</span></header>' +
+        planchePanels(x.items) +
+        '<p class="pl-title">' + escapeHtml(x.items.map(c => [c.series, c.issue].filter(Boolean).join(' ')).join(', ') || 'Brouillon') + '</p>' +
+        (x.text ? '<div class="pl-bubble">' + escapeHtml(x.text.slice(0, 400)) + '</div>' : '') +
+        (x.warnings && x.warnings.length ? '<p class="stat-sub pl-warn">Attention : ' + escapeHtml(x.warnings.join(', ')) + '</p>' : '') +
+        '<footer class="pl-foot"><span class="pl-fx" title="Les réactions (au lieu des « j\'aime ») s\'activeront avec les comptes">' + PLANCHE_FX.map(f => '<span>' + f + '</span>').join('') + '</span>' +
+        '<span class="pl-actions"><button class="btn secondary" data-draft-edit="' + escapeHtml(x.id) + '">Modifier</button><button class="btn secondary" data-draft-del="' + escapeHtml(x.id) + '">Retirer</button><button class="btn secondary" data-draft-preview="' + escapeHtml(x.id) + '" title="Contenu exact qui serait envoyé (CommunityPublish.v1) ; rien n\'est envoyé">Aperçu de l\'envoi</button></span></footer>' +
+      '</article>';
+    host.innerHTML =
+      '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
+      '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>' +
+      '<section class="live-teaser"><div class="live-teaser-main"><span class="live-dot">Bientôt</span><h3>Débats en direct</h3><p>Des salons vocaux pour parler comics à plusieurs : un animateur, des intervenants qui lèvent la main, et un tableau où chacun montre la case ou la couverture dont il parle. Débat du mercredi sur les sorties, procès d\'un event, « quel est le meilleur run de Daredevil ? ». Les débats animés rapportent des points de rang.</p></div>' +
+        '<ul class="live-teaser-list"><li><b>Salon vocal</b> animateur, intervenants, auditeurs</li><li><b>Tableau d\'images</b> cases et couvertures de votre collection</li><li><b>Modération</b> signalement, exclusion, règles du salon</li></ul>' +
+        '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>' +
+      '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches restent sur cet appareil ; publication, abonnés, réactions et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
+      '<h3 class="pf-section">Mon fil <span class="stat-sub">' + d.drafts.length + ' planche' + (d.drafts.length > 1 ? 's' : '') + '</span></h3>' +
+      (d.drafts.length ? '<div class="pl-feed">' + d.drafts.map(planche).join('') + '</div>'
+        : '<div class="notice-box" style="margin-top:8px">Aucune planche. Choisissez un modèle ci-dessus, ou ouvrez une fiche puis « Partager… ».</div>');
+    host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
     host.querySelectorAll('[data-draft-del]').forEach(b => { b.onclick = () => { const r = commRemoveDraft(b.dataset.draftDel); if (!r.ok) return; renderSinglesCollection(); showToastAction('Brouillon retiré.', 'Annuler', () => { r.undo(); renderSinglesCollection(); }); }; });
@@ -16248,32 +16865,36 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (!query || !query.trim()) return;
       const statusEl = $('cvSearchStatus');
       const listEl = $('cvSearchResultsList');
-      statusEl.textContent = 'Recherche en direct sur Comic Vine pour « ' + query + ' »...';
-      listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:25px;color:var(--muted)">Interrogation de l\'API Comic Vine en cours...</div>';
+      statusEl.textContent = 'Recherche dans Comic Vine et Metron pour « ' + query + ' »...';
+      listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:25px;color:var(--muted)">Interrogation des bases de données en cours...</div>';
 
       try {
-        const hits = await searchComicVineIssuesList(query);
+        // Deux bases interrogées en parallèle, résultats fusionnés (un numéro présent dans les deux n'apparaît qu'une fois)
+        const [cvR, mtR] = await Promise.allSettled([searchComicVineIssuesList(query), searchMetronIssuesList(query)]);
+        const cvHits = cvR.status === 'fulfilled' && cvR.value ? cvR.value.map(x => Object.assign({ source: 'Comic Vine' }, x)) : [];
+        const mtHits = mtR.status === 'fulfilled' && mtR.value ? mtR.value : [];
+        const seen = new Set(cvHits.map(x => catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')) + '#' + String(x.issue).trim()));
+        const hits = cvHits.concat(mtHits.filter(x => !seen.has(catNorm(String(x.volume).replace(/\s*\(\d{4}\)$/, '')) + '#' + String(x.issue).trim())));
+        const srcLabel = [cvHits.length ? cvHits.length + ' Comic Vine' : '', mtHits.length ? mtHits.length + ' Metron' : ''].filter(Boolean).join(' · ');
         if (!hits || hits.length === 0) {
-          statusEl.textContent = 'Aucun comic trouvé pour « ' + query + ' » sur Comic Vine.';
+          statusEl.textContent = 'Aucun comic trouvé pour « ' + query + ' »' + (relayStatus && !relayStatus.cv && !relayStatus.metron ? ' : aucune base n\'est configurée sur le serveur local (clé Comic Vine ou compte Metron).' : '.');
           listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:25px;color:var(--muted)">Aucun résultat. Essayez avec un autre titre (ex: Spawn 300, Batman 135, Spider-Man).</div>';
           return;
         }
 
-        statusEl.textContent = '' + hits.length + ' comic(s) trouvé(s) sur Comic Vine !';
+        statusEl.textContent = hits.length + ' comic(s) trouvé(s) (' + srcLabel + ').';
         listEl.innerHTML = '';
 
         hits.forEach(item => {
           const card = document.createElement('div');
-          card.style.cssText = 'display:flex;gap:10px;background:#131a11;border:1px solid #232d1e;border-radius:8px;padding:8px;align-items:center;transition:border-color 0.2s';
-          card.onmouseenter = () => card.style.borderColor = 'var(--lime)';
-          card.onmouseleave = () => card.style.borderColor = 'var(--line)';
+          card.className = 'cv-hit';
 
           card.innerHTML = 
             '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:cover;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.volume) + ' #' + escapeHtml(item.issue) + '</div>' +
               '<div style="font-size: 12px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +
-              '<div style="font-size: 12px;color:var(--muted);margin-top:3px">' + (item.date ? item.date.slice(0, 4) : '') + ' · <strong>' + item.variantsCount + ' variante(s)</strong></div>' +
+              '<div style="font-size: 12px;color:var(--muted);margin-top:3px">' + (item.date ? item.date.slice(0, 4) + ' · ' : '') + (item.source === 'Metron' ? '' : '<strong>' + item.variantsCount + ' variante(s)</strong> · ') + '<span class="cv-src">' + escapeHtml(item.source || 'Comic Vine') + '</span></div>' +
               '<div style="display:flex;gap:6px;margin-top:6px">' +
                 '<button type="button" class="btn secondary" data-single-cv style="padding:4px 8px;font-size: 12px;flex:1"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg> Ajouter à la collection</button>' +
               '</div>' +
@@ -16297,8 +16918,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('singleModalTitle').textContent = 'Fiche du Single Issue';
       $('decodedBarcodeBadge').hidden = false;
       $('decodedBarcodeBadge').querySelector('strong').textContent = item.volume + ' #' + item.issue;
-      if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = 'Comic Vine';
+      if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = item.source || 'Comic Vine';
 
+      item = Object.assign({}, item, { volume: String(item.volume).replace(/\s*\(\d{4}\)$/, '') });
       $('singleSeriesInput').value = item.volume;
       $('singleIssueInput').value = '#' + item.issue;
       $('quickCoverSearchInput').value = item.volume;
@@ -16401,6 +17023,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navAllSingles').onclick = () => goSingles('collection', activeSingleFilter === 'wishlist' ? 'all' : null);
     $('navSinglesWishlist').onclick = () => goSingles('collection', 'wishlist');
     $('navSinglesSeries').onclick = () => goSingles('series');
+    document.querySelectorAll('[data-coll-seg]').forEach(b => { b.onclick = () => goSingles(b.dataset.collSeg); });
     const relSetPullOnly = on => { const cb = $('releasesPullOnly'); if (cb && cb.checked !== on) { cb.checked = on; if (typeof cb.onchange === 'function') cb.onchange(); } };
     $('navSinglesReleases').onclick = () => { relSetPullOnly(false); goSingles('releases'); };
     if ($('navSinglesPullList')) $('navSinglesPullList').onclick = () => { relSetPullOnly(true); goSingles('releases'); };

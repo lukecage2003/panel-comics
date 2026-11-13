@@ -211,6 +211,29 @@ const metronIdsFor = async (key, store, query, ttl) => {
 };
 const handleMetron = async (u, res) => {
   if (u.pathname === '/api/metron/status') return sendJson(res, 200, { configured: !!metronCreds, authFailed: metronState.authFailed, remaining: metronState.remaining });
+  if (u.pathname === '/api/metron/search') {
+    if (!metronCreds) return sendJson(res, 503, { error: 'Metron non configuré : lancez « node serve.js --metron »' });
+    const q = String(u.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    if (q.length < 2) return sendJson(res, 400, { error: 'paramètres invalides' });
+    const m = q.match(/^(.*?)\s*#?\s*(\d{1,5}(?:\.\d+)?[A-Za-z]?)$/);
+    const seriesName = (m && m[1].trim()) || q, number = m && m[1].trim() ? m[2] : '';
+    const key = seriesName.toLowerCase() + '|' + number;
+    metronCache.search = metronCache.search || {};
+    const hit = metronCache.search[key];
+    if (hit && Date.now() - hit.at < 7 * DAY) return sendJson(res, 200, { results: hit.results, cached: true, remaining: metronState.remaining });
+    try {
+      const d = await metronGet('/issue/?' + new URLSearchParams(Object.assign({ series_name: seriesName }, number ? { number } : {})).toString());
+      const results = (d.results || []).slice(0, 30).map(x => ({
+        id: x.id, series: (x.series && x.series.name) || '', year: (x.series && x.series.year_began) || null, volume: (x.series && x.series.volume) || null,
+        number: String(x.number || ''), date: x.cover_date || '', image: /^https:\/\//.test(String(x.image || '')) ? x.image : ''
+      }));
+      metronCache.search[key] = { at: Date.now(), results };
+      saveMetronCache();
+      return sendJson(res, 200, { results, remaining: metronState.remaining });
+    } catch (e) {
+      return sendJson(res, e.status || 502, { error: e.message || 'Metron indisponible' });
+    }
+  }
   if (u.pathname !== '/api/metron/scan') return sendJson(res, 404, { error: 'introuvable' });
   if (!metronCreds) return sendJson(res, 503, { error: 'Metron non configuré : lancez « node serve.js --metron »' });
   const code = String(u.searchParams.get('code') || '').replace(/\D/g, '');
@@ -271,6 +294,8 @@ const setupMetron = async () => {
 const server = http.createServer((req, res) => {
   let p;
   try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { res.writeHead(400); return res.end(); }
+  // État des relais (aucun secret renvoyé) : l'app vérifie au démarrage quels outils en ligne sont réellement disponibles
+  if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true });
   if (p.startsWith('/api/gcd/') && req.method === 'GET') return void handleGcd(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/metron/') && req.method === 'GET') return void handleMetron(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/cv/') && req.method === 'GET') return void handleCv(new URL(req.url, 'http://x'), res);

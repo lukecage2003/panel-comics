@@ -35,3 +35,12 @@ test('résolution des éditeurs par alias, sans accent ni casse', () => {
 test('module figé (aucune modification possible des listes)', () => {
   assert.ok(Object.isFrozen(S.SCOPE_RULES) && Object.isFrozen(S.PUBLISHERS) && Object.isFrozen(S.PUBLISHERS[0][2]));
 });
+
+test('liste blanche : un éditeur nommé hors comics US/FR est écarté, un éditeur absent ne l\'est pas', () => {
+  assert.strictEqual(S.scopeReason({ format: 'single', publisher: 'Scholastic' }), 'other');
+  assert.strictEqual(S.scopeReason({ format: 'tpb', publisher: 'Square Enix Manga' }), 'manga');
+  assert.strictEqual(S.scopeReason({ format: 'single', publisher: 'Zenescope Entertainment' }), null);
+  assert.strictEqual(S.scopeReason({ format: 'single', publisher: 'marvel' }), null);
+  assert.strictEqual(S.scopeReason({ format: 'single', publisher: '' }), null);
+  assert.strictEqual(S.scopeReason({ format: 'single', publisher: 'Scholastic', scope: 'in' }), null, 'choix explicite conservé');
+});

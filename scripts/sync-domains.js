@@ -20,7 +20,8 @@ const MODULES = [
   ['readingStats', 'domains/reading/reading-stats.js'],
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
-  ['trophiesCore', 'domains/community/trophies-core.js']
+  ['trophiesCore', 'domains/community/trophies-core.js'],
+  ['ranksCore', 'domains/community/ranks-core.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

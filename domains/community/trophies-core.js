@@ -115,7 +115,9 @@ const sanitizeProfile = p => {
   const s = (v, n) => String(v || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, n);
   const color = /^#[0-9a-f]{6}$/i.test(String(p && p.color || '')) ? p.color : '#7C5CFF';
   const handle = s(p && p.handle, 24).replace(/\s+/g, '_');
-  return { handle, displayName: s(p && p.displayName, 40), bio: s(p && p.bio, 160), favorite: s(p && p.favorite, 60), color, createdAt: (p && p.createdAt) || null };
+  // Top 3 personnages et top 3 runs : trois entrées au plus, sans doublon ni vide
+  const top3 = v => (Array.isArray(v) ? v : []).map(x => s(x, 60)).filter((x, i, a) => x && a.findIndex(y => y.toLowerCase() === x.toLowerCase()) === i).slice(0, 3);
+  return { handle, displayName: s(p && p.displayName, 40), bio: s(p && p.bio, 160), favorite: s(p && p.favorite, 60), color, topCharacters: top3(p && p.topCharacters), topRuns: top3(p && p.topRuns), createdAt: (p && p.createdAt) || null };
 };
 const validHandle = h => /^[A-Za-z0-9_.À-ſ-]{3,24}$/.test(String(h || ''));
 

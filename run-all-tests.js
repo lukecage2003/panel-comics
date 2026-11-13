@@ -3925,7 +3925,7 @@ const waitForCdp = async () => {
           r.m2 = o('other', 'Delitoon') === 'manhwa' && o('tpb', 'Ize Press') === 'manhwa' && o('other', 'Webtoon') === 'manhwa';
           r.m3 = o('manga', 'Glénat') === 'manga' && o('manga', 'Ankama') === 'manga' && o('tpb', 'Seven Seas') === 'manga';
           r.m4 = o('single', 'IDW Publishing') === null && o('single', 'Dark Horse') === null && o('tpb', 'Glénat') === null && o('tpb', 'Delcourt') === null;
-          r.rules = Rl.scopeRules().map(x => x.id).join() === 'manga,manhwa,bd';
+          r.rules = Rl.scopeRules().map(x => x.id).join() === 'manga,manhwa,bd,other'; // D-60 : éditeurs nommés hors comics US/FR masqués
           // Navigation
           const explorerLbl = document.getElementById('navExplorerLabel');
           const btns = [...document.querySelectorAll('#navSinglesBlock .nav-btn')].map(b => b.id);
@@ -4104,7 +4104,7 @@ const waitForCdp = async () => {
         try {
           document.getElementById('navExplorer').click(); await wait(200);
           const sec = document.getElementById('exSecEvents');
-          r.homeSection = !!sec && /Marvel/.test(sec.textContent) && /DC/.test(sec.textContent) && sec.querySelectorAll('.ex-gcard').length >= 9;
+          r.homeSection = !!sec && /Marvel/.test(sec.textContent) && /DC/.test(sec.textContent) && sec.querySelectorAll('.ex-poster, .ex-gcard').length >= 9; // D-61 : affiches en rails
           const card = sec && sec.querySelector('[data-ex-guide="gd_civil_war"]');
           r.cardFacts = !!card && /7 numéro\\(s\\) principaux/.test(card.textContent);
           card.click(); await wait(200);
