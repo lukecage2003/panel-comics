@@ -6,7 +6,7 @@
  *   pas de réponses opaques qui gonfleraient le quota de stockage).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-13-prd-phases-2-3';
+const VERSION = 'panel-2026-11-13-design-boites-trophees';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [

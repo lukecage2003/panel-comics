@@ -1625,6 +1625,8 @@
 
     /* ===== LOT 2.6 · EXPLORER & GUIDES DE LECTURE ===== */
     #singlesViewSection.is-explorer .singles-stats-bar, #singlesViewSection.hide-coll-stats .singles-stats-bar { display: none !important; }
+    /* Bandeau des couvertures : seulement sur Ma collection (la récupération continue en arrière-plan ailleurs) */
+    #singlesViewSection.is-explorer .cover-job-bar, #singlesViewSection.hide-coll-stats .cover-job-bar { display: none !important; }
     .rel-more { margin: 0 0 10px; }
     .rel-more > summary { cursor: pointer; font-size: 12.5px; font-weight: 600; color: var(--ink-dim); list-style: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--line); border-radius: 999px; }
     .rel-more > summary::-webkit-details-marker { display: none; }
@@ -1896,6 +1898,170 @@
     .btn.accent-scan .ic, .btn.scan-primary .ic, #openScannerBtn .ic { color: #111111 !important; }
     html[data-mode="dark"] .tab-btn.active { background: var(--cyan-fill); border-color: var(--cyan-fill); color: #111111; }
     @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation-duration: .01ms !important; } .comic-card:hover, .ex-gcard:hover, .ex-pub:hover, .ex-reco:hover, .ex-unitile:hover { transform: none; } }
+    /* ==========================================================================
+       PANEL 5 — Apple × Wakanda (D-59) : typographie système, verre dépoli, rayons généreux,
+       lumière douce ; touche « vibranium » (violet profond) et motif géométrique très léger.
+       Couche ajoutée en dernier : aucune règle existante n'est supprimée.
+       ========================================================================== */
+    :root {
+      --vibranium: #7C5CFF; --vibranium-soft: rgba(124, 92, 255, 0.14); --vibranium-glow: rgba(124, 92, 255, 0.28);
+      --font-title: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Inter, Roboto, sans-serif;
+      --ease-spring: cubic-bezier(.2, .8, .2, 1.05);
+      --hair: color-mix(in srgb, var(--ink) 9%, transparent);
+      --shadow-soft: 0 1px 2px rgba(0,0,0,.06), 0 8px 24px rgba(0,0,0,.08);
+      --shadow-lift: 0 2px 6px rgba(0,0,0,.10), 0 18px 40px rgba(0,0,0,.16);
+      --wk-pattern: repeating-linear-gradient(60deg, transparent 0 14px, color-mix(in srgb, var(--vibranium) 7%, transparent) 14px 15px),
+                    repeating-linear-gradient(-60deg, transparent 0 14px, color-mix(in srgb, var(--vibranium) 7%, transparent) 14px 15px);
+    }
+    html[data-mode="dark"] { --hair: rgba(255,255,255,.08); --shadow-soft: 0 1px 2px rgba(0,0,0,.4), 0 10px 30px rgba(0,0,0,.35); --shadow-lift: 0 2px 8px rgba(0,0,0,.5), 0 22px 50px rgba(0,0,0,.55); }
+    body {
+      background:
+        radial-gradient(1100px 520px at 12% -8%, var(--vibranium-soft), transparent 60%),
+        radial-gradient(900px 480px at 100% -10%, color-mix(in srgb, var(--cyan-fill) 10%, transparent), transparent 60%),
+        var(--bg) !important;
+      background-attachment: fixed !important;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    /* Titres : SF Display, casse de phrase, approche serrée */
+    h1, h2, h3, .topbar-title, .section-head h2, .modal-box h2, .modal-box h3, .stats-card h3, .hero-banner h1, .hero-banner h2 {
+      font-family: var(--font-title) !important; text-transform: none !important;
+    }
+    .topbar-title, .topbar h1, #mainTitleHeading { font-weight: 700 !important; letter-spacing: -0.028em !important; font-size: clamp(30px, 3.3vw, 42px) !important; line-height: 1.05 !important; }
+    .section-head h2 { font-weight: 700 !important; letter-spacing: -0.02em !important; font-size: 24px !important; }
+    .stats-card h3 { font-size: 15px !important; font-weight: 650 !important; letter-spacing: -0.01em !important; color: var(--ink) !important; }
+    .modal-box h2, .modal-box h3 { font-weight: 700 !important; letter-spacing: -0.02em !important; }
+    .single-stat-pill span { font-family: var(--font-ui) !important; letter-spacing: 0.02em !important; text-transform: none !important; font-weight: 600 !important; }
+    .single-stat-pill strong { font-family: var(--font-title) !important; font-weight: 650 !important; letter-spacing: -0.03em; }
+    /* Rail : verre dépoli, sélection teintée, filet vibranium */
+    aside {
+      background: color-mix(in srgb, var(--rail) 82%, transparent) !important;
+      backdrop-filter: saturate(180%) blur(22px) !important; -webkit-backdrop-filter: saturate(180%) blur(22px) !important;
+      border-right: 1px solid rgba(255,255,255,.06) !important;
+      box-shadow: inset -1px 0 0 color-mix(in srgb, var(--vibranium) 22%, transparent);
+    }
+    aside .nav-btn { border-radius: 10px !important; transition: background .2s var(--ease-spring), color .2s; }
+    aside .nav-btn.active { background: color-mix(in srgb, var(--cyan-fill) 16%, transparent) !important; border-color: transparent !important; color: var(--cyan-fill) !important; box-shadow: inset 2px 0 0 var(--cyan-fill); }
+    aside .nav-btn.active .ic, aside .nav-btn.active .icon { color: var(--cyan-fill) !important; }
+    aside .nav-btn.active .nav-badge { background: var(--cyan-fill) !important; color: var(--rail) !important; }
+    aside .nav-badge { border-radius: 999px !important; min-width: 22px; text-align: center; }
+    aside .nav-label { letter-spacing: .14em !important; font-size: 11px !important; }
+    /* Surfaces : rayons Apple, filets fins, ombres douces */
+    .stats-card, .single-stats-bar, .singles-stats-bar, .notice-box, .cover-job-bar, .modal-box, .comic-card, .series-track-card, .top-item, .ex-card, .sidebar-footer {
+      border-radius: 18px !important; border-color: var(--hair) !important;
+    }
+    .stats-card, .comic-card, .series-track-card, .ex-card { box-shadow: var(--shadow-soft) !important; }
+    .comic-card, .series-track-card, .ex-card { transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease-spring) !important; }
+    .comic-card:hover, .series-track-card:hover, .ex-card:hover { transform: translateY(-4px) !important; box-shadow: var(--shadow-lift) !important; }
+    .comic-card .comic-poster { border-radius: 14px 14px 0 0; overflow: hidden; }
+    .btn { border-radius: 999px !important; font-weight: 600 !important; letter-spacing: -0.005em; transition: transform .15s var(--ease-spring), background .2s, box-shadow .2s !important; }
+    .btn:active { transform: scale(.97); }
+    .field-input, select.field-input, .search-box { border-radius: 12px !important; }
+    .tab-btn, .filter-tabs-bar .tab-btn, .chip { border-radius: 999px !important; }
+    .modal-box { box-shadow: 0 30px 80px rgba(0,0,0,.45) !important; }
+    .modal-overlay, .modal { backdrop-filter: blur(14px) saturate(140%); -webkit-backdrop-filter: blur(14px) saturate(140%); }
+    /* Bandeaux héros : motif géométrique wakandais très discret, lueur vibranium */
+    .ex-hero, .hero-banner { position: relative; isolation: isolate; border-radius: 24px !important; overflow: hidden; }
+    .ex-hero::after, .hero-banner::after { content: ""; position: absolute; inset: 0; background: var(--wk-pattern); opacity: .9; pointer-events: none; z-index: -1; }
+    .stats-card h3::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan-fill), var(--vibranium)); margin-right: 8px; vertical-align: 2px; }
+    .hbar > div, .progress-fill { background: linear-gradient(90deg, var(--cyan-fill), color-mix(in srgb, var(--vibranium) 70%, var(--cyan-fill))) !important; border-radius: 999px !important; }
+    .hbar, .progress-track { border-radius: 999px !important; }
+    .month-col > div { border-radius: 6px 6px 2px 2px !important; background: linear-gradient(180deg, var(--cyan-fill), color-mix(in srgb, var(--vibranium) 55%, var(--cyan-fill))) !important; }
+    @media (prefers-reduced-motion: reduce) { .comic-card, .series-track-card, .ex-card, .btn, .cbox { transition: none !important; } .comic-card:hover, .cbox:hover { transform: none !important; } }
+
+    /* Boîtes de comics (vue « Boîtes » de la collection) */
+    .cbox-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 34px 22px; padding: 26px 2px 8px; }
+    .cbox { position: relative; display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; color: inherit; font: inherit; transition: transform .4s var(--ease-spring); }
+    .cbox:hover { transform: translateY(-6px); }
+    .cbox:focus-visible { outline: 3px solid var(--cyan-fill); outline-offset: 6px; border-radius: 14px; }
+    .cbox-comics { position: absolute; left: 7%; right: 7%; bottom: calc(100% - 16px); height: 54px; display: flex; align-items: flex-end; gap: 2px; z-index: 0; }
+    .cbox-sliver { flex: 1; height: var(--h); min-width: 4px; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, color-mix(in srgb, var(--c) 92%, #fff), var(--c)); box-shadow: inset -1px 0 0 rgba(0,0,0,.25); overflow: hidden; transition: transform .4s var(--ease-spring); }
+    .cbox-sliver img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .cbox:hover .cbox-sliver:nth-child(3n+1) { transform: translateY(-7px); }
+    .cbox:hover .cbox-sliver:nth-child(4n+2) { transform: translateY(-4px); }
+    .cbox-body { position: relative; z-index: 1; display: block; aspect-ratio: 1.45 / 1; border-radius: 10px 10px 14px 14px;
+      background: linear-gradient(180deg, #efe4cc 0%, #e4d5b5 55%, #d6c49f 100%);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.6), inset 0 -10px 18px rgba(120,90,40,.18), 0 18px 34px rgba(0,0,0,.28), 0 2px 4px rgba(0,0,0,.2); color: #2a2318; }
+    .cbox-lid { position: absolute; left: -2%; right: -2%; top: 0; height: 15%; border-radius: 9px 9px 3px 3px; background: linear-gradient(180deg, #f6edd9, #e7d9bb); box-shadow: 0 3px 6px rgba(90,60,20,.22); }
+    .cbox-handle { position: absolute; left: 50%; top: 24%; width: 26%; height: 9%; transform: translateX(-50%); border-radius: 999px; background: #3a2f22; box-shadow: inset 0 3px 5px rgba(0,0,0,.6); opacity: .85; }
+    .cbox-label { position: absolute; left: 10%; right: 10%; bottom: 13%; padding: 9px 12px 10px; border-radius: 8px; background: #fffdf7; box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 4px 10px rgba(80,60,30,.15); transform: rotate(-1.2deg); display: flex; flex-direction: column; gap: 2px; }
+    .cbox-label small { font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; }
+    .cbox-label b { font-family: var(--font-title); font-size: 17px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.12; color: #1d1810; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .cbox-label em { font-style: normal; font-size: 11.5px; color: #5d503d; font-variant-numeric: tabular-nums; }
+    .cbox-gauge { position: absolute; left: 10%; right: 10%; bottom: 6%; height: 4px; border-radius: 999px; background: rgba(60,45,25,.18); overflow: hidden; }
+    .cbox-gauge i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #1d1810, var(--vibranium)); }
+    .cbox-multi { position: absolute; top: 18%; right: 6%; font-size: 10.5px; font-weight: 700; background: #1d1810; color: #f6edd9; border-radius: 999px; padding: 2px 8px; }
+    .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
+    .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
+    .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
+    .cbox-open-head .cbox-open-meta { margin-left: auto; font-size: 13px; color: #5d503d; }
+    .cbox-open-head .btn.secondary { background: #fffdf7 !important; color: #1d1810 !important; border-color: rgba(0,0,0,.12) !important; }
+    /* Profil et trophées (Communauté) */
+    .pf-hero { position: relative; overflow: hidden; isolation: isolate; border-radius: 24px; padding: 24px; margin-bottom: 18px; border: 1px solid var(--hair);
+      background: radial-gradient(600px 260px at 0% 0%, color-mix(in srgb, var(--pf) 30%, transparent), transparent 70%), radial-gradient(500px 240px at 100% 100%, var(--vibranium-soft), transparent 70%), var(--bg-card); box-shadow: var(--shadow-soft); }
+    .pf-hero::after { content: ""; position: absolute; inset: 0; background: var(--wk-pattern); z-index: -1; opacity: .7; }
+    .pf-id { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+    .pf-id > div { flex: 1; min-width: 200px; }
+    .pf-id h2 { font-size: 28px !important; letter-spacing: -0.03em !important; margin: 0; }
+    .pf-avatar { width: 68px; height: 68px; border-radius: 50%; display: grid; place-items: center; font: 700 24px var(--font-title); color: #fff; letter-spacing: -0.02em;
+      background: linear-gradient(135deg, var(--pf), color-mix(in srgb, var(--pf) 45%, #000)); box-shadow: 0 0 0 3px var(--bg-card), 0 0 0 5px color-mix(in srgb, var(--pf) 60%, transparent), 0 10px 30px color-mix(in srgb, var(--pf) 40%, transparent); }
+    .pf-handle { color: var(--muted); margin: 2px 0 0; font-size: 14px; }
+    .pf-bio { margin: 6px 0 0; font-size: 14px; color: var(--ink-dim); }
+    .pf-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 16px; }
+    .pf-form label { display: flex; flex-direction: column; gap: 5px; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .pf-form input[type=color] { height: 40px; padding: 4px; }
+    .pf-wide { grid-column: 1 / -1; }
+    .pf-actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+    .pf-level { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--hair); }
+    .pf-level-num { width: 74px; height: 74px; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #fff;
+      background: conic-gradient(from 210deg, var(--cyan-fill), var(--vibranium), var(--cyan-fill)); box-shadow: 0 10px 30px var(--vibranium-glow); }
+    .pf-level-num small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; font-weight: 700; opacity: .9; color: #111; }
+    .pf-level-num b { font: 700 32px var(--font-title); letter-spacing: -0.04em; line-height: 1; color: #111; }
+    .pf-level-main { flex: 1; min-width: 220px; display: flex; flex-direction: column; gap: 6px; }
+    .pf-level-main > b { font: 650 18px var(--font-title); letter-spacing: -0.02em; }
+    .pf-level-main small { color: var(--muted); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+    .pf-tiers { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pf-tier { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 6%, transparent); }
+    .pf-tier i { width: 10px; height: 10px; border-radius: 50%; background: var(--tg); }
+    .pf-section { font-size: 22px !important; letter-spacing: -0.02em !important; margin: 4px 2px 10px; }
+    .tr-family h4 { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 16px 2px 8px; font-weight: 700; }
+    .tr-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+    .tr-card { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--hair); transition: transform .3s var(--ease-spring); }
+    .tr-card:hover { transform: translateY(-2px); }
+    .tr-medal { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 50%; display: grid; place-items: center; font-size: 20px; color: #fff;
+      background: radial-gradient(circle at 30% 25%, rgba(255,255,255,.65), transparent 40%), var(--tg); box-shadow: inset 0 -3px 6px rgba(0,0,0,.25), 0 6px 14px color-mix(in srgb, var(--tg-solid, #888) 35%, transparent); }
+    .tr-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+    .tr-info b { font-size: 14px; letter-spacing: -0.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .tr-info small { font-size: 12px; color: var(--muted); }
+    .tr-bar { display: block; height: 5px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 9%, transparent); overflow: hidden; }
+    .tr-bar i { display: block; height: 100%; border-radius: inherit; background: var(--tg, linear-gradient(90deg, var(--cyan-fill), var(--vibranium))); }
+    .pf-xp { height: 8px; } .pf-xp i { background: linear-gradient(90deg, var(--cyan-fill), var(--vibranium)); }
+    .is-bronze { --tg: linear-gradient(135deg, #e0a36b, #8c5a2b); --tg-solid: #a86c36; }
+    .is-silver { --tg: linear-gradient(135deg, #f1f4f8, #8c96a3); --tg-solid: #9aa4b0; }
+    .is-gold { --tg: linear-gradient(135deg, #ffe27a, #c79100); --tg-solid: #d9a400; }
+    .is-vibranium { --tg: linear-gradient(135deg, #b9a4ff, #4b2bd6 55%, #1a0f4a); --tg-solid: #6a4dff; }
+    .tr-card.is-vibranium { border-color: color-mix(in srgb, var(--vibranium) 45%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--vibranium) 25%, transparent), 0 10px 30px var(--vibranium-glow); }
+    .tr-card.is-locked { --tg: linear-gradient(135deg, color-mix(in srgb, var(--ink) 18%, transparent), color-mix(in srgb, var(--ink) 8%, transparent)); }
+    .tr-card.is-locked .tr-medal { color: var(--muted); box-shadow: none; }
+    .tr-card.is-locked .tr-bar i { background: color-mix(in srgb, var(--ink) 30%, transparent); }
+    .pf-tier.is-bronze i, .pf-tier.is-silver i, .pf-tier.is-gold i, .pf-tier.is-vibranium i { background: var(--tg); }
+    /* Calendrier : bande de la semaine, cartes plus aérées */
+    .rel-week { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; padding: 6px; border-radius: 20px; background: color-mix(in srgb, var(--ink) 4%, transparent); border: 1px solid var(--hair); }
+    .rel-day { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 10px 4px 9px; border-radius: 14px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font: inherit; transition: background .2s, transform .25s var(--ease-spring); }
+    .rel-day:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); }
+    .rel-day small { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+    .rel-day b { font: 650 24px var(--font-title); letter-spacing: -0.03em; line-height: 1.1; }
+    .rel-day span { font-size: 11.5px; color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+    .rel-day.is-empty b, .rel-day.is-empty span { color: var(--muted); opacity: .6; }
+    .rel-day.is-today b { color: var(--cyan-fill); }
+    .rel-day.is-ncbd { background: linear-gradient(180deg, color-mix(in srgb, var(--cyan-fill) 14%, transparent), color-mix(in srgb, var(--vibranium) 10%, transparent)); }
+    .rel-day.is-ncbd em { position: absolute; top: 5px; right: 6px; font-style: normal; font-size: 8.5px; font-weight: 800; letter-spacing: .08em; color: var(--cyan-fill); }
+    .rel-day.is-sel { background: var(--cyan-fill) !important; color: #111; box-shadow: 0 8px 20px color-mix(in srgb, var(--cyan-fill) 35%, transparent); }
+    .rel-day.is-sel small, .rel-day.is-sel span, .rel-day.is-sel b, .rel-day.is-sel em { color: #111 !important; opacity: 1; }
+    .release-card .comic-caption { padding-top: 10px; }
+    .rel-status, .rel-market { border-radius: 999px !important; }
+    @media (max-width: 600px) { .rel-week { gap: 2px; padding: 4px; } .rel-day { padding: 8px 0; } .rel-day b { font-size: 18px; } .rel-day span { font-size: 9.5px; } .rel-day.is-ncbd em { display: none; } }
+    #singlesBoxesBtn.is-on { background: var(--cyan-fill) !important; color: #111 !important; border-color: var(--cyan-fill) !important; }
+    @media (max-width: 600px) { .cbox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 12px; padding-top: 34px; } .cbox-label b { font-size: 14px; } .cbox-label { padding: 6px 8px; } .cbox-open-head { flex-wrap: wrap; } }
   </style>
 </head>
 <body>
@@ -2182,6 +2348,7 @@
       <!-- ===== VUE : COMMUNAUTÉ (brouillons locaux, D-34) ===== -->
       <div id="singlesCommunityView" hidden>
         <div class="section-head"><div><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></div></div>
+        <div id="communityProfile"></div>
         <div id="communityDashboard"></div>
       </div>
 
@@ -2264,6 +2431,13 @@
             <option value="read">Lus</option>
           </select>
           <button class="btn secondary" id="singlesViewModeBtn" title="Basculer grille / liste" aria-label="Basculer grille / liste"><svg class=ic aria-hidden=true><use href=#ic-list /></svg> Liste</button>
+          <button class="btn secondary" id="singlesBoxesBtn" title="Voir la collection rangée en boîtes de comics" aria-pressed="false">Boîtes</button>
+          <select id="singlesBoxBy" class="field-input" aria-label="Ranger les boîtes" hidden>
+            <option value="run">Par run</option>
+            <option value="character">Par personnage</option>
+            <option value="publisher">Par éditeur</option>
+            <option value="location">Par boîte physique</option>
+          </select>
           <button class="btn accent-scan" id="quickScanBtn" hidden>
             <span><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span> Scanner code-barres
           </button>
@@ -5171,6 +5345,221 @@ const reminderDigest = (pulled, today, lastDay, days = 7) => {
 };
 
 module.exports = { norm, issueNum, seriesKey, issueKey, focOf, isUpcomingFirst, upcomingFirsts, isMainCover, groupVariants, addDays, reminderDigest };
+  return Object.freeze(module.exports); })();
+  /* domains/collection/boxes-core.js */
+  out.collectionBoxes = (() => { const module = { exports: {} };
+'use strict';
+// Vue « Boîtes » de la collection : les exemplaires rangés comme dans des short boxes, regroupés au choix
+// par run (série), par personnage, par éditeur ou par emplacement physique. Module pur, aucune écriture.
+// Le personnage vient du champ `character` de la fiche s'il est renseigné, sinon il est déduit du titre de la série ;
+// une série non reconnue va dans « Autres personnages » (jamais d'attribution inventée au-delà du titre).
+
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+// Personnages de comics US / FR reconnus dans les titres (ordre : du plus précis au plus général)
+const CHARACTERS = Object.freeze([
+  ['Miles Morales', /miles morales/],
+  ['Spider-Gwen', /spider[- ]?gwen|ghost[- ]spider/],
+  ['Spider-Man', /spider[- ]?man|spectacular spider|web of spider|spider[- ]?verse/],
+  ['Venom', /\bvenom|carnage/],
+  ['Batman', /\bbatman|detective comics|\bbat[- ]?family|nightwing|robin\b|gotham/],
+  ['Superman', /superman|action comics|man of steel/],
+  ['Wonder Woman', /wonder woman/],
+  ['Flash', /\bflash\b/],
+  ['Green Lantern', /green lantern/],
+  ['Aquaman', /aquaman/],
+  ['Justice League', /justice league|\bjla\b/],
+  ['Harley Quinn', /harley quinn/],
+  ['Joker', /\bjoker\b/],
+  ['Wolverine', /wolverine|\blogan\b/],
+  ['X-Men', /x[- ]?men|x[- ]?force|x[- ]?factor|uncanny|mutants?\b|krakoa/],
+  ['Deadpool', /deadpool/],
+  ['Avengers', /avengers/],
+  ['Iron Man', /iron man/],
+  ['Captain America', /captain america/],
+  ['Thor', /\bthor\b/],
+  ['Hulk', /\bhulk\b/],
+  ['Black Panther', /black panther|wakanda/],
+  ['Daredevil', /daredevil/],
+  ['Fantastic Four', /fantastic four|\bff\b/],
+  ['Doctor Strange', /doctor strange|dr\.? strange/],
+  ['Moon Knight', /moon knight/],
+  ['Punisher', /punisher/],
+  ['Captain Marvel', /captain marvel|ms\.? marvel/],
+  ['Black Widow', /black widow/],
+  ['Guardians of the Galaxy', /guardians of the galaxy/],
+  ['Silver Surfer', /silver surfer/],
+  ['Invincible', /invincible/],
+  ['Spawn', /\bspawn\b/],
+  ['Hellboy', /hellboy|\bb\.?p\.?r\.?d\b/],
+  ['Teenage Mutant Ninja Turtles', /ninja turtles|\btmnt\b/],
+  ['Transformers', /transformers/],
+  ['Swamp Thing', /swamp thing/],
+  ['Sandman', /sandman/]
+].map(([name, re]) => Object.freeze([name, re])));
+
+const OTHER_CHARACTERS = 'Autres personnages';
+const characterOf = c => {
+  if (!c) return null;
+  if (typeof c.character === 'string' && c.character.trim()) return c.character.trim().slice(0, 60);
+  const t = norm(c.series);
+  const hit = CHARACTERS.find(([, re]) => re.test(t));
+  return hit ? hit[0] : null;
+};
+
+const MODES = Object.freeze({ run: 'Par run', character: 'Par personnage', publisher: 'Par éditeur', location: 'Par boîte physique' });
+const BOX_CAPACITY = 150; // une short box contient environ 150 numéros
+
+const keyOf = (c, mode) => {
+  if (mode === 'character') return characterOf(c) || OTHER_CHARACTERS;
+  if (mode === 'publisher') return String(c.publisher || '').trim() || 'Éditeur inconnu';
+  if (mode === 'location') return String(c.box || '').trim() || 'Non rangé';
+  return String(c.series || '').trim() || 'Sans série';
+};
+
+const issueNum = v => { const m = /-?\d+(?:\.\d+)?/.exec(String(v || '')); return m ? Number(m[0]) : Infinity; };
+
+// Boîtes triées par contenu (les plus remplies d'abord), les « autres » en dernier ; numéros triés dans chaque boîte
+const buildBoxes = (copies, mode = 'run') => {
+  const m = MODES[mode] ? mode : 'run';
+  const groups = new Map();
+  (copies || []).forEach(c => { if (!c) return; const k = keyOf(c, m); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(c); });
+  const isOther = k => k === OTHER_CHARACTERS || k === 'Non rangé' || k === 'Éditeur inconnu' || k === 'Sans série';
+  return [...groups.entries()].map(([key, items]) => {
+    const sorted = items.slice().sort((a, b) => String(a.series || '').localeCompare(String(b.series || ''), 'fr') || issueNum(a.issue) - issueNum(b.issue));
+    const runs = new Set(items.map(x => String(x.series || '').trim()).filter(Boolean));
+    const publishers = new Set(items.map(x => String(x.publisher || '').trim()).filter(Boolean));
+    return { key, label: key, mode: m, items: sorted, count: items.length, runs: runs.size, publishers: [...publishers],
+      fill: Math.min(1, items.length / BOX_CAPACITY), boxes: Math.max(1, Math.ceil(items.length / BOX_CAPACITY)), other: isOther(key) };
+  }).sort((a, b) => (a.other - b.other) || b.count - a.count || a.label.localeCompare(b.label, 'fr'));
+};
+
+module.exports = { norm, CHARACTERS, OTHER_CHARACTERS, characterOf, MODES, BOX_CAPACITY, keyOf, buildBoxes };
+  return Object.freeze(module.exports); })();
+  /* domains/community/trophies-core.js */
+  out.trophiesCore = (() => { const module = { exports: {} };
+'use strict';
+// Trophées Panel (D-59) : calculés à partir des données locales (collection, lecture, pull list), jamais stockés ni inventés.
+// Quatre paliers : Bronze, Argent, Or et Vibranium (le plus rare). Originalités par rapport aux badges habituels :
+//  - les « Gardiens » : un trophée par personnage, créé dynamiquement à partir des boîtes par personnage ;
+//  - les « Ères » : Golden, Silver, Bronze, Modern Age, d'après l'année de couverture ;
+//  - le « Voyageur temporel » : au moins un numéro de chaque ère ;
+//  - un niveau de collectionneur (XP) qui additionne les paliers obtenus.
+// Module pur : reçoit des entrées déjà préparées, n'écrit rien.
+
+const TIERS = Object.freeze([
+  { id: 'bronze', label: 'Bronze', xp: 10 },
+  { id: 'silver', label: 'Argent', xp: 25 },
+  { id: 'gold', label: 'Or', xp: 60 },
+  { id: 'vibranium', label: 'Vibranium', xp: 150 }
+]);
+
+const ERAS = Object.freeze([
+  { id: 'golden', label: 'Golden Age', from: 1938, to: 1955 },
+  { id: 'silver', label: 'Silver Age', from: 1956, to: 1969 },
+  { id: 'bronze', label: 'Bronze Age', from: 1970, to: 1984 },
+  { id: 'modern', label: 'Modern Age', from: 1985, to: 2100 }
+]);
+
+const yearOf = c => { const m = /^(\d{4})/.exec(String((c && (c.coverYear || c.coverDate)) || '')); return m ? Number(m[1]) : null; };
+const eraOf = c => { const y = yearOf(c); return y ? (ERAS.find(e => y >= e.from && y <= e.to) || null) : null; };
+const issueNum = v => { const m = /-?\d+(?:\.\d+)?/.exec(String(v || '')); return m ? Number(m[0]) : null; };
+
+// Définitions : seuils croissants pour Bronze, Argent, Or, Vibranium
+const DEFS = Object.freeze([
+  { id: 'collector', family: 'Collection', name: 'Collectionneur', icon: 'box', steps: [10, 100, 500, 2000], unit: 'numéro', desc: 'Numéros possédés' },
+  { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 5, 15, 40], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
+  { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 25, 75, 200], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
+  { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 10, 30, 100], unit: 'key issue', desc: 'Key issues possédés' },
+  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 5, 20, 60], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
+  { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 6, 10, 15], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
+  { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 100, 500, 1500], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
+  { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 10, 40, 120], unit: 'relecture', desc: 'Relectures notées dans le journal' },
+  { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 10, 50, 200], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
+  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 100, 500, 2000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' }
+]);
+
+const tierFor = (value, steps) => { let t = -1; steps.forEach((s, i) => { if (value >= s) t = i; }); return t; };
+
+const describe = (def, value) => {
+  const t = tierFor(value, def.steps);
+  const next = t + 1 < def.steps.length ? def.steps[t + 1] : null;
+  const prev = t >= 0 ? def.steps[t] : 0;
+  return { id: def.id, family: def.family, name: def.name, icon: def.icon, desc: def.desc, unit: def.unit, value,
+    tier: t >= 0 ? TIERS[t].id : null, tierLabel: t >= 0 ? TIERS[t].label : null, tierIndex: t,
+    next, progress: next === null ? 1 : Math.max(0, Math.min(1, (value - prev) / (next - prev))) };
+};
+
+// Runs complets : au moins `min` numéros entiers consécutifs depuis le plus petit numéro possédé, sans trou
+const completeRuns = (copies, min = 3) => {
+  const by = new Map();
+  copies.forEach(c => { const n = issueNum(c.issue); if (n === null || !Number.isInteger(n)) return; const k = String(c.series || '').trim().toLowerCase(); if (!k) return; if (!by.has(k)) by.set(k, new Set()); by.get(k).add(n); });
+  let n = 0;
+  by.forEach(set => { const arr = [...set].sort((a, b) => a - b); if (arr.length >= min && arr[arr.length - 1] - arr[0] + 1 === arr.length) n++; });
+  return n;
+};
+
+// input : { copies (possédés), log (journal de lecture), picked (nombre de numéros récupérés), characterOf(copy) -> nom|null,
+//           isKey(copy), isGraded(copy) }
+const computeTrophies = (input = {}) => {
+  const copies = (input.copies || []).filter(Boolean);
+  const log = (input.log || []).filter(Boolean);
+  const isKey = input.isKey || (c => !!c.keyType && c.keyType !== 'none');
+  const isGraded = input.isGraded || (c => /\b(cgc|cbcs|pgx)\b/i.test(String(c.condition || '')));
+  const values = {
+    collector: copies.length,
+    runner: completeRuns(copies),
+    firsts: copies.filter(c => issueNum(c.issue) === 1).length,
+    keys: copies.filter(isKey).length,
+    slabs: copies.filter(isGraded).length,
+    multiverse: new Set(copies.map(c => String(c.publisher || '').trim().toLowerCase()).filter(Boolean)).size,
+    reader: log.filter(l => l.event === 'finished').length,
+    rereader: log.filter(l => l.event === 'reread').length,
+    wednesday: Math.max(0, Number(input.picked) || 0),
+    archivist: copies.filter(c => String(c.box || c.location || '').trim()).length
+  };
+  const trophies = DEFS.map(d => describe(d, values[d.id]));
+
+  // Ères : un trophée par ère (Bronze 1, Argent 5, Or 25, Vibranium 100 numéros de l'ère)
+  const eraCounts = Object.fromEntries(ERAS.map(e => [e.id, 0]));
+  copies.forEach(c => { const e = eraOf(c); if (e) eraCounts[e.id]++; });
+  const eras = ERAS.map(e => describe({ id: 'era-' + e.id, family: 'Ères', name: e.label, icon: 'clock', steps: [1, 5, 25, 100], unit: 'numéro', desc: 'Numéros parus entre ' + e.from + ' et ' + (e.to > 2050 ? 'aujourd\'hui' : e.to) }, eraCounts[e.id]));
+  const erasCovered = ERAS.filter(e => eraCounts[e.id] > 0).length;
+  const traveler = describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 4], unit: 'ère', desc: 'Ères représentées dans la collection (Vibranium : les quatre, avec 10 numéros dans chacune)' }, erasCovered);
+  if (traveler.tierIndex === 3 && !ERAS.every(e => eraCounts[e.id] >= 10)) Object.assign(traveler, describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 5], unit: 'ère', desc: traveler.desc }, 4));
+
+  // Gardiens : un trophée par personnage suivi (au moins 5 numéros), les 6 plus fournis
+  const charOf = input.characterOf || (() => null);
+  const perChar = new Map();
+  copies.forEach(c => { const ch = charOf(c); if (ch) perChar.set(ch, (perChar.get(ch) || 0) + 1); });
+  const guardians = [...perChar.entries()].filter(([, n]) => n >= 5).sort((a, b) => b[1] - a[1]).slice(0, 6)
+    .map(([ch, n]) => describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 25, 100, 300], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n));
+
+  const all = trophies.concat(eras, [traveler], guardians);
+  const xp = all.reduce((a, t) => a + (t.tierIndex >= 0 ? TIERS.slice(0, t.tierIndex + 1).reduce((s, x) => s + x.xp, 0) : 0), 0);
+  const level = Math.floor(Math.sqrt(xp / 20)) + 1;
+  const nextLevelXp = 20 * level * level;
+  const prevLevelXp = 20 * (level - 1) * (level - 1);
+  return {
+    trophies: all, xp, level, levelProgress: Math.max(0, Math.min(1, (xp - prevLevelXp) / (nextLevelXp - prevLevelXp))), nextLevelXp,
+    unlocked: all.filter(t => t.tierIndex >= 0).length, total: all.length,
+    byTier: Object.fromEntries(TIERS.map((t, i) => [t.id, all.filter(x => x.tierIndex === i).length]))
+  };
+};
+
+// Titre du collectionneur selon le niveau
+const titleFor = level => level >= 20 ? 'Légende du multivers' : level >= 12 ? 'Gardien des archives' : level >= 7 ? 'Collectionneur aguerri' : level >= 3 ? 'Habitué du comic shop' : 'Nouvelle recrue';
+
+// Profil local : pseudo et préférences, validés (aucune donnée envoyée)
+const sanitizeProfile = p => {
+  const s = (v, n) => String(v || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, n);
+  const color = /^#[0-9a-f]{6}$/i.test(String(p && p.color || '')) ? p.color : '#7C5CFF';
+  const handle = s(p && p.handle, 24).replace(/\s+/g, '_');
+  return { handle, displayName: s(p && p.displayName, 40), bio: s(p && p.bio, 160), favorite: s(p && p.favorite, 60), color, createdAt: (p && p.createdAt) || null };
+};
+const validHandle = h => /^[A-Za-z0-9_.À-ſ-]{3,24}$/.test(String(h || ''));
+
+module.exports = { TIERS, ERAS, DEFS, eraOf, completeRuns, tierFor, computeTrophies, titleFor, sanitizeProfile, validHandle };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -9709,6 +10098,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // ==========================================================================
   let activeSinglesView = 'collection';
   let singlesViewMode = (() => { try { return localStorage.getItem('panel_singles_view_mode') || 'grid'; } catch (_) { return 'grid'; } })();
+  // Vue « Boîtes » : regroupement choisi (run, personnage, éditeur, emplacement) et boîte ouverte
+  let singlesBoxBy = (() => { try { return localStorage.getItem('panel_singles_box_by') || 'run'; } catch (_) { return 'run'; } })();
+  let singlesOpenBox = null;
   let singlesReadFilter = 'all';
   const SINGLES_PAGE = 120;
   let singlesRenderLimit = SINGLES_PAGE;
@@ -9864,6 +10256,27 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // RENDU DE LA COLLECTION PHYSIQUE DE SINGLES AVEC FILTRAGE, RÉPARTITION & TRI
+  // Boîtes de comics : façade carton, étiquette manuscrite, tranches des numéros qui dépassent, jauge de remplissage
+  const CBOX_PUB_COLORS = { 'Marvel': '#e23636', 'DC Comics': '#0476f2', 'DC': '#0476f2', 'Image Comics': '#f2a900', 'Image': '#f2a900', 'Dark Horse': '#4b4b4b', 'IDW Publishing': '#2e7d6b', 'BOOM! Studios': '#d6336c', 'Urban Comics': '#1f1f1f', 'Panini Comics': '#c8102e' };
+  const renderCollectionBoxes = (grid, boxes) => {
+    grid.className = 'cbox-grid';
+    if (!boxes.length) { grid.innerHTML = '<div class="empty-box"><h2>Aucune boîte</h2><p>Les boîtes regroupent les exemplaires possédés ; la wishlist n\'y figure pas.</p></div>'; return; }
+    const mode = window.PanelDomains.collectionBoxes.MODES[boxes[0].mode];
+    grid.innerHTML = boxes.map((b, i) => {
+      const slivers = b.items.slice(0, 16).map((x, j) => '<span class="cbox-sliver" style="--h:' + (78 + ((j * 37 + i * 11) % 22)) + '%;--c:' + (CBOX_PUB_COLORS[x.publisher] || '#8a8a8a') + '">' + (x.coverUrl ? coverImgTag(x) : '') + '</span>').join('');
+      const v = sumKnown(b.items, valueOf);
+      return '<button class="cbox" data-box="' + escapeHtml(b.key) + '" aria-label="Ouvrir la boîte ' + escapeHtml(b.label) + ', ' + b.count + ' numéros">' +
+        '<span class="cbox-comics" aria-hidden="true">' + slivers + '</span>' +
+        '<span class="cbox-body"><span class="cbox-lid"></span><span class="cbox-handle" aria-hidden="true"></span>' +
+          '<span class="cbox-label"><small>' + escapeHtml(mode) + '</small><b>' + escapeHtml(b.label) + '</b>' +
+          '<em>' + b.count + ' numéro' + (b.count > 1 ? 's' : '') + (b.runs > 1 ? ' · ' + b.runs + ' runs' : '') + (v.n ? ' · ' + money(v.total) : '') + '</em></span>' +
+          '<span class="cbox-gauge" title="' + b.count + ' / ' + window.PanelDomains.collectionBoxes.BOX_CAPACITY * b.boxes + ' places (short box)"><i style="width:' + Math.round(b.fill * 100) + '%"></i></span>' +
+          (b.boxes > 1 ? '<span class="cbox-multi">×' + b.boxes + ' boîtes</span>' : '') +
+        '</span></button>';
+    }).join('');
+    grid.querySelectorAll('.cbox').forEach(el => { el.onclick = () => { singlesOpenBox = el.dataset.box; renderSinglesCollection(); }; });
+  };
+
   const renderSinglesCollection = () => {
     updateSinglesStats();
     renderCoverJobBar();
@@ -9886,8 +10299,26 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     grid.className = singlesViewMode === 'list' ? 'singles-list' : 'comics-grid';
     if ($('singlesViewModeBtn')) $('singlesViewModeBtn').textContent = singlesViewMode === 'list' ? '▦ Grille' : 'Liste';
 
-    const filtered = sortSingles(physicalSingles.filter(singleMatchesFilters));
-    const sig = [activeSingleFilter, singlesReadFilter, $('boxFilterSelect') ? $('boxFilterSelect').value : '', singlesSearchQuery, singlesSortOrder, singlesViewMode].join('|');
+    let filtered = sortSingles(physicalSingles.filter(singleMatchesFilters));
+    // Vue « Boîtes » (domains/collection/boxes-core.js) : boîtes de comics par run, personnage, éditeur ou emplacement
+    const boxesMode = singlesViewMode === 'boxes';
+    if ($('singlesBoxesBtn')) { $('singlesBoxesBtn').setAttribute('aria-pressed', String(boxesMode)); $('singlesBoxesBtn').classList.toggle('is-on', boxesMode); }
+    if ($('singlesBoxBy')) { $('singlesBoxBy').hidden = !boxesMode; $('singlesBoxBy').value = singlesBoxBy; }
+    if ($('singlesViewModeBtn') && boxesMode) $('singlesViewModeBtn').textContent = 'Liste';
+    let openBoxHeader = null;
+    if (boxesMode && filtered.length) {
+      const boxes = window.PanelDomains.collectionBoxes.buildBoxes(filtered.filter(x => !x.isWishlist), singlesBoxBy);
+      const open = singlesOpenBox && boxes.find(b => b.key === singlesOpenBox);
+      if (!open) {
+        singlesOpenBox = null;
+        renderCollectionBoxes(grid, boxes);
+        if ($('boxCountSummary')) { const v = sumKnown(filtered, valueOf); $('boxCountSummary').textContent = boxes.length + ' boîte(s) · ' + filtered.filter(x => !x.isWishlist).length + ' exemplaire(s) · ' + (v.n ? money(v.total) : 'valeur inconnue'); }
+        return;
+      }
+      filtered = open.items;
+      openBoxHeader = open;
+    }
+    const sig = [activeSingleFilter, singlesReadFilter, $('boxFilterSelect') ? $('boxFilterSelect').value : '', singlesSearchQuery, singlesSortOrder, singlesViewMode, singlesBoxBy, singlesOpenBox || ''].join('|');
     if (sig !== singlesRenderSig) { singlesRenderSig = sig; singlesRenderLimit = SINGLES_PAGE; }
     const visible = filtered.slice(0, singlesRenderLimit);
 
@@ -9928,6 +10359,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
 
     const frag = document.createDocumentFragment();
+
+    if (openBoxHeader) {
+      const head = document.createElement('div');
+      head.className = 'cbox-open-head';
+      head.innerHTML = '<button class="btn secondary" data-box-back>‹ Toutes les boîtes</button><div><small>' + escapeHtml(window.PanelDomains.collectionBoxes.MODES[openBoxHeader.mode]) + '</small><h3>' + escapeHtml(openBoxHeader.label) + '</h3></div><span class="cbox-open-meta">' + openBoxHeader.count + ' numéro(s)' + (openBoxHeader.runs > 1 ? ' · ' + openBoxHeader.runs + ' runs' : '') + '</span>';
+      head.querySelector('[data-box-back]').onclick = () => { singlesOpenBox = null; renderSinglesCollection(); };
+      frag.appendChild(head);
+    }
 
     if (singlesViewMode === 'list') {
       const head = document.createElement('div');
@@ -11759,7 +12198,20 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const range = relRange();
     const relViews = window.PanelDomains.releaseViews; // Nouveaux #1, FOC, variantes : domains/releases/release-views.js
     const queried = relQuery({ range: relView.mode === 'month' && range ? [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))] : range });
-    const items = relView.mode === 'firsts' ? relViews.upcomingFirsts(queried, [...relPubs.values()], relToday()) : queried;
+    const itemsAll = relView.mode === 'firsts' ? relViews.upcomingFirsts(queried, [...relPubs.values()], relToday()) : queried;
+    // Bande de la semaine (style calendrier Apple) : un jour choisi filtre les cartes ; mercredi = jour des comics (NCBD)
+    let weekStrip = '';
+    if (relView.period === 'week' && range && (relView.mode === 'grid' || relView.mode === 'firsts')) {
+      if (relView.day && (relView.day < range[0] || relView.day > range[1])) relView.day = '';
+      const days = [];
+      for (let i = 0; i < 7; i++) { const d = new Date(range[0] + 'T12:00:00'); d.setDate(d.getDate() + i); days.push(isoDate(d)); }
+      weekStrip = '<div class="rel-week" role="tablist" aria-label="Jours de la semaine">' + days.map(k => {
+        const n = itemsAll.filter(p => p.dates.current === k).length, d = new Date(k + 'T12:00:00');
+        return '<button role="tab" class="rel-day' + (relView.day === k ? ' is-sel' : '') + (k === relToday() ? ' is-today' : '') + (d.getDay() === 3 ? ' is-ncbd' : '') + (n ? '' : ' is-empty') + '" data-day="' + k + '" aria-selected="' + (relView.day === k) + '">' +
+          '<small>' + d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') + '</small><b>' + d.getDate() + '</b><span>' + (n ? n + ' sortie' + (n > 1 ? 's' : '') : '—') + '</span>' + (d.getDay() === 3 ? '<em>NCBD</em>' : '') + '</button>';
+      }).join('') + '</div>';
+    } else relView.day = '';
+    const items = relView.day ? itemsAll.filter(p => p.dates.current === relView.day) : itemsAll;
     const lens = relLensMap(items);
     relLastLens = lens;
     const stOf = p => lens ? lens.get(p.id) : null;
@@ -11795,7 +12247,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const variantsHtml = vs => !vs.length ? '' : '<details class="rel-variants"><summary>+' + vs.length + ' variante' + (vs.length > 1 ? 's' : '') + '</summary>' +
         vs.map(v => '<div data-id="' + escapeHtml(v.id) + '"><button class="rel-variant-item" data-open>' + escapeHtml(v.variant || 'Variante') + '</button></div>').join('') + '</details>';
       const focBadge = p => { const f = relViews.focOf(p); return f ? '<span class="rel-date is-foc" title="Date limite de commande chez le libraire (FOC)">FOC ' + relFmtDate(f) + '</span>' : ''; };
-      gridEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${relView.mode === 'firsts' ? 'Nouveaux #1 à venir : ' : ''}${items.length} publication(s)${groups.length < items.length ? ' · ' + groups.length + ' numéro(s), variantes regroupées' : ''}${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
+      gridEl.innerHTML = weekStrip + `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${relView.day ? new Date(relView.day + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' : ''}${relView.mode === 'firsts' ? 'Nouveaux #1 à venir : ' : ''}${items.length} publication(s)${groups.length < items.length ? ' · ' + groups.length + ' numéro(s), variantes regroupées' : ''}${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
         groups.map(({ main: p, variants }) => {
           const st = stOf(p), isP = relIsPulled(st);
           const s = { series: p.series, issue: relNumLabel(p), coverUrl: p.cover ? p.cover.url : '' };
@@ -11832,6 +12284,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       gridEl.innerHTML = keys.map(k => (k ? '<h3 class="rel-group">' + escapeHtml(k) + ' <small>' + groups.get(k).length + '</small></h3>' : '') + groups.get(k).map(p => relRowHtml(p, !!(stOf(p) && stOf(p).pullPending))).join('')).join('');
     }
     wire();
+    gridEl.querySelectorAll('.rel-day').forEach(b => { b.onclick = () => { relView.day = relView.day === b.dataset.day ? '' : b.dataset.day; renderReleasesGrid(); }; });
     relMaybeRemind();
   };
   const relSyncCurrent = async (quiet) => {
@@ -13692,7 +14145,60 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.querySelector('[data-consent]').onchange = show; show();
     box.querySelector('[data-close]').onclick = () => box.classList.remove('open');
   };
+  // Profil local et trophées (D-59) : domains/community/trophies-core.js. Le profil reste sur l'appareil ;
+  // le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec le service de synchronisation (phase 1).
+  const PROFILE_KEY = 'panel_profile';
+  const profileLoad = () => { try { const p = JSON.parse(localStorage.getItem(PROFILE_KEY) || 'null'); return p ? window.PanelDomains.trophiesCore.sanitizeProfile(p) : null; } catch (_) { return null; } };
+  const profileSave = p => { try { localStorage.setItem(PROFILE_KEY, JSON.stringify(window.PanelDomains.trophiesCore.sanitizeProfile(p))); return true; } catch (_) { return false; } };
+  const TROPHY_ICONS = { box: 'ic-box', stack: 'ic-layers', one: 'ic-star', key: 'ic-key', shield: 'ic-shield', orbit: 'ic-globe', book: 'ic-book', loop: 'ic-refresh', calendar: 'ic-calendar', archive: 'ic-folder', clock: 'ic-hourglass', hourglass: 'ic-hourglass', mask: 'ic-gem' };
+  let profileEditing = false;
+  const renderCommunityProfile = () => {
+    const host = $('communityProfile');
+    if (!host) return;
+    const TC = window.PanelDomains.trophiesCore;
+    const owned = physicalSingles.filter(isOwned);
+    const picked = (() => { try { return [...relPulls.values()].filter(x => x.status === 'picked').reduce((a, x) => a + (Number(x.quantity) || 1), 0); } catch (_) { return 0; } })();
+    const r = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked, characterOf: window.PanelDomains.collectionBoxes.characterOf });
+    const p = profileLoad();
+    const initials = p ? (p.displayName || p.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
+    const form = (pp) => '<form class="pf-form" id="profileForm">' +
+      '<label>Pseudo<input class="field-input" name="handle" required minlength="3" maxlength="24" value="' + escapeHtml(pp ? pp.handle : '') + '" placeholder="ex. wakanda_reader"></label>' +
+      '<label>Nom affiché<input class="field-input" name="displayName" maxlength="40" value="' + escapeHtml(pp ? pp.displayName : '') + '"></label>' +
+      '<label>Personnage favori<input class="field-input" name="favorite" maxlength="60" value="' + escapeHtml(pp ? pp.favorite : '') + '" placeholder="ex. Black Panther"></label>' +
+      '<label>Couleur<input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#7C5CFF') + '"></label>' +
+      '<label class="pf-wide">Bio<textarea class="field-input" name="bio" maxlength="160" rows="2">' + escapeHtml(pp ? pp.bio : '') + '</textarea></label>' +
+      '<div class="pf-wide pf-actions"><button class="btn" type="submit">' + (pp ? 'Enregistrer' : 'Créer mon profil') + '</button>' + (pp ? '<button class="btn secondary" type="button" data-pf-cancel>Annuler</button>' : '') +
+      '<span class="stat-sub">Profil enregistré sur cet appareil uniquement. Le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec la synchronisation.</span></div></form>';
+    const tierCls = t => t.tier ? 'is-' + t.tier : 'is-locked';
+    const trophyHtml = t => '<div class="tr-card ' + tierCls(t) + '" title="' + escapeHtml(t.desc + ' : ' + t.value + (t.next !== null ? ' / ' + t.next + ' pour le palier suivant' : ' (palier maximal)')) + '">' +
+      '<span class="tr-medal"><svg class=ic aria-hidden=true><use href=#' + (TROPHY_ICONS[t.icon] || 'ic-star') + ' /></svg></span>' +
+      '<span class="tr-info"><b>' + escapeHtml(t.name) + '</b><small>' + (t.tierLabel ? escapeHtml(t.tierLabel) : 'À débloquer') + ' · ' + t.value + ' ' + escapeHtml(t.unit) + (t.value > 1 ? 's' : '') + '</small>' +
+      '<span class="tr-bar"><i style="width:' + Math.round(t.progress * 100) + '%"></i></span></span></div>';
+    const families = [...new Set(r.trophies.map(t => t.family))];
+    host.innerHTML =
+      '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
+        (p && !profileEditing
+          ? '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
+          : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
+        '<div class="pf-level"><div class="pf-level-num"><small>Niveau</small><b>' + r.level + '</b></div><div class="pf-level-main"><b>' + escapeHtml(TC.titleFor(r.level)) + '</b><span class="tr-bar pf-xp"><i style="width:' + Math.round(r.levelProgress * 100) + '%"></i></span><small>' + r.xp + ' XP · niveau ' + (r.level + 1) + ' à ' + r.nextLevelXp + ' XP · ' + r.unlocked + ' / ' + r.total + ' trophées</small></div>' +
+          '<div class="pf-tiers">' + TC.TIERS.map(t => '<span class="pf-tier is-' + t.id + '"><i></i>' + r.byTier[t.id] + ' ' + escapeHtml(t.label) + '</span>').join('') + '</div></div>' +
+      '</section>' +
+      '<h3 class="pf-section">Vitrine des trophées</h3>' +
+      families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
+      '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
+    const f = host.querySelector('#profileForm');
+    if (f) f.onsubmit = ev => {
+      ev.preventDefault();
+      const fd = Object.fromEntries(new FormData(f).entries());
+      if (!TC.validHandle(String(fd.handle || '').trim().replace(/\s+/g, '_'))) { showToast('Pseudo : 3 à 24 lettres, chiffres, point, tiret ou souligné.'); return; }
+      profileSave(Object.assign({}, fd, { createdAt: (p && p.createdAt) || new Date().toISOString() }));
+      profileEditing = false; renderCommunityProfile(); showToast(p ? 'Profil mis à jour.' : 'Profil créé sur cet appareil.');
+    };
+    const ed = host.querySelector('[data-pf-edit]'); if (ed) ed.onclick = () => { profileEditing = true; renderCommunityProfile(); };
+    const ca = host.querySelector('[data-pf-cancel]'); if (ca) ca.onclick = () => { profileEditing = false; renderCommunityProfile(); };
+  };
   const renderCommunityView = () => {
+    try { renderCommunityProfile(); } catch (_) {}
     const host = $('communityDashboard');
     if (!host) return;
     const d = commLoad();
@@ -15915,7 +16421,19 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
 
     $('singlesViewModeBtn').onclick = () => {
       singlesViewMode = singlesViewMode === 'list' ? 'grid' : 'list';
+      singlesOpenBox = null;
       try { localStorage.setItem('panel_singles_view_mode', singlesViewMode); } catch (_) {}
+      renderSinglesCollection();
+    };
+    if ($('singlesBoxesBtn')) $('singlesBoxesBtn').onclick = () => {
+      singlesViewMode = singlesViewMode === 'boxes' ? 'grid' : 'boxes';
+      singlesOpenBox = null;
+      try { localStorage.setItem('panel_singles_view_mode', singlesViewMode); } catch (_) {}
+      renderSinglesCollection();
+    };
+    if ($('singlesBoxBy')) $('singlesBoxBy').onchange = e => {
+      singlesBoxBy = e.target.value; singlesOpenBox = null;
+      try { localStorage.setItem('panel_singles_box_by', singlesBoxBy); } catch (_) {}
       renderSinglesCollection();
     };
     $('singlesReadFilter').onchange = e => { singlesReadFilter = e.target.value; renderSinglesCollection(); };

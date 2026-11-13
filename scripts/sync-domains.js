@@ -18,7 +18,9 @@ const MODULES = [
   ['releasesScope', 'domains/releases/scope-core.js'],
   ['collectionStats', 'domains/collection/stats-core.js'],
   ['readingStats', 'domains/reading/reading-stats.js'],
-  ['releaseViews', 'domains/releases/release-views.js']
+  ['releaseViews', 'domains/releases/release-views.js'],
+  ['collectionBoxes', 'domains/collection/boxes-core.js'],
+  ['trophiesCore', 'domains/community/trophies-core.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';
