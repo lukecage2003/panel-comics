@@ -14,7 +14,11 @@ const MODULES = [
   ['eventSeeds', 'domains/explorer/events-seed.js'],
   ['eventCrossref', 'domains/explorer/events-crossref.js'],
   ['publicationCore', 'domains/catalog/publication-core.js'],
-  ['eventLevels', 'domains/explorer/event-levels.js']
+  ['eventLevels', 'domains/explorer/event-levels.js'],
+  ['releasesScope', 'domains/releases/scope-core.js'],
+  ['collectionStats', 'domains/collection/stats-core.js'],
+  ['readingStats', 'domains/reading/reading-stats.js'],
+  ['releaseViews', 'domains/releases/release-views.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

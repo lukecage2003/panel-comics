@@ -1290,6 +1290,10 @@
     .rel-note { font-size: 12px; color: var(--muted); }
     .rel-date { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 6px; border-radius: 4px; white-space: nowrap; font-variant-numeric: tabular-nums; }
     .rel-date.is-announced { border: 1px dashed var(--muted); color: var(--ink-dim); }
+    .rel-date.is-foc { border: 1px solid var(--orange, #f59e0b); color: var(--ink-dim); margin-left: 4px; }
+    .rel-variants { font-size: 11px; color: var(--ink-dim); margin: 2px 0; }
+    .rel-variants summary { cursor: pointer; }
+    .rel-variant-item { background: none; border: 0; padding: 2px 0; color: inherit; font: inherit; text-align: left; cursor: pointer; text-decoration: underline; }
     .rel-date.is-confirmed { border: 1px solid var(--cyan); background: var(--tint-cyan); color: var(--ink); }
     .rel-date.is-unknown { border: 1px dotted var(--line); color: var(--muted); }
     .rel-market { display: inline-block; font-size: 10px; font-weight: 800; letter-spacing: .5px; padding: 1px 5px; border-radius: 3px; background: var(--ink); color: var(--bg, #fff); }
@@ -2135,7 +2139,7 @@
               <button class="btn ghost" id="releasesThisWeekBtn" style="font-size: 12px">Aujourd'hui</button>
             </div>
             <select class="field-input rel-sel" id="relPeriod" aria-label="Période"><option value="week">Semaine</option><option value="month">Mois</option><option value="quarter">3 mois</option><option value="all">Toutes les dates</option></select>
-            <select class="field-input rel-sel" id="relMode" aria-label="Affichage"><option value="grid">Cartes</option><option value="month">Calendrier mensuel</option><option value="list">Liste chronologique</option><option value="publisher">Par éditeur</option><option value="series">Par série</option><option value="market">Par marché</option></select>
+            <select class="field-input rel-sel" id="relMode" aria-label="Affichage"><option value="grid">Cartes</option><option value="firsts">Nouveaux #1</option><option value="month">Calendrier mensuel</option><option value="list">Liste chronologique</option><option value="publisher">Par éditeur</option><option value="series">Par série</option><option value="market">Par marché</option></select>
           </div>
         </div>
         <div class="rel-quick">
@@ -2151,6 +2155,7 @@
           <select class="field-input rel-sel" id="relStatus" aria-label="Statut"></select>
           <span class="rel-filters-actions">
             <button class="btn secondary rel-mini" id="relSyncBtn">Actualiser (Comic Vine)</button>
+            <button class="btn secondary rel-mini" id="relRemindBtn" title="Notification locale sur cet appareil quand un numéro de votre pull list sort dans les 7 jours ; aucun compte, aucun serveur">Rappels : désactivés</button>
             <button class="btn secondary rel-mini" id="relAddPubBtn">+ Publication</button>
             <button class="btn secondary rel-mini" id="relImportBtn">Importer un calendrier</button>
             <button class="btn ghost rel-mini" id="relExportBtn">Exporter (CSV)</button>
@@ -4965,6 +4970,207 @@ function auditSelection(guide, view) {
 }
 
 module.exports = { LEVELS, LEVEL_KEYS, LEVEL_DEF, ROLES, ROLE_OF, AUTHOR, SELECTIONS, linkKey, levelsFor, recommendedOrder, progressFor, auditSelection };
+  return Object.freeze(module.exports); })();
+  /* domains/releases/scope-core.js */
+  out.releasesScope = (() => { const module = { exports: {} };
+'use strict';
+// Périmètre « comics uniquement » des Sorties (D-37, D-41, D-54 ; éditeurs US et FR de comics, 13 novembre 2026).
+// Module pur : aucune dépendance, aucun accès au stockage ni au réseau. Extrait de index.html (Phase 0 du PRD V1, D-58).
+//  - SCOPE_RULES : listes d'exclusion (manga, manhwa/manhua/webtoon, BD franco-belge). Elles protègent le périmètre.
+//  - PUBLISHERS : éditeurs de comics proposés (nom canonique, marché US ou FR, alias normalisés).
+//  - scopeReason(p) : null si la publication est dans le périmètre, sinon l'identifiant de la règle.
+//  Éditeur mixte (Glénat, Delcourt, Humanoïdes…) : jamais exclu sur le seul nom ; seul le format décide (D-41).
+
+const norm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+const SCOPE_RULES = Object.freeze([
+  Object.freeze({ id: 'manga', label: 'Manga', publishers: Object.freeze(['kana', 'kurokawa', 'ki oon', 'pika', 'pika edition', 'kaze', 'kaze manga', 'tonkam', 'akata', 'doki doki', 'ototo', 'naban', 'meian', 'viz media', 'viz', 'kodansha', 'kodansha usa', 'yen press', 'seven seas', 'tokyopop', 'vertical']) }),
+  Object.freeze({ id: 'manhwa', label: 'Manhwa, manhua, webtoon (M2)', publishers: Object.freeze(['delitoon', 'webtoon', 'webtoon unscrolled', 'tapas', 'ize press', 'kbooks']) }),
+  Object.freeze({ id: 'bd', label: 'Bande dessinée franco-belge (M1)', publishers: Object.freeze(['dargaud', 'dupuis', 'casterman', 'le lombard', 'lombard', 'blake et mortimer']) })
+]);
+const SCOPE_INDEX = new Map(SCOPE_RULES.flatMap(rule => rule.publishers.map(n => [n, rule.id])));
+
+const PUBLISHERS = Object.freeze([
+  ['Marvel', 'US', ['marvel comics', 'marvel worldwide']], ['DC Comics', 'US', ['dc', 'dc entertainment']],
+  ['Image Comics', 'US', ['image']], ['Dark Horse', 'US', ['dark horse comics']], ['IDW Publishing', 'US', ['idw']],
+  ['BOOM! Studios', 'US', ['boom studios', 'boom']], ['Dynamite', 'US', ['dynamite entertainment']], ['Oni Press', 'US', ['oni']],
+  ['Titan Comics', 'US', ['titan']], ['Mad Cave Studios', 'US', ['mad cave']], ['Skybound', 'US', ['skybound entertainment']],
+  ['Valiant', 'US', ['valiant entertainment']], ['Archie Comics', 'US', ['archie']], ['AWA Studios', 'US', ['awa']],
+  ['Ahoy Comics', 'US', ['ahoy']], ['Vault Comics', 'US', ['vault']], ['Mad Cave', 'US', []],
+  ['Panini Comics', 'FR', ['panini', 'panini france', 'panini comics france']], ['Urban Comics', 'FR', ['urban']],
+  ['Delcourt', 'FR', ['delcourt comics', 'editions delcourt']], ['Glénat', 'FR', ['glenat comics', 'editions glenat']],
+  ['Bliss Comics', 'FR', ['bliss']], ['HiComics', 'FR', ['hi comics']], ['Komics Initiative', 'FR', []], ['Vestron', 'FR', []],
+  ['Les Humanoïdes Associés', 'FR', ['humanoides associes', 'les humanoides associes']]
+].map(x => Object.freeze([x[0], x[1], Object.freeze(x[2])])));
+
+const MARKETS = Object.freeze(['US', 'FR']);
+
+// Raison d'exclusion d'une publication ({ format, publisher, scope }) ; null = dans le périmètre
+const scopeReason = p => {
+  if (!p) return null;
+  if (p.scope === 'in') return null;
+  if (p.format === 'manga') return 'manga';
+  return SCOPE_INDEX.get(norm(p.publisher)) || null;
+};
+const isOutOfScope = p => !!scopeReason(p);
+// Éditeur exclu par son nom (pour ne jamais le proposer dans une liste)
+const isExcludedPublisher = name => SCOPE_INDEX.has(norm(name));
+
+// Nom canonique et marché d'un éditeur connu ; sinon le nom tel quel et un marché vide
+const resolvePublisher = (name, maxLen = 100) => {
+  const raw = String(name == null ? '' : name).trim().slice(0, maxLen);
+  const k = norm(raw);
+  if (!k) return { name: '', market: '' };
+  const hit = PUBLISHERS.find(([n, , al]) => norm(n) === k || al.includes(k));
+  return hit ? { name: hit[0], market: hit[1] } : { name: raw, market: '' };
+};
+
+module.exports = { norm, SCOPE_RULES, PUBLISHERS, MARKETS, scopeReason, isOutOfScope, isExcludedPublisher, resolvePublisher };
+  return Object.freeze(module.exports); })();
+  /* domains/collection/stats-core.js */
+  out.collectionStats = (() => { const module = { exports: {} };
+'use strict';
+// Statistiques de collection (PRD V1 : COL-09 répartition par période, COL-11 historique des acquisitions).
+// Module pur : reçoit des exemplaires déjà filtrés (possédés), ne lit ni n'écrit aucun stockage. Aucune valeur inventée :
+// une date inconnue est comptée à part, jamais rattachée à une période.
+
+const yearOf = v => {
+  if (v === null || v === undefined || v === '') return null;
+  const m = /^(\d{4})/.exec(String(v).trim());
+  if (!m) return null;
+  const y = Number(m[1]);
+  return y >= 1900 && y <= 2100 ? y : null;
+};
+
+// Année de publication d'un exemplaire : année de couverture, sinon date de couverture, sinon date de sortie
+const publicationYear = c => c ? (yearOf(c.coverYear) || yearOf(c.coverDate) || yearOf(c.releaseDate)) : null;
+// Année d'acquisition : date d'achat, sinon date d'ajout dans Panel (signalée par `approx`)
+const acquisitionDate = c => {
+  if (!c) return null;
+  if (yearOf(c.purchaseDate)) return { date: String(c.purchaseDate).slice(0, 10), approx: false };
+  if (yearOf(c.addedAt)) return { date: String(c.addedAt).slice(0, 10), approx: true };
+  return null;
+};
+
+// Répartition par décennie de publication (ordre chronologique) ; `unknown` = sans année
+const byDecade = copies => {
+  const m = new Map(); let unknown = 0;
+  (copies || []).forEach(c => { const y = publicationYear(c); if (!y) { unknown++; return; } const d = Math.floor(y / 10) * 10; m.set(d, (m.get(d) || 0) + 1); });
+  const rows = [...m.entries()].sort((a, b) => a[0] - b[0]).map(([decade, n]) => ({ decade, label: decade + 's', n }));
+  return { rows, unknown, total: (copies || []).length };
+};
+
+// Historique des acquisitions par année (ordre chronologique) ; `approx` = années déduites de la date d'ajout
+const acquisitionsByYear = copies => {
+  const m = new Map(); let unknown = 0;
+  (copies || []).forEach(c => {
+    const a = acquisitionDate(c);
+    if (!a) { unknown++; return; }
+    const y = Number(a.date.slice(0, 4));
+    const r = m.get(y) || { year: y, n: 0, approx: 0 };
+    r.n++; if (a.approx) r.approx++;
+    m.set(y, r);
+  });
+  return { rows: [...m.values()].sort((a, b) => a.year - b.year), unknown, total: (copies || []).length };
+};
+
+module.exports = { yearOf, publicationYear, acquisitionDate, byDecade, acquisitionsByYear };
+  return Object.freeze(module.exports); })();
+  /* domains/reading/reading-stats.js */
+  out.readingStats = (() => { const module = { exports: {} };
+'use strict';
+// Statistiques de lecture (PRD V1 : RDG-06, RDG-07). Module pur, calculé sur le journal de lecture (domaine Lecture, L1) :
+// événements `finished` (première lecture) et `reread` (relecture), datés. Rien n'est stocké ; aucune lecture n'est inventée.
+
+const READ_EVENTS = ['finished', 'reread'];
+
+// 12 mois glissants se terminant au mois de `now` (clé AAAA-MM)
+const lastMonths = (now, count = 12) => {
+  const d = new Date(now), out = [];
+  for (let i = count - 1; i >= 0; i--) { const x = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() - i, 1)); out.push(x.toISOString().slice(0, 7)); }
+  return out;
+};
+
+// Lectures par mois (12 derniers mois) et totaux de l'année civile de `now`
+const readingStats = (log, now = new Date().toISOString(), opts = {}) => {
+  const countRereads = opts.countRereads !== false;
+  const months = lastMonths(now);
+  const perMonth = Object.fromEntries(months.map(m => [m, 0]));
+  const year = String(now).slice(0, 4);
+  let yearFirst = 0, yearRereads = 0;
+  const works = new Set();
+  (log || []).forEach(l => {
+    if (!l || !READ_EVENTS.includes(l.event) || typeof l.at !== 'string') return;
+    const m = l.at.slice(0, 7);
+    const counts = l.event === 'finished' || countRereads;
+    if (counts && m in perMonth) perMonth[m]++;
+    if (l.at.slice(0, 4) === year) { if (l.event === 'finished') { yearFirst++; works.add(l.workKey); } else yearRereads++; }
+  });
+  return { months: months.map(m => ({ month: m, n: perMonth[m] })), year: Number(year), yearFirst, yearRereads, yearWorks: works.size };
+};
+
+// Avancement d'un objectif annuel (nombre de premières lectures) ; null si aucun objectif valide
+const goalProgress = (stats, goal) => {
+  const g = Math.floor(Number(goal));
+  if (!stats || !Number.isFinite(g) || g <= 0) return null;
+  return { goal: g, done: stats.yearFirst, pct: Math.min(100, Math.round(stats.yearFirst / g * 100)) };
+};
+
+module.exports = { READ_EVENTS, lastMonths, readingStats, goalProgress };
+  return Object.freeze(module.exports); })();
+  /* domains/releases/release-views.js */
+  out.releaseViews = (() => { const module = { exports: {} };
+'use strict';
+// Vues du calendrier des sorties (PRD V1 : REL-06 Upcoming #1 et FOC, REL-07 variantes regroupées).
+// Module pur : travaille sur des publications déjà chargées, n'écrit rien. La FOC n'est affichée que si une source la fournit.
+
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const issueNum = v => { const m = /-?\d+(?:\.\d+)?/.exec(String(v || '').replace(',', '.')); return m ? Number(m[0]) : null; };
+const seriesKey = p => [norm(p.series), norm(p.publisher), p.market || ''].join('|');
+const issueKey = p => [seriesKey(p), String(p.issue || '').trim().replace(/^#/, '').toLowerCase(), p.format || ''].join('|');
+
+// Date de bouclage des commandes (FOC) : uniquement si elle est connue
+const focOf = p => {
+  if (!p) return null;
+  const d = (p.dates && p.dates.foc) || p.focDate || null;
+  return typeof d === 'string' && /^\d{4}-\d{2}-\d{2}/.test(d) ? d.slice(0, 10) : null;
+};
+
+// Nouveau #1 à venir : numéro 1 (ou 0), date future ou du jour, sans numéro antérieur connu de la même série
+const isUpcomingFirst = (p, all, today) => {
+  if (!p || !p.dates || !p.dates.current || p.dates.current < today || p.cancelled) return false;
+  const n = issueNum(p.issue);
+  if (n !== 1 && n !== 0) return false;
+  const k = seriesKey(p);
+  return !(all || []).some(o => o !== p && seriesKey(o) === k && issueNum(o.issue) !== null && issueNum(o.issue) < n && o.dates && o.dates.current && o.dates.current < p.dates.current);
+};
+const upcomingFirsts = (items, all, today) => (items || []).filter(p => isUpcomingFirst(p, all || items, today));
+
+// Regroupe les variantes d'un même numéro : la couverture principale (sans variante ou « Cover A ») en tête
+const isMainCover = p => !p.variant || /^(cover\s*a|couverture\s*a|regular|standard)$/i.test(String(p.variant).trim());
+const groupVariants = items => {
+  const groups = new Map();
+  (items || []).forEach(p => { const k = issueKey(p); if (!groups.has(k)) groups.set(k, []); groups.get(k).push(p); });
+  return [...groups.values()].map(list => {
+    const main = list.find(isMainCover) || list[0];
+    return { main, variants: list.filter(x => x !== main) };
+  });
+};
+
+// Rappel local (NOT-04) : numéros suivis qui sortent dans les `days` prochains jours ; un seul rappel par jour (`lastDay`)
+const addDays = (iso, n) => { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+const reminderDigest = (pulled, today, lastDay, days = 7) => {
+  if (lastDay === today) return null;
+  const end = addDays(today, days);
+  const due = (pulled || []).filter(p => p && !p.cancelled && p.dates && p.dates.current && p.dates.current >= today && p.dates.current <= end)
+    .sort((a, b) => a.dates.current.localeCompare(b.dates.current));
+  if (!due.length) return null;
+  const label = p => [p.series, p.issue ? '#' + String(p.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ');
+  return { count: due.length, title: due.length === 1 ? 'Sortie à venir dans votre pull list' : due.length + ' sorties à venir dans votre pull list',
+    body: due.slice(0, 5).map(label).join(', ') + (due.length > 5 ? '…' : ''), ids: due.map(p => p.id) };
+};
+
+module.exports = { norm, issueNum, seriesKey, issueKey, focOf, isUpcomingFirst, upcomingFirsts, isMainCover, groupVariants, addDays, reminderDigest };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -10049,19 +10255,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const isoDate = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   const REL_SCHEMA = 1;
   const REL_MARKETS = { US: { label: 'États-Unis', lang: 'en' }, FR: { label: 'Francophone', lang: 'fr' } };
-  const REL_PUBLISHERS = [
-    ['Marvel', 'US', ['marvel comics', 'marvel worldwide']], ['DC Comics', 'US', ['dc', 'dc entertainment']],
-    ['Image Comics', 'US', ['image']], ['Dark Horse', 'US', ['dark horse comics']], ['IDW Publishing', 'US', ['idw']],
-    ['BOOM! Studios', 'US', ['boom studios', 'boom']], ['Dynamite', 'US', ['dynamite entertainment']], ['Oni Press', 'US', ['oni']],
-    ['Titan Comics', 'US', ['titan']], ['Mad Cave Studios', 'US', ['mad cave']], ['Skybound', 'US', ['skybound entertainment']],
-    ['Valiant', 'US', ['valiant entertainment']], ['Archie Comics', 'US', ['archie']], ['AWA Studios', 'US', ['awa']],
-    ['Ahoy Comics', 'US', ['ahoy']], ['Vault Comics', 'US', ['vault']], ['Mad Cave', 'US', []],
-    ['Panini Comics', 'FR', ['panini', 'panini france', 'panini comics france']], ['Urban Comics', 'FR', ['urban']],
-    ['Delcourt', 'FR', ['delcourt comics', 'editions delcourt']], ['Glénat', 'FR', ['glenat comics', 'editions glenat']],
-    ['Bliss Comics', 'FR', ['bliss']], ['HiComics', 'FR', ['hi comics']], ['Komics Initiative', 'FR', []], ['Vestron', 'FR', []],
-    ['Les Humanoïdes Associés', 'FR', ['humanoides associes', 'les humanoides associes']]
-    // Comics uniquement : éditeurs manga (Kana, Kurokawa, Ankama) et BD franco-belge (Dargaud, Dupuis, Casterman) retirés de la liste proposée
-  ];
+  // Éditeurs de comics US et FR proposés : module domains/releases/scope-core.js (Phase 0, D-58)
+  const REL_PUBLISHERS = window.PanelDomains.releasesScope.PUBLISHERS;
   const REL_FORMATS = { single: 'Single issue', album: 'Album', tpb: 'TPB / recueil', hc: 'Hardcover', integrale: 'Intégrale', omnibus: 'Omnibus', deluxe: 'Deluxe', kiosque: 'Kiosque / magazine', manga: 'Manga', other: 'Autre' };
   const REL_STATUS = { announced: 'Annoncé', upcoming: 'À venir', available: 'Disponible', delayed: 'Reporté', cancelled: 'Annulé', unknown: 'Date inconnue' };
   const REL_RELATIONS = { translated_from: 'Traduit depuis', adaptation_of: 'Adaptation de', reprint_of: 'Réédition de', collects: 'Compilation de', contains: 'Contient' };
@@ -10122,13 +10317,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (dt.getUTCFullYear() !== y || dt.getUTCMonth() !== mo - 1 || dt.getUTCDate() !== d || y < 1900 || y > 2200) return null;
     return `${y}-${String(mo).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
   };
-  const relPublisher = name => {
-    const raw = relStr(name, 100);
-    const k = catNorm(raw);
-    if (!k) return { name: '', market: '' };
-    const hit = REL_PUBLISHERS.find(([n, , al]) => catNorm(n) === k || al.includes(k));
-    return hit ? { name: hit[0], market: hit[1] } : { name: raw, market: '' };
-  };
+  const relPublisher = name => window.PanelDomains.releasesScope.resolvePublisher(relStr(name, 100));
   const relMarket = v => {
     const k = catNorm(v);
     if (!k) return '';
@@ -11447,13 +11636,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Cas limites tranchés sous délégation (D-41), selon les propositions de docs/phase4/04 : M1 BD franco-belge exclue (éditeurs d'albums), sauf éditions
   // françaises de comics ; M2 manhwa, manhua, webtoons exclus ; M3 manga non japonais exclu (format manga) ; M4 comic adapté d'un manga, publié par un
   // éditeur de comics : conservé. Éditeur mixte (Glénat, Delcourt, Humanoïdes, Ankama…) : jamais masqué sur le seul nom ; seul le format décide.
-  const REL_SCOPE_RULES = [
-    { id: 'manga', label: 'Manga', publishers: ['kana', 'kurokawa', 'ki oon', 'pika', 'pika edition', 'kaze', 'kaze manga', 'tonkam', 'akata', 'doki doki', 'ototo', 'naban', 'meian', 'viz media', 'viz', 'kodansha', 'kodansha usa', 'yen press', 'seven seas', 'tokyopop', 'vertical'] },
-    { id: 'manhwa', label: 'Manhwa, manhua, webtoon (M2)', publishers: ['delitoon', 'webtoon', 'webtoon unscrolled', 'tapas', 'ize press', 'kbooks'] },
-    { id: 'bd', label: 'Bande dessinée franco-belge (M1)', publishers: ['dargaud', 'dupuis', 'casterman', 'le lombard', 'lombard', 'blake et mortimer'] }
-  ];
+  const REL_SCOPE_RULES = window.PanelDomains.releasesScope.SCOPE_RULES; // listes d'exclusion : domains/releases/scope-core.js
   const REL_SCOPE_INDEX = new Map(REL_SCOPE_RULES.flatMap(rule => rule.publishers.map(n => [n, rule.id])));
-  const relOutOfScopeReason = p => { if (!p) return null; if (p.scope === 'in') return null; if (p.format === 'manga') return 'manga'; return REL_SCOPE_INDEX.get(catNorm(p.publisher)) || null; };
+  const relOutOfScopeReason = window.PanelDomains.releasesScope.scopeReason;
   const relOutOfScope = p => !!relOutOfScopeReason(p);
   const relQuery = (opts = {}) => {
     const range = opts.range === undefined ? relRange() : opts.range;
@@ -11541,6 +11726,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     '<button class="rel-row-title" data-open>' + escapeHtml(relLabel(p)) + '<small>' + escapeHtml([p.publisher, REL_FORMATS[p.format]].filter(Boolean).join(' · ')) + '</small></button>' +
     relStatusPill(p) +
     '<button class="btn secondary rel-mini" data-pulladd>' + (pulled ? '✓ Pull' : '+ Pull') + '</button></div>';
+  // Rappels locaux de sortie (NOT-04) : opt-in, Notification API de l'appareil, aucun compte ni serveur ; au plus un par jour
+  const relRemindOn = () => { try { return localStorage.getItem('panel_rel_reminders') === 'on' && 'Notification' in window && Notification.permission === 'granted'; } catch (_) { return false; } };
+  const relRemindLabel = () => { if ($('relRemindBtn')) $('relRemindBtn').textContent = relRemindOn() ? 'Rappels : activés' : 'Rappels : désactivés'; };
+  const relMaybeRemind = () => {
+    if (navigator.webdriver || !relRemindOn()) return;
+    const today = relToday();
+    let last = null; try { last = localStorage.getItem('panel_rel_reminders_last'); } catch (_) {}
+    const pulled = relQuery({ range: [today, window.PanelDomains.releaseViews.addDays(today, 7)], pullOnly: true, q: '', market: '', publisher: '', format: '', status: '', includeOutOfScope: false });
+    const dig = window.PanelDomains.releaseViews.reminderDigest(pulled, today, last);
+    if (!dig) return;
+    try { localStorage.setItem('panel_rel_reminders_last', today); } catch (_) {}
+    try { new Notification(dig.title, { body: dig.body, tag: 'panel-releases-' + today, icon: 'icons/icon-192.png' }); } catch (_) {}
+  };
   const renderReleasesGrid = () => {
     const gridEl = $('releasesGrid');
     if (!gridEl) return;
@@ -11559,15 +11757,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('relSyncBtn')) { $('relSyncBtn').disabled = !cvAvailable() || relView.syncing; $('relSyncBtn').title = cvAvailable() ? 'Récupérer les sorties américaines de la période (Comic Vine)' : 'Clé Comic Vine absente (Paramètres)'; }
     relHostedPanels.forEach(fn => { try { fn(); } catch (_) {} });
     const range = relRange();
-    const items = relQuery({ range: relView.mode === 'month' && range ? [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))] : range });
+    const relViews = window.PanelDomains.releaseViews; // Nouveaux #1, FOC, variantes : domains/releases/release-views.js
+    const queried = relQuery({ range: relView.mode === 'month' && range ? [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))] : range });
+    const items = relView.mode === 'firsts' ? relViews.upcomingFirsts(queried, [...relPubs.values()], relToday()) : queried;
     const lens = relLensMap(items);
     relLastLens = lens;
     const stOf = p => lens ? lens.get(p.id) : null;
     const undated = range ? relQuery({ range: null }).filter(p => !p.dates.current).length : 0;
-    gridEl.className = relView.mode === 'grid' ? 'comics-grid' : 'rel-alt rel-mode-' + relView.mode;
+    const cardsMode = relView.mode === 'grid' || relView.mode === 'firsts';
+    gridEl.className = cardsMode ? 'comics-grid' : 'rel-alt rel-mode-' + relView.mode;
     if (!items.length) {
       const pullOnly = $('releasesPullOnly') && $('releasesPullOnly').checked;
-      gridEl.innerHTML = '<div class="notice-box">' + (pullOnly ? 'Aucune sortie sur cette période pour votre pull list.' : 'Aucune publication sur cette période.') +
+      gridEl.innerHTML = '<div class="notice-box">' + (relView.mode === 'firsts' ? 'Aucun nouveau #1 à venir sur cette période (numéro 1 sans numéro antérieur connu de la série).' : pullOnly ? 'Aucune sortie sur cette période pour votre pull list.' : 'Aucune publication sur cette période.') +
         (cvAvailable() ? '' : ' Importez un calendrier (CSV ou JSON) ou ajoutez une publication.') + (undated ? '<br>' + undated + ' publication(s) sans date : période « Toutes les dates ».' : '') + '</div>';
       return;
     }
@@ -11587,10 +11788,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       });
       if (el.classList.contains('release-card')) el.onclick = ev => { if (!ev.target.closest('button')) openPubSheet(p.id); };
     });
-    if (relView.mode === 'grid') {
+    if (cardsMode) {
       const pulledCount = items.filter(p => relIsPulled(stOf(p))).length;
-      gridEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${items.length} publication(s)${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
-        items.map(p => {
+      // Variantes d'un même numéro regroupées sous la couverture principale (REL-07) ; chaque variante garde sa propre fiche
+      const groups = relViews.groupVariants(items);
+      const variantsHtml = vs => !vs.length ? '' : '<details class="rel-variants"><summary>+' + vs.length + ' variante' + (vs.length > 1 ? 's' : '') + '</summary>' +
+        vs.map(v => '<div data-id="' + escapeHtml(v.id) + '"><button class="rel-variant-item" data-open>' + escapeHtml(v.variant || 'Variante') + '</button></div>').join('') + '</details>';
+      const focBadge = p => { const f = relViews.focOf(p); return f ? '<span class="rel-date is-foc" title="Date limite de commande chez le libraire (FOC)">FOC ' + relFmtDate(f) + '</span>' : ''; };
+      gridEl.innerHTML = `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${relView.mode === 'firsts' ? 'Nouveaux #1 à venir : ' : ''}${items.length} publication(s)${groups.length < items.length ? ' · ' + groups.length + ' numéro(s), variantes regroupées' : ''}${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
+        groups.map(({ main: p, variants }) => {
           const st = stOf(p), isP = relIsPulled(st);
           const s = { series: p.series, issue: relNumLabel(p), coverUrl: p.cover ? p.cover.url : '' };
           return '<article class="comic-card release-card' + (isP ? ' pulled' : '') + '" data-id="' + escapeHtml(p.id) + '" tabindex="0">' +
@@ -11601,7 +11807,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
               '<div class="rel-card-meta">' + relMarketBadge(p) + relStatusPill(p) + '<span class="rel-src">' + escapeHtml(relSourceLabel(p.origin)) + '</span></div>' +
               '<b>' + escapeHtml(p.series) + ' ' + escapeHtml(relNumLabel(p)) + '</b>' +
               '<small class="rel-card-sub">' + escapeHtml([p.publisher, p.format !== 'single' ? REL_FORMATS[p.format] : '', p.title && p.title !== p.series ? p.title : ''].filter(Boolean).join(' · ')) + '</small>' +
-              relDateBadge(p) + relActions(p, st) +
+              relDateBadge(p) + focBadge(p) + variantsHtml(variants) + relActions(p, st) +
             '</div></article>';
         }).join('');
     } else if (relView.mode === 'month') {
@@ -11626,6 +11832,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       gridEl.innerHTML = keys.map(k => (k ? '<h3 class="rel-group">' + escapeHtml(k) + ' <small>' + groups.get(k).length + '</small></h3>' : '') + groups.get(k).map(p => relRowHtml(p, !!(stOf(p) && stOf(p).pullPending))).join('')).join('');
     }
     wire();
+    relMaybeRemind();
   };
   const relSyncCurrent = async (quiet) => {
     let range = relRange();
@@ -11830,6 +12037,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('relMode')) $('relMode').onchange = e => { relView.mode = e.target.value; if (relView.mode === 'month' && relView.period === 'week') relView.period = 'month'; rerender(); };
     if ($('relPeriod')) $('relPeriod').onchange = e => { relView.period = e.target.value; if (relView.period === 'week') relView.anchor = startOfWeek(relView.anchor); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
     if ($('relSyncBtn')) $('relSyncBtn').onclick = () => relSyncCurrent(false);
+    if ($('relRemindBtn')) {
+      relRemindLabel();
+      $('relRemindBtn').onclick = async () => {
+        if (relRemindOn()) { try { localStorage.setItem('panel_rel_reminders', 'off'); } catch (_) {} relRemindLabel(); showToast('Rappels de sortie désactivés.'); return; }
+        if (!('Notification' in window)) { showToast('Les notifications ne sont pas disponibles sur ce navigateur.'); return; }
+        let perm = Notification.permission;
+        if (perm === 'default') { try { perm = await Notification.requestPermission(); } catch (_) { perm = 'denied'; } }
+        if (perm !== 'granted') { showToast('Notifications refusées : autorisez-les dans les réglages du navigateur pour activer les rappels.'); return; }
+        try { localStorage.setItem('panel_rel_reminders', 'on'); localStorage.removeItem('panel_rel_reminders_last'); } catch (_) {}
+        relRemindLabel(); showToast('Rappels activés : une notification par jour au plus, sur cet appareil.');
+        renderReleasesGrid();
+      };
+    }
     if ($('relAddPubBtn')) $('relAddPubBtn').onclick = () => openPubSheet(null, true);
     if ($('relImportBtn')) $('relImportBtn').onclick = () => openDataAdmin('import', true);
     if ($('relImportFile')) $('relImportFile').onchange = async e => {
@@ -13325,9 +13545,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Pile à lire : exemplaires possédés sans état « lu » (calculée, jamais stockée)
     const pile = physicalSingles.filter(x => x && isOwned(x) && rdStatusOf(x) !== 'read');
     const nextBySeries = [...new Set(pile.map(x => x.series).filter(Boolean))].map(rdSeriesProgress).filter(p => p.next && p.read > 0).sort((a, b) => b.pct - a.pct).slice(0, 8);
+    // Lectures par mois et totaux de l'année (RDG-06) : domains/reading/reading-stats.js, calculé sur le journal
+    const rs = window.PanelDomains.readingStats.readingStats(d.log);
+    const rsMax = Math.max(...rs.months.map(m => m.n), 1);
+    const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
+    const readingStatsCard = `<div class="stats-card" id="readingStatsCard"><h3>Lectures sur 12 mois</h3><div class="month-chart">${rs.months.map(m => `<div class="month-col" title="${m.n} lecture(s)"><b style="font-size:12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / rsMax) * 85}%"></div><span>${rsMonth(m.month)}</span></div>`).join('')}</div><p class="stat-sub" style="margin-top:8px">En ${rs.year} : <b>${rs.yearFirst}</b> première(s) lecture(s) · <b>${rs.yearRereads}</b> relecture(s). Calculé sur le journal de lecture.</p></div>`;
     host.innerHTML = `<div class="stats-grid">
       <div class="stats-card"><h3>Vue d'ensemble</h3><p class="stat-sub" style="line-height:1.7">Œuvres suivies : <b>${s.works}</b><br>Lues : <b>${s.read}</b> · en cours : <b>${s.reading}</b> · à lire : <b>${s.toRead}</b> · abandonnées : <b>${s.abandoned}</b><br>Relectures : <b>${s.rereads}</b> · terminées sur 12 mois : <b>${s.finishedLastYear}</b><br>Pile à lire (possédés non lus) : <b>${s.pileToRead}</b> · lus sans possession : <b>${s.readNotOwned}</b>${s.openConflicts ? '<br><span style="color:var(--warn,#b45309)">Conflits de notes à résoudre : <b>' + s.openConflicts + '</b></span> <button class="btn secondary" style="font-size:12px;padding:3px 8px" id="readingOpenMigration">Voir</button>' : ''}</p></div>
       <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>'}</div>
+      ${readingStatsCard}
     </div>
     <nav class="filter-tabs-bar" id="readingFilterTabs" style="margin:6px 0 10px">${pill('reading', 'En cours', s.reading)}${pill('to_read', 'À lire', s.toRead)}${pill('read', 'Lus', s.read)}${pill('abandoned', 'Abandonnés', s.abandoned)}${pill('all', 'Tout', s.works)}${pill('journal', 'Journal', d.log.length)}</nav>
     <div id="readingList">${list === null
@@ -13550,6 +13776,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const protectedN = owned.filter(s => s.isProtected).length;
     const fin = financeSummary(physicalSingles);
 
+    // Répartition par décennie de publication et historique des acquisitions (COL-09, COL-11) : domains/collection/stats-core.js
+    const colStats = window.PanelDomains.collectionStats;
+    const decades = colStats.byDecade(owned), acq = colStats.acquisitionsByYear(owned);
+    const periodCard = '<div class="stats-card" id="statsByDecade"><h3>Par période de publication</h3>' +
+      (decades.rows.length ? hbars(decades.rows.map(r => ({ label: r.label, v: r.n })), r => r.v + ' ex.') : '<p class="stat-sub">Aucune année de couverture renseignée.</p>') +
+      (decades.unknown ? '<p class="stat-sub" style="margin-top:8px">' + decades.unknown + ' ex. sans année de couverture (non classés).</p>' : '') + '</div>';
+    const approxN = acq.rows.reduce((a, r) => a + r.approx, 0);
+    const acqCard = '<div class="stats-card" id="statsAcquisitions"><h3>Acquisitions par année</h3>' +
+      (acq.rows.length ? hbars(acq.rows.slice(-10).reverse().map(r => ({ label: String(r.year), v: r.n })), r => r.v + ' ex.') : '<p class="stat-sub">Aucune date d\'achat ni d\'ajout.</p>') +
+      '<p class="stat-sub" style="margin-top:8px">Date d\'achat, sinon date d\'ajout dans Panel' + (approxN ? ' (' + approxN + ' ex. datés par leur ajout)' : '') + (acq.unknown ? ' · ' + acq.unknown + ' ex. sans date' : '') + '.</p></div>';
+
     const topItem = (s, i, right) => `<div class="top-item" data-id="${escapeHtml(s.id)}"><span class="rank">${i + 1}</span>${coverImgTag(s)}<span style="min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(s.series)} ${escapeHtml(s.issue)}</b><small style="color:var(--muted)">${escapeHtml(s.condition || '')}</small></span>${right}</div>`;
 
     const snaps = getValueSnapshots().slice(-120);
@@ -13607,6 +13844,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="stats-card"><h3>Achats sur 12 mois</h3><div class="month-chart">' +
         months.map(m => `<div class="month-col" title="${m.n} exemplaire(s) · ${money(m.spent)}${m.unknown ? ' · ' + m.unknown + ' au prix inconnu' : ''}"><b style="font-size: 12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / maxN) * 85}%"></div><span>${m.label}</span></div>`).join('') +
         '</div><p class="stat-sub" style="margin-top:8px">Dépensé sur 12 mois (prix payés connus) : ' + money(months.reduce((a, m) => (toCents(a) + toCents(m.spent)) / 100, 0)) + ((u => u ? ' · ' + u + ' achat(s) au prix inconnu' : '')(months.reduce((a, m) => a + m.unknown, 0))) + ' (date d\'achat, sinon date d\'ajout)</p></div>' +
+      acqCard + periodCard +
       '<div class="stats-card"><h3>Meilleures plus-values</h3><div class="top-list">' + (gains.length ? gains.map((x, i) => topItem(x.s, i, `<b class="gain-pos">+${money(x.g)}</b>`)).join('') : '<p class="stat-sub">Renseignez prix payé et valeur estimée pour suivre vos plus-values.</p>') + '</div></div>' +
       '<div class="stats-card"><h3>État & grading</h3>' + hbars(gradeBuckets, r => r.v + ' ex.') + '</div>' +
       '<div class="stats-card"><h3>Rangement par boîte</h3>' + hbars(byBox, r => r.v + ' ex.') + '</div>' +

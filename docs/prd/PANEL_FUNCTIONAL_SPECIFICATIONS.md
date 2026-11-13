@@ -82,9 +82,9 @@ Date : 13 novembre 2026. Statut : proposé (D-58). Vision et légende des états
 | COL-06 | Déduplication à l'import par identifiants externes (UPC, ISBN, Comic Vine, Metron, LoCG) ; réimport sans doublon | M | MVP | [Partiel] |
 | COL-07 | Wishlist avec priorité, statut, prix maximal | M | MVP | [Existant] |
 | COL-08 | Séries et numéros manquants, complétion | M | MVP | [Existant] |
-| COL-09 | Statistiques : nombre, valeur, investi, plus-value, répartition éditeurs et périodes | M | MVP | [Existant] (répartition par période [Partiel]) |
+| COL-09 | Statistiques : nombre, valeur, investi, plus-value, répartition éditeurs et périodes | M | MVP | [Existant] (répartition par décennie de publication : [Impl. local], domains/collection/stats-core.js) |
 | COL-10 | Finances par devise, lots, frais, ventes, plus-values (F0, F1) | S | MVP | [Existant] |
-| COL-11 | Historique des acquisitions (chronologie, par mois) | S | V1 | [Partiel] |
+| COL-11 | Historique des acquisitions (chronologie, par mois) | S | V1 | [Impl. local] (12 mois et par année ; date d'ajout signalée quand la date d'achat manque) |
 | COL-12 | Corbeille annulable, aucune suppression définitive implicite | M | MVP | [Existant] (D-36) |
 | COL-13 | Export complet (JSON, CSV) et sauvegardes par domaine, restauration | M | MVP | [Existant] (D-39) |
 | COL-14 | Synchronisation multi-appareils via le compte | M | MVP | [Impl. local] ; [Bloqué] (projet cloud) |
@@ -112,8 +112,8 @@ Date : 13 novembre 2026. Statut : proposé (D-58). Vision et légende des états
 | RDG-03 | Prochain numéro à lire par série | M | MVP | [Existant] |
 | RDG-04 | Progression d'événement par niveau | M | MVP | [Existant] (D-57) |
 | RDG-05 | Note (demi-point) et critique liée à une lecture | S | MVP | [Proposé] (critique = PUB) |
-| RDG-06 | Statistiques de lecture (par mois, éditeur, créateur) | S | V1 | [Proposé] |
-| RDG-07 | Objectif annuel de lecture | C | V1 | [Proposé] |
+| RDG-06 | Statistiques de lecture (par mois, éditeur, créateur) | S | V1 | [Partiel] : par mois et par année [Impl. local] (domains/reading/reading-stats.js) ; par éditeur et créateur [Proposé] |
+| RDG-07 | Objectif annuel de lecture | C | V1 | [Proposé] (calcul prêt dans domains/reading/reading-stats.js, sans interface) |
 | RDG-08 | Lecture d'un numéro non possédé conservée | M | MVP | [Existant] |
 
 **Règles.** La lecture appartient à l'œuvre (clé d'œuvre), pas à l'exemplaire. Aucune lecture de pages numériques (hors périmètre).
@@ -134,8 +134,8 @@ Date : 13 novembre 2026. Statut : proposé (D-58). Vision et légende des états
 | REL-03 | Reports et annulations avec historique | M | MVP | [Partiel] |
 | REL-04 | Conflits de sources visibles et tranchables | S | MVP | [Existant] (D-43) |
 | REL-05 | Filtre « Ma pull list seulement » | M | MVP | [Existant] |
-| REL-06 | Vue FOC et vue « Upcoming #1 » | S | V1 | [Proposé] |
-| REL-07 | Variantes repliées sous le numéro | S | V1 | [Proposé] |
+| REL-06 | Vue FOC et vue « Upcoming #1 » | S | V1 | [Partiel] : vue « Nouveaux #1 » [Impl. local] ; FOC affichée seulement si une source la fournit (aucune source actuelle) |
+| REL-07 | Variantes repliées sous le numéro | S | V1 | [Impl. local] (domains/releases/release-views.js) |
 | REL-08 | Source partagée sous licence, ingestion planifiée serveur | M | V1 | [Bloqué] |
 | REL-09 | Import et export CSV | S | MVP | [Existant] |
 | REL-10 | Export ICS (abonnement calendrier) | C | V1 | [Proposé] (Plus) |
@@ -152,7 +152,7 @@ Date : 13 novembre 2026. Statut : proposé (D-58). Vision et légende des états
 |---|---|---|---|---|
 | PUL-01 | Suivre une série ; prochaines sorties | M | MVP | [Existant] (D-42) |
 | PUL-02 | Statut par numéro : prévu, disponible, récupéré, annulé | M | MVP | [Existant] |
-| PUL-03 | « Récupéré » crée un exemplaire (prix, magasin, emplacement), annulable | S | V1 | [Proposé] |
+| PUL-03 | « Récupéré » crée un exemplaire (prix, magasin, emplacement), annulable | S | V1 | [Existant] (création de l'exemplaire au statut « récupéré » de la Pull List) |
 | PUL-04 | Suivre un créateur ou un événement | S | V1 | [Proposé] |
 | PUL-05 | Préférence de variante (principale seulement, toutes, ratio) | C | V1 | [Proposé] |
 | PUL-06 | Export de la pull list pour son libraire (PDF/CSV) | C | V1 | [Proposé] |
@@ -241,7 +241,7 @@ Date : 13 novembre 2026. Statut : proposé (D-58). Vision et légende des états
 | NOT-01 | Centre de notifications in-app (non lues, tout marquer lu) | M | MVP | [Proposé] |
 | NOT-02 | Types : nouvel abonné, réponse, mention, réaction (groupées), sortie d'un numéro suivi, FOC proche, changement de date, décision de modération | M | MVP | [Proposé] |
 | NOT-03 | Préférences par type et par canal (in-app, push, e-mail) | M | MVP | [Proposé] |
-| NOT-04 | Notifications locales (PWA, Android) pour les sorties, sans compte | S | MVP | [Proposé] |
+| NOT-04 | Notifications locales (PWA, Android) pour les sorties, sans compte | S | MVP | [Partiel] : rappel opt-in à l'ouverture de Panel, un par jour au plus [Impl. local] ; notification en arrière-plan [Proposé] |
 | NOT-05 | Push Web et Android (FCM) | S | V1 | [Proposé] |
 | NOT-06 | Résumé hebdomadaire par e-mail (opt-in) | C | V1 | [Proposé] |
 
