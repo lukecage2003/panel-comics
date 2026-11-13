@@ -35,7 +35,7 @@ Il n'existe **ni Next.js, ni React, ni TypeScript, ni Tailwind, ni Stripe, ni mo
 
 | Technologie proposée | Existant | Recommandation | Justification |
 |---|---|---|---|
-| Next.js + React | Non (vanilla JS) | **Ne pas migrer maintenant** ; possible plus tard pour un site public séparé (PRD-D3) | Réécrire 17 000 lignes testées n'apporte rien à l'utilisateur ; le local-first et l'APK fonctionnent sans rendu serveur. Seul argument fort : le SEO des pages publiques (profils, fiches) → petite application séparée lisant les mêmes API |
+| Next.js + React | Non (vanilla JS) | **Ne pas migrer** (confirmé par l'utilisateur le 13 novembre 2026) ; possible plus tard pour un site public séparé (PRD-D3) | Réécrire 17 000 lignes testées n'apporte rien à l'utilisateur ; le local-first et l'APK fonctionnent sans rendu serveur. Seul argument fort : le SEO des pages publiques (profils, fiches) → petite application séparée lisant les mêmes API |
 | TypeScript | Non | **Adoption progressive** : JSDoc typé + `// @ts-check` dans `domains/**`, puis `.ts` pour les Edge Functions | Bénéfice réel sans build pour le client ; les Edge Functions Supabase sont déjà en TypeScript (`delete-account/index.ts`) |
 | Tailwind CSS | Non (CSS à variables, mode sombre D-53) | **Ne pas adopter** dans le client actuel | Le design system existe en jetons CSS (`:root`, `data-mode`) ; Tailwind exigerait un build. À envisager seulement pour l'application publique Next.js |
 | PostgreSQL / Supabase | Oui (préparé) | **Garder** (D-03) | 12 migrations, RLS, 124 tests |

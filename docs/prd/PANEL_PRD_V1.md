@@ -196,7 +196,7 @@ Détail par exigence : [`PANEL_FUNCTIONAL_SPECIFICATIONS.md`](PANEL_FUNCTIONAL_S
 
 | ID | Décision proposée | Justification | Statut |
 |---|---|---|---|
-| PRD-D1 | **Garder le client actuel** (`index.html` + `domains/**`, PWA, Android) ; **ne pas migrer vers Next.js** à ce stade | Fonctionnel, testé (231 tests) ; une réécriture coûterait des mois sans valeur utilisateur et mettrait en risque les données locales | À confirmer |
+| PRD-D1 | **Garder le client actuel** (`index.html` + `domains/**`, PWA, Android) ; **ne pas migrer vers Next.js** à ce stade | Fonctionnel, testé (231 tests) ; une réécriture coûterait des mois sans valeur utilisateur et mettrait en risque les données locales | **Confirmé par l'utilisateur le 13 novembre 2026** |
 | PRD-D2 | **Supabase (Postgres, Auth, RLS, Edge Functions), région UE** comme backend unique | Déjà choisi (D-03) et préparé (12 migrations, 124 tests) | Confirmé (D-03) ; projet à créer |
 | PRD-D3 | Pages **publiques indexables** (profils publics, fiches catalogue) servies plus tard par une petite application Next.js séparée, **seulement si le référencement devient un objectif mesuré** | Évite une réécriture ; le SEO est le seul vrai argument pour du rendu serveur | À confirmer (Phase 5) |
 | PRD-D4 | Hébergement statique du client : **Cloudflare Pages ou Vercel** (statique), au choix | Les deux conviennent à un fichier statique ; Cloudflare simplifie R2 (D-04), Vercel simplifie un futur Next.js | Décision utilisateur |
@@ -247,7 +247,7 @@ Détail par exigence : [`PANEL_FUNCTIONAL_SPECIFICATIONS.md`](PANEL_FUNCTIONAL_S
 | ID | Question | Options | Recommandation |
 |---|---|---|---|
 | Q1 | Valider le PRD (D-58) comme référence | Oui / avec réserves | Oui, avec revue des priorités Must |
-| Q2 | Rester sur le client actuel (PRD-D1) | Garder / migrer vers Next.js | Garder |
+| Q2 | Rester sur le client actuel (PRD-D1) | Garder / migrer vers Next.js | **Tranché le 13 novembre 2026 : garder l'existant** |
 | Q3 | Hébergement du client (PRD-D4) | Cloudflare Pages / Vercel | Cloudflare Pages (cohérence avec R2) |
 | Q4 | Région Supabase | Paris `eu-west-3` / Francfort `eu-central-1` | Paris |
 | Q5 | Prix de PANEL Plus et période d'essai | 3,99 €/mois et 39,99 €/an, essai 14 jours / autre | Tester en bêta |
