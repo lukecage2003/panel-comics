@@ -12,6 +12,9 @@ test('échelle longue, croissante, du Civil à The One Above All', () => {
   assert.ok(R.RANKS[R.RANKS.length - 1].xp > 200000);
   const firstCosmic = R.RANKS.findIndex(r => r.cosmic);
   assert.ok(firstCosmic >= 15 && R.RANKS.slice(0, firstCosmic).every(r => r.tier === 'terre'));
+  assert.strictEqual(R.RANKS[firstCosmic].tier, 'multivers_dc');
+  assert.ok(R.RANKS.some(r => r.universe === 'dc' && !r.cosmic) && R.RANKS.some(r => r.universe === 'marvel' && !r.cosmic));
+  assert.ok(R.RANKS.length >= 90);
   assert.deepStrictEqual([...new Set(R.RANKS.map(r => r.tier))], R.TIER_IDS);
 });
 

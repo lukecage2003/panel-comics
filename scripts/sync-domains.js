@@ -21,7 +21,9 @@ const MODULES = [
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
   ['trophiesCore', 'domains/community/trophies-core.js'],
-  ['ranksCore', 'domains/community/ranks-core.js']
+  ['ranksCore', 'domains/community/ranks-core.js'],
+  ['artefactsCore', 'domains/community/artefacts-core.js'],
+  ['collectionInsights', 'domains/collection/insights-core.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

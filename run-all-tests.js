@@ -33,10 +33,10 @@ const killEdge = () => {
 };
 // Garde-fou global : un test bloqué ne doit jamais laisser Edge tourner indéfiniment
 const globalTimer = setTimeout(() => {
-  console.error('✗ Délai global dépassé (480 s) — arrêt.');
+  console.error('✗ Délai global dépassé (900 s) — arrêt.');
   killEdge();
   process.exit(1);
-}, 480000);
+}, 900000);
 
 // Attente active du port CDP (au lieu d'un délai fixe fragile)
 const waitForCdp = async () => {

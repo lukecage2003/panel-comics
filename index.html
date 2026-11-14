@@ -2185,6 +2185,178 @@
       input[type="checkbox"] { min-width: 20px; min-height: 20px; }
       .row-actions .read-dot { padding: 2px 9px; }
     }
+    /* ===== D-63 · Stories de lecture ===== */
+    .st-card { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 10px; width: 100%; aspect-ratio: 9 / 16; max-height: 78vh; padding: 16px 16px 14px; border-radius: 22px; color: var(--st-ink); background: linear-gradient(160deg, var(--st-bg2), var(--st-bg) 62%); box-shadow: 0 18px 50px rgba(0,0,0,.35); text-align: left; font-family: var(--font-display); }
+    .st-card:not(.is-big) { aspect-ratio: 3 / 4; padding: 10px; gap: 6px; border-radius: 16px; }
+    .st-bgimg { position: absolute; inset: -20px; z-index: -2; opacity: .45; filter: blur(22px) saturate(1.4); }
+    .st-bgimg img { width: 100%; height: 100%; object-fit: cover; }
+    .st-tone { position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(circle, rgba(0,0,0,.28) 1.1px, transparent 1.4px); background-size: 7px 7px; mix-blend-mode: multiply; -webkit-mask-image: linear-gradient(180deg, transparent 30%, #000 100%); mask-image: linear-gradient(180deg, transparent 30%, #000 100%); }
+    .st-dc .st-tone { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 2px, transparent 2px 9px); mix-blend-mode: normal; }
+    .st-image .st-tone { background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 18px 18px; mix-blend-mode: normal; }
+    .st-noir .st-bgimg { opacity: .18; filter: blur(18px) grayscale(1); }
+    .st-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; font-weight: 800; }
+    .st-brand i { color: var(--st-acc); font-style: normal; }
+    .st-date { opacity: .8; letter-spacing: .4px; }
+    .st-cover { position: relative; margin: 4px auto 0; width: 62%; flex: 0 0 auto; transform: rotate(-2.5deg); }
+    .st-card:not(.is-big) .st-cover { width: 54%; }
+    .st-cover img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; border: 3px solid var(--st-ink); box-shadow: 8px 8px 0 rgba(0,0,0,.45); background: rgba(255,255,255,.08); }
+    .st-burst { position: absolute; right: -18%; top: -6%; padding: 10px 12px; font: 900 clamp(13px, 2.6vw, 20px)/1 var(--font-display); letter-spacing: .5px; color: #111; background: var(--st-acc); clip-path: polygon(50% 0, 61% 18%, 82% 6%, 78% 30%, 100% 36%, 82% 52%, 98% 72%, 74% 70%, 70% 96%, 52% 78%, 30% 98%, 28% 72%, 2% 76%, 18% 54%, 0 34%, 24% 30%, 18% 6%, 40% 18%); transform: rotate(8deg); }
+    .st-card:not(.is-big) .st-burst { font-size: 10px; padding: 7px 8px; }
+    .st-body { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
+    .st-title { margin: 0; font-size: clamp(16px, 3.4vw, 24px); font-weight: 800; line-height: 1.05; text-transform: uppercase; }
+    .st-card:not(.is-big) .st-title { font-size: 12px; }
+    .st-title b { color: var(--st-acc); }
+    .st-variant { opacity: .75; font: 600 11px var(--font-body, inherit); }
+    .st-card .st-stars { display: inline-block; align-self: flex-start; -webkit-text-fill-color: transparent; font-size: clamp(20px, 4vw, 30px); letter-spacing: 3px; line-height: 1; background: linear-gradient(90deg, var(--st-acc) var(--r), rgba(255,255,255,.22) var(--r)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .st-noir .st-stars { background: linear-gradient(90deg, var(--st-acc) var(--r), rgba(0,0,0,.18) var(--r)); -webkit-background-clip: text; background-clip: text; }
+    .st-card:not(.is-big) .st-stars { font-size: 13px; letter-spacing: 1px; }
+    .st-card p.st-review { margin: 0; padding: 10px 12px; background: var(--st-ink); color: var(--st-bg); border-radius: 14px 14px 14px 3px; font: 600 14px/1.35 var(--font-body, inherit); position: relative; }
+    .st-card:not(.is-big) p.st-review { display: none; }
+    .st-foot { display: flex; align-items: center; gap: 8px; font: 700 12px var(--font-body, inherit); opacity: .92; }
+    .st-card:not(.is-big) .st-foot { display: none; }
+    .st-av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--pf); color: #fff; font-size: 11px; }
+    .st-pub { margin-left: auto; padding: 2px 8px; border: 1px solid currentColor; border-radius: 99px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+    .st-bar { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 6px; scrollbar-width: none; align-items: flex-start; }
+    .st-bar::-webkit-scrollbar { display: none; }
+    .st-ring { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; color: var(--ink, inherit); cursor: pointer; width: 72px; padding: 0; }
+    .st-ring-img { width: 66px; height: 66px; border-radius: 50%; padding: 3px; background: conic-gradient(from 210deg, var(--acc, #FFD400), var(--bg2, #e0201b), var(--acc, #FFD400)); display: grid; place-items: center; }
+    .st-ring-img img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; border: 3px solid var(--bg, #111); }
+    .st-ring small { font-size: 11px; font-weight: 700; max-width: 72px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-dim, inherit); }
+    .st-new .st-ring-img { background: var(--bg-card); border: 2px dashed var(--line, #444); padding: 0; }
+    .st-new .st-ring-img b { font-size: 28px; color: var(--accent, #FFD400); }
+    .st-bar-hint { margin: 0; align-self: center; font-size: 13px; color: var(--muted); max-width: 420px; }
+    .st-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .st-mini { background: none; border: 0; padding: 0; cursor: pointer; }
+    .modal-backdrop.st-viewer-wrap { background: rgba(5,5,8,.92); }
+    .st-viewer { position: relative; width: min(420px, 94vw); margin: 2vh auto; display: flex; flex-direction: column; gap: 10px; }
+    .st-viewer .st-card { max-height: 76vh; }
+    .st-prog { display: flex; gap: 4px; }
+    .st-prog i { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.25); overflow: hidden; position: relative; }
+    .st-prog i.is-done { background: #fff; }
+    .st-prog i.is-now::after { content: ''; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: stProg 7s linear forwards; }
+    @keyframes stProg { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @media (prefers-reduced-motion: reduce) { .st-prog i.is-now::after { animation: none; transform: scaleX(1); } }
+    .st-nav { position: absolute; top: 40px; bottom: 70px; width: 38%; background: none; border: 0; cursor: pointer; }
+    .st-prev { left: 0; } .st-next { right: 0; }
+    .st-vbar { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+    .modal-box.st-editor { display: grid; grid-template-columns: minmax(200px, 290px) minmax(0, 1fr); gap: 22px; width: min(760px, 96vw); max-width: 760px; max-height: 94vh; overflow: auto; align-items: start; box-sizing: border-box; }
+    .st-ed-preview .st-card { max-height: 70vh; }
+    .st-ed-form h2 { margin-top: 0; }
+    .st-lab { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; font-weight: 700; font-size: 13px; }
+    .st-lab output, .st-lab small { color: var(--muted); font-weight: 600; }
+    .st-lab input[type=range] { accent-color: var(--accent, #FFD400); width: 100%; min-height: 32px; }
+    .st-styles { display: flex; gap: 6px; flex-wrap: wrap; }
+    .st-sw { border: 2px solid transparent; border-radius: 99px; padding: 6px 12px; font-weight: 800; font-size: 12px; color: #fff; background: linear-gradient(135deg, var(--a), var(--a) 60%, var(--b)); cursor: pointer; }
+    .st-sw.is-on { border-color: var(--ink, #fff); box-shadow: 0 0 0 2px var(--accent, #FFD400); }
+    .st-picklist { display: grid; gap: 6px; max-height: 52vh; overflow: auto; }
+    .st-pick { display: flex; gap: 10px; align-items: center; text-align: left; background: var(--bg-card); border: 1px solid var(--line, #333); border-radius: 12px; padding: 6px; cursor: pointer; color: inherit; min-height: 44px; }
+    .st-pick small { display: block; color: var(--muted); }
+    .st-pick-c img { width: 34px; height: 51px; object-fit: cover; border-radius: 4px; }
+    @media (max-width: 640px) {
+      .modal-box.st-editor { grid-template-columns: 1fr; }
+      .st-ed-preview { max-width: 240px; margin: 0 auto; }
+    }
+
+    /* ===== D-63 · Communauté : en-tête commun ===== */
+    .cm-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .cm-me { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--line, #333); border-radius: 16px; padding: 8px 14px 8px 8px; cursor: pointer; color: inherit; text-align: left; min-width: 220px; }
+    .cm-me-av { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: var(--pf, #7C5CFF); color: #fff; font: 800 15px var(--font-display); flex: 0 0 auto; }
+    .cm-me-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+    .cm-me-txt small { color: var(--muted); font-size: 12px; }
+    .cm-me .tr-bar { width: 140px; }
+    .cm-tabs { display: flex; gap: 4px; background: var(--bg-card); border: 1px solid var(--line, #333); border-radius: 99px; padding: 4px; margin-left: auto; }
+    .cm-tabs button, .ci-seg button, .ex-scope button { border: 0; background: none; color: var(--ink-dim, inherit); font-weight: 700; font-size: 13px; padding: 8px 14px; border-radius: 99px; cursor: pointer; min-height: 36px; }
+    .cm-tabs button.is-on, .ci-seg button.is-on, .ex-scope button.is-on { background: var(--accent, #FFD400); color: #111; }
+    @media (max-width: 600px) { .cm-tabs { margin-left: 0; width: 100%; } .cm-tabs button { flex: 1; padding: 8px 6px; } .cm-me { width: 100%; } }
+
+    /* ===== D-63 · Artefacts ===== */
+    .af-next { margin: -4px 2px 10px; }
+    .af-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+    .af-card { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; padding: 14px 10px 10px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--line, #333); filter: grayscale(.9); opacity: .62; transition: var(--transition); }
+    .af-card.is-on { filter: none; opacity: 1; border-color: hsl(var(--h) 70% 50% / .6); box-shadow: 0 8px 24px hsl(var(--h) 70% 40% / .22); }
+    .af-medal { width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: radial-gradient(circle at 35% 30%, hsl(var(--h) 90% 75%), hsl(var(--h) 70% 38%) 60%, hsl(var(--h) 60% 18%)); box-shadow: inset 0 -4px 8px rgba(0,0,0,.35), 0 0 0 3px hsl(var(--h) 50% 25% / .6); }
+    .af-card.is-gem .af-medal { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; transform: rotate(45deg); width: 50px; height: 50px; }
+    .af-card.is-gem .af-medal i { transform: rotate(-45deg); }
+    .af-medal i { font-style: normal; font-size: 24px; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,.5); }
+    .af-card b { font-size: 13px; line-height: 1.15; }
+    .af-card small { font-size: 11px; color: var(--muted); }
+    .af-card em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--ink-dim); }
+    .af-card .tr-bar { width: 100%; }
+    .af-card.is-legendaire.is-on, .af-card.is-mythique.is-on { background: linear-gradient(160deg, hsl(var(--h) 60% 18% / .55), var(--bg-card) 60%); }
+    .af-card.is-mythique.is-on::after { content: ''; position: absolute; inset: -1px; border-radius: 16px; padding: 1px; background: conic-gradient(#ffd400, #ff52ae, #00a3da, #b9a3ff, #ffd400); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none; }
+    .pf-rank.is-dc, .pf-lad-tier.is-dc { --tier: #3b82f6; }
+    .pf-lad-tier.is-dc h5 { color: #60a5fa; }
+
+    /* ===== D-63 · Stats : créateurs, personnages, équipes ===== */
+    .ci-card { grid-column: 1 / -1; }
+    .ci-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; flex-wrap: wrap; }
+    .ci-seg { display: flex; gap: 4px; background: var(--bg, #111); border: 1px solid var(--line, #333); border-radius: 99px; padding: 3px; }
+    .ci-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; margin-top: 12px; }
+    .ci-col h4 { margin: 0 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .8px; color: var(--ink-dim); display: flex; align-items: center; gap: 6px; }
+    .ci-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+    .ci-list li { display: grid; grid-template-columns: 20px minmax(0, 1fr) 56px 26px; gap: 6px; align-items: center; font-size: 13px; }
+    .ci-list li.is-first .ci-name { font-weight: 800; }
+    .ci-rank { font: 800 12px var(--font-display); color: var(--muted); }
+    .ci-list li.is-first .ci-rank { color: var(--accent, #FFD400); }
+    .ci-name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .ci-bar { height: 6px; border-radius: 6px; background: var(--line, #333); overflow: hidden; }
+    .ci-bar i { display: block; height: 100%; background: var(--accent, #FFD400); border-radius: 6px; }
+    .ci-list b { text-align: right; font-variant-numeric: tabular-nums; }
+    .ci-foot { margin-top: 12px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    @media (max-width: 900px) { .ci-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .ci-grid { grid-template-columns: 1fr; } }
+
+    /* ===== D-63 · Finances détaillées ===== */
+    .fi-wrap { margin: 6px 0 18px; }
+    .fi-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; }
+    .fi-tile { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--line, #333); }
+    .fi-tile small { font-size: 12px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
+    .fi-tile b { font: 800 22px var(--font-display); font-variant-numeric: tabular-nums; }
+    .fi-tile span { font-size: 12px; color: var(--ink-dim); }
+    .fi-tile.is-pos b { color: var(--gain, #22c55e); }
+    .fi-tile.is-neg b { color: var(--loss, #ef4444); }
+    .fi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 12px; }
+    .fi-deal { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 10px; padding: 8px 0; border-bottom: 1px solid var(--line, #333); font-size: 13px; }
+    .fi-deal small { grid-column: 1; color: var(--muted); }
+    .fi-deal b { grid-column: 2; grid-row: 1 / span 2; align-self: center; font-variant-numeric: tabular-nums; }
+    .fi-deal.is-pos b { color: var(--gain, #22c55e); } .fi-deal.is-neg b { color: var(--loss, #ef4444); }
+    .fi-deal span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .second-hand-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; font-size: 12px; color: var(--ink-dim); }
+
+    /* ===== D-63 · Réglages ===== */
+    .modal-box.set-box { max-width: 880px; width: min(880px, 96vw); }
+    .set-shell { display: grid; grid-template-columns: 210px minmax(0, 1fr); gap: 18px; }
+    .set-nav { display: flex; flex-direction: column; gap: 4px; position: sticky; top: 0; align-self: start; }
+    .set-nav button { display: flex; align-items: center; gap: 10px; text-align: left; border: 0; background: none; color: var(--ink-dim, inherit); font-weight: 700; font-size: 13px; padding: 10px 12px; border-radius: 12px; cursor: pointer; min-height: 40px; }
+    .set-nav button.is-on { background: var(--accent, #FFD400); color: #111; }
+    .set-main h3 { margin: 0 0 10px; }
+    .set-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line, #333); }
+    .set-row b { display: block; font-size: 14px; }
+    .set-row small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+    .set-ctrl { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; flex: 0 0 auto; }
+    .set-pill { padding: 4px 10px; border-radius: 99px; font-size: 12px; font-weight: 800; background: var(--bg, #111); border: 1px solid var(--line, #333); color: var(--muted); }
+    .set-pill.is-ok { color: var(--gain, #22c55e); border-color: currentColor; }
+    .set-accent { width: 30px; height: 30px; border-radius: 50%; border: 3px solid var(--bg-card); box-shadow: 0 0 0 1px var(--line, #444); background: var(--c); cursor: pointer; }
+    @media (max-width: 700px) {
+      .set-shell { grid-template-columns: 1fr; }
+      .set-nav { flex-direction: row; overflow-x: auto; position: static; }
+      .set-nav button { flex: 0 0 auto; }
+      .set-nav button span { white-space: nowrap; }
+      .set-row { flex-direction: column; align-items: flex-start; }
+      .set-ctrl { justify-content: flex-start; }
+    }
+
+    /* ===== D-63 · Explorer : recherche élargie, en-tête compact, événements d'abord ===== */
+    .ex-hero.is-compact { padding: 18px 20px; }
+    .ex-hero.is-compact h2 { font-size: clamp(20px, 2.6vw, 28px); margin: 4px 0 10px; }
+    .ex-scope { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+    .ex-scope button { color: #ddd; background: rgba(255,255,255,.06); }
+    .ex-member { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--line, #333); border-radius: 14px; padding: 8px 14px 8px 8px; color: inherit; cursor: pointer; text-align: left; margin-bottom: 10px; }
+    .ex-member small { display: block; color: var(--muted); }
+    .ex-live-empty { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 16px; border: 1px dashed var(--line, #444); border-radius: 16px; }
+    .ex-live-empty p { margin: 0; flex: 1; min-width: 200px; color: var(--ink-dim); }
+    .rd-import { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 12px; border-radius: 16px; background: linear-gradient(120deg, rgba(255,212,0,.16), rgba(255,212,0,.04)); border: 1px solid rgba(255,212,0,.45); }
+    .rd-import p { margin: 0; flex: 1; min-width: 220px; }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -2583,6 +2755,7 @@
       <!-- ===== VUE : COMMUNAUTÉ (brouillons locaux, D-34) ===== -->
       <div id="singlesCommunityView" hidden>
         <div class="section-head"><div><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></div></div>
+        <div id="communityHead"></div>
         <div id="communityProfile"></div>
         <div id="communityDashboard"></div>
       </div>
@@ -3070,6 +3243,7 @@
           <small id="purchasePrefillHint" class="stat-sub" hidden>Prérempli avec le prix de couverture : remplacez-le par le montant réellement payé.</small>
           <button type="button" class="btn-link" id="purchaseFromCoverBtn" hidden title="Reprendre le prix de couverture comme prix payé (modifiable)">= prix de couverture</button>
         </div>
+        <label class="second-hand-row"><input type="checkbox" id="singleSecondHandInput"> Seconde main (prix libre, différent de la couverture)</label>
       </div>
       <div class="form-row">
         <label for="singlePurchaseDateInput">Date d'achat</label>
@@ -5825,6 +5999,8 @@ module.exports = { TIERS, ERAS, DEFS, eraOf, completeRuns, tierFor, computeTroph
 //    (abonnés, réactions, commentaires, planches publiées, débats) qui ne compte qu'une fois les comptes en ligne actifs.
 //  - Les rangs cosmiques suivent la hiérarchie présentée par House of Ideal (d'après les vidéos de Maki,
 //    classement de fans, non officiel) : l'abstrait, les forces, le terrain, l'équilibre, le sommet.
+//  - D-63 : l'échelle terrestre mêle Marvel et DC (méta-humains, Amazones, Kryptoniens, Lanterns, Nouveaux Dieux),
+//    puis un palier « multivers DC » précède la hiérarchie cosmique Marvel. Ordre propre à Panel, pour le jeu.
 //  - Module pur : aucune donnée stockée ni envoyée.
 
 // Barème des points. `social: true` : activité qui n'existe qu'avec un compte en ligne (0 tant qu'il n'y en a pas).
@@ -5838,6 +6014,8 @@ const XP_RULES = [
   { id: 'keys', label: 'Key issue possédé', xp: 20 },
   { id: 'trophyXp', label: 'Paliers de trophées', xp: 1 },
   { id: 'planches', label: 'Planche préparée', xp: 6 },
+  { id: 'stories', label: 'Story de lecture créée', xp: 10 },
+  { id: 'artefacts', label: 'Artefact débloqué', xp: 50 },
   { id: 'followers', label: 'Abonné gagné', xp: 10, social: true },
   { id: 'reactions', label: 'Réaction reçue (POW!, WOW!…)', xp: 2, social: true },
   { id: 'comments', label: 'Commentaire reçu', xp: 3, social: true },
@@ -5846,11 +6024,18 @@ const XP_RULES = [
 ];
 
 // Échelle terrestre (avant le cosmique), puis la hiérarchie cosmique de bas en haut.
-const EARTH = [
-  'Civil', 'Témoin d\'un combat', 'Justicier de quartier', 'Athlète de haut niveau', 'Humain entraîné', 'Maître des arts martiaux',
-  'Humain optimisé', 'Super-soldat', 'Agent augmenté', 'Mutant latent', 'Mutant de classe Bêta', 'Mutant de classe Alpha',
-  'Mutant de classe Oméga', 'Inhumain révélé', 'Sorcier initié', 'Sorcier suprême', 'Dieu d\'Asgard', 'Héraut cosmique'
+const EARTH_DEF = [
+  ['Civil', 'mixte'], ['Témoin d\'un combat', 'mixte'], ['Justicier de quartier', 'mixte'], ['Athlète de haut niveau', 'mixte'],
+  ['Humain entraîné', 'mixte'], ['Maître des arts martiaux', 'mixte'], ['Détective de Gotham', 'dc'], ['Humain optimisé', 'marvel'],
+  ['Super-soldat', 'marvel'], ['Agent augmenté', 'marvel'], ['Méta-humain', 'dc'], ['Mutant latent', 'marvel'],
+  ['Mutant de classe Bêta', 'marvel'], ['Atlante', 'mixte'], ['Mutant de classe Alpha', 'marvel'], ['Amazone de Themyscira', 'dc'],
+  ['Mutant de classe Oméga', 'marvel'], ['Inhumain révélé', 'marvel'], ['Martien vert', 'dc'], ['Green Lantern d\'Oa', 'dc'],
+  ['Kryptonien', 'dc'], ['Sorcier initié', 'mixte'], ['Sorcier suprême', 'marvel'], ['Dieu d\'Asgard', 'marvel'],
+  ['Nouveau Dieu', 'dc'], ['Héraut cosmique', 'marvel']
 ];
+const EARTH = EARTH_DEF.map(x => x[0]);
+// Palier DC entre la Terre et le cosmique Marvel (ordre Panel, non officiel)
+const DC_MULTIVERSE = { id: 'multivers_dc', label: 'Le multivers DC', names: ['Gardiens de l\'Univers', 'Darkseid', 'Le Spectre', 'Monitor', 'Anti-Monitor', 'Lucifer Morningstar', 'Le Monde-Forgeron', 'Perpetua'] };
 // Tiers cosmiques (chaque liste va du rang le plus bas au plus haut du tier)
 const COSMIC = [
   { id: 'abstrait', label: 'L\'abstrait', names: ['Destiny', 'Numinus', 'Unbeing', 'Origin', 'Anomaly', 'Mirage'] },
@@ -5866,11 +6051,12 @@ const xpForRank = n => n <= 1 ? 0 : Math.round(30 * Math.pow(n - 1, 2.25) / 10) 
 
 const RANKS = (() => {
   const out = [];
-  EARTH.forEach(name => out.push({ name, tier: ERA_TERRE.id, tierLabel: ERA_TERRE.label, cosmic: false }));
-  COSMIC.forEach(t => t.names.forEach(name => out.push({ name, tier: t.id, tierLabel: t.label, cosmic: true })));
+  EARTH_DEF.forEach(([name, universe]) => out.push({ name, tier: ERA_TERRE.id, tierLabel: ERA_TERRE.label, cosmic: false, universe }));
+  DC_MULTIVERSE.names.forEach(name => out.push({ name, tier: DC_MULTIVERSE.id, tierLabel: DC_MULTIVERSE.label, cosmic: true, universe: 'dc' }));
+  COSMIC.forEach(t => t.names.forEach(name => out.push({ name, tier: t.id, tierLabel: t.label, cosmic: true, universe: 'marvel' })));
   return out.map((r, i) => Object.freeze(Object.assign(r, { rank: i + 1, xp: xpForRank(i + 1) })));
 })();
-const TIER_IDS = [ERA_TERRE.id].concat(COSMIC.map(t => t.id));
+const TIER_IDS = [ERA_TERRE.id, DC_MULTIVERSE.id].concat(COSMIC.map(t => t.id));
 
 const nonNeg = v => Math.max(0, Math.floor(Number(v) || 0));
 
@@ -5894,7 +6080,220 @@ const computeRank = (activity = {}, options = {}) => {
   };
 };
 
-module.exports = { XP_RULES, EARTH, COSMIC, RANKS, TIER_IDS, xpForRank, computeRank };
+module.exports = { XP_RULES, EARTH, EARTH_DEF, DC_MULTIVERSE, COSMIC, RANKS, TIER_IDS, xpForRank, computeRank };
+  return Object.freeze(module.exports); })();
+  /* domains/community/artefacts-core.js */
+  out.artefactsCore = (() => { const module = { exports: {} };
+'use strict';
+// Artefacts Panel (D-63) : badges à débloquer, inspirés d'objets célèbres des univers Marvel et DC
+// (noms cités à titre de référence ; marques de leurs ayants droit ; aucun visuel officiel utilisé).
+//  - Chaque artefact se débloque sur une mesure réelle de l'activité locale (collection, lecture, avis, stories…).
+//  - Les six Gemmes de l'Infini se combinent : le Gant de l'Infini exige les six.
+//  - Module pur : rien n'est stocké ni envoyé ; aucun déblocage n'est inventé.
+
+const RARITIES = Object.freeze({
+  commun: { label: 'Commun', order: 1 },
+  rare: { label: 'Rare', order: 2 },
+  epique: { label: 'Épique', order: 3 },
+  legendaire: { label: 'Légendaire', order: 4 },
+  mythique: { label: 'Mythique', order: 5 }
+});
+
+// Mesures disponibles (toutes calculées sur l'appareil)
+const METRICS = Object.freeze({
+  owned: 'numéros possédés', read: 'numéros lus', reread: 'relectures', rated: 'notes données', reviewed: 'avis écrits',
+  runs: 'runs complets', keys: 'key issues possédés', planches: 'planches préparées', stories: 'stories de lecture',
+  publishers: 'éditeurs différents', characters: 'personnages différents', value: 'valeur estimée (unités monétaires)'
+});
+
+// glyph : symbole court dessiné par Panel (pas de logo) ; hue : teinte de la médaille
+const ARTEFACTS = Object.freeze([
+  { id: 'batarang', name: 'Batarang', universe: 'dc', rarity: 'commun', metric: 'owned', goal: 1, glyph: '◆', hue: 220, lore: 'Le premier outil d\'un justicier : votre premier comic.' },
+  { id: 'web_shooter', name: 'Lance-toile', universe: 'marvel', rarity: 'commun', metric: 'read', goal: 10, glyph: '✳', hue: 0, lore: 'Dix numéros lus : vous commencez à tisser votre toile.' },
+  { id: 'daily_planet', name: 'Une du Daily Planet', universe: 'dc', rarity: 'commun', metric: 'stories', goal: 1, glyph: '▤', hue: 200, lore: 'Votre première story de lecture.' },
+  { id: 'camera_parker', name: 'Appareil de Peter Parker', universe: 'marvel', rarity: 'rare', metric: 'planches', goal: 10, glyph: '◉', hue: 10, lore: 'Dix planches préparées, dignes de la une du Bugle.' },
+  { id: 'shield_cap', name: 'Bouclier de Captain America', universe: 'marvel', rarity: 'rare', metric: 'runs', goal: 1, glyph: '✪', hue: 215, lore: 'Un run complet : la constance d\'un super-soldat.' },
+  { id: 'lasso', name: 'Lasso de Vérité', universe: 'dc', rarity: 'rare', metric: 'reviewed', goal: 10, glyph: '➰', hue: 45, lore: 'Dix avis sincères.' },
+  { id: 'lantern_ring', name: 'Anneau de Green Lantern', universe: 'dc', rarity: 'rare', metric: 'read', goal: 100, glyph: '◎', hue: 130, lore: 'Cent numéros lus, avec la volonté d\'un Lantern.' },
+  { id: 'helmet_fate', name: 'Casque de Nabu', universe: 'dc', rarity: 'rare', metric: 'rated', goal: 50, glyph: '☥', hue: 50, lore: 'Cinquante notes : un jugement éclairé.' },
+  { id: 'kryptonite', name: 'Kryptonite', universe: 'dc', rarity: 'epique', metric: 'keys', goal: 10, glyph: '⬢', hue: 140, lore: 'Dix key issues : des pièces rares et redoutées.' },
+  { id: 'mother_box', name: 'Boîte-Mère', universe: 'dc', rarity: 'epique', metric: 'publishers', goal: 6, glyph: '▣', hue: 190, lore: 'Six éditeurs différents : vous voyagez entre les mondes.' },
+  { id: 'cerebro', name: 'Cerebro', universe: 'marvel', rarity: 'epique', metric: 'characters', goal: 15, glyph: '⌬', hue: 265, lore: 'Quinze personnages différents repérés dans votre collection.' },
+  { id: 'eye_agamotto', name: 'Œil d\'Agamotto', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 25, glyph: '◈', hue: 95, lore: 'Vingt-cinq relectures : maître du temps qui repasse.' },
+  { id: 'nth_metal', name: 'Métal Nth', universe: 'dc', rarity: 'epique', metric: 'runs', goal: 5, glyph: '⬡', hue: 30, lore: 'Cinq runs complets.' },
+  { id: 'mjolnir', name: 'Mjolnir', universe: 'marvel', rarity: 'legendaire', metric: 'read', goal: 500, glyph: 'ᛉ', hue: 205, lore: 'Cinq cents numéros lus : vous êtes digne.' },
+  { id: 'vibranium', name: 'Lingot de vibranium', universe: 'marvel', rarity: 'legendaire', metric: 'value', goal: 1000, glyph: '⟁', hue: 280, lore: 'Une collection estimée à mille unités ou plus.' },
+  { id: 'cosmic_cube', name: 'Cube cosmique', universe: 'marvel', rarity: 'legendaire', metric: 'owned', goal: 1000, glyph: '⬛', hue: 195, lore: 'Mille numéros possédés.' },
+  { id: 'nullifier', name: 'Ultimate Nullifier', universe: 'marvel', rarity: 'mythique', metric: 'reviewed', goal: 100, glyph: '⌖', hue: 340, lore: 'Cent avis écrits : une arme critique absolue.' },
+  // Gemmes de l'Infini
+  { id: 'gem_space', name: 'Gemme de l\'Espace', universe: 'marvel', rarity: 'epique', metric: 'publishers', goal: 4, glyph: '◆', hue: 215, gem: true, lore: 'Quatre éditeurs différents.' },
+  { id: 'gem_mind', name: 'Gemme de l\'Esprit', universe: 'marvel', rarity: 'epique', metric: 'reviewed', goal: 25, glyph: '◆', hue: 50, gem: true, lore: 'Vingt-cinq avis écrits.' },
+  { id: 'gem_reality', name: 'Gemme de la Réalité', universe: 'marvel', rarity: 'epique', metric: 'read', goal: 200, glyph: '◆', hue: 0, gem: true, lore: 'Deux cents numéros lus.' },
+  { id: 'gem_power', name: 'Gemme du Pouvoir', universe: 'marvel', rarity: 'epique', metric: 'owned', goal: 300, glyph: '◆', hue: 285, gem: true, lore: 'Trois cents numéros possédés.' },
+  { id: 'gem_time', name: 'Gemme du Temps', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 10, glyph: '◆', hue: 130, gem: true, lore: 'Dix relectures.' },
+  { id: 'gem_soul', name: 'Gemme de l\'Âme', universe: 'marvel', rarity: 'epique', metric: 'stories', goal: 20, glyph: '◆', hue: 30, gem: true, lore: 'Vingt stories de lecture.' },
+  { id: 'gauntlet', name: 'Gant de l\'Infini', universe: 'marvel', rarity: 'mythique', metric: 'gems', goal: 6, glyph: '✋', hue: 45, lore: 'Les six gemmes réunies.' }
+].map(a => Object.freeze(a)));
+
+const num = v => Math.max(0, Number(v) || 0);
+
+// activity : mesures de METRICS. Renvoie chaque artefact avec sa progression, puis le résumé.
+const computeArtefacts = (activity = {}) => {
+  const base = ARTEFACTS.filter(a => a.metric !== 'gems').map(a => {
+    const have = num(activity[a.metric]);
+    return { ...a, have, unlocked: have >= a.goal, progress: Math.min(1, have / a.goal), rarityLabel: RARITIES[a.rarity].label };
+  });
+  const gems = base.filter(a => a.gem && a.unlocked).length;
+  const out = ARTEFACTS.map(a => a.metric === 'gems'
+    ? { ...a, have: gems, unlocked: gems >= a.goal, progress: Math.min(1, gems / a.goal), rarityLabel: RARITIES[a.rarity].label }
+    : base.find(b => b.id === a.id));
+  const unlocked = out.filter(a => a.unlocked);
+  // Prochain artefact : le plus avancé parmi ceux qui restent
+  const next = out.filter(a => !a.unlocked).sort((x, y) => y.progress - x.progress || RARITIES[x.rarity].order - RARITIES[y.rarity].order)[0] || null;
+  return { list: out, unlocked: unlocked.length, total: out.length, gems, next };
+};
+
+module.exports = { RARITIES, METRICS, ARTEFACTS, computeArtefacts };
+  return Object.freeze(module.exports); })();
+  /* domains/collection/insights-core.js */
+  out.collectionInsights = (() => { const module = { exports: {} };
+'use strict';
+// Analyses de collection (D-63) : créateurs, personnages et équipes les plus présents ou les plus lus,
+// et indicateurs financiers (prix de couverture, prix payé, seconde main, plus-values, dépenses par mois).
+//  - Les crédits viennent de Comic Vine (fiche du numéro, mise en cache sur l'appareil) ; sans crédit connu,
+//    personnages et équipes sont déduits du titre de la série et marqués comme tels.
+//  - Module pur : rien n'est stocké ni envoyé ; aucune valeur n'est inventée.
+
+const norm = s => String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+
+// Équipes reconnues dans un titre de série (repli quand Comic Vine n'a pas fourni les crédits)
+const TEAMS = Object.freeze([
+  ['X-Men', /x men|x force|x factor|uncanny x|krakoa|new mutants/],
+  ['Avengers', /avengers/],
+  ['Justice League', /justice league|\bjla\b/],
+  ['Fantastic Four', /fantastic four/],
+  ['Guardians of the Galaxy', /guardians of the galaxy/],
+  ['Teen Titans', /teen titans|\btitans\b/],
+  ['Suicide Squad', /suicide squad/],
+  ['Justice Society', /justice society|\bjsa\b/],
+  ['Defenders', /defenders/],
+  ['Thunderbolts', /thunderbolts/],
+  ['Inhumans', /inhumans/],
+  ['Eternals', /eternals/],
+  ['Birds of Prey', /birds of prey/],
+  ['Doom Patrol', /doom patrol/],
+  ['Watchmen', /watchmen/],
+  ['Teenage Mutant Ninja Turtles', /ninja turtles|\btmnt\b/]
+].map(([n, re]) => Object.freeze([n, re])));
+const teamOfSeries = series => { const t = norm(series); const hit = TEAMS.find(([, re]) => re.test(t)); return hit ? hit[0] : null; };
+
+const ROLE = {
+  writer: /writer|plotter|script|story/,
+  artist: /pencil|artist|inker|\bink\b|layout|finish/,
+  cover: /cover/,
+  colorist: /colou?r/
+};
+
+const workKey = c => norm(c.series) + '#' + norm(String(c.issue || '').replace(/^#/, ''));
+
+const bump = (map, name, read) => {
+  const k = String(name || '').trim();
+  if (!k) return;
+  const r = map.get(k) || { name: k, n: 0, read: 0 };
+  r.n++; if (read) r.read++;
+  map.set(k, r);
+};
+const top = (map, by, limit) => [...map.values()].filter(r => r[by] > 0).sort((a, b) => b[by] - a[by] || b.n - a.n || a.name.localeCompare(b.name)).slice(0, limit);
+
+// copies : exemplaires possédés ; options.creditsOf(copy) -> { persons:[{name, role}], characters:[...], teams:[...] } | null
+// options.isRead(copy) -> booléen ; options.characterOf(copy) -> nom | null (repli par titre)
+// Une œuvre (série + numéro) compte une fois, même avec plusieurs exemplaires.
+const creatorInsights = (copies = [], options = {}) => {
+  const creditsOf = options.creditsOf || (() => null);
+  const isRead = options.isRead || (() => false);
+  const charOf = options.characterOf || (() => null);
+  const limit = options.limit || 8;
+  const works = new Map();
+  copies.forEach(c => { if (!c || !c.series) return; const k = workKey(c); const w = works.get(k); if (!w) works.set(k, { copy: c, read: !!isRead(c) }); else if (isRead(c)) w.read = true; });
+  const writers = new Map(), artists = new Map(), covers = new Map(), chars = new Map(), teams = new Map();
+  let withCredits = 0, inferredChars = 0, inferredTeams = 0;
+  works.forEach(({ copy, read }) => {
+    const cr = creditsOf(copy);
+    if (cr && (cr.persons || cr.characters || cr.teams)) {
+      withCredits++;
+      (cr.persons || []).forEach(p => {
+        const role = norm(p.role);
+        if (ROLE.writer.test(role)) bump(writers, p.name, read);
+        if (ROLE.artist.test(role)) bump(artists, p.name, read);
+        if (ROLE.cover.test(role)) bump(covers, p.name, read);
+      });
+      (cr.characters || []).forEach(n => bump(chars, n, read));
+      (cr.teams || []).forEach(n => bump(teams, n, read));
+    } else {
+      const ch = charOf(copy); if (ch) { bump(chars, ch, read); inferredChars++; }
+      const tm = teamOfSeries(copy.series); if (tm) { bump(teams, tm, read); inferredTeams++; }
+    }
+  });
+  const pack = m => ({ owned: top(m, 'n', limit), read: top(m, 'read', limit) });
+  return {
+    works: works.size, withCredits, inferredChars, inferredTeams,
+    writers: pack(writers), artists: pack(artists), covers: pack(covers), characters: pack(chars), teams: pack(teams)
+  };
+};
+
+// Réduit une réponse Comic Vine (fiche d'un numéro) à ce que Panel garde en cache
+const creditsFromComicVine = r => {
+  if (!r || typeof r !== 'object') return null;
+  const names = a => (Array.isArray(a) ? a : []).map(x => String((x && x.name) || '').trim().slice(0, 80)).filter(Boolean).slice(0, 40);
+  return {
+    persons: (Array.isArray(r.person_credits) ? r.person_credits : []).map(p => ({ name: String((p && p.name) || '').trim().slice(0, 80), role: String((p && p.role) || '').slice(0, 80) })).filter(p => p.name).slice(0, 40),
+    characters: names(r.character_credits), teams: names(r.team_credits)
+  };
+};
+
+const money = v => { if (v === null || v === undefined || v === '') return null; const n = Number(v); return Number.isFinite(n) && n >= 0 ? n : null; };
+const monthOf = d => { const m = String(d || '').match(/^(\d{4})-(\d{2})/); return m ? m[1] + '-' + m[2] : null; };
+
+// copies : { paid, cover, value, date (achat), publisher, series, issue, secondHand }
+// now : Date de référence (12 derniers mois)
+const financeInsights = (copies = [], now = new Date()) => {
+  const rows = copies.filter(Boolean).map(c => ({ ...c, paid: money(c.paid), cover: money(c.cover), value: money(c.value) }));
+  const sum = (a, f) => a.reduce((t, x) => t + (f(x) || 0), 0);
+  const withPaid = rows.filter(r => r.paid !== null);
+  const both = rows.filter(r => r.paid !== null && r.cover !== null && r.cover > 0);
+  const second = both.filter(r => r.secondHand);
+  const fresh = both.filter(r => !r.secondHand);
+  const withValue = rows.filter(r => r.value !== null && r.paid !== null);
+  const gain = r => r.value - r.paid;
+  // Dépenses des 12 derniers mois
+  const months = [];
+  for (let i = 11; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); months.push({ month: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), spent: 0, n: 0 }); }
+  withPaid.forEach(r => { const m = months.find(x => x.month === monthOf(r.date)); if (m) { m.spent += r.paid; m.n++; } });
+  // Par éditeur
+  const pubs = new Map();
+  rows.forEach(r => { const k = String(r.publisher || '').trim() || 'Éditeur inconnu'; const p = pubs.get(k) || { name: k, paid: 0, value: 0, n: 0 }; p.paid += r.paid || 0; p.value += r.value || 0; p.n++; pubs.set(k, p); });
+  // Tranches de prix payé
+  const bands = [[0, 5], [5, 10], [10, 25], [25, 100], [100, Infinity]].map(([lo, hi]) => ({ lo, hi, n: withPaid.filter(r => r.paid >= lo && r.paid < hi).length }));
+  const label = r => (String(r.series || '').trim() + ' ' + String(r.issue || '').trim()).trim();
+  return {
+    count: rows.length,
+    paid: sum(withPaid, r => r.paid), coverTotal: sum(rows, r => r.cover), value: sum(rows, r => r.value),
+    unknownPaid: rows.length - withPaid.length,
+    avgPaid: withPaid.length ? sum(withPaid, r => r.paid) / withPaid.length : null,
+    // Écart au prix de couverture (positif = économie)
+    vsCover: both.length ? { n: both.length, saved: sum(both, r => r.cover - r.paid), pct: sum(both, r => r.cover) ? (sum(both, r => r.cover - r.paid) / sum(both, r => r.cover)) * 100 : 0 } : null,
+    secondHand: { n: rows.filter(r => r.secondHand).length, saved: sum(second, r => r.cover - r.paid), compared: second.length },
+    newPrice: { n: fresh.length, saved: sum(fresh, r => r.cover - r.paid) },
+    unrealized: withValue.length ? { n: withValue.length, gain: sum(withValue, gain), roi: sum(withValue, r => r.paid) ? sum(withValue, gain) / sum(withValue, r => r.paid) * 100 : null } : null,
+    best: withValue.filter(r => gain(r) > 0).sort((a, b) => gain(b) - gain(a)).slice(0, 5).map(r => ({ label: label(r), paid: r.paid, value: r.value, gain: gain(r) })),
+    worst: withValue.filter(r => gain(r) < 0).sort((a, b) => gain(a) - gain(b)).slice(0, 5).map(r => ({ label: label(r), paid: r.paid, value: r.value, gain: gain(r) })),
+    priciest: withPaid.slice().sort((a, b) => b.paid - a.paid).slice(0, 3).map(r => ({ label: label(r), paid: r.paid })),
+    months, bands,
+    publishers: [...pubs.values()].sort((a, b) => b.paid - a.paid || b.n - a.n).slice(0, 6)
+  };
+};
+
+module.exports = { TEAMS, teamOfSeries, creatorInsights, creditsFromComicVine, financeInsights };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -10032,6 +10431,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     fillStructuredCopyFields(null);
     if ($('singleEstValueInput')) $('singleEstValueInput').value = '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = '';
+    if ($('singleSecondHandInput')) $('singleSecondHandInput').checked = false;
     fillFinanceFormFields(null);
     setPurchasePrefill(false);
     syncPurchasePrefill();
@@ -10176,6 +10576,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         });
         applyStructuredCopyFields(physicalSingles[idx]);
         applyFinanceFormFields(physicalSingles[idx], prevItem);
+        applySecondHand(physicalSingles[idx]);
         if (!!prevItem.isRead !== isRead || rdReadOfCopy(prevItem) !== isRead) rdFromCopyToggle(physicalSingles[idx]);
         applyCascadeLocation(physicalSingles[idx]);
         withCover(physicalSingles[idx], prevItem);
@@ -10194,6 +10595,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         addedAt: new Date().toISOString()
       };
       applyStructuredCopyFields(newSingle);
+      applySecondHand(newSingle);
       applyFinanceFormFields(newSingle, null);
       if (isRead) rdFromCopyToggle(newSingle);
       applyCascadeLocation(newSingle);
@@ -10435,6 +10837,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     $('singleCoverPriceInput').value = numOrNull(item.coverPrice) ?? '';
     $('singleEstValueInput').value = numOrNull(item.estValue) ?? '';
     if ($('singlePurchasePriceInput')) $('singlePurchasePriceInput').value = numOrNull(item.purchasePrice) ?? '';
+    if ($('singleSecondHandInput')) $('singleSecondHandInput').checked = !!item.secondHand;
     fillFinanceFormFields(item);
     setPurchasePrefill(false);
     if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = item.purchaseDate || '';
@@ -10637,7 +11040,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     on('[data-inspect]', () => openSingleInspector(item));
     on('[data-edit]', () => editSingleIssue(item));
     on('[data-del]', () => removeSingleWithUndo(item));
-    on('[data-toggle-read]', () => { item.isRead = !rdReadOfCopy(item); rdFromCopyToggle(item); persistSingles(); renderSinglesCollection(); });
+    on('[data-toggle-read]', () => { item.isRead = !rdReadOfCopy(item); rdFromCopyToggle(item); persistSingles(); renderSinglesCollection(); if (item.isRead) showToastAction('Lu ! Notez-le en story de lecture.', 'Story', () => openStoryEditor(item)); });
   };
 
   // RENDU DE LA COLLECTION PHYSIQUE DE SINGLES AVEC FILTRAGE, RÉPARTITION & TRI
@@ -13038,7 +13441,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (status !== '' && !RD_STATUSES.includes(status)) return { ok: false, error: 'invalid_input' };
     const raw = rdRaw(), d = rdLoad(), f = rdFind(ref), now = new Date().toISOString();
     const key = f ? f.key : k.primary;
-    const prev = f ? f.state : null, prevStatus = prev ? prev.status : rdStatusOf(ref);
+    const prev = f ? f.state : null, prevStatus = prev ? prev.status : (opts.ignoreCompat ? '' : rdStatusOf(ref));
     if (status === '' && !prev) return { ok: true, unchanged: true, workKey: key };
     const st = prev ? Object.assign({}, prev) : Object.assign({ workKey: key, firstReadAt: null, lastReadAt: null, readCount: 0, rating: null, review: null, position: null, createdAt: now }, rdLabel(ref));
     st.status = status || 'to_read';
@@ -13049,7 +13452,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     st.source = opts.source || 'user'; st.updatedAt = now;
     d.states[key] = st;
     const event = st.status === 'read' ? (prevStatus === 'read' || (st.readCount > 1 && opts.reread) ? 'reread' : 'finished') : st.status === 'reading' ? 'started' : st.status === 'abandoned' ? 'abandoned' : 'status';
-    if (prevStatus !== st.status || opts.reread) rdLog(key, event, opts.note, { from: prevStatus || null, to: st.status, by: st.source });
+    if (prevStatus !== st.status || opts.reread) rdLog(key, event, opts.note, Object.assign({ from: prevStatus || null, to: st.status, by: st.source }, opts.at ? { at: opts.at } : {}));
     rdSave(); rdCompatCache = null;
     return { ok: true, workKey: key, status: st.status, undoToken: rdToken(() => rdSetRaw(raw)) };
   };
@@ -13908,15 +14311,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
-      sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
-      (() => { const evs = guides.filter(exIsEvent); if (!evs.length) return ''; const by = p => evs.filter(g => catNorm(relPublisher(g.publisher).name) === catNorm(relPublisher(p).name)).sort((a, b) => (a.periodStart || 0) - (b.periodStart || 0));
+    return (() => { const evs = guides.filter(exIsEvent); if (!evs.length) return ''; const by = p => evs.filter(g => catNorm(relPublisher(g.publisher).name) === catNorm(relPublisher(p).name)).sort((a, b) => (a.periodStart || 0) - (b.periodStart || 0));
         const missing = evs.filter(g => !exMediaOf('guide', g).ref).length;
         setTimeout(() => exAutoResolve(evs), 400);
         return sec('exSecEvents', 'Les grands événements', 'Crossovers Marvel et DC, de la série principale aux tie-ins, avec ordre de lecture et sources. Faites défiler, touchez une affiche pour ouvrir l\'événement.',
           ['Marvel', 'DC'].map(p => { const l = by(p); return l.length ? '<h4 class="ex-ev-pub">' + h(p) + ' <small>' + l.length + ' événements</small></h4><div class="ex-ev-rail" role="list">' + l.map(exEventPoster).join('') + '</div>' : ''; }).join('') +
           (missing ? '<p class="ex-note">' + missing + ' affiche(s) sans couverture établie' + (relayStatus && (relayStatus.cv || relayStatus.metron) ? ' : Panel cherche la couverture du n°1 dans Comic Vine et Metron.' : ' : lancez Panel avec « Lancer Panel.cmd » pour récupérer les couvertures réelles.') + '</p>' : '') +
           '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>'); })() +
+      (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
+      sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
         (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
         '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
@@ -14134,11 +14537,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!root) return;
     if (exView.page === 'home') {
       const hist = exHistory();
-      root.innerHTML = '<section class="ex-hero"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Tout l\'univers comics, à partir de vos données.</h2>' +
+      root.innerHTML = '<section class="ex-hero is-compact"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Événements, séries, créateurs et membres.</h2>' +
         '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="Titre, numéro, événement, personnage, créateur, éditeur, ISBN…" value="' + h(exView.q) + '"></div>' +
         (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') +
-        exPersonalizeHtml() + '</div></section>' +
-        '<div id="exResults">' + (exView.q ? exResultsHtml() : '') + '</div><div id="exHome"' + (exView.q ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
+        exScopeChips() + exPersonalizeHtml() + '</div></section>' +
+        '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
+      root.querySelectorAll('[data-ex-scope]').forEach(b => { b.onclick = () => { exScope = b.dataset.exScope; renderExplorer(); }; });
+      wireExSocial(root);
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
@@ -14147,8 +14552,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exRefreshResults = () => {
     const r = $('exResults'), home = $('exHome');
     if (!r) return renderExplorer();
-    r.innerHTML = exView.q ? exResultsHtml() : '';
-    if (home) home.hidden = !!exView.q;
+    r.innerHTML = exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsHtml() : '';
+    if (home) home.hidden = !!exView.q || exScope !== 'comics';
+    wireExSocial(r);
+  };
+  const wireExSocial = root => {
+    if (!root) return;
+    root.querySelectorAll('[data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
+    root.querySelectorAll('[data-ex-me]').forEach(b => { b.onclick = () => { commTab = 'profile'; goSinglesView('community'); }; });
+    root.querySelectorAll('[data-ex-comm]').forEach(b => { b.onclick = () => { commTab = /live/.test(b.textContent) || /débats/.test(b.textContent) ? 'live' : 'feed'; goSinglesView('community'); }; });
   };
   const exGo = (page, id) => {
     Object.assign(exView, { page, id: id || '' });
@@ -14465,19 +14877,22 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (r.ok && r.workKey !== workKey) { rdUndo.has(r.undoToken) && rdUndo.get(r.undoToken)(); return { ok: false, error: 'key_mismatch' }; }
     return r;
   };
-  let readingViewFilter = 'reading';
+  let readingViewFilter = 'reading', readingFilterTouched = false;
   const renderReadingView = () => {
     const host = $('readingDashboard');
     if (!host) return;
     const s = rdStats(), d = rdLoad();
     const states = Object.values(d.states);
+    const pendingImport = rdMigrationPlan().length;
+    if (!readingFilterTouched && readingViewFilter === 'reading' && !s.reading && s.read) readingViewFilter = 'read';
     if ($('badgeReadingNow')) $('badgeReadingNow').textContent = s.reading;
     const pill = (k, label, n) => `<button class="tab-btn${readingViewFilter === k ? ' active' : ''}" data-rdf="${k}">${label} <b>${n}</b></button>`;
     const row = st => {
       const prog = st.series ? rdSeriesProgress(st.series) : null;
       const owned = rdCopiesOf(st).length;
       const acts = ['reading', 'read', 'to_read', 'abandoned'].filter(x => x !== st.status || x === 'read')
-        .map(x => `<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rdset="${x}" data-key="${escapeHtml(st.workKey)}">${x === 'read' && st.status === 'read' ? 'Relu' : RD_LABEL[x]}</button>`).join(' ');
+        .map(x => `<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rdset="${x}" data-key="${escapeHtml(st.workKey)}">${x === 'read' && st.status === 'read' ? 'Relu' : RD_LABEL[x]}</button>`).join(' ') +
+        (st.status === 'read' && owned ? ` <button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rdstory="${escapeHtml(st.workKey)}">Story</button>` : '');
       return `<div class="top-item" data-work="${escapeHtml(st.workKey)}" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <span style="min-width:0;flex:1"><b>${escapeHtml(st.series || '—')} ${escapeHtml(st.issue || '')}</b>
         <span class="stat-sub" style="display:block">${RD_LABEL[st.status] || '—'}${st.readCount > 1 ? ' · lu ' + st.readCount + ' fois' : ''}${st.lastReadAt ? ' · ' + new Date(st.lastReadAt).toLocaleDateString('fr-FR') : ''}${owned ? '' : ' · non possédé'}${prog && prog.known ? ' · série ' + prog.read + '/' + prog.known + (prog.next ? ', prochain ' + escapeHtml(prog.next) : '') : ''}</span></span>
@@ -14494,7 +14909,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const rsMax = Math.max(...rs.months.map(m => m.n), 1);
     const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
     const readingStatsCard = `<div class="stats-card" id="readingStatsCard"><h3>Lectures sur 12 mois</h3><div class="month-chart">${rs.months.map(m => `<div class="month-col" title="${m.n} lecture(s)"><b style="font-size:12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / rsMax) * 85}%"></div><span>${rsMonth(m.month)}</span></div>`).join('')}</div><p class="stat-sub" style="margin-top:8px">En ${rs.year} : <b>${rs.yearFirst}</b> première(s) lecture(s) · <b>${rs.yearRereads}</b> relecture(s). Calculé sur le journal de lecture.</p></div>`;
-    host.innerHTML = `<div class="stats-grid">
+    host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + `<div class="stats-grid">
       <div class="stats-card"><h3>Vue d'ensemble</h3><p class="stat-sub" style="line-height:1.7">Œuvres suivies : <b>${s.works}</b><br>Lues : <b>${s.read}</b> · en cours : <b>${s.reading}</b> · à lire : <b>${s.toRead}</b> · abandonnées : <b>${s.abandoned}</b><br>Relectures : <b>${s.rereads}</b> · terminées sur 12 mois : <b>${s.finishedLastYear}</b><br>Pile à lire (possédés non lus) : <b>${s.pileToRead}</b> · lus sans possession : <b>${s.readNotOwned}</b>${s.openConflicts ? '<br><span style="color:var(--warn,#b45309)">Conflits de notes à résoudre : <b>' + s.openConflicts + '</b></span> <button class="btn secondary" style="font-size:12px;padding:3px 8px" id="readingOpenMigration">Voir</button>' : ''}</p></div>
       <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>'}</div>
       ${readingStatsCard}
@@ -14503,7 +14918,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     <div id="readingList">${list === null
       ? (d.log.length ? d.log.slice(-50).reverse().map(l => { const st = d.states[l.workKey] || {}; return `<div class="top-item"><span class="stat-sub">${new Date(l.at).toLocaleString('fr-FR')}</span> <b>${escapeHtml(st.series || l.workKey)} ${escapeHtml(st.issue || '')}</b> · ${escapeHtml(({ finished: 'terminé', reread: 'relu', started: 'commencé', abandoned: 'abandonné', rating: 'note', status: 'statut', migrated: 'migré' })[l.event] || l.event)}</div>`; }).join('') : '<div class="notice-box">Le journal se remplit à chaque lecture.</div>')
       : (list.length ? list.slice(0, 200).map(row).join('') : `<div class="notice-box">${s.works ? 'Aucune œuvre dans cette catégorie.' : 'Aucune lecture enregistrée. Cochez « Lu » sur une fiche, ou regroupez vos anciennes lectures avec « Lecture par œuvre… ».'}</div>`)}</div>`;
-    host.querySelectorAll('[data-rdf]').forEach(b => { b.onclick = () => { readingViewFilter = b.dataset.rdf; renderReadingView(); }; });
+    host.querySelectorAll('[data-rdf]').forEach(b => { b.onclick = () => { readingViewFilter = b.dataset.rdf; readingFilterTouched = true; renderReadingView(); }; });
+    if ($('readingImportNow')) $('readingImportNow').onclick = () => { const r = rdMigrate(); readingViewFilter = 'read'; renderSinglesCollection(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
+    if ($('readingImportDetail')) $('readingImportDetail').onclick = () => openReadingMigrationDialog();
+    host.querySelectorAll('[data-rdstory]').forEach(b => { b.onclick = () => { const st = rdLoad().states[b.dataset.rdstory]; const c = st && rdCopiesOf(st)[0]; if (c) openStoryEditor(c); }; });
     host.querySelectorAll('[data-rdset]').forEach(b => {
       b.onclick = () => {
         const r = rdViewSet(b.dataset.key, b.dataset.rdset);
@@ -14581,7 +14999,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const disposed = all.filter(disposedOf).sort((a, b) => String(b.disposal.date || '').localeCompare(String(a.disposal.date || '')));
     const KIND = { sold: 'vendu', given: 'donné', lost: 'perdu', traded: 'échangé' };
     const lots = acqList();
-    host.innerHTML = financeHeroHtml(all, by) + `<div class="stats-grid">
+    const finCur = (() => { const c = {}; all.forEach(x => { const k = purchaseCurOf(x); if (k) c[k] = (c[k] || 0) + 1; }); return Object.keys(c).sort((a, b) => c[b] - c[a])[0] || finDefaultCurrency() || 'EUR'; })();
+    host.innerHTML = financeHeroHtml(all, by) + (() => { try { return financeInsightsHtml(all, finCur); } catch (_) { return ''; } })() + `<div class="stats-grid">
       <div class="stats-card"><h3>Par devise</h3>${rows ? `<table class="fin-table" style="width:100%;font-size:13px;border-collapse:collapse"><thead><tr><th align="left">Devise</th><th align="left">Coût</th><th align="left">Valeur</th><th align="left">Latente</th><th align="left">Réalisée</th></tr></thead><tbody>${rows}</tbody></table>` : '<p class="stat-sub">Aucun montant connu.</p>'}
         ${sum.mixed ? '<p class="stat-sub" style="margin-top:8px">Plusieurs devises : aucun total global (pas de conversion automatique).</p>' : ''}</div>
       <div class="stats-card"><h3>Couverture des données</h3><p class="stat-sub" style="line-height:1.7">Exemplaires possédés : <b>${owned.length}</b><br>Coût connu : <b>${sum.costKnown}</b> (${pct(sum.costKnown, owned.length)}) · inconnu : <b>${sum.costUnknown}</b><br>Valeur connue : <b>${sum.valueKnown}</b> (${pct(sum.valueKnown, owned.length)}) · inconnue : <b>${sum.valueUnknown}</b><br>Frais non renseignés : <b>${sum.feesUnknown}</b><br>Sorties de collection : <b>${sum.disposedCount}</b> (dont ${sum.soldCount} vente(s))</p>
@@ -14700,16 +15119,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const TROPHY_ICONS = { box: 'ic-box', stack: 'ic-layers', one: 'ic-star', key: 'ic-key', shield: 'ic-shield', orbit: 'ic-globe', book: 'ic-book', loop: 'ic-refresh', calendar: 'ic-calendar', archive: 'ic-folder', clock: 'ic-hourglass', hourglass: 'ic-hourglass', mask: 'ic-gem' };
   let profileEditing = false;
   // Rang du compte (domains/community/ranks-core.js) : points calculés depuis l'activité réelle ; l'activité sociale vaut 0 sans compte en ligne
-  const pfRank = (owned, tr) => {
-    const log = rdLoad().log, drafts = commLoad().drafts;
+  const pfRank = (owned, tr, artefacts) => {
+    const a = pfActivity(owned);
     return window.PanelDomains.ranksCore.computeRank({
-      owned: owned.length, read: log.filter(l => l.event === 'finished').length, reread: log.filter(l => l.event === 'reread').length,
-      rated: owned.filter(x => x.rating).length, reviewed: drafts.filter(d => d.kind === 'read' && String(d.text || '').trim().length >= 40).length,
-      runs: window.PanelDomains.trophiesCore.completeRuns(owned), keys: owned.filter(x => x.keyType && x.keyType !== 'none').length,
-      trophyXp: tr.xp, planches: drafts.length
+      owned: a.owned, read: a.read, reread: a.reread, rated: a.rated, reviewed: a.reviewed, runs: a.runs, keys: a.keys,
+      trophyXp: tr.xp, planches: a.planches, stories: a.stories,
+      artefacts: artefacts === undefined ? window.PanelDomains.artefactsCore.computeArtefacts(a).unlocked : artefacts
     }, { online: false });
   };
-  const PF_TIER_CLASS = { terre: 'is-terre', abstrait: 'is-abstrait', forces: 'is-forces', terrain: 'is-terrain', equilibre: 'is-equilibre', sommet: 'is-sommet' };
+  const PF_TIER_CLASS = { terre: 'is-terre', multivers_dc: 'is-dc', abstrait: 'is-abstrait', forces: 'is-forces', terrain: 'is-terrain', equilibre: 'is-equilibre', sommet: 'is-sommet' };
   const pfRankHtml = (rk, tr) => '<div class="pf-rank ' + PF_TIER_CLASS[rk.rank.tier] + '">' +
       '<div class="pf-rank-badge"><small>Rang</small><b>' + rk.rank.rank + '</b><span>/ ' + rk.total + '</span></div>' +
       '<div class="pf-rank-main"><small>' + escapeHtml(rk.rank.tierLabel) + '</small><b>' + escapeHtml(rk.rank.name) + '</b>' +
@@ -14736,7 +15154,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return '<details class="pf-ladder"><summary>Échelle des ' + R.RANKS.length + ' rangs, de Civil à The One Above All <small>et comment gagner des points</small></summary>' +
       '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : '') + '"><i>' + x.rank + '</i>' + escapeHtml(x.name) + '<small>' + x.xp.toLocaleString('fr-FR') + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
       '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString('fr-FR') + ' → ' + b.xp.toLocaleString('fr-FR') + ' XP</em>') + '</span>').join('') + '</div>' +
-      '<p class="stat-sub">Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
+      '<p class="stat-sub">L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
   };
   const renderCommunityProfile = () => {
     const host = $('communityProfile');
@@ -14745,7 +15163,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const owned = physicalSingles.filter(isOwned);
     const picked = (() => { try { return [...relPulls.values()].filter(x => x.status === 'picked').reduce((a, x) => a + (Number(x.quantity) || 1), 0); } catch (_) { return 0; } })();
     const r = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked, characterOf: window.PanelDomains.collectionBoxes.characterOf });
-    const rk = pfRank(owned, r);
+    const ar = window.PanelDomains.artefactsCore.computeArtefacts(pfActivity(owned));
+    const rk = pfRank(owned, r, ar.unlocked);
     const p = profileLoad();
     const initials = p ? (p.displayName || p.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
     const form = (pp) => '<form class="pf-form" id="profileForm">' +
@@ -14771,7 +15190,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           ? '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
-      '</section>' + pfTop3Html(p) + pfLadderHtml(rk) +
+      '</section>' + pfTop3Html(p) + pfLadderHtml(rk) + artefactsHtml(ar) +
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
@@ -14808,10 +15227,352 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const plancheFace = c => c.coverUrl ? coverImgTag(c) : '<span class="pl-face" style="--c:' + cboxHue(c) + '"><b>' + escapeHtml(cboxInitials(c.series)) + '</b><em>' + escapeHtml(String(c.issue || '').replace(/^#?/, '#')) + '</em></span>';
   const planchePanels = items => '<div class="pl-panels pl-n' + Math.min(items.length, 4) + '">' + items.slice(0, 4).map((c, i) => '<figure class="pl-panel" style="--t:' + ((i % 2 ? 1 : -1) * (0.6 + i * 0.3)).toFixed(1) + 'deg">' + plancheFace(c) + '<figcaption>' + escapeHtml([c.series, c.issue].filter(Boolean).join(' ')) + '</figcaption></figure>').join('') + '</div>';
+  // ── Stories de lecture (D-63) : après une lecture, une carte notée façon journal de lecture, habillée selon le comic.
+  // Enregistrées sur cet appareil (panel_stories_v1) ; elles seront publiables avec les comptes en ligne.
+  // Rien n'est inventé : note, avis et date viennent de l'utilisateur ; la couverture est celle de la fiche.
+  const STORY_KEY = 'panel_stories_v1', STORY_MAX = 300;
+  const storyLoad = () => { try { const d = JSON.parse(localStorage.getItem(STORY_KEY) || 'null'); if (d && d.version === 1 && Array.isArray(d.stories)) return d; } catch (_) {} return { version: 1, stories: [] }; };
+  const storySave = d => { try { localStorage.setItem(STORY_KEY, JSON.stringify(d)); return true; } catch (_) { return false; } };
+  const STORY_STYLES = {
+    marvel: { label: 'Marvel', bg: '#5c0a0f', bg2: '#b3121b', ink: '#fff3ec', acc: '#ffd400' },
+    dc: { label: 'DC', bg: '#06173d', bg2: '#0b4fb3', ink: '#eef4ff', acc: '#7fd1ff' },
+    image: { label: 'Image', bg: '#0d0d0d', bg2: '#2b2b2b', ink: '#f3f2ee', acc: '#ffd400' },
+    indie: { label: 'Indé', bg: '#1d1430', bg2: '#4b2d7f', ink: '#f4efff', acc: '#ff8bd1' },
+    noir: { label: 'Noir', bg: '#f2ede2', bg2: '#d8cfbd', ink: '#141414', acc: '#e0201b' }
+  };
+  const storyStyleKey = c => { const p = catNorm(c && c.publisher); return /marvel/.test(p) ? 'marvel' : /(^| )dc( |$)|vertigo|wildstorm/.test(p) ? 'dc' : /image|skybound|top cow/.test(p) ? 'image' : 'indie'; };
+  const STORY_ONO = r => r >= 5 ? 'KA-BOOM!' : r >= 4 ? 'POW!' : r >= 3 ? 'BAM!' : r >= 2 ? 'BOF…' : r > 0 ? 'OUCH!' : 'LU !';
+  const storyStars = r => '<span class="st-stars" role="img" aria-label="' + (r ? String(r).replace('.', ',') + ' sur 5' : 'sans note') + '" style="--r:' + Math.round((Number(r) || 0) / 5 * 100) + '%">★★★★★</span>';
+  const storyCardHtml = (s, opts = {}) => {
+    const st = STORY_STYLES[s.style] || STORY_STYLES[storyStyleKey(s)];
+    const prof = profileLoad();
+    const hue = cboxHue(s);
+    return '<article class="st-card st-' + escapeHtml(s.style || storyStyleKey(s)) + (opts.big ? ' is-big' : '') + '" style="--st-bg:' + st.bg + ';--st-bg2:' + st.bg2 + ';--st-ink:' + st.ink + ';--st-acc:' + st.acc + ';--st-hue:' + hue + '">' +
+      '<span class="st-bgimg" aria-hidden="true">' + coverImgTag(s) + '</span><span class="st-tone" aria-hidden="true"></span>' +
+      '<header class="st-top"><span class="st-brand">PANEL <i>·</i> J\'AI LU</span><span class="st-date">' + escapeHtml(s.readAt ? new Date(s.readAt + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '') + '</span></header>' +
+      '<figure class="st-cover">' + coverImgTag(s) + '<span class="st-burst">' + escapeHtml(STORY_ONO(Number(s.rating) || 0)) + '</span></figure>' +
+      '<div class="st-body"><h4 class="st-title">' + escapeHtml(s.series || '') + ' <b>' + escapeHtml(s.issue || '') + '</b></h4>' +
+        (s.variant && !/^cover a$/i.test(s.variant) ? '<small class="st-variant">' + escapeHtml(s.variant) + '</small>' : '') +
+        storyStars(s.rating) +
+        (s.review ? '<p class="st-review">' + escapeHtml(s.review) + '</p>' : '') +
+      '</div>' +
+      '<footer class="st-foot"><span class="st-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(prof ? (prof.displayName || prof.handle).slice(0, 1).toUpperCase() : 'P') + '</span><span>' + escapeHtml(prof ? '@' + prof.handle : 'Mon journal') + '</span><span class="st-pub">' + escapeHtml(st.label) + '</span></footer>' +
+    '</article>';
+  };
+  // Éditeur : aperçu en direct, note par demi-étoiles, avis court, date de lecture, habillage
+  const openStoryEditor = (item, existing) => {
+    if (!item && !existing) return;
+    const base = existing || { series: item.series, issue: item.issue, publisher: item.publisher, variant: item.variant, coverUrl: isSafeImageUrl(item.coverUrl) ? item.coverUrl : '', copyId: item.id };
+    const f = rdFind(item || base);
+    const draft = Object.assign({ rating: existing ? existing.rating : (item && item.rating ? Number(item.rating) : 0), review: '', readAt: (f && f.state.lastReadAt ? String(f.state.lastReadAt).slice(0, 10) : relToday()), style: storyStyleKey(base) }, base);
+    const box = bunModal('storyDialog');
+    box.innerHTML = '<div class="modal-box st-editor" role="dialog" aria-modal="true" aria-labelledby="stEdTitle"><div class="st-ed-preview" data-prev></div><div class="st-ed-form">' +
+      '<h2 id="stEdTitle">' + (existing ? 'Modifier la story' : 'Ma story de lecture') + '</h2><p class="stat-sub">Notez, dites-le en une phrase : Panel habille la carte aux couleurs du comic.</p>' +
+      '<label class="st-lab">Note <output data-rout></output><input type="range" min="0" max="5" step="0.5" data-rating value="' + (Number(draft.rating) || 0) + '"></label>' +
+      '<label class="st-lab">Mon avis <small data-count></small><textarea class="field-input" data-review rows="3" maxlength="280" placeholder="Ce numéro en une phrase…">' + escapeHtml(draft.review || '') + '</textarea></label>' +
+      '<label class="st-lab">Lu le <input class="field-input" type="date" data-date value="' + escapeHtml(draft.readAt || '') + '"></label>' +
+      '<div class="st-lab">Habillage<div class="st-styles">' + Object.entries(STORY_STYLES).map(([k, v]) => '<button type="button" class="st-sw' + (draft.style === k ? ' is-on' : '') + '" data-style="' + k + '" style="--a:' + v.bg2 + ';--b:' + v.acc + '">' + escapeHtml(v.label) + '</button>').join('') + '</div></div>' +
+      '<p class="stat-sub">Enregistrée sur cet appareil. ' + (existing ? '' : 'Le numéro passe en « Lu » dans Lecture s\'il ne l\'était pas. ') + 'Publication avec les comptes en ligne.</p>' +
+      '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (existing ? 'Enregistrer' : 'Créer la story') + '</button></div></div></div>';
+    box.classList.add('open');
+    const q = s => box.querySelector(s);
+    const sync = () => {
+      draft.rating = Number(q('[data-rating]').value) || 0; draft.review = q('[data-review]').value.slice(0, 280); draft.readAt = q('[data-date]').value;
+      q('[data-rout]').textContent = draft.rating ? String(draft.rating).replace('.', ',') + ' / 5' : 'sans note';
+      q('[data-count]').textContent = draft.review.length + ' / 280';
+      q('[data-prev]').innerHTML = storyCardHtml(draft, { big: true });
+    };
+    q('[data-rating]').oninput = sync; q('[data-review]').oninput = sync; q('[data-date]').onchange = sync;
+    box.querySelectorAll('[data-style]').forEach(b => { b.onclick = () => { draft.style = b.dataset.style; box.querySelectorAll('[data-style]').forEach(x => x.classList.toggle('is-on', x === b)); sync(); }; });
+    sync();
+    q('[data-cancel]').onclick = () => box.classList.remove('open');
+    q('[data-save]').onclick = () => {
+      const d = storyLoad(), prevRaw = localStorage.getItem(STORY_KEY), now = new Date().toISOString();
+      if (!existing && d.stories.length >= STORY_MAX) { showToast('Limite de ' + STORY_MAX + ' stories atteinte.'); return; }
+      const rec = { id: existing ? existing.id : 'st_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), series: String(draft.series || '').slice(0, 200), issue: String(draft.issue || '').slice(0, 20), publisher: String(draft.publisher || '').slice(0, 80), variant: String(draft.variant || '').slice(0, 120), coverUrl: isSafeImageUrl(draft.coverUrl) ? draft.coverUrl : '', copyId: draft.copyId || null, rating: Math.max(0, Math.min(5, Math.round((Number(draft.rating) || 0) * 2) / 2)), review: String(draft.review || '').trim().slice(0, 280), readAt: /^\d{4}-\d{2}-\d{2}$/.test(draft.readAt) ? draft.readAt : relToday(), style: STORY_STYLES[draft.style] ? draft.style : storyStyleKey(draft), createdAt: existing ? existing.createdAt : now, updatedAt: now };
+      const i = d.stories.findIndex(x => x.id === rec.id);
+      if (i >= 0) d.stories[i] = rec; else d.stories.unshift(rec);
+      if (!storySave(d)) { showToast('Enregistrement impossible (stockage plein ?).'); return; }
+      // Lire puis noter : le numéro passe en « Lu » (domaine Lecture, double écriture isRead), avec la date choisie
+      let rdTok = null;
+      const fr = item ? rdFind(item) : null;
+      if (item && !existing && !(fr && fr.state.status === 'read')) { const r = rdSetStatus(item, 'read', { source: 'story', at: rec.readAt + 'T12:00:00.000Z', ignoreCompat: true }); if (r.ok) { rdTok = r.undoToken; item.isRead = true; persistSingles(); } }
+      box.classList.remove('open');
+      renderSinglesCollection();
+      showToastAction(existing ? 'Story mise à jour.' : 'Story créée : retrouvez-la dans Communauté.', 'Annuler', () => { if (prevRaw === null) localStorage.removeItem(STORY_KEY); else localStorage.setItem(STORY_KEY, prevRaw); if (rdTok) { READING_API.undo(rdTok); if (item) { item.isRead = false; persistSingles(); } } renderSinglesCollection(); });
+    };
+  };
+  // Choisir le numéro de la story : les derniers lus d'abord, puis le reste de la collection
+  const openStoryPicker = () => {
+    const owned = physicalSingles.filter(isOwned);
+    if (!owned.length) { showToast('Ajoutez d\'abord un comic à votre collection.'); return; }
+    const log = rdLoad().log;
+    const lastAt = new Map(); log.forEach(l => { if (l.event === 'finished' || l.event === 'reread') lastAt.set(l.workKey, l.at); });
+    const scored = owned.map(x => { const f = rdFind(x); return { x, at: f ? (lastAt.get(f.key) || (f.state.status === 'read' ? f.state.lastReadAt || '1' : '')) : '' }; }).sort((a, b) => String(b.at).localeCompare(String(a.at)));
+    const box = bunModal('storyPicker');
+    const list = term => scored.filter(s => !term || catNorm(s.x.series + ' ' + s.x.issue).includes(catNorm(term))).slice(0, 40).map(s => '<button class="st-pick" data-pick="' + escapeHtml(s.x.id) + '"><span class="st-pick-c">' + coverImgTag(s.x) + '</span><span><b>' + escapeHtml(s.x.series + ' ' + (s.x.issue || '')) + '</b><small>' + (s.at ? 'Lu' : 'Pas encore lu') + '</small></span></button>').join('') || '<p class="stat-sub">Aucun numéro trouvé.</p>';
+    box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="stPickTitle"><h2 id="stPickTitle">Quel comic venez-vous de lire ?</h2><input class="field-input" type="search" data-q placeholder="Série, numéro…" style="width:100%;margin:6px 0 10px"><div class="st-picklist" data-list>' + list('') + '</div><div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button></div></div>';
+    box.classList.add('open');
+    const wire = () => box.querySelectorAll('[data-pick]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.pick); box.classList.remove('open'); if (it) openStoryEditor(it); }; });
+    box.querySelector('[data-q]').oninput = e => { box.querySelector('[data-list]').innerHTML = list(e.target.value); wire(); };
+    box.querySelector('[data-cancel]').onclick = () => box.classList.remove('open');
+    wire();
+  };
+  // Lecteur plein écran, à la manière des stories : barres de progression, touche gauche/droite, avance automatique
+  const openStoryViewer = startId => {
+    const stories = storyLoad().stories;
+    let i = Math.max(0, stories.findIndex(s => s.id === startId));
+    if (!stories.length) return;
+    const box = bunModal('storyViewer');
+    box.classList.add('st-viewer-wrap');
+    let timer = null;
+    const close = () => { clearTimeout(timer); box.classList.remove('open'); document.removeEventListener('keydown', onKey); };
+    const show = () => {
+      clearTimeout(timer);
+      const s = stories[i];
+      box.innerHTML = '<div class="st-viewer" role="dialog" aria-modal="true" aria-label="Story ' + (i + 1) + ' sur ' + stories.length + '">' +
+        '<div class="st-prog">' + stories.map((_, k) => '<i class="' + (k < i ? 'is-done' : k === i ? 'is-now' : '') + '"></i>').join('') + '</div>' +
+        storyCardHtml(s, { big: true }) +
+        '<button class="st-nav st-prev" data-prev aria-label="Story précédente"></button><button class="st-nav st-next" data-next aria-label="Story suivante"></button>' +
+        '<div class="st-vbar"><button class="btn secondary" data-edit>Modifier</button><button class="btn secondary" data-del>Retirer</button><button class="btn secondary" disabled title="Avec les comptes en ligne">Publier</button><button class="btn" data-close>Fermer</button></div></div>';
+      box.querySelector('[data-prev]').onclick = () => { if (i > 0) { i--; show(); } };
+      box.querySelector('[data-next]').onclick = () => { if (i < stories.length - 1) { i++; show(); } else close(); };
+      box.querySelector('[data-close]').onclick = close;
+      box.querySelector('[data-edit]').onclick = () => { close(); openStoryEditor(physicalSingles.find(x => x.id === s.copyId) || null, s); };
+      box.querySelector('[data-del]').onclick = () => { const prevRaw = localStorage.getItem(STORY_KEY), d = storyLoad(); d.stories = d.stories.filter(x => x.id !== s.id); storySave(d); close(); renderSinglesCollection(); showToastAction('Story retirée.', 'Annuler', () => { localStorage.setItem(STORY_KEY, prevRaw); renderSinglesCollection(); }); };
+      if (!navigator.webdriver) timer = setTimeout(() => { if (i < stories.length - 1) { i++; show(); } }, 7000);
+    };
+    const onKey = e => { if (!box.classList.contains('open')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') box.querySelector('[data-next]').click(); if (e.key === 'ArrowLeft') box.querySelector('[data-prev]').click(); };
+    document.addEventListener('keydown', onKey);
+    box.classList.add('open');
+    show();
+  };
+  const storiesBarHtml = () => {
+    const stories = storyLoad().stories;
+    return '<section class="st-bar" aria-label="Stories de lecture"><button class="st-ring st-new" data-st-new><span class="st-ring-img"><b>+</b></span><small>Ma story</small></button>' +
+      stories.slice(0, 30).map(s => { const st = STORY_STYLES[s.style] || STORY_STYLES.indie; return '<button class="st-ring" data-st-open="' + escapeHtml(s.id) + '" style="--acc:' + st.acc + ';--bg2:' + st.bg2 + '"><span class="st-ring-img">' + coverImgTag(s) + '</span><small>' + escapeHtml(String(s.series || '').slice(0, 14)) + '</small></button>'; }).join('') +
+      (stories.length ? '' : '<p class="st-bar-hint">Vous venez de lire un comic ? Notez-le en story : une carte à ses couleurs, comme un journal de lecture.</p>') + '</section>';
+  };
+  const wireStoriesBar = host => {
+    if (!host) return;
+    host.querySelectorAll('[data-st-new]').forEach(b => { b.onclick = openStoryPicker; });
+    host.querySelectorAll('[data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
+  };
+
+  // ── Crédits des numéros (D-63) : scénaristes, dessinateurs, personnages, équipes, depuis la fiche Comic Vine du numéro.
+  // Cache local panel_cv_credits_v1 ; seuls les numéros déjà identifiés (comicVineId, posé par la récupération des couvertures) sont interrogés.
+  const CREDITS_KEY = 'panel_cv_credits_v1';
+  let creditsCache = (() => { try { return JSON.parse(localStorage.getItem(CREDITS_KEY) || '{}') || {}; } catch (_) { return {}; } })();
+  let creditsJob = null;
+  const creditsOfCopy = c => (c && c.comicVineId && creditsCache[c.comicVineId]) || null;
+  const creditsPending = () => [...new Set(physicalSingles.filter(x => isOwned(x) && x.comicVineId && !creditsCache[x.comicVineId]).map(x => x.comicVineId))];
+  const fetchCredits = async (max = 40) => {
+    if (creditsJob) return;
+    const ids = creditsPending().slice(0, max);
+    if (!ids.length) { showToast(physicalSingles.some(x => isOwned(x) && x.comicVineId) ? 'Tous les crédits connus sont déjà récupérés.' : 'Récupérez d\'abord les couvertures : elles identifient chaque numéro sur Comic Vine.'); return; }
+    if (!cvAvailable()) { showToast('Comic Vine n\'est pas disponible : lancez Panel avec « Lancer Panel.cmd ».'); return; }
+    creditsJob = { done: 0, total: ids.length };
+    renderStatsDashboard();
+    const CI = window.PanelDomains.collectionInsights;
+    try {
+      for (const id of ids) {
+        const data = await cvCall('issue', 'issue/4000-' + id, { format: 'jsonp', field_list: 'person_credits,character_credits,team_credits' });
+        const cr = CI.creditsFromComicVine(data.results);
+        if (cr) creditsCache[id] = Object.assign(cr, { at: new Date().toISOString() });
+        creditsJob.done++;
+        saveJson(CREDITS_KEY, creditsCache);
+        if (creditsJob.done % 5 === 0) renderStatsDashboard();
+      }
+      showToast(creditsJob.done + ' fiche(s) de crédits récupérée(s) sur Comic Vine.');
+    } catch (e) {
+      showToast((e && e.name === 'CvRateLimit' ? 'Limite horaire Comic Vine atteinte' : 'Comic Vine indisponible') + ' : ' + creditsJob.done + ' fiche(s) récupérée(s), reprise possible plus tard.');
+    } finally { creditsJob = null; renderStatsDashboard(); }
+  };
+  let statsCreatorMode = 'read';
+  const creatorsCardHtml = owned => {
+    const CI = window.PanelDomains.collectionInsights;
+    const r = CI.creatorInsights(owned, { creditsOf: creditsOfCopy, isRead: rdReadOfCopy, characterOf: window.PanelDomains.collectionBoxes.characterOf, limit: 6 });
+    const mode = statsCreatorMode;
+    const col = (title, icon, pack, note) => {
+      const list = pack[mode];
+      const max = Math.max(1, ...list.map(x => x[mode === 'read' ? 'read' : 'n']));
+      return '<div class="ci-col"><h4><svg class=ic aria-hidden=true><use href=#' + icon + ' /></svg> ' + title + '</h4>' +
+        (list.length ? '<ol class="ci-list">' + list.map((x, i) => { const v = mode === 'read' ? x.read : x.n; return '<li' + (i === 0 ? ' class="is-first"' : '') + '><span class="ci-rank">' + (i + 1) + '</span><span class="ci-name" title="' + escapeHtml(x.name) + '">' + escapeHtml(x.name) + '</span><span class="ci-bar"><i style="width:' + Math.round(v / max * 100) + '%"></i></span><b>' + v + '</b></li>'; }).join('') + '</ol>'
+          : '<p class="stat-sub">' + note + '</p>') + '</div>';
+    };
+    const pend = creditsPending().length;
+    const noCred = mode === 'read' ? 'Rien de lu avec des crédits connus pour l\'instant.' : 'Aucun crédit connu pour l\'instant.';
+    return '<section class="stats-card ci-card"><div class="ci-head"><div><h3>Vos créateurs, personnages et équipes</h3><p class="stat-sub">' +
+        (mode === 'read' ? 'Les plus lus (une œuvre compte une fois, d\'après votre journal de lecture).' : 'Les plus présents dans votre collection.') + '</p></div>' +
+        '<div class="ci-seg" role="tablist"><button role="tab" class="' + (mode === 'read' ? 'is-on' : '') + '" data-ci-mode="read">Plus lus</button><button role="tab" class="' + (mode === 'owned' ? 'is-on' : '') + '" data-ci-mode="owned">Plus présents</button></div></div>' +
+      '<div class="ci-grid">' + col('Scénaristes', 'ic-book', r.writers, noCred) + col('Dessinateurs', 'ic-star', r.artists, noCred) + col('Personnages', 'ic-shield', r.characters, 'Aucun personnage reconnu.') + col('Équipes', 'ic-layers', r.teams, 'Aucune équipe reconnue.') + '</div>' +
+      '<p class="stat-sub ci-foot">Crédits Comic Vine connus pour <b>' + r.withCredits + '</b> / ' + r.works + ' œuvre(s)' + (r.inferredChars || r.inferredTeams ? ' ; ailleurs, personnages et équipes sont déduits du titre de la série' : '') + '. ' +
+        (creditsJob ? 'Récupération en cours : ' + creditsJob.done + ' / ' + creditsJob.total + '…' : pend ? '<button class="btn secondary rel-mini" data-ci-fetch>Récupérer les crédits de ' + Math.min(pend, 40) + ' numéro(s)</button>' + (pend > 40 ? ' <small>(' + pend + ' en attente, par lots pour respecter le quota)</small>' : '') : '') + '</p></section>';
+  };
+  const wireCreatorsCard = host => {
+    host.querySelectorAll('[data-ci-mode]').forEach(b => { b.onclick = () => { statsCreatorMode = b.dataset.ciMode; renderStatsDashboard(); }; });
+    const fb = host.querySelector('[data-ci-fetch]'); if (fb) fb.onclick = () => fetchCredits(40);
+  };
+
+  // ── Finances détaillées (D-63) : prix de couverture et prix payé, seconde main, plus-values, tranches, éditeurs
+  const financeInsightsHtml = (all, cur) => {
+    const CI = window.PanelDomains.collectionInsights;
+    const owned = all.filter(isOwned).filter(x => (purchaseCurOf(x) || 'none') === cur || purchaseCurOf(x) === null);
+    const r = CI.financeInsights(owned.map(x => ({ paid: numOrNull(x.purchasePrice), cover: cur === 'USD' ? numOrNull(x.coverPrice) : null, value: valueOf(x), date: x.purchaseDate, publisher: x.publisher, series: x.series, issue: x.issue, secondHand: !!x.secondHand })), new Date());
+    const coverUsd = owned.reduce((a, x) => a + (numOrNull(x.coverPrice) || 0), 0);
+    const f = v => v === null || v === undefined ? '—' : fmtCur(v, cur);
+    const sign = v => (v >= 0 ? '+' : '−') + fmtCur(Math.abs(v), cur);
+    const bandMax = Math.max(1, ...r.bands.map(b => b.n));
+    const tile = (label, val, sub, cls) => '<div class="fi-tile ' + (cls || '') + '"><small>' + label + '</small><b>' + val + '</b>' + (sub ? '<span>' + sub + '</span>' : '') + '</div>';
+    return '<section class="fi-wrap"><h3 class="pf-section">Analyse financière <span class="stat-sub">en ' + escapeHtml(cur) + ', sans conversion</span></h3><div class="fi-tiles">' +
+      tile('Investi (prix payés)', f(r.paid), r.unknownPaid ? r.unknownPaid + ' exemplaire(s) au prix inconnu' : 'tous les prix sont connus') +
+      tile('Prix moyen payé', f(r.avgPaid), r.count + ' exemplaire(s)') +
+      (r.vsCover ? tile(r.vsCover.saved >= 0 ? 'Économisé vs couverture' : 'Payé au-dessus de la couverture', sign(r.vsCover.saved), Math.abs(r.vsCover.pct).toFixed(1).replace('.', ',') + ' % sur ' + r.vsCover.n + ' numéro(s) comparés', r.vsCover.saved >= 0 ? 'is-pos' : 'is-neg')
+        : tile('Prix de couverture (US$)', owned.some(x => numOrNull(x.coverPrice) !== null) ? fmtCur(coverUsd, 'USD') : '—', cur === 'USD' ? 'Renseignez prix payé et couverture pour comparer' : 'Couvertures en $ : comparaison seulement pour les achats en $')) +
+      tile('Seconde main', r.secondHand.n + ' ex.', r.secondHand.compared ? 'écart à la couverture : ' + sign(r.secondHand.saved) : 'Cochez « Seconde main » dans la fiche pour un prix libre') +
+      (r.unrealized ? tile('Plus-value latente', sign(r.unrealized.gain), r.unrealized.roi === null ? '' : 'rendement ' + r.unrealized.roi.toFixed(1).replace('.', ',') + ' % sur ' + r.unrealized.n + ' ex.', r.unrealized.gain >= 0 ? 'is-pos' : 'is-neg') : tile('Plus-value latente', '—', 'valeur et prix payé requis')) +
+      tile('Valeur estimée', f(r.value), 'cote manuelle ou automatique') +
+      '</div><div class="fi-grid">' +
+      '<div class="stats-card"><h3>Tranches de prix payé</h3>' + r.bands.map(b => '<div class="hbar-row"><span>' + (b.hi === Infinity ? fmtCur(b.lo, cur) + ' et +' : fmtCur(b.lo, cur) + ' – ' + fmtCur(b.hi, cur)) + '</span><div class="hbar"><div style="width:' + (b.n / bandMax * 100) + '%"></div></div><span class="hbar-val">' + b.n + '</span></div>').join('') + '</div>' +
+      '<div class="stats-card"><h3>Meilleures et pires affaires</h3>' + (r.best.length || r.worst.length ? r.best.slice(0, 3).map(x => '<div class="fi-deal is-pos"><span>' + escapeHtml(x.label) + '</span><small>' + f(x.paid) + ' → ' + f(x.value) + '</small><b>' + sign(x.gain) + '</b></div>').join('') + r.worst.slice(0, 3).map(x => '<div class="fi-deal is-neg"><span>' + escapeHtml(x.label) + '</span><small>' + f(x.paid) + ' → ' + f(x.value) + '</small><b>' + sign(x.gain) + '</b></div>').join('') : '<p class="stat-sub">Il faut un prix payé et une valeur sur les mêmes exemplaires.</p>') + '</div>' +
+      '<div class="stats-card"><h3>Les plus chers payés</h3>' + (r.priciest.length ? r.priciest.map((x, i) => '<div class="fi-deal"><span><b>' + (i + 1) + '.</b> ' + escapeHtml(x.label) + '</span><b>' + f(x.paid) + '</b></div>').join('') : '<p class="stat-sub">Aucun prix payé renseigné.</p>') + '</div>' +
+      '</div></section>';
+  };
+
+  // ── Artefacts (D-63) : domains/community/artefacts-core.js, calculés sur les données locales
+  const pfActivity = owned => {
+    const log = rdLoad().log, drafts = commLoad().drafts;
+    const TC = window.PanelDomains.trophiesCore, charOf = window.PanelDomains.collectionBoxes.characterOf;
+    return {
+      owned: owned.length, read: log.filter(l => l.event === 'finished').length, reread: log.filter(l => l.event === 'reread').length,
+      rated: owned.filter(x => x.rating).length, reviewed: drafts.filter(d => d.kind === 'read' && String(d.text || '').trim().length >= 40).length + storyLoad().stories.filter(s => String(s.review || '').trim().length >= 40).length,
+      runs: TC.completeRuns(owned), keys: owned.filter(x => x.keyType && x.keyType !== 'none').length, planches: drafts.length, stories: storyLoad().stories.length,
+      publishers: new Set(owned.map(x => catNorm(x.publisher)).filter(Boolean)).size, characters: new Set(owned.map(charOf).filter(Boolean)).size,
+      value: owned.reduce((a, x) => a + (valueOf(x) || 0), 0)
+    };
+  };
+  const artefactsHtml = ar => '<h3 class="pf-section">Artefacts <span class="stat-sub">' + ar.unlocked + ' / ' + ar.total + ' débloqués · ' + ar.gems + ' / 6 gemmes</span></h3>' +
+    (ar.next ? '<p class="stat-sub af-next">Prochain : <b>' + escapeHtml(ar.next.name) + '</b> — ' + escapeHtml(ar.next.lore) + ' (' + Math.floor(ar.next.have).toLocaleString('fr-FR') + ' / ' + ar.next.goal.toLocaleString('fr-FR') + ')</p>' : '') +
+    '<div class="af-grid">' + ar.list.map(a => '<div class="af-card is-' + a.rarity + (a.unlocked ? ' is-on' : '') + (a.gem ? ' is-gem' : '') + '" style="--h:' + a.hue + '" title="' + escapeHtml(a.lore) + '">' +
+      '<span class="af-medal"><i>' + escapeHtml(a.glyph) + '</i></span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
+      '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString('fr-FR') + ' / ' + a.goal.toLocaleString('fr-FR')) + '</em></div>').join('') + '</div>' +
+    '<p class="stat-sub" style="margin:8px 2px 18px">Objets inspirés des univers Marvel et DC (marques de leurs ayants droit), dessinés par Panel. Chaque artefact débloqué rapporte 50 XP.</p>';
+
+  // ── Communauté : en-tête commun (profil compact, stories, onglets) ; un seul endroit pour naviguer (D-63)
+  let commTab = 'feed';
+  const commHeadHtml = () => {
+    const prof = profileLoad();
+    const owned = physicalSingles.filter(isOwned);
+    let rk = null;
+    try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf }); rk = pfRank(owned, tr); } catch (_) {}
+    const tabs = [['feed', 'Fil'], ['profile', 'Mon profil'], ['live', 'Directs']];
+    return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
+      '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + storiesBarHtml();
+  };
+
+  // ── Explorer : chercher aussi des membres, des planches et des directs (D-63). Les comptes en ligne ne sont pas
+  // encore ouverts : seuls votre profil, vos planches et vos stories sont trouvés ; rien n'est simulé.
+  let exScope = 'comics';
+  const EX_SCOPES = [['comics', 'Comics'], ['members', 'Membres'], ['posts', 'Planches & stories'], ['live', 'Directs']];
+  const exScopeChips = () => '<div class="ex-scope" role="tablist" aria-label="Que chercher ?">' + EX_SCOPES.map(([k, l]) => '<button role="tab" aria-selected="' + (exScope === k) + '" class="' + (exScope === k ? 'is-on' : '') + '" data-ex-scope="' + k + '">' + l + '</button>').join('') + '</div>';
+  const exSocialResultsHtml = q => {
+    const t = catNorm(q);
+    const prof = profileLoad();
+    if (exScope === 'members') {
+      const me = prof && (!t || catNorm(prof.handle + ' ' + prof.displayName + ' ' + prof.favorite).includes(t));
+      return '<section class="ex-sec"><div class="ex-sec-head"><h3>Membres</h3><p>Recherche par pseudo, nom ou personnage favori.</p></div>' +
+        (me ? '<button class="ex-member" data-ex-me style="--pf:' + escapeHtml(prof.color) + '"><span class="cm-me-av">' + escapeHtml((prof.displayName || prof.handle).slice(0, 2).toUpperCase()) + '</span><span><b>' + escapeHtml(prof.displayName || prof.handle) + '</b><small>@' + escapeHtml(prof.handle) + ' · vous</small></span></button>' : '') +
+        '<p class="ex-note">Les comptes en ligne ne sont pas encore ouverts : les autres membres apparaîtront ici dès leur lancement. Aucun profil n\'est inventé.</p></section>';
+    }
+    if (exScope === 'posts') {
+      const drafts = commLoad().drafts.filter(d => !t || catNorm(d.text + ' ' + d.items.map(c => c.series + ' ' + c.issue).join(' ')).includes(t));
+      const stories = storyLoad().stories.filter(s => !t || catNorm(s.series + ' ' + s.issue + ' ' + s.review).includes(t));
+      return '<section class="ex-sec"><div class="ex-sec-head"><h3>Planches et stories</h3><p>Les vôtres pour l\'instant ; celles des autres membres avec les comptes en ligne.</p></div>' +
+        (stories.length ? '<div class="st-grid">' + stories.slice(0, 12).map(s => '<button class="st-mini" data-st-open="' + escapeHtml(s.id) + '">' + storyCardHtml(s) + '</button>').join('') + '</div>' : '') +
+        (drafts.length ? '<div class="ex-chips">' + drafts.slice(0, 20).map(d => '<button class="ex-chip" data-ex-comm>' + escapeHtml((PLANCHE_KINDS[d.kind] || 'Planche') + ' · ' + d.items.map(c => c.series + ' ' + (c.issue || '')).join(', ').slice(0, 60)) + '</button>').join('') + '</div>' : '') +
+        (!stories.length && !drafts.length ? '<p class="ex-note">Aucune planche ni story ' + (t ? 'pour « ' + escapeHtml(q) + ' »' : 'pour l\'instant') + '.</p>' : '') + '</section>';
+    }
+    return '<section class="ex-sec"><div class="ex-sec-head"><h3>Directs en cours</h3><p>Salons vocaux pour débattre comics, images à l\'appui.</p></div><div class="ex-live-empty"><span class="live-dot">Bientôt</span><p>Aucun direct en cours : le direct ouvrira avec les comptes en ligne et un serveur audio. Aucun salon n\'est simulé.</p><button class="btn secondary rel-mini" data-ex-comm>Voir le projet de débats</button></div></section>';
+  };
+
+  // ── Réglages (D-63) : un vrai panneau de réglages par rubriques, autour des paramètres existants (clés API, application)
+  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['sources', 'Sources & clés API', 'ic-key']];
+  let settingsTab = 'account';
+  const settingsPaneHtml = tab => {
+    const prof = profileLoad();
+    const row = (title, sub, ctrl) => '<div class="set-row"><div><b>' + title + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</div><div class="set-ctrl">' + ctrl + '</div></div>';
+    const btn = (label, attrs, primary) => '<button type="button" class="btn ' + (primary ? '' : 'secondary ') + 'rel-mini" ' + attrs + '>' + label + '</button>';
+    if (tab === 'account') return '<h3>Compte & profil</h3>' +
+      row('Profil', prof ? '@' + escapeHtml(prof.handle) + (prof.favorite ? ' · fan de ' + escapeHtml(prof.favorite) : '') : 'Aucun profil sur cet appareil', btn(prof ? 'Modifier mon profil' : 'Créer mon profil', 'data-set-go="profile"', true)) +
+      row('Compte en ligne', 'Pseudo réservé, abonnés, publication des planches et stories, directs. Ouverture avec la synchronisation (Supabase).', '<span class="set-pill">Pas encore ouvert</span>') +
+      row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>');
+    if (tab === 'display') return '<h3>Affichage</h3>' +
+      row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Primestone'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
+      row('Vue de la collection', 'Cartes, liste, boîtes', btn('Cartes / liste', 'data-set-click="singlesViewModeBtn"') + ' ' + btn('Boîtes', 'data-set-click="singlesBoxesBtn"')) +
+      row('Calendrier', 'Manga et éditeurs manga masqués par défaut (comics uniquement)', '<span class="set-pill is-ok">Comics</span>');
+    if (tab === 'collection') return '<h3>Collection & finances</h3>' +
+      row('Devise par défaut', 'Pour les nouvelles fiches ; aucune conversion automatique', '<select class="field-input" data-set-cur>' + FIN_CURRENCIES.map(c => '<option' + (c === finDefaultCurrency() ? ' selected' : '') + '>' + c + '</option>').join('') + '</select>') +
+      row('Prix payé', 'Prérempli avec le prix de couverture pour un achat neuf ; « Seconde main » libère le prix', '<span class="set-pill is-ok">Actif</span>') +
+      row('Couvertures', 'Récupération Fandom puis Comic Vine, en arrière-plan', btn('Ouvrir la collection', 'data-set-view="collection"')) +
+      row('Catalogue commun', 'Doublons possibles à trancher', btn('Ouvrir', 'data-set-click="pubCatalogBtn"'));
+    if (tab === 'reading') { const n = rdMigrationPlan().length; return '<h3>Lecture</h3>' +
+      row('Lectures importées', n ? n + ' numéro(s) marqué(s) lu(s) pas encore dans votre journal' : 'Tout est déjà dans Lecture', n ? btn('Intégrer maintenant', 'data-set-rdmig', true) : '<span class="set-pill is-ok">À jour</span>') +
+      row('Lecture par œuvre', 'Aperçu détaillé, conflits de notes, annulation', btn('Ouvrir', 'data-set-click="readingMigrateBtn"')) +
+      row('Stories de lecture', storyLoad().stories.length + ' story(s) sur cet appareil', btn('Créer une story', 'data-set-story')); }
+    if (tab === 'data') return '<h3>Données & sauvegardes</h3>' +
+      row('Sauvegarde complète', 'Fichier JSON de toute la collection', btn('Exporter', 'data-set-click="backupJsonBtn"', true)) +
+      row('Restaurer', 'Fusion par défaut, annulation possible', btn('Restaurer…', 'data-set-click="restoreJsonBtn"')) +
+      row('Sauvegarde par domaine', 'Collection, Lecture, Explorer, Communauté', btn('Ouvrir', 'data-set-click="backupOptionsBtn"')) +
+      row('Vérifier les données', 'Contrôle d\'intégrité, ne supprime rien', btn('Vérifier', 'data-set-click="cleanDbBtn"')) +
+      row('Corbeille', 'Fiches retirées, restaurables', btn('Ouvrir', 'data-set-click="trashBtn"'));
+    return '';
+  };
+  const setupSettingsHub = () => {
+    const modal = $('settingsModal'); if (!modal) return;
+    const boxEl = modal.querySelector('.modal-box'); if (!boxEl) return;
+    if (!boxEl.querySelector('.set-shell')) {
+      boxEl.classList.add('set-box'); boxEl.style.maxWidth = '';
+      const head = boxEl.firstElementChild;
+      const keys = document.createElement('div'); keys.className = 'set-pane'; keys.dataset.setPane = 'sources';
+      while (head.nextSibling) keys.appendChild(head.nextSibling);
+      const h2 = head.querySelector('h2'); if (h2) h2.textContent = 'Réglages';
+      const shell = document.createElement('div'); shell.className = 'set-shell';
+      shell.innerHTML = '<nav class="set-nav" role="tablist">' + SETTINGS_TABS.map(([k, l, ic]) => '<button role="tab" data-set-tab="' + k + '"><svg class=ic aria-hidden=true><use href=#' + ic + ' /></svg><span>' + l + '</span></button>').join('') + '</nav><div class="set-main"><div class="set-pane" data-set-pane="dyn"></div></div>';
+      shell.querySelector('.set-main').appendChild(keys);
+      boxEl.appendChild(shell);
+    }
+    const render = () => {
+      boxEl.querySelectorAll('[data-set-tab]').forEach(b => { const on = b.dataset.setTab === settingsTab; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); b.onclick = () => { settingsTab = b.dataset.setTab; render(); }; });
+      const dyn = boxEl.querySelector('[data-set-pane="dyn"]'), keys = boxEl.querySelector('[data-set-pane="sources"]');
+      keys.hidden = settingsTab !== 'sources'; dyn.hidden = settingsTab === 'sources';
+      dyn.innerHTML = settingsTab === 'sources' ? '' : settingsPaneHtml(settingsTab);
+      const close = () => modal.classList.remove('open');
+      dyn.querySelectorAll('[data-set-click]').forEach(b => { b.onclick = () => { const t = $(b.dataset.setClick); close(); if (t) setTimeout(() => t.click(), 60); }; });
+      dyn.querySelectorAll('[data-set-go]').forEach(b => { b.onclick = () => { close(); commTab = 'profile'; profileEditing = true; goSinglesView('community'); }; });
+      dyn.querySelectorAll('[data-set-view]').forEach(b => { b.onclick = () => { close(); goSinglesView(b.dataset.setView); }; });
+      dyn.querySelectorAll('[data-set-story]').forEach(b => { b.onclick = () => { close(); openStoryPicker(); }; });
+      dyn.querySelectorAll('[data-set-accent]').forEach(b => { b.onclick = () => { const t = boxEl.querySelector('[data-set-pane="sources"] [data-theme="' + b.dataset.setAccent + '"]'); if (t) t.click(); }; });
+      const cs = dyn.querySelector('[data-set-cur]'); if (cs) cs.onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };
+      const mg = dyn.querySelector('[data-set-rdmig]'); if (mg) mg.onclick = () => { const r = rdMigrate(); renderSinglesCollection(); render(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
+    };
+    render();
+  };
+  // Ouvre une vue de la collection depuis n'importe où (vues hébergées comprises)
+  const goSinglesView = view => { if (hostedViews.has(view)) { hostedViews.get(view)(); return; } if (activeModule !== 'singles') switchModule('singles'); showSinglesView(view); window.scrollTo({ top: 0, behavior: 'smooth' }); };
+
+  const applySecondHand = x => { if ($('singleSecondHandInput') && $('singleSecondHandInput').checked) x.secondHand = true; else delete x.secondHand; };
   const renderCommunityView = () => {
     try { renderCommunityProfile(); } catch (_) {}
+    const headEl = $('communityHead');
+    if (headEl) {
+      headEl.innerHTML = commHeadHtml();
+      wireStoriesBar(headEl);
+      headEl.querySelectorAll('[data-cm-tab]').forEach(b => { b.onclick = () => { commTab = b.dataset.cmTab; renderCommunityView(); }; });
+    }
+    if ($('communityProfile')) $('communityProfile').hidden = commTab !== 'profile';
     const host = $('communityDashboard');
     if (!host) return;
+    host.hidden = commTab === 'profile';
     const d = commLoad();
     const prof = profileLoad();
     const who = prof ? '@' + prof.handle : 'vous';
@@ -14828,15 +15589,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<span class="pl-actions"><button class="btn secondary" data-draft-edit="' + escapeHtml(x.id) + '">Modifier</button><button class="btn secondary" data-draft-del="' + escapeHtml(x.id) + '">Retirer</button><button class="btn secondary" data-draft-preview="' + escapeHtml(x.id) + '" title="Contenu exact qui serait envoyé (CommunityPublish.v1) ; rien n\'est envoyé">Aperçu de l\'envoi</button></span></footer>' +
       '</article>';
     host.innerHTML =
-      '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
-      '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>' +
-      '<section class="live-teaser"><div class="live-teaser-main"><span class="live-dot">Bientôt</span><h3>Débats en direct</h3><p>Des salons vocaux pour parler comics à plusieurs : un animateur, des intervenants qui lèvent la main, et un tableau où chacun montre la case ou la couverture dont il parle. Débat du mercredi sur les sorties, procès d\'un event, « quel est le meilleur run de Daredevil ? ». Les débats animés rapportent des points de rang.</p></div>' +
+      (commTab === 'live' ? '' : '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
+      '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>') +
+      (commTab !== 'live' ? '' : '<section class="live-teaser"><div class="live-teaser-main"><span class="live-dot">Bientôt</span><h3>Débats en direct</h3><p>Des salons vocaux pour parler comics à plusieurs : un animateur, des intervenants qui lèvent la main, et un tableau où chacun montre la case ou la couverture dont il parle. Débat du mercredi sur les sorties, procès d\'un event, « quel est le meilleur run de Daredevil ? ». Les débats animés rapportent des points de rang.</p></div>' +
         '<ul class="live-teaser-list"><li><b>Salon vocal</b> animateur, intervenants, auditeurs</li><li><b>Tableau d\'images</b> cases et couvertures de votre collection</li><li><b>Modération</b> signalement, exclusion, règles du salon</li></ul>' +
-        '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>' +
+        '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>') +
       '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches restent sur cet appareil ; publication, abonnés, réactions et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
-      '<h3 class="pf-section">Mon fil <span class="stat-sub">' + d.drafts.length + ' planche' + (d.drafts.length > 1 ? 's' : '') + '</span></h3>' +
+      (commTab === 'live' ? '' : '<h3 class="pf-section">Mon fil <span class="stat-sub">' + d.drafts.length + ' planche' + (d.drafts.length > 1 ? 's' : '') + '</span></h3>' +
       (d.drafts.length ? '<div class="pl-feed">' + d.drafts.map(planche).join('') + '</div>'
-        : '<div class="notice-box" style="margin-top:8px">Aucune planche. Choisissez un modèle ci-dessus, ou ouvrez une fiche puis « Partager… ».</div>');
+        : '<div class="notice-box" style="margin-top:8px">Aucune planche. Choisissez un modèle ci-dessus, ou ouvrez une fiche puis « Partager… ».</div>'));
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
@@ -14973,7 +15734,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<p class="stat-sub" style="margin-top:8px">Plus-value calculée sur ' + fin.gainBase + ' ex. sur ' + fin.ownedCount + ' (prix payé et valeur connus)' +
       (fin.gainBase ? ' : ' + (fin.gain >= 0 ? '+' : '-') + money(Math.abs(fin.gain)) + ' (' + pctText(fin.gainPct) + ')' : '') + '. Une donnée inconnue n\'est jamais remplacée par le prix de couverture ni par zéro.</p></div>';
 
-    host.innerHTML =
+    if (!host.dataset.ciWired) {
+      host.dataset.ciWired = '1';
+      host.addEventListener('click', e => {
+        const m = e.target.closest('[data-ci-mode]'); if (m) { statsCreatorMode = m.dataset.ciMode; renderStatsDashboard(); return; }
+        if (e.target.closest('[data-ci-fetch]')) fetchCredits(40);
+      });
+    }
+    host.innerHTML = (() => { try { return creatorsCardHtml(owned); } catch (_) { return ''; } })() +
       '<div class="stats-card"><h3>Évolution de la valeur</h3>' + evo + '</div>' + sourcesCard + coverageCard +
       '<div class="stats-card"><h3>Valeur par éditeur</h3>' + hbars(byPub, r => money(r.v)) + '</div>' +
       '<div class="stats-card"><h3>Les 10 plus précieux</h3><div class="top-list">' + top.map((s, i) => topItem(s, i, `<b style="color:var(--gold)">${money(valueOf(s))}</b>`)).join('') + '</div></div>' +
@@ -15190,6 +15958,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const skipped = [];
     const source = opts.source || detectCsvSource(parsed.headers);
     const stamp = Date.now().toString(36);
+    // Colonne de date de lecture distincte de la colonne « Lu » (ex. LoCG : Read + Read Date)
+    const readDateIdx = parsed.headers.findIndex((hd, k) => k !== mapping.read && /^(readdate|dateread|datelu|datedelecture|lastread|lastreaddate|readon|finishedon|datefinished)$/.test(normHeader(hd)));
     parsed.rows.forEach((row, i) => {
       const get = k => (mapping[k] >= 0 ? String(row[mapping[k]] == null ? '' : row[mapping[k]]).trim() : '');
       const rawSeries = get('series');
@@ -15308,6 +16078,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         } else if (opts.autoValue !== false) {
           applyAutoValuation(item);
         }
+        // Date de lecture du fichier (colonne « Read Date ») : gardée hors fiche, pour le journal de lecture
+        if (item.isRead && (readTxt || readDateIdx >= 0)) { const rdd = (readDateIdx >= 0 && parseDateFlexible(String(row[readDateIdx] == null ? '' : row[readDateIdx]).trim())) || parseDateFlexible(readTxt); if (rdd) Object.defineProperty(item, '_readAt', { value: rdd + 'T12:00:00.000Z', enumerable: false }); }
         items.push(item);
       }
     });
@@ -15320,18 +16092,34 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const toAdd = skipDuplicates ? items.filter(it => !existing.has(csvDupKey(it))) : items.slice();
     const duplicates = items.length - toAdd.length;
     toAdd.forEach(it => physicalSingles.push(it));
+    // Lectures du fichier (D-63) : chaque numéro marqué lu entre dans Lecture (journal daté si le fichier donne la date),
+    // y compris quand l'exemplaire existait déjà (doublon ignoré) ; annulable avec l'import
+    const rdBefore = rdRaw(), flipped = [];
+    let readSynced = 0;
+    try {
+      const byKey = new Map(physicalSingles.map(x => [csvDupKey(x), x]));
+      items.filter(it => it.isRead && !it.isWishlist).forEach(it => {
+        const target = toAdd.includes(it) ? it : byKey.get(csvDupKey(it));
+        if (!target || target.isWishlist) return;
+        const f = rdFind(target);
+        if (!f || f.state.status !== 'read') { const r = rdSetStatus(target, 'read', { source: 'import', at: it._readAt, ignoreCompat: true }); if (r.ok) readSynced++; }
+        if (!target.isRead) { target.isRead = true; flipped.push(target); }
+      });
+    } catch (_) {}
     persistSingles();
     renderSinglesCollection();
     const ids = new Set(toAdd.map(it => it.id));
-    if (toAdd.length) {
-      showToastAction(`${toAdd.length} comic(s) importé(s)${duplicates ? `, ${duplicates} doublon(s) ignoré(s)` : ''}.`, 'Annuler', () => {
+    if (toAdd.length || readSynced) {
+      showToastAction(`${toAdd.length} comic(s) importé(s)${duplicates ? `, ${duplicates} doublon(s) ignoré(s)` : ''}${readSynced ? `, ${readSynced} lecture(s) ajoutée(s) à Lecture` : ''}.`, 'Annuler', () => {
         physicalSingles = physicalSingles.filter(s => !ids.has(s.id));
+        flipped.forEach(x => { x.isRead = false; });
+        if (readSynced) rdSetRaw(rdBefore);
         persistSingles();
         renderSinglesCollection();
         showToast('Import annulé.');
       });
     }
-    return { added: toAdd.length, duplicates, ids: [...ids] };
+    return { added: toAdd.length, duplicates, ids: [...ids], readSynced };
   };
 
   // Lecture d'un classeur Excel (.xlsx) : première feuille, chaînes partagées ou en ligne, dates Excel
@@ -17212,6 +18000,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
 
     const openSettings = () => {
+      try { setupSettingsHub(); } catch (_) {}
       renderSnapshotList();
       if ($('appMetronBox')) {
         $('appMetronBox').hidden = !IS_NATIVE_APP;

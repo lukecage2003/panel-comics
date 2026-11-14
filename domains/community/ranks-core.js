@@ -4,6 +4,8 @@
 //    (abonnés, réactions, commentaires, planches publiées, débats) qui ne compte qu'une fois les comptes en ligne actifs.
 //  - Les rangs cosmiques suivent la hiérarchie présentée par House of Ideal (d'après les vidéos de Maki,
 //    classement de fans, non officiel) : l'abstrait, les forces, le terrain, l'équilibre, le sommet.
+//  - D-63 : l'échelle terrestre mêle Marvel et DC (méta-humains, Amazones, Kryptoniens, Lanterns, Nouveaux Dieux),
+//    puis un palier « multivers DC » précède la hiérarchie cosmique Marvel. Ordre propre à Panel, pour le jeu.
 //  - Module pur : aucune donnée stockée ni envoyée.
 
 // Barème des points. `social: true` : activité qui n'existe qu'avec un compte en ligne (0 tant qu'il n'y en a pas).
@@ -17,6 +19,8 @@ const XP_RULES = [
   { id: 'keys', label: 'Key issue possédé', xp: 20 },
   { id: 'trophyXp', label: 'Paliers de trophées', xp: 1 },
   { id: 'planches', label: 'Planche préparée', xp: 6 },
+  { id: 'stories', label: 'Story de lecture créée', xp: 10 },
+  { id: 'artefacts', label: 'Artefact débloqué', xp: 50 },
   { id: 'followers', label: 'Abonné gagné', xp: 10, social: true },
   { id: 'reactions', label: 'Réaction reçue (POW!, WOW!…)', xp: 2, social: true },
   { id: 'comments', label: 'Commentaire reçu', xp: 3, social: true },
@@ -25,11 +29,18 @@ const XP_RULES = [
 ];
 
 // Échelle terrestre (avant le cosmique), puis la hiérarchie cosmique de bas en haut.
-const EARTH = [
-  'Civil', 'Témoin d\'un combat', 'Justicier de quartier', 'Athlète de haut niveau', 'Humain entraîné', 'Maître des arts martiaux',
-  'Humain optimisé', 'Super-soldat', 'Agent augmenté', 'Mutant latent', 'Mutant de classe Bêta', 'Mutant de classe Alpha',
-  'Mutant de classe Oméga', 'Inhumain révélé', 'Sorcier initié', 'Sorcier suprême', 'Dieu d\'Asgard', 'Héraut cosmique'
+const EARTH_DEF = [
+  ['Civil', 'mixte'], ['Témoin d\'un combat', 'mixte'], ['Justicier de quartier', 'mixte'], ['Athlète de haut niveau', 'mixte'],
+  ['Humain entraîné', 'mixte'], ['Maître des arts martiaux', 'mixte'], ['Détective de Gotham', 'dc'], ['Humain optimisé', 'marvel'],
+  ['Super-soldat', 'marvel'], ['Agent augmenté', 'marvel'], ['Méta-humain', 'dc'], ['Mutant latent', 'marvel'],
+  ['Mutant de classe Bêta', 'marvel'], ['Atlante', 'mixte'], ['Mutant de classe Alpha', 'marvel'], ['Amazone de Themyscira', 'dc'],
+  ['Mutant de classe Oméga', 'marvel'], ['Inhumain révélé', 'marvel'], ['Martien vert', 'dc'], ['Green Lantern d\'Oa', 'dc'],
+  ['Kryptonien', 'dc'], ['Sorcier initié', 'mixte'], ['Sorcier suprême', 'marvel'], ['Dieu d\'Asgard', 'marvel'],
+  ['Nouveau Dieu', 'dc'], ['Héraut cosmique', 'marvel']
 ];
+const EARTH = EARTH_DEF.map(x => x[0]);
+// Palier DC entre la Terre et le cosmique Marvel (ordre Panel, non officiel)
+const DC_MULTIVERSE = { id: 'multivers_dc', label: 'Le multivers DC', names: ['Gardiens de l\'Univers', 'Darkseid', 'Le Spectre', 'Monitor', 'Anti-Monitor', 'Lucifer Morningstar', 'Le Monde-Forgeron', 'Perpetua'] };
 // Tiers cosmiques (chaque liste va du rang le plus bas au plus haut du tier)
 const COSMIC = [
   { id: 'abstrait', label: 'L\'abstrait', names: ['Destiny', 'Numinus', 'Unbeing', 'Origin', 'Anomaly', 'Mirage'] },
@@ -45,11 +56,12 @@ const xpForRank = n => n <= 1 ? 0 : Math.round(30 * Math.pow(n - 1, 2.25) / 10) 
 
 const RANKS = (() => {
   const out = [];
-  EARTH.forEach(name => out.push({ name, tier: ERA_TERRE.id, tierLabel: ERA_TERRE.label, cosmic: false }));
-  COSMIC.forEach(t => t.names.forEach(name => out.push({ name, tier: t.id, tierLabel: t.label, cosmic: true })));
+  EARTH_DEF.forEach(([name, universe]) => out.push({ name, tier: ERA_TERRE.id, tierLabel: ERA_TERRE.label, cosmic: false, universe }));
+  DC_MULTIVERSE.names.forEach(name => out.push({ name, tier: DC_MULTIVERSE.id, tierLabel: DC_MULTIVERSE.label, cosmic: true, universe: 'dc' }));
+  COSMIC.forEach(t => t.names.forEach(name => out.push({ name, tier: t.id, tierLabel: t.label, cosmic: true, universe: 'marvel' })));
   return out.map((r, i) => Object.freeze(Object.assign(r, { rank: i + 1, xp: xpForRank(i + 1) })));
 })();
-const TIER_IDS = [ERA_TERRE.id].concat(COSMIC.map(t => t.id));
+const TIER_IDS = [ERA_TERRE.id, DC_MULTIVERSE.id].concat(COSMIC.map(t => t.id));
 
 const nonNeg = v => Math.max(0, Math.floor(Number(v) || 0));
 
@@ -73,4 +85,4 @@ const computeRank = (activity = {}, options = {}) => {
   };
 };
 
-module.exports = { XP_RULES, EARTH, COSMIC, RANKS, TIER_IDS, xpForRank, computeRank };
+module.exports = { XP_RULES, EARTH, EARTH_DEF, DC_MULTIVERSE, COSMIC, RANKS, TIER_IDS, xpForRank, computeRank };
