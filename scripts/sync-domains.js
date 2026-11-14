@@ -18,12 +18,15 @@ const MODULES = [
   ['releasesScope', 'domains/releases/scope-core.js'],
   ['collectionStats', 'domains/collection/stats-core.js'],
   ['readingStats', 'domains/reading/reading-stats.js'],
+  ['seriesProgress', 'domains/reading/series-progress.js'],
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
   ['trophiesCore', 'domains/community/trophies-core.js'],
   ['ranksCore', 'domains/community/ranks-core.js'],
   ['artefactsCore', 'domains/community/artefacts-core.js'],
-  ['collectionInsights', 'domains/collection/insights-core.js']
+  ['collectionInsights', 'domains/collection/insights-core.js'],
+  ['newsCore', 'domains/explorer/news-core.js'],
+  ['watchGuides', 'domains/explorer/watch-guides.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

@@ -1317,9 +1317,12 @@ const waitForCdp = async () => {
         const nw2 = await jget('/api/news?lang=fr');
         const cbr = nw1.body.items.find(a => a.sourceId === 'cbr');
         const fr = nw1.body.items.filter(a => a.sourceId === 'actuabd');
+        // D-75 : l'atlas cosmique est servi par le relais (JSON valide, 301 fiches), les autres fichiers de data/ restent refusés
+        { const at = await jget('/data/cosmos-marvel.json'); const bad = await fetch('http://127.0.0.1:8099/data/../serve.js'); const bad2 = await fetch('http://127.0.0.1:8099/data/x.txt');
+          t20.atlasData = at.status === 200 && Object.keys(at.body.E || {}).length === 301 && Array.isArray(at.body.T) && bad.status !== 200 && bad2.status === 404; }
         t20.news = nw1.status === 200 && !!cbr && cbr.title === 'Static returns in a new comic' && cbr.image === 'https://img.example/a.jpg' && cbr.excerpt.length <= 241 && cbr.excerpt.endsWith('…')
           && !nw1.body.items.some(a => a.title === 'A movie only story') && fr.length === 1 && fr[0].title === 'L’actu BD' && fr[0].excerpt === 'Texte & image' && !nw1.body.items.some(a => /non-https|old/.test(a.url))
-          && nw1.body.unavailable.includes('Urban Comics') && newsN1 === 7 && nw2.body.items.every(a => a.lang === 'fr') && newsUrls.length === 8 && nw2.body.sources.every(x => x.lang === 'fr');
+          && nw1.body.unavailable.includes('Urban Comics') && newsN1 === 13 && nw2.body.items.every(a => a.lang === 'fr') && newsUrls.length === 14 && nw2.body.sources.every(x => x.lang === 'fr');
         // D-68 : durcissement du serveur local (hôte, origine, méthodes, en-têtes)
         const raw = (pathname, headers = {}, method = 'GET') => new Promise(res => { const q = require('http').request({ host: '127.0.0.1', port: 8099, path: pathname, method, headers }, r => { r.resume(); r.on('end', () => res({ status: r.statusCode, headers: r.headers })); }); q.on('error', () => res({ status: 0, headers: {} })); q.end(); });
         const hOk = await raw('/'), hHost = await raw('/', { Host: 'rebind.example:8099' }), hOrigin = await raw('/api/status', { Origin: 'https://site-tiers.example' });
@@ -1340,7 +1343,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['atlasData', 'exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
@@ -4585,9 +4588,9 @@ const waitForCdp = async () => {
       console.log('\n[TEST 56] Actualités : flux simulés, sélection « Pour vous », filtre de langue, liens vers les sites...');
       const t56 = await evalExpr(`(async () => {
         const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
-        const f0 = localStorage.getItem('panel_follows_v1'), n0 = localStorage.getItem('panel_news_v1');
+        const f0 = localStorage.getItem('panel_follows_v1'), n0 = localStorage.getItem('panel_news_v1'), l0 = localStorage.getItem('panel_news_learn_v1');
         try {
-          localStorage.removeItem('panel_news_v1');
+          localStorage.removeItem('panel_news_v1'); localStorage.removeItem('panel_news_learn_v1');
           localStorage.setItem('panel_follows_v1', JSON.stringify({ 'character:26578': { name: 'Static', image: '', lastId: 1, lastLabel: '', lastDate: '', isNew: false } }));
           const d = new Date().toISOString();
           window.Panel.news.setFetcherForTest(async () => ({ items: [
@@ -4600,11 +4603,21 @@ const waitForCdp = async () => {
           await window.Panel.news.load(); await wait(200);
           const box = document.getElementById('exNewsBox');
           r.section = !!box;
-          const fy = [...box.querySelectorAll('.ex-nw-grid.is-foryou .ex-nw')];
+          // D-75 : français par défaut, rubriques, dossiers « Avant de voir », atlas
+          r.frDefault = box.querySelectorAll('.ex-nw').length === 1 && box.querySelector('[data-news-lang="fr"]').classList.contains('active');
+          r.topics = !!box.querySelector('[data-news-topic="bd"]');
+          r.watch = !!document.querySelector('#exWatchBox .ex-wg[data-ex-go="watch"]');
+          // Page en file:// : l'atlas ne peut pas lire data/ et l'annonce ; le fichier lui-même est vérifié côté relais (test 20, atlasData)
+          r.atlas = !!document.querySelector('[data-ex-go="cosmos"]');
+          box.querySelector('[data-news-lang="all"]').click(); await wait(150);
+          const fy = [...document.querySelectorAll('#exNewsBox .ex-nw-grid.is-foryou .ex-nw')];
           r.forYou = fy.length === 1 && /Static gets a new series/.test(fy[0].textContent) && /Static/.test(fy[0].querySelector('em').textContent);
-          r.rest = box.querySelectorAll('.ex-nw-grid:not(.is-foryou) .ex-nw').length === 2;
-          r.links = [...box.querySelectorAll('a.ex-nw')].every(a => a.target === '_blank' && a.rel.includes('noopener') && a.href.startsWith('https://'));
-          box.querySelector('[data-news-lang="fr"]').click(); await wait(150);
+          r.rest = document.querySelectorAll('#exNewsBox .ex-nw-grid:not(.is-foryou) .ex-nw').length === 2;
+          r.links = [...document.querySelectorAll('#exNewsBox a.ex-nw')].every(a => a.target === '_blank' && a.rel.includes('noopener') && a.href.startsWith('https://'));
+          const nb = document.getElementById('exNewsBox'); nb.addEventListener('click', e => e.preventDefault(), { once: true });
+          nb.querySelector('a.ex-nw').click();
+          r.learn = JSON.parse(localStorage.getItem('panel_news_learn_v1') || '{}').clicks === 1;
+          document.querySelector('#exNewsBox [data-news-lang="fr"]').click(); await wait(150);
           r.langFr = document.querySelectorAll('#exNewsBox .ex-nw').length === 1 && /festival/.test(document.querySelector('#exNewsBox .ex-nw').textContent);
           r.pref = JSON.parse(localStorage.getItem('panel_news_v1')).lang === 'fr';
           r.credit = /Avis fixture/.test(document.querySelector('#exNewsBox .ex-credit').textContent);
@@ -4612,13 +4625,14 @@ const waitForCdp = async () => {
         finally {
           if (f0 === null) localStorage.removeItem('panel_follows_v1'); else localStorage.setItem('panel_follows_v1', f0);
           if (n0 === null) localStorage.removeItem('panel_news_v1'); else localStorage.setItem('panel_news_v1', n0);
+          if (l0 === null) localStorage.removeItem('panel_news_learn_v1'); else localStorage.setItem('panel_news_learn_v1', l0);
           document.getElementById('navAllSingles').click();
         }
         return r;
       })()`);
       console.log('Résultat Test 56:', JSON.stringify(t56));
       testResults.push({ test: 'Actualités (D-69) : sélection « Pour vous » d\'après les suivis, dernières nouvelles, filtre de langue mémorisé, liens sortants sûrs, crédit des sources',
-        ok: !!t56 && !t56.error && ['section', 'forYou', 'rest', 'links', 'langFr', 'pref', 'credit'].every(k => t56[k] === true) });
+        ok: !!t56 && !t56.error && ['section', 'frDefault', 'topics', 'watch', 'atlas', 'forYou', 'rest', 'links', 'learn', 'langFr', 'pref', 'credit'].every(k => t56[k] === true) });
 
       // ==========================================
       // TEST 57 : Social local (D-70) — « Pour vous » calculé sur l'appareil, stories vues, lecteur en pause, onglet « Lus »
@@ -4709,6 +4723,46 @@ const waitForCdp = async () => {
       console.log('Résultat Test 58:', JSON.stringify(t58));
       testResults.push({ test: 'Niveaux et trophées (D-71) : vitrine des runs complets, trophées illustrés par la collection, barème (runs lus, semaines de lecture), barre de recherche sans « ⌘K »',
         ok: !!t58 && !t58.error && ['noKbd', 'runs', 'art', 'plural', 'rules'].every(k => t58[k] === true) });
+
+      // ==========================================
+      // TEST 59 : Lecture (D-75) — lectures hors collection importées, séries en cours, « Marquer lu » (fichier FICTIF)
+      // ==========================================
+      console.log('\n[TEST 59] Lecture : lectures hors collection importées, séries en cours, prochain numéro...');
+      const locgReads = ['Publisher Name,Series Name,Full Title,Release Date,In Collection,In Wish List,Marked Read',
+        'Fixture Comics,Fixture Saga (2024 - Present),Fixture Saga #1,2024-01-03,0,0,1',
+        'Fixture Comics,Fixture Saga (2024 - Present),Fixture Saga #2,2024-02-07,0,0,1',
+        'Fixture Comics,Fixture Saga (2024 - Present),Fixture Saga #3,2024-03-06,1,0,0',
+        'Fixture Comics,Fixture Saga (2024 - Present),Fixture Saga #4,2024-04-03,0,1,0',
+        'Fixture Comics,Fixture Fini (2010),Fixture Fini #1,2010-01-06,0,0,1',
+        'Fixture Comics,Fixture Fini (2010),Fixture Fini #2,2010-02-03,0,0,1'].join('\n');
+      const t59 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const prev = P.getPhysicalSingles(), rd0 = localStorage.getItem('panel_reading_v1');
+        try {
+          P.setPhysicalSingles([]); localStorage.removeItem('panel_reading_v1');
+          const out = P.importCsvText(${JSON.stringify(locgReads)});
+          const rd = JSON.parse(localStorage.getItem('panel_reading_v1') || '{"states":{}}');
+          const reads = Object.values(rd.states).filter(x => x.status === 'read');
+          r.reads = reads.length === 4 && reads.every(x => x.source === 'import');
+          r.noFakeCopies = P.getPhysicalSingles().length === 2 && out.skipped.filter(x => x.readRef).length === 4;
+          document.getElementById('navSinglesReading').click(); await wait(300);
+          const cards = [...document.querySelectorAll('#readingDashboard .rd-sip')];
+          r.sip = cards.length === 1 && /Fixture Saga/.test(cards[0].textContent) && /Prochain #3/.test(cards[0].textContent) && /suivant est chez vous/i.test(cards[0].textContent) && /2 lus sur 4/.test(cards[0].textContent);
+          cards[0].querySelector('[data-sip-read]').click(); await wait(250);
+          const rd2 = JSON.parse(localStorage.getItem('panel_reading_v1'));
+          r.markRead = Object.values(rd2.states).filter(x => x.status === 'read').length === 5 && /Prochain #4/.test(document.querySelector('#readingDashboard .rd-sip').textContent);
+          r.importBtn = !!document.querySelector('#readingDashboard [data-rd-import]');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          P.setPhysicalSingles(prev);
+          if (rd0 === null) localStorage.removeItem('panel_reading_v1'); else localStorage.setItem('panel_reading_v1', rd0);
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 59:', JSON.stringify(t59));
+      testResults.push({ test: 'Lecture (D-75) : lectures hors collection importées dans Lecture sans fausse fiche, séries en cours avec prochain numéro, « Marquer lu »',
+        ok: !!t59 && !t59.error && ['reads', 'noFakeCopies', 'sip', 'markRead', 'importBtn'].every(k => t59[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

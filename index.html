@@ -1174,7 +1174,9 @@
 
     :root {
       --font-ui: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      --font-display: 'Barlow Condensed', "Arial Narrow", sans-serif;
+      /* D-75 : titres en police système Apple (SF Pro Display) ou Windows (Segoe UI Variable Display), plus de condensé de presse */
+      --font-display: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-comic: 'Barlow Condensed', "Arial Narrow", sans-serif;
       /* Trames Ben-Day : un point d'encre par cellule */
       --dots-key: radial-gradient(circle, rgba(22, 22, 22, 0.55) 32%, transparent 36%);
       --dots-cyan: radial-gradient(circle, var(--cyan-fill) 40%, transparent 44%);
@@ -1212,7 +1214,7 @@
     .ic-lg { width: 28px; height: 28px; }
     .swatch { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--key); vertical-align: -1px; }
 
-    /* Titres : condensé de presse */
+    /* Titres : police système (D-75) */
     h1, h2, h3, .topbar-title, .section-head h2, .modal-box h2, .modal-box h3, .stats-card h3, .brand, .hero-banner h1, .hero-banner h2 {
       font-family: var(--font-display) !important;
       letter-spacing: 0;
@@ -2174,36 +2176,6 @@
       .row-actions .read-dot { padding: 2px 9px; }
     }
     /* ===== D-63 · Stories de lecture ===== */
-    .st-card { position: relative; isolation: isolate; overflow: hidden; display: flex; flex-direction: column; gap: 10px; width: 100%; aspect-ratio: 9 / 16; max-height: 78vh; padding: 16px 16px 14px; border-radius: 22px; color: var(--st-ink); background: linear-gradient(160deg, var(--st-bg2), var(--st-bg) 62%); box-shadow: 0 18px 50px rgba(0,0,0,.35); text-align: left; font-family: var(--font-display); }
-    .st-card:not(.is-big) { aspect-ratio: 3 / 4; padding: 10px; gap: 6px; border-radius: 16px; }
-    .st-bgimg { position: absolute; inset: -20px; z-index: -2; opacity: .45; filter: blur(22px) saturate(1.4); }
-    .st-bgimg img { width: 100%; height: 100%; object-fit: cover; }
-    .st-tone { position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(circle, rgba(0,0,0,.28) 1.1px, transparent 1.4px); background-size: 7px 7px; mix-blend-mode: multiply; -webkit-mask-image: linear-gradient(180deg, transparent 30%, #000 100%); mask-image: linear-gradient(180deg, transparent 30%, #000 100%); }
-    .st-dc .st-tone { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.07) 0 2px, transparent 2px 9px); mix-blend-mode: normal; }
-    .st-image .st-tone { background-image: linear-gradient(rgba(255,255,255,.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.05) 1px, transparent 1px); background-size: 18px 18px; mix-blend-mode: normal; }
-    .st-noir .st-bgimg { opacity: .18; filter: blur(18px) grayscale(1); }
-    .st-top { display: flex; justify-content: space-between; align-items: center; font-size: 11px; letter-spacing: 1.4px; text-transform: uppercase; font-weight: 800; }
-    .st-brand i { color: var(--st-acc); font-style: normal; }
-    .st-date { opacity: .8; letter-spacing: .4px; }
-    .st-cover { position: relative; margin: 4px auto 0; width: 62%; flex: 0 0 auto; transform: rotate(-2.5deg); }
-    .st-card:not(.is-big) .st-cover { width: 54%; }
-    .st-cover img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; border: 3px solid var(--st-ink); box-shadow: 8px 8px 0 rgba(0,0,0,.45); background: rgba(255,255,255,.08); }
-    .st-burst { position: absolute; right: -18%; top: -6%; padding: 10px 12px; font: 900 clamp(13px, 2.6vw, 20px)/1 var(--font-display); letter-spacing: .5px; color: #111; background: var(--st-acc); clip-path: polygon(50% 0, 61% 18%, 82% 6%, 78% 30%, 100% 36%, 82% 52%, 98% 72%, 74% 70%, 70% 96%, 52% 78%, 30% 98%, 28% 72%, 2% 76%, 18% 54%, 0 34%, 24% 30%, 18% 6%, 40% 18%); transform: rotate(8deg); }
-    .st-card:not(.is-big) .st-burst { font-size: 10px; padding: 7px 8px; }
-    .st-body { margin-top: auto; display: flex; flex-direction: column; gap: 6px; }
-    .st-title { margin: 0; font-size: clamp(16px, 3.4vw, 24px); font-weight: 800; line-height: 1.05; text-transform: uppercase; }
-    .st-card:not(.is-big) .st-title { font-size: 12px; }
-    .st-title b { color: var(--st-acc); }
-    .st-variant { opacity: .75; font: 600 11px var(--font-body, inherit); }
-    .st-card .st-stars { display: inline-block; align-self: flex-start; -webkit-text-fill-color: transparent; font-size: clamp(20px, 4vw, 30px); letter-spacing: 3px; line-height: 1; background: linear-gradient(90deg, var(--st-acc) var(--r), rgba(255,255,255,.22) var(--r)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-    .st-noir .st-stars { background: linear-gradient(90deg, var(--st-acc) var(--r), rgba(0,0,0,.18) var(--r)); -webkit-background-clip: text; background-clip: text; }
-    .st-card:not(.is-big) .st-stars { font-size: 13px; letter-spacing: 1px; }
-    .st-card p.st-review { margin: 0; padding: 10px 12px; background: var(--st-ink); color: var(--st-bg); border-radius: 14px 14px 14px 3px; font: 600 14px/1.35 var(--font-body, inherit); position: relative; }
-    .st-card:not(.is-big) p.st-review { display: none; }
-    .st-foot { display: flex; align-items: center; gap: 8px; font: 700 12px var(--font-body, inherit); opacity: .92; }
-    .st-card:not(.is-big) .st-foot { display: none; }
-    .st-av { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--pf); color: #fff; font-size: 11px; }
-    .st-pub { margin-left: auto; padding: 2px 8px; border: 1px solid currentColor; border-radius: 99px; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
     .st-bar { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 12px; margin-bottom: 6px; scrollbar-width: none; align-items: flex-start; }
     .st-bar::-webkit-scrollbar { display: none; }
     .st-ring { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; color: var(--ink, inherit); cursor: pointer; width: 72px; padding: 0; }
@@ -2215,20 +2187,13 @@
     .st-bar-hint { margin: 0; align-self: center; font-size: 13px; color: var(--muted); max-width: 420px; }
     .st-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
     .st-mini { background: none; border: 0; padding: 0; cursor: pointer; }
-    .modal-backdrop.st-viewer-wrap { background: rgba(5,5,8,.92); }
-    .st-viewer { position: relative; width: min(420px, 94vw); margin: 2vh auto; display: flex; flex-direction: column; gap: 10px; }
-    .st-viewer .st-card { max-height: 76vh; }
     .st-prog { display: flex; gap: 4px; }
     .st-prog i { flex: 1; height: 3px; border-radius: 3px; background: rgba(255,255,255,.25); overflow: hidden; position: relative; }
     .st-prog i.is-done { background: #fff; }
     .st-prog i.is-now::after { content: ''; position: absolute; inset: 0; background: #fff; transform-origin: left; animation: stProg 7s linear forwards; }
     @keyframes stProg { from { transform: scaleX(0); } to { transform: scaleX(1); } }
     @media (prefers-reduced-motion: reduce) { .st-prog i.is-now::after { animation: none; transform: scaleX(1); } }
-    .st-nav { position: absolute; top: 40px; bottom: 70px; width: 38%; background: none; border: 0; cursor: pointer; }
-    .st-prev { left: 0; } .st-next { right: 0; }
-    .st-vbar { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
     .modal-box.st-editor { display: grid; grid-template-columns: minmax(200px, 290px) minmax(0, 1fr); gap: 22px; width: min(760px, 96vw); max-width: 760px; max-height: 94vh; overflow: auto; align-items: start; box-sizing: border-box; }
-    .st-ed-preview .st-card { max-height: 70vh; }
     .st-ed-form h2 { margin-top: 0; }
     .st-lab { display: flex; flex-direction: column; gap: 6px; margin: 12px 0 0; font-weight: 700; font-size: 13px; }
     .st-lab output, .st-lab small { color: var(--muted); font-weight: 600; }
@@ -2483,34 +2448,6 @@
     .is-tilt .tilt-glare, .is-tilt.ex-cv-media > .tilt-glare, .is-tilt.ig-tile > .tilt-glare { opacity: 1; }
     .ex-cvd-media { position: relative; }
     /* D-67 — Story en planche de BD : gouttières papier, cases encrées, récitatif, lignes de vitesse, bulle */
-    .st-card.st-page { display: grid; grid-template-columns: .9fr 1.1fr; grid-template-rows: auto minmax(0, 1fr) auto; gap: 7px; padding: 9px; border-radius: 14px; background: #f5efe1; color: var(--st-ink); box-shadow: 0 18px 40px -18px rgba(0,0,0,.7); }
-    .st-page::before { content: ''; position: absolute; inset: 0; z-index: 0; pointer-events: none; background-image: radial-gradient(rgba(0,0,0,.05) 1px, transparent 1.2px); background-size: 4px 4px; border-radius: inherit; }
-    .st-page .st-pnl { position: relative; z-index: 1; overflow: hidden; border: 3px solid #121212; border-radius: 2px; background: linear-gradient(160deg, var(--st-bg2), var(--st-bg)); }
-    .st-page .st-pnl-cap { grid-column: 1 / -1; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 5px 10px; background: var(--st-acc); color: #111; transform: rotate(-.6deg); box-shadow: 3px 3px 0 #121212; font: 800 11px/1.1 var(--font-display, inherit); letter-spacing: 1.2px; }
-    .st-page .st-pnl-cap .st-brand i { color: #111; }
-    .st-page .st-pnl-hero { grid-column: 1 / -1; display: grid; place-items: center; min-height: 0; clip-path: polygon(0 0, 100% 0, 100% 93%, 0 100%); }
-    .st-page .st-pnl-hero .st-bgimg { inset: -24px; z-index: 0; opacity: .5; }
-    .st-page .st-speed { position: absolute; inset: 0; z-index: 0; background: repeating-conic-gradient(from 0deg at 50% 46%, rgba(255,255,255,.13) 0 3deg, transparent 3deg 11deg); -webkit-mask-image: radial-gradient(circle at 50% 46%, transparent 22%, #000 70%); mask-image: radial-gradient(circle at 50% 46%, transparent 22%, #000 70%); }
-    .st-page .st-pnl-hero .st-tone { z-index: 0; }
-    .st-page .st-cover { z-index: 1; margin: 7% auto 5%; width: auto; height: 80%; max-width: 64%; aspect-ratio: 2 / 3; transform: rotate(-3deg); }
-    .st-page .st-cover img { width: 100%; height: 100%; border: 3px solid #121212; border-radius: 3px; box-shadow: 7px 7px 0 rgba(0,0,0,.55); }
-    .st-page .st-burst { z-index: 2; right: -12%; top: 3%; }
-    .st-page .st-pnl-title { margin: 0; padding: 8px 10px; display: flex; flex-direction: column; justify-content: flex-end; gap: 5px; }
-    .st-page .st-title { font-family: var(--font-display, inherit); letter-spacing: .5px; }
-    .st-page .st-pub { align-self: flex-start; margin: 2px 0 0; }
-    .st-page .st-pnl-voice { padding: 8px; background: #fff; color: #111; display: flex; flex-direction: column; justify-content: space-between; gap: 8px; opacity: 1; font: 700 12px var(--font-body, inherit); }
-    .st-page .st-pnl-voice p.st-review { margin: 0; padding: 8px 10px; background: #fff; color: #111; border: 2px solid #121212; border-radius: 24px; text-align: center; font: 700 12.5px/1.3 var(--font-body, inherit); position: relative; }
-    .st-page .st-pnl-voice p.st-review::after { content: ''; position: absolute; left: 18px; bottom: -11px; width: 14px; height: 12px; background: #fff; border: 2px solid #121212; border-top: 0; border-left: 0; transform: skewX(-28deg); clip-path: polygon(0 0, 100% 0, 100% 100%); }
-    .st-page .st-pnl-voice p.st-review.is-quiet { border-style: dashed; color: #777; }
-    .st-page .st-who { display: flex; align-items: center; gap: 6px; }
-    .st-page.st-noir .st-pnl { background: linear-gradient(160deg, #fff, #e9e3d4); }
-    .st-page.st-noir .st-pnl-voice { background: #111; color: #f5efe1; }
-    .st-card.st-page:not(.is-big) { grid-template-columns: 1fr; grid-template-rows: auto minmax(0, 1fr) auto; padding: 6px; gap: 5px; border-radius: 12px; }
-    .st-card.st-page:not(.is-big) .st-pnl-voice { display: none; }
-    .st-card.st-page:not(.is-big) .st-pnl-cap { font-size: 8.5px; padding: 3px 6px; }
-    .st-card.st-page:not(.is-big) .st-date { display: none; }
-    .st-card.st-page:not(.is-big) .st-pnl-title { padding: 5px 6px; }
-    .st-card.st-page:not(.is-big) .st-pub { display: none; }
     /* D-67 — Fiche personnage enrichie, suivis */
     .ex-cvd-bio p { line-height: 1.6; max-width: 72ch; margin: 0 0 6px; }
     .ex-follows { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: thin; }
@@ -2623,17 +2560,6 @@
     .st-ring.is-seen .st-ring-img { background: color-mix(in srgb, var(--ink, #fff) 22%, transparent); }
     .st-ring.is-seen small { color: var(--muted); font-weight: 600; }
     .st-viewer.is-paused .st-prog i.is-now::after { animation-play-state: paused; }
-    .st-viewer { touch-action: pan-y; user-select: none; }
-    /* Couverture entière, jamais rognée : l'image garde ses proportions dans la case */
-    .st-page .st-cover { display: flex; align-items: center; justify-content: center; aspect-ratio: auto; width: auto; max-width: 72%; height: 84%; }
-    .st-page .st-cover img { width: auto; height: 100%; max-width: 100%; object-fit: contain; aspect-ratio: auto; }
-    .st-page .st-cover .cover-ph { height: 100%; aspect-ratio: 2 / 3; }
-    .st-cover img { object-fit: contain; }
-    .st-vinfo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.08); color: #f5f5f5; }
-    .st-vinfo b { display: block; font-size: 15px; line-height: 1.25; } .st-vinfo b span { color: #FFD400; }
-    .st-vinfo small { display: block; margin-top: 2px; font-size: 12px; color: rgba(255,255,255,.72); }
-    .st-vinfo .btn { flex: 0 0 auto; }
-    .st-vinfo, .st-viewer .st-vbar { position: relative; z-index: 2; }
     .ig-tile { aspect-ratio: 2 / 3; }
     .ig-tile > img { object-position: center top; }
     .pf-avatar.pf-av-story { border: 0; cursor: pointer; font: 700 24px var(--font-title); padding: 0; box-shadow: 0 0 0 3px var(--bg, #111), 0 0 0 5px color-mix(in srgb, var(--ink, #fff) 25%, transparent); }
@@ -2655,11 +2581,6 @@
     /* D-70 — corrections de rendu : vignettes rondes vraiment rondes, lecteur de stories opaque et tenant dans l'écran */
     .st-ring-img img, .ig-hl-ring img, .ig-hl-ring .cover-ph { height: auto; aspect-ratio: 1 / 1; }
     .st-ring-img { overflow: hidden; }
-    .modal-backdrop.st-viewer-wrap.open { background: rgba(5, 5, 8, .94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
-    .st-viewer { margin: max(8px, 1.5vh) auto; }
-    .st-viewer .st-card { max-height: calc(100vh - 190px); max-height: calc(100dvh - 190px); }
-    .st-page .st-cover { margin: 0 auto; height: 78%; }
-    .st-vinfo { background: #16161c; border: 1px solid rgba(255,255,255,.1); }
     /* D-71 — trophées illustrés (couverture réelle ou portrait), vitrine des runs complets en piles 3D */
     .tr-card.has-art { align-items: center; padding: 10px 14px 10px 10px; }
     .tr-art { position: relative; flex: 0 0 62px; width: 62px; aspect-ratio: 2 / 3; border-radius: 7px; background: #0d0d12; display: grid; place-items: center; transform: perspective(520px) rotateY(-10deg) rotateX(2deg); transform-style: preserve-3d; transition: transform .5s var(--ease-spring), box-shadow .5s ease; box-shadow: 7px 9px 18px -8px rgba(0,0,0,.75); }
@@ -2722,6 +2643,286 @@
         }
       }
     }
+    /* D-75 — Stories façon Instagram comics : format 9:16, couverture entière en grand, fond flouté, bulle d'avis, lecteur plein écran */
+    .sx { --u: 1cqw; container-type: inline-size; position: relative; isolation: isolate; overflow: hidden; width: 100%; aspect-ratio: 9 / 16; border-radius: 18px; color: var(--sx-ink); background: radial-gradient(120% 70% at 50% 30%, var(--sx-bg2), var(--sx-bg) 70%); font-family: var(--font-title); text-align: left; display: flex; flex-direction: column; box-shadow: 0 24px 60px -20px rgba(0,0,0,.6); }
+    .sx-blur { position: absolute; inset: -12%; z-index: -2; opacity: .55; filter: blur(28px) saturate(1.5); }
+    .sx-blur img { width: 100%; height: 100%; object-fit: cover !important; }
+    .sx-grain { position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle, rgba(0,0,0,.22) 1px, transparent 1.3px) 0 0 / 6px 6px, linear-gradient(180deg, rgba(0,0,0,.35), transparent 22%, transparent 55%, rgba(0,0,0,.72)); }
+    .sx-noir .sx-grain { background: radial-gradient(circle, rgba(0,0,0,.08) 1px, transparent 1.3px) 0 0 / 6px 6px, linear-gradient(180deg, rgba(255,255,255,.4), transparent 30%, transparent 60%, rgba(255,255,255,.6)); }
+    .sx-head { display: flex; align-items: center; gap: calc(var(--u) * 2.4); padding: calc(var(--u) * 7) calc(var(--u) * 4.5) 0; }
+    .sx-av { flex: 0 0 auto; width: calc(var(--u) * 8.5); height: calc(var(--u) * 8.5); border-radius: 50%; display: grid; place-items: center; background: var(--pf); color: #fff; font-weight: 700; font-size: calc(var(--u) * 3.8); box-shadow: 0 0 0 2px rgba(255,255,255,.85); }
+    .sx-who { display: flex; align-items: baseline; gap: calc(var(--u) * 1.6); min-width: 0; font-size: calc(var(--u) * 3.6); }
+    .sx-who b { font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sx-who small { opacity: .7; font-size: 1em; }
+    .sx-pub { margin-left: auto; padding: calc(var(--u) * .8) calc(var(--u) * 2.6); border-radius: 99px; background: rgba(255,255,255,.16); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); font-size: calc(var(--u) * 2.8); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; }
+    .sx-noir .sx-pub { background: rgba(0,0,0,.08); }
+    .sx-cover { position: relative; flex: 1 1 auto; min-height: 0; margin: calc(var(--u) * 4) calc(var(--u) * 9) calc(var(--u) * 2); display: flex; align-items: center; justify-content: center; perspective: 900px; }
+    .sx-cover-in { height: 100%; max-width: 100%; display: flex; align-items: center; justify-content: center; transform: rotateY(-7deg) rotateX(2deg); transform-style: preserve-3d; }
+    .sx-cover-in img, .sx-cover-in .cover-ph { height: 100%; width: auto; max-width: 100%; object-fit: contain !important; background: transparent !important; border-radius: calc(var(--u) * 1.4); box-shadow: 0 calc(var(--u) * 5) calc(var(--u) * 10) -2px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.12); }
+    .sx-face { height: 100%; aspect-ratio: 2 / 3; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4%; border-radius: calc(var(--u) * 1.4); background: linear-gradient(150deg, hsl(var(--c) 70% 46%), hsl(var(--c) 60% 18%)); color: #fff; box-shadow: 0 calc(var(--u) * 5) calc(var(--u) * 10) -2px rgba(0,0,0,.7); }
+    .sx-face b { font-size: calc(var(--u) * 14); font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+    .sx-face em { font-style: normal; font-weight: 700; font-size: calc(var(--u) * 6); opacity: .85; }
+    .st-ring-img .sx-face { width: 100%; height: 100%; aspect-ratio: 1; border-radius: 50%; box-shadow: none; }
+    .st-ring-img .sx-face b { font-size: 20px; }
+    .sx-sticker { position: absolute; right: calc(var(--u) * -3); top: calc(var(--u) * 2); padding: calc(var(--u) * 2.4) calc(var(--u) * 3.4); font: 900 calc(var(--u) * 5.4)/1 var(--font-display); letter-spacing: .02em; color: #111; background: var(--sx-acc); transform: rotate(9deg); clip-path: polygon(0 12%, 14% 0, 30% 10%, 50% 0, 66% 12%, 86% 2%, 100% 20%, 92% 42%, 100% 64%, 88% 86%, 70% 100%, 50% 90%, 30% 100%, 12% 88%, 0 70%, 7% 46%); filter: drop-shadow(0 4px 8px rgba(0,0,0,.45)); }
+    .sx-meta { display: flex; flex-direction: column; gap: calc(var(--u) * 1.2); padding: 0 calc(var(--u) * 6); }
+    .sx-kicker { font-size: calc(var(--u) * 3); font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--sx-acc); }
+    .sx-title { margin: 0; font-size: calc(var(--u) * 7); font-weight: 750; line-height: 1.08; letter-spacing: -.015em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .sx-title span { opacity: .65; font-weight: 600; }
+    .sx-variant { font-size: calc(var(--u) * 3.2); opacity: .7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .sx-rate { display: flex; align-items: center; gap: calc(var(--u) * 2); }
+    .sx-rate b { font-size: calc(var(--u) * 4); font-weight: 700; }
+    .sx .st-stars { display: inline-block; font-size: calc(var(--u) * 6); letter-spacing: calc(var(--u) * .6); -webkit-text-fill-color: transparent; background: linear-gradient(90deg, var(--sx-acc) var(--r), rgba(255,255,255,.28) var(--r)); -webkit-background-clip: text; background-clip: text; }
+    .sx-noir .st-stars { background: linear-gradient(90deg, var(--sx-acc) var(--r), rgba(0,0,0,.2) var(--r)); -webkit-background-clip: text; background-clip: text; }
+    .sx:not(.has-review) .sx-meta { padding-bottom: calc(var(--u) * 15); }
+    @container (max-width: 240px) {
+      .sx-who small, .sx-pub { display: none; }
+      .sx:not(.has-review) .sx-meta, .sx-meta { padding-bottom: calc(var(--u) * 6); }
+      .sx-head { padding-top: calc(var(--u) * 5); }
+    }
+    .st-mini .sx { border-radius: 14px; transition: transform .25s ease; }
+    .st-mini:hover .sx { transform: translateY(-3px); }
+    /* Lecteur */
+    #storyViewer.modal-backdrop, #storyViewer.modal-backdrop.open { background: #000 !important; padding: 0 !important; -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    .st-viewer.sxv { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; gap: 22px; padding: max(10px, env(safe-area-inset-top)) 10px max(10px, env(safe-area-inset-bottom)); user-select: none; overflow: hidden; }
+    .sxv-backdrop { position: absolute; inset: -10%; z-index: 0; opacity: .5; filter: blur(48px) saturate(1.3) brightness(.7); }
+    .sxv-backdrop img { width: 100%; height: 100%; object-fit: cover !important; background: none !important; }
+    .sxv-stage { position: relative; z-index: 1; height: min(100%, 860px); max-width: 100%; aspect-ratio: 9 / 16; touch-action: pan-y; }
+    .sxv-stage > .sx { height: 100%; width: auto; max-width: 100%; border-radius: 16px; }
+    .sxv-stage .st-prog { position: absolute; top: 10px; left: 12px; right: 12px; z-index: 3; }
+    .sxv-stage .st-prog i { height: 2.5px; background: rgba(255,255,255,.32); }
+    .sxv-ctrl { position: absolute; top: 22px; right: 8px; z-index: 4; display: flex; gap: 2px; }
+    .sxv-ic { width: 40px; height: 40px; display: grid; place-items: center; border: 0; border-radius: 50%; background: transparent; color: #fff; cursor: pointer; }
+    .sxv-ic:hover, .sxv-ic:focus-visible { background: rgba(255,255,255,.14); }
+    .sxv-ic svg, .sxv-arrow svg, .sxv-pill svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 1px 2px rgba(0,0,0,.5)); }
+    .sxv-ic [data-pause] svg path[d^="M7"] { fill: currentColor; }
+    .sxv-ic svg circle { fill: currentColor; stroke: none; }
+    .sxv-stage .sxv-ctrl { right: 8px; }
+    .sxv-stage .sx-head { padding-right: 140px; }
+    .sxv-stage .sx-pub { display: none; }
+    .sxv-stage .sx-review { margin-bottom: 70px; -webkit-line-clamp: 5; }
+    .sxv-stage .sx:not(.has-review) .sx-meta { padding-bottom: 72px; }
+    .sxv-stage .sx-review.is-spoiler { cursor: pointer; }
+    .sxv-menu { position: absolute; top: 66px; right: 12px; z-index: 5; min-width: 220px; display: flex; flex-direction: column; padding: 6px; border-radius: 14px; background: rgba(28,28,32,.92); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); box-shadow: 0 18px 40px rgba(0,0,0,.5); }
+    .sxv-menu[hidden] { display: none; }
+    .sxv-menu button { text-align: left; padding: 11px 12px; border: 0; border-radius: 9px; background: none; color: #fff; font: 500 15px var(--font-ui); cursor: pointer; }
+    .sxv-menu button:hover:not(:disabled) { background: rgba(255,255,255,.1); }
+    .sxv-menu button:disabled { opacity: .45; cursor: default; }
+    .sxv-menu .is-danger { color: #ff6b6b; }
+    .sxv-stage .st-nav { position: absolute; top: 70px; bottom: 76px; z-index: 2; width: 34%; background: none; border: 0; cursor: pointer; }
+    .sxv-stage .st-prev { left: 0; } .sxv-stage .st-next { right: 0; width: 66%; }
+    .sxv-foot { position: absolute; left: 12px; right: 12px; bottom: 12px; z-index: 3; display: flex; align-items: center; gap: 10px; }
+    .sxv-pill { display: inline-flex; align-items: center; gap: 8px; height: 42px; padding: 0 16px; border-radius: 99px; border: 1px solid rgba(255,255,255,.35); background: rgba(0,0,0,.35); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); color: #fff; font: 600 14px var(--font-ui); cursor: pointer; }
+    .sxv-pill.is-quiet { cursor: default; opacity: .8; }
+    .sxv-pill:hover:not(.is-quiet) { background: rgba(255,255,255,.18); }
+    .sxv-count { margin-left: auto; color: rgba(255,255,255,.75); font: 600 13px var(--font-ui); text-shadow: 0 1px 2px rgba(0,0,0,.6); }
+    .sxv-arrow { position: relative; z-index: 1; flex: 0 0 auto; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 0; background: rgba(255,255,255,.88); color: #111; cursor: pointer; box-shadow: 0 6px 18px rgba(0,0,0,.4); }
+    .sxv-arrow svg { filter: none; }
+    .sxv-arrow:disabled { opacity: 0; pointer-events: none; }
+    .st-viewer.is-paused .sx-sticker { animation-play-state: paused; }
+    @media (max-width: 640px) {
+      .st-viewer.sxv { padding: 0; gap: 0; }
+      .sxv-stage { height: 100%; width: 100%; aspect-ratio: auto; }
+      .sxv-stage > .sx { width: 100%; height: 100%; border-radius: 0; aspect-ratio: auto; }
+      .sxv-stage .st-prog { top: max(8px, env(safe-area-inset-top)); }
+      .sxv-arrow { display: none; }
+    }
+    @media (prefers-reduced-motion: no-preference) {
+      .sxv-stage > .sx { animation: sxIn .32s cubic-bezier(.2, .8, .2, 1) both; }
+      .sxv-stage .sx-sticker { animation: sxPop .5s .15s cubic-bezier(.3, 1.6, .5, 1) both; }
+    }
+    @keyframes sxIn { from { opacity: 0; scale: .96; } to { opacity: 1; scale: none; } }
+    @keyframes sxPop { from { opacity: 0; scale: .3; } to { opacity: 1; scale: none; } }
+    /* Barre des stories : anneau dégradé, couverture ronde */
+    .st-ring:not(.is-seen):not(.st-new) .st-ring-img { background: conic-gradient(from 200deg, #FEDA75, #FA7E1E, #D62976, #962FBF, #4F5BD5, #FEDA75); }
+    .st-ring-img img { object-fit: cover !important; }
+    /* D-75 (suite) — avis façon journal de lecture, éditeur en relief */
+    .sx-review { position: relative; margin: calc(var(--u) * 3.5) calc(var(--u) * 6) calc(var(--u) * 14); padding: calc(var(--u) * 2.6) 0 0 calc(var(--u) * 4); border-left: 3px solid var(--sx-acc); font: 450 calc(var(--u) * 4)/1.42 var(--font-ui); letter-spacing: -.005em; display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; text-shadow: 0 1px 8px rgba(0,0,0,.35); }
+    .sx-noir .sx-review { text-shadow: none; }
+    .sx-review.is-spoiler .sx-review-txt { filter: blur(6px); user-select: none; }
+    .sx-spoil { display: block; margin-bottom: calc(var(--u) * 1.4); font-size: calc(var(--u) * 3); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--sx-acc); cursor: pointer; }
+    .sx-badge { font-style: normal; font-size: calc(var(--u) * 3.2); font-weight: 650; padding: calc(var(--u) * .6) calc(var(--u) * 2); border-radius: 99px; background: rgba(255,255,255,.16); }
+    .sx-badge.is-like { color: #ff5a7a; background: none; font-size: calc(var(--u) * 5); padding: 0; }
+    .sx:not(.has-review) .sx-meta { padding-bottom: calc(var(--u) * 16); }
+    @container (max-width: 240px) { .sx-review, .sx-badge:not(.is-like) { display: none; } }
+    .sx-cover-in { transition: transform .5s cubic-bezier(.2,.8,.2,1); }
+    .sxv-stage:hover .sx-cover-in { transform: rotateY(-3deg) rotateX(1deg) translateZ(10px); }
+    .sx-cover-in::after { content: ''; position: absolute; inset: 0; pointer-events: none; }
+    /* Éditeur */
+    .modal-box.st-editor.sxe { display: grid; grid-template-columns: minmax(240px, 340px) minmax(0, 1fr); gap: 0; padding: 0; width: min(900px, 96vw); max-width: 900px; max-height: 94vh; overflow: hidden; border-radius: 22px; align-items: stretch; }
+    .sxe-art { position: relative; isolation: isolate; overflow: hidden; display: flex; align-items: center; justify-content: center; padding: 32px 26px; background: #0b0b10; perspective: 1100px; min-height: 360px; }
+    .sxe-blur { position: absolute; inset: -14%; z-index: -1; opacity: .55; filter: blur(36px) saturate(1.4); }
+    .sxe-blur img { width: 100%; height: 100%; object-fit: cover !important; }
+    .sxe-book { position: relative; margin: 0; width: 100%; display: flex; justify-content: center; transform: rotateY(var(--ry, -10deg)) rotateX(var(--rx, 3deg)); transform-style: preserve-3d; transition: transform .25s ease-out; }
+    .sxe-book-in { position: relative; display: flex; max-width: 100%; }
+    .sxe-book-in img, .sxe-book-in .cover-ph, .sxe-book-in .sx-face { width: 100%; height: auto; max-height: 62vh; object-fit: contain !important; background: transparent !important; border-radius: 6px; box-shadow: 0 30px 50px -16px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.08); }
+    .sxe-book-in .sx-face { aspect-ratio: 2 / 3; min-width: 200px; }
+    .sxe-book-in::before { content: ''; position: absolute; left: 0; top: 2px; bottom: 2px; width: 7px; border-radius: 6px 0 0 6px; background: linear-gradient(90deg, rgba(0,0,0,.45), rgba(255,255,255,.18), rgba(0,0,0,.15)); z-index: 1; }
+    .sxe-shine { position: absolute; inset: 0; pointer-events: none; border-radius: 6px; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.16) 47%, transparent 58%); mix-blend-mode: screen; }
+    .sxe-form { padding: 28px 30px 22px; overflow: auto; max-height: 94vh; box-sizing: border-box; }
+    .sxe-kicker { font: 700 12px var(--font-ui); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+    .sxe-form h2 { margin: 4px 0 2px; font: 750 28px/1.1 var(--font-title); letter-spacing: -.02em; }
+    .sxe-form h2 span { color: var(--muted); font-weight: 600; }
+    .sxe-sub { margin: 0 0 14px; color: var(--muted); font-size: 14px; }
+    .sxe-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 12px; }
+    .sxe-stars { display: flex; gap: 2px; }
+    .sxe-star { position: relative; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; font-size: 38px; line-height: 44px; color: color-mix(in srgb, var(--ink) 18%, transparent); }
+    .sxe-star span { display: block; transition: transform .15s ease; }
+    .sxe-star:hover span { transform: scale(1.12); }
+    .sxe-star.is-full { color: #00C030; }
+    .sxe-star.is-half span { background: linear-gradient(90deg, #00C030 50%, color-mix(in srgb, var(--ink) 18%, transparent) 50%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+    .sxe-rate output { font: 700 16px var(--font-ui); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .sxe-range { flex: 1 1 140px; max-width: 200px; accent-color: #00C030; }
+    .sxe-tg { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 14px; border-radius: 99px; border: 1px solid var(--line-strong, var(--line)); background: var(--bg-card); color: var(--ink); font: 600 14px var(--font-ui); cursor: pointer; }
+    .sxe-tg[aria-pressed="true"] { background: var(--ink); color: var(--bg, #000); border-color: var(--ink); }
+    .sxe-tg[data-tg="liked"][aria-pressed="true"] { background: #ff3b5c; border-color: #ff3b5c; color: #fff; }
+    .sxe-heart { font-size: 16px; }
+    .sxe-text { min-height: 110px; font: 450 15px/1.45 var(--font-ui); border-radius: 12px; }
+    .sxe-date { margin-top: 0; }
+    .sxe .st-sw { width: 30px; height: 30px; padding: 0; border-radius: 50%; background: linear-gradient(135deg, var(--a), var(--b)); }
+    .sxe-prevbox { margin-top: 14px; }
+    .sxe-prevbox summary { cursor: pointer; font-weight: 650; font-size: 14px; color: var(--muted); }
+    .sxe-prevbox .st-ed-preview { margin-top: 10px; display: flex; justify-content: center; }
+    .sxe-prevbox .sx { width: 240px; height: auto; }
+    @media (max-width: 720px) {
+      .modal-box.st-editor.sxe { grid-template-columns: 1fr; overflow: auto; }
+      .sxe-art { min-height: 0; padding: 22px; }
+      .sxe-book-in img, .sxe-book-in .cover-ph { max-height: 46vh; }
+      .sxe-form { max-height: none; overflow: visible; padding: 20px; }
+    }
+    /* D-75 — Explorer : actualités en français, dossiers « Avant de voir », atlas cosmique */
+    .ex-nw-bar { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
+    .ex-seg { display: inline-flex; padding: 3px; border-radius: 11px; background: color-mix(in srgb, var(--ink) 8%, transparent); gap: 2px; }
+    .ex-seg-b { border: 0; background: none; color: var(--ink); font: 600 13px var(--font-ui); padding: 7px 14px; border-radius: 8px; cursor: pointer; }
+    .ex-seg-b.active { background: var(--ink); color: var(--bg, #111); box-shadow: 0 1px 3px rgba(0,0,0,.25); }
+    .ex-nw-topics .ex-chip small, .cz-search + .ex-chips .ex-chip small { opacity: .6; margin-left: 2px; }
+    .ex-nw-learn { margin: 2px 0 12px; font-size: 13px; color: var(--muted); }
+    .ex-nw-learn .ex-link { font-size: 13px; }
+    .ex-nw em.is-learn { color: var(--muted); font-style: normal; }
+    .ex-nw-h { margin: 18px 0 8px; font: 700 13px var(--font-ui); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+    .ex-wg-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+    .ex-wg { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 4px; text-align: left; padding: 18px; min-height: 150px; border: 0; border-radius: 18px; cursor: pointer; color: #fff; background: radial-gradient(120% 120% at 0% 0%, #3b1d6e, #120c22 70%); box-shadow: 0 14px 30px -18px rgba(0,0,0,.7); font-family: var(--font-ui); }
+    .ex-wg:nth-child(2) { background: radial-gradient(120% 120% at 0% 0%, #0f3a6b, #08111f 70%); }
+    .ex-wg:nth-child(3) { background: radial-gradient(120% 120% at 0% 0%, #6b1414, #1a0808 70%); }
+    .ex-wg-k { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: #FFD400; }
+    .ex-wg b { font: 750 22px/1.1 var(--font-title); letter-spacing: -.01em; }
+    .ex-wg small { opacity: .75; font-size: 13px; }
+    .ex-wg-c { margin-top: auto; display: flex; gap: 6px; flex-wrap: wrap; padding-top: 10px; }
+    .ex-wg-c i { font-style: normal; font-size: 12px; font-weight: 650; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.14); }
+    .ex-wg-hero { padding: 26px; border-radius: 22px; color: #fff; background: radial-gradient(120% 140% at 0% 0%, #3b1d6e, #0d0a18 70%); margin: 10px 0 18px; }
+    .ex-wg-hero h2 { margin: 6px 0; font: 800 clamp(28px, 5vw, 44px)/1.05 var(--font-title); letter-spacing: -.02em; }
+    .ex-wg-hero p { margin: 0; opacity: .8; }
+    .ex-wg-cols { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+    .ex-wg-list { margin: 0; padding-left: 22px; display: grid; gap: 10px; }
+    .ex-wg-list li { line-height: 1.35; }
+    .ex-wg-list span { color: var(--muted); }
+    .ex-wg-list small { display: block; color: var(--muted); font-size: 13px; }
+    .ex-cz-promo { position: relative; overflow: hidden; width: 100%; display: flex; align-items: center; gap: 18px; text-align: left; padding: 22px; border: 0; border-radius: 22px; cursor: pointer; color: #fff; font-family: var(--font-ui); background: radial-gradient(80% 140% at 85% 50%, rgba(255,229,0,.22), transparent 60%), radial-gradient(120% 120% at 0% 0%, #2a1155, #05040b 70%); box-shadow: 0 18px 40px -22px rgba(0,0,0,.8); }
+    .ex-cz-promo-art { flex: 0 0 88px; height: 88px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff6b0, #ffb800 30%, #7b2cff 62%, transparent 70%), conic-gradient(from 0deg, transparent, rgba(255,255,255,.3), transparent 30%); box-shadow: 0 0 40px rgba(255,200,0,.35); }
+    .ex-cz-promo b { display: block; font: 750 21px/1.15 var(--font-title); margin: 4px 0; }
+    .ex-cz-promo small { display: block; opacity: .75; font-size: 14px; line-height: 1.4; }
+    .ex-cz-promo-go { margin-left: auto; font-size: 34px; opacity: .6; }
+    .cz-hero { margin: 10px 0 8px; padding: 28px; border-radius: 24px; color: #fff; background: radial-gradient(70% 120% at 90% 10%, rgba(255,229,0,.2), transparent 60%), radial-gradient(120% 120% at 0% 0%, #2a1155, #05040b 70%); }
+    .cz-hero h2 { margin: 6px 0 8px; font: 800 clamp(26px, 4.6vw, 42px)/1.05 var(--font-title); letter-spacing: -.02em; }
+    .cz-hero p { margin: 0; max-width: 760px; opacity: .8; line-height: 1.5; }
+    .cz-rail { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(170px, 200px); gap: 12px; overflow-x: auto; padding-bottom: 8px; scroll-snap-type: x mandatory; }
+    .cz-cosmos { position: relative; overflow: hidden; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; min-height: 230px; padding: 14px; text-align: left; border: 0; border-radius: 18px; cursor: pointer; color: #fff; background: #0b0816; font-family: var(--font-ui); }
+    .cz-cosmos-img { position: absolute; inset: 0; z-index: 0; }
+    .cz-cosmos-img img { width: 100%; height: 100%; object-fit: cover !important; opacity: .7; transition: transform .6s ease; }
+    .cz-cosmos:hover .cz-cosmos-img img { transform: scale(1.06); }
+    .cz-cosmos::after { content: ''; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.85)); }
+    .cz-cosmos > :not(.cz-cosmos-img) { position: relative; z-index: 1; }
+    .cz-cosmos-n { font: 800 34px/1 var(--font-title); color: #FFE500; }
+    .cz-cosmos b { font: 700 16px/1.2 var(--font-title); }
+    .cz-cosmos small { opacity: .75; font-size: 12px; line-height: 1.3; }
+    .cz-search { margin: 4px 0 10px; }
+    .cz-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--cz); margin-right: 6px; vertical-align: 1px; }
+    .cz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
+    .cz-card { display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-card); color: var(--ink); cursor: pointer; font-family: var(--font-ui); transition: transform .2s ease, box-shadow .2s ease; }
+    .cz-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(0,0,0,.6); }
+    .cz-card-img { position: relative; aspect-ratio: 3 / 4; background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--cz) 40%, #111), #0a0a10); display: grid; place-items: center; overflow: hidden; }
+    .cz-card-img img { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; object-fit: cover !important; object-position: 50% 20%; }
+    .cz-card-ini { font: 800 44px var(--font-title); color: color-mix(in srgb, var(--cz) 80%, #fff); opacity: .9; }
+    .cz-card-b { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px 12px; border-top: 3px solid var(--cz); }
+    .cz-card-b small { font-size: 11px; font-weight: 650; color: var(--muted); }
+    .cz-card-b b { font: 700 15px/1.2 var(--font-title); }
+    .cz-card-b span { font-size: 12px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .cz-time { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-left: 2px solid var(--line); }
+    .cz-time li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 0 10px 14px; position: relative; }
+    .cz-time li::before { content: ''; position: absolute; left: -6px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: #FFE500; }
+    .cz-y { font: 800 18px var(--font-title); color: var(--muted); font-variant-numeric: tabular-nums; }
+    .cz-time p { margin: 2px 0; } .cz-time small { color: var(--muted); }
+    .cz-tl { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .cz-legend { margin: 14px 0; } .cz-legend summary { cursor: pointer; font-weight: 650; }
+    .cz-cert { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--ink) 10%, transparent); }
+    .cz-c-c { background: #1f9d55; color: #fff; } .cz-c-o { background: #2b6cb0; color: #fff; } .cz-c-d { background: #b7791f; color: #fff; } .cz-c-t { background: #6b46c1; color: #fff; } .cz-c-x { background: #c53030; color: #fff; }
+    .cz-pill { display: inline-flex; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; border: 1px solid var(--line); }
+    .cz-e { margin-top: 10px; }
+    .cz-e-head { display: grid; grid-template-columns: minmax(160px, 260px) 1fr; gap: 24px; align-items: end; padding: 22px; border-radius: 24px; background: radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--cz) 30%, #120c22), #07060c 70%); color: #fff; }
+    .cz-e-port { margin: 0; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden; background: #0a0a10; display: grid; place-items: center; box-shadow: 0 24px 50px -20px rgba(0,0,0,.9); }
+    .cz-e-port img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover !important; object-position: 50% 20%; }
+    .cz-e-cat { border: 0; background: none; padding: 0; color: var(--cz); font: 700 12px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
+    .cz-e-head h2 { margin: 6px 0 2px; font: 800 clamp(30px, 5vw, 48px)/1.02 var(--font-title); letter-spacing: -.02em; }
+    .cz-e-en { margin: 0; opacity: .6; } .cz-e-lead { margin: 8px 0; font-size: 17px; opacity: .9; }
+    .cz-e-chips { display: flex; gap: 6px; flex-wrap: wrap; } .cz-e-head .cz-pill { border-color: rgba(255,255,255,.25); }
+    .cz-e-act { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 0; }
+    .cz-e-body { display: grid; grid-template-columns: 1fr minmax(240px, 320px); gap: 24px; margin: 22px 0; }
+    .cz-e-big { font-size: 18px; line-height: 1.55; }
+    .cz-src { padding-left: 18px; } .cz-src li { margin: 4px 0; }
+    .cz-idcard { padding: 16px 18px; border-radius: 18px; background: var(--bg-card); border: 1px solid var(--line); align-self: start; }
+    .cz-idcard h3 { margin-top: 0; }
+    .cz-idcard dl { margin: 0; display: grid; gap: 10px; } .cz-idcard dt { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; } .cz-idcard dd { margin: 2px 0 0; font-size: 14px; }
+    .cz-grid.is-rel { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
+    @media (max-width: 720px) {
+      .cz-e-head { grid-template-columns: 1fr; } .cz-e-port { max-width: 220px; }
+      .cz-e-body { grid-template-columns: 1fr; }
+      .cz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .ex-cz-promo-art { flex-basis: 56px; height: 56px; }
+    }
+    /* D-75 — Lecture : séries en cours */
+    .rd-sip-wrap { margin: 4px 0 18px; }
+    .rd-sip-head h3 { margin: 0; font: 750 22px/1.2 var(--font-title); letter-spacing: -.01em; }
+    .rd-sip-head h3 small { font: 600 14px var(--font-ui); color: var(--muted); margin-left: 6px; }
+    .rd-sip-head p { margin: 4px 0 12px; color: var(--muted); font-size: 14px; }
+    .rd-sip-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+    .rd-sip { display: grid; grid-template-columns: 54px 1fr; gap: 4px 12px; align-items: center; padding: 12px 14px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--line); }
+    .rd-sip.has-next, .rd-sip.is-reading { border-color: color-mix(in srgb, var(--key, #FFD400) 55%, var(--line)); }
+    .rd-sip-ring { position: relative; width: 54px; height: 54px; grid-row: span 2; }
+    .rd-sip-ring b { position: absolute; inset: 0; display: grid; place-items: center; font: 700 12px var(--font-ui); font-variant-numeric: tabular-nums; }
+    .rd-ring { width: 54px; height: 54px; transform: rotate(-90deg); }
+    .rd-ring circle { fill: none; stroke-width: 3.2; stroke: color-mix(in srgb, var(--ink) 12%, transparent); }
+    .rd-ring circle + circle { stroke: #34C759; stroke-linecap: round; }
+    .rd-sip.is-caught-up .rd-ring circle + circle { stroke: #0A84FF; }
+    .rd-sip-b { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .rd-sip-tag { font-size: 11px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+    .rd-sip.has-next .rd-sip-tag, .rd-sip.is-reading .rd-sip-tag { color: #34C759; }
+    .rd-sip-t { font: 650 16px/1.25 var(--font-title); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .rd-sip-m { font-size: 12.5px; color: var(--muted); }
+    .rd-sip-act { grid-column: 2; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+    .rd-sip-next { font-size: 13px; } .rd-sip-act .btn { font-size: 12px; padding: 4px 12px; }
+    .rd-sip-more { margin-top: 10px; } .rd-sip-more summary { cursor: pointer; font-weight: 600; margin-bottom: 8px; }
+    .rd-sip-foot { margin: 10px 0 0; }
+    /* D-75 — Calendrier : prochaines semaines */
+    .rel-up { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; margin-bottom: 6px; }
+    .rel-upw { display: flex; flex-direction: column; align-items: flex-start; gap: 0; padding: 10px 12px; border-radius: 14px; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); cursor: pointer; text-align: left; font-family: var(--font-ui); transition: transform .15s ease, border-color .15s ease; }
+    .rel-upw:hover { transform: translateY(-2px); }
+    .rel-upw.is-cur { border-color: var(--key, #FFD400); box-shadow: inset 0 0 0 1px var(--key, #FFD400); }
+    .rel-upw small { font-size: 11.5px; font-weight: 650; color: var(--muted); }
+    .rel-upw b { font: 750 24px/1.1 var(--font-title); font-variant-numeric: tabular-nums; }
+    .rel-upw span { font-size: 12px; color: var(--muted); }
+    .rel-upw i { margin-top: 4px; font-style: normal; font-size: 11.5px; font-weight: 650; color: #34C759; }
+    .rel-upw.is-empty b { color: var(--muted); }
+    @media (max-width: 760px) { .rel-up { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    /* D-75 — Artefacts : vraie image de l'objet, en couleur une fois débloqué */
+    .af-medal.has-photo { position: relative; overflow: hidden; width: 74px; height: 74px; }
+    .af-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover !important; border-radius: inherit; filter: grayscale(.75) brightness(.72); transition: filter .3s ease, transform .4s ease; }
+    .af-card.is-on .af-photo { filter: saturate(1.15); }
+    .af-card:hover .af-photo { transform: scale(1.08); }
+    .af-card.is-gem .af-medal.has-photo { width: 64px; height: 64px; }
+    .af-card.is-mythique .af-medal.has-photo { width: 92px; height: 92px; }
+    .af-card.is-gem .af-photo { transform: rotate(-45deg) scale(1.45); }
+    .af-card.is-gem:hover .af-photo { transform: rotate(-45deg) scale(1.55); }
+    .af-medal.has-photo::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px hsl(var(--h) 80% 60% / .7), inset 0 -14px 24px rgba(0,0,0,.35); pointer-events: none; }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -2826,6 +3027,16 @@
     #singlesSubnav [data-sview="series"] { display: none !important; }
     #singlesBoxesBtn.is-on { background: var(--cyan-fill) !important; color: #111 !important; border-color: var(--cyan-fill) !important; }
     @media (max-width: 600px) { .cbox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px 12px; padding-top: 34px; } .cbox-label b { font-size: 14px; } .cbox-label { padding: 6px 8px; } .cbox-open-head { flex-wrap: wrap; } }
+    /* D-75 — Typographie Apple : casse normale, approche légèrement serrée, graisses moins lourdes */
+    h1, h2, h3, .topbar-title, .topbar h1, .section-head h2, .ex-hero h2, .ex-sec-head h3, .ex-sec > h3, .ex-gcard-body b, .ex-unitile b, .ex-phead h2, .ex-ghero h2, .ex-cvd-body h2 { text-transform: none !important; letter-spacing: -0.022em !important; }
+    .topbar-title, .topbar h1 { font-weight: 700 !important; }
+    .section-head h2, .ex-sec-head h3, .ex-sec > h3 { font-weight: 700 !important; }
+    .stats-card h3 { text-transform: none !important; letter-spacing: -0.01em !important; font-weight: 650 !important; }
+    .single-stat-pill span { text-transform: none !important; letter-spacing: 0 !important; font-weight: 600 !important; font-family: var(--font-ui) !important; }
+    .single-stat-pill strong { letter-spacing: -0.025em; font-weight: 700; }
+    .single-row .row-title b, .series-track-card h3 { letter-spacing: -0.01em; }
+    .ex-online-head h4, .ex-local-h, .ex-cvd-block h4 { font-family: var(--font-ui) !important; font-weight: 650; letter-spacing: .02em; }
+    .sx-sticker { font-family: var(--font-comic) !important; }
   </style>
 </head>
 <body>
@@ -6095,6 +6306,69 @@ const goalProgress = (stats, goal) => {
 
 module.exports = { READ_EVENTS, lastMonths, readingStats, goalProgress };
   return Object.freeze(module.exports); })();
+  /* domains/reading/series-progress.js */
+  out.seriesProgress = (() => { const module = { exports: {} };
+'use strict';
+// Séries en cours (D-75) : à partir des numéros lus (journal de lecture, imports compris) et des numéros connus
+// (collection, wishlist), Panel déduit les séries commencées, la progression et le prochain numéro à lire.
+// Rien n'est stocké : la liste est recalculée à chaque affichage. Module pur.
+//
+// entries : [{ key, label, issue, read, current, owned, wished, at }]
+//   key     : clé de série normalisée (fournie par l'appelant, même règle que le reste de Panel)
+//   issue   : « #12 », « 12 », « 0.5 »… (sans numéro : ignoré, un recueil n'a pas de « suivant »)
+//   read    : numéro lu ; current : numéro marqué « en cours » ; owned / wished : possédé / en wishlist
+//   at      : date ISO de la dernière lecture connue (peut manquer)
+
+const numOf = v => { const m = String(v == null ? '' : v).replace(/^#\s*/, '').trim().match(/^-?\d+(?:[.,]\d+)?/); return m ? Number(m[0].replace(',', '.')) : null; };
+const ONGOING = /\bpresent\b|en cours|ongoing|\(\s*\d{4}\s*[-–]\s*\)/i;
+
+const seriesInProgress = (entries, opts = {}) => {
+  const groups = new Map();
+  for (const e of entries || []) {
+    if (!e || !e.key) continue;
+    const n = numOf(e.issue);
+    if (n === null) continue;
+    let g = groups.get(e.key);
+    if (!g) groups.set(e.key, g = { key: e.key, label: '', nums: new Map(), lastAt: '', ongoing: false });
+    const label = String(e.label || '');
+    if (label.length > g.label.length) g.label = label;
+    if (ONGOING.test(label)) g.ongoing = true;
+    const x = g.nums.get(n) || { read: false, current: false, owned: false, wished: false, issue: '' };
+    x.read = x.read || !!e.read; x.current = x.current || !!e.current; x.owned = x.owned || !!e.owned; x.wished = x.wished || !!e.wished;
+    if (!x.issue) x.issue = String(e.issue || '');
+    g.nums.set(n, x);
+    if (e.read && e.at && String(e.at) > g.lastAt) g.lastAt = String(e.at);
+  }
+  const out = [];
+  for (const g of groups.values()) {
+    const known = [...g.nums.keys()].sort((a, b) => a - b);
+    const readNums = known.filter(n => g.nums.get(n).read);
+    const current = known.find(n => g.nums.get(n).current && !g.nums.get(n).read);
+    if (!readNums.length && current === undefined) continue;
+    const maxRead = readNums.length ? readNums[readNums.length - 1] : -Infinity;
+    const unread = known.filter(n => !g.nums.get(n).read);
+    const after = unread.filter(n => n > maxRead);
+    const next = current !== undefined ? current : after.length ? after[0] : unread.length ? unread[0] : null;
+    const caughtUp = next === null;
+    // À jour sans suite connue : gardée seulement pour une série toujours publiée (sinon c'est une série finie, pas « en cours »)
+    if (caughtUp && !(g.ongoing && readNums.length >= (opts.minCaughtUp || 2))) continue;
+    const nx = next === null ? null : g.nums.get(next);
+    out.push({
+      key: g.key, label: g.label, read: readNums.length, known: known.length,
+      pct: Math.round(readNums.length / known.length * 100),
+      lastRead: readNums.length ? g.nums.get(maxRead).issue || '#' + maxRead : '',
+      next: nx ? nx.issue || '#' + next : '', nextOwned: !!(nx && nx.owned), nextWished: !!(nx && nx.wished),
+      reading: current !== undefined, gaps: unread.filter(n => n < maxRead).length,
+      unreadOwned: unread.filter(n => g.nums.get(n).owned).length,
+      state: current !== undefined ? 'reading' : caughtUp ? 'caught-up' : 'resume', ongoing: g.ongoing, lastAt: g.lastAt
+    });
+  }
+  const rank = s => s.state === 'reading' ? 0 : s.state === 'resume' ? (s.nextOwned ? 1 : 2) : 3;
+  return out.sort((a, b) => rank(a) - rank(b) || String(b.lastAt).localeCompare(String(a.lastAt)) || b.read - a.read || a.label.localeCompare(b.label));
+};
+
+module.exports = { seriesInProgress, numOf };
+  return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
 'use strict';
@@ -6248,6 +6522,7 @@ module.exports = { norm, CHARACTERS, OTHER_CHARACTERS, characterOf, MODES, BOX_C
 //  - les « Ères » : Golden, Silver, Bronze, Modern Age, d'après l'année de couverture ;
 //  - le « Voyageur temporel » : au moins un numéro de chaque ère ;
 //  - un niveau de collectionneur (XP) qui additionne les paliers obtenus.
+// D-75 : Bronze s'obtient vite (pour démarrer), Argent, Or et Vibranium demandent des années (environ dix pour tout finir).
 // Module pur : reçoit des entrées déjà préparées, n'écrit rien.
 
 const TIERS = Object.freeze([
@@ -6270,20 +6545,20 @@ const issueNum = v => { const m = /-?\d+(?:\.\d+)?/.exec(String(v || '')); retur
 
 // Définitions : seuils croissants pour Bronze, Argent, Or, Vibranium
 const DEFS = Object.freeze([
-  { id: 'collector', family: 'Collection', name: 'Collectionneur', icon: 'box', steps: [10, 100, 500, 2000], unit: 'numéro', desc: 'Numéros possédés' },
-  { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 5, 15, 40], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
-  { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 25, 75, 200], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
-  { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 10, 30, 100], unit: 'key issue', desc: 'Key issues possédés' },
-  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 5, 20, 60], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
-  { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 6, 10, 15], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
-  { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 100, 500, 1500], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
-  { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 10, 40, 120], unit: 'relecture', desc: 'Relectures notées dans le journal' },
-  { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 10, 50, 200], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
-  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 100, 500, 2000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' },
+  { id: 'collector', family: 'Collection', name: 'Collectionneur', icon: 'box', steps: [10, 250, 1500, 5000], unit: 'numéro', desc: 'Numéros possédés' },
+  { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 10, 40, 120], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
+  { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 50, 250, 750], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
+  { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 20, 100, 400], unit: 'key issue', desc: 'Key issues possédés' },
+  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 10, 50, 200], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
+  { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 8, 15, 25], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
+  { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 300, 2000, 6000], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
+  { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 25, 150, 500], unit: 'relecture', desc: 'Relectures notées dans le journal' },
+  { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 50, 400, 1500], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
+  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 250, 1500, 5000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' },
   // D-71 : runs lus en entier, longs runs, galerie de personnages
-  { id: 'run-reader', family: 'Lecture', name: 'Lecteur de runs', icon: 'book', steps: [1, 5, 15, 40], unit: 'run lu', plural: 'runs lus', desc: 'Runs complets lus du premier au dernier numéro' },
-  { id: 'marathon', family: 'Collection', name: 'Marathonien', icon: 'stack', steps: [1, 3, 8, 20], unit: 'long run', plural: 'longs runs', desc: 'Runs complets de 12 numéros ou plus' },
-  { id: 'gallery', family: 'Exploration', name: 'Galerie de héros', icon: 'mask', steps: [5, 15, 40, 100], unit: 'personnage', desc: 'Personnages différents dans la collection' }
+  { id: 'run-reader', family: 'Lecture', name: 'Lecteur de runs', icon: 'book', steps: [1, 10, 40, 120], unit: 'run lu', plural: 'runs lus', desc: 'Runs complets lus du premier au dernier numéro' },
+  { id: 'marathon', family: 'Collection', name: 'Marathonien', icon: 'stack', steps: [1, 5, 15, 40], unit: 'long run', plural: 'longs runs', desc: 'Runs complets de 12 numéros ou plus' },
+  { id: 'gallery', family: 'Exploration', name: 'Galerie de héros', icon: 'mask', steps: [5, 25, 80, 200], unit: 'personnage', desc: 'Personnages différents dans la collection' }
 ]);
 
 const tierFor = (value, steps) => { let t = -1; steps.forEach((s, i) => { if (value >= s) t = i; }); return t; };
@@ -6355,7 +6630,7 @@ const computeTrophies = (input = {}) => {
   // Ères : un trophée par ère (Bronze 1, Argent 5, Or 25, Vibranium 100 numéros de l'ère)
   const eraCounts = Object.fromEntries(ERAS.map(e => [e.id, 0]));
   copies.forEach(c => { const e = eraOf(c); if (e) eraCounts[e.id]++; });
-  const eras = ERAS.map(e => describe({ id: 'era-' + e.id, family: 'Ères', name: e.label, icon: 'clock', steps: [1, 5, 25, 100], unit: 'numéro', desc: 'Numéros parus entre ' + e.from + ' et ' + (e.to > 2050 ? 'aujourd\'hui' : e.to) }, eraCounts[e.id]));
+  const eras = ERAS.map(e => describe({ id: 'era-' + e.id, family: 'Ères', name: e.label, icon: 'clock', steps: [1, 10, 50, 200], unit: 'numéro', desc: 'Numéros parus entre ' + e.from + ' et ' + (e.to > 2050 ? 'aujourd\'hui' : e.to) }, eraCounts[e.id]));
   const erasCovered = ERAS.filter(e => eraCounts[e.id] > 0).length;
   const traveler = describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 4], unit: 'ère', desc: 'Ères représentées dans la collection (Vibranium : les quatre, avec 10 numéros dans chacune)' }, erasCovered);
   if (traveler.tierIndex === 3 && !ERAS.every(e => eraCounts[e.id] >= 10)) Object.assign(traveler, describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 5], unit: 'ère', desc: traveler.desc }, 4));
@@ -6365,7 +6640,7 @@ const computeTrophies = (input = {}) => {
   const perChar = new Map();
   copies.forEach(c => { const ch = charOf(c); if (ch) perChar.set(ch, (perChar.get(ch) || 0) + 1); });
   const guardians = [...perChar.entries()].filter(([, n]) => n >= 5).sort((a, b) => b[1] - a[1]).slice(0, 12)
-    .map(([ch, n]) => Object.assign(describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 25, 100, 300], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n), { character: ch }));
+    .map(([ch, n]) => Object.assign(describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 50, 200, 600], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n), { character: ch }));
 
   const all = trophies.concat(eras, [traveler], guardians);
   const xp = all.reduce((a, t) => a + (t.tierIndex >= 0 ? TIERS.slice(0, t.tierIndex + 1).reduce((s, x) => s + x.xp, 0) : 0), 0);
@@ -6499,7 +6774,9 @@ module.exports = { XP_RULES, EARTH, EARTH_DEF, DC_MULTIVERSE, COSMIC, RANKS, TIE
   out.artefactsCore = (() => { const module = { exports: {} };
 'use strict';
 // Artefacts Panel (D-63) : badges à débloquer, inspirés d'objets célèbres des univers Marvel et DC
-// (noms cités à titre de référence ; marques de leurs ayants droit ; aucun visuel officiel utilisé).
+// (noms cités à titre de référence ; marques de leurs ayants droit).
+// D-75 : objectifs pensés pour une dizaine d'années de lecture et de collection (personne ne finit le Gant en quelques mois) ;
+//  les objets Marvel sont illustrés par leur vraie image de comic (Marvel Database, via l'atlas Marvel Primestone : img, imgSrc).
 //  - Chaque artefact se débloque sur une mesure réelle de l'activité locale (collection, lecture, avis, stories…).
 //  - Les six Gemmes de l'Infini se combinent : le Gant de l'Infini exige les six.
 //  - Module pur : rien n'est stocké ni envoyé ; aucun déblocage n'est inventé.
@@ -6524,28 +6801,28 @@ const ARTEFACTS = Object.freeze([
   { id: 'batarang', name: 'Batarang', universe: 'dc', rarity: 'commun', metric: 'owned', goal: 1, glyph: '◆', hue: 220, lore: 'Le premier outil d\'un justicier : votre premier comic.' },
   { id: 'web_shooter', name: 'Lance-toile', universe: 'marvel', rarity: 'commun', metric: 'read', goal: 10, glyph: '✳', hue: 0, lore: 'Dix numéros lus : vous commencez à tisser votre toile.' },
   { id: 'daily_planet', name: 'Une du Daily Planet', universe: 'dc', rarity: 'commun', metric: 'stories', goal: 1, glyph: '▤', hue: 200, lore: 'Votre première story de lecture.' },
-  { id: 'camera_parker', name: 'Appareil de Peter Parker', universe: 'marvel', rarity: 'rare', metric: 'planches', goal: 10, glyph: '◉', hue: 10, lore: 'Dix planches préparées, dignes de la une du Bugle.' },
-  { id: 'shield_cap', name: 'Bouclier de Captain America', universe: 'marvel', rarity: 'rare', metric: 'runs', goal: 1, glyph: '✪', hue: 215, lore: 'Un run complet : la constance d\'un super-soldat.' },
-  { id: 'lasso', name: 'Lasso de Vérité', universe: 'dc', rarity: 'rare', metric: 'reviewed', goal: 10, glyph: '➰', hue: 45, lore: 'Dix avis sincères.' },
-  { id: 'lantern_ring', name: 'Anneau de Green Lantern', universe: 'dc', rarity: 'rare', metric: 'read', goal: 100, glyph: '◎', hue: 130, lore: 'Cent numéros lus, avec la volonté d\'un Lantern.' },
-  { id: 'helmet_fate', name: 'Casque de Nabu', universe: 'dc', rarity: 'rare', metric: 'rated', goal: 50, glyph: '☥', hue: 50, lore: 'Cinquante notes : un jugement éclairé.' },
-  { id: 'kryptonite', name: 'Kryptonite', universe: 'dc', rarity: 'epique', metric: 'keys', goal: 10, glyph: '⬢', hue: 140, lore: 'Dix key issues : des pièces rares et redoutées.' },
-  { id: 'mother_box', name: 'Boîte-Mère', universe: 'dc', rarity: 'epique', metric: 'publishers', goal: 6, glyph: '▣', hue: 190, lore: 'Six éditeurs différents : vous voyagez entre les mondes.' },
-  { id: 'cerebro', name: 'Cerebro', universe: 'marvel', rarity: 'epique', metric: 'characters', goal: 15, glyph: '⌬', hue: 265, lore: 'Quinze personnages différents repérés dans votre collection.' },
-  { id: 'eye_agamotto', name: 'Œil d\'Agamotto', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 25, glyph: '◈', hue: 95, lore: 'Vingt-cinq relectures : maître du temps qui repasse.' },
-  { id: 'nth_metal', name: 'Métal Nth', universe: 'dc', rarity: 'epique', metric: 'runs', goal: 5, glyph: '⬡', hue: 30, lore: 'Cinq runs complets.' },
-  { id: 'mjolnir', name: 'Mjolnir', universe: 'marvel', rarity: 'legendaire', metric: 'read', goal: 500, glyph: 'ᛉ', hue: 205, lore: 'Cinq cents numéros lus : vous êtes digne.' },
-  { id: 'vibranium', name: 'Lingot de vibranium', universe: 'marvel', rarity: 'legendaire', metric: 'value', goal: 1000, glyph: '⟁', hue: 280, lore: 'Une collection estimée à mille unités ou plus.' },
-  { id: 'cosmic_cube', name: 'Cube cosmique', universe: 'marvel', rarity: 'legendaire', metric: 'owned', goal: 1000, glyph: '⬛', hue: 195, lore: 'Mille numéros possédés.' },
-  { id: 'nullifier', name: 'Ultimate Nullifier', universe: 'marvel', rarity: 'mythique', metric: 'reviewed', goal: 100, glyph: '⌖', hue: 340, lore: 'Cent avis écrits : une arme critique absolue.' },
+  { id: 'camera_parker', name: 'Appareil de Peter Parker', universe: 'marvel', rarity: 'rare', metric: 'planches', goal: 25, glyph: '◉', hue: 10, lore: 'Vingt-cinq planches préparées, dignes de la une du Bugle.' },
+  { id: 'shield_cap', name: 'Bouclier de Captain America', universe: 'marvel', rarity: 'rare', metric: 'runs', goal: 3, glyph: '✪', hue: 215, lore: 'Trois runs complets : la constance d\'un super-soldat.' },
+  { id: 'lasso', name: 'Lasso de Vérité', universe: 'dc', rarity: 'rare', metric: 'reviewed', goal: 25, glyph: '➰', hue: 45, lore: 'Vingt-cinq avis sincères.' },
+  { id: 'lantern_ring', name: 'Anneau de Green Lantern', universe: 'dc', rarity: 'rare', metric: 'read', goal: 1000, glyph: '◎', hue: 130, lore: 'Mille numéros lus, avec la volonté d\'un Lantern.' },
+  { id: 'helmet_fate', name: 'Casque de Nabu', universe: 'dc', rarity: 'rare', metric: 'rated', goal: 250, glyph: '☥', hue: 50, lore: 'Deux cent cinquante notes : un jugement éclairé.' },
+  { id: 'kryptonite', name: 'Kryptonite', universe: 'dc', rarity: 'epique', metric: 'keys', goal: 50, glyph: '⬢', hue: 140, lore: 'Cinquante key issues : des pièces rares et redoutées.' },
+  { id: 'mother_box', name: 'Boîte-Mère', universe: 'dc', rarity: 'epique', metric: 'publishers', goal: 12, glyph: '▣', hue: 190, lore: 'Douze éditeurs différents : vous voyagez entre les mondes.' },
+  { id: 'cerebro', name: 'Cerebro', universe: 'marvel', rarity: 'epique', metric: 'characters', goal: 60, glyph: '⌬', hue: 265, lore: 'Soixante personnages différents repérés dans votre collection.' },
+  { id: 'eye_agamotto', name: 'Œil d\'Agamotto', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 150, glyph: '◈', hue: 95, lore: 'Cent cinquante relectures : maître du temps qui repasse.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/e/e4/Eye_of_Agamotto_%28Knowledge%29_from_Guidebook_to_the_Marvel_Cinematic_Universe_-_Marvel%27s_Doctor_Strange_Vol_1_1_01.jpg/revision/latest?cb=20190604223449', imgSrc: 'o_eye' },
+  { id: 'nth_metal', name: 'Métal Nth', universe: 'dc', rarity: 'epique', metric: 'runs', goal: 25, glyph: '⬡', hue: 30, lore: 'Vingt-cinq runs complets.' },
+  { id: 'mjolnir', name: 'Mjolnir', universe: 'marvel', rarity: 'legendaire', metric: 'read', goal: 5000, glyph: 'ᛉ', hue: 205, lore: 'Cinq mille numéros lus : vous êtes digne.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/9/9a/Immortal_Thor_Vol_1_4_Textless.jpg/revision/latest/scale-to-width-down/592?cb=20250614001946', imgSrc: 'o_mjolnir' },
+  { id: 'vibranium', name: 'Lingot de vibranium', universe: 'marvel', rarity: 'legendaire', metric: 'value', goal: 25000, glyph: '⟁', hue: 280, lore: 'Une collection estimée à vingt-cinq mille unités ou plus.' },
+  { id: 'cosmic_cube', name: 'Cube cosmique', universe: 'marvel', rarity: 'legendaire', metric: 'owned', goal: 5000, glyph: '⬛', hue: 195, lore: 'Cinq mille numéros possédés.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/1/13/Avengers_Standoff_Welcome_to_Pleasant_Hill_Vol_1_1_Textless.jpg/revision/latest/scale-to-width-down/599?cb=20151117195132', imgSrc: 'x_cube' },
+  { id: 'nullifier', name: 'Ultimate Nullifier', universe: 'marvel', rarity: 'mythique', metric: 'reviewed', goal: 1000, glyph: '⌖', hue: 340, lore: 'Mille avis écrits : une arme critique absolue.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/6/68/Ultimate_Nullifier_%28Weapon%29_from_All-New_Official_Handbook_of_the_Marvel_Universe_A_to_Z_Vol_1_11_001.jpg/revision/latest/scale-to-width-down/568?cb=20180712161246', imgSrc: 'x_nullifier' },
   // Gemmes de l'Infini
-  { id: 'gem_space', name: 'Gemme de l\'Espace', universe: 'marvel', rarity: 'epique', metric: 'publishers', goal: 4, glyph: '◆', hue: 215, gem: true, lore: 'Quatre éditeurs différents.' },
-  { id: 'gem_mind', name: 'Gemme de l\'Esprit', universe: 'marvel', rarity: 'epique', metric: 'reviewed', goal: 25, glyph: '◆', hue: 50, gem: true, lore: 'Vingt-cinq avis écrits.' },
-  { id: 'gem_reality', name: 'Gemme de la Réalité', universe: 'marvel', rarity: 'epique', metric: 'read', goal: 200, glyph: '◆', hue: 0, gem: true, lore: 'Deux cents numéros lus.' },
-  { id: 'gem_power', name: 'Gemme du Pouvoir', universe: 'marvel', rarity: 'epique', metric: 'owned', goal: 300, glyph: '◆', hue: 285, gem: true, lore: 'Trois cents numéros possédés.' },
-  { id: 'gem_time', name: 'Gemme du Temps', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 10, glyph: '◆', hue: 130, gem: true, lore: 'Dix relectures.' },
-  { id: 'gem_soul', name: 'Gemme de l\'Âme', universe: 'marvel', rarity: 'epique', metric: 'stories', goal: 20, glyph: '◆', hue: 30, gem: true, lore: 'Vingt stories de lecture.' },
-  { id: 'gauntlet', name: 'Gant de l\'Infini', universe: 'marvel', rarity: 'mythique', metric: 'gems', goal: 6, glyph: '✋', hue: 45, lore: 'Les six gemmes réunies.' }
+  { id: 'gem_space', name: 'Gemme de l\'Espace', universe: 'marvel', rarity: 'epique', metric: 'publishers', goal: 15, glyph: '◆', hue: 215, gem: true, lore: 'Quinze éditeurs différents.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/0/05/Space_Gem_from_Marvel_Legacy_Vol_1_1_001.jpg/revision/latest?cb=20171118004348', imgSrc: 'x_sspace' },
+  { id: 'gem_mind', name: 'Gemme de l\'Esprit', universe: 'marvel', rarity: 'epique', metric: 'reviewed', goal: 300, glyph: '◆', hue: 50, gem: true, lore: 'Trois cents avis écrits.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/c/c5/Infinity_Countdown_Vol_1_4_Turk_Holds_Infinity_Unknown_Comics_Exclusive_Virgin_Variant.jpg/revision/latest/scale-to-width-down/600?cb=20180530173556', imgSrc: 'x_smind' },
+  { id: 'gem_reality', name: 'Gemme de la Réalité', universe: 'marvel', rarity: 'epique', metric: 'read', goal: 2500, glyph: '◆', hue: 0, gem: true, lore: 'Deux mille cinq cents numéros lus.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/9/9d/Captain_Marvel_Vol_10_128_Textless.jpg/revision/latest/scale-to-width-down/593?cb=20171017171558', imgSrc: 'x_sreal' },
+  { id: 'gem_power', name: 'Gemme du Pouvoir', universe: 'marvel', rarity: 'epique', metric: 'owned', goal: 2500, glyph: '◆', hue: 285, gem: true, lore: 'Deux mille cinq cents numéros possédés.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/a/a0/Power_Stone_from_Immortal_Thor_Annual_Vol_1_1_001.jpg/revision/latest?cb=20240723142424', imgSrc: 'x_spow' },
+  { id: 'gem_time', name: 'Gemme du Temps', universe: 'marvel', rarity: 'epique', metric: 'reread', goal: 200, glyph: '◆', hue: 130, gem: true, lore: 'Deux cents relectures.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/8/8b/Time_Gem_from_Doctor_Strange_Vol_5_3_001.jpg/revision/latest?cb=20180719031113', imgSrc: 'x_stime' },
+  { id: 'gem_soul', name: 'Gemme de l\'Âme', universe: 'marvel', rarity: 'epique', metric: 'stories', goal: 365, glyph: '◆', hue: 30, gem: true, lore: 'Trois cent soixante-cinq stories de lecture : une par jour pendant un an.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/f/f4/Soul_Gem_from_Infinity_Wars_Vol_1_6_001.jpg/revision/latest?cb=20190203021316', imgSrc: 'x_ssoul' },
+  { id: 'gauntlet', name: 'Gant de l\'Infini', universe: 'marvel', rarity: 'mythique', metric: 'gems', goal: 6, glyph: '✋', hue: 45, lore: 'Les six gemmes réunies.', img: 'https://static.wikia.nocookie.net/marveldatabase/images/e/ec/Infinity_Gauntlet_%28Item%29_from_New_Avengers_Vol_3_3_001.jpg/revision/latest/scale-to-width-down/559?cb=20151013053043', imgSrc: 'x_gauntlet' }
 ].map(a => Object.freeze(a)));
 
 const num = v => Math.max(0, Number(v) || 0);
@@ -6707,6 +6984,190 @@ const financeInsights = (copies = [], now = new Date()) => {
 };
 
 module.exports = { TEAMS, teamOfSeries, creatorInsights, creditsFromComicVine, financeInsights };
+  return Object.freeze(module.exports); })();
+  /* domains/explorer/news-core.js */
+  out.newsCore = (() => { const module = { exports: {} };
+'use strict';
+// Actualités (D-75) : rubriques, classement et apprentissage local des préférences de lecture.
+//  - Les rubriques sont déduites du titre, de l'extrait et des catégories du flux (mots-clés français et anglais).
+//  - Le classement mêle fraîcheur, intérêts déclarés (suivis, collection) et préférences apprises sur l'appareil :
+//    chaque article ouvert renforce ses rubriques et sa source ; les poids s'estompent de moitié en 30 jours.
+//  - Module pur : rien n'est envoyé ; l'appelant stocke l'état d'apprentissage (localStorage).
+
+const TOPICS = Object.freeze({
+  marvel: { label: 'Marvel', re: /\b(marvel|avengers?|x-?men|spider-?(man|verse|woman|gwen)|iron ?man|captain america|thor|hulk|wolverine|deadpool|daredevil|venom|fantastic four|4 fantastiques|thunderbolts|doctor (doom|strange)|docteur strange|black panther|loki|punisher|moon knight|guardians of the galaxy|gardiens de la galaxie|eternals|blade|silver surfer|galactus|thanos)\b/i },
+  dc: { label: 'DC', re: /\b(dc( comics| studios| universe)?|batman|superman|wonder woman|justice league|joker|gotham|aquaman|the flash|green lantern|lanterns|supergirl|harley quinn|peacemaker|clayface|catwoman|nightwing|robin|darkseid|absolute (batman|superman|wonder woman))\b/i },
+  bd: { label: 'BD', re: /\b(bd|bande[s]? dessin[ée]e?s?|franco-belge|ast[ée]rix|tintin|spirou|lucky luke|blake (et|&) mortimer|angoul[êe]me|dupuis|dargaud|casterman|glénat|delcourt|lombard|futuropolis|soleil)\b/i },
+  manga: { label: 'Manga', re: /\b(manga|mangas|anime|shonen|shōnen|seinen|one piece|naruto|dragon ball|jujutsu|chainsaw man|my hero academia|ki-oon|kana|pika|kurokawa)\b/i },
+  indie: { label: 'Indé', re: /\b(image comics|boom! studios|boom studios|dark horse|idw|dynamite|skybound|invincible|the walking dead|saga|spawn|hellboy|energon|transformers|tmnt|ninja turtles|mad cave|oni press|awa studios)\b/i },
+  ecran: { label: 'Films & séries', re: /\b(film|films|movie|movies|s[ée]rie|series|season|saison|trailer|bande-annonce|teaser|box[- ]office|casting|cast|disney\+|netflix|hbo|prime video|cin[ée]ma|réalisateur|director|tournage|sortie en salles|in theaters|post-credits?|sc[èe]ne post-g[ée]n[ée]rique)\b/i },
+  sorties: { label: 'Sorties', re: /\b(sortie|sorties|parution|nouveaut[ée]s?|new comics|release[sd]?|on sale|solicitations?|preview|pr[ée]commande|foc|final order cutoff|first look|premier regard|annonce|announced?)\b/i },
+  evenements: { label: 'Festivals', re: /\b(festival|convention|comic-?con|nycc|sdcc|salon|expo|dédicace|dedicace|prix|award|eisner|fauve)\b/i }
+});
+const TOPIC_KEYS = Object.freeze(Object.keys(TOPICS));
+const HALF_LIFE_DAYS = 30;
+
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const text = a => [a && a.title, a && a.excerpt, ...((a && a.categories) || [])].filter(Boolean).join(' ');
+
+// Rubriques d'un article (au moins « comics » quand rien d'autre n'est reconnu)
+const classify = a => {
+  const t = text(a), out = [];
+  for (const k of TOPIC_KEYS) if (TOPICS[k].re.test(t) || TOPICS[k].re.test(norm(t))) out.push(k);
+  if (!out.some(k => k !== 'sorties' && k !== 'evenements' && k !== 'ecran')) out.push('comics');
+  return out;
+};
+
+const emptyLearn = () => ({ version: 1, topics: {}, sources: {}, at: null, clicks: 0 });
+const sanitizeLearn = v => {
+  const o = emptyLearn();
+  if (!v || typeof v !== 'object') return o;
+  const clean = m => { const r = {}; if (m && typeof m === 'object') for (const [k, x] of Object.entries(m).slice(0, 80)) { const n = Number(x); if (/^[a-z0-9_-]{1,40}$/i.test(k) && isFinite(n) && n > 0) r[k] = Math.min(n, 50); } return r; };
+  o.topics = clean(v.topics); o.sources = clean(v.sources);
+  o.at = typeof v.at === 'string' && !isNaN(new Date(v.at)) ? v.at : null;
+  o.clicks = Math.max(0, Math.min(1e6, Number(v.clicks) || 0));
+  return o;
+};
+// Les poids s'estompent : un intérêt ancien compte de moins en moins
+const decay = (learn, now) => {
+  const l = sanitizeLearn(learn);
+  if (!l.at) return l;
+  const days = Math.max(0, (new Date(now).getTime() - new Date(l.at).getTime()) / 86400000);
+  const f = Math.pow(0.5, days / HALF_LIFE_DAYS);
+  for (const m of [l.topics, l.sources]) for (const k of Object.keys(m)) { m[k] = +(m[k] * f).toFixed(4); if (m[k] < 0.05) delete m[k]; }
+  return l;
+};
+// Un article ouvert : ses rubriques (+1) et sa source (+0,5) gagnent du poids
+const learnFrom = (learn, article, now) => {
+  const l = decay(learn, now);
+  for (const k of classify(article)) l.topics[k] = Math.min(50, (l.topics[k] || 0) + 1);
+  if (article && article.sourceId && /^[a-z0-9_-]{1,40}$/i.test(article.sourceId)) l.sources[article.sourceId] = Math.min(50, (l.sources[article.sourceId] || 0) + 0.5);
+  l.at = new Date(now).toISOString(); l.clicks++;
+  return l;
+};
+// Classement : fraîcheur (demi-vie 2 jours) + intérêt déclaré + préférences apprises ; explication jointe
+const rank = (items, opts = {}) => {
+  const now = new Date(opts.now || Date.now()).getTime();
+  const l = decay(opts.learn, now);
+  const tot = Object.values(l.topics).reduce((s, x) => s + x, 0) || 1;
+  const interests = opts.interests || [];
+  return (items || []).map((a, i) => {
+    const topics = classify(a);
+    const age = a.date ? Math.max(0, (now - new Date(a.date).getTime()) / 3600000) : 240;
+    const fresh = Math.pow(0.5, age / 48);
+    const t = ' ' + norm(text(a)) + ' ';
+    const why = interests.find(([n]) => n && t.includes(' ' + n + ' '));
+    const learned = topics.reduce((s, k) => s + (l.topics[k] || 0) / tot, 0);
+    const best = topics.slice().sort((x, y) => (l.topics[y] || 0) - (l.topics[x] || 0))[0];
+    const score = fresh * 3 + (why ? 2.5 : 0) + learned * 2 + Math.min(1, (l.sources[a.sourceId] || 0) / 5) * 0.5 + (a.image ? 0.15 : 0);
+    return { a, topics, score, why: why ? why[1] : '', learnedTopic: !why && learned > 0.25 && l.clicks >= 3 && best ? TOPICS[best] ? TOPICS[best].label : 'Comics' : '', i };
+  }).sort((x, y) => y.score - x.score || x.i - y.i);
+};
+const topicLabel = k => k === 'comics' ? 'Comics' : TOPICS[k] ? TOPICS[k].label : '';
+
+module.exports = { TOPICS, TOPIC_KEYS, HALF_LIFE_DAYS, classify, emptyLearn, sanitizeLearn, decay, learnFrom, rank, topicLabel };
+  return Object.freeze(module.exports); })();
+  /* domains/explorer/watch-guides.js */
+  out.watchGuides = (() => { const module = { exports: {} };
+'use strict';
+// Dossiers « Avant de voir » (D-75) : pour les grandes sorties ciné et séries tirées des comics, ce qu'il faut voir
+// et lire avant. Données éditoriales de Panel (titres et années vérifiables), sans résumé recopié.
+//  - Un dossier s'affiche quand l'actualité en parle (mots-clés dans les articles récents) ou quand sa sortie approche.
+//  - Les dates sont celles annoncées publiquement ; elles peuvent changer (le libellé le dit).
+//  - « read[].q » est la recherche lancée dans l'Explorer (base Comic Vine) pour trouver l'édition.
+
+const GUIDES = Object.freeze([
+  {
+    id: 'avengers-doomsday', title: 'Avengers: Doomsday', studio: 'Marvel Studios', kind: 'film', release: '2026-12-16', releaseLabel: 'au cinéma le 16 décembre 2026 (France, date annoncée)',
+    match: /avengers:? doomsday|doomsday/i, hero: 'Docteur Fatalis (Victor von Doom)',
+    watch: [
+      { t: 'Avengers: Endgame', y: 2019, why: 'la fin de la Saga de l\'Infini et le point de départ des nouveaux Avengers' },
+      { t: 'Loki, saison 2', y: 2023, why: 'le multivers, le Temps et les variants (Disney+)' },
+      { t: 'Deadpool & Wolverine', y: 2024, why: 'le Vide et le retour des héros de l\'ère Fox' },
+      { t: 'Captain America: Brave New World', y: 2025, why: 'Sam Wilson en Captain America' },
+      { t: 'Thunderbolts*', y: 2025, why: 'la nouvelle équipe qui se fait appeler « New Avengers »' },
+      { t: 'Les 4 Fantastiques : Premiers pas', y: 2025, why: 'la famille Richards, liée à Fatalis depuis 1962' },
+      { t: 'X-Men et X-Men 2', y: 2000, why: 'les mutants de la Fox, annoncés au casting' }
+    ],
+    read: [
+      { t: 'Books of Doom', y: 2005, by: 'Ed Brubaker, Pablo Raimondi', why: 'les origines de Victor von Doom', q: 'Books of Doom' },
+      { t: 'Fantastic Four : Unthinkable', y: 2003, by: 'Mark Waid, Mike Wieringo', why: 'Fatalis au sommet de sa cruauté', q: 'Fantastic Four Unthinkable' },
+      { t: 'Avengers / New Avengers (Hickman)', y: 2012, by: 'Jonathan Hickman', why: 'les incursions qui mènent à Secret Wars', q: 'New Avengers Hickman' },
+      { t: 'Secret Wars', y: 2015, by: 'Jonathan Hickman, Esad Ribić', why: 'Doom devenu dieu-empereur de Battleworld', q: 'Secret Wars 2015' },
+      { t: 'Infamous Iron Man', y: 2016, by: 'Brian Michael Bendis, Alex Maleev', why: 'Fatalis veut se racheter', q: 'Infamous Iron Man' },
+      { t: 'One World Under Doom', y: 2025, by: 'Ryan North, R.B. Silva', why: 'Doom, Sorcier suprême, prend le pouvoir sur Terre', q: 'One World Under Doom' }
+    ]
+  },
+  {
+    id: 'avengers-secret-wars', title: 'Avengers: Secret Wars', studio: 'Marvel Studios', kind: 'film', release: '2027-12-15', releaseLabel: 'au cinéma en décembre 2027 (date annoncée)',
+    match: /avengers:? secret wars|secret wars/i, hero: 'le multivers Marvel',
+    watch: [
+      { t: 'Avengers: Doomsday', y: 2026, why: 'la première partie' },
+      { t: 'Loki, saisons 1 et 2', y: 2021, why: 'la naissance du multivers' },
+      { t: 'Doctor Strange in the Multiverse of Madness', y: 2022, why: 'les incursions entre univers' },
+      { t: 'Spider-Man: No Way Home', y: 2021, why: 'les Spider-Man d\'autres univers' }
+    ],
+    read: [
+      { t: 'Secret Wars (1984)', y: 1984, by: 'Jim Shooter, Mike Zeck', why: 'le Beyonder et le premier Battleworld', q: 'Secret Wars 1984' },
+      { t: 'Secret Wars (2015)', y: 2015, by: 'Jonathan Hickman, Esad Ribić', why: 'la fin du multivers et sa renaissance', q: 'Secret Wars 2015' },
+      { t: 'Time Runs Out', y: 2015, by: 'Jonathan Hickman', why: 'le prélude direct', q: 'Avengers Time Runs Out' }
+    ]
+  },
+  {
+    id: 'the-batman-2', title: 'The Batman Part II', studio: 'DC Studios / Warner Bros.', kind: 'film', release: '2027-10-01', releaseLabel: 'au cinéma en octobre 2027 (date annoncée)',
+    match: /the batman (part ii|part 2|2)|batman part ii/i, hero: 'Batman',
+    watch: [
+      { t: 'The Batman', y: 2022, why: 'le premier film de Matt Reeves' },
+      { t: 'The Penguin', y: 2024, why: 'la série qui suit directement le film (HBO)' }
+    ],
+    read: [
+      { t: 'Batman : Année Un', y: 1987, by: 'Frank Miller, David Mazzucchelli', why: 'les débuts de Batman et de Gordon', q: 'Batman Year One' },
+      { t: 'Un long Halloween', y: 1996, by: 'Jeph Loeb, Tim Sale', why: 'l\'enquête criminelle qui inspire les films', q: 'Batman The Long Halloween' },
+      { t: 'Batman : Ego', y: 2000, by: 'Darwyn Cooke', why: 'Bruce face à sa part d\'ombre', q: 'Batman Ego' }
+    ]
+  },
+  {
+    id: 'man-of-tomorrow', title: 'Man of Tomorrow', studio: 'DC Studios', kind: 'film', release: '2027-07-09', releaseLabel: 'au cinéma en juillet 2027 (date annoncée)',
+    match: /man of tomorrow/i, hero: 'Superman et Lex Luthor',
+    watch: [
+      { t: 'Superman', y: 2025, why: 'le premier film du nouvel univers DC' },
+      { t: 'Peacemaker, saison 2', y: 2025, why: 'la suite de l\'univers DC à la télévision' }
+    ],
+    read: [
+      { t: 'All-Star Superman', y: 2005, by: 'Grant Morrison, Frank Quitely', why: 'le Superman le plus lumineux', q: 'All-Star Superman' },
+      { t: 'Superman : Birthright', y: 2003, by: 'Mark Waid, Leinil Francis Yu', why: 'une origine moderne de Superman et de Luthor', q: 'Superman Birthright' },
+      { t: 'Lex Luthor : Man of Steel', y: 2005, by: 'Brian Azzarello, Lee Bermejo', why: 'le point de vue de Lex', q: 'Lex Luthor Man of Steel' }
+    ]
+  },
+  {
+    id: 'beyond-the-spider-verse', title: 'Spider-Man: Beyond the Spider-Verse', studio: 'Sony Pictures Animation', kind: 'film', release: '2027-06-18', releaseLabel: 'au cinéma en juin 2027 (date annoncée)',
+    match: /beyond the spider-?verse|spider-?verse/i, hero: 'Miles Morales',
+    watch: [
+      { t: 'Spider-Man : New Generation', y: 2018, why: 'le premier film (Into the Spider-Verse)' },
+      { t: 'Spider-Man : Across the Spider-Verse', y: 2023, why: 'la première partie, qui finit sur un suspense' }
+    ],
+    read: [
+      { t: 'Miles Morales : Ultimate Spider-Man', y: 2011, by: 'Brian Michael Bendis, Sara Pichelli', why: 'la naissance de Miles', q: 'Miles Morales Ultimate Spider-Man' },
+      { t: 'Spider-Verse', y: 2014, by: 'Dan Slott, Olivier Coipel', why: 'toutes les araignées du multivers', q: 'Spider-Verse 2014' },
+      { t: 'Spider-Gwen', y: 2015, by: 'Jason Latour, Robbi Rodriguez', why: 'Gwen Stacy en héroïne', q: 'Spider-Gwen' }
+    ]
+  }
+]);
+
+// Dossiers à montrer : ceux dont parle l'actualité récente, puis ceux qui sortent dans l'année
+const pick = (articles, now, max = 3) => {
+  const t = Date.parse(now || new Date().toISOString());
+  const scored = GUIDES.map(g => {
+    const hits = (articles || []).filter(a => g.match.test([a && a.title, a && a.excerpt].filter(Boolean).join(' ')));
+    const days = (Date.parse(g.release + 'T12:00:00Z') - t) / 86400000;
+    return { g, hits, days };
+  }).filter(x => x.days > -45 && (x.hits.length || x.days < 400));
+  return scored.sort((a, b) => (b.hits.length > 0) - (a.hits.length > 0) || a.days - b.days).slice(0, max)
+    .map(x => ({ guide: x.g, articles: x.hits.slice(0, 4), daysLeft: Math.round(x.days) }));
+};
+const byId = id => GUIDES.find(g => g.id === id) || null;
+
+module.exports = { GUIDES, pick, byId };
   return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
@@ -12168,7 +12629,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const relFmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR') : '';
   // D-67 — Sorties US : rangées au mercredi de leur semaine (New Comic Book Day). La date de la source reste stockée telle quelle.
   const relNcbd = d => { if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return d || ''; const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + (3 - ((x.getDay() + 6) % 7 + 1))); return isoDate(x); };
-  const relDay = p => { const d = p && p.dates && p.dates.current; return d && String(p.market || '').toUpperCase() === 'US' ? relNcbd(d) : (d || ''); };
+  const REL_WED_MARKETS = ['US', 'FR', 'BE', 'CH', 'CA', 'LU'];
+  const relDay = p => { const d = p && p.dates && p.dates.current; return d && REL_WED_MARKETS.includes(String(p.market || '').toUpperCase()) ? relNcbd(d) : (d || ''); };
   const relSourceLabel = s => ({ comicvine: 'Comic Vine', import: 'Import', manual: 'Saisie', backup: 'Sauvegarde' })[s] || (typeof srcById === 'function' && srcById(s) ? srcById(s).name : '') || s || '—';
 
   // ---------- Édition manuelle (la saisie de l'utilisateur prime)
@@ -13302,6 +13764,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Map pubId → { owned, wishlisted, inPullList, read, unconfirmed, pullPending, seriesSubscribed } ; null si le réglage est désactivé ou le fournisseur absent.
   const REL_LENS_INCLUDE = ['unconfirmed', 'pullPending', 'seriesSubscribed'];
   const relRefOf = p => ({ series: String(p.series || ''), issue: String(p.issue == null ? '' : p.issue), year: String(p.dates.actual || p.dates.current || '').slice(0, 4), pubId: p.id });
+  const relWireStrips = root => {
+    root.querySelectorAll('.rel-day').forEach(b => { b.onclick = () => { relView.day = relView.day === b.dataset.day ? '' : b.dataset.day; renderReleasesGrid(); }; });
+    root.querySelectorAll('[data-rel-jump]').forEach(b => { b.onclick = () => { relView.period = 'week'; relView.day = ''; relView.anchor = startOfWeek(new Date(b.dataset.relJump + 'T12:00:00')); releasesWeekStart = relView.anchor; loadReleasesForWeek(); }; });
+  };
   const relLensMap = pubs => {
     try {
       const out = new Map();
@@ -13360,7 +13826,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (p.dates.actual) return '<span class="rel-date is-confirmed" title="Date de sortie confirmée">Sorti le ' + relFmtDate(p.dates.actual) + '</span>';
     if (!p.dates.current) return '<span class="rel-date is-unknown">Date inconnue</span>';
     const day = relDay(p), moved = day !== p.dates.current;
-    return '<span class="rel-date is-announced" title="' + (moved ? 'Sortie US rangée au mercredi de sa semaine (date de la source : ' + relFmtDate(p.dates.current) + ')' : 'Date annoncée, non confirmée') + '">' + (day < relToday() ? 'Prévu le ' : 'Annoncé · ') + relFmtDate(day) + '</span>';
+    return '<span class="rel-date is-announced" title="' + (moved ? 'Sortie rangée au mercredi de sa semaine, jour des nouveautés comics et BD (date de la source : ' + relFmtDate(p.dates.current) + ')' : 'Date annoncée, non confirmée') + '">' + (day < relToday() ? 'Prévu le ' : 'Annoncé · ') + relFmtDate(day) + '</span>';
   };
   const relStatusPill = p => { const st = relStatusOf(p); return '<span class="rel-status st-' + st + '">' + REL_STATUS[st] + '</span>'; };
   const relMarketBadge = p => '<span class="rel-market">' + escapeHtml(p.market || '?') + '</span>';
@@ -13448,7 +13914,27 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const relViews = window.PanelDomains.releaseViews; // Nouveaux #1, FOC, variantes : domains/releases/release-views.js
     const queried = relQuery({ range: relView.mode === 'month' && range ? [isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth(), 1)), isoDate(new Date(relView.anchor.getFullYear(), relView.anchor.getMonth() + 1, 0))] : range });
     const itemsAll = relView.mode === 'firsts' ? relViews.upcomingFirsts(queried, [...relPubs.values()], relToday()) : queried;
-    // Bande de la semaine (style calendrier Apple) : un jour choisi filtre les cartes ; mercredi = jour des comics (NCBD)
+    // D-75 : les six prochaines semaines (sorties, dont VF, et numéros suivis), pour voir venir et sauter à une semaine
+    let upStrip = '';
+    if (relView.mode === 'grid' || relView.mode === 'firsts') {
+      const s0 = startOfWeek(new Date());
+      const qa = new Date(s0); qa.setDate(qa.getDate() - 3); const qb = new Date(s0); qb.setDate(qb.getDate() + 6 * 7 + 3);
+      const pool = relQuery({ range: [isoDate(qa), isoDate(qb)] });
+      const cur = range && relView.period === 'week' ? range[0] : '';
+      upStrip = '<div class="rel-up" role="list" aria-label="Prochaines semaines">' + Array.from({ length: 6 }, (_, w) => {
+        const a = new Date(s0); a.setDate(a.getDate() + 7 * w); const b = new Date(a); b.setDate(b.getDate() + 6);
+        const A = isoDate(a), B = isoDate(b);
+        const its = pool.filter(p => { const d = relDay(p); return d >= A && d <= B; });
+        const lm = its.length ? relLensMap(its) : null;
+        const pulled = lm ? its.filter(p => relIsPulled(lm.get(p.id))).length : 0;
+        const vf = its.filter(p => ['FR', 'BE', 'CH', 'CA', 'LU'].includes(String(p.market || '').toUpperCase())).length;
+        const wed = new Date(a); wed.setDate(wed.getDate() + 2);
+        const title = w === 0 ? 'Cette semaine' : w === 1 ? 'Semaine prochaine' : 'Mer. ' + wed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }).replace('.', '');
+        return '<button role="listitem" class="rel-upw' + (cur === A ? ' is-cur' : '') + (its.length ? '' : ' is-empty') + '" data-rel-jump="' + A + '"><small>' + title + '</small>' + (its.length || w === 0 ? '<b>' + its.length + '</b><span>sortie' + (its.length > 1 ? 's' : '') + '</span>' : '<b>—</b><span>Ouvrir la semaine</span>') +
+          (vf || pulled ? '<i>' + [vf ? vf + ' VF' : '', pulled ? pulled + ' suivie' + (pulled > 1 ? 's' : '') : ''].filter(Boolean).join(' · ') + '</i>' : '') + '</button>';
+      }).join('') + '</div>';
+    }
+    // Bande de la semaine (style calendrier Apple) : un jour choisi filtre les cartes ; mercredi = jour des comics et de la BD
     let weekStrip = '';
     if (relView.period === 'week' && range && (relView.mode === 'grid' || relView.mode === 'firsts')) {
       if (relView.day && (relView.day < range[0] || relView.day > range[1])) relView.day = '';
@@ -13457,9 +13943,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       weekStrip = '<div class="rel-week" role="tablist" aria-label="Jours de la semaine">' + days.map(k => {
         const n = itemsAll.filter(p => relDay(p) === k).length, d = new Date(k + 'T12:00:00');
         return '<button role="tab" class="rel-day' + (relView.day === k ? ' is-sel' : '') + (k === relToday() ? ' is-today' : '') + (d.getDay() === 3 ? ' is-ncbd' : '') + (n ? '' : ' is-empty') + '" data-day="' + k + '" aria-selected="' + (relView.day === k) + '">' +
-          '<small>' + d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') + '</small><b>' + d.getDate() + '</b><span>' + (n ? n + ' sortie' + (n > 1 ? 's' : '') : '—') + '</span>' + (d.getDay() === 3 ? '<em>NCBD</em>' : '') + '</button>';
+          '<small>' + d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') + '</small><b>' + d.getDate() + '</b><span>' + (n ? n + ' sortie' + (n > 1 ? 's' : '') : '—') + '</span>' + (d.getDay() === 3 ? '<em>Mercredi BD</em>' : '') + '</button>';
       }).join('') + '</div>';
     } else relView.day = '';
+    weekStrip = upStrip + weekStrip;
     const items = relView.day ? itemsAll.filter(p => relDay(p) === relView.day) : itemsAll;
     const lens = relLensMap(items);
     relLastLens = lens;
@@ -13469,8 +13956,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     gridEl.className = cardsMode ? 'comics-grid' : 'rel-alt rel-mode-' + relView.mode;
     if (!items.length) {
       const pullOnly = $('releasesPullOnly') && $('releasesPullOnly').checked;
-      gridEl.innerHTML = '<div class="notice-box">' + (relView.mode === 'firsts' ? 'Aucun nouveau #1 à venir sur cette période (numéro 1 sans numéro antérieur connu de la série).' : pullOnly ? 'Aucune sortie sur cette période pour votre pull list.' : 'Aucune publication sur cette période.') +
+      gridEl.innerHTML = weekStrip + '<div class="notice-box" style="grid-column:1/-1">' + (relView.mode === 'firsts' ? 'Aucun nouveau #1 à venir sur cette période (numéro 1 sans numéro antérieur connu de la série).' : pullOnly ? 'Aucune sortie sur cette période pour votre pull list.' : 'Aucune publication sur cette période.') +
         (cvAvailable() ? '' : ' Importez un calendrier (CSV ou JSON) ou ajoutez une publication.') + (undated ? '<br>' + undated + ' publication(s) sans date : période « Toutes les dates ».' : '') + '</div>';
+      relWireStrips(gridEl);
       return;
     }
     const wire = () => gridEl.querySelectorAll('[data-id]').forEach(el => {
@@ -13533,7 +14021,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       gridEl.innerHTML = keys.map(k => (k ? '<h3 class="rel-group">' + escapeHtml(k) + ' <small>' + groups.get(k).length + '</small></h3>' : '') + groups.get(k).map(p => relRowHtml(p, !!(stOf(p) && stOf(p).pullPending))).join('')).join('');
     }
     wire();
-    gridEl.querySelectorAll('.rel-day').forEach(b => { b.onclick = () => { relView.day = relView.day === b.dataset.day ? '' : b.dataset.day; renderReleasesGrid(); }; });
+    relWireStrips(gridEl);
     relMaybeRemind();
     notifBadge();
   };
@@ -13996,6 +14484,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return { works: states.length, read: by('read'), reading: by('reading'), toRead: by('to_read'), abandoned: by('abandoned'), rereads: states.reduce((a, x) => a + Math.max(0, (x.readCount || 0) - 1), 0),
       finishedLastYear: d.log.filter(l => (l.event === 'finished' || l.event === 'reread') && Date.parse(l.at) >= yearAgo).length, pileToRead: pile,
       readNotOwned: states.filter(x => x.status === 'read' && !rdCopiesOf(x).length).length, openConflicts: Object.values(d.conflicts).filter(c => !c.resolved).length };
+  };
+  const rdSeriesInProgress = () => {
+    const entries = [];
+    Object.values(rdLoad().states).forEach(x => { if (x && x.series && (x.status === 'read' || x.status === 'reading')) entries.push({ key: gdBase(x.series), label: x.series, issue: x.issue, read: x.status === 'read', current: x.status === 'reading', at: x.lastReadAt || x.updatedAt || '' }); });
+    physicalSingles.forEach(x => { if (x && x.series && !disposedOf(x)) entries.push({ key: gdBase(x.series), label: x.series, issue: x.issue, read: !x.isWishlist && rdIsRead(x), owned: !x.isWishlist, wished: !!x.isWishlist }); });
+    return window.PanelDomains.seriesProgress.seriesInProgress(entries);
   };
   const rdResume = () => {
     const states = Object.values(rdLoad().states).filter(x => x.status === 'reading').sort((a, b) => String(b.updatedAt).localeCompare(String(a.updatedAt)));
@@ -14690,7 +15184,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return exFollowsHtml() + '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + exBrowseHtml() +
+    return exFollowsHtml() +
+      sec('exSecNews', 'Actualités', 'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.',
+        (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
+        '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
+      sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>') +
+      '<section class="ex-sec"><button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><span class="ex-kicker">Atlas · Marvel Primestone</span><b>La cosmologie Marvel, cartographiée et sourcée</b><small>Les huit Cosmos, les entités abstraites, les Célestes, les objets de pouvoir et les événements cosmiques : 301 fiches reliées entre elles.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
+      '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + exBrowseHtml() +
       (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
       sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
@@ -14704,9 +15204,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
       sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
       sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
-      sec('exSecNews', 'Actualités', 'Les dernières nouvelles des sites spécialisés, en français et en anglais. Les articles s\'ouvrent sur leur site.',
-        (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
-        '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>');
+      '';
   };
   const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
   const exSrcLabel = (g, id) => { const s = (g.sources || []).find(x => x.id === id); return s ? s.label : ''; };
@@ -15264,7 +15762,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // l'article d'origine. « Pour vous » : articles qui citent un personnage suivi ou une série de la collection.
   // ==========================================================================
   const NEWS_PREF_KEY = 'panel_news_v1';
-  const exNews = { status: 'idle', data: null, err: '', at: 0, shown: 9, test: false, lang: (() => { try { const v = JSON.parse(localStorage.getItem(NEWS_PREF_KEY) || '{}'); return ['fr', 'en'].includes(v.lang) ? v.lang : ''; } catch (_) { return ''; } })() };
+  // D-75 : français par défaut (le choix « English » ou « Toutes les langues » est mémorisé), rubriques et fil qui apprend
+  const exNews = { status: 'idle', data: null, err: '', at: 0, shown: 12, test: false, topic: '', lang: (() => { try { const v = JSON.parse(localStorage.getItem(NEWS_PREF_KEY) || '{}'); return ['fr', 'en', 'all'].includes(v.lang) ? v.lang : 'fr'; } catch (_) { return 'fr'; } })() };
+  const NEWS_LEARN_KEY = 'panel_news_learn_v1';
+  const exNewsLearn = () => { try { return window.PanelDomains.newsCore.sanitizeLearn(JSON.parse(localStorage.getItem(NEWS_LEARN_KEY) || 'null')); } catch (_) { return window.PanelDomains.newsCore.emptyLearn(); } };
   let exNewsFetch = async () => { const r = await fetch(location.origin + '/api/news', { cache: 'no-store' }); if (!r.ok) throw new Error('Actualités indisponibles'); return r.json(); };
   const exNewsInterests = () => {
     const out = new Map();
@@ -15273,35 +15774,72 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (facets) facets.series.filter(x => x.owned || x.wish).sort((a, b) => (b.owned + b.wish) - (a.owned + a.wish)).slice(0, 150).forEach(x => { const name = String(x.name).replace(/\s*\(\s*\d{4}\s*\)\s*$/, '').trim(); const n = catNorm(name).replace(/^the /, ''); if (n.length >= 5 && !out.has(n)) out.set(n, name); });
     return out;
   };
-  const exNewsWhy = (a, interests) => { const t = ' ' + catNorm(a.title + ' ' + a.excerpt + ' ' + a.categories.join(' ')) + ' '; for (const [n, label] of interests) if (t.includes(' ' + n + ' ')) return label; return ''; };
   const exNewsAgo = iso => { const m = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? 'il y a ' + m + ' min' : m < 1440 ? 'il y a ' + Math.round(m / 60) + ' h' : m < 2880 ? 'hier' : 'il y a ' + Math.round(m / 1440) + ' j'; };
-  const exNewsCard = (a, why, big) => '<a class="ex-nw' + (big ? ' is-big' : '') + (a.image ? '' : ' no-img') + '" href="' + h(a.url) + '" target="_blank" rel="noopener noreferrer">' +
+  const exNewsCard = (a, why, big, extra) => '<a class="ex-nw' + (big ? ' is-big' : '') + (a.image ? '' : ' no-img') + '" href="' + h(a.url) + '" target="_blank" rel="noopener noreferrer" data-news-id="' + h(a.id) + '">' +
     (a.image ? '<span class="ex-nw-img"><img class="ex-nw-bg" src="' + h(a.image) + '" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></span>' : '') +
-    '<span class="ex-nw-body"><span class="ex-nw-meta"><b>' + h(a.source) + '</b><i>' + a.lang.toUpperCase() + '</i>' + (a.date ? '<time datetime="' + h(a.date) + '">' + h(exNewsAgo(a.date)) + '</time>' : '') + '</span>' +
-    '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') + (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : '') + '</span></a>';
+    '<span class="ex-nw-body"><span class="ex-nw-meta"><b>' + h(a.source) + '</b>' + (exNews.lang !== 'fr' ? '<i>' + h(String(a.lang || '').toUpperCase()) + '</i>' : '') + (a.date ? '<time datetime="' + h(a.date) + '">' + h(exNewsAgo(a.date)) + '</time>' : '') + '</span>' +
+    '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') +
+    (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : extra ? '<em class="is-learn">' + h(extra) + '</em>' : '') + '</span></a>';
+  const NEWS_LANGS = [['fr', 'Français'], ['en', 'English'], ['all', 'Toutes les langues']];
+  const exNewsDay = iso => { const d = new Date(iso), t = new Date(); const k = x => x.getFullYear() * 400 + x.getMonth() * 32 + x.getDate(); const diff = Math.round((new Date(t.toDateString()) - new Date(d.toDateString())) / 86400000); return diff <= 0 ? 'Aujourd\'hui' : diff === 1 ? 'Hier' : diff < 7 ? d.toLocaleDateString('fr-FR', { weekday: 'long' }).replace(/^./, c => c.toUpperCase()) : diff < 14 ? 'La semaine dernière' : 'Plus ancien'; };
   const exNewsBoxHtml = () => {
     if (!exNews.test && (!relayStatus || !relayStatus.news)) return '<p class="ex-note">Les actualités passent par le relais local de Panel (<b>Lancer Panel.cmd</b>). Panel n\'affiche jamais d\'actualité inventée.</p>';
-    const st = exNews;
+    const st = exNews, NC = window.PanelDomains.newsCore;
     if (st.status === 'error' && !st.data) return '<div class="ex-shop-err" role="alert">' + h(st.err) + ' <button class="btn secondary rel-mini" data-news-retry>Réessayer</button></div>';
     if (!st.data) return '<div class="ex-nw-grid is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-nw-skel"></span>').join('') + '</div>';
-    const interests = exNewsInterests();
-    const all = st.data.items.filter(a => !st.lang || a.lang === st.lang);
-    const tagged = all.map(a => ({ a, why: exNewsWhy(a, interests) }));
-    const forYou = tagged.filter(x => x.why).slice(0, 3);
-    const rest = tagged.filter(x => !forYou.includes(x));
-    const tabs = '<div class="ex-chips" role="tablist" aria-label="Langue des actualités">' + [['', 'Tout'], ['fr', 'En français'], ['en', 'In English']].map(([k, l]) => '<button role="tab" aria-selected="' + (st.lang === k) + '" class="ex-chip' + (st.lang === k ? ' active' : '') + '" data-news-lang="' + k + '">' + l + '</button>').join('') + '</div>';
-    return tabs + (forYou.length ? '<h4 class="ex-nw-h">Pour vous</h4><div class="ex-nw-grid is-foryou">' + forYou.map(x => exNewsCard(x.a, x.why, true)).join('') + '</div><h4 class="ex-nw-h">Dernières nouvelles</h4>' : '') +
-      (rest.length ? '<div class="ex-nw-grid">' + rest.slice(0, st.shown).map(x => exNewsCard(x.a, '', false)).join('') + '</div>' : '<p class="ex-note">Aucune actualité récente pour ce choix.</p>') +
+    const learn = exNewsLearn();
+    const inLang = st.data.items.filter(a => st.lang === 'all' || a.lang === st.lang);
+    const ranked = NC.rank(inLang, { interests: [...exNewsInterests().entries()], learn });
+    const counts = {}; ranked.forEach(x => x.topics.forEach(k => { counts[k] = (counts[k] || 0) + 1; }));
+    const topics = ['comics', ...NC.TOPIC_KEYS].filter(k => counts[k]);
+    const list = ranked.filter(x => !st.topic || x.topics.includes(st.topic));
+    const forYou = list.filter(x => x.why).slice(0, 3);
+    const rest = list.filter(x => !forYou.includes(x)).sort((x, y) => String(y.a.date).localeCompare(String(x.a.date)));
+    const shown = rest.slice(0, st.shown);
+    const groups = []; shown.forEach(x => { const g = exNewsDay(x.a.date); const last = groups[groups.length - 1]; if (last && last.g === g) last.items.push(x); else groups.push({ g, items: [x] }); });
+    const langs = '<div class="ex-seg" role="tablist" aria-label="Langue des actualités">' + NEWS_LANGS.map(([k, l]) => '<button role="tab" aria-selected="' + (st.lang === k) + '" class="ex-seg-b' + (st.lang === k ? ' active' : '') + '" data-news-lang="' + k + '">' + l + '</button>').join('') + '</div>';
+    const chips = '<div class="ex-chips ex-nw-topics" role="tablist" aria-label="Rubriques"><button class="ex-chip' + (!st.topic ? ' active' : '') + '" data-news-topic="">Tout <small>' + ranked.length + '</small></button>' + topics.map(k => '<button class="ex-chip' + (st.topic === k ? ' active' : '') + '" data-news-topic="' + k + '">' + h(NC.topicLabel(k)) + ' <small>' + counts[k] + '</small></button>').join('') + '</div>';
+    const top = Object.entries(learn.topics).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([k]) => NC.topicLabel(k)).filter(Boolean);
+    const learnNote = learn.clicks >= 3 && top.length ? '<p class="ex-nw-learn">Votre fil s\'adapte à vos lectures : <b>' + h(top.join(', ')) + '</b> remontent en premier. <button class="ex-link" data-news-unlearn>Repartir de zéro</button></p>' : '<p class="ex-nw-learn">Plus vous ouvrez d\'articles, plus le fil met en avant ce qui vous intéresse (calculé sur cet appareil).</p>';
+    return '<div class="ex-nw-bar">' + langs + '</div>' + chips + learnNote +
+      (forYou.length ? '<h4 class="ex-nw-h">Pour vous</h4><div class="ex-nw-grid is-foryou">' + forYou.map(x => exNewsCard(x.a, x.why, true)).join('') + '</div>' : '') +
+      (groups.length ? groups.map((g, gi) => '<h4 class="ex-nw-h">' + h(g.g) + '</h4><div class="ex-nw-grid">' + g.items.map((x, i) => exNewsCard(x.a, '', gi === 0 && i === 0 && !forYou.length, x.learnedTopic ? 'Vous lisez souvent : ' + x.learnedTopic : '')).join('') + '</div>').join('') :
+        '<p class="ex-note">' + (st.lang === 'fr' && st.data.items.some(a => a.lang !== 'fr') ? 'Aucun article en français pour ce choix. <button class="ex-link" data-news-lang="all">Voir toutes les langues</button>' : 'Aucune actualité récente pour ce choix.') + '</p>') +
       (rest.length > st.shown ? '<div class="ex-row"><button class="btn secondary rel-mini" data-news-more>Afficher plus</button></div>' : '') +
-      '<p class="ex-credit">Sources : ' + st.data.sources.map(x => '<a href="' + h(x.home) + '" target="_blank" rel="noopener noreferrer">' + h(x.name) + '</a>').join(', ') + '. ' + h(st.data.notice || '') + (st.data.unavailable && st.data.unavailable.length ? ' Momentanément indisponible : ' + h(st.data.unavailable.join(', ')) + '.' : '') + '</p>';
+      '<p class="ex-credit">Sources : ' + st.data.sources.filter(x => st.lang === 'all' || x.lang === st.lang).map(x => '<a href="' + h(x.home) + '" target="_blank" rel="noopener noreferrer">' + h(x.name) + '</a>').join(', ') + '. ' + h(st.data.notice || '') + (st.data.unavailable && st.data.unavailable.length ? ' Momentanément indisponible : ' + h(st.data.unavailable.join(', ')) + '.' : '') + '</p>';
   };
   const exNewsWire = () => {
     const box = $('exNewsBox'); if (!box) return;
-    box.querySelectorAll('[data-news-lang]').forEach(b => { b.onclick = () => { exNews.lang = b.dataset.newsLang; exNews.shown = 9; try { localStorage.setItem(NEWS_PREF_KEY, JSON.stringify({ lang: exNews.lang })); } catch (_) {} exNewsPaint(); }; });
+    box.querySelectorAll('[data-news-lang]').forEach(b => { b.onclick = () => { exNews.lang = b.dataset.newsLang; exNews.topic = ''; exNews.shown = 12; try { localStorage.setItem(NEWS_PREF_KEY, JSON.stringify({ lang: exNews.lang })); } catch (_) {} exNewsPaint(); exWatchPaint(); }; });
+    box.querySelectorAll('[data-news-topic]').forEach(b => { b.onclick = () => { exNews.topic = b.dataset.newsTopic; exNews.shown = 12; exNewsPaint(); }; });
     const more = box.querySelector('[data-news-more]'); if (more) more.onclick = () => { exNews.shown += 12; exNewsPaint(); };
     const rt = box.querySelector('[data-news-retry]'); if (rt) rt.onclick = () => exNewsLoad(true);
+    const ul = box.querySelector('[data-news-unlearn]'); if (ul) ul.onclick = () => { try { localStorage.removeItem(NEWS_LEARN_KEY); } catch (_) {} exNewsPaint(); };
+    // Apprentissage : un article ouvert renforce ses rubriques et sa source (sur l'appareil seulement)
+    box.querySelectorAll('a.ex-nw[data-news-id]').forEach(a => { a.addEventListener('click', () => { const art = exNews.data && exNews.data.items.find(x => x.id === a.dataset.newsId); if (!art) return; try { localStorage.setItem(NEWS_LEARN_KEY, JSON.stringify(window.PanelDomains.newsCore.learnFrom(exNewsLearn(), art, new Date().toISOString()))); } catch (_) {} }); });
   };
-  const exNewsPaint = () => { const box = $('exNewsBox'); if (box) { box.innerHTML = exNewsBoxHtml(); exNewsWire(); } };
+  // ---------- Dossiers « Avant de voir » (D-75) : à voir et à lire avant les grandes sorties tirées des comics
+  const exWatchHtml = () => {
+    const W = window.PanelDomains.watchGuides;
+    const arts = exNews.data ? exNews.data.items : [];
+    const list = W.pick(arts, new Date().toISOString(), 3);
+    if (!list.length) return '';
+    return '<div class="ex-wg-row">' + list.map(x => { const g = x.guide; return '<button class="ex-wg" data-ex-go="watch" data-ex-id="' + h(g.id) + '"><span class="ex-wg-k">' + (x.articles.length ? 'Dans l\'actu · ' + x.articles.length + ' article' + (x.articles.length > 1 ? 's' : '') : 'Bientôt') + '</span><b>' + h(g.title) + '</b><small>' + h(g.releaseLabel) + '</small>' +
+      '<span class="ex-wg-c"><i>' + g.watch.length + ' à voir</i><i>' + g.read.length + ' à lire</i>' + (x.daysLeft > 0 ? '<i>J-' + x.daysLeft + '</i>' : '') + '</span></button>'; }).join('') + '</div>';
+  };
+  const exWatchPaint = () => { const b = $('exWatchBox'); if (b) b.innerHTML = exWatchHtml(); };
+  const exWatchPageHtml = id => {
+    const g = window.PanelDomains.watchGuides.byId(id);
+    if (!g) return exBack() + '<div class="ex-empty">Dossier introuvable.</div>';
+    const arts = exNews.data ? exNews.data.items.filter(a => g.match.test(a.title + ' ' + (a.excerpt || '')) && (exNews.lang === 'all' || a.lang === exNews.lang)).slice(0, 6) : [];
+    const days = Math.round((Date.parse(g.release + 'T12:00:00Z') - Date.now()) / 86400000);
+    return exBack() + '<section class="ex-wg-page"><header class="ex-wg-hero"><span class="ex-kicker">Dossier · avant de voir</span><h2>' + h(g.title) + '</h2><p>' + h(g.studio) + ' · ' + h(g.releaseLabel) + (days > 0 ? ' · dans ' + days + ' jour' + (days > 1 ? 's' : '') : '') + '</p></header>' +
+      '<div class="ex-wg-cols"><section><h3>À voir avant</h3><ol class="ex-wg-list">' + g.watch.map(w => '<li><b>' + h(w.t) + '</b> <span>(' + w.y + ')</span><small>' + h(w.why) + '</small></li>').join('') + '</ol></section>' +
+      '<section><h3>À lire avant</h3><ol class="ex-wg-list">' + g.read.map(r => '<li><button class="ex-link" data-ex-q="' + h(r.q) + '">' + h(r.t) + '</button> <span>(' + r.y + ')</span><small>' + h(r.by) + ' — ' + h(r.why) + '</small></li>').join('') + '</ol><p class="ex-note">Touchez un titre pour le chercher dans la base (éditions VO et VF).</p></section></div>' +
+      (arts.length ? '<section><h3>Dans l\'actualité</h3><div class="ex-nw-grid">' + arts.map(a => exNewsCard(a, '', false)).join('') + '</div></section>' : '') +
+      '<p class="ex-credit">Dossier éditorial de Panel : titres et années des œuvres ; les dates de sortie annoncées peuvent changer.</p></section>';
+  };
+  const exNewsPaint = () => { const box = $('exNewsBox'); if (box) { box.innerHTML = exNewsBoxHtml(); exNewsWire(); } exWatchPaint(); };
   const exNewsLoad = async force => {
     if ((!exNews.test && (!relayStatus || !relayStatus.news)) || exNews.status === 'loading') return exNewsWire();
     if (!force && exNews.data && Date.now() - exNews.at < 10 * 60000) return exNewsWire();
@@ -15421,6 +15959,69 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     root.querySelectorAll('[data-ex-follow]').forEach(b => { b.onclick = () => { if (!exCvDetail.data) return; const on = exFollowToggle(exView.id, exCvDetail.data); if (on && exCvDetail.extra && exCvDetail.extra.appearances && exCvDetail.extra.appearances.latest[0]) exFollowSeen(exView.id, exCvDetail.extra.appearances.latest[0]); showToast(on ? 'Suivi : ' + exCvDetail.data.name + '. Ses prochaines apparitions seront signalées ici.' : 'Suivi retiré.'); renderExplorer(); }; });
     root.querySelectorAll('[data-ex-cv-add]').forEach(b => { b.onclick = e => { const S2 = exCommands(); if (exCvDetail.data && exCvAdd(exCvDetail.data, b.dataset.exCvAdd === 'wish', S2 ? S2.gesture(e) : null)) renderExplorer(); }; });
   };
+  // ---------- Atlas cosmique (D-75) : encyclopédie de la cosmologie Marvel reprise du site Marvel Primestone (301 fiches)
+  // Données : data/cosmos-marvel.json (fiches, relations, sources, chronologie éditoriale), chargées à la demande.
+  const CZ_URL = 'data/cosmos-marvel.json', CZ_SITE = 'https://lukecage2003.github.io/marvel-primeston/';
+  const CZ_CATS = { cos: ['Cosmos et firmaments', '#FFE500'], abs: ['Entités abstraites', '#B57CFF'], cel: ['Célestes et puissances', '#FF5A36'], pow: ['Forces et énergies', '#36C5FF'], dark: ['Ténèbres', '#8A8AA0'], pla: ['Lieux et dimensions', '#3DDC97'], grp: ['Groupes', '#FF9F1C'], per: ['Personnages', '#FF4F8B'], obj: ['Objets de pouvoir', '#FFD166'], evt: ['Événements', '#5B8CFF'] };
+  const CZ_CERT = { c: ['Canon', 'montré ou dit dans un comic Marvel, numéro et page'], o: ['Source officielle', 'guide ou manuel officiel Marvel'], d: ['Interprétation', 'conclusion argumentée à partir de plusieurs comics'], t: ['Théorie', 'hypothèse de lecteurs, non confirmée'], x: ['Contesté', 'les sources se contredisent'], u: ['À vérifier', 'première apparition relevée sur un wiki communautaire ; à confronter aux comics'] };
+  const cz = { data: null, status: 'idle', err: '', cat: '', q: '', view: 'grid' };
+  const exCzLoad = async () => {
+    if (cz.data || cz.status === 'loading') return;
+    cz.status = 'loading';
+    try { const r = await fetch(CZ_URL, { cache: 'force-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json(); if (!d || !d.E) throw new Error('données illisibles'); cz.data = d; cz.status = 'done'; }
+    catch (e) { cz.status = 'error'; cz.err = location.protocol === 'file:' ? 'Ouvrez Panel avec « Lancer Panel.cmd » pour charger l\'atlas.' : 'Atlas indisponible (' + String(e && e.message || e).slice(0, 80) + ').'; }
+    if (exView.page === 'cosmos' || exView.page === 'cosmos-e') renderExplorer();
+  };
+  const exCzImg = (e, cls) => e && e.img && /^https:\/\//.test(e.img) ? '<img class="' + (cls || '') + '" src="' + h(e.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+  const exCzCertTag = c => { const x = CZ_CERT[c] || CZ_CERT.u; return '<span class="cz-cert cz-c-' + h(c || 'u') + '" title="' + h(x[1]) + '">' + h(x[0]) + '</span>'; };
+  const exCzCard = (id, e, big) => { const cat = CZ_CATS[e.k] || ['', '#999']; return '<button class="cz-card' + (big ? ' is-big' : '') + '" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '" style="--cz:' + cat[1] + '"><span class="cz-card-img">' + exCzImg(e) + '<span class="cz-card-ini" aria-hidden="true">' + h(String(e.n || '?').replace(/^(L[ea]s?\s|L’|L')/i, '').slice(0, 1)) + '</span></span><span class="cz-card-b"><small>' + h(cat[0]) + '</small><b>' + h(e.n) + '</b><span>' + h(e.s || '') + '</span></span></button>'; };
+  const exCzHtml = () => {
+    if (cz.status === 'error') return exBack() + '<div class="ex-empty">' + h(cz.err) + '</div>';
+    if (!cz.data) return exBack() + '<div class="ex-empty">Chargement de l\'atlas…</div>';
+    const E = cz.data.E, ids = Object.keys(E);
+    const counts = {}; ids.forEach(id => { counts[E[id].k] = (counts[E[id].k] || 0) + 1; });
+    const q = catNorm(cz.q);
+    const list = ids.filter(id => (!cz.cat || E[id].k === cz.cat) && (!q || catNorm([E[id].n, E[id].en, E[id].s, (E[id].id || []).map(x => x[1].join(' ')).join(' ')].join(' ')).includes(q)));
+    const cosmos = ids.filter(id => E[id].k === 'cos' && /^c\d$|^bw$/.test(id));
+    return exBack() + '<section class="cz-hero"><span class="ex-kicker">Atlas cosmique</span><h2>La cosmologie Marvel, cartographiée et sourcée</h2><p>Les huit Cosmos successifs, les entités abstraites, les structures du multivers, les événements cosmiques et les comics qui documentent chaque affirmation. ' + ids.length + ' fiches reliées, chacune avec son niveau de fiabilité.</p></section>' +
+      '<section class="ex-sec"><div class="ex-sec-head"><h3>Les huit Cosmos</h3><p>Chaque univers naît de la mort du précédent.</p></div><div class="cz-rail">' + cosmos.map((id, i) => '<button class="cz-cosmos" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '"><span class="cz-cosmos-img">' + exCzImg(E[id]) + '</span><span class="cz-cosmos-n">' + (id === 'bw' ? '✦' : h(['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][Number(id.slice(1)) - 1] || '')) + '</span><b>' + h(E[id].n) + '</b><small>' + h(E[id].s || '') + '</small></button>').join('') + '</div></section>' +
+      '<section class="ex-sec"><div class="ex-sec-head"><h3>Encyclopédie</h3><p>' + list.length + ' fiche' + (list.length > 1 ? 's' : '') + (cz.cat ? ' · ' + h(CZ_CATS[cz.cat][0]) : '') + '</p></div>' +
+        '<div class="ex-search cz-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="czSearch" type="search" autocomplete="off" placeholder="Éternité, Galactus, Gant de l\'Infini, Battleworld…" value="' + h(cz.q) + '"></div>' +
+        '<div class="ex-chips"><button class="ex-chip' + (!cz.cat ? ' active' : '') + '" data-cz-cat="">Tout <small>' + ids.length + '</small></button>' + Object.entries(CZ_CATS).filter(([k]) => counts[k]).map(([k, v]) => '<button class="ex-chip' + (cz.cat === k ? ' active' : '') + '" data-cz-cat="' + k + '" style="--cz:' + v[1] + '"><i class="cz-dot"></i>' + h(v[0]) + ' <small>' + counts[k] + '</small></button>').join('') + '</div>' +
+        '<div class="cz-grid" id="czGrid">' + list.slice(0, 240).map(id => exCzCard(id, E[id])).join('') + '</div>' + (list.length > 240 ? '<p class="ex-note">Affinez la recherche pour voir les ' + (list.length - 240) + ' autres fiches.</p>' : '') + '</section>' +
+      '<section class="ex-sec"><div class="ex-sec-head"><h3>Chronologie éditoriale</h3><p>Les comics qui ont bâti le cosmos Marvel.</p></div><ol class="cz-time">' + (cz.data.T || []).map(t => '<li><span class="cz-y">' + h(String(Math.floor(t.y))) + '</span><div><b>' + h(t.t) + '</b><p>' + h(t.d) + '</p><small>' + h(t.s) + '</small>' + (t.r.length ? '<span class="cz-tl">' + t.r.slice(0, 5).map(id => '<button class="ex-chip" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '">' + h(E[id].n) + '</button>').join('') + '</span>' : '') + '</div></li>').join('') + '</ol></section>' +
+      '<details class="cz-legend"><summary>Comment lire les niveaux de fiabilité</summary><ul>' + Object.values(CZ_CERT).map(v => '<li><b>' + h(v[0]) + '</b> : ' + h(v[1]) + '.</li>').join('') + '</ul></details>' +
+      '<p class="ex-credit">Contenus de <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a> (atlas de la cosmologie Marvel par Primestone). Personnages et illustrations © Marvel ; portraits tirés de la Marvel Database (Fandom), cités à titre d\'illustration.</p>';
+  };
+  const exCzEntityHtml = id => {
+    if (!cz.data) return exCzHtml();
+    const E = cz.data.E, e = E[id];
+    if (!e) return exBack() + '<div class="ex-empty">Fiche introuvable.</div>';
+    const cat = CZ_CATS[e.k] || ['', '#999'];
+    const rels = (e.r || []).filter(r => E[r]);
+    const back = ids => ids;
+    const cited = Object.keys(E).filter(k => k !== id && (E[k].r || []).includes(id) && !rels.includes(k)).slice(0, 12);
+    const tl = (cz.data.T || []).filter(t => t.r.includes(id));
+    const q = e.en || e.n;
+    return '<button class="btn secondary ex-back" data-ex-go="cosmos">← Atlas cosmique</button><article class="cz-e" style="--cz:' + cat[1] + '">' +
+      '<header class="cz-e-head"><figure class="cz-e-port">' + (exCzImg(e) || '<span class="cz-card-ini">' + h(String(e.n).slice(0, 1)) + '</span>') + '</figure><div>' +
+        '<button class="cz-e-cat" data-ex-go="cosmos" data-cz-setcat="' + h(e.k) + '">' + h(cat[0]) + '</button><h2>' + h(e.n) + '</h2>' + (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') +
+        '<p class="cz-e-lead">' + h(e.s || '') + '</p><p class="cz-e-chips">' + exCzCertTag(e.c) + (e.a ? '<span class="cz-pill">1ʳᵉ apparition · ' + h(e.a) + '</span>' : '') + '<span class="cz-pill">' + rels.length + ' relation' + (rels.length > 1 ? 's' : '') + '</span></p>' +
+        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button><a class="btn secondary rel-mini" href="' + CZ_SITE + 'fiche/' + encodeURIComponent(id) + '.html" target="_blank" rel="noopener noreferrer">Voir sur Marvel Primestone</a></p></div></header>' +
+      '<div class="cz-e-body"><div class="cz-e-prose"><h3>Présentation</h3><p class="cz-e-big">' + h(e.d || '') + '</p>' + (e.f ? '<h3>Fait marquant</h3><p>' + h(e.f) + '</p>' : '') +
+        (e.src && e.src.length ? '<h3>Où le lire</h3><ul class="cz-src">' + e.src.map(x => '<li><button class="ex-link" data-ex-q="' + h(x.replace(/\s*[—–(].*$/, '').replace(/[«»]/g, '').trim().slice(0, 80)) + '">' + h(x) + '</button></li>').join('') + '</ul>' : '') + '</div>' +
+        (e.id && e.id.length ? '<aside class="cz-idcard"><h3>Fiche d\'identité</h3><dl>' + e.id.map(([k, v]) => '<div><dt>' + h(k) + '</dt><dd>' + v.map(h).join('<br>') + '</dd></div>').join('') + '</dl></aside>' : '') + '</div>' +
+      (rels.length ? '<section><h3>Relations</h3><div class="cz-grid is-rel">' + rels.map(r => exCzCard(r, E[r])).join('') + '</div></section>' : '') +
+      (cited.length ? '<section><h3>Cité dans</h3><div class="cz-grid is-rel">' + cited.map(r => exCzCard(r, E[r])).join('') + '</div></section>' : '') +
+      (tl.length ? '<section><h3>Dans la chronologie éditoriale</h3><ol class="cz-time">' + tl.map(t => '<li><span class="cz-y">' + h(String(Math.floor(t.y))) + '</span><div><b>' + h(t.t) + '</b><p>' + h(t.d) + '</p><small>' + h(t.s) + '</small></div></li>').join('') + '</ol></section>' : '') +
+      '<p class="ex-credit">Fiche de <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a> · fiabilité : ' + h((CZ_CERT[e.c] || CZ_CERT.u)[1]) + '. Illustration © Marvel (Marvel Database, Fandom).</p></article>';
+  };
+  const exCzWire = root => {
+    root.querySelectorAll('[data-cz-cat]').forEach(b => { b.onclick = () => { cz.cat = b.dataset.czCat; renderExplorer(); }; });
+    root.querySelectorAll('[data-cz-setcat]').forEach(b => { b.addEventListener('click', () => { cz.cat = b.dataset.czSetcat; }); });
+    const inp = root.querySelector('#czSearch');
+    if (inp) inp.oninput = () => { cz.q = inp.value; clearTimeout(exCzWire.tm); exCzWire.tm = setTimeout(() => { const pos = inp.selectionStart; renderExplorer(); const n = $('czSearch'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) {} } }, 160); };
+  };
   const renderExplorer = () => {
     const root = $('explorerRoot');
     if (!root) return;
@@ -15440,6 +16041,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     } else if (exView.page === 'shops') {
       root.innerHTML = exShopsHtml();
       exWireShops(root);
+    } else if (exView.page === 'cosmos' || exView.page === 'cosmos-e') {
+      root.innerHTML = exView.page === 'cosmos' ? exCzHtml() : exCzEntityHtml(exView.id);
+      exCzWire(root); exCzLoad();
+    } else if (exView.page === 'watch') {
+      root.innerHTML = exWatchPageHtml(exView.id);
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
@@ -15694,7 +16300,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       // Actions personnelles : uniquement par S2, avec un jeton de geste tiré de ce clic (jamais d'appel direct à Collection ni à Lecture)
       const S2 = exCommands(), gesture = () => S2 ? S2.gesture(e) : null;
       if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
-      else if (d.exQ) { if (d.exBrowse) { exFilt.kind = d.exBrowse; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x.dataset.exKind === d.exBrowse; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); } exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
+      else if (d.exQ) { if (exView.page !== 'home') { Object.assign(exView, { page: 'home', id: '', q: d.exQ }); renderExplorer(); const v = $('singlesExplorerView'); if (v && v.scrollIntoView && !navigator.webdriver) v.scrollIntoView({ block: 'start' }); } if (d.exBrowse) { exFilt.kind = d.exBrowse; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x.dataset.exKind === d.exBrowse; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); } exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
       else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
       else if (d.exLb) exLightbox(exLbStore.get(d.exLb), Number(d.exLbI) || 0);
       else if (d.exVset) { const i = d.exVset.indexOf(':'); const r = mediaSetVerification(d.exVset.slice(0, i), d.exVset.slice(i + 1), d.v); renderExplorer(); if (r.ok) showToastAction('Statut du visuel : ' + MEDIA_VERIF[d.v].toLowerCase() + '.', 'Annuler', () => { r.undo(); renderExplorer(); }); }
@@ -15801,6 +16407,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     let list;
     if (readingViewFilter === 'journal') list = null;
     else list = states.filter(x => readingViewFilter === 'all' || x.status === readingViewFilter).sort((a, b) => String(b.updatedAt || '').localeCompare(String(a.updatedAt || '')));
+    // D-75 : séries en cours (lues en partie ou toujours publiées), déduites du journal et de la collection, jamais stockées
+    const sip = rdSeriesInProgress();
+    const sipCard = x => {
+      const ring = `<svg class="rd-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.9" /><circle cx="18" cy="18" r="15.9" stroke-dasharray="${x.pct} 100" /></svg>`;
+      const tag = x.state === 'reading' ? 'En train de lire' : x.state === 'caught-up' ? 'À jour' : x.nextOwned ? 'Le suivant est chez vous' : x.nextWished ? 'Suivant en wishlist' : 'Suivant à trouver';
+      return `<article class="rd-sip is-${x.state}${x.nextOwned ? ' has-next' : ''}"><div class="rd-sip-ring">${ring}<b>${x.pct}%</b></div>
+        <div class="rd-sip-b"><span class="rd-sip-tag">${tag}</span><b class="rd-sip-t">${escapeHtml(x.label)}</b>
+        <span class="rd-sip-m">${x.read} lu${x.read > 1 ? 's' : ''} sur ${x.known} connu${x.known > 1 ? 's' : ''}${x.lastRead ? ' · dernier lu ' + escapeHtml(x.lastRead) : ''}${x.gaps ? ' · ' + x.gaps + ' sauté' + (x.gaps > 1 ? 's' : '') : ''}${x.unreadOwned ? ' · ' + x.unreadOwned + ' à lire chez vous' : ''}</span></div>
+        <div class="rd-sip-act">${x.next ? `<span class="rd-sip-next">Prochain <b>${escapeHtml(x.next)}</b></span>` + (x.nextOwned ? `<button class="btn" data-sip-read="${escapeHtml(x.key)}" data-sip-issue="${escapeHtml(x.next)}">Marquer lu</button>` : '') : '<span class="rd-sip-next">En attente du prochain numéro</span>'}</div></article>`;
+    };
+    const sipShown = sip.slice(0, 12);
+    const sipHtml = `<section class="rd-sip-wrap"><div class="rd-sip-head"><h3>Séries en cours <small>${sip.length}</small></h3><p>Calculé d'après vos lectures (imports compris) et votre collection : le prochain numéro à lire, ce que vous possédez déjà.</p></div>` +
+      (sip.length ? `<div class="rd-sip-grid">${sipShown.map(sipCard).join('')}</div>` + (sip.length > sipShown.length ? `<details class="rd-sip-more"><summary>Voir les ${sip.length - sipShown.length} autres séries</summary><div class="rd-sip-grid">${sip.slice(12, 200).map(sipCard).join('')}</div></details>` : '')
+        : `<div class="notice-box">Aucune série en cours pour l'instant. Importez votre export League of Comic Geeks ou CLZ (bouton ci-dessous) : les numéros marqués lus, même hors collection, rejoignent Lecture et vos séries en cours apparaissent ici.</div>`) +
+      `<p class="rd-sip-foot"><button class="btn secondary" data-rd-import>Importer mes lectures (League of Comic Geeks, CLZ, tableur)</button></p></section>`;
     // Pile à lire : exemplaires possédés sans état « lu » (calculée, jamais stockée)
     const pile = physicalSingles.filter(x => x && isOwned(x) && rdStatusOf(x) !== 'read');
     const nextBySeries = [...new Set(pile.map(x => x.series).filter(Boolean))].map(rdSeriesProgress).filter(p => p.next && p.read > 0).sort((a, b) => b.pct - a.pct).slice(0, 8);
@@ -15809,9 +16430,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const rsMax = Math.max(...rs.months.map(m => m.n), 1);
     const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
     const readingStatsCard = `<div class="stats-card" id="readingStatsCard"><h3>Lectures sur 12 mois</h3><div class="month-chart">${rs.months.map(m => `<div class="month-col" title="${m.n} lecture(s)"><b style="font-size:12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / rsMax) * 85}%"></div><span>${rsMonth(m.month)}</span></div>`).join('')}</div><p class="stat-sub" style="margin-top:8px">En ${rs.year} : <b>${rs.yearFirst}</b> première(s) lecture(s) · <b>${rs.yearRereads}</b> relecture(s). Calculé sur le journal de lecture.</p></div>`;
-    host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + `<div class="stats-grid">
+    host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + `${sipHtml}<div class="stats-grid">
       <div class="stats-card"><h3>Vue d'ensemble</h3><p class="stat-sub" style="line-height:1.7">Œuvres suivies : <b>${s.works}</b><br>Lues : <b>${s.read}</b> · en cours : <b>${s.reading}</b> · à lire : <b>${s.toRead}</b> · abandonnées : <b>${s.abandoned}</b><br>Relectures : <b>${s.rereads}</b> · terminées sur 12 mois : <b>${s.finishedLastYear}</b><br>Pile à lire (possédés non lus) : <b>${s.pileToRead}</b> · lus sans possession : <b>${s.readNotOwned}</b>${s.openConflicts ? '<br><span style="color:var(--warn,#b45309)">Conflits de notes à résoudre : <b>' + s.openConflicts + '</b></span> <button class="btn secondary" style="font-size:12px;padding:3px 8px" id="readingOpenMigration">Voir</button>' : ''}</p></div>
-      <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>'}</div>
+      <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : (sip.length ? '<p class="stat-sub">Aucun numéro possédé à lire dans vos séries commencées : voir « Séries en cours » ci-dessus pour les suivants à trouver.</p>' : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>')}</div>
       ${readingStatsCard}
     </div>
     <nav class="filter-tabs-bar" id="readingFilterTabs" style="margin:6px 0 10px">${pill('reading', 'En cours', s.reading)}${pill('to_read', 'À lire', s.toRead)}${pill('read', 'Lus', s.read)}${pill('abandoned', 'Abandonnés', s.abandoned)}${pill('all', 'Tout', s.works)}${pill('journal', 'Journal', d.log.length)}</nav>
@@ -15821,6 +16442,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-rdf]').forEach(b => { b.onclick = () => { readingViewFilter = b.dataset.rdf; readingFilterTouched = true; renderReadingView(); }; });
     if ($('readingImportNow')) $('readingImportNow').onclick = () => { const r = rdMigrate(); readingViewFilter = 'read'; renderSinglesCollection(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
     if ($('readingImportDetail')) $('readingImportDetail').onclick = () => openReadingMigrationDialog();
+    host.querySelectorAll('[data-rd-import]').forEach(b => { b.onclick = () => openCsvImportModal(); });
+    host.querySelectorAll('[data-sip-read]').forEach(b => { b.onclick = () => {
+      const copy = physicalSingles.find(x => x && isOwned(x) && gdBase(x.series) === b.dataset.sipRead && gdIssue(x.issue) === gdIssue(b.dataset.sipIssue));
+      if (!copy) { showToast('Exemplaire introuvable.'); return; }
+      const r = rdSetStatus(copy, 'read', { source: 'user' });
+      if (!r.ok) { showToast('Lecture non enregistrée.'); return; }
+      copy.isRead = true; persistSingles(); renderSinglesCollection();
+      showToastAction(escapeHtml(copy.series) + ' ' + escapeHtml(copy.issue) + ' : lu.', 'Annuler', () => { READING_API.undo(r.undoToken); copy.isRead = false; persistSingles(); renderSinglesCollection(); });
+    }; });
     host.querySelectorAll('[data-rdstory]').forEach(b => { b.onclick = () => { const st = rdLoad().states[b.dataset.rdstory]; const c = st && rdCopiesOf(st)[0]; if (c) openStoryEditor(c); }; });
     host.querySelectorAll('[data-rdset]').forEach(b => {
       b.onclick = () => {
@@ -16223,21 +16853,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const storyStyleKey = c => { const p = catNorm(c && c.publisher); return /marvel/.test(p) ? 'marvel' : /(^| )dc( |$)|vertigo|wildstorm/.test(p) ? 'dc' : /image|skybound|top cow/.test(p) ? 'image' : 'indie'; };
   const STORY_ONO = r => r >= 5 ? 'KA-BOOM!' : r >= 4 ? 'POW!' : r >= 3 ? 'BAM!' : r >= 2 ? 'BOF…' : r > 0 ? 'OUCH!' : 'LU !';
   const storyStars = r => '<span class="st-stars" role="img" aria-label="' + (r ? String(r).replace('.', ',') + ' sur 5' : 'sans note') + '" style="--r:' + Math.round((Number(r) || 0) / 5 * 100) + '%">★★★★★</span>';
+  const storyIssue = s => String(s && s.issue || '').trim().replace(/^#+\s*/, '');
+  const storyAgo = iso => { const t = new Date(iso).getTime(); if (!t) return ''; const m = Math.max(1, Math.round((Date.now() - t) / 60000)); return m < 60 ? m + ' min' : m < 1440 ? Math.round(m / 60) + ' h' : m < 10080 ? Math.round(m / 1440) + ' j' : m < 525600 ? Math.round(m / 10080) + ' sem.' : Math.round(m / 525600) + ' an' + (m >= 1051200 ? 's' : ''); };
   const storyCardHtml = (s, opts = {}) => {
-    const st = STORY_STYLES[s.style] || STORY_STYLES[storyStyleKey(s)];
+    const key = STORY_STYLES[s.style] ? s.style : storyStyleKey(s), st = STORY_STYLES[key];
     const prof = profileLoad();
-    const hue = cboxHue(s);
-    const author = escapeHtml(prof ? '@' + prof.handle : 'Mon journal');
-    const av = '<span class="st-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(prof ? (prof.displayName || prof.handle).slice(0, 1).toUpperCase() : 'P') + '</span>';
-    return '<article class="st-card st-page st-' + escapeHtml(s.style || storyStyleKey(s)) + (opts.big ? ' is-big' : '') + (s.review ? ' has-review' : '') + '" style="--st-bg:' + st.bg + ';--st-bg2:' + st.bg2 + ';--st-ink:' + st.ink + ';--st-acc:' + st.acc + ';--st-hue:' + hue + '">' +
-      '<header class="st-pnl st-pnl-cap st-top"><span class="st-brand">PANEL <i>·</i> J\'AI LU</span><span class="st-date">' + escapeHtml(s.readAt ? new Date(s.readAt + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric' }) : '') + '</span></header>' +
-      '<div class="st-pnl st-pnl-hero"><span class="st-bgimg" aria-hidden="true">' + coverImgTag(s) + '</span><span class="st-speed" aria-hidden="true"></span><span class="st-tone" aria-hidden="true"></span>' +
-        '<figure class="st-cover">' + coverImgTag(s) + '<span class="st-burst">' + escapeHtml(STORY_ONO(Number(s.rating) || 0)) + '</span></figure></div>' +
-      '<div class="st-pnl st-pnl-title st-body"><h4 class="st-title">' + escapeHtml(s.series || '') + ' <b>' + escapeHtml(s.issue || '') + '</b></h4>' +
-        (s.variant && !/^cover a$/i.test(s.variant) ? '<small class="st-variant">' + escapeHtml(s.variant) + '</small>' : '') +
-        storyStars(s.rating) + '<span class="st-pub">' + escapeHtml(st.label) + '</span></div>' +
-      '<footer class="st-pnl st-pnl-voice st-foot">' + (s.review ? '<p class="st-review">' + escapeHtml(s.review) + '</p>' : '<p class="st-review is-quiet">…</p>') +
-        '<span class="st-who">' + av + '<span>' + author + '</span></span></footer>' +
+    const who = prof ? '@' + prof.handle : 'Mon journal';
+    const d = s.readAt ? new Date(s.readAt + 'T12:00:00') : null;
+    const when = d && !isNaN(d) ? d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) : '';
+    const ago = storyAgo(s.createdAt || (s.readAt ? s.readAt + 'T12:00:00' : ''));
+    const n = storyIssue(s), r = Number(s.rating) || 0;
+    const face = s.coverUrl ? coverImgTag(s) : '<span class="sx-face" style="--c:' + cboxHue(s) + '"><b>' + escapeHtml(cboxInitials(s.series || '?')) + '</b>' + (n ? '<em>#' + escapeHtml(n) + '</em>' : '') + '</span>';
+    return '<article class="sx sx-' + key + (opts.big ? ' is-big' : '') + (s.review ? ' has-review' : '') + '" style="--sx-bg:' + st.bg + ';--sx-bg2:' + st.bg2 + ';--sx-ink:' + st.ink + ';--sx-acc:' + st.acc + '">' +
+      '<span class="sx-blur" aria-hidden="true">' + (s.coverUrl ? coverImgTag(s) : '') + '</span><span class="sx-grain" aria-hidden="true"></span>' +
+      '<header class="sx-head"><span class="sx-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(prof ? (prof.displayName || prof.handle).slice(0, 1).toUpperCase() : 'P') + '</span>' +
+        '<span class="sx-who"><b>' + escapeHtml(who) + '</b>' + (ago ? '<small>' + escapeHtml(ago) + '</small>' : '') + '</span><span class="sx-pub">' + escapeHtml(st.label) + '</span></header>' +
+      '<figure class="sx-cover"><span class="sx-cover-in">' + face + '</span>' + (r ? '<span class="sx-sticker">' + escapeHtml(STORY_ONO(r)) + '</span>' : '') + '</figure>' +
+      '<div class="sx-meta"><span class="sx-kicker">J\'ai lu' + (when ? ' · ' + escapeHtml(when) : '') + '</span>' +
+        '<h4 class="sx-title">' + escapeHtml(s.series || 'Sans titre') + (n ? ' <span>#' + escapeHtml(n) + '</span>' : '') + '</h4>' +
+        (s.variant && !/^cover a$/i.test(s.variant) ? '<small class="sx-variant">' + escapeHtml(s.variant) + '</small>' : '') +
+        '<span class="sx-rate">' + storyStars(r) + (r ? '<b>' + String(r).replace('.', ',') + '</b>' : '') +
+          (s.liked ? '<i class="sx-badge is-like" title="Coup de cœur">♥</i>' : '') + (s.reread ? '<i class="sx-badge" title="Relecture">↻ Relu</i>' : '') + '</span></div>' +
+      (s.review ? '<blockquote class="sx-review' + (s.spoiler ? ' is-spoiler' : '') + '">' + (s.spoiler ? '<span class="sx-spoil">Spoilers · touchez pour lire</span>' : '') + '<span class="sx-review-txt">' + escapeHtml(s.review) + '</span></blockquote>' : '') +
     '</article>';
   };
   // Éditeur : aperçu en direct, note par demi-étoiles, avis court, date de lecture, habillage
@@ -16245,24 +16882,44 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!item && !existing) return;
     const base = existing || { series: item.series, issue: item.issue, publisher: item.publisher, variant: item.variant, coverUrl: isSafeImageUrl(item.coverUrl) ? item.coverUrl : '', copyId: item.id };
     const f = rdFind(item || base);
-    const draft = Object.assign({ rating: existing ? existing.rating : (item && item.rating ? Number(item.rating) : 0), review: '', readAt: (f && f.state.lastReadAt ? String(f.state.lastReadAt).slice(0, 10) : relToday()), style: storyStyleKey(base) }, base);
+    const draft = Object.assign({ rating: existing ? existing.rating : (item && item.rating ? Number(item.rating) : 0), review: '', liked: false, reread: !!(!existing && item && rdFind(item) && rdFind(item).state.status === 'read'), spoiler: false, readAt: (f && f.state.lastReadAt ? String(f.state.lastReadAt).slice(0, 10) : relToday()), style: storyStyleKey(base) }, base);
     const box = bunModal('storyDialog');
-    box.innerHTML = '<div class="modal-box st-editor" role="dialog" aria-modal="true" aria-labelledby="stEdTitle"><div class="st-ed-preview" data-prev></div><div class="st-ed-form">' +
-      '<h2 id="stEdTitle">' + (existing ? 'Modifier la story' : 'Ma story de lecture') + '</h2><p class="stat-sub">Notez, dites-le en une phrase : Panel habille la carte aux couleurs du comic.</p>' +
-      '<label class="st-lab">Note <output data-rout></output><input type="range" min="0" max="5" step="0.5" data-rating value="' + (Number(draft.rating) || 0) + '"></label>' +
-      '<label class="st-lab">Mon avis <small data-count></small><textarea class="field-input" data-review rows="3" maxlength="280" placeholder="Ce numéro en une phrase…">' + escapeHtml(draft.review || '') + '</textarea></label>' +
-      '<label class="st-lab">Lu le <input class="field-input" type="date" data-date value="' + escapeHtml(draft.readAt || '') + '"></label>' +
-      '<div class="st-lab">Habillage<div class="st-styles">' + Object.entries(STORY_STYLES).map(([k, v]) => '<button type="button" class="st-sw' + (draft.style === k ? ' is-on' : '') + '" data-style="' + k + '" style="--a:' + v.bg2 + ';--b:' + v.acc + '">' + escapeHtml(v.label) + '</button>').join('') + '</div></div>' +
-      '<p class="stat-sub">Enregistrée sur cet appareil. ' + (existing ? '' : 'Le numéro passe en « Lu » dans Lecture s\'il ne l\'était pas. ') + 'Publication avec les comptes en ligne.</p>' +
-      '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (existing ? 'Enregistrer' : 'Créer la story') + '</button></div></div></div>';
+    const cov = draft.coverUrl ? coverImgTag(draft) : '<span class="sx-face" style="--c:' + cboxHue(draft) + '"><b>' + escapeHtml(cboxInitials(draft.series || '?')) + '</b></span>';
+    const n0 = storyIssue(draft);
+    box.innerHTML = '<div class="modal-box st-editor sxe" role="dialog" aria-modal="true" aria-labelledby="stEdTitle">' +
+      '<div class="sxe-art"><span class="sxe-blur" aria-hidden="true">' + (draft.coverUrl ? coverImgTag(draft) : '') + '</span><figure class="sxe-book"><span class="sxe-book-in">' + cov + '</span><span class="sxe-shine" aria-hidden="true"></span></figure></div>' +
+      '<div class="st-ed-form sxe-form">' +
+        '<span class="sxe-kicker">' + (existing ? 'Modifier la story' : 'J\'ai lu…') + '</span>' +
+        '<h2 id="stEdTitle">' + escapeHtml(draft.series || 'Sans titre') + (n0 ? ' <span>#' + escapeHtml(n0) + '</span>' : '') + '</h2>' +
+        '<p class="sxe-sub">' + escapeHtml([draft.publisher, draft.variant && !/^cover a$/i.test(draft.variant) ? draft.variant : ''].filter(Boolean).join(' · ')) + '</p>' +
+        '<div class="sxe-row sxe-rate"><div class="sxe-stars" role="radiogroup" aria-label="Note" data-stars>' + [1, 2, 3, 4, 5].map(k => '<button type="button" class="sxe-star" data-star="' + k + '" aria-label="' + k + ' étoile' + (k > 1 ? 's' : '') + '"><span>★</span></button>').join('') + '</div>' +
+          '<output data-rout></output><input class="sxe-range" type="range" min="0" max="5" step="0.5" data-rating value="' + (Number(draft.rating) || 0) + '" aria-label="Note sur 5 (demi-étoiles)"></div>' +
+        '<div class="sxe-row sxe-toggles"><button type="button" class="sxe-tg" data-tg="liked" aria-pressed="false"><span class="sxe-heart">♥</span>J\'aime</button>' +
+          '<button type="button" class="sxe-tg" data-tg="reread" aria-pressed="false">↻ Relecture</button><button type="button" class="sxe-tg" data-tg="spoiler" aria-pressed="false">Spoilers</button></div>' +
+        '<label class="st-lab">Mon avis <small data-count></small><textarea class="field-input sxe-text" data-review rows="4" maxlength="280" placeholder="Ce qui était bon, ce qui l\'était moins…">' + escapeHtml(draft.review || '') + '</textarea></label>' +
+        '<div class="sxe-row"><label class="st-lab sxe-date">Lu le <input class="field-input" type="date" data-date value="' + escapeHtml(draft.readAt || '') + '"></label>' +
+          '<div class="st-lab">Habillage<div class="st-styles">' + Object.entries(STORY_STYLES).map(([k, v]) => '<button type="button" class="st-sw' + (draft.style === k ? ' is-on' : '') + '" data-style="' + k + '" style="--a:' + v.bg2 + ';--b:' + v.acc + '" aria-label="' + escapeHtml(v.label) + '"></button>').join('') + '</div></div></div>' +
+        '<details class="sxe-prevbox"><summary>Aperçu de la story</summary><div class="st-ed-preview" data-prev></div></details>' +
+        '<p class="stat-sub">Enregistrée sur cet appareil. ' + (existing ? '' : 'Le numéro passe en « Lu » dans Lecture s\'il ne l\'était pas. ') + 'Publication avec les comptes en ligne.</p>' +
+        '<div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (existing ? 'Enregistrer' : 'Publier dans mes stories') + '</button></div></div></div>';
     box.classList.add('open');
     const q = s => box.querySelector(s);
+    const paintStars = v => box.querySelectorAll('[data-star]').forEach(b => { const k = Number(b.dataset.star); b.classList.toggle('is-full', v >= k); b.classList.toggle('is-half', v === k - .5); b.setAttribute('aria-checked', String(Math.ceil(v) === k)); });
     const sync = () => {
       draft.rating = Number(q('[data-rating]').value) || 0; draft.review = q('[data-review]').value.slice(0, 280); draft.readAt = q('[data-date]').value;
-      q('[data-rout]').textContent = draft.rating ? String(draft.rating).replace('.', ',') + ' / 5' : 'sans note';
+      q('[data-rout]').textContent = draft.rating ? String(draft.rating).replace('.', ',') + ' / 5' : 'Pas de note';
       q('[data-count]').textContent = draft.review.length + ' / 280';
+      paintStars(draft.rating);
+      box.querySelectorAll('[data-tg]').forEach(b => b.setAttribute('aria-pressed', String(!!draft[b.dataset.tg])));
       q('[data-prev]').innerHTML = storyCardHtml(draft, { big: true });
     };
+    // Une étoile : clic sur sa moitié gauche = demi-étoile ; re-cliquer la même note l'efface
+    box.querySelectorAll('[data-star]').forEach(b => { b.onclick = e => { const k = Number(b.dataset.star), rc = b.getBoundingClientRect(); let v = e.clientX && e.clientX < rc.left + rc.width / 2 ? k - .5 : k; if (v === draft.rating) v = 0; q('[data-rating]').value = v; sync(); }; });
+    box.querySelectorAll('[data-tg]').forEach(b => { b.onclick = () => { draft[b.dataset.tg] = !draft[b.dataset.tg]; sync(); }; });
+    // Relief : la couverture suit le pointeur
+    const book = q('.sxe-book');
+    q('.sxe-art').onpointermove = e => { if (matchMedia('(prefers-reduced-motion: reduce)').matches) return; const rc = book.getBoundingClientRect(); book.style.setProperty('--ry', ((e.clientX - rc.left) / rc.width - .5) * 18 + 'deg'); book.style.setProperty('--rx', (.5 - (e.clientY - rc.top) / rc.height) * 12 + 'deg'); };
+    q('.sxe-art').onpointerleave = () => { book.style.removeProperty('--ry'); book.style.removeProperty('--rx'); };
     q('[data-rating]').oninput = sync; q('[data-review]').oninput = sync; q('[data-date]').onchange = sync;
     box.querySelectorAll('[data-style]').forEach(b => { b.onclick = () => { draft.style = b.dataset.style; box.querySelectorAll('[data-style]').forEach(x => x.classList.toggle('is-on', x === b)); sync(); }; });
     sync();
@@ -16270,7 +16927,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     q('[data-save]').onclick = () => {
       const d = storyLoad(), prevRaw = localStorage.getItem(STORY_KEY), now = new Date().toISOString();
       if (!existing && d.stories.length >= STORY_MAX) { showToast('Limite de ' + STORY_MAX + ' stories atteinte.'); return; }
-      const rec = { id: existing ? existing.id : 'st_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), series: String(draft.series || '').slice(0, 200), issue: String(draft.issue || '').slice(0, 20), publisher: String(draft.publisher || '').slice(0, 80), variant: String(draft.variant || '').slice(0, 120), coverUrl: isSafeImageUrl(draft.coverUrl) ? draft.coverUrl : '', copyId: draft.copyId || null, rating: Math.max(0, Math.min(5, Math.round((Number(draft.rating) || 0) * 2) / 2)), review: String(draft.review || '').trim().slice(0, 280), readAt: /^\d{4}-\d{2}-\d{2}$/.test(draft.readAt) ? draft.readAt : relToday(), style: STORY_STYLES[draft.style] ? draft.style : storyStyleKey(draft), createdAt: existing ? existing.createdAt : now, updatedAt: now };
+      const rec = { id: existing ? existing.id : 'st_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), series: String(draft.series || '').slice(0, 200), issue: String(draft.issue || '').slice(0, 20), publisher: String(draft.publisher || '').slice(0, 80), variant: String(draft.variant || '').slice(0, 120), coverUrl: isSafeImageUrl(draft.coverUrl) ? draft.coverUrl : '', copyId: draft.copyId || null, rating: Math.max(0, Math.min(5, Math.round((Number(draft.rating) || 0) * 2) / 2)), review: String(draft.review || '').trim().slice(0, 280), readAt: /^\d{4}-\d{2}-\d{2}$/.test(draft.readAt) ? draft.readAt : relToday(), style: STORY_STYLES[draft.style] ? draft.style : storyStyleKey(draft), liked: !!draft.liked, reread: !!draft.reread, spoiler: !!draft.spoiler && !!String(draft.review || '').trim(), createdAt: existing ? existing.createdAt : now, updatedAt: now };
       const i = d.stories.findIndex(x => x.id === rec.id);
       if (i >= 0) d.stories[i] = rec; else d.stories.unshift(rec);
       if (!storySave(d)) { showToast('Enregistrement impossible (stockage plein ?).'); return; }
@@ -16308,14 +16965,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ids = new Set(storyLoad().stories.map(x => x.id));
     try { localStorage.setItem(STORY_SEEN_KEY, JSON.stringify([...seen].filter(x => ids.has(x)).slice(-400))); } catch (_) {}
   };
-  const storyInfoHtml = s => {
-    const st = STORY_STYLES[s.style] || STORY_STYLES[storyStyleKey(s)];
-    const copy = s.copyId ? physicalSingles.find(x => x.id === s.copyId) : null;
-    const d = s.readAt ? new Date(s.readAt + 'T12:00:00') : null;
-    const facts = [s.publisher || st.label, s.variant && !/^cover a$/i.test(s.variant) ? s.variant : '', d && !isNaN(d) ? 'lu le ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '', Number(s.rating) ? String(s.rating).replace('.', ',') + ' / 5' : 'sans note'].filter(Boolean);
-    return '<div class="st-vinfo"><div><b>' + escapeHtml(String(s.series || 'Sans titre')) + ' <span>#' + escapeHtml(String(s.issue || '?')) + '</span></b><small>' + facts.map(escapeHtml).join(' · ') + '</small></div>' +
-      (copy ? '<button class="btn secondary rel-mini" data-st-copy>Ouvrir la fiche</button>' : '') + '</div>';
-  };
   // Lecteur plein écran, à la manière des stories : barres de progression, touche gauche/droite, avance automatique,
   // pause en maintenant le doigt (ou Espace), glisser à gauche / droite pour changer, vers le bas pour fermer (D-70)
   const openStoryViewer = startId => {
@@ -16332,7 +16981,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (on === paused) return;
       paused = on;
       const v = box.querySelector('.st-viewer'); if (v) v.classList.toggle('is-paused', on);
-      const pb = box.querySelector('[data-pause]'); if (pb) { pb.setAttribute('aria-pressed', String(on)); pb.textContent = on ? 'Reprendre' : 'Pause'; }
+      const pb = box.querySelector('[data-pause]'); if (pb) { pb.setAttribute('aria-pressed', String(on)); pb.setAttribute('aria-label', on ? 'Reprendre' : 'Mettre en pause'); pb.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + (on ? '<path d="M7 5l12 7-12 7z"/>' : '<path d="M8 5v14M16 5v14"/>') + '</svg>'; }
       if (on) { clearTimeout(timer); left = Math.max(300, left - (Date.now() - t0)); } else arm();
     };
     const close = () => { clearTimeout(timer); box.classList.remove('open'); document.removeEventListener('keydown', onKey); try { if (activeSinglesView === 'community') renderCommunityView(); } catch (_) {} };
@@ -16341,11 +16990,31 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       left = DUR; paused = false;
       const s = stories[i];
       storyMarkSeen(s.id);
-      box.innerHTML = '<div class="st-viewer" role="dialog" aria-modal="true" aria-label="Story ' + (i + 1) + ' sur ' + stories.length + '">' +
-        '<div class="st-prog">' + stories.map((_, k) => '<i class="' + (k < i ? 'is-done' : k === i ? 'is-now' : '') + '"></i>').join('') + '</div>' +
-        storyCardHtml(s, { big: true }) + storyInfoHtml(s) +
-        '<button class="st-nav st-prev" data-prev aria-label="Story précédente"></button><button class="st-nav st-next" data-next aria-label="Story suivante"></button>' +
-        '<div class="st-vbar"><button class="btn secondary" data-pause aria-pressed="false">Pause</button><button class="btn secondary" data-edit>Modifier</button><button class="btn secondary" data-del>Retirer</button><button class="btn secondary" disabled title="Avec les comptes en ligne">Publier</button><button class="btn" data-close>Fermer</button></div></div>';
+      const copy = s.copyId ? physicalSingles.find(x => x.id === s.copyId) : null;
+      const ico = d => '<svg viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>';
+      box.innerHTML = '<div class="st-viewer sxv" role="dialog" aria-modal="true" aria-label="Story ' + (i + 1) + ' sur ' + stories.length + '">' +
+        '<span class="sxv-backdrop" aria-hidden="true">' + (s.coverUrl ? coverImgTag(s) : '') + '</span>' +
+        '<button class="sxv-arrow sxv-arrow-l" data-prev aria-label="Story précédente"' + (i ? '' : ' disabled') + '>' + ico('<path d="M15 5l-7 7 7 7"/>') + '</button>' +
+        '<div class="sxv-stage">' + storyCardHtml(s, { big: true }) +
+          '<div class="st-prog">' + stories.map((_, k) => '<i class="' + (k < i ? 'is-done' : k === i ? 'is-now' : '') + '"></i>').join('') + '</div>' +
+          '<div class="sxv-ctrl"><button class="sxv-ic" data-pause aria-pressed="false" aria-label="Mettre en pause">' + ico('<path d="M8 5v14M16 5v14"/>') + '</button>' +
+            '<button class="sxv-ic" data-more aria-haspopup="true" aria-expanded="false" aria-label="Plus d\'options">' + ico('<circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/>') + '</button>' +
+            '<button class="sxv-ic" data-close aria-label="Fermer">' + ico('<path d="M6 6l12 12M18 6L6 18"/>') + '</button></div>' +
+          '<div class="sxv-menu" data-menu hidden><button data-edit>Modifier la story</button><button data-share>Partager le texte</button><button data-del class="is-danger">Retirer la story</button><button disabled>Publier (avec les comptes en ligne)</button></div>' +
+          '<button class="st-nav st-prev" data-tap-prev aria-hidden="true" tabindex="-1"></button><button class="st-nav st-next" data-next aria-label="Story suivante"></button>' +
+          '<div class="sxv-foot">' + (copy ? '<button class="sxv-pill" data-st-copy>' + ico('<path d="M5 4h10l4 4v12H5z"/><path d="M9 12h6M9 16h4"/>') + 'Ouvrir la fiche</button>' : '<span class="sxv-pill is-quiet">' + escapeHtml(s.publisher || 'Story de lecture') + '</span>') +
+            '<span class="sxv-count">' + (i + 1) + ' / ' + stories.length + '</span></div>' +
+        '</div>' +
+        '<button class="sxv-arrow sxv-arrow-r" data-next-arrow aria-label="Story suivante"' + (i < stories.length - 1 ? '' : ' disabled') + '>' + ico('<path d="M9 5l7 7-7 7"/>') + '</button></div>';
+      box.querySelector('[data-tap-prev]').onclick = () => box.querySelector('[data-prev]').click();
+      const sp = box.querySelector('.sx-review.is-spoiler'); if (sp) { sp.style.position = 'relative'; sp.style.zIndex = '3'; sp.onclick = e => { e.stopPropagation(); sp.classList.remove('is-spoiler'); pause(true); }; }
+      box.querySelector('[data-next-arrow]').onclick = () => box.querySelector('[data-next]').click();
+      const menu = box.querySelector('[data-menu]'), more = box.querySelector('[data-more]');
+      more.onclick = () => { const open = menu.hidden; menu.hidden = !open; more.setAttribute('aria-expanded', String(open)); pause(open); };
+      box.querySelector('[data-share]').onclick = async () => {
+        const txt = 'J\'ai lu ' + [s.series, storyIssue(s) ? '#' + storyIssue(s) : ''].filter(Boolean).join(' ') + (Number(s.rating) ? ' — ' + String(s.rating).replace('.', ',') + '/5' : '') + (s.review ? ' : « ' + s.review + ' »' : '') + ' (via Panel)';
+        try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); showToast('Texte de la story copié.'); } } catch (_) {}
+      };
       box.querySelector('[data-prev]').onclick = () => { if (i > 0) { i--; show(); } };
       box.querySelector('[data-next]').onclick = () => { if (i < stories.length - 1) { i++; show(); } else close(); };
       box.querySelector('[data-close]').onclick = close;
@@ -16353,12 +17022,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       box.querySelector('[data-del]').onclick = () => { const prevRaw = localStorage.getItem(STORY_KEY), d = storyLoad(); d.stories = d.stories.filter(x => x.id !== s.id); storySave(d); close(); renderSinglesCollection(); showToastAction('Story retirée.', 'Annuler', () => { localStorage.setItem(STORY_KEY, prevRaw); renderSinglesCollection(); }); };
       box.querySelector('[data-pause]').onclick = () => pause(!paused);
       const oc = box.querySelector('[data-st-copy]'); if (oc) oc.onclick = () => { const it = physicalSingles.find(x => x.id === s.copyId); close(); if (it) openSingleInspector(it); };
-      const v = box.querySelector('.st-viewer');
+      const v = box.querySelector('.sxv-stage');
       let hold = null, held = false, sx = 0, sy = 0;
-      v.addEventListener('pointerdown', e => { if (e.target.closest('.st-vbar')) return; held = false; sx = e.clientX; sy = e.clientY; hold = setTimeout(() => { held = true; pause(true); }, 220); });
+      v.addEventListener('pointerdown', e => { if (e.target.closest('.sxv-ctrl, .sxv-menu, .sxv-foot, .sxv-arrow')) return; held = false; sx = e.clientX; sy = e.clientY; hold = setTimeout(() => { held = true; pause(true); }, 220); });
       const up = e => {
         clearTimeout(hold);
-        if (e.target.closest && e.target.closest('.st-vbar')) return;
+        if (e.target.closest && e.target.closest('.sxv-ctrl, .sxv-menu, .sxv-foot, .sxv-arrow')) return;
         const dx = e.clientX - sx, dy = e.clientY - sy;
         if (held) { pause(false); return; }
         if (dy > 90 && Math.abs(dy) > Math.abs(dx)) { held = true; close(); }
@@ -16377,7 +17046,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const storiesBarHtml = () => {
     const stories = storyLoad().stories, seen = storySeen();
     return '<section class="st-bar" aria-label="Stories de lecture"><button class="st-ring st-new" data-st-new><span class="st-ring-img"><b>+</b></span><small>Ma story</small></button>' +
-      stories.slice(0, 30).sort((a, b) => seen.has(a.id) - seen.has(b.id)).map(s => { const st = STORY_STYLES[s.style] || STORY_STYLES.indie; return '<button class="st-ring' + (seen.has(s.id) ? ' is-seen' : '') + '" data-st-open="' + escapeHtml(s.id) + '" aria-label="Story : ' + escapeHtml(String(s.series || '') + ' ' + (s.issue || '')) + (seen.has(s.id) ? ', vue' : ', nouvelle') + '" style="--acc:' + st.acc + ';--bg2:' + st.bg2 + '"><span class="st-ring-img">' + coverImgTag(s) + '</span><small>' + escapeHtml(String(s.series || '').slice(0, 14)) + '</small></button>'; }).join('') +
+      stories.slice(0, 30).sort((a, b) => seen.has(a.id) - seen.has(b.id)).map(s => { const st = STORY_STYLES[s.style] || STORY_STYLES.indie; return '<button class="st-ring' + (seen.has(s.id) ? ' is-seen' : '') + '" data-st-open="' + escapeHtml(s.id) + '" aria-label="Story : ' + escapeHtml(String(s.series || '') + ' ' + (s.issue || '')) + (seen.has(s.id) ? ', vue' : ', nouvelle') + '" style="--acc:' + st.acc + ';--bg2:' + st.bg2 + '"><span class="st-ring-img">' + (s.coverUrl ? coverImgTag(s) : '<span class="sx-face" style="--c:' + cboxHue(s) + '"><b>' + escapeHtml(cboxInitials(s.series || '?')) + '</b></span>') + '</span><small>' + escapeHtml(String(s.series || '').slice(0, 14)) + (storyIssue(s) ? ' #' + escapeHtml(storyIssue(s)) : '') + '</small></button>'; }).join('') +
       (stories.length ? '' : '<p class="st-bar-hint">Vous venez de lire un comic ? Notez-le en story : une carte à ses couleurs, comme un journal de lecture.</p>') + '</section>';
   };
   const wireStoriesBar = host => {
@@ -16509,7 +17178,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       [[27, 20, 215], [33, 16, 50], [39, 20, 0], [21, 32, 285], [47, 31, 130], [32, 44, 30]].map(([x, y, hh]) => '<circle cx="' + x + '" cy="' + y + '" r="3.2" fill="hsl(' + hh + ',85%,58%)" stroke="#fff" stroke-width="1"/>').join(''),
     gem_space: AF_GEM, gem_mind: AF_GEM, gem_reality: AF_GEM, gem_power: AF_GEM, gem_time: AF_GEM, gem_soul: AF_GEM
   };
-  const afArt = a => AF_ART[a.id] ? '<svg viewBox="0 0 64 64" aria-hidden="true">' + AF_ART[a.id] + '</svg>' : '<i>' + escapeHtml(a.glyph) + '</i>';
+  const afArt = a => (AF_ART[a.id] ? '<svg viewBox="0 0 64 64" aria-hidden="true">' + AF_ART[a.id] + '</svg>' : '<i>' + escapeHtml(a.glyph) + '</i>') +
+    (a.img && /^https:\/\//.test(a.img) ? '<img class="af-photo" src="' + escapeHtml(a.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '');
 
   // Portraits des rangs (D-64) : image du personnage tirée de Comic Vine (correspondance exacte du nom), avec crédit.
   // Seuls le rang actuel et le suivant sont cherchés (2 requêtes au plus), réponse gardée 30 jours ; sinon aucun portrait.
@@ -16571,9 +17241,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const artefactsHtml = ar => '<h3 class="pf-section">Artefacts <span class="stat-sub">' + ar.unlocked + ' / ' + ar.total + ' débloqués · ' + ar.gems + ' / 6 gemmes</span></h3>' +
     (ar.next ? '<p class="stat-sub af-next">Prochain : <b>' + escapeHtml(ar.next.name) + '</b> — ' + escapeHtml(ar.next.lore) + ' (' + Math.floor(ar.next.have).toLocaleString('fr-FR') + ' / ' + ar.next.goal.toLocaleString('fr-FR') + ')</p>' : '') +
     '<div class="af-grid">' + ar.list.map(a => '<div class="af-card is-' + a.rarity + (a.unlocked ? ' is-on' : '') + (a.gem ? ' is-gem' : '') + '" style="--h:' + a.hue + '" title="' + escapeHtml(a.lore) + '">' +
-      '<span class="af-medal' + (AF_ART[a.id] ? ' has-art' : '') + '">' + afArt(a) + '</span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
+      '<span class="af-medal' + (AF_ART[a.id] ? ' has-art' : '') + (a.img ? ' has-photo' : '') + '">' + afArt(a) + '</span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
       '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString('fr-FR') + ' / ' + a.goal.toLocaleString('fr-FR')) + '</em></div>').join('') + '</div>' +
-    '<p class="stat-sub" style="margin:8px 2px 18px">Objets inspirés des univers Marvel et DC (marques de leurs ayants droit), illustrations originales dessinées par Panel. Chaque artefact débloqué rapporte 50 XP.</p>';
+    '<p class="stat-sub" style="margin:8px 2px 18px">Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l\'atlas Marvel Primestone, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte 50 XP.</p>';
 
   // ── Communauté : en-tête commun (profil compact, stories, onglets) ; un seul endroit pour naviguer (D-63)
   let commTab = 'feed';
@@ -17239,7 +17909,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         if (mapping.inCollection >= 0) {
           const owned = csvTruthy(get('inCollection'));
           if (!owned && !wished) {
-            if (!opts.includeReadOnly) { skipped.push({ line: i + 2, reason: 'liste de lecture (ni collection ni wishlist)', readOnly: true }); return; }
+            if (!opts.includeReadOnly) {
+              const rt = get('read'), rIdx = mapping.read;
+              const isR = !!rt && (csvTruthy(rt) || (rIdx >= 0 && /date/.test(normHeader(parsed.headers[rIdx])) && parseDateFlexible(rt) !== ''));
+              const iss = issueRaw ? '#' + issueRaw.replace(/^#\s*/, '').slice(0, 18) : '';
+              // D-75 : la lecture n'est plus perdue ; elle rejoint Lecture (séries en cours, stats, trophées) sans créer de fiche
+              const readRef = isR && iss ? { series: series.slice(0, 200), issue: iss, coverYear: yearFrom(get('date')) || sInfo.year || null, at: (readDateIdx >= 0 && parseDateFlexible(String(row[readDateIdx] == null ? '' : row[readDateIdx]).trim())) ? parseDateFlexible(String(row[readDateIdx]).trim()) + 'T12:00:00.000Z' : undefined } : null;
+              skipped.push({ line: i + 2, reason: 'liste de lecture (ni collection ni wishlist)', readOnly: true, readRef }); return;
+            }
           }
           isWishlist = !owned && (wished || !!opts.includeReadOnly);
         } else if (mapping.inWishlist >= 0) {
@@ -17326,7 +18003,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // Ajoute les exemplaires convertis (doublons ignorés si demandé) avec annulation possible
-  const importCsvItems = (items, { skipDuplicates = true } = {}) => {
+  const importCsvItems = (items, { skipDuplicates = true, reads = [] } = {}) => {
     const existing = new Set(physicalSingles.map(csvDupKey));
     const toAdd = skipDuplicates ? items.filter(it => !existing.has(csvDupKey(it))) : items.slice();
     const duplicates = items.length - toAdd.length;
@@ -17343,6 +18020,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         const f = rdFind(target);
         if (!f || f.state.status !== 'read') { const r = rdSetStatus(target, 'read', { source: 'import', at: it._readAt, ignoreCompat: true }); if (r.ok) readSynced++; }
         if (!target.isRead) { target.isRead = true; flipped.push(target); }
+      });
+      // D-75 : numéros lus hors collection (liste de lecture League of Comic Geeks, lectures numériques…)
+      (reads || []).forEach(ref => {
+        if (!ref || !ref.series) return;
+        const f = rdFind(ref);
+        if (!f || f.state.status !== 'read') { const r = rdSetStatus(ref, 'read', { source: 'import', at: ref.at, ignoreCompat: true }); if (r.ok) readSynced++; }
       });
     } catch (_) {}
     persistSingles();
@@ -17469,10 +18152,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ? '<span style="color:var(--red)">Associez au moins la colonne « Série » (ou « Titre complet »).</span>'
       : `<b>${willAdd}</b> comic(s) à importer` + (wish ? ` (dont ${wish} en wishlist)` : '') +
         (dupCount ? ` · ${dupCount} déjà présent(s)${skipDup ? ' ignoré(s)' : ''}` : '') +
-        (readOnlyCount ? ` · ${readOnlyCount} comic(s) seulement marqué(s) lu(s), ni en collection ni en wishlist : non importé(s)` : '') +
+        (readOnlyCount ? ` · ${readOnlyCount} comic(s) lu(s) hors collection : ` + (res.skipped.some(x => x.readRef) ? `<b>${res.skipped.filter(x => x.readRef).length}</b> lecture(s) ajoutée(s) à Lecture (séries en cours, statistiques), sans fiche de collection` : 'non importé(s)') : '') +
         (otherSkipped.length ? ` · ${otherSkipped.length} ligne(s) ignorée(s) : ` + escapeHtml(otherSkipped.slice(0, 3).map(s => 'l.' + s.line + ' ' + s.reason).join(', ')) + (otherSkipped.length > 3 ? '…' : '') : '');
-    $('csvImportConfirmBtn').disabled = !hasSeries || willAdd === 0;
-    $('csvImportConfirmBtn').textContent = willAdd ? `Importer ${willAdd} comic(s)` : 'Importer';
+    const readsOnly = res.skipped.filter(x => x.readRef).length;
+    $('csvImportConfirmBtn').disabled = !hasSeries || (willAdd === 0 && !readsOnly && !res.items.some(it => it.isRead));
+    $('csvImportConfirmBtn').textContent = willAdd ? `Importer ${willAdd} comic(s)` : readsOnly || res.items.some(it => it.isRead) ? 'Importer les lectures' : 'Importer';
     const rows = res.items.slice(0, 6);
     $('csvImportPreview').innerHTML = rows.length
       ? '<table class="csv-preview"><thead><tr><th>Série</th><th>N°</th><th>Variante</th><th>État</th><th>Payé</th><th>Valeur</th><th>Statut</th></tr></thead><tbody>' +
@@ -17573,7 +18257,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const parsed = parseCsvText(text);
     const mapping = Object.assign(detectCsvMapping(parsed.headers), opts.mapping || {});
     const res = convertCsvRows(parsed, mapping, opts);
-    const out = importCsvItems(res.items, opts);
+    const out = importCsvItems(res.items, Object.assign({}, opts, { reads: res.skipped.filter(x => x.readRef).map(x => x.readRef) }));
     return { ...out, skipped: res.skipped, source: res.source, mapping, delimiter: parsed.delimiter };
   };
 
@@ -18140,7 +18824,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     coverJob.phase = 'run';
     coverJob.resumeAt = null;
     coverJob.error = '';
-    coverJobOptions.active = true;
+    coverJobOptions.active = true; coverJobOptions.userPaused = false;
     saveJson('panel_cover_job', coverJobOptions);
     // Un lot par session de récupération (annulable) + instantané complet de la collection avant modification
     const newBatch = !coverJob.batchId;
@@ -18212,7 +18896,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
 
   const pauseCoverJob = () => {
     coverJob.running = false;
-    coverJobOptions.active = false;
+    coverJobOptions.active = false; coverJobOptions.userPaused = true; // D-75 : une pause voulue n'est jamais relancée automatiquement
     saveJson('panel_cover_job', coverJobOptions);
     clearTimeout(coverWakeTimer);
     coverJob.phase = 'paused';
@@ -19173,9 +19857,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('csvImportConfirmBtn').onclick = () => {
       if (!csvImportState || !csvImportState.result) return;
       renderCsvPreview();
-      const res = importCsvItems(csvImportState.result.items, { skipDuplicates: $('csvImportSkipDuplicates').checked });
+      const res = importCsvItems(csvImportState.result.items, { skipDuplicates: $('csvImportSkipDuplicates').checked, reads: csvImportState.result.skipped.filter(x => x.readRef).map(x => x.readRef) });
       $('csvImportModal').classList.remove('open');
-      if (!res.added) showToast('Aucun nouveau comic à importer.');
+      if (!res.added && !(csvImportState.result.skipped.some(x => x.readRef) || csvImportState.result.items.some(it => it.isRead))) showToast('Aucun nouveau comic à importer.');
       if (activeSinglesView !== 'collection') showSinglesView('collection');
     };
     $('closeRevalueModalBtn').onclick = () => $('revalueModal').classList.remove('open');
@@ -19613,6 +20297,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   initPwa();
   handleLaunchParams();
   if (coverJobOptions.active && !navigator.webdriver) setTimeout(() => { if (coverJobOptions.active) runCoverJob(); }, 4000);
+  // D-75 : couvertures manquantes complétées d'elles-mêmes (Fandom puis Comic Vine, lot annulable, instantané avant modification),
+  // sauf si l'utilisateur a mis la récupération en pause ; jamais hors ligne ni hors du relais local
+  else if (!coverJobOptions.userPaused && !navigator.webdriver && location.protocol !== 'file:') setTimeout(() => { if (!coverJobOptions.userPaused && !coverJob.running && navigator.onLine && physicalSingles.some(coverJobPending)) runCoverJob(); }, 9000);
 
   // Menus « Plus » / « Outils » : se ferment après un choix ou un clic à l'extérieur
   document.addEventListener('click', e => {

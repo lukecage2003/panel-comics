@@ -17,7 +17,7 @@ test('paliers Bronze à Vibranium et progression vers le suivant', () => {
   const copies = Array.from({ length: 12 }, (_, i) => copy('Venom', '#' + (i + 1)));
   const r = T.computeTrophies({ copies });
   const col = r.trophies.find(t => t.id === 'collector');
-  assert.deepStrictEqual([col.tier, col.value, col.next], ['bronze', 12, 100]);
+  assert.deepStrictEqual([col.tier, col.value, col.next], ['bronze', 12, 250]);
   assert.ok(col.progress > 0 && col.progress < 1);
   assert.strictEqual(r.trophies.find(t => t.id === 'runner').tier, 'bronze', 'Venom #1 à #12 sans trou');
   assert.strictEqual(r.trophies.find(t => t.id === 'firsts').value, 1);

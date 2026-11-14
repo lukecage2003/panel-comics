@@ -57,6 +57,7 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   fs.copyFileSync(path.join(ROOT, 'manifest.webmanifest'), path.join(WWW, 'manifest.webmanifest'));
   fs.cpSync(path.join(ROOT, 'icons'), path.join(WWW, 'icons'), { recursive: true });
   fs.cpSync(path.join(ROOT, 'fonts'), path.join(WWW, 'fonts'), { recursive: true });
+  fs.cpSync(path.join(ROOT, 'data'), path.join(WWW, 'data'), { recursive: true });
   const size = fs.readdirSync(WWW, { recursive: true }).length;
   console.log(`www/ prêt : ${size} fichiers, bibliothèques locales vérifiées (${VENDOR.length}).`);
 })().catch(e => { console.error('✗ ' + e.message); process.exit(1); });

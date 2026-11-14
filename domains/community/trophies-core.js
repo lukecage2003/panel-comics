@@ -5,6 +5,7 @@
 //  - les « Ères » : Golden, Silver, Bronze, Modern Age, d'après l'année de couverture ;
 //  - le « Voyageur temporel » : au moins un numéro de chaque ère ;
 //  - un niveau de collectionneur (XP) qui additionne les paliers obtenus.
+// D-75 : Bronze s'obtient vite (pour démarrer), Argent, Or et Vibranium demandent des années (environ dix pour tout finir).
 // Module pur : reçoit des entrées déjà préparées, n'écrit rien.
 
 const TIERS = Object.freeze([
@@ -27,20 +28,20 @@ const issueNum = v => { const m = /-?\d+(?:\.\d+)?/.exec(String(v || '')); retur
 
 // Définitions : seuils croissants pour Bronze, Argent, Or, Vibranium
 const DEFS = Object.freeze([
-  { id: 'collector', family: 'Collection', name: 'Collectionneur', icon: 'box', steps: [10, 100, 500, 2000], unit: 'numéro', desc: 'Numéros possédés' },
-  { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 5, 15, 40], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
-  { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 25, 75, 200], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
-  { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 10, 30, 100], unit: 'key issue', desc: 'Key issues possédés' },
-  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 5, 20, 60], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
-  { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 6, 10, 15], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
-  { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 100, 500, 1500], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
-  { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 10, 40, 120], unit: 'relecture', desc: 'Relectures notées dans le journal' },
-  { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 10, 50, 200], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
-  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 100, 500, 2000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' },
+  { id: 'collector', family: 'Collection', name: 'Collectionneur', icon: 'box', steps: [10, 250, 1500, 5000], unit: 'numéro', desc: 'Numéros possédés' },
+  { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 10, 40, 120], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
+  { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 50, 250, 750], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
+  { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 20, 100, 400], unit: 'key issue', desc: 'Key issues possédés' },
+  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 10, 50, 200], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
+  { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 8, 15, 25], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
+  { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 300, 2000, 6000], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
+  { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 25, 150, 500], unit: 'relecture', desc: 'Relectures notées dans le journal' },
+  { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 50, 400, 1500], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
+  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 250, 1500, 5000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' },
   // D-71 : runs lus en entier, longs runs, galerie de personnages
-  { id: 'run-reader', family: 'Lecture', name: 'Lecteur de runs', icon: 'book', steps: [1, 5, 15, 40], unit: 'run lu', plural: 'runs lus', desc: 'Runs complets lus du premier au dernier numéro' },
-  { id: 'marathon', family: 'Collection', name: 'Marathonien', icon: 'stack', steps: [1, 3, 8, 20], unit: 'long run', plural: 'longs runs', desc: 'Runs complets de 12 numéros ou plus' },
-  { id: 'gallery', family: 'Exploration', name: 'Galerie de héros', icon: 'mask', steps: [5, 15, 40, 100], unit: 'personnage', desc: 'Personnages différents dans la collection' }
+  { id: 'run-reader', family: 'Lecture', name: 'Lecteur de runs', icon: 'book', steps: [1, 10, 40, 120], unit: 'run lu', plural: 'runs lus', desc: 'Runs complets lus du premier au dernier numéro' },
+  { id: 'marathon', family: 'Collection', name: 'Marathonien', icon: 'stack', steps: [1, 5, 15, 40], unit: 'long run', plural: 'longs runs', desc: 'Runs complets de 12 numéros ou plus' },
+  { id: 'gallery', family: 'Exploration', name: 'Galerie de héros', icon: 'mask', steps: [5, 25, 80, 200], unit: 'personnage', desc: 'Personnages différents dans la collection' }
 ]);
 
 const tierFor = (value, steps) => { let t = -1; steps.forEach((s, i) => { if (value >= s) t = i; }); return t; };
@@ -112,7 +113,7 @@ const computeTrophies = (input = {}) => {
   // Ères : un trophée par ère (Bronze 1, Argent 5, Or 25, Vibranium 100 numéros de l'ère)
   const eraCounts = Object.fromEntries(ERAS.map(e => [e.id, 0]));
   copies.forEach(c => { const e = eraOf(c); if (e) eraCounts[e.id]++; });
-  const eras = ERAS.map(e => describe({ id: 'era-' + e.id, family: 'Ères', name: e.label, icon: 'clock', steps: [1, 5, 25, 100], unit: 'numéro', desc: 'Numéros parus entre ' + e.from + ' et ' + (e.to > 2050 ? 'aujourd\'hui' : e.to) }, eraCounts[e.id]));
+  const eras = ERAS.map(e => describe({ id: 'era-' + e.id, family: 'Ères', name: e.label, icon: 'clock', steps: [1, 10, 50, 200], unit: 'numéro', desc: 'Numéros parus entre ' + e.from + ' et ' + (e.to > 2050 ? 'aujourd\'hui' : e.to) }, eraCounts[e.id]));
   const erasCovered = ERAS.filter(e => eraCounts[e.id] > 0).length;
   const traveler = describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 4], unit: 'ère', desc: 'Ères représentées dans la collection (Vibranium : les quatre, avec 10 numéros dans chacune)' }, erasCovered);
   if (traveler.tierIndex === 3 && !ERAS.every(e => eraCounts[e.id] >= 10)) Object.assign(traveler, describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 5], unit: 'ère', desc: traveler.desc }, 4));
@@ -122,7 +123,7 @@ const computeTrophies = (input = {}) => {
   const perChar = new Map();
   copies.forEach(c => { const ch = charOf(c); if (ch) perChar.set(ch, (perChar.get(ch) || 0) + 1); });
   const guardians = [...perChar.entries()].filter(([, n]) => n >= 5).sort((a, b) => b[1] - a[1]).slice(0, 12)
-    .map(([ch, n]) => Object.assign(describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 25, 100, 300], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n), { character: ch }));
+    .map(([ch, n]) => Object.assign(describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 50, 200, 600], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n), { character: ch }));
 
   const all = trophies.concat(eras, [traveler], guardians);
   const xp = all.reduce((a, t) => a + (t.tierIndex >= 0 ? TIERS.slice(0, t.tierIndex + 1).reduce((s, x) => s + x.xp, 0) : 0), 0);

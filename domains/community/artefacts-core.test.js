@@ -23,7 +23,16 @@ test('déblocage sur mesure réelle et gant de l\'Infini avec les six gemmes', (
   assert.ok(some.list.find(a => a.id === 'batarang').unlocked);
   assert.ok(some.list.find(a => a.id === 'web_shooter').unlocked);
   assert.ok(!some.list.find(a => a.id === 'gauntlet').unlocked);
-  const all = A.computeArtefacts({ publishers: 4, reviewed: 25, read: 200, owned: 300, reread: 10, stories: 20 });
+  const early = A.computeArtefacts({ publishers: 4, reviewed: 25, read: 200, owned: 300, reread: 10, stories: 20 });
+  assert.strictEqual(early.gems, 0, 'D-75 : quelques mois d\'activité ne suffisent plus pour une gemme');
+  const all = A.computeArtefacts({ publishers: 15, reviewed: 300, read: 2500, owned: 2500, reread: 200, stories: 365 });
   assert.strictEqual(all.gems, 6);
   assert.ok(all.list.find(a => a.id === 'gauntlet').unlocked);
+});
+
+test('D-75 : illustrations https pour le Gant, les six gemmes et Mjolnir', () => {
+  ['gauntlet', 'gem_space', 'gem_mind', 'gem_reality', 'gem_power', 'gem_time', 'gem_soul', 'mjolnir'].forEach(id => {
+    const a = A.ARTEFACTS.find(x => x.id === id);
+    assert.ok(/^https:\/\//.test(a.img) && a.imgSrc, id);
+  });
 });

@@ -6,7 +6,7 @@
  *   pas de réponses opaques qui gonfleraient le quota de stockage).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-14-levels-polish-d72';
+const VERSION = 'panel-2026-11-14-explorer-fr-atlas-d75';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [
@@ -20,7 +20,8 @@ const SHELL = [
   './icons/favicon-32.png',
   './fonts/barlow-condensed-600-latin.woff2',
   './fonts/barlow-condensed-700-latin.woff2',
-  './fonts/barlow-condensed-800-latin.woff2'
+  './fonts/barlow-condensed-800-latin.woff2',
+  './data/cosmos-marvel.json'
 ];
 const LIB_HOSTS = ['cdnjs.cloudflare.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 

@@ -37,7 +37,7 @@ const TYPES = {
   '.woff2': 'font/woff2'
 };
 // Seuls les fichiers de l'application sont servis (pas les sauvegardes, profils de test, etc.)
-const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2)?$/i;
+const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json)?$/i;
 
 // ---------- Relais GCD : quota, cache, aucune donnée personnelle transmise
 const GCD_HOURLY_MAX = 25;
@@ -552,14 +552,22 @@ const handleShops = async (u, res) => {
 // Flux RSS publics de sites spécialisés. Panel ne reprend que le titre, un court extrait (240 caractères au plus),
 // la date, l'auteur, les rubriques et l'image d'illustration fournie par le flux, avec le lien vers l'article d'origine.
 // Chaque flux est relu au plus toutes les 30 minutes (cache disque .cache/news.json).
+const FR_COMICS_KEEP = /comics?\b|marvel|\bdc\b|batman|superman|spider-?man|spider-?verse|avengers|x-men|super-?h[ée]ros|\bbd\b|bande[s]? dessin|manga|wolverine|deadpool|daredevil|thunderbolts|fantastiques|joker|gotham|supergirl|lanterns|venom|hellboy|invincible|ast[ée]rix|tintin|angoul[êe]me/i;
 const NEWS_SOURCES = [
   { id: 'cbr', name: 'CBR', lang: 'en', url: 'https://www.cbr.com/feed/', keep: /comic|marvel|dc |image comics|manga|graphic novel/i },
   { id: 'bleedingcool', name: 'Bleeding Cool', lang: 'en', url: 'https://bleedingcool.com/comics/feed/' },
   { id: 'comicsbeat', name: 'The Comics Beat', lang: 'en', url: 'https://www.comicsbeat.com/feed/' },
   { id: 'comicbook', name: 'ComicBook.com', lang: 'en', url: 'https://comicbook.com/category/comics/feed/' },
-  { id: 'superpouvoir', name: 'Superpouvoir', lang: 'fr', url: 'https://www.superpouvoir.com/feed/', keep: /comic|marvel|dc |bd|bande dessin/i },
+  { id: 'superpouvoir', name: 'Superpouvoir', lang: 'fr', url: 'https://www.superpouvoir.com/feed/', keep: /comic|marvel|dc |bd\b|bande dessin/i },
   { id: 'actuabd', name: 'ActuaBD', lang: 'fr', url: 'https://www.actuabd.com/spip.php?page=backend' },
-  { id: 'urban', name: 'Urban Comics', lang: 'fr', url: 'https://www.urban-comics.com/feed/' }
+  { id: 'urban', name: 'Urban Comics', lang: 'fr', url: 'https://www.urban-comics.com/feed/' },
+  // D-75 : plus de sources en français ; les sites généralistes (cinéma, pop culture) sont filtrés sur les comics, la BD et les super-héros
+  { id: 'bdzoom', name: 'BDzoom', lang: 'fr', url: 'https://www.bdzoom.com/feed/' },
+  { id: 'ligneclaire', name: 'Ligne Claire', lang: 'fr', url: 'https://www.ligneclaire.info/feed' },
+  { id: 'ecranlarge', name: 'Écran Large', lang: 'fr', url: 'https://www.ecranlarge.com/rss', keep: FR_COMICS_KEEP },
+  { id: 'allocine', name: 'AlloCiné', lang: 'fr', url: 'https://www.allocine.fr/rss/news-cine.xml', keep: FR_COMICS_KEEP },
+  { id: 'journaldugeek', name: 'Journal du Geek', lang: 'fr', url: 'https://www.journaldugeek.com/feed/', keep: FR_COMICS_KEEP },
+  { id: 'numerama', name: 'Numerama Pop culture', lang: 'fr', url: 'https://www.numerama.com/pop-culture/feed/', keep: FR_COMICS_KEEP }
 ];
 const newsCacheFile = path.join(root, '.cache', 'news.json');
 let newsCache = {};
@@ -595,7 +603,8 @@ const handleNews = async (u, res) => {
   }));
   if (newsPersist) { try { fs.mkdirSync(path.dirname(newsCacheFile), { recursive: true }); fs.writeFileSync(newsCacheFile, JSON.stringify(newsCache)); } catch (_) {} }
   const items = NEWS_SOURCES.filter(src => (!lang || src.lang === lang) && newsCache[src.id]).flatMap(src => newsCache[src.id].items)
-    .filter(a => a.date && now - new Date(a.date).getTime() < 21 * 86400000).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 80);
+    .filter(a => a.date && now - new Date(a.date).getTime() < 21 * 86400000).sort((a, b) => b.date.localeCompare(a.date))
+    .filter((a, i, all) => all.slice(0, i).filter(x => x.lang === a.lang).length < 120); // D-75 : 120 articles au plus par langue (le français n'est plus évincé)
   return sendJson(res, 200, { items, sources: NEWS_SOURCES.filter(src => !lang || src.lang === lang).map(src => ({ id: src.id, name: src.name, lang: src.lang, home: new URL(src.url).origin })), unavailable: errors,
     notice: 'Titres, extraits courts et images d\'illustration fournis par les flux RSS publics des sites cités ; les articles restent sur leur site.' });
 };
