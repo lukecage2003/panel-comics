@@ -262,15 +262,6 @@
     }
     .search-input { width: 100%; font-size: 12px; color: var(--ink); }
     .search-input::placeholder { color: var(--muted); }
-    .kbd-tag {
-      font-size: 12px;
-      background: var(--bg-card);
-      border: 1px solid var(--cyan-line);
-      color: var(--muted);
-      padding: 1px 5px;
-      border-radius: 4px;
-      font-weight: 700;
-    }
 
     .search-results-menu {
       position: absolute;
@@ -1250,7 +1241,6 @@
     /* Barre du haut et recherche */
     .search-box, .search-input, .search-bar { background: var(--bg-card) !important; border-color: var(--line-strong) !important; color: var(--ink); }
     .search-box:focus-within { border-color: var(--key) !important; box-shadow: 0 0 0 3px var(--lime-glow) !important; }
-    .kbd-tag { background: var(--bg) !important; border: 1px solid var(--line) !important; color: var(--muted) !important; }
 
     /* Boutons */
     .btn {
@@ -2670,6 +2660,68 @@
     .st-viewer .st-card { max-height: calc(100vh - 190px); max-height: calc(100dvh - 190px); }
     .st-page .st-cover { margin: 0 auto; height: 78%; }
     .st-vinfo { background: #16161c; border: 1px solid rgba(255,255,255,.1); }
+    /* D-71 — trophées illustrés (couverture réelle ou portrait), vitrine des runs complets en piles 3D */
+    .tr-card.has-art { align-items: center; padding: 10px 14px 10px 10px; }
+    .tr-art { position: relative; flex: 0 0 62px; width: 62px; aspect-ratio: 2 / 3; border-radius: 7px; background: #0d0d12; display: grid; place-items: center; transform: perspective(520px) rotateY(-10deg) rotateX(2deg); transform-style: preserve-3d; transition: transform .5s var(--ease-spring), box-shadow .5s ease; box-shadow: 7px 9px 18px -8px rgba(0,0,0,.75); }
+    .tr-art > img { width: 100%; height: 100%; object-fit: contain; border-radius: 7px; display: block; }
+    .tr-art::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: linear-gradient(115deg, transparent 35%, rgba(255,255,255,.35) 48%, transparent 60%); background-size: 260% 100%; background-position: 130% 0; transition: background-position .9s ease; }
+    .tr-card:hover .tr-art, .tr-card:focus-within .tr-art { transform: perspective(520px) rotateY(0) translateZ(14px) scale(1.05); box-shadow: 10px 14px 26px -10px rgba(0,0,0,.8); }
+    .tr-card:hover .tr-art::after { background-position: -30% 0; }
+    .tr-art .tr-medal { position: absolute; right: -11px; bottom: -9px; width: 30px; height: 30px; flex: none; font-size: 13px; z-index: 1; border: 2px solid var(--bg-card); }
+    .tr-art .tr-medal .ic { width: 15px; height: 15px; }
+    .tr-card.is-locked .tr-art > img { filter: grayscale(1) brightness(.55); }
+    .pf-runs { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 18px; }
+    .pf-run { display: flex; gap: 16px; align-items: center; text-align: left; padding: 12px 14px 12px 12px; border-radius: 16px; border: 1px solid var(--hair, var(--border)); background: var(--bg-card); color: inherit; cursor: pointer; transition: transform .3s var(--ease-spring), border-color .2s ease; min-width: 0; }
+    .pf-run:hover, .pf-run:focus-visible { transform: translateY(-2px); border-color: var(--ink); outline: none; }
+    .pf-run.is-read { background: linear-gradient(135deg, color-mix(in srgb, #2fbf71 14%, var(--bg-card)), var(--bg-card) 65%); }
+    .pf-run-stack { position: relative; flex: 0 0 58px; width: 58px; aspect-ratio: 2 / 3; border-radius: 5px; background: #0d0d12; transform: perspective(500px) rotateY(-14deg); transition: transform .45s var(--ease-spring);
+      box-shadow: 3px -3px 0 -1px #2a2a33, 6px -6px 0 -2px #3a3a45, 9px -9px 0 -3px #4a4a56, 10px 12px 18px -8px rgba(0,0,0,.7); }
+    .pf-run:hover .pf-run-stack { transform: perspective(500px) rotateY(0) translateZ(10px); }
+    .pf-run-stack img { width: 100%; height: 100%; object-fit: contain; border-radius: 5px; display: block; }
+    .pf-run-txt { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .pf-run-txt b { font-size: 14.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .pf-run-txt small { font-size: 12px; color: var(--muted); }
+    .pf-run-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .pf-run-tags i { font-style: normal; font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px; border: 1px solid var(--border); color: var(--muted); }
+    .pf-run-tags i.is-read { color: #2fbf71; border-color: color-mix(in srgb, #2fbf71 50%, transparent); }
+    .pf-run-tags i.is-long { color: #FFD400; border-color: color-mix(in srgb, #FFD400 50%, transparent); }
+    @media (prefers-reduced-motion: reduce) { .tr-art, .pf-run-stack, .tr-card:hover .tr-art, .pf-run:hover .pf-run-stack { transform: none; transition: none; } .tr-art::after { display: none; } }
+    /* D-72 — finitions : aucune couverture rognée, relief 3D étendu, apparitions au défilement, actualités compactes sur téléphone */
+    .variant-cover-card img, .single-row img, .series-track-card img, .top-item img, .comic-poster > img, .ex-res-thumb, .ex-iss-img, .ex-cov-img,
+    .ex-gcard-img, .cbox-book img, .dig-book img, .pl-panel img, .fin-top img, .pf-pod-cover img, .st-pick-c img, .ex-cv-media img, .ig-tile > img,
+    .ex-vf-cover img, .notif-thumb img, .fy-cover img, .ex-gal-img { object-fit: contain !important; background-color: #0d0d12; }
+    .fy-card, .pf-run, .ex-nw, .tr-card.has-art, .ex-shop { position: relative; }
+    .fy-card.is-tilt, .pf-run.is-tilt, .ex-nw.is-tilt, .af-card.is-tilt, .tr-card.has-art.is-tilt, .ex-shop.is-tilt { transform: perspective(900px) rotateX(calc(var(--rx, 0deg) * .6)) rotateY(calc(var(--ry, 0deg) * .6)) translateY(-3px) !important; transition: transform .08s linear, box-shadow .25s ease !important; box-shadow: 0 18px 36px -18px rgba(0,0,0,.65); }
+    .is-tilt.fy-card > .tilt-glare, .is-tilt.pf-run > .tilt-glare, .is-tilt.ex-nw > .tilt-glare, .is-tilt.af-card > .tilt-glare, .is-tilt.tr-card > .tilt-glare, .is-tilt.ex-shop > .tilt-glare { opacity: 1; }
+    .ex-nw-img { position: relative; isolation: isolate; }
+    .ex-nw-img img { position: relative; z-index: 1; object-fit: contain; }
+    .ex-nw-img img.ex-nw-bg { position: absolute; inset: -16px; width: calc(100% + 32px); height: calc(100% + 32px); z-index: 0; object-fit: cover; filter: blur(16px) brightness(.55) saturate(1.2); }
+    @media (max-width: 640px) {
+      .ex-nw-grid { gap: 10px; }
+      .ex-nw:not(.is-big) { flex-direction: row; align-items: stretch; }
+      .ex-nw:not(.is-big) .ex-nw-img { flex: 0 0 112px; aspect-ratio: auto; min-height: 112px; }
+      .ex-nw:not(.is-big) .ex-nw-body { padding: 10px 12px; gap: 4px; }
+      .ex-nw:not(.is-big) strong { font-size: 14px; -webkit-line-clamp: 3; }
+      .ex-nw:not(.is-big) small { -webkit-line-clamp: 2; font-size: 12px; }
+      .ex-nw.is-big .ex-nw-img { aspect-ratio: 16 / 10; }
+      .fy-row { grid-auto-columns: minmax(250px, 86%); }
+      .pf-runs { grid-template-columns: 1fr; }
+      .tr-grid { grid-template-columns: 1fr; }
+    }
+    @media (min-width: 641px) and (max-width: 1024px) {
+      .ex-nw-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .pf-runs, .tr-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    }
+    @keyframes pnViewIn { from { opacity: 0; translate: 0 10px; } to { opacity: 1; translate: none; } }
+    @keyframes pnRise { from { opacity: 0; translate: 0 26px; scale: .97; } to { opacity: 1; translate: none; scale: none; } }
+    @media (prefers-reduced-motion: no-preference) {
+      [id^="singles"][id$="View"]:not([hidden]) { animation: pnViewIn .38s cubic-bezier(.2, .8, .2, 1) both; }
+      @supports (animation-timeline: view()) {
+        .tr-card, .af-card, .pf-run, .ex-nw, .pl-card, .ex-shop, .pf-podium, .tr-family h4, .ex-sec-head {
+          animation: pnRise linear both; animation-timeline: view(); animation-range: entry 0% entry 55%;
+        }
+      }
+    }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -2884,7 +2936,6 @@
           <div class="search-bar">
             <span style="color:var(--muted);font-size:13px"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span>
             <input class="search-input" id="globalSearch" type="search" placeholder="Rechercher une série, numéro..." autocomplete="off">
-            <span class="kbd-tag">⌘K</span>
           </div>
           <div class="search-results-menu" id="searchResultsMenu" hidden></div>
         </div>
@@ -3696,7 +3747,7 @@
       <!-- Aperçu Cover -->
       <div style="display:flex;flex-direction:column;gap:8px">
         <div style="aspect-ratio:2/3;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);position:relative;background:var(--bg-card)">
-          <img id="inspectCoverImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Cover" style="width:100%;height:100%;object-fit:cover">
+          <img id="inspectCoverImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Cover" style="width:100%;height:100%;object-fit:contain;background:#0d0d12">
           <div id="inspectKeyBadge" style="position:absolute;top:6px;left:6px" class="status-pill key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> KEY</div>
         </div>
         <a id="inspectCoverDownloadBtn" class="btn secondary" style="font-size: 12px;padding:5px 8px;text-align:center" target="_blank" rel="noopener"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Plein écran</a>
@@ -6228,7 +6279,11 @@ const DEFS = Object.freeze([
   { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 100, 500, 1500], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
   { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 10, 40, 120], unit: 'relecture', desc: 'Relectures notées dans le journal' },
   { id: 'wednesday', family: 'Pull list', name: 'Fidèle du mercredi', icon: 'calendar', steps: [1, 10, 50, 200], unit: 'numéro récupéré', desc: 'Numéros de la pull list récupérés' },
-  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 100, 500, 2000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' }
+  { id: 'archivist', family: 'Rangement', name: 'Archiviste', icon: 'archive', steps: [10, 100, 500, 2000], unit: 'numéro rangé', desc: 'Numéros possédés avec un emplacement' },
+  // D-71 : runs lus en entier, longs runs, galerie de personnages
+  { id: 'run-reader', family: 'Lecture', name: 'Lecteur de runs', icon: 'book', steps: [1, 5, 15, 40], unit: 'run lu', plural: 'runs lus', desc: 'Runs complets lus du premier au dernier numéro' },
+  { id: 'marathon', family: 'Collection', name: 'Marathonien', icon: 'stack', steps: [1, 3, 8, 20], unit: 'long run', plural: 'longs runs', desc: 'Runs complets de 12 numéros ou plus' },
+  { id: 'gallery', family: 'Exploration', name: 'Galerie de héros', icon: 'mask', steps: [5, 15, 40, 100], unit: 'personnage', desc: 'Personnages différents dans la collection' }
 ]);
 
 const tierFor = (value, steps) => { let t = -1; steps.forEach((s, i) => { if (value >= s) t = i; }); return t; };
@@ -6237,9 +6292,30 @@ const describe = (def, value) => {
   const t = tierFor(value, def.steps);
   const next = t + 1 < def.steps.length ? def.steps[t + 1] : null;
   const prev = t >= 0 ? def.steps[t] : 0;
-  return { id: def.id, family: def.family, name: def.name, icon: def.icon, desc: def.desc, unit: def.unit, value,
+  return { id: def.id, family: def.family, name: def.name, icon: def.icon, desc: def.desc, unit: def.unit, plural: def.plural || def.unit + 's', value,
     tier: t >= 0 ? TIERS[t].id : null, tierLabel: t >= 0 ? TIERS[t].label : null, tierIndex: t,
     next, progress: next === null ? 1 : Math.max(0, Math.min(1, (value - prev) / (next - prev))) };
+};
+
+// D-71 : détail des runs complets (série, premier et dernier numéro, nombre, lus en entier ou non).
+// isRead(copy) -> vrai si le numéro est lu ; un run est « lu » quand chacun de ses numéros l'est.
+const runsDetail = (copies, isRead = () => false, min = 3) => {
+  const by = new Map();
+  (copies || []).filter(Boolean).forEach(c => {
+    const n = issueNum(c.issue); if (n === null || !Number.isInteger(n)) return;
+    const name = String(c.series || '').trim(); const k = name.toLowerCase(); if (!k) return;
+    if (!by.has(k)) by.set(k, { series: name, nums: new Map() });
+    const e = by.get(k).nums.get(n) || { read: false, copy: c };
+    if (isRead(c)) e.read = true;
+    by.get(k).nums.set(n, e);
+  });
+  const out = [];
+  by.forEach(v => {
+    const arr = [...v.nums.keys()].sort((a, b) => a - b);
+    if (arr.length < min || arr[arr.length - 1] - arr[0] + 1 !== arr.length) return;
+    out.push({ series: v.series, from: arr[0], to: arr[arr.length - 1], count: arr.length, read: arr.every(n => v.nums.get(n).read), first: v.nums.get(arr[0]).copy });
+  });
+  return out.sort((a, b) => b.count - a.count || a.series.localeCompare(b.series));
 };
 
 // Runs complets : au moins `min` numéros entiers consécutifs depuis le plus petit numéro possédé, sans trou
@@ -6252,12 +6328,13 @@ const completeRuns = (copies, min = 3) => {
 };
 
 // input : { copies (possédés), log (journal de lecture), picked (nombre de numéros récupérés), characterOf(copy) -> nom|null,
-//           isKey(copy), isGraded(copy) }
+//           isKey(copy), isGraded(copy), isRead(copy) (D-71 : runs lus en entier) }
 const computeTrophies = (input = {}) => {
   const copies = (input.copies || []).filter(Boolean);
   const log = (input.log || []).filter(Boolean);
   const isKey = input.isKey || (c => !!c.keyType && c.keyType !== 'none');
   const isGraded = input.isGraded || (c => /\b(cgc|cbcs|pgx)\b/i.test(String(c.condition || '')));
+  const runs = runsDetail(copies, input.isRead || (() => false));
   const values = {
     collector: copies.length,
     runner: completeRuns(copies),
@@ -6268,7 +6345,10 @@ const computeTrophies = (input = {}) => {
     reader: log.filter(l => l.event === 'finished').length,
     rereader: log.filter(l => l.event === 'reread').length,
     wednesday: Math.max(0, Number(input.picked) || 0),
-    archivist: copies.filter(c => String(c.box || c.location || '').trim()).length
+    archivist: copies.filter(c => String(c.box || c.location || '').trim()).length,
+    'run-reader': runs.filter(r => r.read).length,
+    marathon: runs.filter(r => r.count >= 12).length,
+    gallery: new Set(copies.map(c => (input.characterOf || (() => null))(c)).filter(Boolean)).size
   };
   const trophies = DEFS.map(d => describe(d, values[d.id]));
 
@@ -6280,12 +6360,12 @@ const computeTrophies = (input = {}) => {
   const traveler = describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 4], unit: 'ère', desc: 'Ères représentées dans la collection (Vibranium : les quatre, avec 10 numéros dans chacune)' }, erasCovered);
   if (traveler.tierIndex === 3 && !ERAS.every(e => eraCounts[e.id] >= 10)) Object.assign(traveler, describe({ id: 'time-traveler', family: 'Ères', name: 'Voyageur temporel', icon: 'hourglass', steps: [2, 3, 4, 5], unit: 'ère', desc: traveler.desc }, 4));
 
-  // Gardiens : un trophée par personnage suivi (au moins 5 numéros), les 6 plus fournis
+  // Gardiens : un trophée par personnage (au moins 5 numéros), les 12 plus fournis ; D-71 : nom du personnage gardé pour son portrait
   const charOf = input.characterOf || (() => null);
   const perChar = new Map();
   copies.forEach(c => { const ch = charOf(c); if (ch) perChar.set(ch, (perChar.get(ch) || 0) + 1); });
-  const guardians = [...perChar.entries()].filter(([, n]) => n >= 5).sort((a, b) => b[1] - a[1]).slice(0, 6)
-    .map(([ch, n]) => describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 25, 100, 300], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n));
+  const guardians = [...perChar.entries()].filter(([, n]) => n >= 5).sort((a, b) => b[1] - a[1]).slice(0, 12)
+    .map(([ch, n]) => Object.assign(describe({ id: 'guardian-' + ch.toLowerCase().replace(/[^a-z0-9]+/g, '-'), family: 'Gardiens', name: 'Gardien · ' + ch, icon: 'mask', steps: [5, 25, 100, 300], unit: 'numéro', desc: 'Numéros de ' + ch + ' possédés' }, n), { character: ch }));
 
   const all = trophies.concat(eras, [traveler], guardians);
   const xp = all.reduce((a, t) => a + (t.tierIndex >= 0 ? TIERS.slice(0, t.tierIndex + 1).reduce((s, x) => s + x.xp, 0) : 0), 0);
@@ -6294,7 +6374,7 @@ const computeTrophies = (input = {}) => {
   const prevLevelXp = 20 * (level - 1) * (level - 1);
   return {
     trophies: all, xp, level, levelProgress: Math.max(0, Math.min(1, (xp - prevLevelXp) / (nextLevelXp - prevLevelXp))), nextLevelXp,
-    unlocked: all.filter(t => t.tierIndex >= 0).length, total: all.length,
+    unlocked: all.filter(t => t.tierIndex >= 0).length, total: all.length, runs,
     byTier: Object.fromEntries(TIERS.map((t, i) => [t.id, all.filter(x => x.tierIndex === i).length]))
   };
 };
@@ -6313,7 +6393,7 @@ const sanitizeProfile = p => {
 };
 const validHandle = h => /^[A-Za-z0-9_.À-ſ-]{3,24}$/.test(String(h || ''));
 
-module.exports = { TIERS, ERAS, DEFS, eraOf, completeRuns, tierFor, computeTrophies, titleFor, sanitizeProfile, validHandle };
+module.exports = { TIERS, ERAS, DEFS, eraOf, runsDetail, completeRuns, tierFor, computeTrophies, titleFor, sanitizeProfile, validHandle };
   return Object.freeze(module.exports); })();
   /* domains/community/ranks-core.js */
   out.ranksCore = (() => { const module = { exports: {} };
@@ -6340,6 +6420,15 @@ const XP_RULES = [
   { id: 'planches', label: 'Planche préparée', xp: 6 },
   { id: 'stories', label: 'Story de lecture créée', xp: 10 },
   { id: 'artefacts', label: 'Artefact débloqué', xp: 50 },
+  // D-71 : runs lus en entier, longs runs, découvertes et régularité
+  { id: 'runsRead', label: 'Run complet lu en entier', xp: 90 },
+  { id: 'longRuns', label: 'Run complet de 12 numéros ou plus', xp: 120 },
+  { id: 'firsts', label: 'Numéro 1 possédé', xp: 6 },
+  { id: 'graded', label: 'Exemplaire gradé (CGC, CBCS, PGX)', xp: 15 },
+  { id: 'publishers', label: 'Éditeur dans la collection', xp: 12 },
+  { id: 'characters', label: 'Personnage dans la collection', xp: 5 },
+  { id: 'eras', label: 'Ère représentée (Golden, Silver, Bronze, Modern)', xp: 40 },
+  { id: 'readWeeks', label: 'Semaine avec au moins une lecture', xp: 12 },
   { id: 'followers', label: 'Abonné gagné', xp: 10, social: true },
   { id: 'reactions', label: 'Réaction reçue (POW!, WOW!…)', xp: 2, social: true },
   { id: 'comments', label: 'Commentaire reçu', xp: 3, social: true },
@@ -15187,7 +15276,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exNewsWhy = (a, interests) => { const t = ' ' + catNorm(a.title + ' ' + a.excerpt + ' ' + a.categories.join(' ')) + ' '; for (const [n, label] of interests) if (t.includes(' ' + n + ' ')) return label; return ''; };
   const exNewsAgo = iso => { const m = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? 'il y a ' + m + ' min' : m < 1440 ? 'il y a ' + Math.round(m / 60) + ' h' : m < 2880 ? 'hier' : 'il y a ' + Math.round(m / 1440) + ' j'; };
   const exNewsCard = (a, why, big) => '<a class="ex-nw' + (big ? ' is-big' : '') + (a.image ? '' : ' no-img') + '" href="' + h(a.url) + '" target="_blank" rel="noopener noreferrer">' +
-    (a.image ? '<span class="ex-nw-img"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></span>' : '') +
+    (a.image ? '<span class="ex-nw-img"><img class="ex-nw-bg" src="' + h(a.image) + '" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></span>' : '') +
     '<span class="ex-nw-body"><span class="ex-nw-meta"><b>' + h(a.source) + '</b><i>' + a.lang.toUpperCase() + '</i>' + (a.date ? '<time datetime="' + h(a.date) + '">' + h(exNewsAgo(a.date)) + '</time>' : '') + '</span>' +
     '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') + (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : '') + '</span></a>';
   const exNewsBoxHtml = () => {
@@ -15934,6 +16023,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const a = pfActivity(owned);
     return window.PanelDomains.ranksCore.computeRank({
       owned: a.owned, read: a.read, reread: a.reread, rated: a.rated, reviewed: a.reviewed, runs: a.runs, keys: a.keys,
+      runsRead: a.runsRead, longRuns: a.longRuns, firsts: a.firsts, graded: a.graded, publishers: a.publishers, characters: a.characters, eras: a.eras, readWeeks: a.readWeeks,
       trophyXp: tr.xp, planches: a.planches, stories: a.stories,
       artefacts: artefacts === undefined ? window.PanelDomains.artefactsCore.computeArtefacts(a).unlocked : artefacts
     }, { online: false });
@@ -15967,6 +16057,43 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString('fr-FR') + ' → ' + b.xp.toLocaleString('fr-FR') + ' XP</em>') + '</span>').join('') + '</div>' +
       '<p class="stat-sub">Portraits : Comic Vine (nom exact du personnage), chargés au fil de l\'ouverture ; sinon emblème Panel. L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
   };
+  // Image de chaque trophée (D-71) : une couverture de votre collection qui l'illustre (un n° 1 pour « Chasseur de #1 »,
+  // le premier numéro d'un run pour « Complétiste », un numéro de l'ère pour les Ères…), ou le portrait Comic Vine
+  // du personnage pour les Gardiens. Jamais d'image inventée : sans couverture, l'icône reste seule.
+  const trophyArtCopy = (t, owned, runs) => {
+    const TC = window.PanelDomains.trophiesCore, charOf = window.PanelDomains.collectionBoxes.characterOf;
+    const withCover = owned.filter(x => isSafeImageUrl(x.coverUrl));
+    const pick = f => withCover.find(f) || null;
+    const year = x => Number(String(x.coverYear || x.coverDate || '').slice(0, 4)) || 9999;
+    if (/^era-/.test(t.id)) { const e = t.id.slice(4); return pick(x => (TC.eraOf(x) || {}).id === e); }
+    if (t.character) return pick(x => charOf(x) === t.character);
+    const run = f => { const r = runs.find(x => f(x) && isSafeImageUrl(x.first.coverUrl)); return r ? r.first : null; };
+    switch (t.id) {
+      case 'runner': return run(() => true);
+      case 'marathon': return run(x => x.count >= 12);
+      case 'run-reader': return run(x => x.read);
+      case 'firsts': return pick(x => issueNumber(x) === 1);
+      case 'keys': return pick(x => x.keyType && x.keyType !== 'none');
+      case 'slabs': return pick(x => /\b(cgc|cbcs|pgx)\b/i.test(String(x.condition || '')));
+      case 'reader': case 'rereader': return pick(rdReadOfCopy);
+      case 'archivist': return pick(x => String(x.box || x.location || '').trim());
+      case 'gallery': return pick(x => !!charOf(x));
+      case 'time-traveler': return withCover.slice().sort((a, b) => year(a) - year(b))[0] || null;
+      default: return withCover.slice().sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')))[0] || null;
+    }
+  };
+  const trophyArtHtml = (t, owned, runs) => {
+    if (t.character) { const pt = rankPortrait({ name: t.character }); if (pt) return '<img src="' + escapeHtml(pt.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer" title="' + escapeHtml(pt.name + ' — portrait Comic Vine') + '">'; }
+    const c = trophyArtCopy(t, owned, runs);
+    return c ? coverImgTag(c) : '';
+  };
+  // Vitrine des runs complets : du premier au dernier numéro possédé, lus en entier ou non
+  const pfRunsHtml = runs => !runs.length ? '' :
+    '<h3 class="pf-section">Runs complets <span class="stat-sub">' + runs.length + ' run' + (runs.length > 1 ? 's' : '') + ' · ' + runs.filter(r => r.read).length + ' lu' + (runs.filter(r => r.read).length > 1 ? 's' : '') + ' en entier</span></h3>' +
+    '<div class="pf-runs">' + runs.slice(0, 24).map(r => '<button class="pf-run' + (r.read ? ' is-read' : '') + '" data-pf-copy="' + escapeHtml(r.first.id) + '" aria-label="' + escapeHtml(r.series + ', numéros ' + r.from + ' à ' + r.to + (r.read ? ', lu en entier' : '')) + '">' +
+      '<span class="pf-run-stack" style="--n:' + Math.min(r.count, 6) + '">' + coverImgTag(r.first) + '</span>' +
+      '<span class="pf-run-txt"><b>' + escapeHtml(r.series) + '</b><small>#' + r.from + ' à #' + r.to + ' · ' + r.count + ' numéros</small>' +
+      '<span class="pf-run-tags">' + (r.count >= 12 ? '<i class="is-long">Long run · +120 XP</i>' : '') + (r.read ? '<i class="is-read">Lu en entier · +90 XP</i>' : '<i>À lire en entier : +90 XP</i>') + '</span></span></button>').join('') + '</div>';
   let pfGramTab = 'stories';
   const pfAvatarHtml = ini => {
     const st = storyLoad().stories;
@@ -16010,7 +16137,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const TC = window.PanelDomains.trophiesCore;
     const owned = physicalSingles.filter(isOwned);
     const picked = (() => { try { return [...relPulls.values()].filter(x => x.status === 'picked').reduce((a, x) => a + (Number(x.quantity) || 1), 0); } catch (_) { return 0; } })();
-    const r = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked, characterOf: window.PanelDomains.collectionBoxes.characterOf });
+    const r = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy });
     const ar = window.PanelDomains.artefactsCore.computeArtefacts(pfActivity(owned));
     const rk = pfRank(owned, r, ar.unlocked);
     const p = profileLoad();
@@ -16027,10 +16154,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="pf-wide pf-actions"><button class="btn" type="submit">' + (pp ? 'Enregistrer' : 'Créer mon profil') + '</button>' + (pp ? '<button class="btn secondary" type="button" data-pf-cancel>Annuler</button>' : '') +
       '<span class="stat-sub">Profil enregistré sur cet appareil uniquement. Le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec la synchronisation.</span></div></form>';
     const tierCls = t => t.tier ? 'is-' + t.tier : 'is-locked';
-    const trophyHtml = t => '<div class="tr-card ' + tierCls(t) + '" title="' + escapeHtml(t.desc + ' : ' + t.value + (t.next !== null ? ' / ' + t.next + ' pour le palier suivant' : ' (palier maximal)')) + '">' +
-      '<span class="tr-medal"><svg class=ic aria-hidden=true><use href=#' + (TROPHY_ICONS[t.icon] || 'ic-star') + ' /></svg></span>' +
-      '<span class="tr-info"><b>' + escapeHtml(t.name) + '</b><small>' + (t.tierLabel ? escapeHtml(t.tierLabel) : 'À débloquer') + ' · ' + t.value + ' ' + escapeHtml(t.unit) + (t.value > 1 ? 's' : '') + '</small>' +
+    const trophyHtml = t => {
+      const medal = '<span class="tr-medal"><svg class=ic aria-hidden=true><use href=#' + (TROPHY_ICONS[t.icon] || 'ic-star') + ' /></svg></span>';
+      const art = trophyArtHtml(t, owned, r.runs || []);
+      return '<div class="tr-card ' + tierCls(t) + (art ? ' has-art' : '') + '" title="' + escapeHtml(t.desc + ' : ' + t.value + (t.next !== null ? ' / ' + t.next + ' pour le palier suivant' : ' (palier maximal)')) + '">' +
+      (art ? '<span class="tr-art">' + art + medal + '</span>' : medal) +
+      '<span class="tr-info"><b>' + escapeHtml(t.name) + '</b><small>' + (t.tierLabel ? escapeHtml(t.tierLabel) : 'À débloquer') + ' · ' + t.value.toLocaleString('fr-FR') + ' ' + escapeHtml(t.value > 1 ? (t.plural || t.unit + 's') : t.unit) + '</small>' +
       '<span class="tr-bar"><i style="width:' + Math.round(t.progress * 100) + '%"></i></span></span></div>';
+    };
     const families = [...new Set(r.trophies.map(t => t.family))];
     host.innerHTML =
       '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
@@ -16038,7 +16169,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
-      '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfLadderHtml(rk) + artefactsHtml(ar) +
+      '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfRunsHtml(r.runs || []) + pfLadderHtml(rk) + artefactsHtml(ar) +
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
@@ -16332,13 +16463,24 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ── Artefacts (D-63) : domains/community/artefacts-core.js, calculés sur les données locales
+  // Semaines (ISO) avec au moins une première lecture terminée
+  const pfReadWeeks = log => new Set(log.filter(l => l.event === 'finished' && l.at).map(l => {
+    const d = new Date(l.at); if (isNaN(d)) return '';
+    const t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), day = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - day);
+    const y = t.getUTCFullYear();
+    return y + '-' + Math.ceil(((t - Date.UTC(y, 0, 1)) / 86400000 + 1) / 7);
+  }).filter(Boolean)).size;
   const pfActivity = owned => {
     const log = rdLoad().log, drafts = commLoad().drafts;
     const TC = window.PanelDomains.trophiesCore, charOf = window.PanelDomains.collectionBoxes.characterOf;
+    const runsD = TC.runsDetail(owned, rdReadOfCopy);
     return {
       owned: owned.length, read: log.filter(l => l.event === 'finished').length, reread: log.filter(l => l.event === 'reread').length,
       rated: owned.filter(x => x.rating).length, reviewed: drafts.filter(d => d.kind === 'read' && String(d.text || '').trim().length >= 40).length + storyLoad().stories.filter(s => String(s.review || '').trim().length >= 40).length,
-      runs: TC.completeRuns(owned), keys: owned.filter(x => x.keyType && x.keyType !== 'none').length, planches: drafts.length, stories: storyLoad().stories.length,
+      runs: runsD.length, runsRead: runsD.filter(r => r.read).length, longRuns: runsD.filter(r => r.count >= 12).length,
+      firsts: owned.filter(x => issueNumber(x) === 1).length, graded: owned.filter(x => /\b(cgc|cbcs|pgx)\b/i.test(String(x.condition || ''))).length,
+      eras: new Set(owned.map(x => (TC.eraOf(x) || {}).id).filter(Boolean)).size, readWeeks: pfReadWeeks(log), keys: owned.filter(x => x.keyType && x.keyType !== 'none').length, planches: drafts.length, stories: storyLoad().stories.length,
       publishers: new Set(owned.map(x => catNorm(x.publisher)).filter(Boolean)).size, characters: new Set(owned.map(charOf).filter(Boolean)).size,
       value: owned.reduce((a, x) => a + (valueOf(x) || 0), 0)
     };
@@ -16439,7 +16581,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const prof = profileLoad();
     const owned = physicalSingles.filter(isOwned);
     let rk = null;
-    try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf }); rk = pfRank(owned, tr); } catch (_) {}
+    try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); rk = pfRank(owned, tr); } catch (_) {}
     const tabs = [['feed', 'Fil'], ['profile', 'Mon profil'], ['live', 'Directs']];
     return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
       '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + storiesBarHtml();
@@ -16507,7 +16649,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // D-67 — Couvertures en relief : inclinaison qui suit le pointeur, reflet. Souris uniquement, jamais avec « réduire les animations ».
   (() => {
     const mq = window.matchMedia ? window.matchMedia('(hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference)') : null;
-    const SEL = '.comic-card, .ex-cv-media, .ig-tile, .ex-cvd-media';
+    const SEL = '.comic-card, .ex-cv-media, .ig-tile, .ex-cvd-media, .fy-card, .pf-run, .ex-nw, .af-card, .tr-card.has-art, .ex-shop';
     let cur = null, raf = 0, last = null;
     const glareHost = el => el.classList.contains('comic-card') ? el.querySelector('.comic-poster') : el;
     const reset = () => { if (!cur) return; cur.classList.remove('is-tilt'); cur.style.removeProperty('--rx'); cur.style.removeProperty('--ry'); cur.style.removeProperty('--gx'); cur.style.removeProperty('--gy'); cur = null; };
@@ -18723,7 +18865,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           const row = document.createElement('div');
           row.className = 'search-row';
           row.innerHTML = 
-            '<img src="' + safeImgSrc(s.coverUrl) + '" class="search-row-icon" style="object-fit:cover;border-radius:3px" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
+            '<img src="' + safeImgSrc(s.coverUrl) + '" class="search-row-icon" style="object-fit:contain;background:#0d0d12;border-radius:3px" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(s.series) + ' ' + escapeHtml(s.issue) + '</div>' +
               '<div style="font-size: 12px;color:var(--muted)">' + escapeHtml(s.publisher) + ' · ' + escapeHtml(s.variant || 'Cover A') + ' · <strong style="color:var(--gold)">$' + (s.estValue || 0).toFixed(2) + '</strong></div>' +
@@ -18805,7 +18947,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           card.className = 'cv-hit';
 
           card.innerHTML = 
-            '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:cover;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
+            '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:contain;background:#0d0d12;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.volume) + ' #' + escapeHtml(item.issue) + '</div>' +
               '<div style="font-size: 12px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +

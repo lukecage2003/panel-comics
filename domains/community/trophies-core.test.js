@@ -29,6 +29,22 @@ test('runs complets : un trou casse le run', () => {
   assert.strictEqual(T.completeRuns([copy('A', '#1'), copy('A', '#2'), copy('A', '#4')]), 0);
 });
 
+test('D-71 : détail des runs, runs lus en entier, longs runs, galerie', () => {
+  const run = (s, n) => Array.from({ length: n }, (_, i) => copy(s, '#' + (i + 1)));
+  const copies = run('Alpha', 3).concat(run('Long', 12), [copy('Trou', '#1'), copy('Trou', '#2'), copy('Trou', '#4')]);
+  const read = new Set(['Alpha']);
+  const d = T.runsDetail(copies, c => read.has(c.series));
+  assert.strictEqual(d.length, 2);
+  assert.deepStrictEqual(d.map(r => [r.series, r.from, r.to, r.count, r.read]), [['Long', 1, 12, 12, false], ['Alpha', 1, 3, 3, true]]);
+  assert.strictEqual(d[0].first.issue, '#1');
+  const r = T.computeTrophies({ copies, isRead: c => read.has(c.series), characterOf: c => c.series === 'Long' ? 'Héros' : c.series === 'Alpha' ? 'Autre' : null });
+  assert.strictEqual(r.trophies.find(t => t.id === 'run-reader').value, 1);
+  assert.strictEqual(r.trophies.find(t => t.id === 'marathon').value, 1);
+  assert.strictEqual(r.trophies.find(t => t.id === 'gallery').value, 2);
+  assert.strictEqual(r.trophies.find(t => t.id === 'guardian-h-ros').character, 'Héros');
+  assert.strictEqual(r.runs.length, 2);
+});
+
 test('ères, voyageur temporel et gardiens par personnage', () => {
   const copies = [copy('X', '#1', { coverYear: 1950 }), copy('X', '#2', { coverYear: 1963 }), copy('X', '#3', { coverYear: 1975 }), copy('X', '#4', { coverYear: 2020 })]
     .concat(Array.from({ length: 5 }, (_, i) => copy('Batman', '#' + i, { publisher: 'DC Comics' })));

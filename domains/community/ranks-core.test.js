@@ -28,6 +28,12 @@ test('points : barème appliqué, activité sociale ignorée sans compte', () =>
   assert.ok(on.rank.rank > off.rank.rank);
 });
 
+test('D-71 : runs lus, longs runs, découvertes et semaines de lecture rapportent des points', () => {
+  const r = R.computeRank({ runsRead: 1, longRuns: 1, firsts: 2, graded: 1, publishers: 1, characters: 2, eras: 1, readWeeks: 1 });
+  assert.strictEqual(r.xp, 90 + 120 + 12 + 15 + 12 + 10 + 40 + 12);
+  assert.ok(r.breakdown.some(b => b.id === 'runsRead' && b.label === 'Run complet lu en entier'));
+});
+
 test('progression vers le rang suivant et valeurs invalides', () => {
   const z = R.computeRank({ owned: -4, read: 'x' });
   assert.strictEqual(z.xp, 0);

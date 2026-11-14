@@ -4671,6 +4671,38 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Social local (D-70) : « Pour vous » calculé sur l\'appareil (à lire ensuite, story à écrire, souvenir), stories vues, pause du lecteur, onglet Lus du profil',
         ok: !!t57 && !t57.error && ['next', 'tell', 'memory', 'order', 'unseen', 'viewer', 'paused', 'resumed', 'second', 'seenRings', 'lusTab'].every(k => t57[k] === true) });
 
+      // ==========================================
+      // TEST 58 : Niveaux et trophées (D-71) — runs complets en vitrine, trophées illustrés, nouveaux gains, plus de « ⌘K »
+      // ==========================================
+      console.log('\n[TEST 58] Niveaux et trophées : vitrine des runs (collection FICTIVE), trophées illustrés, barème complété...');
+      const t58 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const prev = P.getPhysicalSingles();
+        try {
+          r.noKbd = !document.querySelector('.search-bar .kbd-tag') && !/⌘K/.test(document.querySelector('.search-bar').textContent);
+          const fx = n => ({ id: 'fx_run_' + n, series: 'Fixture Run Saga', issue: '#' + n, publisher: 'Fixture Comics', coverUrl: 'https://img.example/fixture-' + n + '.jpg', condition: 'NM', addedAt: '2026-01-0' + n + 'T00:00:00Z' });
+          P.setPhysicalSingles([fx(1), fx(2), fx(3)]);
+          document.getElementById('navSinglesCommunity').click(); await wait(200);
+          const pt = document.querySelector('#communityHead [data-cm-tab="profile"]'); pt.click(); await wait(300);
+          const root = document.getElementById('communityProfile');
+          const runs = root.querySelectorAll('.pf-run');
+          r.runs = runs.length === 1 && /Fixture Run Saga/.test(runs[0].textContent) && /#1 à #3/.test(runs[0].textContent) && /À lire en entier/.test(runs[0].textContent);
+          const runner = [...root.querySelectorAll('.tr-card')].find(c => /Complétiste/.test(c.textContent));
+          r.art = !!runner && runner.classList.contains('has-art') && !!runner.querySelector('.tr-art img');
+          r.plural = [...root.querySelectorAll('.tr-card')].some(c => /Lecteur de runs/.test(c.textContent));
+          r.rules = /Run complet lu en entier/.test(root.textContent) && /Semaine avec au moins une lecture/.test(root.textContent);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          P.setPhysicalSingles(prev);
+          const ft = document.querySelector('#communityHead [data-cm-tab="feed"]'); if (ft) ft.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 58:', JSON.stringify(t58));
+      testResults.push({ test: 'Niveaux et trophées (D-71) : vitrine des runs complets, trophées illustrés par la collection, barème (runs lus, semaines de lecture), barre de recherche sans « ⌘K »',
+        ok: !!t58 && !t58.error && ['noKbd', 'runs', 'art', 'plural', 'rules'].every(k => t58[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
