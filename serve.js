@@ -10,6 +10,8 @@
 // 25 requêtes / heure maximum (limite anonyme GCD : 30), réponses en cache disque (.cache/gcd.json, 30 jours).
 // Données GCD sous licence CC BY-SA 4.0 (attribution : Grand Comics Database, comics.org).
 //
+// Relais Wikidata : /api/wd/entity?cv=4005-… (ville, univers, créateurs, création, résumé Wikipédia), voir plus bas.
+//
 // Relais Metron (metron.cloud) : /api/metron/scan?code=…&issue=… et /api/metron/status
 // Code-barres complet → numéro + variante exacte (74 variantes pour Absolute Batman #1) ;
 // début du code (12 chiffres) → série reconnue sans saisie. Compte gratuit requis :
@@ -169,6 +171,46 @@ const handleCv = async (u, res) => {
   }
 };
 
+// Apparitions récentes d'un personnage, d'une équipe ou d'un créateur (D-67) : /api/cv-appearances?ref=character:26578
+// La liste complète des crédits peut peser plusieurs Mo (Batman : ~6 Mo) : le relais la lit une fois, garde les 30 entrées
+// les plus récentes dans Comic Vine, lit leurs dates en une requête, et renvoie 12 numéros triés. Cache disque 7 jours.
+const cvAppFile = path.join(root, '.cache', 'cv-appearances.json');
+let cvAppCache = {};
+try { cvAppCache = JSON.parse(fs.readFileSync(cvAppFile, 'utf8')) || {}; } catch (_) { cvAppCache = {}; }
+let cvAppPersist = true;
+const CV_APP_KIND = { character: ['character/4005-', 'issue_credits'], team: ['team/4060-', 'issue_credits'], person: ['person/4040-', 'issue_credits'] };
+const cvBudgetTake = resource => { const now = Date.now(); cvCalls[resource] = (cvCalls[resource] || []).filter(t => now - t < 3600000); if (cvCalls[resource].length >= 190) return false; cvCalls[resource].push(now); return true; };
+const cvJson = async (p, params) => { const r = await cvGet('https://comicvine.gamespot.com/api/' + p + '/?api_key=' + encodeURIComponent(cvApiKey) + '&format=json&' + new URLSearchParams(params).toString()); return r.json(); };
+const handleCvAppearances = async (u, res) => {
+  if (!cvApiKey) return sendJson(res, 503, { error: 'Clé Comic Vine absente du serveur.' });
+  const m = /^(character|team|person):(\d{1,9})$/.exec(String(u.searchParams.get('ref') || ''));
+  if (!m) return sendJson(res, 400, { error: 'paramètres invalides' });
+  const key = m[1] + ':' + m[2], hit = cvAppCache[key];
+  if (hit && Date.now() - hit.at < 7 * 86400000) return sendJson(res, 200, Object.assign({ cached: true }, hit.data));
+  const [prefix, field] = CV_APP_KIND[m[1]];
+  try {
+    if (!cvBudgetTake(m[1]) ) return sendJson(res, 429, { error: 'quota Comic Vine atteint pour l\'heure' });
+    const d = await cvJson(prefix + m[2], { field_list: field + ',count_of_issue_appearances' });
+    const credits = (d.results && Array.isArray(d.results[field]) ? d.results[field] : []).filter(x => x && Number.isInteger(x.id));
+    const top = credits.map(x => x.id).sort((a, b) => b - a).slice(0, 30);
+    let issues = [];
+    if (top.length) {
+      if (!cvBudgetTake('issues')) return sendJson(res, 429, { error: 'quota Comic Vine atteint pour l\'heure' });
+      const r = await cvJson('issues', { filter: 'id:' + top.join('|'), limit: 30, field_list: 'id,name,issue_number,volume,image,cover_date,store_date' });
+      issues = (r.results || []).map(x => ({ id: x.id, name: String(x.name || '').slice(0, 120), issue_number: String(x.issue_number || '').slice(0, 12),
+        volume: x.volume ? { id: x.volume.id, name: String(x.volume.name || '').slice(0, 160) } : null,
+        image: x.image && /^https:\/\//.test(x.image.small_url || '') ? x.image.small_url : '', date: String(x.store_date || x.cover_date || '').slice(0, 10) }))
+        .filter(x => x.date).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 12);
+    }
+    const data = { total: credits.length, latest: issues };
+    cvAppCache[key] = { at: Date.now(), data };
+    if (cvAppPersist) { try { fs.mkdirSync(path.dirname(cvAppFile), { recursive: true }); fs.writeFileSync(cvAppFile, JSON.stringify(cvAppCache)); } catch (_) {} }
+    return sendJson(res, 200, data);
+  } catch (e) {
+    return sendJson(res, 502, { error: 'Comic Vine indisponible' });
+  }
+};
+
 // ---------- Relais Metron
 const METRON_BASE = 'https://metron.cloud/api';
 const metronCredFile = path.join(root, '.secrets', 'metron.json');
@@ -319,14 +361,120 @@ const setupMetron = async () => {
   process.exit(0);
 };
 
+// ---------- Relais Wikidata + Wikipédia (D-67) : /api/wd/entity?cv=4005-1699
+// Données ouvertes (Wikidata CC0, résumés Wikipédia CC BY-SA 4.0), sans clé ni compte. Seul l'identifiant Comic Vine
+// public est envoyé. Quota 60 requêtes / heure, cache disque 30 jours (.cache/wikidata.json).
+const WD_HOURLY_MAX = 60;
+const wdCacheFile = path.join(root, '.cache', 'wikidata.json');
+let wdCache = {};
+try { wdCache = JSON.parse(fs.readFileSync(wdCacheFile, 'utf8')) || {}; } catch (_) { wdCache = {}; }
+const wdCalls = [];
+const wdBudget = () => { const now = Date.now(); while (wdCalls.length && now - wdCalls[0] > 3600000) wdCalls.shift(); return WD_HOURLY_MAX - wdCalls.length; };
+let wdPersist = true;
+const saveWdCache = () => { if (!wdPersist) return; try { fs.mkdirSync(path.dirname(wdCacheFile), { recursive: true }); fs.writeFileSync(wdCacheFile, JSON.stringify(wdCache)); } catch (_) {} };
+let wdGet = async (url, accept) => {
+  const r = await fetch(url, { headers: { 'User-Agent': 'PanelComics/1.0 (local collection manager; open data relay)', Accept: accept || 'application/json' } });
+  if (r.status === 404) return null;
+  if (!r.ok) throw Object.assign(new Error('HTTP ' + r.status), { status: r.status });
+  return r.json();
+};
+const WD_PROPS = { res: 'P551', univ: 'P1080', creator: 'P170', pob: 'P19', sex: 'P21', member: 'P463', first: 'P4584', occupation: 'P106', citizen: 'P27' };
+const wdQuery = cv => 'SELECT ?item ?itemLabel ?inception ?frwiki ?enwiki ' + Object.keys(WD_PROPS).map(k => '?' + k + 'Label').join(' ') +
+  ' WHERE { ?item wdt:P5905 "' + cv + '". OPTIONAL{?item wdt:P571 ?inception} ' + Object.entries(WD_PROPS).map(([k, pr]) => 'OPTIONAL{?item wdt:' + pr + ' ?' + k + '} ').join('') +
+  'OPTIONAL{?frwiki schema:about ?item; schema:isPartOf <https://fr.wikipedia.org/>} OPTIONAL{?enwiki schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>} ' +
+  'SERVICE wikibase:label { bd:serviceParam wikibase:language "fr,en". } } LIMIT 200';
+const handleWd = async (u, res) => {
+  if (u.pathname !== '/api/wd/entity') return sendJson(res, 404, { error: 'introuvable' });
+  const cv = String(u.searchParams.get('cv') || '');
+  if (!/^40(05|40|60|45|10)-\d{1,9}$/.test(cv)) return sendJson(res, 400, { error: 'paramètres invalides' });
+  const hit = wdCache[cv];
+  if (hit && Date.now() - hit.at < GCD_CACHE_TTL) return sendJson(res, 200, Object.assign({ cached: true }, hit.data));
+  if (wdBudget() < 2) return sendJson(res, 429, { error: 'quota Wikidata atteint, réessayez dans une heure' });
+  try {
+    wdCalls.push(Date.now());
+    const d = await wdGet('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(wdQuery(cv)), 'application/sparql-results+json');
+    const rows = (d && d.results && d.results.bindings) || [];
+    const val = (r, k) => r[k] && typeof r[k].value === 'string' ? r[k].value.slice(0, 200) : '';
+    const uniq = k => [...new Set(rows.map(r => val(r, k + 'Label')).filter(v => v && !/^Q\d+$/.test(v) && !/^https?:/.test(v)))].slice(0, 12);
+    const first = rows[0] || {};
+    const data = { found: !!rows.length, qid: (val(first, 'item').match(/Q\d+$/) || [''])[0], label: val(first, 'itemLabel'), inception: val(first, 'inception').slice(0, 10),
+      residence: uniq('res'), universe: uniq('univ'), creators: uniq('creator'), birthplace: uniq('pob'), sex: uniq('sex'), memberOf: uniq('member'), firstAppearance: uniq('first'),
+      occupation: uniq('occupation'), citizenship: uniq('citizen'), frwiki: val(first, 'frwiki'), enwiki: val(first, 'enwiki'), summary: '', summaryLang: '', summaryUrl: '' };
+    // Résumé Wikipédia (français d'abord), extrait court avec lien vers l'article
+    const wiki = data.frwiki || data.enwiki;
+    if (wiki && /^https:\/\/(fr|en)\.wikipedia\.org\/wiki\/[^\s?#]+$/.test(wiki)) {
+      wdCalls.push(Date.now());
+      const lang = wiki.slice(8, 10), title = wiki.split('/wiki/')[1];
+      const sm = await wdGet('https://' + lang + '.wikipedia.org/api/rest_v1/page/summary/' + title).catch(() => null);
+      if (sm && typeof sm.extract === 'string') { data.summary = sm.extract.slice(0, 1200); data.summaryLang = lang; data.summaryUrl = wiki; }
+    }
+    data.source = 'Wikidata (CC0)' + (data.summary ? ' · Wikipédia (CC BY-SA 4.0)' : '');
+    wdCache[cv] = { at: Date.now(), data };
+    saveWdCache();
+    return sendJson(res, 200, data);
+  } catch (e) {
+    return sendJson(res, e.status === 429 ? 429 : 502, { error: 'Wikidata indisponible', detail: String(e.message || e).slice(0, 120) });
+  }
+};
+
+// ---------- Relais BnF (D-67) : /api/bnf/editions?title=Absolute%20Batman
+// Catalogue public de la Bibliothèque nationale de France (SRU, Dublin Core), sans clé : éditions françaises déjà parues
+// (dépôt légal), avec date, éditeur, collection et ISBN. Seuls les éditeurs de comics francophones sont gardés.
+// Quota 40 requêtes / heure, cache disque 14 jours (.cache/bnf.json).
+const BNF_HOURLY_MAX = 40;
+const bnfCacheFile = path.join(root, '.cache', 'bnf.json');
+let bnfCache = {};
+try { bnfCache = JSON.parse(fs.readFileSync(bnfCacheFile, 'utf8')) || {}; } catch (_) { bnfCache = {}; }
+const bnfCalls = [];
+const bnfBudget = () => { const now = Date.now(); while (bnfCalls.length && now - bnfCalls[0] > 3600000) bnfCalls.shift(); return BNF_HOURLY_MAX - bnfCalls.length; };
+let bnfPersist = true;
+let bnfGet = async url => { const r = await fetch(url, { headers: { 'User-Agent': 'PanelComics/1.0 (local collection manager; BnF relay)', Accept: 'application/xml' } }); if (!r.ok) throw Object.assign(new Error('BnF HTTP ' + r.status), { status: r.status }); return r.text(); };
+const BNF_PUBLISHERS = /urban|panini|marvel france|semic|delcourt|gl[ée]nat|bliss|hi comics|komics initiative|akileos|futuropolis|dargaud|humano[iï]des|ankama|snorgleux|kinaye|404 [ée]ditions|vents d'ouest|soleil|casterman|dupuis|lombard|wetta|reflexions|graph zeppelin|black river|huginn|vestron|omaké|dc comics/i;
+const xmlDecode = t => String(t || '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'").replace(/&amp;/g, '&');
+const handleBnf = async (u, res) => {
+  if (u.pathname !== '/api/bnf/editions') return sendJson(res, 404, { error: 'introuvable' });
+  const title = String(u.searchParams.get('title') || '').replace(/["\\]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 100);
+  if (title.length < 2) return sendJson(res, 400, { error: 'paramètres invalides' });
+  const key = title.toLowerCase(), hit = bnfCache[key];
+  if (hit && Date.now() - hit.at < 14 * 86400000) return sendJson(res, 200, Object.assign({ cached: true }, hit.data));
+  if (bnfBudget() < 1) return sendJson(res, 429, { error: 'quota BnF atteint, réessayez dans une heure' });
+  try {
+    bnfCalls.push(Date.now());
+    const q = 'bib.title all "' + title + '" and bib.doctype any "a"';
+    const xml = await bnfGet('https://catalogue.bnf.fr/api/SRU?version=1.2&operation=searchRetrieve&recordSchema=dublincore&maximumRecords=50&query=' + encodeURIComponent(q));
+    const recs = xml.split('<srw:record>').slice(1);
+    const field = (r, tag) => [...r.matchAll(new RegExp('<dc:' + tag + '[^>]*>([\\s\\S]*?)</dc:' + tag + '>', 'g'))].map(m => xmlDecode(m[1]).trim());
+    const editions = recs.map(r => {
+      const ids = field(r, 'identifier');
+      const isbn = (ids.map(x => (x.match(/ISBN\s*([0-9Xx-]{10,17})/) || [])[1]).find(Boolean) || '').replace(/-/g, '');
+      const ark = ids.find(x => /^https?:\/\/catalogue\.bnf\.fr\/ark:/.test(x)) || '';
+      const descs = field(r, 'description');
+      return { title: (field(r, 'title')[0] || '').split(' / ')[0].slice(0, 200), publisher: (field(r, 'publisher')[0] || '').slice(0, 120), date: (field(r, 'date')[0] || '').slice(0, 10),
+        collection: ((descs.find(x => /^Collection\s*:/.test(x)) || '').replace(/^Collection\s*:\s*/, '')).slice(0, 120), isbn: /^(97[89])?\d{9}[\dX]$/i.test(isbn) ? isbn : '',
+        creators: field(r, 'creator').slice(0, 4).map(c => c.replace(/\s*\(.*?\)\.?|\.\s*Auteur.*$|\.\s*Illustrateur.*$/g, '').trim().slice(0, 80)), lang: field(r, 'language')[0] || '',
+        url: ark.replace(/^http:/, 'https:') };
+    }).filter(e => e.lang === 'fre' && BNF_PUBLISHERS.test(e.publisher) && e.title)
+      .sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 30);
+    const data = { title, editions, source: 'BnF, catalogue général (data.bnf.fr, Licence Ouverte)' };
+    bnfCache[key] = { at: Date.now(), data };
+    if (bnfPersist) { try { fs.mkdirSync(path.dirname(bnfCacheFile), { recursive: true }); fs.writeFileSync(bnfCacheFile, JSON.stringify(bnfCache)); } catch (_) {} }
+    return sendJson(res, 200, data);
+  } catch (e) {
+    return sendJson(res, 502, { error: 'BnF indisponible', detail: String(e.message || e).slice(0, 120) });
+  }
+};
+
 const server = http.createServer((req, res) => {
   let p;
   try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { res.writeHead(400); return res.end(); }
   // État des relais (aucun secret renvoyé) : l'app vérifie au démarrage quels outils en ligne sont réellement disponibles
-  if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true });
+  if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true, wd: true, bnf: true });
   if (p.startsWith('/api/gcd/') && req.method === 'GET') return void handleGcd(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/metron/') && req.method === 'GET') return void handleMetron(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/cv/') && req.method === 'GET') return void handleCv(new URL(req.url, 'http://x'), res);
+  if (p === '/api/cv-appearances' && req.method === 'GET') return void handleCvAppearances(new URL(req.url, 'http://x'), res);
+  if (p.startsWith('/api/bnf/') && req.method === 'GET') return void handleBnf(new URL(req.url, 'http://x'), res);
+  if (p.startsWith('/api/wd/') && req.method === 'GET') return void handleWd(new URL(req.url, 'http://x'), res);
   if (!ALLOWED.test(p)) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Introuvable'); }
   const file = path.join(root, p === '/' ? 'index.html' : p);
   fs.readFile(file, (err, data) => {
@@ -351,4 +499,7 @@ module.exports = server;
 module.exports.setMetronForTest = (fetchFn, creds) => { metronFetch = fetchFn; metronCreds = creds; metronPersist = false; metronCache = { upc: {}, prefix: {}, issues: {} }; metronState = { last: 0, blockedUntil: 0, remaining: null, authFailed: false, chain: Promise.resolve() }; METRON_SPACING = 0; };
 
 module.exports.setCvForTest = (fn, key) => { cvGet = fn; cvApiKey = key; Object.keys(cvCalls).forEach(k => delete cvCalls[k]); };
+module.exports.setCvAppearancesForTest = () => { cvAppCache = {}; cvAppPersist = false; };
+module.exports.setBnfGetForTest = fn => { bnfGet = fn; bnfCalls.length = 0; bnfCache = {}; bnfPersist = false; };
+module.exports.setWdGetForTest = fn => { wdGet = fn; wdCalls.length = 0; wdCache = {}; wdPersist = false; };
 module.exports.setGcdGetForTest = fn => { gcdGet = fn; gcdCalls.length = 0; gcdCache = {}; gcdPersist = false; };

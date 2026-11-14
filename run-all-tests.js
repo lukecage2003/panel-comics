@@ -1238,6 +1238,41 @@ const waitForCdp = async () => {
         srv.setCvForTest(async () => ({ json: async () => ({}) }), '');
         const cvNoKey = await fetch('http://127.0.0.1:8099/api/cv/search?query=x');
         t20.cvRelay = cvOk.status_code === 1 && /api_key=CLESERVEUR/.test(cvUrl) && !/PIRATE/.test(cvUrl) && /format=json/.test(cvUrl) && cvBad.status === 400 && cvNoKey.status === 503;
+        // D-67 : apparitions récentes agrégées par le relais (Comic Vine simulé), Wikidata + Wikipédia, éditions françaises BnF
+        const jget = async q => { const res = await fetch('http://127.0.0.1:8099' + q); return { status: res.status, body: await res.json() }; };
+        const cvUrls = [];
+        srv.setCvAppearancesForTest();
+        srv.setCvForTest(async url => { cvUrls.push(url); return { json: async () => url.includes('/character/4005-26578/')
+          ? { status_code: 1, results: { issue_credits: Array.from({ length: 40 }, (_, i) => ({ id: 1000 + i })) } }
+          : { status_code: 1, results: [{ id: 1039, name: 'Fin', issue_number: '40', volume: { id: 7, name: 'New Titans' }, image: { small_url: 'https://comicvine.gamespot.com/a.jpg' }, store_date: '2026-10-21' },
+              { id: 1010, name: '', issue_number: '11', volume: { id: 7, name: 'New Titans' }, image: { small_url: 'http://x/b.jpg' }, cover_date: '2025-01-01' }] } }; }, 'CLESERVEUR');
+        const ap1 = await jget('/api/cv-appearances?ref=character:26578');
+        const nAp = cvUrls.length;
+        const ap2 = await jget('/api/cv-appearances?ref=character:26578');
+        const apBad = await jget('/api/cv-appearances?ref=issue:1');
+        const top = decodeURIComponent((cvUrls[1] || '').split('filter=')[1] || '');
+        t20.cvAppearances = ap1.status === 200 && ap1.body.total === 40 && ap1.body.latest.length === 2 && ap1.body.latest[0].date === '2026-10-21' && ap1.body.latest[1].image === ''
+          && nAp === 2 && /^id:1039\|1038/.test(top) && !top.includes('1009') && ap2.body.cached === true && cvUrls.length === nAp && apBad.status === 400;
+        const wdUrls = [];
+        srv.setWdGetForTest(async url => { wdUrls.push(url); return url.includes('query.wikidata.org')
+          ? { results: { bindings: [{ item: { value: 'http://www.wikidata.org/entity/Q1131424' }, itemLabel: { value: 'Static' }, resLabel: { value: 'Dakota' }, creatorLabel: { value: 'Dwayne McDuffie' }, frwiki: { value: 'https://fr.wikipedia.org/wiki/Static_(comics)' } },
+              { item: { value: 'http://www.wikidata.org/entity/Q1131424' }, resLabel: { value: 'Q99' }, creatorLabel: { value: 'Denys Cowan' } }] } }
+          : { extract: 'Virgil Hawkins est un super-héros.' }; });
+        const wd1 = await jget('/api/wd/entity?cv=4005-26578');
+        const wd2 = await jget('/api/wd/entity?cv=4005-26578');
+        const wdBad = await jget('/api/wd/entity?cv=9999-1');
+        t20.wikidata = wd1.status === 200 && wd1.body.qid === 'Q1131424' && wd1.body.residence.join() === 'Dakota' && wd1.body.creators.length === 2 && wd1.body.summaryLang === 'fr'
+          && /super-héros/.test(wd1.body.summary) && /P5905/.test(decodeURIComponent(wdUrls[0])) && wd2.body.cached === true && wdUrls.length === 2 && wdBad.status === 400;
+        const bnfUrls = [];
+        const rec = (t, pub, date, lang, isbn) => '<srw:record><dc:title>' + t + ' / scénario X</dc:title><dc:publisher>' + pub + '</dc:publisher><dc:date>' + date + '</dc:date><dc:language>' + lang + '</dc:language><dc:identifier>ISBN ' + isbn + '</dc:identifier><dc:identifier>http://catalogue.bnf.fr/ark:/12148/cb1</dc:identifier><dc:description>Collection : DC Black Label</dc:description></srw:record>';
+        srv.setBnfGetForTest(async url => { bnfUrls.push(url); return '<x>' + rec('Absolute Batman. 1, Le zoo', 'Urban comics (Paris)', '2025', 'fre', '979-10-268-2338-4') + rec('Batman', 'Penguin', '2024', 'eng', '9780000000001') + rec('Recettes &amp; cuisine', 'Hachette', '2025', 'fre', '9780000000002') + '</x>'; });
+        const b1 = await jget('/api/bnf/editions?title=Absolute%20Batman');
+        const b2 = await jget('/api/bnf/editions?title=absolute%20batman');
+        const bBad = await jget('/api/bnf/editions?title=x');
+        const st = await jget('/api/status');
+        t20.bnf = b1.status === 200 && b1.body.editions.length === 1 && b1.body.editions[0].isbn === '9791026823384' && b1.body.editions[0].title === 'Absolute Batman. 1, Le zoo'
+          && b1.body.editions[0].url === 'https://catalogue.bnf.fr/ark:/12148/cb1' && b1.body.editions[0].collection === 'DC Black Label' && b2.body.cached === true && bnfUrls.length === 1
+          && bBad.status === 400 && st.body.wd === true && st.body.bnf === true;
         const src = require('fs').readFileSync(require('path').join(__dirname, 'index.html'), 'utf8');
         t20.noKeyInClient = !/DEFAULT_CV_KEY/.test(src) && !/['"][0-9a-f]{40}['"]/.test(src);
       } catch (e) { t20 = { error: String(e && e.message || e) }; }
@@ -1245,7 +1280,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
