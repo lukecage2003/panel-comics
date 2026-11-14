@@ -86,8 +86,25 @@ begin
   if n <> 3 then raise exception 'Fonctions de service du lot 3.6 : % conforme(s) sur 3', n; end if;
   if not exists (select 1 from pg_trigger where tgname = 'sync_ops_rate' and tgrelid = 'app.sync_ops'::regclass) then raise exception 'Limitation de débit absente'; end if;
 
-  select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals','community');
+  select count(*) into n from pg_namespace where nspname in ('catalog','editorial','media','signals');
   if n <> 0 then raise exception 'Schéma réservé créé'; end if;
+
+  -- D-73 (migration 13) : communauté et modération. RLS partout, aucune écriture client, API authenticated seulement
+  select count(*) into n from pg_class where relnamespace = 'community'::regnamespace and relkind = 'r' and not relrowsecurity;
+  if n <> 0 then raise exception 'community : RLS désactivée sur % table(s)', n; end if;
+  select count(*) into n from pg_class c where c.relnamespace = 'community'::regnamespace and c.relkind = 'r'
+    and (has_table_privilege('authenticated', c.oid, 'insert,update,delete,truncate') or has_table_privilege('anon', c.oid, 'select,insert,update,delete'));
+  if n <> 0 then raise exception 'community : % table(s) modifiable(s) par un client', n; end if;
+  if has_table_privilege('authenticated', 'community.moderation_log', 'select') or has_table_privilege('authenticated', 'community.rate_events', 'select') or has_table_privilege('authenticated', 'community.limits', 'select') then
+    raise exception 'community : journal de modération, limites ou compteurs lisibles par un client';
+  end if;
+  select count(*) into n from pg_proc where pronamespace = 'api'::regnamespace
+    and proname in ('community_join','community_update_profile','post_create','post_delete','follow','unfollow','block','unblock','react','unreact','report','mod_queue','mod_act','mod_log')
+    and prosecdef and proconfig @> array['search_path=""'] and not has_function_privilege('anon', oid, 'execute') and has_function_privilege('authenticated', oid, 'execute');
+  if n <> 14 then raise exception 'API communauté : % fonction(s) conforme(s) sur 14', n; end if;
+  select count(*) into n from pg_proc where pronamespace = 'community'::regnamespace and proname in ('rate_check','payload_ok')
+    and (has_function_privilege('anon', oid, 'execute') or has_function_privilege('authenticated', oid, 'execute'));
+  if n <> 0 then raise exception 'community.rate_check ou payload_ok exécutable par un client'; end if;
 
   raise notice 'verify-supabase : schéma app conforme (15 tables, 37 politiques, RLS 100 %%, anon sans droit, écritures par api.sync_push).';
 end $$;

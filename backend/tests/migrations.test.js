@@ -20,7 +20,7 @@ async function fingerprint(db) {
   ].join('\n---\n');
 }
 
-test('douze migrations horodatées, dans l\'ordre attendu', () => {
+test('treize migrations horodatées, dans l\'ordre attendu', () => {
   assert.deepEqual(H.migrationFiles(), [
     '20261107000001_app_schema.sql',
     '20261107000002_profiles_settings_devices.sql',
@@ -33,7 +33,8 @@ test('douze migrations horodatées, dans l\'ordre attendu', () => {
     '20261109000009_privacy_purge.sql',
     '20261110000010_roles_profile_devices.sql',
     '20261110000011_conflict_resolution.sql',
-    '20261110000012_limits_purge_account.sql'
+    '20261110000012_limits_purge_account.sql',
+    '20261114000013_community_moderation.sql'
   ]);
 });
 
@@ -42,7 +43,7 @@ test('les migrations ne créent pas le schéma auth (fourni par Supabase) et ne 
     const sql = fs.readFileSync(path.join(MIG_DIR, f), 'utf8').replace(/--.*$/gm, '');
     assert.doesNotMatch(sql, /create\s+(schema|table|function)\s+auth\b|create\s+table\s+auth\./i, f);
     assert.doesNotMatch(sql, /\b(drop\s+(table|schema)|truncate)\b/i, f);
-    assert.doesNotMatch(sql, /create\s+schema\s+(if\s+not\s+exists\s+)?(catalog|editorial|media|signals|community)\b/i, f);
+    assert.doesNotMatch(sql, /create\s+schema\s+(if\s+not\s+exists\s+)?(catalog|editorial|media|signals)\b/i, f);
   }
 });
 

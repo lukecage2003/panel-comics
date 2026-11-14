@@ -613,12 +613,27 @@ const SECURITY_HEADERS = {
   'Referrer-Policy': 'strict-origin-when-cross-origin',
   'Cross-Origin-Opener-Policy': 'same-origin',
   'Permissions-Policy': 'camera=(self), geolocation=(self), microphone=(), payment=(), usb=(), serial=(), hid=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=()',
-  'Content-Security-Policy': "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; worker-src 'self'; manifest-src 'self'"
+  'Content-Security-Policy': "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; worker-src 'self'; manifest-src 'self'",
+  'Cross-Origin-Resource-Policy': 'same-origin',
+  'X-Permitted-Cross-Domain-Policies': 'none',
+  'Origin-Agent-Cluster': '?1'
+};
+// 4. (D-73) Requêtes bornées : adresse de 2 048 caractères au plus, aucun corps accepté, et 300 appels /api par minute
+//    et par adresse au plus (une page qui boucle ne peut pas épuiser les quotas des services tiers ni le processeur).
+const MAX_URL = 2048, API_PER_MIN = 300;
+let apiHits = new Map();
+const apiRateOk = ip => {
+  const now = Date.now(), win = Math.floor(now / 60000), e = apiHits.get(ip);
+  if (!e || e.win !== win) { if (apiHits.size > 1000) apiHits = new Map(); apiHits.set(ip, { win, n: 1 }); return true; }
+  return ++e.n <= API_PER_MIN;
 };
 const requestGuard = (req, res, p) => {
   const host = String(req.headers.host || '');
   if (!LOCAL_HOST.test(host)) { res.writeHead(421, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); res.end('Hôte refusé'); return false; }
+  const len = Number(req.headers['content-length'] || 0);
+  if (len > 0 || req.headers['transfer-encoding']) { res.writeHead(413, { 'Content-Type': 'text/plain; charset=utf-8', Connection: 'close', ...SECURITY_HEADERS }); res.end('Corps refusé'); req.destroy(); return false; }
   if (p.startsWith('/api/')) {
+    if (!apiRateOk(req.socket.remoteAddress || '?')) { res.setHeader('Retry-After', '60'); sendJson(res, 429, { error: 'trop de requêtes, réessayez dans une minute' }); return false; }
     const origin = req.headers.origin;
     if (origin && origin !== 'null') {
       let ok = false; try { const o = new URL(origin); ok = /^https?:$/.test(o.protocol) && o.host.toLowerCase() === host.toLowerCase(); } catch (_) {}
@@ -631,7 +646,9 @@ const requestGuard = (req, res, p) => {
 
 const server = http.createServer((req, res) => {
   let p;
+  if ((req.url || '').length > MAX_URL) { res.writeHead(414, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); return res.end('Adresse trop longue'); }
   try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { res.writeHead(400); return res.end(); }
+  if (p.includes('\0') || p.includes('..')) { res.writeHead(400, SECURITY_HEADERS); return res.end(); }
   if (!requestGuard(req, res, p)) return;
   // État des relais (aucun secret renvoyé) : l'app vérifie au démarrage quels outils en ligne sont réellement disponibles
   if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true, wd: true, bnf: true, shops: true, news: true });
@@ -657,6 +674,9 @@ const server = http.createServer((req, res) => {
   });
 });
 
+// Délais : en-têtes reçus en 10 s, requête complète en 30 s, connexion inactive fermée après 5 s (lenteurs volontaires « slowloris »)
+server.headersTimeout = 10000; server.requestTimeout = 30000; server.keepAliveTimeout = 5000; server.maxHeadersCount = 64;
+
 if (require.main === module && process.argv.includes('--metron')) setupMetron();
 else server.listen(port, '127.0.0.1', () => {
   console.log(`Panel est servi sur http://localhost:${port}  (Ctrl+C pour arrêter)`);
@@ -666,6 +686,8 @@ module.exports = server;
 // Tests : remplacement de l'accès réseau GCD
 module.exports.setMetronForTest = (fetchFn, creds) => { metronFetch = fetchFn; metronCreds = creds; metronPersist = false; metronCache = { upc: {}, prefix: {}, issues: {} }; metronState = { last: 0, blockedUntil: 0, remaining: null, authFailed: false, chain: Promise.resolve() }; METRON_SPACING = 0; };
 
+module.exports.setApiRateForTest = () => { apiHits = new Map(); };
+module.exports.apiRateLimit = API_PER_MIN;
 module.exports.setCvForTest = (fn, key) => { cvGet = fn; cvApiKey = key; Object.keys(cvCalls).forEach(k => delete cvCalls[k]); };
 module.exports.setCvAppearancesForTest = () => { cvAppCache = {}; cvAppPersist = false; };
 module.exports.setNewsGetForTest = fn => { newsGet = fn; newsCache = {}; newsPersist = false; };

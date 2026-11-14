@@ -1326,6 +1326,13 @@ const waitForCdp = async () => {
         const hSame = await raw('/api/status', { Origin: 'http://127.0.0.1:8099' }), hPost = await raw('/api/status', {}, 'POST'), hPut = await raw('/index.html', {}, 'PUT');
         t20.hardening = hOk.status === 200 && hOk.headers['x-frame-options'] === 'DENY' && /frame-ancestors 'none'/.test(hOk.headers['content-security-policy'] || '') && /microphone=\(\)/.test(hOk.headers['permissions-policy'] || '')
           && hHost.status === 421 && hOrigin.status === 403 && hSame.status === 200 && hPost.status === 405 && hPut.status === 405;
+        // D-73 : adresse trop longue, corps refusé, remontée de dossier refusée, limite de débit /api, en-têtes supplémentaires
+        const hLong = await raw('/api/status?x=' + 'a'.repeat(2100)), hBody = await raw('/api/status', { 'Content-Length': '5' }), hDots = await raw('/..%2fserve.js');
+        srv.setApiRateForTest();
+        let hRate = null; for (let i = 0; i <= srv.apiRateLimit; i++) hRate = await raw('/api/status');
+        srv.setApiRateForTest();
+        t20.hardening2 = hLong.status === 414 && hBody.status === 413 && hDots.status === 400 && hRate.status === 429 && hRate.headers['retry-after'] === '60'
+          && hOk.headers['cross-origin-resource-policy'] === 'same-origin' && (await raw('/api/status')).status === 200;
         const src = require('fs').readFileSync(require('path').join(__dirname, 'index.html'), 'utf8');
         t20.noKeyInClient = !/DEFAULT_CV_KEY/.test(src) && !/['"][0-9a-f]{40}['"]/.test(src);
       } catch (e) { t20 = { error: String(e && e.message || e) }; }
@@ -1333,7 +1340,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================

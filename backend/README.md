@@ -16,7 +16,7 @@ backend/
   .env.example            noms de variables, sans valeur (jamais de clé de service)
   supabase/
     config.toml           configuration de la Supabase CLI, sans secret
-    migrations/           10 migrations horodatées (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4 ; 9e : export, effacement, purge, lot 3.6 ; 10e : rôles, profil, préférences HLC, appareils, lot 3.3)
+    migrations/           13 migrations horodatées (7e : durcissement ; 8e : RPC de synchronisation, lot 3.4 ; 9e : export, effacement, purge, lot 3.6 ; 10e : rôles, profil, préférences HLC, appareils, lot 3.3 ; 11e : conflits ; 12e : limites et purge du compte ; 13e : communauté et modération, D-73)
     seed.sql              données fictives (@exemple.test)
   tests/
     auth-stub.sql         schéma auth minimal (en test seulement ; Supabase fournit le vrai)
@@ -44,7 +44,8 @@ backend/
   - `app.assign_rev()` (`security definer`, `search_path` vide) : révision strictement croissante par utilisateur ;
   - `updated_at` : horodatage serveur, `created_at` conservé.
 - **Écritures (lot 3.4, D-31) :** un client n'écrit plus directement dans les tables synchronisées. Il passe par `api.sync_push` et lit par `api.sync_pull` (`security definer`, `search_path` vide, `authenticated` seulement). Les suppressions sont des pierres tombales.
-- **Schémas réservés, non créés :** `catalog`, `editorial`, `media`, `signals` (Explorer 2.0) et `community`.
+- **Schémas réservés, non créés :** `catalog`, `editorial`, `media`, `signals` (Explorer 2.0).
+- **Schéma `community` (D-73, migration 13) :** membres, publications, abonnements, blocages, réactions, signalements, journal de modération et limites de débit. RLS partout ; les clients ne font que lire (selon l'âge, la visibilité et les blocages) et n'écrivent que par les fonctions `api.*` (security definer, `search_path` vide). Tests : `community.test.js`.
 
 ## Conventions de migration
 - **Nom :** `AAAAMMJJHHMMSS_description.sql`.

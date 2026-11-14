@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- D-73 (OWASP MASVS-NETWORK) : HTTPS obligatoire, aucune autorité installée par l'utilisateur, aucun trafic en clair. -->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </base-config>
+</network-security-config>

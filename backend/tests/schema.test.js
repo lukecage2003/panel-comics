@@ -29,8 +29,9 @@ test('le schéma app contient exactement les 15 tables prévues (12 personnelles
   assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log', 'service_limits'].sort());
 });
 
-test('aucun schéma réservé (catalog, editorial, media, signals, community) n\'est créé', async () => {
-  const r = await db.query("select nspname from pg_namespace where nspname in ('catalog','editorial','media','signals','community')");
+test('aucun schéma réservé (catalog, editorial, media, signals) n\'est créé ; community existe depuis D-73', async () => {
+  assert.equal((await db.query("select 1 from pg_namespace where nspname = 'community'")).rows.length, 1);
+  const r = await db.query("select nspname from pg_namespace where nspname in ('catalog','editorial','media','signals')");
   assert.equal(r.rows.length, 0);
 });
 
