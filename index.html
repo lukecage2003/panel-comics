@@ -1989,21 +1989,21 @@
     .cbox-book:nth-child(3n+2) { filter: brightness(.86) saturate(1.1); } .cbox-book:nth-child(3n) { filter: brightness(1.08); }
     .cbox:hover .cbox-book { transform: translateY(calc(var(--y, 0px) - 16px)) rotate(var(--r, 0deg)); }
     .cbox-book img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; }
-    .cbox-book b { position: absolute; left: 8%; top: 6%; font: 800 13px var(--font-title); color: #fff; letter-spacing: -0.02em; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
-    .cbox-book em { position: absolute; left: 8%; right: 8%; top: 22%; font: 800 22px var(--font-title); font-style: normal; color: rgba(255,255,255,.88); letter-spacing: -0.04em; line-height: .9; }
+    .cbox-book b { position: absolute; left: 8%; top: 6%; font: 800 13px var(--font-display); color: #fff; letter-spacing: -0.02em; text-shadow: 0 1px 3px rgba(0,0,0,.5); }
+    .cbox-book em { position: absolute; left: 8%; right: 8%; top: 22%; font: 800 22px var(--font-display); font-style: normal; color: rgba(255,255,255,.88); letter-spacing: -0.04em; line-height: .9; }
     .cbox-book i { position: absolute; inset: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.38) 40%, transparent 52%), linear-gradient(180deg, rgba(255,255,255,.12), transparent 30%); pointer-events: none; }
     .cbox-front { position: absolute; left: 0; right: 0; top: 46%; bottom: 0; z-index: 3; display: block; border-radius: 6px 6px 14px 14px; color: #2a2318;
       background: linear-gradient(180deg, #f1e6cf 0%, #e6d6b4 60%, #d4c098 100%);
       box-shadow: inset 0 2px 0 rgba(255,255,255,.65), inset 0 -14px 22px rgba(120,90,40,.2), 0 1px 0 rgba(0,0,0,.08); }
     .cbox-front::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 9px; border-radius: 6px 6px 0 0; background: linear-gradient(180deg, #fbf4e4, #e9dbbd); box-shadow: 0 2px 4px rgba(90,60,20,.25); }
-    .cbox-print { position: absolute; left: 7%; top: 12%; font: 800 9px var(--font-ui); letter-spacing: .28em; color: rgba(60,45,25,.55); text-transform: uppercase; }
+    .cbox-print { position: absolute; left: 7%; top: 12%; font: 700 9px var(--font-display); letter-spacing: .2em; color: rgba(60,45,25,.55); text-transform: uppercase; }
     .cbox-print::after { content: ""; display: block; width: 26px; height: 2px; margin-top: 4px; background: linear-gradient(90deg, var(--vibranium), var(--cyan-fill)); border-radius: 2px; }
     .cbox-handle { position: absolute; right: 7%; top: 11%; width: 22%; height: 8%; border-radius: 999px; background: #2d241a; box-shadow: inset 0 3px 6px rgba(0,0,0,.7), 0 1px 0 rgba(255,255,255,.5); }
     .cbox-holder { position: absolute; left: 7%; right: 7%; bottom: 16%; padding: 4px; border-radius: 9px; background: linear-gradient(180deg, rgba(255,255,255,.55), rgba(255,255,255,.25)); box-shadow: inset 0 0 0 1px rgba(255,255,255,.7), 0 2px 6px rgba(80,60,30,.2); }
     .cbox-label { display: flex; flex-direction: column; gap: 2px; padding: 8px 11px 9px; border-radius: 6px; background: #fffdf7; transform: rotate(-.8deg); box-shadow: 0 1px 2px rgba(0,0,0,.1); }
-    .cbox-label small { font-size: 9px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8a7556; }
-    .cbox-label b { font-family: "Segoe Print", "Bradley Hand", "Marker Felt", var(--font-title); font-size: 16px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.2; color: #1a1610; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
-    .cbox-label em { font-style: normal; font-size: 11.5px; color: #5d503d; font-variant-numeric: tabular-nums; }
+    .cbox-label small { font-size: 9px; font-family: var(--font-display); font-weight: 650; letter-spacing: .08em; text-transform: uppercase; color: #8a7556; }
+    .cbox-label b { font-family: var(--font-display); font-size: 15px; font-weight: 650; letter-spacing: -0.015em; line-height: 1.2; color: #1a1610; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .cbox-label em { font-style: normal; font-family: var(--font-display); font-size: 11.5px; color: #5d503d; font-variant-numeric: tabular-nums; }
     .cbox-gauge { position: absolute; left: 7%; right: 7%; bottom: 7%; height: 4px; border-radius: 999px; background: rgba(60,45,25,.2); overflow: hidden; }
     .cbox-gauge i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #2a2318, var(--vibranium)); }
     .cbox-multi { position: absolute; top: -10px; right: 10px; z-index: 4; font-size: 10.5px; font-weight: 800; background: #1d1810; color: #f6edd9; border-radius: 999px; padding: 3px 9px; box-shadow: 0 4px 10px rgba(0,0,0,.3); }
@@ -2153,16 +2153,9 @@
     .pf-xp-rules span.is-pending { background: transparent; border: 1px dashed var(--hair); }
     @media (max-width: 600px) { .pf-rank { grid-template-columns: 1fr; text-align: left; } .pf-rank-badge { width: 64px; height: 64px; } .pf-rank-main > b { font-size: 21px; } .pf-form .pf-top3 { grid-template-columns: 1fr; } }
     /* Communauté : annonce des débats en direct */
-    .live-teaser { display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px; align-items: center; margin: 0 0 14px; padding: 18px 20px; border-radius: 22px; border: 1px solid var(--hair); background: radial-gradient(circle at 90% 10%, color-mix(in srgb, #ff375f 22%, transparent), transparent 45%), var(--card, var(--bg-secondary)); }
-    .live-teaser h3 { margin: 6px 0; font: 800 21px var(--font-title); letter-spacing: -0.02em; }
-    .live-teaser p { margin: 0; font-size: 13.5px; line-height: 1.5; color: var(--muted); }
     .live-dot { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ff375f; background: color-mix(in srgb, #ff375f 14%, transparent); }
     .live-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #ff375f; animation: livePulse 1.6s ease-in-out infinite; }
     @keyframes livePulse { 50% { opacity: .3; } }
-    .live-teaser-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 13px; }
-    .live-teaser-list li { padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--ink, #fff) 5%, transparent); } .live-teaser-list b { display: block; }
-    .live-teaser-note { grid-column: 1 / -1; margin: 0; }
-    @media (max-width: 700px) { .live-teaser { grid-template-columns: 1fr; } }
     /* D-62 : passe responsive mobile (cibles tactiles, vue liste) */
     @media (max-width: 600px) {
       .single-row { grid-template-columns: 40px minmax(0, 1fr) auto auto; gap: 8px; padding: 6px 8px 6px 6px; }
@@ -2835,8 +2828,6 @@
     .cz-cosmos-n { font: 800 34px/1 var(--font-title); color: #FFE500; }
     .cz-cosmos b { font: 700 16px/1.2 var(--font-title); }
     .cz-cosmos small { opacity: .75; font-size: 12px; line-height: 1.3; }
-    .cz-search { margin: 4px 0 10px; }
-    .cz-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--cz); margin-right: 6px; vertical-align: 1px; }
     .cz-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; margin-top: 12px; }
     .cz-card { display: flex; flex-direction: column; text-align: left; padding: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-card); color: var(--ink); cursor: pointer; font-family: var(--font-ui); transition: transform .2s ease, box-shadow .2s ease; }
     .cz-card:hover { transform: translateY(-3px); box-shadow: 0 14px 30px -18px rgba(0,0,0,.6); }
@@ -2847,16 +2838,6 @@
     .cz-card-b small { font-size: 11px; font-weight: 650; color: var(--muted); }
     .cz-card-b b { font: 700 15px/1.2 var(--font-title); }
     .cz-card-b span { font-size: 12px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .cz-time { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-left: 2px solid var(--line); }
-    .cz-time li { display: grid; grid-template-columns: 64px 1fr; gap: 12px; padding: 10px 0 10px 14px; position: relative; }
-    .cz-time li::before { content: ''; position: absolute; left: -6px; top: 16px; width: 10px; height: 10px; border-radius: 50%; background: #FFE500; }
-    .cz-y { font: 800 18px var(--font-title); color: var(--muted); font-variant-numeric: tabular-nums; }
-    .cz-time p { margin: 2px 0; } .cz-time small { color: var(--muted); }
-    .cz-tl { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
-    .cz-legend { margin: 14px 0; } .cz-legend summary { cursor: pointer; font-weight: 650; }
-    .cz-cert { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700; background: color-mix(in srgb, var(--ink) 10%, transparent); }
-    .cz-c-c { background: #1f9d55; color: #fff; } .cz-c-o { background: #2b6cb0; color: #fff; } .cz-c-d { background: #b7791f; color: #fff; } .cz-c-t { background: #6b46c1; color: #fff; } .cz-c-x { background: #c53030; color: #fff; }
-    .cz-pill { display: inline-flex; padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 600; border: 1px solid var(--line); }
     .cz-e { margin-top: 10px; }
     .cz-e-head { display: grid; grid-template-columns: minmax(160px, 260px) 1fr; gap: 24px; align-items: end; padding: 22px; border-radius: 24px; background: radial-gradient(120% 120% at 0% 0%, color-mix(in srgb, var(--cz) 30%, #120c22), #07060c 70%); color: #fff; }
     .cz-e-port { margin: 0; aspect-ratio: 3 / 4; border-radius: 16px; overflow: hidden; background: #0a0a10; display: grid; place-items: center; box-shadow: 0 24px 50px -20px rgba(0,0,0,.9); }
@@ -2864,18 +2845,11 @@
     .cz-e-cat { border: 0; background: none; padding: 0; color: var(--cz); font: 700 12px var(--font-ui); letter-spacing: .1em; text-transform: uppercase; cursor: pointer; }
     .cz-e-head h2 { margin: 6px 0 2px; font: 800 clamp(30px, 5vw, 48px)/1.02 var(--font-title); letter-spacing: -.02em; }
     .cz-e-en { margin: 0; opacity: .6; } .cz-e-lead { margin: 8px 0; font-size: 17px; opacity: .9; }
-    .cz-e-chips { display: flex; gap: 6px; flex-wrap: wrap; } .cz-e-head .cz-pill { border-color: rgba(255,255,255,.25); }
     .cz-e-act { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0 0; }
-    .cz-e-body { display: grid; grid-template-columns: 1fr minmax(240px, 320px); gap: 24px; margin: 22px 0; }
     .cz-e-big { font-size: 18px; line-height: 1.55; }
     .cz-src { padding-left: 18px; } .cz-src li { margin: 4px 0; }
-    .cz-idcard { padding: 16px 18px; border-radius: 18px; background: var(--bg-card); border: 1px solid var(--line); align-self: start; }
-    .cz-idcard h3 { margin-top: 0; }
-    .cz-idcard dl { margin: 0; display: grid; gap: 10px; } .cz-idcard dt { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; } .cz-idcard dd { margin: 2px 0 0; font-size: 14px; }
-    .cz-grid.is-rel { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); }
     @media (max-width: 720px) {
       .cz-e-head { grid-template-columns: 1fr; } .cz-e-port { max-width: 220px; }
-      .cz-e-body { grid-template-columns: 1fr; }
       .cz-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .ex-cz-promo-art { flex-basis: 56px; height: 56px; }
     }
@@ -3000,6 +2974,133 @@
     .ig-tile-pin .ic { fill: currentColor; width: 16px; height: 16px; }
     @media (max-width: 600px) { .igf { gap: 14px; margin-left: -6px; margin-right: -6px; } .igp { border-radius: 16px; } }
     @media (prefers-reduced-motion: reduce) { .igp-burst.is-go .ic, .igp-act.is-pop .ic { animation-duration: .01s; } .igp-track { scroll-behavior: auto; } }
+    /* D-78 : accueil d'Explorer (sommaire, paires, index replié) et cartes cosmiques */
+    .ex-toc { position: sticky; top: 0; z-index: 6; display: flex; gap: 6px; overflow-x: auto; padding: 10px 2px; margin: 14px 0 -16px; background: color-mix(in srgb, var(--bg) 86%, transparent); -webkit-backdrop-filter: saturate(160%) blur(16px); backdrop-filter: saturate(160%) blur(16px); scrollbar-width: none; }
+    .ex-toc::-webkit-scrollbar { display: none; }
+    .ex-filt-wrap { margin-top: 8px; } .ex-filt-wrap > summary { cursor: pointer; width: fit-content; font: 600 13px var(--font-display); color: var(--muted); list-style: none; padding: 4px 0; }
+    .ex-filt-wrap > summary::-webkit-details-marker { display: none; } .ex-filt-wrap > summary::after { content: ' ▾'; } .ex-filt-wrap[open] > summary::after { content: ' ▴'; }
+    .ex-toc-b { flex: 0 0 auto; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font: 600 13px/1 var(--font-display); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: border-color .15s, background .15s; }
+    .ex-toc-b:hover { border-color: var(--line-strong); }
+    .ex-duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
+    .ex-duo > .ex-sec > .ex-cz-promo, .ex-duo > .ex-sec > .ex-shop-cta { flex: 1; }
+    .ex-duo .ex-cz-promo b { font-size: 18px; }
+    .ex-index { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-top: 34px; align-items: start; }
+    .ex-index > .ex-sec { margin-top: 0 !important; padding: 16px 18px 14px; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-card); }
+    .ex-index .ex-sec-head h3 { font-size: 18px !important; }
+    .ex-index .ex-sec-head p { font-size: 12.5px !important; }
+    .ex-index .ex-ev-pub { margin: 6px 0 2px; font: 650 12px var(--font-display); color: var(--muted); text-transform: none; letter-spacing: 0; }
+    .ex-index > .ex-sec:not(.is-open) .ex-chips { max-height: 118px; overflow: hidden; -webkit-mask-image: linear-gradient(#000 60%, transparent); mask-image: linear-gradient(#000 60%, transparent); }
+    .ex-index-more { align-self: flex-start; border: 0; background: none; color: var(--blue-ink); font: 600 13px var(--font-display); padding: 2px 0; cursor: pointer; }
+    .cz-e-prose { max-width: 760px; margin: 22px 0; }
+    .cz-e-nav { display: flex; justify-content: space-between; gap: 12px; margin: 18px 0; }
+    .cz-e-step { display: flex; flex-direction: column; gap: 2px; text-align: left; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); border-radius: 14px; padding: 10px 14px; cursor: pointer; max-width: 48%; }
+    .cz-e-step.is-next { text-align: right; margin-left: auto; }
+    .cz-e-step small { color: var(--muted); font-size: 12px; } .cz-e-step b { font: 650 15px var(--font-display); }
+    @media (max-width: 760px) { .ex-duo, .ex-index { grid-template-columns: 1fr; } }
+    /* D-78 : page Lecture */
+    .rd-up { margin: 4px 0 22px; }
+    .rd-up-head h3 { margin: 0; font: 700 22px/1.2 var(--font-display); letter-spacing: -0.02em; }
+    .rd-up-head p { margin: 2px 0 12px; color: var(--muted); font-size: 13px; }
+    .rd-up-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(150px, 172px); gap: 14px; overflow-x: auto; padding-bottom: 6px; scroll-snap-type: x proximity; }
+    .rd-up-card { display: flex; flex-direction: column; gap: 8px; scroll-snap-align: start; }
+    .rd-up-cov { position: relative; aspect-ratio: 2 / 3; border-radius: 12px; overflow: hidden; background: linear-gradient(160deg, var(--bg-card), color-mix(in srgb, var(--ink) 12%, var(--bg-card))); border: 1px solid var(--line); display: grid; place-items: center; box-shadow: 0 14px 30px -20px rgba(0,0,0,.6); }
+    .rd-up-cov img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .rd-up-cov i { font: 750 28px var(--font-display); font-style: normal; color: var(--muted); }
+    .rd-up-pct { position: absolute; left: 0; right: 0; bottom: 0; height: 4px; z-index: 2; background: rgba(0,0,0,.35); }
+    .rd-up-pct::after { content: ''; display: block; height: 100%; width: var(--p); background: var(--key, #FFD400); }
+    .rd-up-b { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+    .rd-up-b small { color: var(--muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rd-up-b b { font: 700 16px var(--font-display); } .rd-up-b span { color: var(--muted); font-size: 12px; }
+    .rd-up-go { width: 100%; justify-content: center; }
+    .rd-kpis { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; }
+    .rd-kpi { padding: 14px 14px 12px; border-radius: 16px; background: var(--bg-card); border: 1px solid var(--line); display: flex; flex-direction: column; gap: 2px; }
+    .rd-kpi b { font: 700 28px/1 var(--font-display); letter-spacing: -0.03em; font-variant-numeric: tabular-nums; }
+    .rd-kpi span { color: var(--muted); font-size: 12.5px; }
+    .rd-kpi-note { margin: 8px 2px 20px; color: var(--muted); font-size: 12.5px; }
+    .rd-warn { color: var(--warn, #b45309); font-weight: 600; }
+    .rd-row { display: grid !important; grid-template-columns: 44px minmax(0, 1fr) !important; gap: 6px 12px !important; align-items: start; padding: 8px 10px !important; border-radius: 14px !important; cursor: default !important; font-size: 13px !important; }
+    .rd-row + .rd-row { border-top: 1px solid var(--line); border-radius: 0 !important; }
+    .rd-row-cov { grid-row: span 2; position: relative; width: 44px; aspect-ratio: 2 / 3; border-radius: 6px; overflow: hidden; background: var(--bg-card); border: 1px solid var(--line); display: grid; place-items: center; }
+    .rd-row-cov img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .rd-row-cov i { font: 700 15px var(--font-display); font-style: normal; color: var(--muted); }
+    .rd-row-b { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .rd-row-b > b { font: 650 14.5px var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rd-row-act { grid-column: 2; display: flex; gap: 6px; flex-wrap: wrap; }
+    .rd-act { border: 1px solid var(--line); background: transparent; color: var(--ink); font: 600 12px var(--font-display); padding: 5px 10px; border-radius: 999px; cursor: pointer; transition: background .15s, border-color .15s; }
+    .rd-act:hover { border-color: var(--line-strong); background: color-mix(in srgb, var(--ink) 6%, transparent); }
+    .rd-act.is-main { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .rd-stats { margin-top: 26px; }
+    @media (max-width: 900px) { .rd-kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    /* D-78 : studio de direct et scène de répétition */
+    .lv { display: flex; flex-direction: column; gap: 12px; margin-bottom: 18px; }
+    .lv-hero { display: flex; gap: 18px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; padding: 22px; border-radius: 22px; color: #fff; background: radial-gradient(90% 140% at 100% 0%, rgba(255,55,95,.35), transparent 60%), radial-gradient(80% 120% at 0% 100%, rgba(94,92,230,.45), transparent 60%), #14121c; }
+    .lv-hero-t { flex: 1 1 340px; min-width: 0; }
+    .lv-hero h3 { margin: 8px 0 6px; font: 700 26px/1.1 var(--font-display); letter-spacing: -0.025em; }
+    .lv-hero p { margin: 0; max-width: 640px; font-size: 14px; line-height: 1.5; color: rgba(255,255,255,.78); }
+    .live-dot.is-studio { background: rgba(255,255,255,.12); color: #fff; }
+    .live-dot.is-rec { background: rgba(255,55,95,.16); color: #ff375f; }
+    .lv-h { margin: 10px 2px 0; font: 700 18px var(--font-display); letter-spacing: -0.01em; } .lv-h small { color: var(--muted); font-weight: 500; margin-left: 4px; }
+    .lv-list, .lv-hists { display: grid; gap: 10px; }
+    .lv-card { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 8px 14px; align-items: center; padding: 12px 14px; border-radius: 18px; border: 1px solid var(--line); background: var(--bg-card); }
+    .lv-card-covers { grid-row: span 2; display: flex; }
+    .lv-card-covers > span { position: relative; width: 40px; aspect-ratio: 2 / 3; border-radius: 6px; overflow: hidden; background: color-mix(in srgb, var(--ink) 8%, var(--bg-card)); border: 2px solid var(--bg-card); display: grid; place-items: center; font: 700 14px var(--font-display); color: var(--muted); }
+    .lv-card-covers > span + span { margin-left: -16px; }
+    .lv-card-covers img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
+    .lv-card-covers i { font-style: normal; }
+    .lv-card-ph { color: #ff375f !important; font-size: 18px !important; }
+    .lv-card-b { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+    .lv-card-b small, .lv-hist small { color: var(--muted); font-size: 12px; }
+    .lv-card-b b, .lv-hist b { font: 650 16px var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lv-card-b span, .lv-hist span { color: var(--muted); font-size: 12.5px; }
+    .lv-card-act { grid-column: 2; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .lv-empty { display: flex; flex-direction: column; gap: 4px; padding: 18px; border-radius: 18px; border: 1px dashed var(--line-strong); color: var(--muted); font-size: 13px; } .lv-empty b { color: var(--ink); font-size: 15px; }
+    .lv-hist { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); }
+    .lv-hist > div { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .lv-edit { max-width: 640px; }
+    .lv-f { display: flex; flex-direction: column; gap: 4px; margin: 10px 0; font-size: 13px; font-weight: 600; } .lv-f small { color: var(--muted); font-weight: 500; }
+    .lv-f > summary { cursor: pointer; }
+    .lv-f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; } @media (max-width: 560px) { .lv-f2 { grid-template-columns: 1fr; } }
+    .lv-picked, .lv-pick, .lv-strip { display: flex; gap: 8px; overflow-x: auto; padding: 4px 0 6px; }
+    .lv-pick { flex-wrap: wrap; max-height: 236px; overflow-y: auto; }
+    .lv-thumb { position: relative; flex: 0 0 auto; width: 64px; aspect-ratio: 2 / 3; padding: 0; border-radius: 8px; overflow: hidden; border: 2px solid transparent; background: color-mix(in srgb, var(--ink) 8%, var(--bg-card)); cursor: pointer; display: flex; align-items: flex-end; }
+    .lv-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+    .lv-thumb i { position: relative; z-index: 1; width: 100%; padding: 10px 4px 3px; font: 600 9.5px/1.15 var(--font-display); font-style: normal; color: #fff; text-align: left; background: linear-gradient(transparent, rgba(0,0,0,.75)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lv-thumb.is-on { border-color: #ff375f; }
+    .lv-stage { position: fixed; inset: 0; z-index: 3000; display: flex; flex-direction: column; color: #f4f2f8; background: radial-gradient(70% 90% at 80% 0%, rgba(255,55,95,.18), transparent 60%), #0d0c12; font-family: var(--font-display); }
+    .lv-top { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
+    .lv-top-t { flex: 1; min-width: 0; font: 650 17px var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .lv-clock { font: 600 20px var(--font-display); font-variant-numeric: tabular-nums; letter-spacing: .02em; }
+    .lv-end { background: #ff375f !important; color: #fff !important; border-color: #ff375f !important; }
+    .lv-body { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 18px; padding: 18px 20px; overflow: auto; }
+    .lv-board { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+    .lv-screen { position: relative; flex: 1; min-height: 260px; border-radius: 20px; overflow: hidden; background: #000; display: grid; place-items: center; }
+    .lv-screen img { max-width: 100%; max-height: 62vh; object-fit: contain; }
+    .lv-cap { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 18px 16px 12px; font-size: 13px; background: linear-gradient(transparent, rgba(0,0,0,.8)); }
+    .lv-screen-empty { color: rgba(255,255,255,.55); padding: 20px; text-align: center; }
+    .lv-stage .lv-thumb { width: 72px; }
+    .lv-react { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .lv-onoma { border: 0; cursor: pointer; padding: 8px 14px; border-radius: 999px; font: 800 14px var(--font-comic, var(--font-display)); letter-spacing: .02em; color: #111; background: #FFE500; transform: rotate(-2deg); transition: transform .12s; }
+    .lv-onoma:nth-child(2n) { background: #ff375f; color: #fff; transform: rotate(2deg); } .lv-onoma:active { transform: scale(.92); }
+    .lv-react-n { color: rgba(255,255,255,.6); font-size: 12.5px; }
+    .lv-burst { position: absolute; bottom: 30%; z-index: 3; font: 900 34px var(--font-comic, var(--font-display)); color: #FFE500; text-shadow: 3px 3px 0 #000; pointer-events: none; animation: lvBurst .9s ease-out forwards; }
+    @keyframes lvBurst { from { transform: translateY(0) scale(.6); opacity: 0; } 25% { opacity: 1; transform: translateY(-20px) scale(1.15); } to { transform: translateY(-110px) scale(1); opacity: 0; } }
+    .lv-side { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 20px; background: rgba(255,255,255,.05); align-self: start; }
+    .lv-side h4 { margin: 0; font: 700 15px var(--font-display); }
+    .lv-agenda { margin: 0; padding: 0; list-style: none; display: grid; gap: 6px; counter-reset: lv; }
+    .lv-agenda li { counter-increment: lv; display: flex; gap: 8px; justify-content: space-between; padding: 8px 10px; border-radius: 12px; font-size: 13.5px; color: rgba(255,255,255,.75); }
+    .lv-agenda li span::before { content: counter(lv) '. '; color: rgba(255,255,255,.4); }
+    .lv-agenda li.is-cur { background: rgba(255,55,95,.16); color: #fff; font-weight: 650; }
+    .lv-agenda li.is-done { color: rgba(255,255,255,.4); text-decoration: line-through; }
+    .lv-agenda small { font-variant-numeric: tabular-nums; color: inherit; text-decoration: none; }
+    .lv-next { width: 100%; justify-content: center; }
+    .lv-mic { display: grid; gap: 6px; } .lv-mic .rd-act { color: #fff; border-color: rgba(255,255,255,.2); justify-self: start; } .lv-mic .rd-act.is-on { background: #30d158; border-color: #30d158; color: #000; }
+    .lv-meter { height: 6px; border-radius: 99px; background: rgba(255,255,255,.1); overflow: hidden; } .lv-meter span { display: block; height: 100%; width: 0; background: #30d158; transition: width .08s linear; }
+    .lv-mic small, .lv-solo { color: rgba(255,255,255,.55); font-size: 12px; margin: 0; }
+    .lv-rules summary { cursor: pointer; font-size: 13px; font-weight: 600; } .lv-rules ul { margin: 6px 0 0; padding-left: 18px; font-size: 12.5px; color: rgba(255,255,255,.75); }
+    @media (max-width: 860px) { .lv-body { grid-template-columns: 1fr; } .lv-screen img { max-height: 46vh; } }
+    .pl-notice { display: flex; gap: 8px; align-items: baseline; margin: 6px 2px 14px; font-size: 12.5px; color: var(--muted); }
+    .pl-notice-dot { flex: 0 0 auto; width: 7px; height: 7px; border-radius: 50%; background: var(--muted); opacity: .6; transform: translateY(-1px); }
+    .cm-share-rules { margin-top: 4px; font-size: 13px; color: var(--muted); } .cm-share-rules summary { cursor: pointer; width: fit-content; } .cm-share-rules p { margin: 6px 0 0; }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -3296,7 +3397,7 @@
         <div class="single-stat-pill">
           <span>Valeur estimée</span>
           <strong class="value-glow" id="statSinglesValue">$0.00</strong>
-          <small class="stat-sub" id="statSinglesGradedSub">0 gradés</small>
+          <small class="stat-sub" id="statSinglesGradedSub">—</small>
         </div>
         <div class="single-stat-pill">
           <span>Investi</span>
@@ -3411,7 +3512,7 @@
 
       <!-- ===== VUE : COMMUNAUTÉ (brouillons locaux, D-34) ===== -->
       <div id="singlesCommunityView" hidden>
-        <div class="section-head"><div><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></div></div>
+        <div class="section-head"><div><p>Vos planches, vos stories et vos directs, à partir de votre vraie collection.</p><details class="cm-share-rules"><summary>Ce qui est repris quand vous partagez</summary><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></details></div></div>
         <div id="communityHead"></div>
         <div id="communityProfile"></div>
         <div id="communityDashboard"></div>
@@ -3474,7 +3575,6 @@
           <button class="tab-btn" data-sfilter="Dark Horse">Dark Horse</button>
           <button class="tab-btn" data-sfilter="Indé">Indés</button>
           <button class="tab-btn" data-sfilter="key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Key Issues</button>
-          <button class="tab-btn" data-sfilter="graded"><svg class=ic aria-hidden=true><use href=#ic-gem /></svg> Gradés CGC</button>
           <button class="tab-btn" data-sfilter="disposed" title="Exemplaires vendus, donnés, perdus ou échangés (fiches conservées)">Sorties</button>
           <button class="tab-btn" data-sfilter="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
         </div>
@@ -3819,7 +3919,7 @@
         </select>
       </div>
       <div class="form-row">
-        <label for="singleConditionSelect">Condition / Grading</label>
+        <label for="singleConditionSelect">État</label>
         <select id="singleConditionSelect">
           <option value="">État non renseigné</option>
           <optgroup label="Non gradé (estimation)">
@@ -3833,25 +3933,12 @@
             <option value="GD 2.0 (Good)">GD 2.0 (Usé)</option>
             <option value="FR 1.0 (Fair)">FR 1.0 (Abîmé)</option>
           </optgroup>
-          <optgroup label="Gradé (slab certifié)">
-            <option value="CGC 10.0 (Certifié)">CGC 10.0</option>
-            <option value="CGC 9.9 (Certifié)">CGC 9.9</option>
-            <option value="CGC 9.8 (Certifié)">CGC 9.8</option>
-            <option value="CGC 9.6 (Certifié)">CGC 9.6</option>
-            <option value="CGC 9.4 (Certifié)">CGC 9.4</option>
-            <option value="CGC 9.2 (Certifié)">CGC 9.2</option>
-            <option value="CGC 9.0 (Certifié)">CGC 9.0</option>
-            <option value="CGC 8.0 (Certifié)">CGC 8.0</option>
-            <option value="CBCS 9.8 (Certifié)">CBCS 9.8</option>
-            <option value="CBCS 9.6 (Certifié)">CBCS 9.6</option>
-            <option value="PGX 9.8 (Certifié)">PGX 9.8</option>
-            <option value="CGC Signature Series">CGC Signature Series (jaune)</option>
-          </optgroup>
         </select>
       </div>
     </div>
 
-    <details class="grading-details" id="singleGradingDetails">
+    <!-- D-78 : gradation retirée de l'interface ; les champs restent pour conserver les données déjà saisies -->
+    <details class="grading-details" id="singleGradingDetails" hidden>
       <summary>Grading, slab et signature</summary>
       <div class="grading-grid">
         <div class="form-row">
@@ -6528,6 +6615,159 @@ const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {
 
 module.exports = { KIND_TAGS, MAX_PINS, tagify, publisherTag, tagsOf, emptyState, sanitizeState, toggle, buildFeed };
   return Object.freeze(module.exports); })();
+  /* domains/community/live-core.js */
+  out.liveCore = (() => { const module = { exports: {} };
+'use strict';
+// Studio de direct (D-78) : préparer un débat (sujet, ordre du jour, tableau d'images, règles), le répéter seul sur l'appareil,
+// garder la synthèse de chaque répétition. Le salon vocal à plusieurs (voix, mains levées, auditeurs) arrive avec les comptes
+// en ligne et un serveur audio (docs/LIVE-DEBATS.md). Module pur : aucun participant, aucun message ni aucune réaction d'autrui
+// n'est jamais simulé ; tout ce qui est compté vient de l'utilisateur lui-même.
+
+const FORMATS = Object.freeze({ wednesday: 'Débat du mercredi', trial: 'Procès d\'un event', bestrun: 'Meilleur run', club: 'Club de lecture', free: 'Sujet libre' });
+const DEFAULT_RULES = Object.freeze([
+  'On débat des œuvres, jamais des personnes.',
+  'Spoilers annoncés avant d\'en parler.',
+  'Une main levée, une prise de parole.',
+  'Aucun enregistrement sans l\'accord de tous.'
+]);
+const REACTIONS = Object.freeze(['POW!', 'WOW!', 'BOOM!', 'ZAP!', 'HMM…']);
+const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 12, rules: 6, rule: 140, rooms: 30, history: 30 });
+
+const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
+const isoOrEmpty = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
+const uniq = list => list.filter((x, i) => list.indexOf(x) === i);
+
+const emptyState = () => ({ rooms: [], history: [] });
+
+// Une image du tableau est une référence à un exemplaire de la collection (jamais un envoi d'image libre, cf. cahier des charges)
+const sanitizeImage = im => {
+  if (!im || typeof im !== 'object') return null;
+  const ref = str(im.ref, 80);
+  if (!ref) return null;
+  return { ref, series: str(im.series, 120), issue: str(im.issue, 20) };
+};
+
+const sanitizeRoom = r => {
+  if (!r || typeof r !== 'object') return null;
+  const topics = (Array.isArray(r.topics) ? r.topics : String(r.topics || '').split('\n')).map(t => str(t, LIMITS.topic)).filter(Boolean).slice(0, LIMITS.topics);
+  const rules = (Array.isArray(r.rules) ? r.rules : String(r.rules || '').split('\n')).map(t => str(t, LIMITS.rule)).filter(Boolean).slice(0, LIMITS.rules);
+  const images = [];
+  (Array.isArray(r.images) ? r.images : []).forEach(x => { const im = sanitizeImage(x); if (im && !images.some(y => y.ref === im.ref) && images.length < LIMITS.images) images.push(im); });
+  return {
+    id: str(r.id, 40),
+    title: str(r.title, LIMITS.title),
+    format: FORMATS[r.format] ? r.format : 'free',
+    when: isoOrEmpty(r.when),
+    topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images,
+    createdAt: isoOrEmpty(r.createdAt), updatedAt: isoOrEmpty(r.updatedAt)
+  };
+};
+
+const sanitizeSummary = x => {
+  if (!x || typeof x !== 'object') return null;
+  const reactions = {};
+  REACTIONS.forEach(k => { const n = Math.floor(Number(x.reactions && x.reactions[k])); if (n > 0) reactions[k] = Math.min(n, 9999); });
+  return {
+    id: str(x.id, 40), roomId: str(x.roomId, 40), title: str(x.title, LIMITS.title), format: FORMATS[x.format] ? x.format : 'free',
+    startedAt: isoOrEmpty(x.startedAt), endedAt: isoOrEmpty(x.endedAt),
+    durationSec: Math.max(0, Math.min(86400, Math.floor(Number(x.durationSec) || 0))),
+    topics: (Array.isArray(x.topics) ? x.topics : []).map(t => ({ text: str(t && t.text, LIMITS.topic), secs: Math.max(0, Math.floor(Number(t && t.secs) || 0)) })).filter(t => t.text).slice(0, LIMITS.topics),
+    shown: (Array.isArray(x.shown) ? x.shown : []).map(sanitizeImage).filter(Boolean).slice(0, LIMITS.images),
+    reactions
+  };
+};
+
+const sanitizeState = s => {
+  const out = emptyState();
+  if (!s || typeof s !== 'object') return out;
+  (Array.isArray(s.rooms) ? s.rooms : []).forEach(r => { const x = sanitizeRoom(r); if (x && x.id && x.title && !out.rooms.some(y => y.id === x.id)) out.rooms.push(x); });
+  out.rooms = out.rooms.slice(0, LIMITS.rooms);
+  (Array.isArray(s.history) ? s.history : []).forEach(h => { const x = sanitizeSummary(h); if (x && x.id) out.history.push(x); });
+  out.history = out.history.slice(0, LIMITS.history);
+  return out;
+};
+
+const validateRoom = r => {
+  const errors = [];
+  if (!r || !r.title) errors.push('Donnez un sujet au direct.');
+  if (!r || !r.topics.length) errors.push('Ajoutez au moins un point à l\'ordre du jour.');
+  return errors;
+};
+
+// Crée ou met à jour un direct préparé. Renvoie { state, room, errors } ; l'état d'origine n'est jamais modifié.
+const saveRoom = (state, input, now, newId) => {
+  const st = sanitizeState(state);
+  const prev = input && input.id ? st.rooms.find(x => x.id === input.id) : null;
+  const room = sanitizeRoom(Object.assign({}, prev || {}, input || {}, { id: prev ? prev.id : newId, createdAt: prev ? prev.createdAt : now, updatedAt: now }));
+  const errors = validateRoom(room);
+  if (errors.length) return { state: st, room: null, errors };
+  if (!prev && st.rooms.length >= LIMITS.rooms) return { state: st, room: null, errors: ['Trente directs préparés au plus : supprimez-en un.'] };
+  st.rooms = prev ? st.rooms.map(x => x.id === room.id ? room : x) : [room].concat(st.rooms);
+  return { state: st, room, errors: [] };
+};
+
+const removeRoom = (state, id) => {
+  const st = sanitizeState(state);
+  const room = st.rooms.find(x => x.id === id) || null;
+  st.rooms = st.rooms.filter(x => x.id !== id);
+  return { state: st, removed: room };
+};
+
+// Directs programmés à venir d'abord (le plus proche en tête), puis les brouillons sans date, puis les dates passées
+const ordered = (state, now) => {
+  const t = Date.parse(now) || 0;
+  const rank = r => { const w = Date.parse(r.when); return !r.when ? 1 : w >= t ? 0 : 2; };
+  return sanitizeState(state).rooms.slice().sort((a, b) => rank(a) - rank(b) || (rank(a) === 0 ? Date.parse(a.when) - Date.parse(b.when) : String(b.updatedAt).localeCompare(String(a.updatedAt))));
+};
+
+// ── Répétition : une session en mémoire, menée par l'utilisateur seul
+const secsBetween = (a, b) => Math.max(0, Math.round(((Date.parse(b) || 0) - (Date.parse(a) || 0)) / 1000));
+const startSession = (room, now) => ({ roomId: room.id, startedAt: now, topic: 0, topicStartedAt: now, done: [], shown: null, shownLog: [], reactions: {} });
+const nextTopic = (session, room, now) => {
+  if (!session || session.topic >= room.topics.length) return session;
+  const done = session.done.concat([{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }]);
+  return Object.assign({}, session, { topic: session.topic + 1, topicStartedAt: now, done });
+};
+const showImage = (session, room, ref) => {
+  const im = room.images.find(x => x.ref === ref);
+  if (!session || !im) return session;
+  const shown = session.shown === ref ? null : ref;
+  return Object.assign({}, session, { shown, shownLog: shown && !session.shownLog.includes(ref) ? session.shownLog.concat([ref]) : session.shownLog });
+};
+const react = (session, kind) => {
+  if (!session || !REACTIONS.includes(kind)) return session;
+  const reactions = Object.assign({}, session.reactions, { [kind]: (session.reactions[kind] || 0) + 1 });
+  return Object.assign({}, session, { reactions });
+};
+// Fin de la répétition : synthèse ajoutée en tête de l'historique (30 au plus)
+const endSession = (state, session, room, now, newId) => {
+  const st = sanitizeState(state);
+  const last = session.topic < room.topics.length ? [{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }] : [];
+  const summary = sanitizeSummary({
+    id: newId, roomId: room.id, title: room.title, format: room.format, startedAt: session.startedAt, endedAt: now,
+    durationSec: secsBetween(session.startedAt, now), topics: session.done.concat(last),
+    shown: uniq(session.shownLog).map(ref => room.images.find(x => x.ref === ref)).filter(Boolean), reactions: session.reactions
+  });
+  st.history = [summary].concat(st.history).slice(0, LIMITS.history);
+  return { state: st, summary };
+};
+
+const fmtDuration = sec => {
+  const s = Math.max(0, Math.floor(Number(sec) || 0)), h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60;
+  const p = n => String(n).padStart(2, '0');
+  return h ? h + ' h ' + p(m) + ' min' : m ? m + ' min ' + p(r) + ' s' : r + ' s';
+};
+const clock = sec => { const s = Math.max(0, Math.floor(Number(sec) || 0)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+
+// Texte de la planche de synthèse, à partir de la répétition seulement
+const summaryText = x => [
+  (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
+  x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
+  'Durée : ' + fmtDuration(x.durationSec)
+].filter(Boolean).join('\n');
+
+module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, react, endSession, fmtDuration, clock, summaryText };
+  return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
 'use strict';
@@ -6708,7 +6948,6 @@ const DEFS = Object.freeze([
   { id: 'runner', family: 'Collection', name: 'Complétiste', icon: 'stack', steps: [1, 10, 40, 120], unit: 'run complet', desc: 'Runs complets du premier au dernier numéro possédé' },
   { id: 'firsts', family: 'Collection', name: 'Chasseur de #1', icon: 'one', steps: [5, 50, 250, 750], unit: 'numéro 1', desc: 'Numéros 1 possédés' },
   { id: 'keys', family: 'Collection', name: 'Clé de voûte', icon: 'key', steps: [1, 20, 100, 400], unit: 'key issue', desc: 'Key issues possédés' },
-  { id: 'slabs', family: 'Collection', name: 'Maître du slab', icon: 'shield', steps: [1, 10, 50, 200], unit: 'exemplaire gradé', desc: 'Exemplaires gradés (CGC, CBCS, PGX)' },
   { id: 'multiverse', family: 'Exploration', name: 'Multivers', icon: 'orbit', steps: [3, 8, 15, 25], unit: 'éditeur', desc: 'Éditeurs différents dans la collection' },
   { id: 'reader', family: 'Lecture', name: 'Dévoreur', icon: 'book', steps: [10, 300, 2000, 6000], unit: 'lecture', desc: 'Numéros lus (premières lectures)' },
   { id: 'rereader', family: 'Lecture', name: 'Relecteur', icon: 'loop', steps: [1, 25, 150, 500], unit: 'relecture', desc: 'Relectures notées dans le journal' },
@@ -6774,7 +7013,6 @@ const computeTrophies = (input = {}) => {
     runner: completeRuns(copies),
     firsts: copies.filter(c => issueNum(c.issue) === 1).length,
     keys: copies.filter(isKey).length,
-    slabs: copies.filter(isGraded).length,
     multiverse: new Set(copies.map(c => String(c.publisher || '').trim().toLowerCase()).filter(Boolean)).size,
     reader: log.filter(l => l.event === 'finished').length,
     rereader: log.filter(l => l.event === 'reread').length,
@@ -6858,7 +7096,6 @@ const XP_RULES = [
   { id: 'runsRead', label: 'Run complet lu en entier', xp: 90 },
   { id: 'longRuns', label: 'Run complet de 12 numéros ou plus', xp: 120 },
   { id: 'firsts', label: 'Numéro 1 possédé', xp: 6 },
-  { id: 'graded', label: 'Exemplaire gradé (CGC, CBCS, PGX)', xp: 15 },
   { id: 'publishers', label: 'Éditeur dans la collection', xp: 12 },
   { id: 'characters', label: 'Personnage dans la collection', xp: 5 },
   { id: 'eras', label: 'Ère représentée (Golden, Silver, Bronze, Modern)', xp: 40 },
@@ -7918,6 +8155,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         });
       }
 
+      // D-78 : la recherche ne renvoie pas les variantes ; le détail du numéro les donne (associated_images), une requête de plus
+      if (!Array.isArray(match.associated_images) && match.id) {
+        try {
+          const det = await cvFetcher('https://comicvine.gamespot.com/api/issue/4000-' + match.id + '/?api_key=' + key + '&field_list=associated_images', 7000);
+          if (det && det.results && Array.isArray(det.results.associated_images)) match.associated_images = det.results.associated_images;
+        } catch (_) {}
+      }
       // Variantes officielles associées à cette issue
       if (Array.isArray(match.associated_images) && match.associated_images.length > 0) {
         match.associated_images.forEach((img, idx) => {
@@ -7999,13 +8243,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const digits = String(query || '').replace(/[^0-9]/g, '');
     if (/^97[89]\d{10}$/.test(digits) && !/[a-z]/i.test(query)) return fetchOpenLibraryDetails(digits);
     const issue = String(issueNumber || '').replace(/^#\s*/, '').trim() || '1';
-    const [fd, cv] = await Promise.all([
+    const [fd, cv, mt] = await Promise.all([
       fetchFandomProposals(query, issue, publisher, opts.variant || '', opts.year || null),
-      searchComicVineApi(query, issue.replace(/[^0-9.]/g, '') || '1').catch(() => null)
+      searchComicVineApi(query, issue.replace(/[^0-9.]/g, '') || '1').catch(() => null),
+      fetchMetronVariants(query, issue, opts.year || parseInt((String(query).match(/\((\d{4})/) || [])[1], 10) || null).catch(() => [])
     ]);
     const out = [];
     const push = p => { if (p && p.url && isSafeImageUrl(p.url) && !out.some(x => x.url === p.url)) out.push(p); };
     fd.forEach(push);
+    // Metron : variantes absentes de Fandom (même nom = même variante, on garde celle de Fandom déjà classée)
+    const vKey = n => String(n || '').toLowerCase().replace(/\bcover\b|\bvariant\b|\bcvr\b|[^a-z0-9]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const want = vKey(opts.variant);
+    mt.forEach(v => { if (v.main && out.some(x => x.main)) return; if (!v.main && out.some(x => vKey(x.caption || x.name) === vKey(v.name))) return; push(Object.assign({}, v, { match: !!want && !out.some(x => x.match) && vKey(v.name) === want })); });
     if (cv && cv.length) {
       const main = cv[0];
       const vol = normSeries(main.volume || '');
@@ -9009,7 +9258,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   // Metron via le relais local (serve.js) : code complet → édition exacte ; début du code → série
   let metronFetcher = url => (url.startsWith('app:') ? appRoute(url) : fetch(url, { credentials: 'omit' }).then(r => r.json())).catch(() => null);
-  let metronUnavailable = false;
+  let metronUnavailable = false, metronStubbed = false;
   const metronProxyBase = () => {
     const custom = (localStorage.getItem('panel_metron_proxy') || '').trim();
     if (custom) return custom.replace(/\/$/, '');
@@ -9025,6 +9274,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return (d && Array.isArray(d.results) ? d.results : []).map(x => ({
       id: 'metron-' + x.id, volume: x.series + (x.year ? ' (' + x.year + ')' : ''), issue: x.number || '1', title: '', cover: x.image || '', date: x.date || '', variantsCount: 1, source: 'Metron'
     }));
+  };
+  // D-78 : toutes les éditions connues de Metron pour un numéro (couverture A et variantes, avec image) ; [] sans relais
+  const fetchMetronVariants = async (series, issue, year) => {
+    const base = metronProxyBase();
+    if (!base || base.startsWith('app:') || metronUnavailable || (relayStatus && !relayStatus.metron && !metronStubbed)) return [];
+    const num = String(issue || '').replace(/^#\s*/, '').trim();
+    if (!num || !String(series || '').trim()) return [];
+    const d = await metronFetcher(base + '/variants?q=' + encodeURIComponent(String(series).replace(/\(\s*\d{4}[^)]*\)/g, ' ').replace(/\s+/g, ' ').trim() + ' #' + num) + (year ? '&year=' + year : ''));
+    if (d && d.error && /non configur|refus/.test(d.error)) { metronUnavailable = true; return []; }
+    if (!d || !d.found || !Array.isArray(d.editions)) return [];
+    return d.editions.map(e => ({ name: e.name, caption: e.name, url: e.image, source: 'metron', main: !!e.main, upc: e.upc || '', page: 'Metron #' + d.issue.id, confidence: 'exacte' }));
   };
   const lookupMetron = async parsed => {
     const base = metronProxyBase();
@@ -11954,7 +12214,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const subKey = view === 'collection' && activeSingleFilter === 'wishlist' ? 'wishlist' : view;
     $$('#singlesSubnav .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sview === subKey));
     const titles = {
-      collection: ['Ma collection', 'Inventaire physique : singles, variantes, grading et rangement'],
+      collection: ['Ma collection', 'Inventaire physique : singles, variantes et rangement'],
       series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
       releases: ['Calendrier', 'Sorties comics US et francophones'],
       stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
@@ -12001,7 +12261,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     $('statSinglesSeries').textContent = ownedSeries.length;
     if ($('statSinglesCompleteSub')) $('statSinglesCompleteSub').textContent = ownedSeries.filter(g => g.isRun && g.missing.length === 0).length + ' runs complets';
     if ($('statSinglesReadSub')) $('statSinglesReadSub').textContent = owned.filter(rdReadOfCopy).length + ' lus';
-    if ($('statSinglesGradedSub')) $('statSinglesGradedSub').textContent = (fin.valueUnknown ? fin.valueUnknown + ' sans valeur · ' : '') + owned.filter(s => isGradedCondition(s.condition)).length + ' gradés';
+    if ($('statSinglesGradedSub')) $('statSinglesGradedSub').textContent = (fin.valueUnknown ? fin.valueUnknown + ' sans valeur' : 'toutes valorisées');
     if ($('statSinglesWishlist')) $('statSinglesWishlist').textContent = wish.length;
     if ($('statSinglesWishlistSub')) { const wv = sumKnown(wish, valueOf); $('statSinglesWishlistSub').textContent = wv.n ? money(wv.total) + ' estimés' + (wv.unknown ? ' (' + wv.unknown + ' sans valeur)' : '') : 'valeur inconnue'; }
 
@@ -12029,7 +12289,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     else if (activeSingleFilter === 'disposed') { if (s.isWishlist || !disposedOf(s)) return false; }
     else if (s.isWishlist || disposedOf(s)) return false;
     if (activeSingleFilter === 'key' && (!s.keyType || s.keyType === 'none')) return false;
-    if (activeSingleFilter === 'graded' && !isGradedCondition(s.condition)) return false;
     if (activeSingleFilter === 'Indé' && ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse'].includes(s.publisher)) return false;
     if (!['all', 'key', 'graded', 'wishlist', 'disposed', 'Indé'].includes(activeSingleFilter) && s.publisher !== activeSingleFilter) return false;
 
@@ -12143,6 +12402,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (activeSinglesView === 'releases') renderPullChips();
     { const hk = viewHooks.get(activeSinglesView); if (hk && typeof hk.render === 'function') hk.render(); }
 
+    // D-78 : la grille n'est reconstruite que lorsqu'elle est visible ; showSinglesView('collection') la reconstruit au retour
+    if (activeSinglesView !== 'collection') return;
     const grid = $('singlesGrid');
     grid.innerHTML = '';
     grid.className = singlesViewMode === 'list' ? 'singles-list' : 'comics-grid';
@@ -12228,7 +12489,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
     const copyCounts = variantCopyCounts();
     visible.forEach(item => {
-      const graded = isGradedCondition(item.condition);
       const nCopies = item.isWishlist ? 0 : (copyCounts.get(catalogIdsOf(item).variantId) || 0);
       const copiesTag = nCopies > 1 ? '<span class="copies-badge" title="' + nCopies + ' exemplaires de cette variante">×' + nCopies + '</span>' : '';
       const key = keyLabel(item);
@@ -12269,7 +12529,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           (item.isWishlist ? '<span class="wish-ribbon"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> WISHLIST</span>' : '') +
           '<div class="comic-badges-strip">' +
             '<span class="issue-box">' + escapeHtml(item.issue || 'TP') + '</span>' + copiesTag +
-            '<span class="status-pill ' + (graded ? 'cgc' : key ? 'key' : 'unread') + '">' + escapeHtml(graded ? condShort : key || condShort) + '</span>' +
+            '<span class="status-pill ' + (key ? 'key' : 'unread') + '">' + escapeHtml(key || condShort) + '</span>' +
           '</div>' +
         '</div>' +
         '<div class="comic-caption">' +
@@ -14635,6 +14895,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const next = sorted.find(n => !rdIsRead(nums.get(n)));
     return { series: base, known: sorted.length, read: read.length, pct: sorted.length ? Math.round(read.length / sorted.length * 100) : null, next: next === undefined ? null : '#' + next };
   };
+  // D-78 : progression de toutes les séries en un seul passage (la vue Lecture en demandait une par série : 0,6 s pour 3 000 exemplaires)
+  const rdSeriesProgressAll = () => {
+    const groups = new Map();
+    physicalSingles.forEach(s => {
+      if (!s || s.isWishlist) return;
+      const base = gdBase(s.series), n = issueNumber(s);
+      if (!Number.isFinite(n)) return;
+      let g = groups.get(base); if (!g) { g = new Map(); groups.set(base, g); }
+      if (!g.has(n)) g.set(n, s);
+    });
+    const out = new Map();
+    groups.forEach((nums, base) => {
+      const sorted = [...nums.keys()].sort((a, b) => a - b);
+      let read = 0, next;
+      sorted.forEach(n => { if (rdIsRead(nums.get(n))) read++; else if (next === undefined) next = n; });
+      out.set(base, { series: base, known: sorted.length, read, pct: sorted.length ? Math.round(read / sorted.length * 100) : null, next: next === undefined ? null : '#' + next });
+    });
+    return out;
+  };
   const rdStats = () => {
     const d = rdLoad(), states = Object.values(d.states), yearAgo = Date.now() - 365 * 864e5;
     const by = s => states.filter(x => x.status === s).length;
@@ -15344,25 +15623,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
     return exFollowsHtml() +
+      '<nav class="ex-toc" aria-label="Sommaire d\'Explorer">' + [['exSecNews', 'Actualités'], ['exSecGuides', 'Guides'], ['exSecReleases', 'Sorties'], ['exSecCosmos', 'Cosmos et multivers'], ['exSecUniverses', 'Univers'], ['exSecIndex', 'Personnages et créateurs']].map(([id, t]) => '<button class="ex-toc-b" data-ex-toc="' + id + '">' + t + '</button>').join('') + '</nav>' +
+      (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
+      sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecNews', 'Actualités', 'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.',
         (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
         '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
       sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>') +
-      '<section class="ex-sec"><button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><span class="ex-kicker">Atlas · Marvel Primestone</span><b>La cosmologie Marvel, cartographiée et sourcée</b><small>Les huit Cosmos, les entités abstraites, les Célestes, les objets de pouvoir et les événements cosmiques : 301 fiches reliées entre elles.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
-      '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + exBrowseHtml() +
-      (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
-      sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
         (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
         '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
         '<div class="ex-row dev-only"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>') +
-      sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
       sec('exSecReleases', 'Sorties et nouveautés', 'D\'après le calendrier international de Panel.', '<div class="ex-rel-cols">' +
         [['US', 'États-Unis · 30 prochains jours'], ['FR', 'Francophone · 30 prochains jours']].map(([m, t]) => { const l = upcoming(m); return '<div><h4>' + t + '</h4>' + (l.length ? l.map(exPubMini).join('') : '<p class="ex-note">Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.</p>') + '</div>'; }).join('') +
         '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
+      '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
+      '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + '</div>' +
+      sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
+      '<div class="ex-index" id="exSecIndex">' + exBrowseHtml() +
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
       sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
       sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
+      '</div>' +
       '';
   };
   const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
@@ -15670,10 +15952,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const exPubOptions = ['Marvel', 'DC Comics', 'Image', 'Dark Horse', 'IDW', 'BOOM! Studios', 'Dynamite', 'Skybound', 'Oni', 'Titan', 'Glénat', 'Urban Comics', 'Panini', 'Delcourt'];
   const exFiltersHtml = () => '<div class="ex-kinds" role="tablist" aria-label="Type de résultat">' + EX_KINDS.map(([k, l]) => '<button role="tab" aria-selected="' + (exFilt.kind === k) + '" class="' + (exFilt.kind === k ? 'is-on' : '') + '" data-ex-kind="' + k + '">' + l + '</button>').join('') + '</div>' +
-    '<div class="ex-filters"><label>Éditeur <select data-ex-flt="pub"><option value="">Tous</option>' + exPubOptions.map(p => '<option' + (exFilt.pub === p ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select></label>' +
+    '<details class="ex-filt-wrap"' + (exFilt.pub || exFilt.from || exFilt.to || exFilt.sort !== 'rel' ? ' open' : '') + '><summary>Filtres et tri</summary><div class="ex-filters"><label>Éditeur <select data-ex-flt="pub"><option value="">Tous</option>' + exPubOptions.map(p => '<option' + (exFilt.pub === p ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select></label>' +
     '<label>De <input data-ex-flt="from" type="number" inputmode="numeric" min="1930" max="2100" placeholder="1938" value="' + h(exFilt.from) + '"></label>' +
     '<label>À <input data-ex-flt="to" type="number" inputmode="numeric" min="1930" max="2100" placeholder="' + new Date().getFullYear() + '" value="' + h(exFilt.to) + '"></label>' +
-    '<label>Tri <select data-ex-flt="sort">' + [['rel', 'Pertinence'], ['new', 'Plus récents'], ['old', 'Plus anciens'], ['pop', 'Popularité']].map(([k, l]) => '<option value="' + k + '"' + (exFilt.sort === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label></div>';
+    '<label>Tri <select data-ex-flt="sort">' + [['rel', 'Pertinence'], ['new', 'Plus récents'], ['old', 'Plus anciens'], ['pop', 'Popularité']].map(([k, l]) => '<option value="' + k + '"' + (exFilt.sort === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label></div></details>';
   const exWireFilters = root => {
     root.querySelectorAll('[data-ex-kind]').forEach(b => { b.onclick = () => { exFilt.kind = b.dataset.exKind; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); exOnlineSearch(exView.q); exPaintOnline(); }; });
     root.querySelectorAll('[data-ex-flt]').forEach(el => { el.onchange = () => { exFilt[el.dataset.exFlt] = el.value.trim(); exPaintOnline(); }; });
@@ -16122,64 +16404,49 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Données : data/cosmos-marvel.json (fiches, relations, sources, chronologie éditoriale), chargées à la demande.
   const CZ_URL = 'data/cosmos-marvel.json', CZ_SITE = 'https://lukecage2003.github.io/marvel-primeston/';
   const CZ_CATS = { cos: ['Cosmos et firmaments', '#FFE500'], abs: ['Entités abstraites', '#B57CFF'], cel: ['Célestes et puissances', '#FF5A36'], pow: ['Forces et énergies', '#36C5FF'], dark: ['Ténèbres', '#8A8AA0'], pla: ['Lieux et dimensions', '#3DDC97'], grp: ['Groupes', '#FF9F1C'], per: ['Personnages', '#FF4F8B'], obj: ['Objets de pouvoir', '#FFD166'], evt: ['Événements', '#5B8CFF'] };
-  const CZ_CERT = { c: ['Canon', 'montré ou dit dans un comic Marvel, numéro et page'], o: ['Source officielle', 'guide ou manuel officiel Marvel'], d: ['Interprétation', 'conclusion argumentée à partir de plusieurs comics'], t: ['Théorie', 'hypothèse de lecteurs, non confirmée'], x: ['Contesté', 'les sources se contredisent'], u: ['À vérifier', 'première apparition relevée sur un wiki communautaire ; à confronter aux comics'] };
-  const cz = { data: null, status: 'idle', err: '', cat: '', q: '', view: 'grid' };
+  const cz = { data: null, status: 'idle', err: '' };
+  // D-78 : seulement les cartes des Cosmos et des dimensions du multivers (aucune hiérarchie, aucune encyclopédie)
+  const CZ_COSMOS = ['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'bw', 'c8'];
+  const CZ_MULTI = ['univ', 'superflow', 'micro', 'neg', 'exo', 'beyond', 'shore', 'p_nexus', 'p_crossroads', 'x_darkdim', 'x_dreams', 'x_mojo', 'x_yggdrasil', 'p_otherworld', 'p_weirdworld', 'p_cancerverse'];
+  const CZ_SUB = { c8: '2015 – aujourd’hui', univ: 'notre réalité, la Terre-616' };
+  const exCzSub = id => CZ_SUB[id] || (cz.data && cz.data.E[id] && cz.data.E[id].s) || '';
   const exCzLoad = async () => {
     if (cz.data || cz.status === 'loading') return;
     cz.status = 'loading';
     try { const r = await fetch(CZ_URL, { cache: 'force-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json(); if (!d || !d.E) throw new Error('données illisibles'); cz.data = d; cz.status = 'done'; }
-    catch (e) { cz.status = 'error'; cz.err = location.protocol === 'file:' ? 'Ouvrez Panel avec « Lancer Panel.cmd » pour charger l\'atlas.' : 'Atlas indisponible (' + String(e && e.message || e).slice(0, 80) + ').'; }
+    catch (e) { cz.status = 'error'; cz.err = location.protocol === 'file:' ? 'Ouvrez Panel avec « Lancer Panel.cmd » pour charger les cartes.' : 'Cartes indisponibles (' + String(e && e.message || e).slice(0, 80) + ').'; }
     if (exView.page === 'cosmos' || exView.page === 'cosmos-e') renderExplorer();
   };
   const exCzImg = (e, cls) => e && e.img && /^https:\/\//.test(e.img) ? '<img class="' + (cls || '') + '" src="' + h(e.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
-  const exCzCertTag = c => { const x = CZ_CERT[c] || CZ_CERT.u; return '<span class="cz-cert cz-c-' + h(c || 'u') + '" title="' + h(x[1]) + '">' + h(x[0]) + '</span>'; };
-  const exCzCard = (id, e, big) => { const cat = CZ_CATS[e.k] || ['', '#999']; return '<button class="cz-card' + (big ? ' is-big' : '') + '" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '" style="--cz:' + cat[1] + '"><span class="cz-card-img">' + exCzImg(e) + '<span class="cz-card-ini" aria-hidden="true">' + h(String(e.n || '?').replace(/^(L[ea]s?\s|L’|L')/i, '').slice(0, 1)) + '</span></span><span class="cz-card-b"><small>' + h(cat[0]) + '</small><b>' + h(e.n) + '</b><span>' + h(e.s || '') + '</span></span></button>'; };
+  const exCzCard = id => { const e = cz.data.E[id], cat = CZ_CATS[e.k] || ['', '#999']; return '<button class="cz-card" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '" style="--cz:' + cat[1] + '"><span class="cz-card-img">' + exCzImg(e) + '<span class="cz-card-ini" aria-hidden="true">' + h(String(e.n || '?').replace(/^(L[ea]s?\s|L’|L')/i, '').slice(0, 1)) + '</span></span><span class="cz-card-b"><b>' + h(e.n) + '</b><span>' + h(exCzSub(id)) + '</span></span></button>'; };
+  const CZ_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', '', 'VIII'];
+  const exCzCredit = '<p class="ex-credit">Cartes d\'après <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a>. Personnages et illustrations © Marvel ; images tirées de la Marvel Database (Fandom), citées à titre d\'illustration.</p>';
   const exCzHtml = () => {
     if (cz.status === 'error') return exBack() + '<div class="ex-empty">' + h(cz.err) + '</div>';
-    if (!cz.data) return exBack() + '<div class="ex-empty">Chargement de l\'atlas…</div>';
-    const E = cz.data.E, ids = Object.keys(E);
-    const counts = {}; ids.forEach(id => { counts[E[id].k] = (counts[E[id].k] || 0) + 1; });
-    const q = catNorm(cz.q);
-    const list = ids.filter(id => (!cz.cat || E[id].k === cz.cat) && (!q || catNorm([E[id].n, E[id].en, E[id].s, (E[id].id || []).map(x => x[1].join(' ')).join(' ')].join(' ')).includes(q)));
-    const cosmos = ids.filter(id => E[id].k === 'cos' && /^c\d$|^bw$/.test(id));
-    return exBack() + '<section class="cz-hero"><span class="ex-kicker">Atlas cosmique</span><h2>La cosmologie Marvel, cartographiée et sourcée</h2><p>Les huit Cosmos successifs, les entités abstraites, les structures du multivers, les événements cosmiques et les comics qui documentent chaque affirmation. ' + ids.length + ' fiches reliées, chacune avec son niveau de fiabilité.</p></section>' +
-      '<section class="ex-sec"><div class="ex-sec-head"><h3>Les huit Cosmos</h3><p>Chaque univers naît de la mort du précédent.</p></div><div class="cz-rail">' + cosmos.map((id, i) => '<button class="cz-cosmos" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '"><span class="cz-cosmos-img">' + exCzImg(E[id]) + '</span><span class="cz-cosmos-n">' + (id === 'bw' ? '✦' : h(['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII'][Number(id.slice(1)) - 1] || '')) + '</span><b>' + h(E[id].n) + '</b><small>' + h(E[id].s || '') + '</small></button>').join('') + '</div></section>' +
-      '<section class="ex-sec"><div class="ex-sec-head"><h3>Encyclopédie</h3><p>' + list.length + ' fiche' + (list.length > 1 ? 's' : '') + (cz.cat ? ' · ' + h(CZ_CATS[cz.cat][0]) : '') + '</p></div>' +
-        '<div class="ex-search cz-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="czSearch" type="search" autocomplete="off" placeholder="Éternité, Galactus, Gant de l\'Infini, Battleworld…" value="' + h(cz.q) + '"></div>' +
-        '<div class="ex-chips"><button class="ex-chip' + (!cz.cat ? ' active' : '') + '" data-cz-cat="">Tout <small>' + ids.length + '</small></button>' + Object.entries(CZ_CATS).filter(([k]) => counts[k]).map(([k, v]) => '<button class="ex-chip' + (cz.cat === k ? ' active' : '') + '" data-cz-cat="' + k + '" style="--cz:' + v[1] + '"><i class="cz-dot"></i>' + h(v[0]) + ' <small>' + counts[k] + '</small></button>').join('') + '</div>' +
-        '<div class="cz-grid" id="czGrid">' + list.slice(0, 240).map(id => exCzCard(id, E[id])).join('') + '</div>' + (list.length > 240 ? '<p class="ex-note">Affinez la recherche pour voir les ' + (list.length - 240) + ' autres fiches.</p>' : '') + '</section>' +
-      '<section class="ex-sec"><div class="ex-sec-head"><h3>Chronologie éditoriale</h3><p>Les comics qui ont bâti le cosmos Marvel.</p></div><ol class="cz-time">' + (cz.data.T || []).map(t => '<li><span class="cz-y">' + h(String(Math.floor(t.y))) + '</span><div><b>' + h(t.t) + '</b><p>' + h(t.d) + '</p><small>' + h(t.s) + '</small>' + (t.r.length ? '<span class="cz-tl">' + t.r.slice(0, 5).map(id => '<button class="ex-chip" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '">' + h(E[id].n) + '</button>').join('') + '</span>' : '') + '</div></li>').join('') + '</ol></section>' +
-      '<details class="cz-legend"><summary>Comment lire les niveaux de fiabilité</summary><ul>' + Object.values(CZ_CERT).map(v => '<li><b>' + h(v[0]) + '</b> : ' + h(v[1]) + '.</li>').join('') + '</ul></details>' +
-      '<p class="ex-credit">Contenus de <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a> (atlas de la cosmologie Marvel par Primestone). Personnages et illustrations © Marvel ; portraits tirés de la Marvel Database (Fandom), cités à titre d\'illustration.</p>';
+    if (!cz.data) return exBack() + '<div class="ex-empty">Chargement des cartes…</div>';
+    const E = cz.data.E;
+    const cosmos = CZ_COSMOS.filter(id => E[id]), multi = CZ_MULTI.filter(id => E[id] && E[id].img);
+    return exBack() + '<section class="cz-hero"><span class="ex-kicker">Explorer · Marvel</span><h2>Cosmos et multivers</h2><p>Les huit Cosmos successifs et les dimensions du multivers Marvel. Touchez une carte pour la lire et retrouver ses comics.</p></section>' +
+      '<section class="ex-sec"><div class="ex-sec-head"><h3>Les Cosmos</h3></div><div class="cz-rail">' + cosmos.map((id, i) => '<button class="cz-cosmos" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '"><span class="cz-cosmos-img">' + exCzImg(E[id]) + '</span><span class="cz-cosmos-n">' + (id === 'bw' ? '✦' : h(CZ_ROMAN[i] || '')) + '</span><b>' + h(E[id].n) + '</b><small>' + h(exCzSub(id)) + '</small></button>').join('') + '</div></section>' +
+      '<section class="ex-sec"><div class="ex-sec-head"><h3>Le multivers</h3></div><div class="cz-grid">' + multi.map(exCzCard).join('') + '</div></section>' + exCzCredit;
   };
   const exCzEntityHtml = id => {
     if (!cz.data) return exCzHtml();
     const E = cz.data.E, e = E[id];
-    if (!e) return exBack() + '<div class="ex-empty">Fiche introuvable.</div>';
+    if (!e) return exBack() + '<div class="ex-empty">Carte introuvable.</div>';
     const cat = CZ_CATS[e.k] || ['', '#999'];
-    const rels = (e.r || []).filter(r => E[r]);
-    const back = ids => ids;
-    const cited = Object.keys(E).filter(k => k !== id && (E[k].r || []).includes(id) && !rels.includes(k)).slice(0, 12);
-    const tl = (cz.data.T || []).filter(t => t.r.includes(id));
+    const list = CZ_COSMOS.includes(id) ? CZ_COSMOS.filter(k => E[k]) : CZ_MULTI.filter(k => E[k] && E[k].img);
+    const at = list.indexOf(id), prev = at > 0 ? list[at - 1] : null, next = at >= 0 && at < list.length - 1 ? list[at + 1] : null;
     const q = e.en || e.n;
-    return '<button class="btn secondary ex-back" data-ex-go="cosmos">← Atlas cosmique</button><article class="cz-e" style="--cz:' + cat[1] + '">' +
+    return '<button class="btn secondary ex-back" data-ex-go="cosmos">← Cosmos et multivers</button><article class="cz-e" style="--cz:' + cat[1] + '">' +
       '<header class="cz-e-head"><figure class="cz-e-port">' + (exCzImg(e) || '<span class="cz-card-ini">' + h(String(e.n).slice(0, 1)) + '</span>') + '</figure><div>' +
-        '<button class="cz-e-cat" data-ex-go="cosmos" data-cz-setcat="' + h(e.k) + '">' + h(cat[0]) + '</button><h2>' + h(e.n) + '</h2>' + (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') +
-        '<p class="cz-e-lead">' + h(e.s || '') + '</p><p class="cz-e-chips">' + exCzCertTag(e.c) + (e.a ? '<span class="cz-pill">1ʳᵉ apparition · ' + h(e.a) + '</span>' : '') + '<span class="cz-pill">' + rels.length + ' relation' + (rels.length > 1 ? 's' : '') + '</span></p>' +
-        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button><a class="btn secondary rel-mini" href="' + CZ_SITE + 'fiche/' + encodeURIComponent(id) + '.html" target="_blank" rel="noopener noreferrer">Voir sur Marvel Primestone</a></p></div></header>' +
-      '<div class="cz-e-body"><div class="cz-e-prose"><h3>Présentation</h3><p class="cz-e-big">' + h(e.d || '') + '</p>' + (e.f ? '<h3>Fait marquant</h3><p>' + h(e.f) + '</p>' : '') +
+        '<span class="cz-e-cat">' + (CZ_COSMOS.includes(id) ? 'Cosmos' : 'Multivers') + '</span><h2>' + h(e.n) + '</h2>' + (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') +
+        '<p class="cz-e-lead">' + h(exCzSub(id)) + '</p>' +
+        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button></p></div></header>' +
+      '<div class="cz-e-prose">' + (e.d ? '<p class="cz-e-big">' + h(e.d) + '</p>' : '') + (e.f ? '<p>' + h(e.f) + '</p>' : '') +
         (e.src && e.src.length ? '<h3>Où le lire</h3><ul class="cz-src">' + e.src.map(x => '<li><button class="ex-link" data-ex-q="' + h(x.replace(/\s*[—–(].*$/, '').replace(/[«»]/g, '').trim().slice(0, 80)) + '">' + h(x) + '</button></li>').join('') + '</ul>' : '') + '</div>' +
-        (e.id && e.id.length ? '<aside class="cz-idcard"><h3>Fiche d\'identité</h3><dl>' + e.id.map(([k, v]) => '<div><dt>' + h(k) + '</dt><dd>' + v.map(h).join('<br>') + '</dd></div>').join('') + '</dl></aside>' : '') + '</div>' +
-      (rels.length ? '<section><h3>Relations</h3><div class="cz-grid is-rel">' + rels.map(r => exCzCard(r, E[r])).join('') + '</div></section>' : '') +
-      (cited.length ? '<section><h3>Cité dans</h3><div class="cz-grid is-rel">' + cited.map(r => exCzCard(r, E[r])).join('') + '</div></section>' : '') +
-      (tl.length ? '<section><h3>Dans la chronologie éditoriale</h3><ol class="cz-time">' + tl.map(t => '<li><span class="cz-y">' + h(String(Math.floor(t.y))) + '</span><div><b>' + h(t.t) + '</b><p>' + h(t.d) + '</p><small>' + h(t.s) + '</small></div></li>').join('') + '</ol></section>' : '') +
-      '<p class="ex-credit">Fiche de <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a> · fiabilité : ' + h((CZ_CERT[e.c] || CZ_CERT.u)[1]) + '. Illustration © Marvel (Marvel Database, Fandom).</p></article>';
-  };
-  const exCzWire = root => {
-    root.querySelectorAll('[data-cz-cat]').forEach(b => { b.onclick = () => { cz.cat = b.dataset.czCat; renderExplorer(); }; });
-    root.querySelectorAll('[data-cz-setcat]').forEach(b => { b.addEventListener('click', () => { cz.cat = b.dataset.czSetcat; }); });
-    const inp = root.querySelector('#czSearch');
-    if (inp) inp.oninput = () => { cz.q = inp.value; clearTimeout(exCzWire.tm); exCzWire.tm = setTimeout(() => { const pos = inp.selectionStart; renderExplorer(); const n = $('czSearch'); if (n) { n.focus(); try { n.setSelectionRange(pos, pos); } catch (_) {} } }, 160); };
+      (prev || next ? '<nav class="cz-e-nav">' + (prev ? '<button class="cz-e-step" data-ex-go="cosmos-e" data-ex-id="' + h(prev) + '"><small>Carte précédente</small><b>' + h(E[prev].n) + '</b></button>' : '<span></span>') + (next ? '<button class="cz-e-step is-next" data-ex-go="cosmos-e" data-ex-id="' + h(next) + '"><small>Carte suivante</small><b>' + h(E[next].n) + '</b></button>' : '') + '</nav>' : '') +
+      exCzCredit + '</article>';
   };
   const renderExplorer = () => {
     const root = $('explorerRoot');
@@ -16193,6 +16460,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
       root.querySelectorAll('[data-ex-scope]').forEach(b => { b.onclick = () => { exScope = b.dataset.exScope; renderExplorer(); }; });
       wireExSocial(root); exWireFilters(root); exWireOnline(root);
+      exWireHome(root);
       exNewsLoad();
     } else if (exView.page === 'cv') {
       root.innerHTML = exCvHtml();
@@ -16202,13 +16470,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       exWireShops(root);
     } else if (exView.page === 'cosmos' || exView.page === 'cosmos-e') {
       root.innerHTML = exView.page === 'cosmos' ? exCzHtml() : exCzEntityHtml(exView.id);
-      exCzWire(root); exCzLoad();
+      exCzLoad();
     } else if (exView.page === 'watch') {
       root.innerHTML = exWatchPageHtml(exView.id);
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
     } else root.innerHTML = exEntityHtml();
+  };
+  // D-78 : sommaire de l'accueil et listes longues repliées (personnages, créateurs, séries)
+  const exWireHome = root => {
+    root.querySelectorAll('[data-ex-toc]').forEach(b => { b.onclick = () => { const t = document.getElementById(b.dataset.exToc); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }; });
+    root.querySelectorAll('.ex-index > .ex-sec').forEach(sec => {
+      const c = sec.querySelector('.ex-chips');
+      if (!c || c.children.length <= 14) { sec.classList.add('is-open'); return; }
+      const more = document.createElement('button');
+      more.type = 'button'; more.className = 'ex-index-more'; more.textContent = 'Tout afficher (' + c.children.length + ')';
+      more.onclick = () => { const open = sec.classList.toggle('is-open'); more.textContent = open ? 'Réduire' : 'Tout afficher (' + c.children.length + ')'; };
+      sec.appendChild(more);
+    });
   };
   const exRefreshResults = () => {
     const r = $('exResults'), home = $('exHome');
@@ -16552,16 +16832,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!readingFilterTouched && readingViewFilter === 'reading' && !s.reading && s.read) readingViewFilter = 'read';
     if ($('badgeReadingNow')) $('badgeReadingNow').textContent = s.reading;
     const pill = (k, label, n) => `<button class="tab-btn${readingViewFilter === k ? ' active' : ''}" data-rdf="${k}">${label} <b>${n}</b></button>`;
+    const progAll = rdSeriesProgressAll();
     const row = st => {
-      const prog = st.series ? rdSeriesProgress(st.series) : null;
-      const owned = rdCopiesOf(st).length;
+      const prog = st.series ? progAll.get(gdBase(st.series)) || null : null;
+      const copies = rdCopiesOf(st), owned = copies.length;
+      const cov = (copies.find(c => c && c.coverUrl && isSafeImageUrl(c.coverUrl)) || {}).coverUrl || '';
       const acts = ['reading', 'read', 'to_read', 'abandoned'].filter(x => x !== st.status || x === 'read')
-        .map(x => `<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rdset="${x}" data-key="${escapeHtml(st.workKey)}">${x === 'read' && st.status === 'read' ? 'Relu' : RD_LABEL[x]}</button>`).join(' ') +
-        (st.status === 'read' && owned ? ` <button class="btn secondary" style="font-size:12px;padding:3px 8px" data-rdstory="${escapeHtml(st.workKey)}">Story</button>` : '');
-      return `<div class="top-item" data-work="${escapeHtml(st.workKey)}" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <span style="min-width:0;flex:1"><b>${escapeHtml(st.series || '—')} ${escapeHtml(st.issue || '')}</b>
+        .map(x => `<button class="rd-act${x === 'read' ? ' is-main' : ''}" data-rdset="${x}" data-key="${escapeHtml(st.workKey)}">${x === 'read' && st.status === 'read' ? 'Relu' : RD_LABEL[x]}</button>`).join(' ') +
+        (st.status === 'read' && owned ? ` <button class="rd-act" data-rdstory="${escapeHtml(st.workKey)}">Story</button>` : '');
+      return `<div class="top-item rd-row is-${escapeHtml(st.status || 'none')}" data-work="${escapeHtml(st.workKey)}">
+        <span class="rd-row-cov" aria-hidden="true">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i>${escapeHtml(String(st.series || '?').trim().slice(0, 1).toUpperCase())}</i></span>
+        <span class="rd-row-b"><b>${escapeHtml(st.series || '—')} ${escapeHtml(st.issue || '')}</b>
         <span class="stat-sub" style="display:block">${RD_LABEL[st.status] || '—'}${st.readCount > 1 ? ' · lu ' + st.readCount + ' fois' : ''}${st.lastReadAt ? ' · ' + new Date(st.lastReadAt).toLocaleDateString('fr-FR') : ''}${owned ? '' : ' · non possédé'}${prog && prog.known ? ' · série ' + prog.read + '/' + prog.known + (prog.next ? ', prochain ' + escapeHtml(prog.next) : '') : ''}</span></span>
-        <span>${acts}</span></div>`;
+        <span class="rd-row-act">${acts}</span></div>`;
     };
     let list;
     if (readingViewFilter === 'journal') list = null;
@@ -16577,27 +16860,39 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         <div class="rd-sip-act">${x.next ? `<span class="rd-sip-next">Prochain <b>${escapeHtml(x.next)}</b></span>` + (x.nextOwned ? `<button class="btn" data-sip-read="${escapeHtml(x.key)}" data-sip-issue="${escapeHtml(x.next)}">Marquer lu</button>` : '') : '<span class="rd-sip-next">En attente du prochain numéro</span>'}</div></article>`;
     };
     const sipShown = sip.slice(0, 12);
+    // D-78 : « Continuer la lecture » : le numéro suivant de vos séries, quand il est déjà chez vous, avec sa couverture
+    const nextCopy = x => physicalSingles.find(c => c && isOwned(c) && gdBase(c.series) === x.key && gdIssue(c.issue) === gdIssue(x.next));
+    const upNext = sip.filter(x => x.next && x.nextOwned).slice(0, 6);
+    const upHtml = upNext.length ? `<section class="rd-up"><div class="rd-up-head"><h3>Continuer la lecture</h3><p>Le numéro suivant de vos séries, déjà dans votre collection.</p></div><div class="rd-up-row">${upNext.map(x => {
+      const c = nextCopy(x), cov = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : '';
+      return `<article class="rd-up-card"><div class="rd-up-cov">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i aria-hidden="true">${escapeHtml(String(x.next))}</i><span class="rd-up-pct" style="--p:${x.pct}%"></span></div>
+        <div class="rd-up-b"><small>${escapeHtml(x.label)}</small><b>${escapeHtml(x.next)}</b><span>${x.read} lu${x.read > 1 ? 's' : ''} sur ${x.known}</span></div>
+        <button class="btn rd-up-go" data-sip-read="${escapeHtml(x.key)}" data-sip-issue="${escapeHtml(x.next)}">Marquer lu</button></article>`;
+    }).join('')}</div></section>` : '';
+    const kpis = [['Lus', s.read], ['En cours', s.reading], ['À lire', s.toRead], ['Pile à lire', s.pileToRead], ['Relectures', s.rereads], ['Terminés sur 12 mois', s.finishedLastYear]];
+    const kpiHtml = `<div class="rd-kpis">${kpis.map(([l, n]) => `<div class="rd-kpi"><b>${n}</b><span>${l}</span></div>`).join('')}</div>` +
+      `<p class="rd-kpi-note">${s.works} œuvre${s.works > 1 ? 's' : ''} suivie${s.works > 1 ? 's' : ''} · ${s.abandoned} abandonnée${s.abandoned > 1 ? 's' : ''} · ${s.readNotOwned} lue${s.readNotOwned > 1 ? 's' : ''} sans possession${s.openConflicts ? ` · <span class="rd-warn">${s.openConflicts} conflit${s.openConflicts > 1 ? 's' : ''} de notes à résoudre</span> <button class="rd-act" id="readingOpenMigration">Voir</button>` : ''}</p>`;
     const sipHtml = `<section class="rd-sip-wrap"><div class="rd-sip-head"><h3>Séries en cours <small>${sip.length}</small></h3><p>Calculé d'après vos lectures (imports compris) et votre collection : le prochain numéro à lire, ce que vous possédez déjà.</p></div>` +
       (sip.length ? `<div class="rd-sip-grid">${sipShown.map(sipCard).join('')}</div>` + (sip.length > sipShown.length ? `<details class="rd-sip-more"><summary>Voir les ${sip.length - sipShown.length} autres séries</summary><div class="rd-sip-grid">${sip.slice(12, 200).map(sipCard).join('')}</div></details>` : '')
         : `<div class="notice-box">Aucune série en cours pour l'instant. Importez votre export League of Comic Geeks ou CLZ (bouton ci-dessous) : les numéros marqués lus, même hors collection, rejoignent Lecture et vos séries en cours apparaissent ici.</div>`) +
       `<p class="rd-sip-foot"><button class="btn secondary" data-rd-import>Importer mes lectures (League of Comic Geeks, CLZ, tableur)</button></p></section>`;
     // Pile à lire : exemplaires possédés sans état « lu » (calculée, jamais stockée)
     const pile = physicalSingles.filter(x => x && isOwned(x) && rdStatusOf(x) !== 'read');
-    const nextBySeries = [...new Set(pile.map(x => x.series).filter(Boolean))].map(rdSeriesProgress).filter(p => p.next && p.read > 0).sort((a, b) => b.pct - a.pct).slice(0, 8);
+    const nextBySeries = [...new Set(pile.map(x => x.series).filter(Boolean).map(gdBase))].map(b => progAll.get(b)).filter(p => p && p.next && p.read > 0).sort((a, b) => b.pct - a.pct).slice(0, 8);
     // Lectures par mois et totaux de l'année (RDG-06) : domains/reading/reading-stats.js, calculé sur le journal
     const rs = window.PanelDomains.readingStats.readingStats(d.log);
     const rsMax = Math.max(...rs.months.map(m => m.n), 1);
     const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
     const readingStatsCard = `<div class="stats-card" id="readingStatsCard"><h3>Lectures sur 12 mois</h3><div class="month-chart">${rs.months.map(m => `<div class="month-col" title="${m.n} lecture(s)"><b style="font-size:12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / rsMax) * 85}%"></div><span>${rsMonth(m.month)}</span></div>`).join('')}</div><p class="stat-sub" style="margin-top:8px">En ${rs.year} : <b>${rs.yearFirst}</b> première(s) lecture(s) · <b>${rs.yearRereads}</b> relecture(s). Calculé sur le journal de lecture.</p></div>`;
-    host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + `${sipHtml}<div class="stats-grid">
-      <div class="stats-card"><h3>Vue d'ensemble</h3><p class="stat-sub" style="line-height:1.7">Œuvres suivies : <b>${s.works}</b><br>Lues : <b>${s.read}</b> · en cours : <b>${s.reading}</b> · à lire : <b>${s.toRead}</b> · abandonnées : <b>${s.abandoned}</b><br>Relectures : <b>${s.rereads}</b> · terminées sur 12 mois : <b>${s.finishedLastYear}</b><br>Pile à lire (possédés non lus) : <b>${s.pileToRead}</b> · lus sans possession : <b>${s.readNotOwned}</b>${s.openConflicts ? '<br><span style="color:var(--warn,#b45309)">Conflits de notes à résoudre : <b>' + s.openConflicts + '</b></span> <button class="btn secondary" style="font-size:12px;padding:3px 8px" id="readingOpenMigration">Voir</button>' : ''}</p></div>
-      <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : (sip.length ? '<p class="stat-sub">Aucun numéro possédé à lire dans vos séries commencées : voir « Séries en cours » ci-dessus pour les suivants à trouver.</p>' : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>')}</div>
-      ${readingStatsCard}
-    </div>
+    host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + upHtml + kpiHtml + sipHtml + `
     <nav class="filter-tabs-bar" id="readingFilterTabs" style="margin:6px 0 10px">${pill('reading', 'En cours', s.reading)}${pill('to_read', 'À lire', s.toRead)}${pill('read', 'Lus', s.read)}${pill('abandoned', 'Abandonnés', s.abandoned)}${pill('all', 'Tout', s.works)}${pill('journal', 'Journal', d.log.length)}</nav>
     <div id="readingList">${list === null
       ? (d.log.length ? d.log.slice(-50).reverse().map(l => { const st = d.states[l.workKey] || {}; return `<div class="top-item"><span class="stat-sub">${new Date(l.at).toLocaleString('fr-FR')}</span> <b>${escapeHtml(st.series || l.workKey)} ${escapeHtml(st.issue || '')}</b> · ${escapeHtml(({ finished: 'terminé', reread: 'relu', started: 'commencé', abandoned: 'abandonné', rating: 'note', status: 'statut', migrated: 'migré' })[l.event] || l.event)}</div>`; }).join('') : '<div class="notice-box">Le journal se remplit à chaque lecture.</div>')
-      : (list.length ? list.slice(0, 200).map(row).join('') : `<div class="notice-box">${s.works ? 'Aucune œuvre dans cette catégorie.' : 'Aucune lecture enregistrée. Cochez « Lu » sur une fiche, ou regroupez vos anciennes lectures avec « Lecture par œuvre… ».'}</div>`)}</div>`;
+      : (list.length ? list.slice(0, 200).map(row).join('') : `<div class="notice-box">${s.works ? 'Aucune œuvre dans cette catégorie.' : 'Aucune lecture enregistrée. Cochez « Lu » sur une fiche, ou regroupez vos anciennes lectures avec « Lecture par œuvre… ».'}</div>`)}</div>
+    <div class="stats-grid rd-stats">
+      <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : (sip.length ? '<p class="stat-sub">Aucun numéro possédé à lire dans vos séries commencées : voir « Séries en cours » ci-dessus pour les suivants à trouver.</p>' : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>')}</div>
+      ${readingStatsCard}
+    </div>`;
     host.querySelectorAll('[data-rdf]').forEach(b => { b.onclick = () => { readingViewFilter = b.dataset.rdf; readingFilterTouched = true; renderReadingView(); }; });
     if ($('readingImportNow')) $('readingImportNow').onclick = () => { const r = rdMigrate(); readingViewFilter = 'read'; renderSinglesCollection(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
     if ($('readingImportDetail')) $('readingImportDetail').onclick = () => openReadingMigrationDialog();
@@ -17441,7 +17736,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (drafts.length ? '<div class="ex-chips">' + drafts.slice(0, 20).map(d => '<button class="ex-chip" data-ex-comm>' + escapeHtml((PLANCHE_KINDS[d.kind] || 'Planche') + ' · ' + d.items.map(c => c.series + ' ' + (c.issue || '')).join(', ').slice(0, 60)) + '</button>').join('') + '</div>' : '') +
         (!stories.length && !drafts.length ? '<p class="ex-note">Aucune planche ni story ' + (t ? 'pour « ' + escapeHtml(q) + ' »' : 'pour l\'instant') + '.</p>' : '') + '</section>';
     }
-    return '<section class="ex-sec"><div class="ex-sec-head"><h3>Directs en cours</h3><p>Salons vocaux pour débattre comics, images à l\'appui.</p></div><div class="ex-live-empty"><span class="live-dot">Bientôt</span><p>Aucun direct en cours : le direct ouvrira avec les comptes en ligne et un serveur audio. Aucun salon n\'est simulé.</p><button class="btn secondary rel-mini" data-ex-comm>Voir le projet de débats</button></div></section>';
+    return '<section class="ex-sec"><div class="ex-sec-head"><h3>Directs en cours</h3><p>Salons vocaux pour débattre comics, images à l\'appui.</p></div><div class="ex-live-empty"><span class="live-dot">Bientôt</span><p>Aucun direct en cours : le direct ouvrira avec les comptes en ligne et un serveur audio. Aucun salon n\'est simulé.</p><button class="btn secondary rel-mini" data-ex-comm>Préparer un direct</button></div></section>';
   };
 
   // ── Réglages (D-63) : un vrai panneau de réglages par rubriques, autour des paramètres existants (clés API, application)
@@ -17750,8 +18045,193 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const se = card.querySelector('[data-igp-sedit]'); if (se) se.onclick = () => { const st = storyLoad().stories.find(x => x.id === ref); if (st) openStoryEditor(null, st); };
     });
   };
+  // ── Studio de direct (D-78) : préparer un débat, le répéter seul chronomètre en main, garder la synthèse.
+  // Aucun participant, message ni réaction d'autrui n'est simulé : le salon à plusieurs ouvrira avec les comptes en ligne.
+  const LIVE_KEY = 'panel_live_v1';
+  const LV = () => window.PanelDomains.liveCore;
+  const lvLoad = () => { try { return LV().sanitizeState(JSON.parse(localStorage.getItem(LIVE_KEY) || 'null')); } catch (_) { return LV().emptyState(); } };
+  const lvStore = st => { try { localStorage.setItem(LIVE_KEY, JSON.stringify(st)); return true; } catch (_) { showToast('Stockage plein : direct non enregistré.'); return false; } };
+  const lvId = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const lvNow = () => new Date().toISOString();
+  const lvCopy = ref => physicalSingles.find(x => x && x.id === ref) || null;
+  const lvImg = ref => { const c = lvCopy(ref), u = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : ''; return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : ''; };
+  const lvWhen = iso => iso ? new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sans date';
+  const lvLocalInput = iso => { if (!iso) return ''; const d = new Date(iso), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()); };
+  const lvHtml = () => {
+    const st = lvLoad(), F = LV().FORMATS, rooms = LV().ordered(st, lvNow());
+    const card = r => '<article class="lv-card" data-lv-room="' + escapeHtml(r.id) + '"><div class="lv-card-covers" aria-hidden="true">' + (r.images.length ? r.images.slice(0, 3).map(im => '<span>' + lvImg(im.ref) + '<i>' + escapeHtml(String(im.series || '?').slice(0, 1)) + '</i></span>').join('') : '<span class="lv-card-ph">◉</span>') + '</div>' +
+      '<div class="lv-card-b"><small>' + escapeHtml(F[r.format]) + ' · ' + escapeHtml(lvWhen(r.when)) + '</small><b>' + escapeHtml(r.title) + '</b><span>' + r.topics.length + ' point' + (r.topics.length > 1 ? 's' : '') + ' à l\'ordre du jour · ' + r.images.length + ' image' + (r.images.length > 1 ? 's' : '') + ' au tableau</span></div>' +
+      '<div class="lv-card-act"><button class="btn" data-lv-start="' + escapeHtml(r.id) + '">Répéter</button><button class="rd-act" data-lv-edit="' + escapeHtml(r.id) + '">Modifier</button><button class="rd-act" data-lv-del="' + escapeHtml(r.id) + '">Supprimer</button></div></article>';
+    const hist = st.history.slice(0, 6).map(x => '<article class="lv-hist"><div><small>' + escapeHtml(lvWhen(x.endedAt)) + ' · ' + escapeHtml(LV().fmtDuration(x.durationSec)) + '</small><b>' + escapeHtml(x.title) + '</b><span>' + x.topics.length + ' sujet' + (x.topics.length > 1 ? 's' : '') + ' traité' + (x.topics.length > 1 ? 's' : '') + (x.shown.length ? ' · ' + x.shown.length + ' image' + (x.shown.length > 1 ? 's' : '') + ' montrée' + (x.shown.length > 1 ? 's' : '') : '') + '</span></div>' +
+      '<button class="rd-act" data-lv-post="' + escapeHtml(x.id) + '">Planche de synthèse</button></article>').join('');
+    return '<section class="lv" id="liveStudio"><div class="lv-hero"><div class="lv-hero-t"><span class="live-dot is-studio">Studio</span><h3>Préparez votre direct</h3><p>Sujet, ordre du jour, couvertures au tableau et règles du salon. Répétez-le ici, chronomètre en main ; la synthèse reste sur cet appareil. Le salon à plusieurs (voix, mains levées, auditeurs) ouvrira avec les comptes en ligne : aucun participant n\'est simulé.</p></div><button class="btn" data-lv-new>+ Préparer un direct</button></div>' +
+      (rooms.length ? '<h4 class="lv-h">Mes directs <small>' + rooms.length + '</small></h4><div class="lv-list">' + rooms.map(card).join('') + '</div>'
+        : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
+      (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>';
+  };
+  const lvWire = host => {
+    host.querySelectorAll('[data-lv-new]').forEach(b => { b.onclick = () => openLiveEditor(null); });
+    host.querySelectorAll('[data-lv-edit]').forEach(b => { b.onclick = () => openLiveEditor(b.dataset.lvEdit); });
+    host.querySelectorAll('[data-lv-start]').forEach(b => { b.onclick = () => openLiveStage(b.dataset.lvStart); });
+    host.querySelectorAll('[data-lv-del]').forEach(b => { b.onclick = () => {
+      const before = lvLoad(), r = LV().removeRoom(before, b.dataset.lvDel);
+      if (!r.removed || !lvStore(r.state)) return;
+      renderCommunityView();
+      showToastAction('Direct « ' + escapeHtml(r.removed.title) + ' » supprimé.', 'Annuler', () => { lvStore(before); renderCommunityView(); });
+    }; });
+    host.querySelectorAll('[data-lv-post]').forEach(b => { b.onclick = () => {
+      const x = lvLoad().history.find(y => y.id === b.dataset.lvPost);
+      const copies = x ? x.shown.map(im => lvCopy(im.ref)).filter(Boolean) : [];
+      if (!copies.length) { showToast('Montrez au moins une couverture pendant la répétition pour en faire une planche.'); return; }
+      openShareDialog(copies, null, { kind: 'free', text: LV().summaryText(x) });
+    }; });
+  };
+  const openLiveEditor = id => {
+    const prev = id ? lvLoad().rooms.find(x => x.id === id) : null;
+    const box = bunModal('liveEditDialog');
+    let picked = prev ? prev.images.slice() : [];
+    const owned = physicalSingles.filter(x => x && isOwned(x) && x.coverUrl && isSafeImageUrl(x.coverUrl));
+    const F = LV().FORMATS, MAXI = LV().LIMITS.images;
+    box.innerHTML = '<div class="modal-box lv-edit" role="dialog" aria-modal="true" aria-labelledby="lvEditTitle"><h2 id="lvEditTitle">' + (prev ? 'Modifier le direct' : 'Préparer un direct') + '</h2>' +
+      '<label class="lv-f">Sujet<input class="field-input" data-lv="title" maxlength="90" placeholder="ex : Le meilleur run de Daredevil" value="' + escapeHtml(prev ? prev.title : '') + '"></label>' +
+      '<div class="lv-f2"><label class="lv-f">Format<select class="field-input" data-lv="format">' + Object.entries(F).map(([k, l]) => '<option value="' + k + '"' + ((prev ? prev.format : 'wednesday') === k ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('') + '</select></label>' +
+      '<label class="lv-f">Date prévue (facultatif)<input class="field-input" type="datetime-local" data-lv="when" value="' + escapeHtml(prev ? lvLocalInput(prev.when) : '') + '"></label></div>' +
+      '<label class="lv-f">Ordre du jour <small>un point par ligne, huit au plus</small><textarea class="field-input" data-lv="topics" rows="4" placeholder="Les sorties de la semaine&#10;Le numéro qui divise&#10;Vos coups de cœur">' + escapeHtml(prev ? prev.topics.join('\n') : '') + '</textarea></label>' +
+      '<div class="lv-f"><span>Tableau d\'images <small data-lv-count></small></span><div class="lv-picked" data-lv-picked></div>' +
+        (owned.length ? '<input class="field-input" data-lv-q type="search" placeholder="Chercher une couverture dans votre collection…"><div class="lv-pick" data-lv-pick></div>' : '<p class="stat-sub">Ajoutez des numéros avec couverture à votre collection pour les montrer pendant le direct.</p>') + '</div>' +
+      '<details class="lv-f"><summary>Règles du salon</summary><textarea class="field-input" data-lv="rules" rows="4">' + escapeHtml((prev ? prev.rules : LV().DEFAULT_RULES).join('\n')) + '</textarea></details>' +
+      '<p class="stat-sub" data-lv-msg role="status"></p><div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (prev ? 'Enregistrer' : 'Créer le direct') + '</button></div></div>';
+    box.classList.add('open');
+    const q = sel => box.querySelector(sel);
+    const label = c => (c.series || '') + ' ' + (c.issue || '');
+    const paint = () => {
+      q('[data-lv-count]').textContent = picked.length + ' / ' + MAXI;
+      q('[data-lv-picked]').innerHTML = picked.length ? picked.map(im => '<button type="button" class="lv-thumb is-on" data-lv-unpick="' + escapeHtml(im.ref) + '" title="Retirer ' + escapeHtml(label(im)) + '">' + lvImg(im.ref) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') : '<span class="stat-sub">Aucune image pour l\'instant.</span>';
+      q('[data-lv-picked]').querySelectorAll('[data-lv-unpick]').forEach(b => { b.onclick = () => { picked = picked.filter(x => x.ref !== b.dataset.lvUnpick); paint(); }; });
+      const pick = q('[data-lv-pick]');
+      if (!pick) return;
+      const t = catNorm(q('[data-lv-q]').value);
+      const list = owned.filter(c => !picked.some(x => x.ref === c.id) && (!t || catNorm(label(c)).includes(t))).slice(0, 24);
+      pick.innerHTML = list.map(c => '<button type="button" class="lv-thumb" data-lv-add="' + escapeHtml(c.id) + '" title="Ajouter ' + escapeHtml(label(c)) + '">' + lvImg(c.id) + '<i>' + escapeHtml(label(c)) + '</i></button>').join('') || '<span class="stat-sub">Aucune couverture trouvée.</span>';
+      pick.querySelectorAll('[data-lv-add]').forEach(b => { b.onclick = () => {
+        if (picked.length >= MAXI) { q('[data-lv-msg]').textContent = 'Douze images au plus sur le tableau.'; return; }
+        const c = lvCopy(b.dataset.lvAdd); if (c) picked.push({ ref: c.id, series: c.series || '', issue: c.issue || '' }); paint();
+      }; });
+    };
+    if (q('[data-lv-q]')) q('[data-lv-q]').oninput = () => { clearTimeout(paint.tm); paint.tm = setTimeout(paint, 120); };
+    paint();
+    const close = () => box.classList.remove('open');
+    q('[data-cancel]').onclick = close;
+    box.onkeydown = e => { if (e.key === 'Escape') close(); };
+    q('[data-save]').onclick = () => {
+      const v = k => q('[data-lv="' + k + '"]').value;
+      const when = v('when') ? new Date(v('when')).toISOString() : '';
+      const r = LV().saveRoom(lvLoad(), { id: prev && prev.id, title: v('title'), format: v('format'), when, topics: v('topics'), rules: v('rules'), images: picked }, lvNow(), lvId('lv'));
+      if (r.errors.length) { q('[data-lv-msg]').textContent = r.errors.join(' '); return; }
+      if (!lvStore(r.state)) return;
+      close(); commTab = 'live'; renderCommunityView();
+      showToast(prev ? 'Direct mis à jour.' : 'Direct préparé : lancez une répétition quand vous voulez.');
+    };
+    setTimeout(() => { const f = q('[data-lv="title"]'); if (f) f.focus(); }, 30);
+  };
+  // Scène de répétition : plein écran, chronomètres, tableau, réactions de l'utilisateur, test du micro (rien n'est enregistré)
+  let lvStage = null;
+  const lvMicStop = () => {
+    const m = lvStage && lvStage.mic;
+    if (!m) return;
+    cancelAnimationFrame(m.raf);
+    try { m.stream.getTracks().forEach(t => t.stop()); } catch (_) {}
+    try { m.ctx.close(); } catch (_) {}
+    lvStage.mic = null;
+  };
+  const lvMicStart = async () => {
+    const el = lvStage && lvStage.el;
+    if (!el || lvStage.mic) return;
+    const note = el.querySelector('[data-lv-micnote]');
+    try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) throw new Error('absent');
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+      if (!lvStage) { stream.getTracks().forEach(t => t.stop()); return; }
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const an = ctx.createAnalyser(); an.fftSize = 512;
+      ctx.createMediaStreamSource(stream).connect(an);
+      const buf = new Uint8Array(an.fftSize), bar = el.querySelector('[data-lv-meter]');
+      const loop = () => { an.getByteTimeDomainData(buf); let peak = 0; for (let i = 0; i < buf.length; i++) peak = Math.max(peak, Math.abs(buf[i] - 128)); if (bar) bar.style.width = Math.min(100, Math.round(peak / 128 * 160)) + '%'; if (lvStage && lvStage.mic) lvStage.mic.raf = requestAnimationFrame(loop); };
+      lvStage.mic = { stream, ctx, raf: 0 };
+      loop();
+      if (note) note.textContent = 'Micro actif sur cet appareil : rien n\'est enregistré ni envoyé.';
+    } catch (e) {
+      if (note) note.textContent = 'Micro indisponible (permission refusée ou aucun micro).';
+    }
+    lvPaintMic();
+  };
+  const lvPaintMic = () => { const b = lvStage && lvStage.el.querySelector('[data-lv-mic]'); if (b) { b.textContent = lvStage.mic ? 'Couper le micro' : 'Tester mon micro'; b.classList.toggle('is-on', !!lvStage.mic); } };
+  const lvTick = () => {
+    if (!lvStage) return;
+    const now = Date.now(), el = lvStage.el, secs = t => Math.round((now - Date.parse(t)) / 1000);
+    const a = el.querySelector('[data-lv-elapsed]'), b = el.querySelector('[data-lv-topictime]');
+    if (a) a.textContent = LV().clock(secs(lvStage.session.startedAt));
+    if (b) b.textContent = LV().clock(secs(lvStage.session.topicStartedAt));
+  };
+  const lvPaintStage = () => {
+    const { el, room, session } = lvStage;
+    const cur = room.topics[session.topic], label = im => (im.series || '') + ' ' + (im.issue || '');
+    const shownIm = session.shown ? room.images.find(x => x.ref === session.shown) : null;
+    const counts = Object.entries(session.reactions).map(([k, n]) => escapeHtml(k) + ' ×' + n).join(' · ');
+    el.innerHTML = '<header class="lv-top"><span class="live-dot is-rec">Répétition</span><b class="lv-top-t">' + escapeHtml(room.title) + '</b><span class="lv-clock" data-lv-elapsed>00:00</span><button class="btn lv-end" data-lv-end>Terminer</button></header>' +
+      '<div class="lv-body"><section class="lv-board"><div class="lv-screen" data-lv-screen>' + (shownIm ? lvImg(shownIm.ref) + '<p class="lv-cap">' + escapeHtml(label(shownIm)) + ' · votre collection</p>' : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une couverture ci-dessous pour la montrer en grand.' : 'Aucune image au tableau : ajoutez-en en modifiant le direct.') + '</p>') + '</div>' +
+        (room.images.length ? '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im.ref) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') + '</div>' : '') +
+        '<div class="lv-react">' + LV().REACTIONS.map(k => '<button class="lv-onoma" data-lv-react="' + escapeHtml(k) + '">' + escapeHtml(k) + '</button>').join('') + '<span class="lv-react-n">' + (counts ? 'Vos réactions : ' + counts : 'Vos réactions, pour rythmer la répétition') + '</span></div></section>' +
+        '<aside class="lv-side"><h4>Ordre du jour</h4><ol class="lv-agenda">' + room.topics.map((t, i) => '<li class="' + (i < session.topic ? 'is-done' : i === session.topic ? 'is-cur' : '') + '"><span>' + escapeHtml(t) + '</span>' + (i < session.topic ? '<small>' + escapeHtml(LV().clock(session.done[i].secs)) + '</small>' : i === session.topic ? '<small data-lv-topictime>00:00</small>' : '') + '</li>').join('') + '</ol>' +
+        '<button class="btn secondary lv-next" data-lv-next' + (cur ? '' : ' disabled') + '>' + (!cur ? 'Ordre du jour terminé' : session.topic === room.topics.length - 1 ? 'Clore ce dernier point' : 'Point suivant') + '</button>' +
+        '<div class="lv-mic"><button class="rd-act" data-lv-mic>Tester mon micro</button><div class="lv-meter" aria-hidden="true"><span data-lv-meter></span></div><small data-lv-micnote>Facultatif : vérifie le niveau, rien n\'est enregistré ni envoyé.</small></div>' +
+        '<details class="lv-rules"><summary>Règles du salon</summary><ul>' + room.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul></details>' +
+        '<p class="lv-solo">Vous êtes seul dans ce salon de répétition. Les auditeurs et les intervenants arriveront avec les comptes en ligne.</p></aside></div>';
+    el.querySelector('[data-lv-end]').onclick = closeLiveStage;
+    el.querySelectorAll('[data-lv-show]').forEach(b => { b.onclick = () => { lvStage.session = LV().showImage(lvStage.session, room, b.dataset.lvShow); lvPaintStage(); }; });
+    el.querySelectorAll('[data-lv-react]').forEach(b => { b.onclick = () => {
+      lvStage.session = LV().react(lvStage.session, b.dataset.lvReact);
+      const n = el.querySelector('.lv-react-n'); if (n) n.textContent = 'Vos réactions : ' + Object.entries(lvStage.session.reactions).map(([k, c]) => k + ' ×' + c).join(' · ');
+      const burst = document.createElement('span'); burst.className = 'lv-burst'; burst.textContent = b.dataset.lvReact;
+      burst.style.left = (20 + Math.random() * 60) + '%'; el.querySelector('[data-lv-screen]').appendChild(burst); setTimeout(() => burst.remove(), 900);
+    }; });
+    const nx = el.querySelector('[data-lv-next]'); if (nx) nx.onclick = () => { lvStage.session = LV().nextTopic(lvStage.session, room, lvNow()); lvPaintStage(); };
+    el.querySelector('[data-lv-mic]').onclick = () => { if (lvStage.mic) { lvMicStop(); const nt = el.querySelector('[data-lv-micnote]'); if (nt) nt.textContent = 'Micro coupé.'; const m = el.querySelector('[data-lv-meter]'); if (m) m.style.width = '0'; lvPaintMic(); } else lvMicStart(); };
+    lvPaintMic(); lvTick();
+  };
+  const openLiveStage = id => {
+    const room = lvLoad().rooms.find(x => x.id === id);
+    if (!room || lvStage) return false;
+    const el = document.createElement('div');
+    el.className = 'lv-stage'; el.id = 'liveStage'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Répétition : ' + room.title);
+    document.body.appendChild(el);
+    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, onKey: e => { if (e.key === 'Escape') closeLiveStage(); } };
+    document.addEventListener('keydown', lvStage.onKey);
+    lvPaintStage();
+    return true;
+  };
+  const closeLiveStage = () => {
+    if (!lvStage) return null;
+    lvMicStop();
+    clearInterval(lvStage.timer);
+    document.removeEventListener('keydown', lvStage.onKey);
+    const r = LV().endSession(lvLoad(), lvStage.session, lvStage.room, lvNow(), lvId('lh'));
+    lvStage.el.remove();
+    lvStage = null;
+    lvStore(r.state);
+    commTab = 'live'; renderCommunityView();
+    showToast('Répétition terminée : ' + LV().fmtDuration(r.summary.durationSec) + ', ' + r.summary.topics.length + ' sujet' + (r.summary.topics.length > 1 ? 's' : '') + '.');
+    return r.summary;
+  };
+  const LIVE_API = Object.freeze({
+    state: () => JSON.parse(JSON.stringify(lvLoad())),
+    save: input => { const r = LV().saveRoom(lvLoad(), input, lvNow(), lvId('lv')); if (r.errors.length) return { ok: false, errors: r.errors }; lvStore(r.state); return { ok: true, id: r.room.id }; },
+    start: id => openLiveStage(id),
+    stage: () => lvStage ? JSON.parse(JSON.stringify({ roomId: lvStage.room.id, session: lvStage.session, mic: !!lvStage.mic })) : null,
+    end: () => closeLiveStage()
+  });
   const renderCommunityView = () => {
-    try { renderCommunityProfile(); } catch (_) {}
+    if (commTab === 'profile') { try { renderCommunityProfile(); } catch (_) {} }
     const headEl = $('communityHead');
     if (headEl) {
       headEl.innerHTML = commHeadHtml();
@@ -17766,14 +18246,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.innerHTML =
       (commTab === 'live' ? '' : '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
       '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>') +
-      (commTab !== 'live' ? '' : '<section class="live-teaser"><div class="live-teaser-main"><span class="live-dot">Bientôt</span><h3>Débats en direct</h3><p>Des salons vocaux pour parler comics à plusieurs : un animateur, des intervenants qui lèvent la main, et un tableau où chacun montre la case ou la couverture dont il parle. Débat du mercredi sur les sorties, procès d\'un event, « quel est le meilleur run de Daredevil ? ». Les débats animés rapportent des points de rang.</p></div>' +
-        '<ul class="live-teaser-list"><li><b>Salon vocal</b> animateur, intervenants, auditeurs</li><li><b>Tableau d\'images</b> cases et couvertures de votre collection</li><li><b>Modération</b> signalement, exclusion, règles du salon</li></ul>' +
-        '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>') +
+      (commTab !== 'live' ? '' : lvHtml()) +
       (commTab === 'live' ? '' : commForYouHtml()) +
-      '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches et stories restent sur cet appareil ; vos « j\'aime » et enregistrements aussi. Publication, abonnés, commentaires et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
+      '<p class="pl-notice"><span class="pl-notice-dot" aria-hidden="true"></span>Mode local, service communautaire non configuré : planches, stories, directs, « j\'aime » et enregistrements restent sur cet appareil. Publication, abonnés et commentaires arriveront avec les comptes.</p>' +
       (commTab === 'live' ? '' : igFeedHtml());
     commForYouWire(host);
     igWire(host);
+    lvWire(host);
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
@@ -21569,6 +22048,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     finance: FINANCE_API,
     reading: READING_API,
     community: COMMUNITY_API,
+    live: LIVE_API,
     media: Object.freeze({ providers: () => JSON.parse(JSON.stringify((exMC() || {}).PROVIDERS || [])), setVerification: mediaSetVerification, status: r => exRefStatus(r), issueIndex: () => [...exIssueIndex().values()].map(x => JSON.parse(JSON.stringify(x))), placeholder: mediaPlaceholder, img: mediaImg, failed: mediaFailed, markFailed: mediaMarkFailed, ref: mediaGetRef, setRef: mediaSetRef, removeRef: mediaRemoveRef, refs: () => JSON.parse(JSON.stringify(mediaRefsLoad().refs)), credit: mediaCredit, kinds: () => Object.keys(MEDIA_KINDS) }),
     trash: TRASH_API,
     conflicts: Object.freeze({ counts: () => conflictOpenCounts(), open: () => openConflictCenter() }),
@@ -21734,7 +22214,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     clearScanQueueForTest: () => { scanQueue = []; saveScanQueue(); upcEditions = {}; saveUpcEditions(); customUpcDatabase = {}; localStorage.removeItem('panel_custom_upc_db'); },
     learnSeriesForTest: (base12, series, pub) => { customUpcDatabase[base12] = { series, pub }; },
     setGcdFetcherForTest: fn => { gcdFetcher = fn; },
-    setMetronFetcherForTest: fn => { metronFetcher = fn; metronUnavailable = false; },
+    setMetronFetcherForTest: fn => { metronFetcher = fn; metronUnavailable = false; metronStubbed = true; },
     appRelay,
     appRoute,
     setNativeHttpForTest: fn => { nativeHttp = fn; appRelay.metronSpacing = 0; appRelay.metronState = { last: 0, blockedUntil: 0, remaining: null, authFailed: false, chain: Promise.resolve() }; appRelay.gcdCalls = []; ['panel_app_gcd_calls', 'panel_app_gcd_cache', 'panel_app_metron_issues', 'panel_app_metron_lookups', 'panel_metron_creds'].forEach(k => localStorage.removeItem(k)); },

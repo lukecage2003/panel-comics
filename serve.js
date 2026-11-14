@@ -304,6 +304,36 @@ const handleMetron = async (u, res) => {
       return sendJson(res, e.status || 502, { error: e.message || 'Metron indisponible' });
     }
   }
+  // D-78 : toutes les éditions d'un numéro (couverture A et variantes, avec image) pour la fiche : /api/metron/variants?q=Série #12&year=2024
+  if (u.pathname === '/api/metron/variants') {
+    if (!metronCreds) return sendJson(res, 503, { error: 'Metron non configuré : lancez « node serve.js --metron »' });
+    const q = String(u.searchParams.get('q') || '').replace(/\s+/g, ' ').trim().slice(0, 80);
+    const year = parseInt(u.searchParams.get('year') || '', 10) || null;
+    const m = q.match(/^(.*?)\s*#?\s*(\d{1,5}(?:\.\d+)?[A-Za-z]?)$/);
+    if (!m || !m[1].trim()) return sendJson(res, 400, { error: 'paramètres invalides' });
+    const seriesName = m[1].replace(/\(\s*\d{4}[^)]*\)/g, '').trim(), number = m[2];
+    try {
+      const key = seriesName.toLowerCase() + '|' + number;
+      metronCache.search = metronCache.search || {};
+      let results = metronCache.search[key] && Date.now() - metronCache.search[key].at < 7 * DAY ? metronCache.search[key].results : null;
+      if (!results) {
+        const d = await metronGet('/issue/?' + new URLSearchParams({ series_name: seriesName, number }).toString());
+        results = (d.results || []).slice(0, 30).map(x => ({ id: x.id, series: (x.series && x.series.name) || '', year: (x.series && x.series.year_began) || null, number: String(x.number || ''), date: x.cover_date || '' }));
+        metronCache.search[key] = { at: Date.now(), results };
+        saveMetronCache();
+      }
+      const norm = t => String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+      const want = norm(seriesName);
+      const yearOf = r => parseInt(String(r.date || '').slice(0, 4), 10) || r.year || 0;
+      const pick = results.filter(r => r.number === number).sort((a, b) => (norm(b.series) === want) - (norm(a.series) === want) || (year ? Math.abs(yearOf(a) - year) - Math.abs(yearOf(b) - year) : yearOf(b) - yearOf(a)))[0];
+      if (!pick || (year && Math.abs(yearOf(pick) - year) > 2)) return sendJson(res, 200, { found: false, remaining: metronState.remaining });
+      const issue = await metronIssue(pick.id);
+      const editions = issue.editions.filter(e => /^https:\/\//.test(String(e.image || ''))).map(e => ({ name: e.main ? 'Cover A' : String(e.name || 'Variante').slice(0, 120), main: !!e.main, image: e.image, upc: e.upc || '' }));
+      return sendJson(res, 200, { found: true, issue: { id: issue.id, series: issue.series, number: issue.number, cover_date: issue.cover_date }, editions, remaining: metronState.remaining });
+    } catch (e) {
+      return sendJson(res, e.status || 502, { error: e.message || 'Metron indisponible' });
+    }
+  }
   if (u.pathname !== '/api/metron/scan') return sendJson(res, 404, { error: 'introuvable' });
   if (!metronCreds) return sendJson(res, 503, { error: 'Metron non configuré : lancez « node serve.js --metron »' });
   const code = String(u.searchParams.get('code') || '').replace(/\D/g, '');

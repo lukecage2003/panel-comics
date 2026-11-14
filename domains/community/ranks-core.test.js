@@ -30,7 +30,8 @@ test('points : barème appliqué, activité sociale ignorée sans compte', () =>
 
 test('D-71 : runs lus, longs runs, découvertes et semaines de lecture rapportent des points', () => {
   const r = R.computeRank({ runsRead: 1, longRuns: 1, firsts: 2, graded: 1, publishers: 1, characters: 2, eras: 1, readWeeks: 1 });
-  assert.strictEqual(r.xp, 90 + 120 + 12 + 15 + 12 + 10 + 40 + 12);
+  assert.strictEqual(r.xp, 90 + 120 + 12 + 12 + 10 + 40 + 12); // D-78 : la gradation ne rapporte plus de points
+  assert.ok(!r.breakdown.some(b => b.id === 'graded'));
   assert.ok(r.breakdown.some(b => b.id === 'runsRead' && b.label === 'Run complet lu en entier'));
 });
 

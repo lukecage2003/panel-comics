@@ -57,13 +57,14 @@ test('ères, voyageur temporel et gardiens par personnage', () => {
   assert.ok(r.xp > 0 && r.level >= 1);
 });
 
-test('lecture, pull list, rangement et gradés', () => {
+test('lecture, pull list, rangement (la gradation n\'a plus de trophée, D-78)', () => {
   const r = T.computeTrophies({
     copies: [copy('A', '#1', { box: 'Short 1', condition: 'CGC 9.8', keyType: 'major' })],
     log: [{ event: 'finished' }, { event: 'reread' }, { event: 'started' }], picked: 3
   });
   const v = id => r.trophies.find(t => t.id === id);
-  assert.deepStrictEqual([v('reader').value, v('rereader').value, v('wednesday').value, v('archivist').value, v('slabs').value, v('keys').value], [1, 1, 3, 1, 1, 1]);
+  assert.deepStrictEqual([v('reader').value, v('rereader').value, v('wednesday').value, v('archivist').value, v('keys').value], [1, 1, 3, 1, 1]);
+  assert.strictEqual(v('slabs'), undefined);
   assert.strictEqual(v('wednesday').tier, 'bronze');
 });
 

@@ -1,6 +1,13 @@
 # Débats en direct : cahier des charges (D-61)
 
-Statut : **annoncé dans l'application, non construit.** Le direct demande des comptes en ligne et un serveur audio : il arrive après la phase 1 (service de comptes). Aucun salon n'est simulé en attendant.
+Statut : **studio de préparation construit (D-78), salon à plusieurs non construit.** Le direct à plusieurs demande des comptes en ligne et un serveur audio : il arrive après la phase 1 (service de comptes). Aucun salon, participant ni réaction d'autrui n'est simulé en attendant.
+
+## Déjà disponible : le studio de direct (D-78, onglet Communauté → Directs)
+
+- **Préparer** un direct : sujet, format (débat du mercredi, procès d'un event, meilleur run, club de lecture, sujet libre), date prévue, ordre du jour (huit points au plus), images du tableau (douze couvertures de la collection au plus, par référence) et règles du salon (quatre règles proposées, modifiables).
+- **Répéter seul**, en plein écran : chronomètre général et chronomètre du point en cours, ordre du jour coché au fil de l'eau, couverture montrée en grand avec son crédit, onomatopées de l'utilisateur, test du micro (niveau seulement : rien n'est enregistré ni envoyé).
+- **Après la répétition** : synthèse gardée sur l'appareil (durée, points traités et leur durée, images montrées) et planche de synthèse préparée dans le compositeur de planches, comme brouillon local.
+- Données : `panel_live_v1` (validé à la lecture par `domains/community/live-core.js`) ; suppression annulable.
 
 ## Ce que l'utilisateur obtient
 

@@ -1,0 +1,66 @@
+'use strict';
+const test = require('node:test');
+const assert = require('node:assert/strict');
+const L = require('./live-core');
+
+const T0 = '2026-11-14T18:00:00.000Z';
+const at = s => new Date(Date.parse(T0) + s * 1000).toISOString();
+const input = { title: '  Le meilleur run de   Daredevil ', format: 'bestrun', when: '2026-11-19T19:30:00Z', topics: 'Miller\n\nBendis et Maleev\nZdarsky', images: [{ ref: 'c1', series: 'Série fictive', issue: '#1' }, { ref: 'c1', series: 'doublon' }, { ref: '', series: 'sans référence' }] };
+
+test('saveRoom : nettoyage, règles par défaut, validation', () => {
+  const r = L.saveRoom(L.emptyState(), input, T0, 'lv_1');
+  assert.deepEqual(r.errors, []);
+  assert.equal(r.room.title, 'Le meilleur run de Daredevil');
+  assert.deepEqual(r.room.topics, ['Miller', 'Bendis et Maleev', 'Zdarsky']);
+  assert.equal(r.room.images.length, 1);
+  assert.deepEqual(r.room.rules, L.DEFAULT_RULES.slice());
+  assert.equal(r.state.rooms.length, 1);
+  const bad = L.saveRoom(r.state, { title: '', topics: '' }, T0, 'lv_2');
+  assert.equal(bad.errors.length, 2);
+  assert.equal(bad.state.rooms.length, 1);
+  // Mise à jour : même identifiant, date de création conservée
+  const up = L.saveRoom(r.state, { id: 'lv_1', title: 'Daredevil, le procès' }, at(60), 'ignored');
+  assert.equal(up.state.rooms.length, 1);
+  assert.equal(up.room.createdAt, T0);
+  assert.equal(up.room.title, 'Daredevil, le procès');
+  assert.deepEqual(up.room.topics, ['Miller', 'Bendis et Maleev', 'Zdarsky']);
+});
+
+test('ordered : directs à venir d\'abord, puis brouillons, puis passés', () => {
+  let st = L.emptyState();
+  st = L.saveRoom(st, { title: 'Passé', topics: 'a', when: '2026-11-01T10:00:00Z' }, T0, 'p').state;
+  st = L.saveRoom(st, { title: 'Brouillon', topics: 'a' }, T0, 'b').state;
+  st = L.saveRoom(st, { title: 'Loin', topics: 'a', when: '2026-12-20T10:00:00Z' }, T0, 'l').state;
+  st = L.saveRoom(st, { title: 'Proche', topics: 'a', when: '2026-11-15T10:00:00Z' }, T0, 'c').state;
+  assert.deepEqual(L.ordered(st, T0).map(x => x.id), ['c', 'l', 'b', 'p']);
+  assert.equal(L.removeRoom(st, 'b').state.rooms.length, 3);
+});
+
+test('répétition : sujets chronométrés, images montrées, réactions de l\'utilisateur, synthèse', () => {
+  const { state, room } = L.saveRoom(L.emptyState(), input, T0, 'lv_1');
+  let s = L.startSession(room, T0);
+  s = L.showImage(s, room, 'c1');
+  s = L.showImage(s, room, 'inconnue');
+  s = L.react(s, 'POW!'); s = L.react(s, 'POW!'); s = L.react(s, 'faux');
+  s = L.nextTopic(s, room, at(90));
+  s = L.showImage(s, room, 'c1');
+  assert.equal(s.shown, null);
+  const end = L.endSession(state, s, room, at(150), 'h_1');
+  assert.equal(end.summary.durationSec, 150);
+  assert.deepEqual(end.summary.topics, [{ text: 'Miller', secs: 90 }, { text: 'Bendis et Maleev', secs: 60 }]);
+  assert.deepEqual(end.summary.shown.map(x => x.ref), ['c1']);
+  assert.deepEqual(end.summary.reactions, { 'POW!': 2 });
+  assert.equal(end.state.history.length, 1);
+  assert.match(L.summaryText(end.summary), /Meilleur run : Le meilleur run de Daredevil\nAu programme : Miller · Bendis et Maleev\nDurée : 2 min 30 s/);
+});
+
+test('sanitizeState rejette le mal formé ; formats de durée', () => {
+  const st = L.sanitizeState({ rooms: [{ id: 'x', title: '<b>ok</b>', topics: ['a'], format: 'piège' }, { id: 'x', title: 'doublon', topics: ['a'] }, null, { title: 'sans id' }], history: [{ id: 'h', durationSec: -5, reactions: { 'POW!': 'x', 'WOW!': 3 } }] });
+  assert.equal(st.rooms.length, 1);
+  assert.equal(st.rooms[0].format, 'free');
+  assert.equal(st.history[0].durationSec, 0);
+  assert.deepEqual(st.history[0].reactions, { 'WOW!': 3 });
+  assert.equal(L.fmtDuration(3725), '1 h 02 min');
+  assert.equal(L.fmtDuration(65), '1 min 05 s');
+  assert.equal(L.clock(605), '10:05');
+});

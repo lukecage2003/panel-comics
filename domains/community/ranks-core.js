@@ -25,7 +25,6 @@ const XP_RULES = [
   { id: 'runsRead', label: 'Run complet lu en entier', xp: 90 },
   { id: 'longRuns', label: 'Run complet de 12 numéros ou plus', xp: 120 },
   { id: 'firsts', label: 'Numéro 1 possédé', xp: 6 },
-  { id: 'graded', label: 'Exemplaire gradé (CGC, CBCS, PGX)', xp: 15 },
   { id: 'publishers', label: 'Éditeur dans la collection', xp: 12 },
   { id: 'characters', label: 'Personnage dans la collection', xp: 5 },
   { id: 'eras', label: 'Ère représentée (Golden, Silver, Bronze, Modern)', xp: 40 },

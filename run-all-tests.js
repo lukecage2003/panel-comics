@@ -1220,6 +1220,7 @@ const waitForCdp = async () => {
           mCalls.push(url); authHeader = headers.Authorization;
           if (url.includes('upc=76194138584600138') || url.includes('upc_starts_with=761941385846')) return resp(200, LIST);
           if (url.endsWith('/issue/127884/')) return resp(200, DETAIL);
+          if (url.includes('series_name=Absolute+Batman') && url.includes('number=1')) return resp(200, { results: [{ id: 127884, number: '1', cover_date: '2024-12-01', series: { name: 'Absolute Batman', year_began: 2024 } }] });
           return resp(200, { results: [] });
         }, { username: 'u', password: 'p' });
         const mget = async q => { const res = await fetch('http://127.0.0.1:8099/api/metron/' + q); return { status: res.status, body: await res.json() }; };
@@ -1234,6 +1235,12 @@ const waitForCdp = async () => {
         t20.metronIssue = m2.body.found === 'issue' && m2.body.issue.number === '1';
         t20.metronSeries = m3.body.found === 'series' && m3.body.series.year_began === 2024;
         t20.metronBadParams = mBad.status === 400;
+        // D-78 : toutes les éditions d'un numéro par son titre (couverture A et variantes, avec image) pour la fiche
+        const mv1 = await mget('variants?q=' + encodeURIComponent('Absolute Batman (2024) #1') + '&year=2024');
+        const mv2 = await mget('variants?q=' + encodeURIComponent('Absolute Batman #1') + '&year=1990');
+        const mv3 = await mget('variants?q=' + encodeURIComponent('##'));
+        t20.metronVariants = mv1.status === 200 && mv1.body.found === true && mv1.body.editions.length === 2 && mv1.body.editions[0].main === true && mv1.body.editions[0].name === 'Cover A' &&
+          mv1.body.editions[1].name === 'Cover J Jim Lee Foil Virgin Variant' && mv1.body.editions.every(e => /^https:\/\//.test(e.image)) && mv2.body.found === false && mv3.status === 400;
         srv.setMetronForTest(async () => resp(401, {}), { username: 'u', password: 'x' });
         const m4 = await mget('scan?code=76194138584600111&issue=1');
         const m5 = await mget('status');
@@ -1354,7 +1361,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['atlasData', 'exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['atlasData', 'exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronVariants', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
@@ -4828,6 +4835,76 @@ const waitForCdp = async () => {
       console.log('Résultat Test 60:', JSON.stringify(t60));
       testResults.push({ test: 'Fil façon Instagram (D-76) : publications planches et stories, carrousel, double-clic « j\'aime », enregistrer, épingler, filtres par mot-dièse, onglet « Enregistrés »',
         ok: !!t60 && !t60.error && ['posts', 'carousel', 'like', 'likeStays', 'save', 'menu', 'pin', 'tags', 'filter', 'unfilter', 'honest', 'savedTab'].every(k => t60[k] === true) });
+
+      // ==========================================
+      // TEST 61 : Studio de direct (D-78) — préparer, répéter seul, synthèse, planche ; variantes Metron dans la fiche (données FICTIVES restaurées)
+      // ==========================================
+      console.log('\n[TEST 61] Studio de direct et variantes Metron...');
+      const t61 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const live0 = localStorage.getItem('panel_live_v1'), drafts0 = localStorage.getItem('panel_community_drafts_v1');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const mk = (id, issue) => ({ id, series: 'Fixture Débat', issue, year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, coverUrl: 'https://example.invalid/' + id + '.jpg' });
+        try {
+          localStorage.removeItem('panel_live_v1');
+          P.setSinglesInMemoryForTest([mk('lv61a', '#1'), mk('lv61b', '#2')]);
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          document.querySelector('#communityHead [data-cm-tab="live"]').click(); await wait(250);
+          const studio = () => document.getElementById('liveStudio');
+          r.studio = !!studio() && /aucun participant n'est simulé/.test(studio().textContent) && !!studio().querySelector('.lv-empty');
+          studio().querySelector('[data-lv-new]').click(); await wait(200);
+          const box = document.getElementById('liveEditDialog');
+          box.querySelector('[data-lv="title"]').value = '<img src=x onerror="window.__lv61=1"> Débat fictif';
+          box.querySelector('[data-lv="topics"]').value = 'Point A\\nPoint B';
+          const qi = box.querySelector('[data-lv-q]'); qi.value = '#1'; qi.dispatchEvent(new Event('input')); await wait(250);
+          box.querySelector('[data-lv-add="lv61a"]').click(); await wait(50);
+          r.picked = box.querySelectorAll('[data-lv-picked] [data-lv-unpick]').length === 1;
+          box.querySelector('[data-save]').click(); await wait(250);
+          const st1 = P.live.state();
+          r.saved = st1.rooms.length === 1 && st1.rooms[0].images[0].ref === 'lv61a' && st1.rooms[0].rules.length === 4 && !!studio().querySelector('.lv-card') && !window.__lv61 && !document.querySelector('#liveStudio img[src="x"]');
+          studio().querySelector('[data-lv-start]').click(); await wait(250);
+          const stage = () => document.getElementById('liveStage');
+          r.stage = !!stage() && /Vous êtes seul/.test(stage().textContent) && !/auditeurs connectés|participants en ligne/i.test(stage().textContent);
+          stage().querySelector('[data-lv-show="lv61a"]').click(); await wait(80);
+          r.shown = P.live.stage().session.shown === 'lv61a' && !!stage().querySelector('.lv-screen img');
+          stage().querySelector('[data-lv-react="POW!"]').click(); stage().querySelector('[data-lv-react="POW!"]').click(); await wait(50);
+          stage().querySelector('[data-lv-next]').click(); await wait(80);
+          const se = P.live.stage().session;
+          r.agenda = se.topic === 1 && se.done[0].text === 'Point A' && !!stage().querySelector('.lv-agenda li.is-cur') && se.reactions['POW!'] === 2;
+          stage().querySelector('[data-lv-end]').click(); await wait(250);
+          const h = P.live.state().history;
+          r.history = !stage() && h.length === 1 && h[0].topics.length === 2 && h[0].shown[0].ref === 'lv61a' && h[0].reactions['POW!'] === 2 && !!studio().querySelector('.lv-hist');
+          studio().querySelector('[data-lv-post]').click(); await wait(200);
+          const sd = document.getElementById('communityShareDialog');
+          r.planche = !!sd && sd.classList.contains('open') && /Au programme : Point A · Point B/.test(sd.querySelector('[data-text]').value);
+          if (sd) sd.querySelector('[data-cancel]').click();
+          studio().querySelector('[data-lv-del]').click(); await wait(150);
+          const gone = P.live.state().rooms.length === 0;
+          const undo = document.querySelector('#toastPopup button, .toast-action, [data-toast-action]');
+          if (undo) { undo.click(); await wait(150); }
+          r.undo = gone && !!undo && P.live.state().rooms.length === 1;
+          // Variantes : Metron complète Fandom et Comic Vine (relais simulé, aucune requête réseau)
+          P.setFandomFetcherForTest(async () => null);
+          P.setCvFetcherForTest(async () => null);
+          P.setMetronFetcherForTest(async url => /\\/variants\\?q=Fixture%20Saga%20%233&year=2025/.test(url) ? { found: true, issue: { id: 61 }, editions: [{ name: 'Cover A', main: true, image: 'https://example.invalid/a.jpg' }, { name: 'Cover B Fixture Artist Variant', main: false, image: 'https://example.invalid/b.jpg' }, { name: 'Cover C 1:25', main: false, image: 'https://example.invalid/c.jpg' }] } : null);
+          const props = await P.fetchComicCoversAndDetails('Fixture Saga (2025)', '#3', 'Fictif', { variant: 'Cover B Fixture Artist' });
+          r.variants = props.length === 3 && props.every(p => p.source === 'metron') && props.filter(p => p.main).length === 1 && props.find(p => p.match) && props.find(p => p.match).url === 'https://example.invalid/b.jpg';
+          r.noFake = (await P.fetchComicCoversAndDetails('Fixture Inconnue', '#9', 'Fictif')).length === 0;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (document.getElementById('liveStage')) P.live.end();
+          if (live0 === null) localStorage.removeItem('panel_live_v1'); else localStorage.setItem('panel_live_v1', live0);
+          if (drafts0 === null) localStorage.removeItem('panel_community_drafts_v1'); else localStorage.setItem('panel_community_drafts_v1', drafts0);
+          P.setSinglesInMemoryForTest(prev);
+          try { P.resetFandomStateForTest(); P.resetCvStateForTest(); } catch (_) {}
+          const ft = document.querySelector('[data-cm-tab="feed"]'); if (ft) ft.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 61:', JSON.stringify(t61));
+      testResults.push({ test: 'Studio de direct (D-78) : préparer un direct, répétition seul (tableau, ordre du jour chronométré, réactions), synthèse, planche, suppression annulable ; variantes Metron fusionnées dans la fiche',
+        ok: !!t61 && !t61.error && ['studio', 'picked', 'saved', 'stage', 'shown', 'agenda', 'history', 'planche', 'undo', 'variants', 'noFake'].every(k => t61[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
