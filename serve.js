@@ -56,6 +56,34 @@ let gcdGet = async url => {
 const sendJson = (res, code, obj) => { res.writeHead(code, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' }); res.end(JSON.stringify(obj)); };
 const handleGcd = async (u, res) => {
   if (u.pathname === '/api/gcd/status') return sendJson(res, 200, { ok: true, remaining: gcdBudget(), cached: Object.keys(gcdCache).length });
+  if (u.pathname === '/api/gcd/cover') {
+    // Fiche publique d'un numéro GCD : son champ « cover » donne l'URL du scan (licence de la base : CC BY-SA 4.0)
+    const series = String(u.searchParams.get('series') || '').trim().slice(0, 120);
+    const issue = String(u.searchParams.get('issue') || '').trim().slice(0, 12);
+    const year = String(u.searchParams.get('year') || '').trim();
+    if (!series || !/^[0-9A-Za-z.\-]+$/.test(issue) || !/^(18|19|20)\d{2}$/.test(year)) return sendJson(res, 400, { error: 'paramètres invalides' });
+    const key = 'cover|' + series.toLowerCase() + '|' + issue + '|' + year;
+    const hit = gcdCache[key];
+    if (hit && Date.now() - hit.at < GCD_CACHE_TTL) return sendJson(res, 200, Object.assign({ cached: true, remaining: gcdBudget() }, hit.data));
+    try {
+      if (gcdBudget() < 2) return sendJson(res, 429, { error: 'quota GCD atteint, réessayez dans une heure', remaining: gcdBudget() });
+      gcdCalls.push(Date.now());
+      const list = await gcdGet('https://www.comics.org/api/series/name/' + encodeURIComponent(series) + '/issue/' + encodeURIComponent(issue) + '/year/' + year + '/?format=json');
+      const rows = Array.isArray(list) ? list : (list.results || []);
+      const main = rows.find(e => !e.variant_of) || rows[0];
+      let cover = '';
+      if (main) {
+        cover = String(main.cover || '');
+        if (!cover && main.api_url) { gcdCalls.push(Date.now()); const d = await gcdGet(main.api_url); cover = String(d.cover || ''); }
+      }
+      const data = { cover: /^https:\/\//.test(cover) ? cover : '', series: (main && main.series_name) || null, source: 'Grand Comics Database', license: 'CC BY-SA 4.0' };
+      gcdCache[key] = { at: Date.now(), data };
+      saveGcdCache();
+      return sendJson(res, 200, Object.assign({ remaining: gcdBudget() }, data));
+    } catch (e) {
+      return sendJson(res, e.status === 429 ? 429 : 502, { error: 'GCD indisponible', detail: String(e.message || e).slice(0, 120) });
+    }
+  }
   if (u.pathname !== '/api/gcd/issues') return sendJson(res, 404, { error: 'introuvable' });
   const series = String(u.searchParams.get('series') || '').trim().slice(0, 120);
   const issue = String(u.searchParams.get('issue') || '').trim().slice(0, 12);
@@ -118,7 +146,7 @@ const cvKeyFile = path.join(root, '.secrets', 'comicvine.json');
 const loadCvKey = () => { if (process.env.CV_API_KEY) return process.env.CV_API_KEY.trim(); try { return (JSON.parse(fs.readFileSync(cvKeyFile, 'utf8')).apiKey || '').trim(); } catch (_) { return ''; } };
 let cvApiKey = loadCvKey();
 const cvCalls = {};
-const CV_PATH_RE = /^(search|issues|volumes|issue\/4000-\d+|volume\/4050-\d+)$/;
+const CV_PATH_RE = /^(search|issues|volumes|characters|people|publishers|teams|story_arcs|issue\/4000-\d+|volume\/4050-\d+|character\/4005-\d+|person\/4040-\d+|publisher\/4010-\d+|team\/4060-\d+|story_arc\/4045-\d+)$/;
 let cvGet = url => fetch(url, { headers: { 'User-Agent': 'PanelComics/1.0 (local collection manager; Comic Vine relay)', Accept: 'application/json' } });
 const handleCv = async (u, res) => {
   if (!cvApiKey) return sendJson(res, 503, { error: 'Clé Comic Vine absente du serveur (.secrets/comicvine.json ou CV_API_KEY).' });

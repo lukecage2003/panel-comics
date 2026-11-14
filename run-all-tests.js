@@ -2388,7 +2388,9 @@ const waitForCdp = async () => {
         r.uiHome = vis(document.getElementById('singlesExplorerView')) && ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
           getComputedStyle(document.querySelector('.singles-stats-bar')).display === 'none' && document.getElementById('navExplorer').classList.contains('active') &&
           ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'].every(n => [...root.querySelectorAll('.ex-unitile b')].some(b => b.textContent === n)) &&
-          /Aucune source d'actualités/.test(document.getElementById('exSecNews').textContent) && !!root.querySelector('[data-ex-guide="gd_king_in_black"]');
+          /Aucune source d'actualités/.test(document.getElementById('exSecNews').textContent) &&
+          // D-64 : les événements ne sont plus affichés sur l'accueil, mais restent référencés et trouvés par la recherche
+          !root.querySelector('[data-ex-guide="gd_king_in_black"]') && !!(X.search('king in black').guides || { items: [] }).items.includes('gd_king_in_black');
         const inp = document.getElementById('exSearch');
         inp.value = 'venom'; inp.dispatchEvent(new Event('input', { bubbles: true }));
         await new Promise(res => setTimeout(res, 400));
@@ -4103,9 +4105,11 @@ const waitForCdp = async () => {
         const r = {}; const wait = ms => new Promise(res => setTimeout(res, ms));
         try {
           document.getElementById('navExplorer').click(); await wait(200);
-          const sec = document.getElementById('exSecEvents');
-          r.homeSection = !!sec && /Marvel/.test(sec.textContent) && /DC/.test(sec.textContent) && sec.querySelectorAll('.ex-poster, .ex-gcard').length >= 9; // D-61 : affiches en rails
-          const card = sec && sec.querySelector('[data-ex-guide="gd_civil_war"]');
+          // D-64 : les événements ne sont plus mis en avant sur l'accueil ; ils restent référencés et trouvés par la recherche
+          const s0 = document.getElementById('exSearch');
+          r.homeSection = !document.getElementById('exSecEvents') && !!document.getElementById('exSecBrowse');
+          s0.value = 'civil war'; s0.dispatchEvent(new Event('input', { bubbles: true })); await wait(350);
+          const card = document.querySelector('#exResults [data-ex-guide="gd_civil_war"]');
           r.cardFacts = !!card && /7 numéro\\(s\\) principaux/.test(card.textContent);
           card.click(); await wait(200);
           const ev = document.getElementById('exEventSheet');
@@ -4120,10 +4124,14 @@ const waitForCdp = async () => {
           r.noOverflow = document.documentElement.scrollWidth <= window.innerWidth + 1;
           // King in Black : seed complété (5 numéros, sources conservées)
           document.querySelector('.ex-back').click(); await wait(150);
-          document.querySelector('#exSecEvents [data-ex-guide="gd_king_in_black"]').click(); await wait(200);
+          await window.Panel.explorer.open('guide', 'gd_king_in_black'); await wait(200);
           r.kib = document.querySelectorAll('#exEventSheet .ex-iss-grid .ex-iss').length === 5;
         } catch (e) { r.error = String(e && e.message || e); }
-        finally { document.getElementById('navAllSingles').click(); await wait(100); }
+        finally {
+          try { await window.Panel.explorer.open('home'); const s1 = document.getElementById('exSearch'); if (s1) { s1.value = ''; s1.dispatchEvent(new Event('input', { bubbles: true })); await wait(250); } } catch (_) {}
+          localStorage.removeItem('panel_explorer_recent');
+          document.getElementById('navAllSingles').click(); await wait(100);
+        }
         return r;
       })()`);
       console.log('Résultat Test 48:', JSON.stringify(t48));
@@ -4139,7 +4147,7 @@ const waitForCdp = async () => {
         try {
           document.getElementById('navExplorer').click(); await wait(150);
           if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
-          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(200);
+          await window.Panel.explorer.open('guide', 'gd_civil_war'); await wait(200);
           document.querySelector('#exEventSheet .ex-iss').click(); await wait(200);
           const head = document.querySelector('.ex-issue-head');
           r.issuePage = !!head && /Civil War.*#1/.test(head.querySelector('h2').textContent);
@@ -4181,7 +4189,7 @@ const waitForCdp = async () => {
           r.set = !!set.ok && M.ref('issue', key).verification === 'unverified' && /non vérifié/.test(M.credit(M.ref('issue', key)));
           document.getElementById('navExplorer').click(); await wait(150);
           if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
-          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(150);
+          await window.Panel.explorer.open('guide', 'gd_civil_war'); await wait(150);
           const item = document.querySelector('#exEventSheet .ex-gal-item');
           r.gallery = !!item && /Série principale/.test(item.textContent);
           item.click(); await wait(100);
@@ -4191,7 +4199,7 @@ const waitForCdp = async () => {
           lb.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(50);
           r.lbEscape = !lb.classList.contains('open');
           document.querySelector('#explorerRoot .ex-back').click(); await wait(150);
-          document.querySelector('#exSecEvents [data-ex-go="visuals"]').click(); await wait(150);
+          await window.Panel.explorer.open('visuals'); await wait(150);
           const row = document.querySelector('[data-audit="issue:' + key + '"]');
           r.audit = !!row && /Non vérifié/.test(row.textContent);
           row.querySelector('[data-v="user_confirmed"]').click(); await wait(100);
@@ -4227,7 +4235,7 @@ const waitForCdp = async () => {
         try {
           document.getElementById('navExplorer').click(); await wait();
           if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(); }
-          document.querySelector('#exSecEvents [data-ex-guide="gd_crisis_infinite_earths"]').click(); await wait();
+          await window.Panel.explorer.open('guide', 'gd_crisis_infinite_earths'); await wait();
           const q = document.getElementById('exEventQuality');
           r.section = !!q;
           r.threeSources = /Sources consultées \\(4\\)/.test(q.textContent) && q.querySelectorAll('a[href^="https://"]').length >= 4 && !!q.querySelector('[data-src-kind="bibliographic"]');
@@ -4239,15 +4247,15 @@ const waitForCdp = async () => {
           r.notExhaustive = /Aucune liste n'est présentée comme exhaustive/.test(q.textContent);
           r.noGuideOrder = !document.querySelector('#exEventSheet .ex-ev-links .ex-b') || ![...document.querySelectorAll('#exEventSheet .ex-ev-links .ex-b')].some(b => /Position de lecture/.test(b.textContent));
           document.querySelector('#explorerRoot .ex-back').click(); await wait();
-          document.querySelector('#exSecEvents [data-ex-guide="gd_secret_wars_1984"]').click(); await wait();
+          await window.Panel.explorer.open('guide', 'gd_secret_wars_1984'); await wait();
           const q2 = document.getElementById('exEventQuality');
           r.singleSourceHonest = !!q2 && /Sources consultées \\(2\\)/.test(q2.textContent) && /source unique/.test(q2.textContent) && Number(q2.querySelector('[data-cc-concordant]').textContent) === 0;
           document.querySelector('#explorerRoot .ex-back').click(); await wait();
-          document.querySelector('#exSecEvents [data-ex-guide="gd_infinite_crisis"]').click(); await wait();
+          await window.Panel.explorer.open('guide', 'gd_infinite_crisis'); await wait();
           const q3 = document.getElementById('exEventQuality');
           r.priorityCases = [...q3.querySelectorAll('[data-ex-divergences] li')].some(li => /Superman #712/.test(li.textContent) && li.querySelector('[data-div-kind="explained"]') && /Superman #659/.test(li.textContent)) && /Battle for Blüdhaven/.test(q3.querySelector('[data-ex-uncertain]').textContent);
           document.querySelector('#explorerRoot .ex-back').click(); await wait();
-          document.querySelector('#exSecEvents [data-ex-guide="gd_blackest_night"]').click(); await wait();
+          await window.Panel.explorer.open('guide', 'gd_blackest_night'); await wait();
           r.mainGap = !!document.querySelector('#exEventQuality [data-cv-main] [data-cv="gap"]') && /#0/.test(document.querySelector('#exEventQuality [data-cv-main]').textContent);
           r.noCoverInvented = [...document.querySelectorAll('#exEventSheet img')].every(i => !i.src || i.src.startsWith('data:') || i.closest('.is-fallback'));
         } catch (e) { r.error = String(e && e.message || e); }
@@ -4306,7 +4314,7 @@ const waitForCdp = async () => {
           } else r.inspectorBox = true;
           document.getElementById('navExplorer').click(); await wait(150);
           if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
-          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(200);
+          await window.Panel.explorer.open('guide', 'gd_civil_war'); await wait(200);
           document.querySelector('#exEventSheet .ex-iss').click(); await wait(200);
           const eb = await until(() => { const e = document.getElementById('exPubUsage'); return e && e.dataset.pubState ? e : null; });
           r.explorerBox = !!eb && eb.dataset.pubState === 'linked' && !!eb.querySelector('[data-pub-use="collection"]') && !eb.querySelector('[data-pub-use="explorer"]');
@@ -4344,7 +4352,7 @@ const waitForCdp = async () => {
           if (!r.nineJustified) r.auditProblems = audits.map((a, i) => a.ok ? '' : ids[i] + ':' + a.problems.join('/')).filter(Boolean);
           document.getElementById('navExplorer').click(); await wait(150);
           if (document.querySelector('#explorerRoot .ex-back')) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
-          document.querySelector('#exSecEvents [data-ex-guide="gd_civil_war"]').click(); await wait(250);
+          await window.Panel.explorer.open('guide', 'gd_civil_war'); await wait(250);
           const sec = document.getElementById('exLevels'), sheet = document.getElementById('exEventSheet');
           r.step = 'cw-open'; r.ms['cw-open'] = Math.round(performance.now() - T0);
           r.section = !!sec && sec.dataset.level === 'essential';
@@ -4372,7 +4380,7 @@ const waitForCdp = async () => {
           r.step = 'sw'; r.ms['sw'] = Math.round(performance.now() - T0);
           document.querySelector('#explorerRoot .ex-back').click(); await wait(150);
           r.step = 'sw-back'; r.ms['sw-back'] = Math.round(performance.now() - T0);
-          document.querySelector('#exSecEvents [data-ex-guide="gd_secret_wars_1984"]').click(); await wait(250);
+          await window.Panel.explorer.open('guide', 'gd_secret_wars_1984'); await wait(250);
           r.step = 'sw-open'; r.ms['sw-open'] = Math.round(performance.now() - T0);
           const sw = document.getElementById('exLevels');
           r.noTieIn = !!sw && sw.querySelector('[data-level-count="essential"]').textContent === '12' && sw.querySelector('[data-level-count="complete"]').textContent === '12';

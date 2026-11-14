@@ -2357,6 +2357,118 @@
     .ex-live-empty p { margin: 0; flex: 1; min-width: 200px; color: var(--ink-dim); }
     .rd-import { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 14px 16px; margin-bottom: 12px; border-radius: 16px; background: linear-gradient(120deg, rgba(255,212,0,.16), rgba(255,212,0,.04)); border: 1px solid rgba(255,212,0,.45); }
     .rd-import p { margin: 0; flex: 1; min-width: 220px; }
+    /* D-64 — Explorer : recherche poussée (base mondiale), filtres, fiches détaillées */
+    .ex-hero-sub { margin: -6px 0 14px; color: #CFCBC2; font-size: 14px; max-width: 560px; }
+    .ex-kinds { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; margin-top: 12px; padding-bottom: 2px; }
+    .ex-kinds::-webkit-scrollbar { display: none; }
+    .ex-kinds button { flex: 0 0 auto; border: 1.5px solid rgba(255,255,255,.22); background: transparent; color: #F3F2EE; border-radius: 999px; padding: 6px 13px; font: 600 13px/1.2 inherit; cursor: pointer; min-height: 34px; }
+    .ex-kinds button.is-on { background: #FFD400; border-color: #FFD400; color: #111; }
+    .ex-filters { display: flex; flex-wrap: wrap; gap: 8px 14px; margin-top: 10px; font-size: 12px; color: #CFCBC2; }
+    .ex-filters label { display: inline-flex; align-items: center; gap: 6px; }
+    .ex-filters select, .ex-filters input { background: rgba(255,255,255,.08); color: #F3F2EE; border: 1px solid rgba(255,255,255,.2); border-radius: 8px; padding: 5px 8px; font: inherit; min-height: 32px; }
+    .ex-filters input { width: 76px; }
+    .ex-filters option { color: #111; }
+    .ex-online { margin: 18px 0 8px; }
+    .ex-online-head h4, .ex-local-h { font-family: var(--font-display); text-transform: uppercase; font-size: 15px; letter-spacing: .04em; margin: 0 0 10px; }
+    .ex-online-head small { font-family: inherit; text-transform: none; letter-spacing: 0; color: var(--muted); font-weight: 500; margin-left: 6px; }
+    .ex-local-h { margin-top: 22px; }
+    .ex-cv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); gap: 16px 12px; }
+    .ex-cv-grid.is-issues { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+    .ex-cv { display: flex; flex-direction: column; gap: 4px; border: 0; background: transparent; color: var(--ink); padding: 0; text-align: left; cursor: pointer; font: inherit; min-width: 0; }
+    .ex-cv-media { position: relative; display: block; aspect-ratio: 2 / 3; border-radius: 6px; overflow: hidden; background: var(--bg-soft, #222); box-shadow: 0 1px 0 rgba(0,0,0,.08), 0 8px 18px -10px rgba(0,0,0,.45); transition: transform .18s ease, box-shadow .18s ease; }
+    .ex-cv-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ex-cv.is-portrait .ex-cv-media { aspect-ratio: 1; border-radius: 50%; }
+    .ex-cv.is-portrait { align-items: center; text-align: center; }
+    .ex-cv:hover .ex-cv-media, .ex-cv:focus-visible .ex-cv-media { transform: translateY(-3px) rotate(-.6deg); box-shadow: 0 14px 26px -12px rgba(0,0,0,.55); }
+    .ex-cv b { font-size: 13px; line-height: 1.25; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-cv small { font-size: 11.5px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-cv-kind { position: absolute; left: 6px; top: 6px; background: rgba(17,17,17,.82); color: #FFD400; font-size: 10px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; padding: 2px 6px; border-radius: 4px; }
+    .ex-cv.is-portrait .ex-cv-kind { left: 50%; top: auto; bottom: 8px; transform: translateX(-50%); }
+    .ex-cv-owned { position: absolute; right: 6px; top: 6px; background: #1E9E5A; color: #fff; font-size: 11px; font-weight: 700; padding: 2px 6px; border-radius: 999px; }
+    .ex-cv-skel { display: block; aspect-ratio: 2 / 3; border-radius: 6px; background: linear-gradient(100deg, var(--bg-soft, #222) 30%, rgba(255,255,255,.08) 50%, var(--bg-soft, #222) 70%); background-size: 300% 100%; animation: exSkel 1.2s linear infinite; }
+    .ex-cv-skel.is-big { width: min(260px, 60vw); }
+    .ex-cv-skel.is-line { aspect-ratio: auto; height: 16px; margin-bottom: 10px; width: 70%; }
+    @keyframes exSkel { from { background-position: 100% 0; } to { background-position: -100% 0; } }
+    @media (prefers-reduced-motion: reduce) { .ex-cv-skel { animation: none; } .ex-cv-media { transition: none; } }
+    .ex-credit { font-size: 11.5px; color: var(--muted); margin: 10px 0 0; }
+    .ex-credit a { color: inherit; }
+    .ex-cvd { display: grid; grid-template-columns: minmax(180px, 280px) 1fr; gap: 26px; align-items: start; margin: 14px 0 22px; }
+    .ex-cvd.is-loading { grid-template-columns: auto 1fr; }
+    .ex-cvd-media img { width: 100%; border-radius: 8px; display: block; box-shadow: 0 22px 40px -22px rgba(0,0,0,.6); }
+    .ex-cvd-character .ex-cvd-media img, .ex-cvd-person .ex-cvd-media img { aspect-ratio: 1; object-fit: cover; border-radius: 50%; }
+    .ex-cvd-body h2 { font-family: var(--font-display); font-size: clamp(26px, 4.2vw, 44px); line-height: 1; text-transform: uppercase; margin: 6px 0 10px; }
+    .ex-cvd-deck { font-size: 16px; line-height: 1.5; margin: 10px 0 14px; max-width: 62ch; }
+    .ex-cvd-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px 18px; margin: 0 0 16px; }
+    .ex-cvd-facts dt { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+    .ex-cvd-facts dd { margin: 2px 0 0; font-weight: 600; }
+    .ex-cvd-text summary { cursor: pointer; font-weight: 600; margin: 8px 0; }
+    .ex-cvd-text p { line-height: 1.6; max-width: 70ch; color: var(--ink-dim, inherit); }
+    .ex-cvd-block { margin: 0 0 20px; }
+    .ex-cvd-block h4 { font-family: var(--font-display); text-transform: uppercase; font-size: 14px; letter-spacing: .04em; margin: 0 0 8px; }
+    .ex-cvd-block h4 small { color: var(--muted); font-family: inherit; }
+    .ex-cvd-order { columns: 2 260px; margin: 0; padding-left: 22px; }
+    .ex-cvd-order li { margin: 0 0 6px; break-inside: avoid; }
+    .ex-chip.is-static { cursor: default; }
+    @media (max-width: 640px) {
+      .ex-cvd { grid-template-columns: 1fr; gap: 16px; }
+      .ex-cvd-media { max-width: 220px; }
+      .ex-cv-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 14px 10px; }
+      .ex-filters input { width: 64px; }
+    }
+    /* D-64 — Réglages : outils techniques masqués hors mode développeur, bouton unique dans la barre latérale */
+    html:not(.is-dev) .dev-only { display: none !important; }
+    .sidebar-settings { position: relative; width: 100%; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; padding: 9px 10px; border-radius: 12px; }
+    .sidebar-settings-dot { position: absolute; top: 6px; right: 8px; width: 8px; height: 8px; border-radius: 50%; background: #FF4D4F; box-shadow: 0 0 0 2px var(--bg-card, #111); }
+    .set-src h3, .set-h-sub { margin: 0 0 8px; }
+    .set-h-sub { margin-top: 18px; font-size: 14px; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
+    .set-switch { position: relative; display: inline-block; width: 44px; height: 26px; }
+    .set-switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; z-index: 1; }
+    .set-switch span { position: absolute; inset: 0; border-radius: 999px; background: var(--line-strong, #555); transition: background .18s; }
+    .set-switch span::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .18s; }
+    .set-switch input:checked + span { background: var(--lime, #FFD400); }
+    .set-switch input:checked + span::after { transform: translateX(18px); }
+    .set-switch input:focus-visible + span { outline: 2px solid var(--lime, #FFD400); outline-offset: 2px; }
+    /* D-64 — artefacts illustrés, portraits de rang, profil façon Instagram */
+    .af-medal.has-art { width: 66px; height: 66px; background: radial-gradient(circle at 35% 28%, hsl(var(--h) 45% 30%), #0c0c10 72%); box-shadow: inset 0 0 0 2px hsl(var(--h) 70% 52% / .75), 0 8px 18px rgba(0,0,0,.45); }
+    .af-medal.has-art svg { width: 44px; height: 44px; color: hsl(var(--h) 88% 62%); filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); }
+    .af-card.is-gem .af-medal.has-art { width: 56px; height: 56px; }
+    .af-card.is-gem .af-medal.has-art svg { transform: rotate(-45deg); width: 36px; height: 36px; }
+    .af-card.is-on .af-medal.has-art svg { animation: afGlow 3.2s ease-in-out infinite; }
+    @keyframes afGlow { 50% { filter: drop-shadow(0 0 6px hsl(var(--h) 90% 60% / .8)); } }
+    @media (prefers-reduced-motion: reduce) { .af-card.is-on .af-medal.has-art svg { animation: none; } }
+    .pf-rank { position: relative; }
+    .pf-rank-pt { flex: 0 0 auto; width: 72px; height: 72px; border-radius: 50%; overflow: hidden; box-shadow: 0 0 0 3px var(--pf, #FFD400), 0 10px 24px rgba(0,0,0,.4); }
+    .pf-rank-pt img, .pf-next-pt img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
+    .pf-next-pt { display: inline-block; vertical-align: middle; width: 22px; height: 22px; border-radius: 50%; overflow: hidden; margin-left: 6px; box-shadow: 0 0 0 1.5px currentColor; }
+    .pf-lad-pt { width: 20px; height: 20px; border-radius: 50%; object-fit: cover; object-position: top; vertical-align: middle; margin-right: 4px; }
+    .ig { margin: 18px 0 8px; }
+    .ig-stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; text-align: center; padding: 6px 0 14px; }
+    .ig-stat b { display: block; font-size: 20px; font-weight: 800; line-height: 1.1; }
+    .ig-stat small { font-size: 12px; color: var(--muted); }
+    .ig-stat.is-soon b { color: var(--muted); }
+    .ig-hl { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 14px; scrollbar-width: none; }
+    .ig-hl::-webkit-scrollbar { display: none; }
+    .ig-hl-item { flex: 0 0 auto; display: flex; flex-direction: column; align-items: center; gap: 6px; border: 0; background: transparent; color: var(--ink); cursor: pointer; font: inherit; width: 76px; }
+    .ig-hl-ring { width: 66px; height: 66px; border-radius: 50%; padding: 3px; background: conic-gradient(from 210deg, #FFD400, #FF52AE, #7C5CFF, #00A3DA, #FFD400); display: block; }
+    .ig-hl-ring img, .ig-hl-ring .cover-ph { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; display: block; border: 3px solid var(--bg, #111); }
+    .ig-hl-ring.st-dc { background: conic-gradient(#0476F2, #66B2FF, #0476F2); }
+    .ig-hl-ring.st-marvel { background: conic-gradient(#EC1D24, #FF8A8F, #EC1D24); }
+    .ig-hl-item small { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+    .ig-tabs { display: flex; border-top: 1px solid var(--line, #333); margin-bottom: 2px; }
+    .ig-tabs button { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; border: 0; border-top: 2px solid transparent; margin-top: -1px; background: transparent; color: var(--muted); padding: 12px 6px; font: 600 12px/1 inherit; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; min-height: 44px; }
+    .ig-tabs button[aria-selected="true"] { color: var(--ink); border-top-color: var(--ink); }
+    .ig-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px; }
+    .ig-tile { position: relative; aspect-ratio: 4 / 5; border: 0; padding: 0; overflow: hidden; background: var(--bg-soft, #222); cursor: pointer; }
+    .ig-tile > img, .ig-tile > .cover-ph { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .25s ease; }
+    .ig-tile:hover > img { transform: scale(1.04); }
+    .ig-tile-meta { position: absolute; inset: auto 0 0 0; padding: 18px 8px 6px; background: linear-gradient(transparent, rgba(0,0,0,.72)); color: #fff; font-size: 12px; text-align: left; opacity: .95; }
+    .ig-mosaic { display: grid; width: 100%; height: 100%; gap: 2px; grid-template-columns: 1fr 1fr; }
+    .ig-mosaic.ig-m1 { grid-template-columns: 1fr; }
+    .ig-mosaic > * { width: 100%; height: 100%; object-fit: cover; min-height: 0; }
+    .ig-mosaic.ig-m3 > :first-child { grid-row: span 2; }
+    .ig-empty { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 28px 12px; text-align: center; color: var(--muted); }
+    .ig-empty b { color: var(--ink); }
+    @media (max-width: 520px) { .ig-stats { grid-template-columns: repeat(3, 1fr); row-gap: 10px; } .ig-stat b { font-size: 17px; } .pf-rank-pt { width: 56px; height: 56px; } }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -2538,6 +2650,7 @@
 
     <div class="sidebar-footer">
       <span class="sidebar-footer-title" title="Vos comics et inventaires physiques restent sur cet appareil."><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Données sur cet appareil</span>
+      <div id="sidebarAdmin" class="sidebar-admin" hidden>
       <div style="display:flex;gap:6px;margin-top:4px">
         <button class="btn secondary" id="backupJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Export JSON</button>
         <button class="btn secondary" id="restoreJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Restaurer</button>
@@ -2549,7 +2662,8 @@
       <button class="btn secondary" id="readingMigrateBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px" title="Regrouper « lu » et les notes par œuvre (Lecture). Les fiches ne sont pas modifiées.">Lecture par œuvre…</button>
       <button class="btn secondary digital-archive-btn" id="exportDigitalArchiveBtn" hidden title="Télécharger une archive ZIP de vos anciens fichiers PDF/CBZ et de leurs données (marque-pages, notes, positions). Rien n'est supprimé."><svg class=ic aria-hidden=true><use href=#ic-download /></svg> Anciens fichiers numériques</button>
       <button class="btn secondary" id="openDataAdminBtn" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Sources & données</button>
-      <button class="btn secondary" id="openSettingsBtnSide" style="font-size: 12px;padding:5px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Paramètres & Clés API</button>
+      </div>
+      <button class="btn secondary sidebar-settings" id="openSettingsBtnSide"><svg class=ic aria-hidden=true><use href=#ic-settings /></svg> Réglages<span class="sidebar-settings-dot" id="settingsAlertDot" hidden></span></button>
       <button class="btn" id="installAppBtn" hidden style="font-size: 12px;padding:6px 8px;width:100%;margin-top:6px"><svg class=ic aria-hidden=true><use href=#ic-phone /></svg> Installer l'application</button>
     </div>
   </aside>
@@ -3538,12 +3652,12 @@
     </div>
 
     <!-- CLÉS API COMIC VINE -->
-    <div class="form-row">
+    <div class="form-row dev-only">
       <label style="font-weight:700;color:var(--lime);display:flex;justify-content:space-between">
         <span><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Clé API Comic Vine</span>
         <a href="https://comicvine.gamespot.com/api/" target="_blank" rel="noopener" style="font-size: 12px;color:var(--lime);text-decoration:underline">Documentation API</a>
       </label>
-      <input id="settingComicVineApiKey" placeholder="Collez votre clé API Comic Vine...">
+      <input id="settingComicVineApiKey" type="password" autocomplete="off" spellcheck="false" placeholder="Collez votre clé API Comic Vine...">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px">
         <span id="comicVineStatusBadge" style="font-size: 12px;color:var(--lime);font-weight:600"><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Clé Comic Vine intégrée &amp; active</span>
         <button type="button" id="testComicVineBtn" class="btn secondary" style="font-size: 12px;padding:3px 8px"><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> Tester l'accès API</button>
@@ -3593,7 +3707,7 @@
     </div>
 
     <!-- METRON DANS L'APP ANDROID (identifiants gardés sur le téléphone) -->
-    <div id="appMetronBox" class="snapshot-box" hidden>
+    <div id="appMetronBox" class="snapshot-box dev-only" hidden>
       <div style="font-size: 12px;color:var(--muted);margin-bottom:6px">Metron (identification exacte des variantes au scan) : compte gratuit sur metron.cloud. Le <b>pseudo</b>, pas l'e-mail.</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <input id="appMetronUser" placeholder="Pseudo Metron" autocomplete="username" autocapitalize="none" spellcheck="false" style="flex:1;min-width:120px;font-size:12px">
@@ -3607,7 +3721,7 @@
     </div>
 
     <!-- JOURNAL DES SCANS (MESURES) -->
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size: 12px">
+    <div class="dev-only" style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px;padding:8px 10px;background:var(--bg-card);border-radius:6px;font-size: 12px">
       <span style="color:var(--muted)"><span id="metronStatusText">Metron : …</span> · Journal des scans : <strong id="scanJournalCount" style="color:var(--ink)">0</strong></span>
       <span style="display:flex;gap:6px">
         <button class="btn secondary" id="exportScanJournalBtn" style="font-size: 12px;padding:3px 8px">Exporter (CSV)</button>
@@ -14311,21 +14425,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return (() => { const evs = guides.filter(exIsEvent); if (!evs.length) return ''; const by = p => evs.filter(g => catNorm(relPublisher(g.publisher).name) === catNorm(relPublisher(p).name)).sort((a, b) => (a.periodStart || 0) - (b.periodStart || 0));
-        const missing = evs.filter(g => !exMediaOf('guide', g).ref).length;
-        setTimeout(() => exAutoResolve(evs), 400);
-        return sec('exSecEvents', 'Les grands événements', 'Crossovers Marvel et DC, de la série principale aux tie-ins, avec ordre de lecture et sources. Faites défiler, touchez une affiche pour ouvrir l\'événement.',
-          ['Marvel', 'DC'].map(p => { const l = by(p); return l.length ? '<h4 class="ex-ev-pub">' + h(p) + ' <small>' + l.length + ' événements</small></h4><div class="ex-ev-rail" role="list">' + l.map(exEventPoster).join('') + '</div>' : ''; }).join('') +
-          (missing ? '<p class="ex-note">' + missing + ' affiche(s) sans couverture établie' + (relayStatus && (relayStatus.cv || relayStatus.metron) ? ' : Panel cherche la couverture du n°1 dans Comic Vine et Metron.' : ' : lancez Panel avec « Lancer Panel.cmd » pour récupérer les couvertures réelles.') + '</p>' : '') +
-          '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>'); })() +
+    return exBrowseHtml() +
       (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
-      sec('exSecFeatured', 'À la une', '', featured.length ? '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun contenu mis en avant.</p>') +
+      sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
         (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
         '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
-        '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button></div>') +
+        '<div class="ex-row dev-only"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>') +
       sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
-      sec('exSecReleases', 'Sorties et publications', 'Données du calendrier international (lot 2.4).', '<div class="ex-rel-cols">' +
+      sec('exSecReleases', 'Sorties et nouveautés', 'D\'après le calendrier international de Panel.', '<div class="ex-rel-cols">' +
         [['US', 'États-Unis · 30 prochains jours'], ['FR', 'Francophone · 30 prochains jours']].map(([m, t]) => { const l = upcoming(m); return '<div><h4>' + t + '</h4>' + (l.length ? l.map(exPubMini).join('') : '<p class="ex-note">Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.</p>') + '</div>'; }).join('') +
         '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
@@ -14532,18 +14640,233 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return '<label class="da-switch ex-personalize"><input type="checkbox" id="exPersonalize" data-ex-personalize' + (on ? ' checked' : '') + '> Personnaliser Explorer avec mes données</label>' +
       '<small class="ex-personalize-note">' + (on ? 'Statuts possédé, wishlist, pull list et progression calculés sur cet appareil ; rien n\'est envoyé.' : 'Désactivé : Explorer n\'affiche que le contenu éditorial.') + '</small>';
   };
+  // ---------- Recherche poussée (D-64) : la base mondiale Comic Vine (numéros, séries, personnages, créateurs, arcs, équipes,
+  // éditeurs) par le relais local ou la clé de l'appareil. Filtres éditeur, années et tri appliqués aux résultats reçus ;
+  // réponses gardées 7 jours sur l'appareil pour ménager le quota. Les événements restent cherchables mais ne sont plus mis en avant.
+  const EX_KINDS = [['all', 'Tout'], ['issue', 'Numéros'], ['volume', 'Séries'], ['character', 'Personnages'], ['person', 'Créateurs'], ['story_arc', 'Arcs'], ['team', 'Équipes'], ['publisher', 'Éditeurs']];
+  const EX_KIND_LABEL = { issue: 'Numéro', volume: 'Série', character: 'Personnage', person: 'Créateur', story_arc: 'Arc', team: 'Équipe', publisher: 'Éditeur' };
+  const EX_CV_PATH = { issue: 'issue/4000-', volume: 'volume/4050-', character: 'character/4005-', person: 'person/4040-', story_arc: 'story_arc/4045-', team: 'team/4060-', publisher: 'publisher/4010-' };
+  const EX_CV_DETAIL_FIELDS = {
+    issue: 'id,name,issue_number,volume,cover_date,store_date,image,deck,description,person_credits,character_credits,team_credits,story_arc_credits,site_detail_url',
+    volume: 'id,name,start_year,publisher,count_of_issues,image,deck,description,first_issue,last_issue,site_detail_url',
+    character: 'id,name,real_name,aliases,deck,description,image,publisher,first_appeared_in_issue,count_of_issue_appearances,powers,teams,creators,site_detail_url',
+    person: 'id,name,deck,description,image,country,birth,death,created_characters,site_detail_url',
+    story_arc: 'id,name,deck,description,image,publisher,issues,first_appeared_in_issue,count_of_isssue_appearances,site_detail_url',
+    team: 'id,name,deck,description,image,publisher,characters,count_of_issue_appearances,site_detail_url',
+    publisher: 'id,name,deck,description,image,location_city,location_state,site_detail_url'
+  };
+  const EX_POPULAR = { character: ['Batman', 'Spider-Man', 'Wonder Woman', 'Wolverine', 'Superman', 'Storm', 'Miles Morales', 'Harley Quinn', 'Venom', 'Black Panther', 'Deadpool', 'Joker'],
+    volume: ['Absolute Batman', 'Ultimate Spider-Man', 'Saga', 'Transformers', 'Monstress', 'Something is Killing the Children'],
+    person: ['Tom King', 'Jonathan Hickman', 'Scott Snyder', 'Chip Zdarsky', 'Jim Lee', 'Daniel Warren Johnson'] };
+  const exFilt = { kind: 'all', pub: '', from: '', to: '', sort: 'rel' };
+  const exOnline = { key: '', status: 'idle', results: [], total: 0, page: 1, error: '' };
+  const EX_CV_CACHE_KEY = 'panel_ex_cv_cache_v1';
+  const exCvCache = (() => { try { const v = JSON.parse(localStorage.getItem(EX_CV_CACHE_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (_) { return {}; } })();
+  const exCvCacheGet = k => { const e = exCvCache[k]; return e && Date.now() - e.at < 7 * 86400000 ? e.data : null; };
+  const exCvCachePut = (k, data) => {
+    exCvCache[k] = { at: Date.now(), data };
+    const keys = Object.keys(exCvCache).sort((a, b) => exCvCache[a].at - exCvCache[b].at);
+    while (keys.length > 80) delete exCvCache[keys.shift()];
+    try { localStorage.setItem(EX_CV_CACHE_KEY, JSON.stringify(exCvCache)); } catch (_) { try { localStorage.removeItem(EX_CV_CACHE_KEY); } catch (__) {} }
+  };
+  const exCvText = html => { if (!html) return ''; try { const d = new DOMParser().parseFromString(String(html), 'text/html'); d.querySelectorAll('table,figure,img,script,style').forEach(n => n.remove()); return (d.body.textContent || '').replace(/\s+/g, ' ').trim(); } catch (_) { return ''; } };
+  const exShortDate = d => exDateLabel(d, 'cover').replace(/^[^:]*:\s*/, '');
+  const exCvImg = img => img && (img.medium_url || img.small_url || img.super_url || img.original_url) || '';
+  const exCvYear = r => parseInt(String(r.start_year || r.cover_date || r.store_date || '').slice(0, 4), 10) || null;
+  const exCvPub = r => (r.publisher && r.publisher.name) || '';
+  const exCvTitle = r => r.resource_type === 'issue' ? ((r.volume && r.volume.name) || r.name || '') + ' #' + (r.issue_number || '?') : r.name || '';
+  const exOwnedIssue = (series, num) => { const C = exContracts(); return C && C.lens && C.lens.ownedCount ? C.lens.ownedCount({ series, issue: num }) : 0; };
+  const exOwnedSeries = name => { const C = exContracts(); return C && C.lens && C.lens.ownedCount ? C.lens.ownedCount({ series: name }) : 0; };
+
+  const exOnlineSearch = async (q, page = 1) => {
+    const query = String(q || '').trim();
+    if (query.length < 2 || !cvAvailable()) return;
+    const resources = exFilt.kind === 'all' ? 'volume,issue,character,person,story_arc,team' : exFilt.kind;
+    const key = catNorm(query) + '|' + resources + '|' + page;
+    if (exOnline.key === key && exOnline.status !== 'error') return;
+    Object.assign(exOnline, { key, status: 'loading', error: '', page });
+    exPaintOnline();
+    try {
+      let data = exCvCacheGet(key);
+      if (!data) {
+        const d = await cvCall('search', 'search', { format: 'jsonp', resources, query, limit: 40, page,
+          field_list: 'id,name,resource_type,image,start_year,publisher,count_of_issues,issue_number,volume,cover_date,store_date,deck,real_name,count_of_issue_appearances' });
+        data = { total: d.number_of_total_results || 0, results: (d.results || []).map(r => ({ id: r.id, resource_type: r.resource_type, name: gdStr(r.name || '', 160), image: { small_url: exCvImg(r.image) },
+          start_year: r.start_year || null, publisher: r.publisher ? { name: gdStr(r.publisher.name || '', 80) } : null, count_of_issues: r.count_of_issues || 0, issue_number: r.issue_number || '',
+          volume: r.volume ? { id: r.volume.id, name: gdStr(r.volume.name || '', 160) } : null, cover_date: r.cover_date || r.store_date || '', deck: gdStr(r.deck || '', 240), real_name: gdStr(r.real_name || '', 120), count_of_issue_appearances: r.count_of_issue_appearances || 0 })) };
+        exCvCachePut(key, data);
+      }
+      if (exOnline.key !== key) return;
+      Object.assign(exOnline, { status: 'done', total: data.total, results: page > 1 ? exOnline.results.concat(data.results) : data.results });
+    } catch (e) {
+      if (exOnline.key !== key) return;
+      Object.assign(exOnline, { status: 'error', error: e instanceof CvRateLimit ? 'Quota Comic Vine atteint pour l\'heure : réessayez plus tard.' : String(e && e.message || e).slice(0, 160) });
+    }
+    exPaintOnline();
+  };
+  const exOnlineFiltered = () => {
+    let l = exOnline.results.slice();
+    const fp = catNorm(exFilt.pub), from = parseInt(exFilt.from, 10), to = parseInt(exFilt.to, 10);
+    if (fp) l = l.filter(r => catNorm(exCvPub(r)).includes(fp) || (r.resource_type === 'issue' && !exCvPub(r)));
+    if (from) l = l.filter(r => { const y = exCvYear(r); return y === null || y >= from; });
+    if (to) l = l.filter(r => { const y = exCvYear(r); return y === null || y <= to; });
+    if (exFilt.sort === 'new') l.sort((a, b) => (exCvYear(b) || 0) - (exCvYear(a) || 0));
+    else if (exFilt.sort === 'old') l.sort((a, b) => (exCvYear(a) || 9999) - (exCvYear(b) || 9999));
+    else if (exFilt.sort === 'pop') l.sort((a, b) => (b.count_of_issue_appearances || b.count_of_issues || 0) - (a.count_of_issue_appearances || a.count_of_issues || 0));
+    return l;
+  };
+  const exCvCard = r => {
+    const t = r.resource_type, img = exCvImg(r.image), y = exCvYear(r);
+    const owned = t === 'issue' ? exOwnedIssue(r.volume && r.volume.name, r.issue_number) : t === 'volume' ? exOwnedSeries(r.name) : 0;
+    const sub = t === 'issue' ? [r.cover_date ? exShortDate(r.cover_date) : '', r.name && r.name !== (r.volume && r.volume.name) ? r.name : ''].filter(Boolean).join(' · ')
+      : t === 'volume' ? [exCvPub(r), y, r.count_of_issues ? r.count_of_issues + ' n°' : ''].filter(Boolean).join(' · ')
+      : t === 'character' ? [exCvPub(r), r.real_name, r.count_of_issue_appearances ? r.count_of_issue_appearances + ' apparitions' : ''].filter(Boolean).join(' · ')
+      : [exCvPub(r), r.deck].filter(Boolean).join(' · ');
+    const round = t === 'person' || t === 'character';
+    return '<button class="ex-cv' + (round ? ' is-portrait' : '') + '" data-ex-cv="' + h(t + ':' + r.id) + '">' +
+      '<span class="ex-cv-media">' + (img ? '<img src="' + h(img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' : '<img src="' + h(exArt(exCvTitle(r), exCvPub(r) || EX_KIND_LABEL[t])) + '" alt="" aria-hidden="true">') +
+      '<span class="ex-cv-kind">' + h(EX_KIND_LABEL[t] || t) + '</span>' + (owned ? '<span class="ex-cv-owned">✓ ' + owned + '</span>' : '') + '</span>' +
+      '<b>' + h(exCvTitle(r)) + '</b><small>' + h(sub) + '</small></button>';
+  };
+  const exOnlineHtml = () => {
+    if (!exView.q || String(exView.q).trim().length < 2) return '';
+    if (!cvAvailable()) return '<section class="ex-online is-off"><h4>Base mondiale des comics</h4><p class="ex-note">La recherche dans la base Comic Vine (plus de 900 000 numéros, personnages et créateurs) passe par le relais de Panel : ouvrez Panel avec « Lancer Panel.cmd ». Les résultats ci-dessous viennent des données déjà présentes dans Panel.</p></section>';
+    const l = exOnlineFiltered();
+    const head = '<div class="ex-online-head"><h4>Base mondiale <small>Comic Vine' + (exOnline.status === 'done' ? ' · ' + exOnline.total.toLocaleString('fr-FR') + ' résultat' + (exOnline.total > 1 ? 's' : '') : '') + '</small></h4></div>';
+    if (exOnline.status === 'loading' && !exOnline.results.length) return '<section class="ex-online">' + head + '<div class="ex-cv-grid is-loading">' + Array.from({ length: 8 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></section>';
+    if (exOnline.status === 'error') return '<section class="ex-online">' + head + '<p class="ex-note">' + h(exOnline.error) + ' <button class="btn secondary rel-mini" data-ex-cv-retry>Réessayer</button></p></section>';
+    if (!l.length) return exOnline.status === 'done' ? '<section class="ex-online">' + head + '<p class="ex-note">Aucun résultat' + (exFilt.pub || exFilt.from || exFilt.to ? ' avec ces filtres' : '') + '.</p></section>' : '';
+    const more = exOnline.results.length < exOnline.total && exOnline.results.length < 200 ? '<button class="ex-more" data-ex-cv-more>' + (exOnline.status === 'loading' ? 'Chargement…' : 'Plus de résultats') + '</button>' : '';
+    return '<section class="ex-online">' + head + '<div class="ex-cv-grid">' + l.map(exCvCard).join('') + '</div>' + more + '<p class="ex-credit">Données et images : Comic Vine (comicvine.gamespot.com).</p></section>';
+  };
+  const exPaintOnline = () => { const host = $('exOnline'); if (host) { host.innerHTML = exOnlineHtml(); exWireOnline(host); } };
+  const exWireOnline = root => {
+    root.querySelectorAll('[data-ex-cv]').forEach(b => { b.onclick = () => exGo('cv', b.dataset.exCv); });
+    root.querySelectorAll('[data-ex-cv-more]').forEach(b => { b.onclick = () => exOnlineSearch(exView.q, exOnline.page + 1); });
+    root.querySelectorAll('[data-ex-cv-retry]').forEach(b => { b.onclick = () => { exOnline.key = ''; exOnlineSearch(exView.q); }; });
+  };
+  const exPubOptions = ['Marvel', 'DC Comics', 'Image', 'Dark Horse', 'IDW', 'BOOM! Studios', 'Dynamite', 'Skybound', 'Oni', 'Titan', 'Glénat', 'Urban Comics', 'Panini', 'Delcourt'];
+  const exFiltersHtml = () => '<div class="ex-kinds" role="tablist" aria-label="Type de résultat">' + EX_KINDS.map(([k, l]) => '<button role="tab" aria-selected="' + (exFilt.kind === k) + '" class="' + (exFilt.kind === k ? 'is-on' : '') + '" data-ex-kind="' + k + '">' + l + '</button>').join('') + '</div>' +
+    '<div class="ex-filters"><label>Éditeur <select data-ex-flt="pub"><option value="">Tous</option>' + exPubOptions.map(p => '<option' + (exFilt.pub === p ? ' selected' : '') + '>' + h(p) + '</option>').join('') + '</select></label>' +
+    '<label>De <input data-ex-flt="from" type="number" inputmode="numeric" min="1930" max="2100" placeholder="1938" value="' + h(exFilt.from) + '"></label>' +
+    '<label>À <input data-ex-flt="to" type="number" inputmode="numeric" min="1930" max="2100" placeholder="' + new Date().getFullYear() + '" value="' + h(exFilt.to) + '"></label>' +
+    '<label>Tri <select data-ex-flt="sort">' + [['rel', 'Pertinence'], ['new', 'Plus récents'], ['old', 'Plus anciens'], ['pop', 'Popularité']].map(([k, l]) => '<option value="' + k + '"' + (exFilt.sort === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></label></div>';
+  const exWireFilters = root => {
+    root.querySelectorAll('[data-ex-kind]').forEach(b => { b.onclick = () => { exFilt.kind = b.dataset.exKind; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); exOnlineSearch(exView.q); exPaintOnline(); }; });
+    root.querySelectorAll('[data-ex-flt]').forEach(el => { el.onchange = () => { exFilt[el.dataset.exFlt] = el.value.trim(); exPaintOnline(); }; });
+  };
+  // Raccourcis de parcours : noms réels, chaque bouton lance une recherche du bon type
+  const exBrowseHtml = () => '<section class="ex-sec" id="exSecBrowse"><div class="ex-sec-head"><h3>Parcourir</h3><p>Un point de départ : touchez un nom pour lancer une recherche ciblée.</p></div>' +
+    [['character', 'Personnages'], ['volume', 'Séries du moment'], ['person', 'Auteurs']].map(([k, t]) => '<h4 class="ex-ev-pub">' + t + '</h4><div class="ex-chips">' + EX_POPULAR[k].map(n => '<button class="ex-chip" data-ex-browse="' + k + '" data-ex-q="' + h(n) + '">' + h(n) + '</button>').join('') + '</div>').join('') + '</section>';
+
+  // ---------- Fiche détaillée Comic Vine
+  const exCvDetail = { key: '', data: null, issues: null, status: '', error: '' };
+  const exCvLoad = async ref => {
+    const [t, id] = String(ref).split(':');
+    if (!EX_CV_PATH[t] || !/^\d+$/.test(id || '')) return;
+    if (exCvDetail.key === ref && exCvDetail.status !== 'error') return;
+    Object.assign(exCvDetail, { key: ref, data: null, issues: null, status: 'loading', error: '' });
+    try {
+      let data = exCvCacheGet('d|' + ref);
+      if (!data) {
+        if (!cvAvailable()) throw new Error('Relais Comic Vine indisponible : ouvrez Panel avec « Lancer Panel.cmd ».');
+        const d = await cvCall(t, EX_CV_PATH[t] + id, { format: 'jsonp', field_list: EX_CV_DETAIL_FIELDS[t] });
+        const r = d.results || {};
+        const list = (a, n) => (Array.isArray(a) ? a : []).slice(0, n || 60).map(x => ({ id: x.id, name: gdStr(x.name || '', 120), role: gdStr(x.role || '', 80), issue_number: x.issue_number || '' }));
+        data = { t, id: r.id, name: gdStr(r.name || '', 160), issue_number: r.issue_number || '', volume: r.volume ? { id: r.volume.id, name: gdStr(r.volume.name || '', 160) } : null,
+          date: r.cover_date || r.store_date || '', start_year: r.start_year || null, publisher: r.publisher ? { id: r.publisher.id, name: gdStr(r.publisher.name || '', 80) } : null,
+          count: r.count_of_issues || r.count_of_issue_appearances || r.count_of_isssue_appearances || 0, image: exCvImg(r.image), deck: gdStr(r.deck || '', 400), text: gdStr(exCvText(r.description), 1400),
+          real_name: gdStr(r.real_name || '', 120), aliases: gdStr(String(r.aliases || '').split(/\r?\n/).filter(Boolean).slice(0, 4).join(', '), 200), country: gdStr(r.country || '', 60), birth: String(r.birth || '').slice(0, 10),
+          first: r.first_appeared_in_issue ? { id: r.first_appeared_in_issue.id, name: gdStr(r.first_appeared_in_issue.name || '', 120), issue_number: r.first_appeared_in_issue.issue_number || '' } : null,
+          firstIssue: r.first_issue ? { id: r.first_issue.id, issue_number: r.first_issue.issue_number || '' } : null, lastIssue: r.last_issue ? { id: r.last_issue.id, issue_number: r.last_issue.issue_number || '' } : null,
+          persons: list(r.person_credits, 40), characters: list(r.character_credits || r.characters, 60), teams: list(r.team_credits || r.teams, 30), arcs: list(r.story_arc_credits, 10),
+          powers: list(r.powers, 24), creators: list(r.creators, 12), created: list(r.created_characters, 40), arcIssues: list(r.issues, 80), site: /^https:\/\//.test(r.site_detail_url || '') ? r.site_detail_url : '' };
+        exCvCachePut('d|' + ref, data);
+      }
+      if (exCvDetail.key !== ref) return;
+      exCvDetail.data = data;
+      exCvDetail.status = 'done';
+      if (t === 'volume') {
+        let iss = exCvCacheGet('v|' + id);
+        if (!iss && cvAvailable()) {
+          renderExplorer();
+          const d = await cvCall('issues', 'issues', { format: 'jsonp', filter: 'volume:' + id, limit: 100, sort: 'cover_date:asc', field_list: 'id,issue_number,image,cover_date,name' });
+          iss = (d.results || []).map(x => ({ id: x.id, issue_number: x.issue_number || '', image: exCvImg(x.image), date: x.cover_date || '', name: gdStr(x.name || '', 120) }));
+          exCvCachePut('v|' + id, iss);
+        }
+        if (exCvDetail.key === ref) exCvDetail.issues = iss || [];
+      }
+    } catch (e) {
+      if (exCvDetail.key !== ref) return;
+      Object.assign(exCvDetail, { status: 'error', error: e instanceof CvRateLimit ? 'Quota Comic Vine atteint pour l\'heure.' : String(e && e.message || e).slice(0, 160) });
+    }
+    if (exView.page === 'cv' && exView.id === ref) renderExplorer();
+  };
+  const exCvChips = (list, t, label) => list && list.length ? '<div class="ex-cvd-block"><h4>' + label + ' <small>' + list.length + '</small></h4><div class="ex-chips">' + list.map(x => '<button class="ex-chip" data-ex-cv="' + t + ':' + x.id + '">' + h(x.name) + (x.role ? ' <small>' + h(x.role.split(',').map(r => r.trim()).filter(Boolean).slice(0, 2).join(', ')) + '</small>' : '') + '</button>').join('') + '</div></div>' : '';
+  const exCvAdd = (d, wish, gesture) => {
+    const S2 = exCommands();
+    if (!S2 || !S2.addCatalogIssue) { showToast('Ajout indisponible.'); return null; }
+    const r = S2.addCatalogIssue({ series: d.volume ? d.volume.name : d.name, issue: d.issue_number, publisher: d.publisher ? d.publisher.name : '', comicVineId: d.id, image: d.image, date: d.date }, { wish: !!wish, gesture });
+    if (!r || !r.ok) { showToast('Ajout non enregistré.'); return null; }
+    return r;
+  };
+  const exCvHtml = () => {
+    const ref = exView.id, [t] = String(ref).split(':');
+    if (exCvDetail.key !== ref) { setTimeout(() => exCvLoad(ref), 0); }
+    const back = '<button class="btn secondary ex-back" data-ex-go="home">← Explorer</button>';
+    if (exCvDetail.key !== ref || exCvDetail.status === 'loading' && !exCvDetail.data) return back + '<div class="ex-cvd is-loading"><span class="ex-cv-skel is-big"></span><div><span class="ex-cv-skel is-line"></span><span class="ex-cv-skel is-line"></span></div></div>';
+    if (exCvDetail.status === 'error') return back + '<div class="ex-empty"><b>Fiche indisponible.</b><br>' + h(exCvDetail.error) + '</div>';
+    const d = exCvDetail.data;
+    const title = t === 'issue' ? (d.volume ? d.volume.name : '') + ' #' + d.issue_number : d.name;
+    const facts = [];
+    if (t === 'issue') { if (d.name) facts.push(['Titre', d.name]); if (d.date) facts.push(['Date de couverture', exShortDate(d.date)]); }
+    if (d.publisher) facts.push(['Éditeur', d.publisher.name]);
+    if (d.start_year) facts.push(['Début', d.start_year]);
+    if (d.real_name) facts.push(['Identité', d.real_name]);
+    if (d.aliases) facts.push(['Alias', d.aliases]);
+    if (d.country) facts.push(['Pays', d.country]);
+    if (d.birth) facts.push(['Naissance', d.birth]);
+    if (d.count) facts.push([t === 'volume' ? 'Numéros' : 'Apparitions', d.count.toLocaleString('fr-FR')]);
+    const owned = t === 'issue' ? exOwnedIssue(d.volume && d.volume.name, d.issue_number) : t === 'volume' ? exOwnedSeries(d.name) : 0;
+    const actions = t === 'issue' ? '<div class="ex-row"><button class="btn" data-ex-cv-add="own">' + (owned ? 'Ajouter un autre exemplaire' : 'Ajouter à ma collection') + '</button><button class="btn secondary" data-ex-cv-add="wish">Wishlist</button>' + (d.volume ? '<button class="btn secondary" data-ex-cv="volume:' + d.volume.id + '">Toute la série</button>' : '') + '</div>' : '';
+    const first = d.first ? '<div class="ex-cvd-block"><h4>Première apparition</h4><button class="ex-chip" data-ex-cv="issue:' + d.first.id + '">' + h(d.first.name || 'Numéro') + (d.first.issue_number ? ' #' + h(d.first.issue_number) : '') + '</button></div>' : '';
+    const vIssues = t === 'volume' ? (exCvDetail.issues === null ? '<div class="ex-cv-grid is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div>' :
+      '<div class="ex-cvd-block"><h4>Numéros <small>' + exCvDetail.issues.length + (d.count > exCvDetail.issues.length ? ' sur ' + d.count : '') + '</small></h4><div class="ex-cv-grid is-issues">' + exCvDetail.issues.map(x => {
+        const own = exOwnedIssue(d.name, x.issue_number);
+        return '<button class="ex-cv" data-ex-cv="issue:' + x.id + '"><span class="ex-cv-media">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' : '<img src="' + h(exArt(d.name + ' ' + x.issue_number, d.publisher ? d.publisher.name : '')) + '" alt="" aria-hidden="true">') + (own ? '<span class="ex-cv-owned">✓</span>' : '') + '</span><b>#' + h(x.issue_number) + '</b><small>' + h(x.date ? String(x.date).slice(0, 7) : '') + '</small></button>';
+      }).join('') + '</div></div>') : '';
+    const arcIssues = t === 'story_arc' && d.arcIssues.length ? '<div class="ex-cvd-block"><h4>Ordre de lecture <small>' + d.arcIssues.length + ' numéros</small></h4><ol class="ex-cvd-order">' + d.arcIssues.map(x => '<li><button class="ex-link" data-ex-cv="issue:' + x.id + '">' + h(x.name || ('#' + x.issue_number)) + '</button></li>').join('') + '</ol></div>' : '';
+    return back + '<article class="ex-cvd ex-cvd-' + h(t) + '"><div class="ex-cvd-media">' + (d.image ? '<img src="' + h(d.image) + '" alt="' + h(title) + '" referrerpolicy="no-referrer">' : '<img src="' + h(exArt(title, d.publisher ? d.publisher.name : '')) + '" alt="" aria-hidden="true">') + '</div>' +
+      '<div class="ex-cvd-body"><span class="ex-kicker">' + h(EX_KIND_LABEL[t] || '') + (d.publisher ? ' · ' + h(d.publisher.name) : '') + '</span><h2>' + h(title) + '</h2>' +
+      (owned ? '<span class="ex-b is-owned">Dans ma collection' + (owned > 1 ? ' ×' + owned : '') + '</span>' : '') +
+      (d.deck ? '<p class="ex-cvd-deck">' + h(d.deck) + '</p>' : '') +
+      (facts.length ? '<dl class="ex-cvd-facts">' + facts.map(([k, v]) => '<div><dt>' + h(k) + '</dt><dd>' + h(String(v)) + '</dd></div>').join('') + '</dl>' : '') + actions +
+      (d.text ? '<details class="ex-cvd-text"' + (d.deck ? '' : ' open') + '><summary>' + (t === 'issue' ? 'Résumé' : 'Présentation') + '</summary><p>' + h(d.text) + (d.text.length >= 1400 ? '…' : '') + '</p></details>' : '') +
+      '</div></article>' + vIssues + arcIssues + first +
+      exCvChips(d.persons, 'person', 'Créateurs') + exCvChips(d.characters, 'character', t === 'team' ? 'Membres' : 'Personnages') + exCvChips(d.teams, 'team', 'Équipes') + exCvChips(d.arcs, 'story_arc', 'Arcs') +
+      exCvChips(d.creators, 'person', 'Créé par') + exCvChips(d.created, 'character', 'Personnages créés') +
+      (d.powers.length ? '<div class="ex-cvd-block"><h4>Pouvoirs</h4><div class="ex-chips">' + d.powers.map(p => '<span class="ex-chip is-static">' + h(p.name) + '</span>').join('') + '</div></div>' : '') +
+      '<p class="ex-credit">Données et images : Comic Vine' + (d.site ? ' · <a href="' + h(d.site) + '" target="_blank" rel="noopener noreferrer">voir la fiche d\'origine</a>' : '') + '.</p>';
+  };
+  const exWireCv = root => {
+    root.querySelectorAll('[data-ex-cv]').forEach(b => { b.onclick = () => exGo('cv', b.dataset.exCv); });
+    root.querySelectorAll('[data-ex-cv-add]').forEach(b => { b.onclick = e => { const S2 = exCommands(); if (exCvDetail.data && exCvAdd(exCvDetail.data, b.dataset.exCvAdd === 'wish', S2 ? S2.gesture(e) : null)) renderExplorer(); }; });
+  };
   const renderExplorer = () => {
     const root = $('explorerRoot');
     if (!root) return;
     if (exView.page === 'home') {
       const hist = exHistory();
-      root.innerHTML = '<section class="ex-hero is-compact"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Événements, séries, créateurs et membres.</h2>' +
-        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="Titre, numéro, événement, personnage, créateur, éditeur, ISBN…" value="' + h(exView.q) + '"></div>' +
+      root.innerHTML = '<section class="ex-hero is-compact"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Toute la BD, numéro par numéro.</h2><p class="ex-hero-sub">Numéros, séries, personnages, créateurs, arcs et équipes : la base mondiale et vos données Panel, dans une seule recherche.</p>' +
+        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="« Absolute Batman 1 », Miles Morales, Tom King, Krakoa…" value="' + h(exView.q) + '"></div>' +
         (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') +
-        exScopeChips() + exPersonalizeHtml() + '</div></section>' +
-        '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
+        exScopeChips() + (exScope === 'comics' ? exFiltersHtml() : '') + exPersonalizeHtml() + '</div></section>' +
+        '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
       root.querySelectorAll('[data-ex-scope]').forEach(b => { b.onclick = () => { exScope = b.dataset.exScope; renderExplorer(); }; });
-      wireExSocial(root);
+      wireExSocial(root); exWireFilters(root); exWireOnline(root);
+    } else if (exView.page === 'cv') {
+      root.innerHTML = exCvHtml();
+      exWireCv(root);
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
@@ -14552,10 +14875,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exRefreshResults = () => {
     const r = $('exResults'), home = $('exHome');
     if (!r) return renderExplorer();
-    r.innerHTML = exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsHtml() : '';
+    r.innerHTML = exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '';
     if (home) home.hidden = !!exView.q || exScope !== 'comics';
-    wireExSocial(r);
+    wireExSocial(r); exWireOnline(r);
+    clearTimeout(exRefreshResults.tm);
+    if (exScope === 'comics' && String(exView.q || '').trim().length >= 3) exRefreshResults.tm = setTimeout(() => exOnlineSearch(exView.q), 650);
   };
+  // Résultats : base mondiale d'abord (si le relais est là), puis ce que Panel connaît déjà
+  const exResultsAllHtml = () => '<div id="exOnline">' + exOnlineHtml() + '</div><div class="ex-local">' + (cvAvailable() ? '<h4 class="ex-local-h">Dans Panel</h4>' : '') + exResultsHtml() + '</div>';
   const wireExSocial = root => {
     if (!root) return;
     root.querySelectorAll('[data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
@@ -14779,7 +15106,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       wireExplorer.tm = setTimeout(() => { exView.q = v; exView.cat = ''; exView.rpub = ''; exRefreshResults(); }, 160);
     });
     root.addEventListener('change', e => { if (e.target.matches && e.target.matches('[data-ex-rpub]')) { exView.rpub = e.target.value; exRefreshResults(); } else if (e.target.matches && e.target.matches('[data-ex-vkind]')) { exView.vkind = e.target.value; renderExplorer(); } });
-    root.addEventListener('keydown', e => { if (e.target.id === 'exSearch' && e.key === 'Enter') { clearTimeout(wireExplorer.tm); exView.q = e.target.value; exRemember(exView.q); exRefreshResults(); } });
+    root.addEventListener('keydown', e => { if (e.target.id === 'exSearch' && e.key === 'Enter') { clearTimeout(wireExplorer.tm); exView.q = e.target.value; exRemember(exView.q); exRefreshResults(); clearTimeout(exRefreshResults.tm); exOnlineSearch(exView.q); } });
     root.addEventListener('change', async e => {
       const t = e.target;
       if (t.dataset.exF) { exView[t.dataset.exF] = t.type === 'checkbox' ? t.checked : t.value; exView.limit = 60; renderExplorer(); }
@@ -14794,7 +15121,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       // Actions personnelles : uniquement par S2, avec un jeton de geste tiré de ce clic (jamais d'appel direct à Collection ni à Lecture)
       const S2 = exCommands(), gesture = () => S2 ? S2.gesture(e) : null;
       if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
-      else if (d.exQ) { exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
+      else if (d.exQ) { if (d.exBrowse) { exFilt.kind = d.exBrowse; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x.dataset.exKind === d.exBrowse; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); } exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
       else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
       else if (d.exLb) exLightbox(exLbStore.get(d.exLb), Number(d.exLbI) || 0);
       else if (d.exVset) { const i = d.exVset.indexOf(':'); const r = mediaSetVerification(d.exVset.slice(0, i), d.exVset.slice(i + 1), d.v); renderExplorer(); if (r.ok) showToastAction('Statut du visuel : ' + MEDIA_VERIF[d.v].toLowerCase() + '.', 'Annuler', () => { r.undo(); renderExplorer(); }); }
@@ -15128,11 +15455,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }, { online: false });
   };
   const PF_TIER_CLASS = { terre: 'is-terre', multivers_dc: 'is-dc', abstrait: 'is-abstrait', forces: 'is-forces', terrain: 'is-terrain', equilibre: 'is-equilibre', sommet: 'is-sommet' };
-  const pfRankHtml = (rk, tr) => '<div class="pf-rank ' + PF_TIER_CLASS[rk.rank.tier] + '">' +
+  const pfRankHtml = (rk, tr) => '<div class="pf-rank ' + PF_TIER_CLASS[rk.rank.tier] + '">' + rankPortraitHtml(rk.rank, 'pf-rank-pt') +
       '<div class="pf-rank-badge"><small>Rang</small><b>' + rk.rank.rank + '</b><span>/ ' + rk.total + '</span></div>' +
       '<div class="pf-rank-main"><small>' + escapeHtml(rk.rank.tierLabel) + '</small><b>' + escapeHtml(rk.rank.name) + '</b>' +
         '<span class="tr-bar pf-xp"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' +
-        '<small>' + rk.xp.toLocaleString('fr-FR') + ' XP' + (rk.next ? ' · encore ' + rk.toNext.toLocaleString('fr-FR') + ' XP pour devenir <b>' + escapeHtml(rk.next.name) + '</b>' : ' · sommet atteint') + ' · ' + tr.unlocked + ' / ' + tr.total + ' trophées</small></div>' +
+        '<small>' + rk.xp.toLocaleString('fr-FR') + ' XP' + (rk.next ? ' · encore ' + rk.toNext.toLocaleString('fr-FR') + ' XP pour devenir <b>' + escapeHtml(rk.next.name) + '</b>' + rankPortraitHtml(rk.next, 'pf-next-pt') : ' · sommet atteint') + ' · ' + tr.unlocked + ' / ' + tr.total + ' trophées</small></div>' +
       '<div class="pf-tiers">' + window.PanelDomains.trophiesCore.TIERS.map(t => '<span class="pf-tier is-' + t.id + '"><i></i>' + tr.byTier[t.id] + ' ' + escapeHtml(t.label) + '</span>').join('') + '</div></div>';
   // Suggestions du top 3 : personnages et séries les plus présents dans la collection
   const pfSuggest = () => {
@@ -15152,9 +15479,33 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const R = window.PanelDomains.ranksCore;
     const groups = R.TIER_IDS.map(t => ({ t, list: R.RANKS.filter(x => x.tier === t) }));
     return '<details class="pf-ladder"><summary>Échelle des ' + R.RANKS.length + ' rangs, de Civil à The One Above All <small>et comment gagner des points</small></summary>' +
-      '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : '') + '"><i>' + x.rank + '</i>' + escapeHtml(x.name) + '<small>' + x.xp.toLocaleString('fr-FR') + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
+      '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : '') + '">' + (() => { const c = rankPts[RANK_CV[x.name] || x.name]; return c && c.url ? '<img class="pf-lad-pt" src="' + escapeHtml(c.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : ''; })() + '<i>' + x.rank + '</i>' + escapeHtml(x.name) + '<small>' + x.xp.toLocaleString('fr-FR') + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
       '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString('fr-FR') + ' → ' + b.xp.toLocaleString('fr-FR') + ' XP</em>') + '</span>').join('') + '</div>' +
       '<p class="stat-sub">L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
+  };
+  let pfGramTab = 'stories';
+  const pfGramHtml = (p, owned) => {
+    const stories = storyLoad().stories.slice().sort((a, b) => String(b.readAt || b.at || '').localeCompare(String(a.readAt || a.at || '')));
+    const drafts = commLoad().drafts;
+    const read = owned.filter(rdReadOfCopy).length;
+    const n = (v, l) => '<div class="ig-stat"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
+    // À la une : stories regroupées par habillage (Marvel, DC, Image, indé, noir), comme des « highlights »
+    const groups = Object.keys(STORY_STYLES).map(k => ({ k, list: stories.filter(st => (st.style || storyStyleKey(st)) === k) })).filter(g => g.list.length);
+    const hl = groups.length ? '<div class="ig-hl" role="list">' + groups.map(g => '<button class="ig-hl-item" role="listitem" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
+    const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString('fr-FR') + '</b></span></button>';
+    const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + '"><span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
+    const grid = pfGramTab === 'stories'
+      ? (stories.length ? '<div class="ig-grid">' + stories.map(tile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune story pour l’instant.</b><span>Marquez un numéro « Lu », notez-le : la story apparaît ici.</span><button class="btn rel-mini" data-pf-newstory>Créer une story</button></div>')
+      : (drafts.length ? '<div class="ig-grid">' + drafts.map(ptile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune planche.</b><span>Composez une planche depuis le Fil (pull de la semaine, pépite, boîte…).</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>');
+    return '<section class="ig">' +
+      '<div class="ig-stats">' + n(stories.length, 'stories') + n(drafts.length, 'planches') + n(read, 'lus') + n(owned.length, 'en collection') + '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>' + hl +
+      '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button></nav>' + grid + '</section>';
+  };
+  const pfGramWire = host => {
+    host.querySelectorAll('[data-pf-gtab]').forEach(b => { b.onclick = () => { pfGramTab = b.dataset.pfGtab; renderCommunityProfile(); }; });
+    host.querySelectorAll('.ig [data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
+    host.querySelectorAll('[data-pf-newstory]').forEach(b => { b.onclick = () => openStoryPicker(); });
+    host.querySelectorAll('[data-pf-feed], [data-pf-planche]').forEach(b => { b.onclick = () => { commTab = 'feed'; renderCommunityView(); }; });
   };
   const renderCommunityProfile = () => {
     const host = $('communityProfile');
@@ -15190,7 +15541,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           ? '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
-      '</section>' + pfTop3Html(p) + pfLadderHtml(rk) + artefactsHtml(ar) +
+      '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfLadderHtml(rk) + artefactsHtml(ar) +
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
@@ -15203,6 +15554,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       profileSave(Object.assign({}, fd, { createdAt: (p && p.createdAt) || new Date().toISOString() }));
       profileEditing = false; renderCommunityProfile(); showToast(p ? 'Profil mis à jour.' : 'Profil créé sur cet appareil.');
     };
+    pfGramWire(host);
     const ed = host.querySelector('[data-pf-edit]'); if (ed) ed.onclick = () => { profileEditing = true; renderCommunityProfile(); };
     const ca = host.querySelector('[data-pf-cancel]'); if (ca) ca.onclick = () => { profileEditing = false; renderCommunityProfile(); };
   };
@@ -15451,12 +15803,68 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       value: owned.reduce((a, x) => a + (valueOf(x) || 0), 0)
     };
   };
+  // Illustrations originales des artefacts (D-64), dessinées par Panel en SVG (aucune image d'éditeur reprise)
+  const AF_GEM = '<path d="M20 22 L32 10 L44 22 L32 54 Z" fill="currentColor" fill-opacity=".9"/><path d="M20 22 H44 M26 22 L32 54 L38 22 M26 22 L32 10 L38 22" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.5"/>';
+  const AF_ART = {
+    batarang: '<path d="M4 30 L17 23 L22 29 L27 21 L32 27 L37 21 L42 29 L47 23 L60 30 L47 35 L42 43 L37 36 L32 41 L27 36 L22 43 L17 35 Z" fill="currentColor"/>',
+    web_shooter: '<g fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M32 30 L12 8 M32 30 L32 4 M32 30 L52 8 M18 15 Q32 9 46 15 M23 21 Q32 17 41 21"/></g><rect x="14" y="32" width="36" height="16" rx="5" fill="currentColor"/><rect x="27" y="36" width="10" height="8" rx="2" fill="#fff" fill-opacity=".55"/>',
+    daily_planet: '<rect x="8" y="12" width="40" height="42" rx="3" fill="currentColor"/><g stroke="#fff" stroke-opacity=".6" stroke-width="2"><path d="M13 20 H43 M13 27 H28 M13 33 H28 M13 39 H28 M13 45 H43"/></g><circle cx="44" cy="34" r="12" fill="#fff" fill-opacity=".9"/><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="44" cy="34" r="12"/><ellipse cx="44" cy="34" rx="5" ry="12"/><path d="M32 34 H56"/></g>',
+    camera_parker: '<rect x="8" y="20" width="48" height="30" rx="5" fill="currentColor"/><rect x="14" y="14" width="12" height="8" rx="2" fill="currentColor"/><circle cx="34" cy="35" r="10" fill="#fff" fill-opacity=".85"/><circle cx="34" cy="35" r="6" fill="currentColor"/><circle cx="31.5" cy="32.5" r="1.8" fill="#fff"/><rect x="46" y="24" width="6" height="4" rx="1" fill="#fff" fill-opacity=".7"/>',
+    shield_cap: '<circle cx="32" cy="32" r="27" fill="currentColor"/><circle cx="32" cy="32" r="20" fill="#fff" fill-opacity=".85"/><circle cx="32" cy="32" r="14" fill="currentColor"/><path d="M32 21 L35 29.5 L44 29.5 L36.8 34.8 L39.5 43.5 L32 38.3 L24.5 43.5 L27.2 34.8 L20 29.5 L29 29.5 Z" fill="#fff"/>',
+    lasso: '<g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><ellipse cx="32" cy="22" rx="20" ry="9"/><ellipse cx="32" cy="27" rx="17" ry="8" stroke-opacity=".75"/><ellipse cx="32" cy="32" rx="14" ry="7" stroke-opacity=".55"/><path d="M44 36 Q52 46 46 58"/></g>',
+    lantern_ring: '<ellipse cx="32" cy="46" rx="16" ry="8" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="32" cy="24" r="16" fill="currentColor"/><circle cx="32" cy="24" r="8" fill="none" stroke="#fff" stroke-width="3"/><path d="M20 20 H44 M20 28 H44" stroke="#fff" stroke-width="2.6"/>',
+    helmet_fate: '<path d="M12 50 V28 Q12 8 32 8 Q52 8 52 28 V50 L42 56 V40 H22 V56 Z" fill="currentColor"/><path d="M18 26 H46 M32 26 V40" stroke="#111" stroke-opacity=".75" stroke-width="5" stroke-linecap="round"/><path d="M24 12 Q32 6 40 12" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="2"/>',
+    kryptonite: '<path d="M30 58 L22 26 L30 6 L38 26 Z" fill="currentColor"/><path d="M20 58 L10 36 L16 22 L24 40 Z" fill="currentColor" fill-opacity=".75"/><path d="M42 58 L42 34 L50 20 L56 38 Z" fill="currentColor" fill-opacity=".8"/><path d="M30 6 L30 58 M16 22 L18 58 M50 20 L46 58" stroke="#fff" stroke-opacity=".45" stroke-width="1.4"/>',
+    mother_box: '<path d="M32 6 L56 18 V46 L32 58 L8 46 V18 Z" fill="currentColor"/><path d="M8 18 L32 30 L56 18 M32 30 V58" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/><g fill="none" stroke="#fff" stroke-width="1.8"><path d="M14 28 H22 V36 H18 M40 34 H48 V42 M44 22 L50 25"/><circle cx="18" cy="40" r="2"/><circle cx="48" cy="46" r="2"/></g>',
+    cerebro: '<path d="M10 40 Q10 10 32 10 Q54 10 54 40 Z" fill="currentColor"/><path d="M14 40 H50 V46 H14 Z" fill="currentColor" fill-opacity=".8"/><g fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"><path d="M18 30 Q32 18 46 30 M22 22 Q32 14 42 22 M32 10 V40"/></g><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 46 Q14 54 6 56 M46 46 Q50 54 58 56 M32 46 V58"/></g>',
+    eye_agamotto: '<circle cx="32" cy="32" r="22" fill="currentColor"/><path d="M14 32 Q32 16 50 32 Q32 48 14 32 Z" fill="#fff" fill-opacity=".9"/><circle cx="32" cy="32" r="7" fill="currentColor"/><circle cx="32" cy="32" r="3" fill="#fff"/><path d="M6 20 L12 26 M58 20 L52 26 M6 44 L12 38 M58 44 L52 38" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>',
+    nth_metal: '<path d="M32 8 L52 20 V44 L32 56 L12 44 V20 Z" fill="currentColor"/><path d="M32 16 L45 24 V40 L32 48 L19 40 V24 Z" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="1.8"/><path d="M20 30 Q8 24 2 14 Q12 18 22 24 M44 30 Q56 24 62 14 Q52 18 42 24" fill="currentColor" fill-opacity=".7"/>',
+    mjolnir: '<rect x="10" y="10" width="44" height="22" rx="3" fill="currentColor"/><path d="M14 16 H50 M14 26 H50" stroke="#fff" stroke-opacity=".35" stroke-width="1.6"/><rect x="28" y="32" width="8" height="22" rx="2" fill="currentColor" fill-opacity=".85"/><path d="M28 38 H36 M28 44 H36 M28 50 H36" stroke="#fff" stroke-opacity=".45" stroke-width="1.4"/><path d="M32 54 Q26 60 32 62 Q38 60 32 54" fill="none" stroke="currentColor" stroke-width="2"/>',
+    vibranium: '<path d="M8 44 L18 22 H46 L56 44 Z" fill="currentColor"/><path d="M18 22 L22 44 M46 22 L42 44 M8 44 H56" stroke="#fff" stroke-opacity=".5" stroke-width="1.6"/><path d="M26 30 L30 26 L34 34 L38 28" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/><path d="M10 52 H54" stroke="currentColor" stroke-opacity=".5" stroke-width="3" stroke-linecap="round"/>',
+    cosmic_cube: '<path d="M32 6 L56 19 V45 L32 58 L8 45 V19 Z" fill="currentColor" fill-opacity=".35"/><path d="M32 18 L45 25 V40 L32 47 L19 40 V25 Z" fill="currentColor"/><path d="M8 19 L32 32 L56 19 M32 32 V58 M19 25 L32 32 L45 25" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.6"/>',
+    nullifier: '<rect x="16" y="20" width="32" height="26" rx="13" fill="currentColor"/><rect x="26" y="8" width="12" height="12" rx="3" fill="currentColor" fill-opacity=".8"/><path d="M16 33 H6 M48 33 H58" stroke="currentColor" stroke-width="5" stroke-linecap="round"/><circle cx="32" cy="33" r="6" fill="#fff" fill-opacity=".85"/><path d="M24 52 H40" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>',
+    gauntlet: '<path d="M18 58 V30 Q18 26 21 26 Q24 26 24 30 V18 Q24 14 27 14 Q30 14 30 18 V14 Q30 10 33 10 Q36 10 36 14 V18 Q36 14 39 14 Q42 14 42 18 V34 L46 28 Q49 25 52 28 L44 44 Q42 52 36 58 Z" fill="currentColor"/>' +
+      [[27, 20, 215], [33, 16, 50], [39, 20, 0], [21, 32, 285], [47, 31, 130], [32, 44, 30]].map(([x, y, hh]) => '<circle cx="' + x + '" cy="' + y + '" r="3.2" fill="hsl(' + hh + ',85%,58%)" stroke="#fff" stroke-width="1"/>').join(''),
+    gem_space: AF_GEM, gem_mind: AF_GEM, gem_reality: AF_GEM, gem_power: AF_GEM, gem_time: AF_GEM, gem_soul: AF_GEM
+  };
+  const afArt = a => AF_ART[a.id] ? '<svg viewBox="0 0 64 64" aria-hidden="true">' + AF_ART[a.id] + '</svg>' : '<i>' + escapeHtml(a.glyph) + '</i>';
+
+  // Portraits des rangs (D-64) : image du personnage tirée de Comic Vine (correspondance exacte du nom), avec crédit.
+  // Seuls le rang actuel et le suivant sont cherchés (2 requêtes au plus), réponse gardée 30 jours ; sinon aucun portrait.
+  const RANK_CV = { 'Justicier de quartier': 'Daredevil', 'Athlète de haut niveau': 'Hawkeye', 'Humain entraîné': 'Black Widow', 'Maître des arts martiaux': 'Shang-Chi', 'Détective de Gotham': 'Batman',
+    'Humain optimisé': 'Black Panther', 'Super-soldat': 'Captain America', 'Agent augmenté': 'Deathlok', 'Méta-humain': 'Flash', 'Mutant latent': 'Jubilee', 'Mutant de classe Bêta': 'Nightcrawler', 'Atlante': 'Aquaman',
+    'Mutant de classe Alpha': 'Cyclops', 'Amazone de Themyscira': 'Wonder Woman', 'Mutant de classe Oméga': 'Jean Grey', 'Inhumain révélé': 'Black Bolt', 'Martien vert': 'Martian Manhunter', 'Green Lantern d\'Oa': 'Green Lantern',
+    'Kryptonien': 'Superman', 'Sorcier initié': 'Zatanna', 'Sorcier suprême': 'Doctor Strange', 'Dieu d\'Asgard': 'Thor', 'Nouveau Dieu': 'Orion', 'Héraut cosmique': 'Silver Surfer',
+    'Gardiens de l\'Univers': 'Ganthet', 'Le Spectre': 'Spectre', 'Lucifer Morningstar': 'Lucifer', 'Le Monde-Forgeron': 'World Forger', 'Les Elder Gods': 'Chthon', 'L\'Anti-All': 'Anti-All', 'L\'Étranger': 'The Stranger',
+    'Les Watchers': 'Uatu', 'Les Célestes': 'Arishem', 'Le Black Winter': 'Black Winter', 'Les Beyonders': 'Beyonder', 'Le Premier Firmament': 'First Firmament', 'Le Phénix': 'Phoenix Force', 'Le Tribunal Vivant': 'Living Tribunal', 'Le Fulcrum': 'Fulcrum', 'L\'Enigma Force': 'Enigma Force' };
+  const RANK_PT_KEY = 'panel_rank_portraits_v1';
+  const rankPts = (() => { try { const v = JSON.parse(localStorage.getItem(RANK_PT_KEY) || '{}'); return v && typeof v === 'object' ? v : {}; } catch (_) { return {}; } })();
+  const rankPtPending = new Set();
+  const rankPortrait = rank => {
+    if (!rank || rank.name === 'Civil' || rank.name === 'Témoin d\'un combat') return null;
+    const q = RANK_CV[rank.name] || rank.name;
+    const hit = rankPts[q];
+    if (hit && Date.now() - hit.at < 30 * 86400000) return hit.url ? hit : null;
+    if (!cvAvailable() || rankPtPending.has(q) || rankPtPending.size >= 2) return null;
+    rankPtPending.add(q);
+    cvCall('search', 'search', { format: 'jsonp', resources: 'character', query: q, limit: 10, field_list: 'id,name,image,publisher' }).then(d => {
+      const want = rank.universe === 'dc' ? /\bdc\b/i : rank.universe === 'marvel' || rank.cosmic ? /marvel/i : null;
+      const exact = (d.results || []).filter(r => catNorm(r.name) === catNorm(q) && r.image);
+      const r = exact.find(x => want && want.test((x.publisher && x.publisher.name) || '')) || exact[0];
+      const url = r ? (r.image.small_url || r.image.medium_url || r.image.thumb_url || '') : '';
+      rankPts[q] = { at: Date.now(), url: isSafeImageUrl(url) ? url : '', name: r ? gdStr(r.name, 80) : '', id: r ? r.id : null };
+      try { localStorage.setItem(RANK_PT_KEY, JSON.stringify(rankPts)); } catch (_) {}
+      if (url && $('communityProfile') && !$('communityProfile').hidden) renderCommunityProfile();
+    }).catch(() => {}).finally(() => rankPtPending.delete(q));
+    return null;
+  };
+  const rankPortraitHtml = (rank, cls) => { const pt = rankPortrait(rank); return pt ? '<span class="' + cls + '" title="' + escapeHtml(pt.name + ' — portrait Comic Vine') + '"><img src="' + escapeHtml(pt.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></span>' : ''; };
   const artefactsHtml = ar => '<h3 class="pf-section">Artefacts <span class="stat-sub">' + ar.unlocked + ' / ' + ar.total + ' débloqués · ' + ar.gems + ' / 6 gemmes</span></h3>' +
     (ar.next ? '<p class="stat-sub af-next">Prochain : <b>' + escapeHtml(ar.next.name) + '</b> — ' + escapeHtml(ar.next.lore) + ' (' + Math.floor(ar.next.have).toLocaleString('fr-FR') + ' / ' + ar.next.goal.toLocaleString('fr-FR') + ')</p>' : '') +
     '<div class="af-grid">' + ar.list.map(a => '<div class="af-card is-' + a.rarity + (a.unlocked ? ' is-on' : '') + (a.gem ? ' is-gem' : '') + '" style="--h:' + a.hue + '" title="' + escapeHtml(a.lore) + '">' +
-      '<span class="af-medal"><i>' + escapeHtml(a.glyph) + '</i></span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
+      '<span class="af-medal' + (AF_ART[a.id] ? ' has-art' : '') + '">' + afArt(a) + '</span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
       '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString('fr-FR') + ' / ' + a.goal.toLocaleString('fr-FR')) + '</em></div>').join('') + '</div>' +
-    '<p class="stat-sub" style="margin:8px 2px 18px">Objets inspirés des univers Marvel et DC (marques de leurs ayants droit), dessinés par Panel. Chaque artefact débloqué rapporte 50 XP.</p>';
+    '<p class="stat-sub" style="margin:8px 2px 18px">Objets inspirés des univers Marvel et DC (marques de leurs ayants droit), illustrations originales dessinées par Panel. Chaque artefact débloqué rapporte 50 XP.</p>';
 
   // ── Communauté : en-tête commun (profil compact, stories, onglets) ; un seul endroit pour naviguer (D-63)
   let commTab = 'feed';
@@ -15496,7 +15904,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ── Réglages (D-63) : un vrai panneau de réglages par rubriques, autour des paramètres existants (clés API, application)
-  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['sources', 'Sources & clés API', 'ic-key']];
+  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['sources', 'Sources & avancé', 'ic-key']];
   let settingsTab = 'account';
   const settingsPaneHtml = tab => {
     const prof = profileLoad();
@@ -15524,10 +15932,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Restaurer', 'Fusion par défaut, annulation possible', btn('Restaurer…', 'data-set-click="restoreJsonBtn"')) +
       row('Sauvegarde par domaine', 'Collection, Lecture, Explorer, Communauté', btn('Ouvrir', 'data-set-click="backupOptionsBtn"')) +
       row('Vérifier les données', 'Contrôle d\'intégrité, ne supprime rien', btn('Vérifier', 'data-set-click="cleanDbBtn"')) +
-      row('Corbeille', 'Fiches retirées, restaurables', btn('Ouvrir', 'data-set-click="trashBtn"'));
+      row('Corbeille', (($('trashCount') || {}).textContent || '0') + ' fiche(s) retirée(s), restaurables', btn('Ouvrir', 'data-set-click="trashBtn"')) +
+      row('Conflits', (($('conflictCount') || {}).textContent || '0') + ' à trancher (notes, sources du calendrier, synchronisation)', btn('Ouvrir', 'data-set-click="conflictsBtn"')) +
+      ($('exportDigitalArchiveBtn') && !$('exportDigitalArchiveBtn').hidden ? row('Anciens fichiers numériques', 'Archive ZIP des PDF/CBZ et de leurs données ; rien n\'est supprimé', btn('Télécharger', 'data-set-click="exportDigitalArchiveBtn"')) : '');
     return '';
   };
+  const devModeOn = () => { try { return localStorage.getItem('panel_dev_mode') === '1'; } catch (_) { return false; } };
+  const setDevMode = on => { try { if (on) localStorage.setItem('panel_dev_mode', '1'); else localStorage.removeItem('panel_dev_mode'); } catch (_) {} document.documentElement.classList.toggle('is-dev', !!on); };
+  document.documentElement.classList.toggle('is-dev', devModeOn());
+  // Pastille sur « Réglages » quand des conflits attendent une décision
+  const refreshSettingsDot = () => { const d = $('settingsAlertDot'), c = $('conflictCount'); if (d && c) d.hidden = !(parseInt(c.textContent, 10) > 0); };
+  setTimeout(refreshSettingsDot, 1500);
   const setupSettingsHub = () => {
+    refreshSettingsDot();
     const modal = $('settingsModal'); if (!modal) return;
     const boxEl = modal.querySelector('.modal-box'); if (!boxEl) return;
     if (!boxEl.querySelector('.set-shell')) {
@@ -15545,6 +15962,23 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       boxEl.querySelectorAll('[data-set-tab]').forEach(b => { const on = b.dataset.setTab === settingsTab; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); b.onclick = () => { settingsTab = b.dataset.setTab; render(); }; });
       const dyn = boxEl.querySelector('[data-set-pane="dyn"]'), keys = boxEl.querySelector('[data-set-pane="sources"]');
       keys.hidden = settingsTab !== 'sources'; dyn.hidden = settingsTab === 'sources';
+      let srcHead = keys.querySelector('.set-src');
+      if (!srcHead) { srcHead = document.createElement('div'); srcHead.className = 'set-src'; keys.insertBefore(srcHead, keys.firstChild); }
+      if (settingsTab === 'sources') {
+        const st = (on, label, sub) => '<div class="set-row"><div><b>' + label + '</b><small>' + sub + '</small></div><div class="set-ctrl"><span class="set-pill' + (on ? ' is-ok' : '') + '">' + (on ? 'Disponible' : 'Indisponible') + '</span></div></div>';
+        const relay = !!relayStatus && /^https?:$/.test(location.protocol);
+        srcHead.innerHTML = '<h3>Sources de données</h3>' +
+          st(cvAvailable(), 'Comic Vine', 'Couvertures, crédits, recherche mondiale de l’Explorer') +
+          st(relay && relayStatus.metron, 'Metron', 'Variantes exactes au scan, couvertures de repli') +
+          st(relay && relayStatus.gcd, 'Grand Comics Database', 'Éditions et couvertures de repli (CC BY-SA 4.0)') +
+          st(true, 'Fandom (DC, Marvel, Image)', 'Couvertures de variantes') +
+          st(true, 'Open Library', 'Couvertures des recueils par ISBN') +
+          '<div class="set-row"><div><b>Mode développeur</b><small>Affiche les clés API, le journal des scans et les outils éditoriaux. Inutile pour un usage normal.</small></div><div class="set-ctrl"><label class="set-switch"><input type="checkbox" data-set-dev' + (devModeOn() ? ' checked' : '') + '><span></span></label></div></div>' +
+          '<div class="set-row"><div><b>Sources & données</b><small>Provenance des fiches et contrôle des sources</small></div><div class="set-ctrl"><button type="button" class="btn secondary rel-mini" data-set-click-src="openDataAdminBtn">Ouvrir</button></div></div>' +
+          '<h3 class="set-h-sub">Préférences de l’appareil</h3>';
+        const dv = srcHead.querySelector('[data-set-dev]'); if (dv) dv.onchange = () => { setDevMode(dv.checked); showToast(dv.checked ? 'Mode développeur activé sur cet appareil.' : 'Mode développeur désactivé.'); };
+        srcHead.querySelectorAll('[data-set-click-src]').forEach(b => { b.onclick = () => { const t = $(b.dataset.setClickSrc); modal.classList.remove('open'); if (t) setTimeout(() => t.click(), 60); }; });
+      }
       dyn.innerHTML = settingsTab === 'sources' ? '' : settingsPaneHtml(settingsTab);
       const close = () => modal.classList.remove('open');
       dyn.querySelectorAll('[data-set-click]').forEach(b => { b.onclick = () => { const t = $(b.dataset.setClick); close(); if (t) setTimeout(() => t.click(), 60); }; });
@@ -16387,7 +16821,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Une couverture manuelle (photo, URL, ou choix explicite dans la fiche) est verrouillée :
   // aucun traitement automatique ne la remplace. Chaque remplacement automatique garde l'image
   // précédente dans coverHistory (annulation par lot ou par comic).
-  const COVER_SOURCE_LABEL = { manual: 'Manuelle', metron: 'Metron', fandom: 'Fandom', comicvine: 'Comic Vine', openlibrary: 'Open Library', generated: 'Générée' };
+  const COVER_SOURCE_LABEL = { manual: 'Manuelle', metron: 'Metron', fandom: 'Fandom', comicvine: 'Comic Vine', gcd: 'Grand Comics Database', openlibrary: 'Open Library', generated: 'Générée' };
   const COVER_CONF_LABEL = { exacte: 'exacte', approchee: 'approchée', standard: 'couverture standard' };
   const FANDOM_WIKIS = {
     dc: { host: 'dc.fandom.com', name: 'DC Database' },
@@ -16747,6 +17181,52 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
   };
 
+  // Replis de couverture (D-64) : Metron (fiche du numéro), Grand Comics Database (scan de l'édition principale),
+  // Open Library (ISBN d'un recueil). Seulement via le relais local, jamais plus de 60 replis par passage.
+  const COVER_FALLBACK_MAX = 60;
+  const coverFallback = async (s, reason, extra = {}) => {
+    const tried = [];
+    const yr = parseInt(String(s.coverYear || s.year || s.releaseDate || '').slice(0, 4), 10) || null;
+    const num = String(s.issue || '').replace(/^#/, '').trim();
+    const series = cleanSeriesName(s.series).base;
+    const relayOk = relayStatus && /^https?:$/.test(location.protocol);
+    coverJob.fallbacks = coverJob.fallbacks || 0;
+    if (relayOk && coverJob.fallbacks < COVER_FALLBACK_MAX && series && num) {
+      coverJob.fallbacks++;
+      if (relayStatus.metron) {
+        tried.push('Metron');
+        try {
+          const r = await fetch(location.origin + '/api/metron/search?q=' + encodeURIComponent(series + ' #' + num), { cache: 'no-store' });
+          const j = r.ok ? await r.json() : null;
+          const list = (j && j.results || []).filter(x => x.image && String(x.number).replace(/^0+(?=\d)/, '') === num.replace(/^0+(?=\d)/, '') && catNorm(x.series) === catNorm(series));
+          const best = list.sort((a, b) => (yr ? Math.abs((a.year || 0) - yr) - Math.abs((b.year || 0) - yr) : 0))[0];
+          if (best && (!yr || !best.year || Math.abs(best.year - yr) <= 2) && applyAutoCover(s, best.image, { source: 'metron', confidence: 'standard', batch: coverJob.batchId, metronId: best.id })) {
+            setCoverStatus(s, 'found', { source: 'metron' }); refreshCoverInDom(s); return true;
+          }
+        } catch (_) {}
+      }
+      if (relayStatus.gcd && yr) {
+        tried.push('GCD');
+        try {
+          const r = await fetch(location.origin + '/api/gcd/cover?' + new URLSearchParams({ series, issue: num, year: String(yr) }), { cache: 'no-store' });
+          const j = r.ok ? await r.json() : null;
+          if (j && j.cover && applyAutoCover(s, j.cover, { source: 'gcd', confidence: 'standard', batch: coverJob.batchId, caption: 'Grand Comics Database (CC BY-SA 4.0)' })) {
+            setCoverStatus(s, 'found', { source: 'gcd' }); refreshCoverInDom(s); return true;
+          }
+        } catch (_) {}
+      }
+    }
+    const isbn = String(s.isbn || '').replace(/[^0-9Xx]/g, '');
+    if (/^(\d{9}[\dXx]|\d{13})$/.test(isbn)) {
+      tried.push('Open Library');
+      const url = 'https://covers.openlibrary.org/b/isbn/' + isbn + '-L.jpg?default=false';
+      const ok = await new Promise(res => { const im = new Image(); const t = setTimeout(() => res(false), 8000); im.onload = () => { clearTimeout(t); res(im.naturalWidth > 10); }; im.onerror = () => { clearTimeout(t); res(false); }; im.src = url; });
+      if (ok && applyAutoCover(s, url, { source: 'openlibrary', confidence: 'standard', batch: coverJob.batchId })) { setCoverStatus(s, 'found', { source: 'openlibrary' }); refreshCoverInDom(s); return true; }
+    }
+    setCoverStatus(s, 'notfound', Object.assign({ reason: reason + (tried.length ? ' ; aussi cherché : ' + tried.join(', ') : '') }, extra));
+    return false;
+  };
+
   const processCoverGroup = async items => {
     await processFandomGroup(items);
     items = items.filter(coverPending);
@@ -16771,7 +17251,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       cvVolumeCache[gk] = vol || null;
       saveJson('panel_cv_volumes', cvVolumeCache);
     }
-    if (!vol) { numbered.forEach(s => setCoverStatus(s, 'notfound', { reason: 'série introuvable sur Comic Vine' })); return; }
+    if (!vol) { for (const s of numbered) await coverFallback(s, 'série introuvable sur Comic Vine'); return; }
 
     // Numéros du volume, page par page, jusqu'à trouver tous ceux qu'on possède
     const wanted = new Set(numbered.map(s => issueKeyOf(s.issue)));
@@ -16797,7 +17277,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     for (const s of numbered) {
       const k = issueKeyOf(s.issue);
       const hit = byNumber.get(k) || byNumber.get(String(parseFloat(k)));
-      if (!hit) { setCoverStatus(s, 'notfound', { reason: 'numéro absent du volume Comic Vine', volumeId: vol.id }); continue; }
+      if (!hit) { await coverFallback(s, 'numéro absent du volume Comic Vine', { volumeId: vol.id }); continue; }
       s.comicVineId = s.comicVineId || hit.id;
       if (!s.coverYear && (hit.cover_date || hit.store_date)) s.coverYear = parseInt(String(hit.cover_date || hit.store_date).slice(0, 4), 10) || s.coverYear;
       let url = cvIssueImage(hit.image);
@@ -16823,7 +17303,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         setCoverStatus(s, status, { volumeId: vol.id });
         refreshCoverInDom(s);
       } else {
-        setCoverStatus(s, 'notfound', { reason: 'pas d\'image sur Comic Vine' });
+        await coverFallback(s, 'pas d\'image sur Comic Vine');
       }
     }
   };
@@ -19325,10 +19805,35 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     return { ok: true };
   };
   const cmdUndo = async token => { const f = s2Undo.get(token); if (!f) return false; s2Undo.delete(token); await f(); s2Refresh(); return true; };
+  // D-64 : exemplaires possédés d'un numéro (ou d'une série) du catalogue mondial ; 0 si la personnalisation est coupée
+  const catIssueNo = v => String(v == null ? '' : v).replace(/^#/, '').replace(/^0+(?=\d)/, '').trim();
+  const lensOwnedCount = ref => {
+    if (!ref || !ref.series || !personalizeEnabled()) return 0;
+    const k = catNorm(cleanSeriesName(ref.series).base), n = ref.issue === undefined || ref.issue === null ? null : catIssueNo(ref.issue);
+    return physicalSingles.filter(x => !x.isWishlist && catNorm(cleanSeriesName(x.series).base) === k && (n === null || catIssueNo(x.issue) === n)).length;
+  };
+  // D-64 : ajout d'un numéro trouvé dans la base mondiale (collection ou wishlist), couverture Comic Vine, annulable
+  const cmdAddCatalogIssue = (ref, opts = {}) => {
+    const e = s2Guard(opts, () => (ref && relStr(ref.series, 160) && catIssueNo(ref.issue) ? null : s1Err('invalid_input'))); if (e) return e;
+    const series = relStr(ref.series, 160), num = catIssueNo(ref.issue).slice(0, 12), wish = !!opts.wish;
+    const item = { id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7), series, issue: '#' + num, publisher: relStr(ref.publisher, 80) || 'Autre / Indé', variant: 'Cover A',
+      keyType: (checkKeyIssueInfo(series, num) || {}).tier || 'none', condition: '', coverPrice: null, estValue: null, box: '', divider: '', location: '',
+      isProtected: false, isWishlist: wish, isRead: false, rating: 0, notes: '', coverUrl: '', addedAt: new Date().toISOString() };
+    if (/^\d+$/.test(String(ref.comicVineId || ''))) item.comicVineId = Number(ref.comicVineId);
+    const y = parseInt(String(ref.date || '').slice(0, 4), 10); if (y > 1900) item.coverYear = y;
+    applyAutoValuation(item);
+    if (ref.image && isSafeImageUrl(ref.image)) applyAutoCover(item, ref.image, { source: 'comicvine', confidence: 'exacte', comicVineId: item.comicVineId || null });
+    physicalSingles.unshift(item);
+    persistSingles();
+    s2Refresh();
+    renderSinglesCollection();
+    showToastAction((wish ? 'Ajouté à la wishlist : ' : 'Ajouté à la collection : ') + series + ' #' + num, 'Annuler', () => { const i = physicalSingles.indexOf(item); if (i >= 0) { physicalSingles.splice(i, 1); persistSingles(); s2Refresh(); renderSinglesCollection(); } });
+    return { ok: true, id: item.id };
+  };
   const PERSONAL_CONTRACTS_V1 = Object.freeze({
     version: 1,
-    lens: Object.freeze({ isEnabled: personalizeEnabled, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets, referencedPubs: lensReferencedPubs }),
-    commands: Object.freeze({ gesture: s2Gesture, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, markRead: cmdMarkRead, openItem: cmdOpenItem, undo: cmdUndo }),
+    lens: Object.freeze({ isEnabled: personalizeEnabled, ownedCount: lensOwnedCount, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets, referencedPubs: lensReferencedPubs }),
+    commands: Object.freeze({ gesture: s2Gesture, addCatalogIssue: cmdAddCatalogIssue, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, markRead: cmdMarkRead, openItem: cmdOpenItem, undo: cmdUndo }),
     settings: Object.freeze({ personalize: personalizeEnabled, setPersonalize })
   });
 
