@@ -1273,6 +1273,12 @@ const waitForCdp = async () => {
         t20.bnf = b1.status === 200 && b1.body.editions.length === 1 && b1.body.editions[0].isbn === '9791026823384' && b1.body.editions[0].title === 'Absolute Batman. 1, Le zoo'
           && b1.body.editions[0].url === 'https://catalogue.bnf.fr/ark:/12148/cb1' && b1.body.editions[0].collection === 'DC Black Label' && b2.body.cached === true && bnfUrls.length === 1
           && bBad.status === 400 && st.body.wd === true && st.body.bnf === true;
+        // D-68 : durcissement du serveur local (hôte, origine, méthodes, en-têtes)
+        const raw = (pathname, headers = {}, method = 'GET') => new Promise(res => { const q = require('http').request({ host: '127.0.0.1', port: 8099, path: pathname, method, headers }, r => { r.resume(); r.on('end', () => res({ status: r.statusCode, headers: r.headers })); }); q.on('error', () => res({ status: 0, headers: {} })); q.end(); });
+        const hOk = await raw('/'), hHost = await raw('/', { Host: 'rebind.example:8099' }), hOrigin = await raw('/api/status', { Origin: 'https://site-tiers.example' });
+        const hSame = await raw('/api/status', { Origin: 'http://127.0.0.1:8099' }), hPost = await raw('/api/status', {}, 'POST'), hPut = await raw('/index.html', {}, 'PUT');
+        t20.hardening = hOk.status === 200 && hOk.headers['x-frame-options'] === 'DENY' && /frame-ancestors 'none'/.test(hOk.headers['content-security-policy'] || '') && /microphone=\(\)/.test(hOk.headers['permissions-policy'] || '')
+          && hHost.status === 421 && hOrigin.status === 403 && hSame.status === 200 && hPost.status === 405 && hPut.status === 405;
         const src = require('fs').readFileSync(require('path').join(__dirname, 'index.html'), 'utf8');
         t20.noKeyInClient = !/DEFAULT_CV_KEY/.test(src) && !/['"][0-9a-f]{40}['"]/.test(src);
       } catch (e) { t20 = { error: String(e && e.message || e) }; }
@@ -1280,7 +1286,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'hardening', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
@@ -4436,6 +4442,43 @@ const waitForCdp = async () => {
       const t53fail = t53keys.filter(k => !t53 || t53[k] !== true);
       if (t53fail.length) console.log('Test 53 — vérifications en échec :', t53fail.join(', '));
       testResults.push({ test: 'Event Center v2 (R2) : 9 événements aux niveaux justifiés, essentiel visible en tête de fiche, niveau recommandé, ordre recommandé Panel versionné construit par rôles, progression, masquage réversible, préférence locale', ok: t53fail.length === 0 });
+
+      // ==========================================
+      // TEST 54 : Centre de notifications (D-68) — suivis, lu / non lu, préférences, données restaurées
+      // ==========================================
+      console.log('\n[TEST 54] Centre de notifications : suivi avec nouvelle apparition, pastille, panneau, tout lu, préférences...');
+      const t54 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const f0 = localStorage.getItem('panel_follows_v1'), n0 = localStorage.getItem('panel_notifs_v1');
+        try {
+          localStorage.removeItem('panel_notifs_v1');
+          localStorage.setItem('panel_follows_v1', JSON.stringify({ 'character:26578': { name: 'Static', image: '', at: '2026-11-01', lastId: 1039, lastLabel: 'New Titans #40', lastDate: '2026-10-21', isNew: true, checkedAt: new Date().toISOString() },
+            'team:1': { name: 'Calme', image: '', lastId: 5, lastLabel: 'X #1', lastDate: '2026-01-01', isNew: false } }));
+          const P = window.Panel.notifications;
+          const items = await P.items();
+          r.followItem = items.some(n => n.kind === 'follow' && n.id === 'follow:character:26578:1039' && !n.read) && !items.some(n => n.id.startsWith('follow:team:1'));
+          r.badge = (await P.badge()) >= 1 && !document.getElementById('notifCount').hidden;
+          P.open(); await wait(300);
+          const panel = document.getElementById('notifPanel');
+          r.panel = !panel.hidden && !!panel.querySelector('[data-nid="follow:character:26578:1039"]') && document.getElementById('notifBtn').getAttribute('aria-expanded') === 'true';
+          document.getElementById('notifReadAll').click(); await wait(300);
+          r.readAll = (await P.items()).every(n => n.read) && document.getElementById('notifCount').hidden;
+          const pref = panel.querySelector('[data-npref="follow"]'); pref.checked = false; pref.dispatchEvent(new Event('change')); await wait(200);
+          r.prefOff = !(await P.items()).some(n => n.kind === 'follow') && JSON.parse(localStorage.getItem('panel_notifs_v1')).off.follow === true;
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape' })); await wait(300);
+          r.closed = panel.hidden;
+          r.nothingSent = JSON.parse(localStorage.getItem('panel_notifs_v1')).device === false;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (f0 === null) localStorage.removeItem('panel_follows_v1'); else localStorage.setItem('panel_follows_v1', f0);
+          if (n0 === null) localStorage.removeItem('panel_notifs_v1'); else localStorage.setItem('panel_notifs_v1', n0);
+          await window.Panel.notifications.badge();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 54:', JSON.stringify(t54));
+      testResults.push({ test: 'Centre de notifications (D-68) : nouvelle apparition d\'un suivi, pastille, panneau accessible, tout marquer lu, préférence par type, rien envoyé, données restaurées',
+        ok: !!t54 && !t54.error && ['followItem', 'badge', 'panel', 'readAll', 'prefOff', 'closed', 'nothingSent'].every(k => t54[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

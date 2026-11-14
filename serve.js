@@ -464,9 +464,39 @@ const handleBnf = async (u, res) => {
   }
 };
 
+// ---------- Durcissement (D-68)
+// 1. Hôte : seules les adresses locales sont servies (protection contre le « DNS rebinding » : un site tiers qui ferait
+//    pointer son nom vers 127.0.0.1 ne peut ni lire Panel ni utiliser les relais et leurs quotas).
+// 2. Relais /api : refusés aux autres origines (en-tête Origin d'un autre site), lecture seule (GET).
+// 3. En-têtes de sécurité sur la page : pas d'intégration dans un cadre, pas de plugin, base et formulaires limités au site,
+//    caméra et géolocalisation réservées à Panel, micro, paiement, USB et capteurs refusés.
+const LOCAL_HOST = /^(localhost|127\.0\.0\.1|\[::1\])(:\d{1,5})?$/i;
+const SECURITY_HEADERS = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Permissions-Policy': 'camera=(self), geolocation=(self), microphone=(), payment=(), usb=(), serial=(), hid=(), bluetooth=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=()',
+  'Content-Security-Policy': "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; worker-src 'self'; manifest-src 'self'"
+};
+const requestGuard = (req, res, p) => {
+  const host = String(req.headers.host || '');
+  if (!LOCAL_HOST.test(host)) { res.writeHead(421, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); res.end('Hôte refusé'); return false; }
+  if (p.startsWith('/api/')) {
+    const origin = req.headers.origin;
+    if (origin && origin !== 'null') {
+      let ok = false; try { const o = new URL(origin); ok = /^https?:$/.test(o.protocol) && o.host.toLowerCase() === host.toLowerCase(); } catch (_) {}
+      if (!ok) { sendJson(res, 403, { error: 'origine refusée' }); return false; }
+    }
+    if (req.method !== 'GET') { sendJson(res, 405, { error: 'méthode non autorisée' }); return false; }
+  } else if (req.method !== 'GET' && req.method !== 'HEAD') { res.writeHead(405, { Allow: 'GET, HEAD', ...SECURITY_HEADERS }); res.end(); return false; }
+  return true;
+};
+
 const server = http.createServer((req, res) => {
   let p;
   try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { res.writeHead(400); return res.end(); }
+  if (!requestGuard(req, res, p)) return;
   // État des relais (aucun secret renvoyé) : l'app vérifie au démarrage quels outils en ligne sont réellement disponibles
   if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true, wd: true, bnf: true });
   if (p.startsWith('/api/gcd/') && req.method === 'GET') return void handleGcd(new URL(req.url, 'http://x'), res);
@@ -475,7 +505,7 @@ const server = http.createServer((req, res) => {
   if (p === '/api/cv-appearances' && req.method === 'GET') return void handleCvAppearances(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/bnf/') && req.method === 'GET') return void handleBnf(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/wd/') && req.method === 'GET') return void handleWd(new URL(req.url, 'http://x'), res);
-  if (!ALLOWED.test(p)) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8' }); return res.end('Introuvable'); }
+  if (!ALLOWED.test(p)) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); return res.end('Introuvable'); }
   const file = path.join(root, p === '/' ? 'index.html' : p);
   fs.readFile(file, (err, data) => {
     if (err) { res.writeHead(404); return res.end(); }
@@ -483,9 +513,9 @@ const server = http.createServer((req, res) => {
       'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
       // le service worker et la page doivent toujours être revalidés pour recevoir les mises à jour
       'Cache-Control': /\.(html|js|webmanifest)$/.test(file) ? 'no-cache' : /\.woff2$/.test(file) ? 'public, max-age=31536000, immutable' : 'public, max-age=86400',
-      'X-Content-Type-Options': 'nosniff'
+      ...SECURITY_HEADERS
     });
-    res.end(data);
+    res.end(req.method === 'HEAD' ? undefined : data);
   });
 });
 
