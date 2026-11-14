@@ -19,6 +19,7 @@ const MODULES = [
   ['collectionStats', 'domains/collection/stats-core.js'],
   ['readingStats', 'domains/reading/reading-stats.js'],
   ['seriesProgress', 'domains/reading/series-progress.js'],
+  ['feedCore', 'domains/community/feed-core.js'],
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
   ['trophiesCore', 'domains/community/trophies-core.js'],

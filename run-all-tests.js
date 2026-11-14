@@ -88,10 +88,21 @@ const waitForCdp = async () => {
         if (d.method === 'Runtime.exceptionThrown') {
           console.error('[Browser Exception]', d.params.exceptionDetails.text, d.params.exceptionDetails.exception?.description);
         }
+        // Une boîte native (alert, confirm, prompt) bloque l'évaluation en mode headless : on la note et on la ferme
+        if (d.method === 'Page.javascriptDialogOpening') {
+          console.error('[Dialogue natif fermé]', d.params.type, JSON.stringify(String(d.params.message || '').slice(0, 200)));
+          ws.send(JSON.stringify({ id: id++, method: 'Page.handleJavaScriptDialog', params: { accept: d.params.type !== 'beforeunload' ? false : true } }));
+        }
+        if (d.method === 'Inspector.targetCrashed') console.error('[Onglet Edge planté]');
       });
+      await send('Page.enable');
 
       const evalExpr = async expr => {
-        const res = await send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true });
+        // Garde-fou : une évaluation qui ne rend jamais la main est signalée (avec l'extrait du test) au lieu de bloquer toute la suite
+        let stuck;
+        const res = await Promise.race([send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }),
+          new Promise(r => { stuck = setTimeout(() => { console.error('[Évaluation bloquée 120 s]', expr.replace(/\s+/g, ' ').slice(0, 160)); r({ result: { value: { error: 'timeout' } } }); }, 120000); })]);
+        clearTimeout(stuck);
         if (res.exceptionDetails) {
           console.error('Eval Error:', res.exceptionDetails);
         }
@@ -1410,7 +1421,8 @@ const waitForCdp = async () => {
         const P = window.Panel;
         const r = {};
         const origAlert = window.alert, origConfirm = window.confirm;
-        window.alert = () => {}; window.confirm = () => true;
+        let checkDone = false; // la vérification est asynchrone : son alerte finale arrive parfois après la fin du test
+        window.alert = () => { checkDone = true; }; window.confirm = () => true;
         const base = { publisher: 'DC Comics', condition: 'NM 9.4 (Near Mint)', addedAt: '2026-01-01T00:00:00.000Z', variant: 'Cover A' };
         const mine = [ { ...base, id: 'k1', series: 'Absolute Batman (2024)', issue: '#1', notes: 'à moi' }, { ...base, id: 'k2', series: 'Absolute Batman (2024)', issue: '#2' } ];
         P.setPhysicalSingles(JSON.parse(JSON.stringify(mine)));
@@ -1457,6 +1469,7 @@ const waitForCdp = async () => {
         r.rollback = !fail.ok && fail.rolledBack === true && JSON.stringify(L()) === beforeFail;
         r.digitalStillUntouched = localStorage.getItem('panel_bookmarks') === bmBefore && localStorage.getItem('panel_reading_positions') === posBefore && (await countPages()) === pagesBefore;
 
+        for (let i = 0; i < 300 && !checkDone; i++) await new Promise(res => setTimeout(res, 100)); // jamais de vraie boîte bloquante après le test
         window.alert = origAlert; window.confirm = origConfirm;
         localStorage.removeItem('panel_bookmarks'); localStorage.removeItem('panel_reading_positions');
         return r;
@@ -4763,6 +4776,58 @@ const waitForCdp = async () => {
       console.log('Résultat Test 59:', JSON.stringify(t59));
       testResults.push({ test: 'Lecture (D-75) : lectures hors collection importées dans Lecture sans fausse fiche, séries en cours avec prochain numéro, « Marquer lu »',
         ok: !!t59 && !t59.error && ['reads', 'noFakeCopies', 'sip', 'markRead', 'importBtn'].every(k => t59[k] === true) });
+
+      // ==========================================
+      // TEST 60 : Fil façon Instagram (D-76) — publications, double-clic « j'aime », enregistrer, épingler, mots-dièse, profil « Enregistrés » (données FICTIVES restaurées)
+      // ==========================================
+      console.log('\n[TEST 60] Fil façon Instagram : publications, j\'aime, enregistrés, épingles, mots-dièse...');
+      const t60 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), keys = ['panel_community_drafts_v1', 'panel_stories_v1', 'panel_ig_v1'];
+        const saved0 = keys.map(k => localStorage.getItem(k)), at = h => new Date(Date.now() - h * 3600e3).toISOString();
+        try {
+          localStorage.removeItem('panel_ig_v1');
+          localStorage.setItem('panel_community_drafts_v1', JSON.stringify({ version: 1, drafts: [
+            { id: 'cd_fx60a', kind: 'pull', text: 'Pile fictive #NCBD', visibility: 'private', warnings: [], status: 'draft', createdAt: at(30), updatedAt: at(30), items: [{ series: 'Fixture Héros (2025)', issue: '#4', publisher: 'Marvel' }, { series: 'Fixture Nuit', issue: '#12', publisher: 'DC Comics' }] },
+            { id: 'cd_fx60b', kind: 'gem', text: 'Pépite fictive', visibility: 'private', warnings: [], status: 'draft', createdAt: at(80), updatedAt: at(80), items: [{ series: 'Fixture Gardien', issue: '#1', publisher: 'Marvel' }] }] }));
+          localStorage.setItem('panel_stories_v1', JSON.stringify({ version: 1, stories: [{ id: 'st_fx60', series: 'Fixture Héroïne', issue: '#7', publisher: 'Marvel', rating: 5, review: 'Avis fictif.', readAt: '2026-11-13', style: 'marvel', liked: true, reread: false, spoiler: false, createdAt: at(5), updatedAt: at(5) }] }));
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          const feedTab = document.querySelector('[data-cm-tab="feed"]'); if (feedTab) { feedTab.click(); await wait(250); }
+          const ids = () => [...document.querySelectorAll('#communityDashboard .igp')].map(x => x.dataset.igp);
+          r.posts = ids().join() === 's:st_fx60,p:cd_fx60a,p:cd_fx60b';
+          const card = () => document.querySelector('[data-igp="p:cd_fx60a"]');
+          r.carousel = card().querySelectorAll('.igp-slide').length === 2 && card().querySelector('.igp-count').textContent === '1/2' && card().querySelectorAll('.igp-dots i').length === 2;
+          card().querySelector('[data-igp-media]').dispatchEvent(new MouseEvent('dblclick', { bubbles: true })); await wait(50);
+          const st1 = JSON.parse(localStorage.getItem('panel_ig_v1'));
+          r.like = card().querySelector('[data-igp-like]').getAttribute('aria-pressed') === 'true' && !!st1.likes['p:cd_fx60a'] && card().querySelector('.igp-burst').classList.contains('is-go');
+          card().querySelector('[data-igp-media]').dispatchEvent(new MouseEvent('dblclick', { bubbles: true })); await wait(50);
+          r.likeStays = !!JSON.parse(localStorage.getItem('panel_ig_v1')).likes['p:cd_fx60a'];
+          card().querySelector('[data-igp-save]').click(); await wait(50);
+          r.save = !!JSON.parse(localStorage.getItem('panel_ig_v1')).saves['p:cd_fx60a'];
+          card().querySelector('[data-igp-more]').click();
+          r.menu = !card().querySelector('.igp-menu').hidden && card().querySelectorAll('.igp-menu [data-draft-edit], .igp-menu [data-draft-preview], .igp-menu [data-draft-del]').length === 3;
+          card().querySelector('[data-igp-pin]').click(); await wait(200);
+          r.pin = ids()[0] === 'p:cd_fx60a' && !!card().querySelector('.igp-pinned');
+          const tags = [...document.querySelectorAll('[data-igp="s:st_fx60"] .igp-tags button')].map(b => b.dataset.igTag);
+          r.tags = tags.includes('CoupDeCœur') && tags.includes('Marvel') && tags.includes('FixtureHéroïne');
+          document.querySelector('[data-igp="p:cd_fx60b"] [data-ig-tag="Pépite"]').click(); await wait(200);
+          r.filter = ids().join() === 'p:cd_fx60b' && !!document.querySelector('.ig-filter');
+          document.querySelector('.ig-filter button').click(); await wait(200);
+          r.unfilter = ids().length === 3;
+          r.honest = !/abonné|follower/i.test(document.querySelector('#communityDashboard .igf').textContent) && /Vous aimez/.test(card().textContent);
+          const prof = document.querySelector('[data-cm-tab="profile"]'); if (prof) { prof.click(); await wait(250); }
+          document.querySelector('[data-pf-gtab="saved"]').click(); await wait(200);
+          r.savedTab = document.querySelectorAll('#communityProfile .ig-grid .ig-tile').length === 1 && !!document.querySelector('#communityProfile [data-pf-planche="cd_fx60a"]');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          keys.forEach((k, i) => { if (saved0[i] === null) localStorage.removeItem(k); else localStorage.setItem(k, saved0[i]); });
+          const ft = document.querySelector('[data-cm-tab="feed"]'); if (ft) ft.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 60:', JSON.stringify(t60));
+      testResults.push({ test: 'Fil façon Instagram (D-76) : publications planches et stories, carrousel, double-clic « j\'aime », enregistrer, épingler, filtres par mot-dièse, onglet « Enregistrés »',
+        ok: !!t60 && !t60.error && ['posts', 'carousel', 'like', 'likeStays', 'save', 'menu', 'pin', 'tags', 'filter', 'unfilter', 'honest', 'savedTab'].every(k => t60[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

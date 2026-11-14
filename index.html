@@ -2923,6 +2923,83 @@
     .af-card.is-gem .af-photo { transform: rotate(-45deg) scale(1.45); }
     .af-card.is-gem:hover .af-photo { transform: rotate(-45deg) scale(1.55); }
     .af-medal.has-photo::after { content: ''; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 2px hsl(var(--h) 80% 60% / .7), inset 0 -14px 24px rgba(0,0,0,.35); pointer-events: none; }
+    /* Fil façon Instagram (D-76) */
+    .igf { display: flex; flex-direction: column; gap: 22px; max-width: 520px; margin: 10px auto 0; }
+    .igp { background: var(--bg-card); border: 1px solid var(--hair); border-radius: 20px; overflow: hidden; box-shadow: var(--shadow-soft); }
+    .igp-head { display: flex; align-items: center; gap: 10px; padding: 11px 12px 10px 14px; }
+    .igp-av { width: 38px; height: 38px; border-radius: 50%; padding: 2px; flex: none; background: conic-gradient(from 210deg, #ffd60a, #ff6b3d, #e62429, #b23cff, #ffd60a); display: grid; }
+    .igp-av > span { border-radius: 50%; display: grid; place-items: center; font: 700 12.5px var(--font-ui); color: #fff; background: var(--pf); border: 2px solid var(--bg-card); }
+    .igp-who { display: flex; flex-direction: column; min-width: 0; flex: 1; line-height: 1.25; }
+    .igp-who b { font: 650 14px var(--font-ui); letter-spacing: -0.01em; }
+    .igp-who small { font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .igp-pinned { display: inline-flex; align-items: center; gap: 4px; font-size: 11.5px; font-weight: 600; color: var(--muted); }
+    .igp-pinned .ic { width: 13px; height: 13px; fill: currentColor; }
+    .igp-menu-wrap { position: relative; }
+    .igp-more { border: 0; background: none; color: inherit; font: 700 13px var(--font-ui); letter-spacing: 1px; padding: 8px 6px; border-radius: 10px; cursor: pointer; }
+    .igp-more:hover, .igp-more[aria-expanded="true"] { background: var(--hair); }
+    .igp-menu { position: absolute; right: 0; top: calc(100% + 4px); z-index: 30; min-width: 220px; padding: 6px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--hair); box-shadow: 0 18px 40px rgba(0,0,0,.22); display: flex; flex-direction: column; }
+    .igp-menu[hidden] { display: none; }
+    .igp-menu button { display: flex; align-items: center; gap: 10px; border: 0; background: none; color: inherit; text-align: left; font: 500 14px var(--font-ui); padding: 9px 10px; border-radius: 9px; cursor: pointer; }
+    .igp-menu button:hover, .igp-menu button:focus-visible { background: var(--hair); outline: none; }
+    .igp-menu .is-danger { color: var(--red, #e5484d); }
+    .igp-media { position: relative; aspect-ratio: 4 / 5; background: #0d0d0f; overflow: hidden; user-select: none; -webkit-user-select: none; outline: none; }
+    .igp-media:focus-visible { box-shadow: inset 0 0 0 3px var(--ink); }
+    .igp-track { display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior-x: contain; }
+    .igp-track::-webkit-scrollbar { display: none; }
+    .igp-slide { position: relative; flex: 0 0 100%; height: 100%; margin: 0; scroll-snap-align: center; display: grid; place-items: center; overflow: hidden; }
+    .igp-slide .igp-bg { position: absolute; inset: -12%; width: 124%; height: 124%; object-fit: cover; filter: blur(28px) saturate(1.25) brightness(.62); transform: scale(1.05); }
+    .igp-face { position: relative; height: 86%; aspect-ratio: 2 / 3; max-width: 86%; display: block; border-radius: 6px; overflow: hidden; box-shadow: 0 24px 50px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4); }
+    .igp-face img, .igp-face .igp-cover { width: 100%; height: 100%; object-fit: contain; display: block; background: #111; }
+    .igp-face .pl-face { border-radius: 0; }
+    .igp-count { position: absolute; top: 12px; right: 12px; padding: 3px 9px; border-radius: 99px; background: rgba(0,0,0,.55); color: #fff; font: 600 12px var(--font-ui); backdrop-filter: blur(8px); }
+    .igp-nav { position: absolute; top: 50%; translate: 0 -50%; width: 30px; height: 30px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgba(255,255,255,.88); color: #111; box-shadow: 0 2px 8px rgba(0,0,0,.3); cursor: pointer; opacity: 0; transition: opacity .2s; }
+    .igp-nav.is-prev { left: 10px; } .igp-nav.is-next { right: 10px; }
+    .igp-media:hover .igp-nav, .igp-nav:focus-visible { opacity: 1; }
+    .igp-nav[hidden] { display: none; }
+    .igp-rating { position: absolute; left: 12px; bottom: 12px; padding: 4px 10px; border-radius: 99px; background: rgba(0,0,0,.6); color: #ffd60a; font: 700 13px var(--font-ui); letter-spacing: 1px; backdrop-filter: blur(8px); }
+    .igp-burst { position: absolute; inset: 0; display: grid; place-items: center; pointer-events: none; }
+    .igp-burst .ic { width: 96px; height: 96px; fill: #fff; stroke: none; filter: drop-shadow(0 6px 18px rgba(0,0,0,.4)); opacity: 0; transform: scale(.2); }
+    .igp-burst.is-go .ic { animation: igBurst .9s cubic-bezier(.2,.9,.3,1.2) both; }
+    @keyframes igBurst { 0% { opacity: 0; transform: scale(.2); } 18% { opacity: 1; transform: scale(1.15); } 32% { transform: scale(.95); } 70% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.05) translateY(-18px); } }
+    .igp-dots { display: flex; justify-content: center; gap: 4px; padding-top: 10px; }
+    .igp-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-strong); transition: background .2s, transform .2s; }
+    .igp-dots i.on { background: var(--ink); transform: scale(1.15); }
+    .igp-bar { display: flex; align-items: center; gap: 4px; padding: 6px 8px 0; }
+    .igp-dots + .igp-bar { margin-top: -16px; }
+    .igp-sp { flex: 1; }
+    .igp-act { border: 0; background: none; color: inherit; padding: 8px; border-radius: 50%; cursor: pointer; display: grid; place-items: center; }
+    .igp-act .ic { width: 25px; height: 25px; stroke-width: 1.8; transition: transform .15s; }
+    .igp-act:hover .ic { transform: scale(1.08); opacity: .75; }
+    .igp-act.is-on .ic { fill: currentColor; }
+    .igp-act.is-like.is-on { color: #ff3040; }
+    .igp-act.is-pop .ic { animation: igPop .35s cubic-bezier(.2,.9,.3,1.4); }
+    @keyframes igPop { 0% { transform: scale(1); } 45% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    .igp-liked { margin: 0 14px; font: 650 13.5px var(--font-ui); }
+    .igp-cap { margin: 4px 14px 0; font-size: 14px; line-height: 1.42; white-space: pre-line; overflow-wrap: anywhere; }
+    .igp-cap b { font-weight: 650; margin-right: 2px; }
+    .igp-cap.is-clamped { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; position: relative; padding-right: 40px; }
+    .igp-plus { position: absolute; right: 0; bottom: 0; border: 0; background: var(--bg-card); color: var(--muted); font: inherit; padding: 0 0 0 6px; cursor: pointer; }
+    .igp-spoil { color: var(--muted); font-style: italic; }
+    .igp-tags { display: flex; flex-wrap: wrap; gap: 2px 8px; margin: 6px 14px 0; }
+    .igp-tags button { border: 0; background: none; padding: 0; font: 500 13.5px var(--font-ui); color: var(--blue-ink, #2f6fdb); cursor: pointer; }
+    .igp-tags button:hover { text-decoration: underline; }
+    .igp-items { display: flex; gap: 6px; align-items: baseline; margin: 6px 14px 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+    .igp-items .ic { width: 13px; height: 13px; flex: none; translate: 0 2px; }
+    .igp-date { margin: 6px 14px 0; font-size: 11.5px; color: var(--muted); letter-spacing: .02em; text-transform: uppercase; }
+    .igp > :last-child { margin-bottom: 14px; }
+    .ig-chips { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: none; max-width: 520px; margin: 0 auto; }
+    .ig-chips::-webkit-scrollbar { display: none; }
+    .ig-chips button { flex: none; border: 1px solid var(--hair); background: var(--bg-card); color: inherit; border-radius: 99px; padding: 6px 12px; font: 600 13px var(--font-ui); cursor: pointer; }
+    .ig-chips button small { color: var(--muted); font-weight: 500; margin-left: 2px; }
+    .ig-chips button[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: transparent; }
+    .ig-chips button[aria-pressed="true"] small { color: inherit; opacity: .7; }
+    .ig-filter { display: flex; align-items: center; gap: 6px; max-width: 520px; margin: 0 auto 4px; font-size: 13.5px; color: var(--muted); }
+    .ig-filter b { color: var(--ink); }
+    .ig-filter button { border: 0; background: var(--hair); color: inherit; border-radius: 50%; width: 24px; height: 24px; display: grid; place-items: center; cursor: pointer; }
+    .ig-tile-pin { position: absolute; top: 6px; right: 6px; z-index: 2; color: #fff; filter: drop-shadow(0 1px 3px rgba(0,0,0,.6)); }
+    .ig-tile-pin .ic { fill: currentColor; width: 16px; height: 16px; }
+    @media (max-width: 600px) { .igf { gap: 14px; margin-left: -6px; margin-right: -6px; } .igp { border-radius: 16px; } }
+    @media (prefers-reduced-motion: reduce) { .igp-burst.is-go .ic, .igp-act.is-pop .ic { animation-duration: .01s; } .igp-track { scroll-behavior: auto; } }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -6368,6 +6445,88 @@ const seriesInProgress = (entries, opts = {}) => {
 };
 
 module.exports = { seriesInProgress, numOf };
+  return Object.freeze(module.exports); })();
+  /* domains/community/feed-core.js */
+  out.feedCore = (() => { const module = { exports: {} };
+'use strict';
+// Fil façon Instagram (D-76) : les planches et les stories de l'utilisateur deviennent des publications.
+//  - Mots-dièse déduits des vraies données (éditeur, type de planche, série, coup de cœur) et de ceux écrits dans le texte.
+//  - « J'aime », « Enregistrer » et « Épingler » (trois au plus) : état local de l'appareil, jamais envoyé.
+//  - Module pur : l'appelant fournit planches, stories et état ; rien n'est inventé (aucun compte, aucun abonné simulé).
+
+const KIND_TAGS = Object.freeze({ pull: 'PullDuMercredi', shelfie: 'Shelfie', gem: 'Pépite', read: 'JeViensDeLire', free: 'Planche' });
+const MAX_PINS = 3;
+
+const strip = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
+// « Absolute Batman (2024) » -> « AbsoluteBatman » ; « X-Men » -> « XMen » ; les accents restent (« HéroïneFictive »)
+const tagify = t => String(t || '').normalize('NFC').replace(/\(\s*\d{4}[^)]*\)/g, ' ').replace(/[^\p{L}\p{N}]+/gu, ' ').trim().split(/\s+/).filter(Boolean)
+  .map(w => w[0].toUpperCase() + w.slice(1)).join('').slice(0, 28);
+const publisherTag = p => { const n = strip(p).toLowerCase(); return /marvel/.test(n) ? 'Marvel' : /(^|\s)dc(\s|$)|dc comics|vertigo/.test(n) ? 'DC' : /image|skybound/.test(n) ? 'ImageComics' : /urban/.test(n) ? 'UrbanComics' : /panini/.test(n) ? 'Panini' : /dupuis|dargaud|casterman|glenat|delcourt|lombard|soleil/.test(n) ? 'BD' : ''; };
+const TEXT_TAG = /#([\p{L}\p{N}_]{2,30})/gu;
+const norm = t => strip(t).toLowerCase().replace(/œ/g, 'oe').replace(/æ/g, 'ae');
+
+const tagsOf = post => {
+  const out = [];
+  const add = t => { if (t && !out.some(x => norm(x) === norm(t))) out.push(t); };
+  String(post.text || '').replace(TEXT_TAG, (_, t) => { add(t); return ''; });
+  if (post.type === 'planche') add(KIND_TAGS[post.kind] || KIND_TAGS.free);
+  if (post.type === 'story') { add('Lecture'); if (post.rating >= 4.5 || post.liked) add('CoupDeCœur'); if (post.reread) add('Relecture'); }
+  (post.media || []).forEach(m => { add(publisherTag(m.publisher)); add(tagify(m.series)); });
+  return out.filter(Boolean).slice(0, 8);
+};
+
+const emptyState = () => ({ version: 1, likes: {}, saves: {}, pins: [] });
+const ID = /^[sp]:[A-Za-z0-9_-]{1,60}$/;
+const sanitizeState = v => {
+  const o = emptyState();
+  if (!v || typeof v !== 'object') return o;
+  for (const k of ['likes', 'saves']) if (v[k] && typeof v[k] === 'object') for (const [id, at] of Object.entries(v[k]).slice(0, 2000)) if (ID.test(id) && typeof at === 'string' && !isNaN(Date.parse(at))) o[k][id] = at;
+  if (Array.isArray(v.pins)) o.pins = v.pins.filter(id => typeof id === 'string' && ID.test(id)).filter((id, i, a) => a.indexOf(id) === i).slice(0, MAX_PINS);
+  return o;
+};
+// Bascule d'un « j'aime », d'un enregistrement ou d'une épingle ; renvoie un nouvel état (l'ancien reste intact pour l'annulation)
+const toggle = (state, what, id, now) => {
+  const s = sanitizeState(JSON.parse(JSON.stringify(state || {})));
+  if (!ID.test(String(id))) return { state: s, on: false, error: 'invalid_id' };
+  if (what === 'pin') {
+    const i = s.pins.indexOf(id);
+    if (i >= 0) { s.pins.splice(i, 1); return { state: s, on: false }; }
+    if (s.pins.length >= MAX_PINS) return { state: s, on: false, error: 'too_many_pins' };
+    s.pins.unshift(id); return { state: s, on: true };
+  }
+  const k = what === 'save' ? 'saves' : 'likes';
+  if (s[k][id]) { delete s[k][id]; return { state: s, on: false }; }
+  s[k][id] = new Date(now || Date.now()).toISOString(); return { state: s, on: true };
+};
+
+// Publications : épinglées d'abord (dans l'ordre d'épinglage), puis de la plus récente à la plus ancienne
+const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {}) => {
+  const st = sanitizeState(state);
+  const posts = [];
+  for (const d of drafts || []) {
+    if (!d || !d.id) continue;
+    const media = (d.items || []).slice(0, 10).map(c => ({ series: c.series || '', issue: c.issue || '', publisher: c.publisher || '', coverUrl: c.coverUrl || '', variant: c.variant || '' }));
+    posts.push({ id: 'p:' + d.id, ref: d.id, type: 'planche', kind: d.kind || 'free', at: d.createdAt || d.updatedAt || '', text: String(d.text || ''), media, visibility: d.visibility || 'private' });
+  }
+  for (const s of stories || []) {
+    if (!s || !s.id) continue;
+    posts.push({ id: 's:' + s.id, ref: s.id, type: 'story', kind: 'read', at: s.createdAt || (s.readAt ? s.readAt + 'T12:00:00Z' : ''), text: String(s.review || ''), spoiler: !!s.spoiler, rating: Number(s.rating) || 0, liked: !!s.liked, reread: !!s.reread, readAt: s.readAt || '',
+      media: [{ series: s.series || '', issue: s.issue || '', publisher: s.publisher || '', coverUrl: s.coverUrl || '', variant: s.variant || '' }], style: s.style || '' });
+  }
+  posts.forEach(p => { p.tags = tagsOf(p); p.likedByMe = !!st.likes[p.id]; p.saved = !!st.saves[p.id]; p.pinned = st.pins.includes(p.id); });
+  const t = norm(tag).replace(/^#/, '');
+  const list = posts.filter(p => (!t || p.tags.some(x => norm(x) === t)) && (only !== 'saved' || p.saved));
+  const pinRank = p => p.pinned ? st.pins.indexOf(p.id) : Infinity;
+  list.sort((a, b) => pinRank(a) - pinRank(b) || String(b.at).localeCompare(String(a.at)));
+  // Mots-dièse les plus présents (pour les filtres en haut du fil)
+  const counts = new Map();
+  posts.forEach(p => p.tags.forEach(x => counts.set(x, (counts.get(x) || 0) + 1)));
+  const kindSet = new Set(Object.values(KIND_TAGS).concat(['Lecture', 'CoupDeCœur', 'Relecture']));
+  const topTags = [...counts.entries()].sort((a, b) => b[1] - a[1] || kindSet.has(b[0]) - kindSet.has(a[0]) || a[0].localeCompare(b[0], 'fr')).slice(0, 12).map(([tg, n]) => ({ tag: tg, n }));
+  return { posts: list, total: posts.length, topTags, likes: Object.keys(st.likes).length, saves: Object.keys(st.saves).length };
+};
+
+module.exports = { KIND_TAGS, MAX_PINS, tagify, publisherTag, tagsOf, emptyState, sanitizeState, toggle, buildFeed };
   return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
@@ -16574,7 +16733,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const COMM_VIS = { private: 'Moi seul', followers: 'Mes abonnés', public: 'Public' };
   // Planches : le format de publication de Panel (une case de BD par numéro, une bulle pour le message)
   const PLANCHE_KINDS = { pull: 'Pull du mercredi', shelfie: 'Shelfie de boîte', gem: 'Pépite', read: 'Je viens de lire', free: 'Planche libre' };
-  const PLANCHE_FX = ['POW!', 'WOW!', 'BAM!', 'KRAK!'];
   const commValidate = (text, visibility, items) => {
     const P = commPolicy();
     if (!P) return { ok: false, errors: ['Module Communauté indisponible.'], warnings: [] };
@@ -16735,23 +16893,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const pfReadList = owned => owned.filter(rdReadOfCopy).map(x => ({ x, at: String(((rdFind(x) || {}).state || {}).lastReadAt || '') })).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 90);
   const pfGramHtml = (p, owned) => {
     const stories = storyLoad().stories.slice().sort((a, b) => String(b.readAt || b.at || '').localeCompare(String(a.readAt || a.at || '')));
-    const drafts = commLoad().drafts;
+    const igs = igLoad(), pinned = new Set(igs.pins);
+    const drafts = commLoad().drafts.slice().sort((a, b) => (pinned.has('p:' + b.id) - pinned.has('p:' + a.id)) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
+    const saved = igFeed('saved').posts;
     const read = owned.filter(rdReadOfCopy).length;
     const n = (v, l) => '<div class="ig-stat"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
     // À la une : stories regroupées par habillage (Marvel, DC, Image, indé, noir), comme des « highlights »
     const groups = Object.keys(STORY_STYLES).map(k => ({ k, list: stories.filter(st => (st.style || storyStyleKey(st)) === k) })).filter(g => g.list.length);
     const hl = groups.length ? '<div class="ig-hl" role="list">' + groups.map(g => '<button class="ig-hl-item" role="listitem" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
     const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString('fr-FR') + '</b></span></button>';
-    const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + '"><span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
+    const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + (pinned.has('p:' + d.id) ? ', épinglée' : '') + '">' + (pinned.has('p:' + d.id) ? '<span class="ig-tile-pin" aria-hidden="true"><svg class=ic><use href=#ic-bookmark /></svg></span>' : '') + '<span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
     const rtile = e => '<button class="ig-tile" data-pf-copy="' + escapeHtml(e.x.id) + '" aria-label="' + escapeHtml((e.x.series || '') + ' ' + (e.x.issue || '')) + (e.at ? ', lu le ' + escapeHtml(new Date(e.at).toLocaleDateString('fr-FR')) : '') + '">' + coverImgTag(e.x) + '<span class="ig-tile-meta"><b>' + escapeHtml(String(e.x.series || '').slice(0, 22)) + ' #' + escapeHtml(String(e.x.issue || '?')) + '</b></span></button>';
-    const grid = pfGramTab === 'lus'
+    const stile = p => p.type === 'story' ? tile(storyLoad().stories.find(x => 's:' + x.id === p.id) || {}) : ptile(commLoad().drafts.find(x => 'p:' + x.id === p.id) || { id: p.ref, items: [] });
+    const grid = pfGramTab === 'saved'
+      ? (saved.length ? '<div class="ig-grid">' + saved.map(stile).join('') + '</div>' : '<div class="ig-empty"><b>Rien d’enregistré.</b><span>Touchez le signet d’une publication du Fil pour la retrouver ici. Seul vous voyez vos enregistrements.</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>')
+      : pfGramTab === 'lus'
       ? (read ? '<div class="ig-grid">' + pfReadList(owned).map(rtile).join('') + '</div>' : '<div class="ig-empty"><b>Aucun numéro lu.</b><span>Cochez « Lu » sur une fiche, ou ouvrez Lecture.</span></div>')
       : pfGramTab === 'stories'
       ? (stories.length ? '<div class="ig-grid">' + stories.map(tile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune story pour l’instant.</b><span>Marquez un numéro « Lu », notez-le : la story apparaît ici.</span><button class="btn rel-mini" data-pf-newstory>Créer une story</button></div>')
       : (drafts.length ? '<div class="ig-grid">' + drafts.map(ptile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune planche.</b><span>Composez une planche depuis le Fil (pull de la semaine, pépite, boîte…).</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>');
     return '<section class="ig">' +
       '<div class="ig-stats">' + n(stories.length, 'stories') + n(drafts.length, 'planches') + n(read, 'lus') + n(owned.length, 'en collection') + '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>' + hl +
-      '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button><button role="tab" aria-selected="' + (pfGramTab === 'lus') + '" data-pf-gtab="lus"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lus</button></nav>' + grid + '</section>';
+      '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button><button role="tab" aria-selected="' + (pfGramTab === 'lus') + '" data-pf-gtab="lus"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lus</button><button role="tab" aria-selected="' + (pfGramTab === 'saved') + '" data-pf-gtab="saved" title="Visible par vous seul"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg> Enregistrés</button></nav>' + grid + '</section>';
   };
   const pfGramWire = host => {
     host.querySelectorAll('[data-pf-gtab]').forEach(b => { b.onclick = () => { pfGramTab = b.dataset.pfGtab; renderCommunityProfile(); }; });
@@ -16836,7 +16999,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return out;
   };
   const plancheFace = c => c.coverUrl ? coverImgTag(c) : '<span class="pl-face" style="--c:' + cboxHue(c) + '"><b>' + escapeHtml(cboxInitials(c.series)) + '</b><em>' + escapeHtml(String(c.issue || '').replace(/^#?/, '#')) + '</em></span>';
-  const planchePanels = items => '<div class="pl-panels pl-n' + Math.min(items.length, 4) + '">' + items.slice(0, 4).map((c, i) => '<figure class="pl-panel" style="--t:' + ((i % 2 ? 1 : -1) * (0.6 + i * 0.3)).toFixed(1) + 'deg">' + plancheFace(c) + '<figcaption>' + escapeHtml([c.series, c.issue].filter(Boolean).join(' ')) + '</figcaption></figure>').join('') + '</div>';
   // ── Stories de lecture (D-63) : après une lecture, une carte notée façon journal de lecture, habillée selon le comic.
   // Enregistrées sur cet appareil (panel_stories_v1) ; elles seront publiables avec les comptes en ligne.
   // Rien n'est inventé : note, avis et date viennent de l'utilisateur ; la couverture est celle de la fiche.
@@ -17469,6 +17631,125 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-fy-story]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.fyStory); if (it) openStoryEditor(it); }; });
     host.querySelectorAll('[data-fy-mem]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.fyMem); });
   };
+  // ── Fil façon Instagram (D-76) : planches et stories deviennent des publications (feedCore).
+  // « J'aime », « Enregistrer » et « Épingler » restent sur cet appareil (panel_ig_v1) ; aucun autre compte n'est simulé.
+  const IG_KEY = 'panel_ig_v1';
+  const igLoad = () => { try { return window.PanelDomains.feedCore.sanitizeState(JSON.parse(localStorage.getItem(IG_KEY) || 'null')); } catch (_) { return window.PanelDomains.feedCore.emptyState(); } };
+  const igSave = st => { try { localStorage.setItem(IG_KEY, JSON.stringify(st)); return true; } catch (_) { return false; } };
+  let igTag = '';
+  const igFeed = only => window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, state: igLoad(), tag: only === 'saved' ? '' : igTag, only });
+  const igStars = r => { const n = Number(r) || 0; return n ? '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : '') : ''; };
+  const igIcon = id => '<svg class=ic aria-hidden=true><use href=#' + id + ' /></svg>';
+  const igPostHtml = (p, prof) => {
+    const handle = prof ? '@' + prof.handle : 'vous';
+    const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'P';
+    const kindLabel = p.type === 'story' ? 'Story de lecture' : (PLANCHE_KINDS[p.kind] || PLANCHE_KINDS.free);
+    const when = p.at ? storyAgo(p.at) : '';
+    const vis = p.type === 'story' ? 'Moi seul' : (COMM_VIS[p.visibility] || 'Moi seul');
+    const id = escapeHtml(p.id), n = p.media.length;
+    const slide = (m, i) => {
+      const face = m.coverUrl ? coverImgTag(m, 'class="igp-cover"') : plancheFace(m);
+      return '<figure class="igp-slide" aria-roledescription="diapositive" aria-label="' + (i + 1) + ' sur ' + n + ' : ' + escapeHtml([m.series, m.issue].filter(Boolean).join(' ')) + '">' +
+        (m.coverUrl ? coverImgTag(m, 'class="igp-bg" aria-hidden="true"') : '') + '<span class="igp-face">' + face + '</span></figure>';
+    };
+    const menu = (p.type === 'planche'
+      ? '<button role="menuitem" data-draft-edit="' + escapeHtml(p.ref) + '">' + igIcon('ic-pencil') + ' Modifier</button>' +
+        '<button role="menuitem" data-draft-preview="' + escapeHtml(p.ref) + '">' + igIcon('ic-eye') + ' Aperçu de l\'envoi</button>'
+      : '<button role="menuitem" data-igp-story="' + escapeHtml(p.ref) + '">' + igIcon('ic-play') + ' Voir en story</button>' +
+        '<button role="menuitem" data-igp-sedit="' + escapeHtml(p.ref) + '">' + igIcon('ic-pencil') + ' Modifier</button>') +
+      '<button role="menuitem" data-igp-pin="' + id + '">' + igIcon('ic-bookmark') + (p.pinned ? ' Désépingler du profil' : ' Épingler en haut') + '</button>' +
+      (p.type === 'planche' ? '<button role="menuitem" class="is-danger" data-draft-del="' + escapeHtml(p.ref) + '">' + igIcon('ic-trash') + ' Retirer</button>' : '');
+    const text = p.spoiler ? '' : p.text;
+    const long = text.length > 140;
+    return '<article class="igp" data-igp="' + id + '">' +
+      '<header class="igp-head"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span>' +
+        '<span class="igp-who"><b>' + escapeHtml(handle) + '</b><small>' + escapeHtml(kindLabel) + (when ? ' · ' + escapeHtml(when) : '') + ' · ' + escapeHtml(vis) + '</small></span>' +
+        (p.pinned ? '<span class="igp-pinned" title="Épinglé en haut du fil">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
+        '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
+      '<div class="igp-media' + (p.type === 'story' ? ' is-story' : '') + '" data-igp-media tabindex="0" aria-label="Double-cliquez pour aimer">' +
+        '<div class="igp-track"' + (n > 1 ? ' aria-roledescription="carrousel"' : '') + '>' + p.media.map(slide).join('') + '</div>' +
+        (n > 1 ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
+        (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString('fr-FR') + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
+        '<span class="igp-burst" aria-hidden="true">' + igIcon('ic-heart') + '</span></div>' +
+      (n > 1 ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
+      '<div class="igp-bar">' +
+        '<button class="igp-act is-like' + (p.likedByMe ? ' is-on' : '') + '" data-igp-like aria-pressed="' + p.likedByMe + '" aria-label="J\'aime">' + igIcon('ic-heart') + '</button>' +
+        '<button class="igp-act" data-igp-open aria-label="' + (p.type === 'story' ? 'Ouvrir la story' : 'Modifier la planche') + '">' + igIcon(p.type === 'story' ? 'ic-play' : 'ic-pencil') + '</button>' +
+        '<button class="igp-act" data-igp-share aria-label="Partager le texte">' + igIcon('ic-external') + '</button>' +
+        '<span class="igp-sp"></span>' +
+        '<button class="igp-act is-save' + (p.saved ? ' is-on' : '') + '" data-igp-save aria-pressed="' + p.saved + '" aria-label="Enregistrer">' + igIcon('ic-bookmark') + '</button></div>' +
+      '<p class="igp-liked"' + (p.likedByMe ? '' : ' hidden') + '>Vous aimez</p>' +
+      '<div class="igp-cap' + (long ? ' is-clamped' : '') + '"><b>' + escapeHtml(handle) + '</b> ' +
+        (p.spoiler ? '<span class="igp-spoil">Avis masqué : spoilers. Ouvrez la story pour le lire.</span>' : escapeHtml(text.replace(/#[\p{L}\p{N}_]{2,30}/gu, '').trim() || p.media.map(m => [m.series, m.issue].filter(Boolean).join(' ')).join(', '))) +
+        (long ? '<button class="igp-plus" data-igp-plus>plus</button>' : '') + '</div>' +
+      (p.tags.length ? '<p class="igp-tags">' + p.tags.map(t => '<button data-ig-tag="' + escapeHtml(t) + '">#' + escapeHtml(t) + '</button>').join('') + '</p>' : '') +
+      (p.type === 'planche' && p.text.trim() ? '<p class="igp-items">' + igIcon('ic-books') + ' ' + escapeHtml(p.media.map(m => [m.series, m.issue].filter(Boolean).join(' ')).join(' · ')) + '</p>' : '') +
+      (p.type === 'story' && p.readAt ? '<p class="igp-date">Lu le ' + escapeHtml(new Date(p.readAt + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })) + (p.reread ? ' · relecture' : '') + '</p>' : '') +
+    '</article>';
+  };
+  const igFeedHtml = () => {
+    const f = igFeed(), prof = profileLoad();
+    const chips = f.topTags.length > 1 ? '<div class="ig-chips" role="toolbar" aria-label="Filtrer par mot-dièse">' +
+      '<button data-ig-tag="" aria-pressed="' + !igTag + '">Tout</button>' + f.topTags.map(t => '<button data-ig-tag="' + escapeHtml(t.tag) + '" aria-pressed="' + (igTag.toLowerCase() === t.tag.toLowerCase()) + '">#' + escapeHtml(t.tag) + ' <small>' + t.n + '</small></button>').join('') + '</div>' : '';
+    const head = '<h3 class="pf-section">Mon fil <span class="stat-sub">' + f.total + ' publication' + (f.total > 1 ? 's' : '') + (f.saves ? ' · ' + f.saves + ' enregistrée' + (f.saves > 1 ? 's' : '') : '') + '</span></h3>';
+    if (!f.total) return head + '<div class="notice-box" style="margin-top:8px">Aucune publication. Choisissez un modèle ci-dessus, ouvrez une fiche puis « Partager… », ou notez un numéro lu pour créer une story.</div>';
+    const filt = igTag ? '<p class="ig-filter">Publications avec <b>#' + escapeHtml(igTag) + '</b> · ' + f.posts.length + ' <button data-ig-tag="" aria-label="Retirer le filtre">' + igIcon('ic-x') + '</button></p>' : '';
+    return head + chips + filt + '<div class="igf">' + (f.posts.length ? f.posts.map(p => igPostHtml(p, prof)).join('') : '<div class="notice-box">Aucune publication avec ce mot-dièse.</div>') + '</div>';
+  };
+  // J'aime et Enregistrer se mettent à jour sur place (le carrousel garde sa position)
+  const igToggle = (what, id, card) => {
+    const r = window.PanelDomains.feedCore.toggle(igLoad(), what, id);
+    if (r.error === 'too_many_pins') { showToast('Trois publications épinglées au plus : désépinglez-en une d\'abord.'); return null; }
+    if (r.error || !igSave(r.state)) { showToast('Impossible d\'enregistrer sur cet appareil.'); return null; }
+    if (card && what !== 'pin') {
+      const b = card.querySelector(what === 'like' ? '[data-igp-like]' : '[data-igp-save]');
+      if (b) { b.classList.toggle('is-on', r.on); b.setAttribute('aria-pressed', String(r.on)); b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); }
+      if (what === 'like') { const l = card.querySelector('.igp-liked'); if (l) l.hidden = !r.on; }
+      if (what === 'save') showToast(r.on ? 'Enregistré dans votre profil.' : 'Retiré des enregistrements.');
+    }
+    return r;
+  };
+  const igWire = host => {
+    host.querySelectorAll('[data-ig-tag]').forEach(b => { b.onclick = () => { igTag = b.dataset.igTag; commTab = 'feed'; renderCommunityView(); const h = $('communityDashboard'); const t = h && h.querySelector('.ig-chips, .igf'); if (t && igTag) t.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }; });
+    host.querySelectorAll('.igp').forEach(card => {
+      const id = card.dataset.igp, ref = id.slice(2), isStory = id[0] === 's';
+      const media = card.querySelector('[data-igp-media]'), track = card.querySelector('.igp-track');
+      const like = () => { const st = igLoad(); if (!st.likes[id]) igToggle('like', id, card); const burst = card.querySelector('.igp-burst'); if (burst) { burst.classList.remove('is-go'); void burst.offsetWidth; burst.classList.add('is-go'); } };
+      let lastTap = 0;
+      media.addEventListener('dblclick', e => { e.preventDefault(); like(); });
+      media.addEventListener('touchend', e => { const t = Date.now(); if (t - lastTap < 300) { e.preventDefault(); like(); lastTap = 0; } else lastTap = t; }, { passive: false });
+      media.addEventListener('keydown', e => { if (e.key === 'l' || e.key === 'L') like(); if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); track.scrollBy({ left: (e.key === 'ArrowRight' ? 1 : -1) * track.clientWidth, behavior: 'smooth' }); } });
+      const n = track.children.length;
+      if (n > 1) {
+        const count = card.querySelector('.igp-count'), dots = card.querySelectorAll('.igp-dots i'), prev = card.querySelector('.is-prev'), next = card.querySelector('.is-next');
+        const sync = () => { const i = Math.round(track.scrollLeft / Math.max(1, track.clientWidth)); if (count) count.textContent = (i + 1) + '/' + n; dots.forEach((d, k) => d.classList.toggle('on', k === i)); if (prev) prev.hidden = i <= 0; if (next) next.hidden = i >= n - 1; };
+        track.addEventListener('scroll', () => requestAnimationFrame(sync), { passive: true });
+        card.querySelectorAll('[data-igp-nav]').forEach(b => { b.onclick = e => { e.stopPropagation(); track.scrollBy({ left: Number(b.dataset.igpNav) * track.clientWidth, behavior: 'smooth' }); }; });
+      }
+      card.querySelector('[data-igp-like]').onclick = () => igToggle('like', id, card);
+      card.querySelector('[data-igp-save]').onclick = () => igToggle('save', id, card);
+      card.querySelector('[data-igp-open]').onclick = () => { if (isStory) openStoryViewer(ref); else { const x = commLoad().drafts.find(y => y.id === ref); if (x) openShareDialog([], x); } };
+      card.querySelector('[data-igp-share]').onclick = async () => {
+        const p = igFeed().posts.find(x => x.id === id) || window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories }).posts.find(x => x.id === id);
+        if (!p) return;
+        const titles = p.media.map(m => [m.series, m.issue].filter(Boolean).join(' ')).join(', ');
+        const txt = [titles + (p.type === 'story' && p.rating ? ' · ' + igStars(p.rating) : ''), p.spoiler ? '' : p.text.trim(), p.tags.map(t => '#' + t).join(' ')].filter(Boolean).join('\n');
+        try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); showToast('Texte copié : collez-le où vous voulez.'); } } catch (_) {}
+      };
+      const plus = card.querySelector('[data-igp-plus]');
+      if (plus) plus.onclick = () => { card.querySelector('.igp-cap').classList.remove('is-clamped'); plus.remove(); };
+      const more = card.querySelector('[data-igp-more]'), menu = card.querySelector('.igp-menu');
+      const closeMenu = () => { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); document.removeEventListener('click', outside, true); };
+      const outside = e => { if (!card.querySelector('.igp-menu-wrap').contains(e.target)) closeMenu(); };
+      more.onclick = () => { const open = menu.hidden; menu.hidden = !open; more.setAttribute('aria-expanded', String(open)); if (open) { document.addEventListener('click', outside, true); const f = menu.querySelector('button'); if (f) f.focus(); } else closeMenu(); };
+      menu.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); more.focus(); } });
+      menu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => closeMenu()));
+      const pin = card.querySelector('[data-igp-pin]');
+      if (pin) pin.onclick = () => { const r = igToggle('pin', id); if (r) { renderCommunityView(); showToast(r.on ? 'Épinglé en haut du fil et du profil.' : 'Désépinglé.'); } };
+      const so = card.querySelector('[data-igp-story]'); if (so) so.onclick = () => openStoryViewer(ref);
+      const se = card.querySelector('[data-igp-sedit]'); if (se) se.onclick = () => { const st = storyLoad().stories.find(x => x.id === ref); if (st) openStoryEditor(null, st); };
+    });
+  };
   const renderCommunityView = () => {
     try { renderCommunityProfile(); } catch (_) {}
     const headEl = $('communityHead');
@@ -17481,21 +17762,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const host = $('communityDashboard');
     if (!host) return;
     host.hidden = commTab === 'profile';
-    const d = commLoad();
-    const prof = profileLoad();
-    const who = prof ? '@' + prof.handle : 'vous';
-    const avatar = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'P';
     const sugg = plancheSuggestions();
-    const planche = x => '<article class="pl-card" data-draft="' + escapeHtml(x.id) + '">' +
-        '<header class="pl-head"><span class="pl-avatar" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(avatar) + '</span><span class="pl-who"><b>' + escapeHtml(who) + '</b><small>' + escapeHtml(COMM_VIS[x.visibility] || x.visibility) + ' · brouillon local · ' + new Date(x.updatedAt).toLocaleString('fr-FR') + '</small></span>' +
-        '<span class="pl-kind">' + escapeHtml(PLANCHE_KINDS[x.kind] || PLANCHE_KINDS.free) + '</span></header>' +
-        planchePanels(x.items) +
-        '<p class="pl-title">' + escapeHtml(x.items.map(c => [c.series, c.issue].filter(Boolean).join(' ')).join(', ') || 'Brouillon') + '</p>' +
-        (x.text ? '<div class="pl-bubble">' + escapeHtml(x.text.slice(0, 400)) + '</div>' : '') +
-        (x.warnings && x.warnings.length ? '<p class="stat-sub pl-warn">Attention : ' + escapeHtml(x.warnings.join(', ')) + '</p>' : '') +
-        '<footer class="pl-foot"><span class="pl-fx" title="Les réactions (au lieu des « j\'aime ») s\'activeront avec les comptes">' + PLANCHE_FX.map(f => '<span>' + f + '</span>').join('') + '</span>' +
-        '<span class="pl-actions"><button class="btn secondary" data-draft-edit="' + escapeHtml(x.id) + '">Modifier</button><button class="btn secondary" data-draft-del="' + escapeHtml(x.id) + '">Retirer</button><button class="btn secondary" data-draft-preview="' + escapeHtml(x.id) + '" title="Contenu exact qui serait envoyé (CommunityPublish.v1) ; rien n\'est envoyé">Aperçu de l\'envoi</button></span></footer>' +
-      '</article>';
     host.innerHTML =
       (commTab === 'live' ? '' : '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
       '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>') +
@@ -17503,11 +17770,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<ul class="live-teaser-list"><li><b>Salon vocal</b> animateur, intervenants, auditeurs</li><li><b>Tableau d\'images</b> cases et couvertures de votre collection</li><li><b>Modération</b> signalement, exclusion, règles du salon</li></ul>' +
         '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>') +
       (commTab === 'live' ? '' : commForYouHtml()) +
-      '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches restent sur cet appareil ; publication, abonnés, réactions et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
-      (commTab === 'live' ? '' : '<h3 class="pf-section">Mon fil <span class="stat-sub">' + d.drafts.length + ' planche' + (d.drafts.length > 1 ? 's' : '') + '</span></h3>' +
-      (d.drafts.length ? '<div class="pl-feed">' + d.drafts.map(planche).join('') + '</div>'
-        : '<div class="notice-box" style="margin-top:8px">Aucune planche. Choisissez un modèle ci-dessus, ou ouvrez une fiche puis « Partager… ».</div>'));
+      '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches et stories restent sur cet appareil ; vos « j\'aime » et enregistrements aussi. Publication, abonnés, commentaires et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
+      (commTab === 'live' ? '' : igFeedHtml());
     commForYouWire(host);
+    igWire(host);
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
