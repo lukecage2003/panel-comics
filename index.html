@@ -2582,6 +2582,94 @@
     .notif-note { margin: 10px 0 0; font-size: 11.5px; color: var(--muted); line-height: 1.45; }
     @media (max-width: 600px) { .notif-panel { top: 0; right: 0; bottom: 0; width: 100vw; border-radius: 0; border: 0; } }
     @media (prefers-reduced-motion: reduce) { .notif-panel { transition: none; } }
+    /* D-69 — Boutiques proches */
+    .ex-shop-cta { width: 100%; display: grid; grid-template-columns: auto 1fr auto; gap: 14px; align-items: center; text-align: left; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(120deg, color-mix(in srgb, var(--ink) 6%, transparent), transparent 70%), var(--bg-card); color: inherit; cursor: pointer; transition: transform .15s ease, border-color .15s ease; }
+    .ex-shop-cta:hover, .ex-shop-cta:focus-visible { border-color: var(--ink); transform: translateY(-1px); outline: none; }
+    .ex-shop-cta b { display: block; font-size: 15px; } .ex-shop-cta small { color: var(--muted); font-size: 12.5px; }
+    .ex-shop-cta-ic { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-size: 22px; background: #2f80ed; color: #fff; }
+    .ex-shop-ask { display: grid; gap: 12px; padding: 14px; border-radius: 14px; background: var(--bg-card); border: 1px solid var(--border); margin-bottom: 14px; }
+    .ex-shop-why { display: flex; flex-direction: column; gap: 4px; line-height: 1.5; } .ex-shop-why span { color: var(--muted); font-size: 13px; }
+    .ex-shop-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+    .ex-shop-form { display: flex; gap: 8px; flex: 1 1 260px; min-width: 0; } .ex-shop-form input { flex: 1; min-width: 0; }
+    .ex-shop-wait { display: flex; gap: 10px; align-items: center; padding: 18px 4px; color: var(--muted); }
+    .ex-spin { width: 18px; height: 18px; border-radius: 50%; border: 2px solid color-mix(in srgb, var(--ink) 25%, transparent); border-top-color: var(--ink); animation: exspin .8s linear infinite; flex: none; }
+    @keyframes exspin { to { transform: rotate(360deg); } }
+    .ex-shop-err { padding: 12px 14px; border-radius: 12px; border: 1px solid #e5484d; background: color-mix(in srgb, #e5484d 12%, transparent); }
+    .ex-shop-head { margin: 4px 0 10px; color: var(--muted); } .ex-shop-head b { color: var(--ink); }
+    .ex-shop-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+    .ex-shop-mapbox { position: sticky; top: 12px; display: flex; flex-direction: column; gap: 6px; }
+    .ex-shop-mapbox small { color: var(--muted); font-size: 12px; }
+    .ex-shop-map { width: 100%; aspect-ratio: 4 / 3; border: 0; border-radius: 14px; background: var(--bg-card); }
+    .ex-shop-list { display: grid; gap: 10px; }
+    .ex-shop { border-radius: 14px; border: 1px solid var(--border); background: var(--bg-card); overflow: hidden; transition: border-color .15s ease; }
+    .ex-shop.is-sel { border-color: #2f80ed; box-shadow: 0 0 0 1px #2f80ed inset; }
+    .ex-shop-main { width: 100%; display: flex; flex-direction: column; gap: 3px; text-align: left; border: 0; background: transparent; color: inherit; padding: 12px 14px 8px; cursor: pointer; }
+    .ex-shop-main b { font-size: 15px; } .ex-shop-main small { color: var(--muted); font-size: 12.5px; }
+    .ex-shop-km { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; color: #2f80ed; }
+    .ex-shop-hours { font-family: ui-monospace, monospace; font-size: 11.5px !important; }
+    .ex-shop-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; } .ex-shop-tags i { font-style: normal; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 9%, transparent); }
+    .ex-shop-links { display: flex; flex-wrap: wrap; gap: 4px 14px; padding: 0 14px 12px; font-size: 13px; } .ex-shop-links a { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+    @media (max-width: 760px) { .ex-shop-grid { grid-template-columns: 1fr; } .ex-shop-mapbox { position: static; } }
+    @media (prefers-reduced-motion: reduce) { .ex-spin { animation: none; } }
+    /* D-69 — Actualités */
+    .ex-nw-h { margin: 14px 0 8px; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); }
+    .ex-nw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 14px; margin-top: 10px; }
+    .ex-nw-grid.is-foryou { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    .ex-nw { display: flex; flex-direction: column; border-radius: 14px; overflow: hidden; border: 1px solid var(--border); background: var(--bg-card); color: inherit; text-decoration: none; transition: transform .15s ease, border-color .15s ease; min-width: 0; }
+    .ex-nw:hover, .ex-nw:focus-visible { transform: translateY(-2px); border-color: var(--ink); outline: none; }
+    .ex-nw-img { aspect-ratio: 16 / 9; overflow: hidden; background: color-mix(in srgb, var(--ink) 6%, transparent); }
+    .ex-nw-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ex-nw-body { display: flex; flex-direction: column; gap: 6px; padding: 12px 14px 14px; min-width: 0; }
+    .ex-nw-meta { display: flex; gap: 8px; align-items: center; font-size: 11.5px; color: var(--muted); }
+    .ex-nw-meta b { color: var(--ink); font-weight: 800; } .ex-nw-meta i { font-style: normal; font-size: 10px; font-weight: 800; padding: 1px 6px; border-radius: 4px; border: 1px solid var(--border); }
+    .ex-nw strong { font-size: 15px; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-nw.is-big strong { font-size: 17px; }
+    .ex-nw small { font-size: 12.5px; color: var(--muted); line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-nw em { font-style: normal; font-size: 11.5px; font-weight: 700; color: #2f80ed; }
+    .ex-nw-skel { height: 220px; border-radius: 14px; background: linear-gradient(90deg, var(--bg-card), color-mix(in srgb, var(--ink) 8%, var(--bg-card)), var(--bg-card)); background-size: 200% 100%; animation: exskel 1.2s ease infinite; }
+    @keyframes exskel { to { background-position: -200% 0; } }
+    @media (prefers-reduced-motion: reduce) { .ex-nw-skel { animation: none; } .ex-nw:hover { transform: none; } }
+    /* D-70 — Social local : stories vues, lecteur en pause, avatar à anneau, fil « Pour vous » */
+    .st-ring.is-seen .st-ring-img { background: color-mix(in srgb, var(--ink, #fff) 22%, transparent); }
+    .st-ring.is-seen small { color: var(--muted); font-weight: 600; }
+    .st-viewer.is-paused .st-prog i.is-now::after { animation-play-state: paused; }
+    .st-viewer { touch-action: pan-y; user-select: none; }
+    /* Couverture entière, jamais rognée : l'image garde ses proportions dans la case */
+    .st-page .st-cover { display: flex; align-items: center; justify-content: center; aspect-ratio: auto; width: auto; max-width: 72%; height: 84%; }
+    .st-page .st-cover img { width: auto; height: 100%; max-width: 100%; object-fit: contain; aspect-ratio: auto; }
+    .st-page .st-cover .cover-ph { height: 100%; aspect-ratio: 2 / 3; }
+    .st-cover img { object-fit: contain; }
+    .st-vinfo { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-radius: 14px; background: rgba(255,255,255,.08); color: #f5f5f5; }
+    .st-vinfo b { display: block; font-size: 15px; line-height: 1.25; } .st-vinfo b span { color: #FFD400; }
+    .st-vinfo small { display: block; margin-top: 2px; font-size: 12px; color: rgba(255,255,255,.72); }
+    .st-vinfo .btn { flex: 0 0 auto; }
+    .st-vinfo, .st-viewer .st-vbar { position: relative; z-index: 2; }
+    .ig-tile { aspect-ratio: 2 / 3; }
+    .ig-tile > img { object-position: center top; }
+    .pf-avatar.pf-av-story { border: 0; cursor: pointer; font: 700 24px var(--font-title); padding: 0; box-shadow: 0 0 0 3px var(--bg, #111), 0 0 0 5px color-mix(in srgb, var(--ink, #fff) 25%, transparent); }
+    .pf-avatar.pf-av-story.is-new { box-shadow: 0 0 0 3px var(--bg, #111), 0 0 0 6px #FF52AE, 0 0 18px -2px #7C5CFF; }
+    .pf-avatar.pf-av-story:focus-visible { outline: 2px solid var(--ink); outline-offset: 8px; }
+    .fy { margin: 6px 0 18px; }
+    .fy-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .fy-head small { color: var(--muted); font-size: 12px; }
+    .fy-row { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(260px, 320px); gap: 12px; overflow-x: auto; padding: 4px 2px 10px; scroll-snap-type: x mandatory; scrollbar-width: thin; }
+    .fy-card { scroll-snap-align: start; display: grid; grid-template-columns: 86px minmax(0, 1fr); gap: 12px; padding: 12px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(135deg, color-mix(in srgb, var(--c, #7C5CFF) 18%, var(--bg-card)), var(--bg-card) 70%); }
+    .fy-cover { aspect-ratio: 2 / 3; border-radius: 8px; overflow: hidden; background: color-mix(in srgb, var(--ink) 8%, transparent); box-shadow: 0 8px 18px -10px rgba(0,0,0,.6); }
+    .fy-cover img, .fy-cover .cover-ph { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .fy-body { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+    .fy-body small { font-size: 10.5px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-dim, var(--muted)); }
+    .fy-body b { font-size: 14.5px; line-height: 1.25; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+    .fy-body p { margin: 0; font-size: 12.5px; color: var(--muted); line-height: 1.4; flex: 1; }
+    .fy-body .btn { align-self: flex-start; }
+    @media (prefers-reduced-motion: reduce) { .fy-row { scroll-snap-type: none; } }
+    /* D-70 — corrections de rendu : vignettes rondes vraiment rondes, lecteur de stories opaque et tenant dans l'écran */
+    .st-ring-img img, .ig-hl-ring img, .ig-hl-ring .cover-ph { height: auto; aspect-ratio: 1 / 1; }
+    .st-ring-img { overflow: hidden; }
+    .modal-backdrop.st-viewer-wrap.open { background: rgba(5, 5, 8, .94); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+    .st-viewer { margin: max(8px, 1.5vh) auto; }
+    .st-viewer .st-card { max-height: calc(100vh - 190px); max-height: calc(100dvh - 190px); }
+    .st-page .st-cover { margin: 0 auto; height: 78%; }
+    .st-vinfo { background: #16161c; border: 1px solid rgba(255,255,255,.1); }
     .cbox-open-head { grid-column: 1 / -1; display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: 18px; background: linear-gradient(180deg, #efe4cc, #e2d2b1); color: #1d1810; box-shadow: var(--shadow-soft); }
     .cbox-open-head small { font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: #7a6a52; font-weight: 700; }
     .cbox-open-head h3 { font-size: 22px !important; margin: 0; letter-spacing: -0.02em; color: #1d1810; }
@@ -6678,7 +6766,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try {
       const r = await fetch(location.origin + '/api/status', { cache: 'no-store' });
       const j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
-      relayStatus = j && j.ok ? { cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd, wd: !!j.wd, bnf: !!j.bnf } : { cv: false, metron: false, gcd: false, wd: false, bnf: false };
+      relayStatus = j && j.ok ? { cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd, wd: !!j.wd, bnf: !!j.bnf, shops: !!j.shops, news: !!j.news } : { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false };
     } catch (_) { relayStatus = { cv: false, metron: false, gcd: false }; }
     return relayStatus;
   };
@@ -14513,7 +14601,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return exFollowsHtml() + exBrowseHtml() +
+    return exFollowsHtml() + '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + exBrowseHtml() +
       (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
       sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
@@ -14527,8 +14615,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
       sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
       sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
-      sec('exSecNews', 'Actualités et annonces', '', exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') :
-        '<p class="ex-note">Aucune source d\'actualités n\'est configurée. Panel n\'affiche pas d\'actualités inventées : cette section accueillera des contenus éditoriaux importés (type « news ») ou un futur service de publication.</p>');
+      sec('exSecNews', 'Actualités', 'Les dernières nouvelles des sites spécialisés, en français et en anglais. Les articles s\'ouvrent sur leur site.',
+        (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
+        '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>');
   };
   const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
   const exSrcLabel = (g, id) => { const s = (g.sources || []).find(x => x.id === id); return s ? s.label : ''; };
@@ -15015,6 +15104,123 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     setTimeout(() => { notifBadge(); notifCheckFollows(); }, 2500);
     setInterval(notifBadge, 5 * 60000);
   };
+  // ==========================================================================
+  // Boutiques proches (D-69) : OpenStreetMap par le relais local. La position n'est demandée que sur un geste
+  // explicite, arrondie à environ 1 km avant l'envoi et jamais enregistrée (seuls le rayon et la ville tapée le sont).
+  // ==========================================================================
+  const SHOPS_PREF_KEY = 'panel_shops_v1';
+  const shopsPref = () => { let v = null; try { v = JSON.parse(localStorage.getItem(SHOPS_PREF_KEY) || 'null'); } catch (_) {} v = v && typeof v === 'object' ? v : {}; return { r: [5, 10, 25, 50].includes(v.r) ? v.r : 10, q: typeof v.q === 'string' ? v.q.slice(0, 80) : '' }; };
+  const shopsPrefSave = v => { try { localStorage.setItem(SHOPS_PREF_KEY, JSON.stringify({ r: v.r, q: v.q })); } catch (_) {} };
+  const exShops = { status: 'idle', data: null, err: '', sel: '', kind: '', last: null, test: false };
+  let exShopsFetch = async params => { const r = await fetch(location.origin + '/api/shops?' + new URLSearchParams(params), { cache: 'no-store' }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Recherche impossible'); return j; };
+  const exShopsRun = async params => {
+    const pref = shopsPref();
+    exShops.last = params; Object.assign(exShops, { status: 'loading', err: '', sel: '' });
+    if (exView.page === 'shops') renderExplorer();
+    try {
+      const d = await exShopsFetch(Object.assign({ r: pref.r }, params));
+      Object.assign(exShops, { status: 'done', data: d });
+    } catch (e) { Object.assign(exShops, { status: 'error', err: String(e && e.message || e).slice(0, 160) }); }
+    if (exView.page === 'shops') renderExplorer();
+  };
+  const exShopsLocate = () => {
+    if (!('geolocation' in navigator)) { Object.assign(exShops, { status: 'error', err: 'La localisation n\'est pas disponible sur cet appareil : tapez une ville ou un code postal.' }); return renderExplorer(); }
+    Object.assign(exShops, { status: 'locating', err: '' }); renderExplorer();
+    navigator.geolocation.getCurrentPosition(
+      pos => exShopsRun({ lat: (Math.round(pos.coords.latitude * 100) / 100).toFixed(2), lon: (Math.round(pos.coords.longitude * 100) / 100).toFixed(2) }),
+      err => { Object.assign(exShops, { status: 'error', err: err && err.code === 1 ? 'Localisation refusée. Vous pouvez taper une ville ou un code postal à la place.' : 'Position introuvable pour le moment. Tapez une ville ou un code postal.' }); renderExplorer(); },
+      { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+  };
+  const exShopsMap = (x, y) => { const d = 0.012; return '<iframe class="ex-shop-map" title="Carte OpenStreetMap" loading="lazy" referrerpolicy="no-referrer" sandbox="allow-scripts allow-same-origin" src="https://www.openstreetmap.org/export/embed.html?' + new URLSearchParams({ bbox: [y - d * 1.6, x - d, y + d * 1.6, x + d].map(n => n.toFixed(5)).join(','), layer: 'mapnik', marker: x.toFixed(5) + ',' + y.toFixed(5) }) + '"></iframe>'; };
+  const exShopsHtml = () => {
+    const pref = shopsPref(), st = exShops, relay = st.test || !!(relayStatus && relayStatus.shops);
+    const radius = '<div class="ex-chips ex-shop-r" role="group" aria-label="Rayon de recherche">' + [5, 10, 25, 50].map(r => '<button class="ex-chip' + (pref.r === r ? ' active' : '') + '" data-shop-r="' + r + '">' + r + ' km</button>').join('') + '</div>';
+    const ask = '<div class="ex-shop-ask"><div class="ex-shop-why"><b>Votre position, seulement si vous le voulez.</b><span>Panel la demande une fois, l\'arrondit à environ 1 km et l\'envoie à OpenStreetMap par le relais de votre ordinateur pour chercher les boutiques autour. Elle n\'est pas enregistrée.</span></div>' +
+      '<div class="ex-shop-actions"><button class="btn" data-shop-locate' + (relay ? '' : ' disabled') + '>Utiliser ma position</button><form class="ex-shop-form" data-shop-form><input class="field-input" name="q" type="search" maxlength="80" autocomplete="address-level2" placeholder="Ville ou code postal" aria-label="Ville ou code postal" value="' + h(pref.q) + '"' + (relay ? '' : ' disabled') + '><button class="btn secondary" type="submit"' + (relay ? '' : ' disabled') + '>Chercher</button></form></div>' + radius + '</div>';
+    let body = '';
+    if (!relay) body = '<p class="ex-note">La recherche de boutiques passe par le relais local de Panel : lancez <b>Lancer Panel.cmd</b> (ou <code>node serve.js</code>) puis rouvrez cette page.</p>';
+    else if (st.status === 'locating') body = '<p class="ex-note ex-shop-wait">Autorisation de localisation demandée…</p>';
+    else if (st.status === 'loading') body = '<div class="ex-shop-wait"><span class="ex-spin" aria-hidden="true"></span>Recherche dans OpenStreetMap… Le service public peut prendre jusqu\'à une minute quand il est chargé.</div>';
+    else if (st.status === 'error') body = '<div class="ex-shop-err" role="alert">' + h(st.err) + (st.last ? ' <button class="btn secondary rel-mini" data-shop-retry>Réessayer</button>' : '') + '</div>';
+    else if (st.status === 'done' && st.data) {
+      const d = st.data;
+      if (d.notFound) body = '<p class="ex-note">Lieu introuvable. Essayez un nom de ville avec son pays, ou un code postal.</p>';
+      else {
+        const kinds = [...new Set(d.shops.flatMap(x => x.kinds))];
+        const list = d.shops.filter(x => !st.kind || x.kinds.includes(st.kind));
+        const sel = list.find(x => x.id === st.sel) || list[0];
+        const head = '<div class="ex-shop-head"><b>' + d.shops.length + ' boutique' + (d.shops.length > 1 ? 's' : '') + '</b> dans un rayon de ' + d.radius + ' km' + (d.place ? ' autour de ' + h(d.place) : ' autour de votre position') + '</div>';
+        const chips = kinds.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!st.kind ? ' active' : '') + '" data-shop-kind="">Toutes</button>' + kinds.map(k => '<button class="ex-chip' + (st.kind === k ? ' active' : '') + '" data-shop-kind="' + h(k) + '">' + h(k) + '</button>').join('') + '</div>' : '';
+        const card = x => '<article class="ex-shop' + (sel && sel.id === x.id ? ' is-sel' : '') + '" data-shop-id="' + h(x.id) + '"><button class="ex-shop-main" data-shop-sel="' + h(x.id) + '" aria-label="Voir ' + h(x.name) + ' sur la carte"><span class="ex-shop-km">' + (x.km < 1 ? Math.round(x.km * 1000) + ' m' : String(x.km).replace('.', ',') + ' km') + '</span><b>' + h(x.name) + '</b>' +
+          '<small>' + h(x.address || 'Adresse non renseignée') + '</small><span class="ex-shop-tags">' + x.kinds.map(k => '<i>' + h(k) + '</i>').join('') + (x.wheelchair ? '<i>Accessible en fauteuil</i>' : '') + '</span>' + (x.hours ? '<small class="ex-shop-hours">' + h(x.hours) + '</small>' : '') + '</button>' +
+          '<span class="ex-shop-links"><a href="https://www.openstreetmap.org/directions?' + new URLSearchParams({ to: x.lat + ',' + x.lon }) + '" target="_blank" rel="noopener noreferrer">Itinéraire</a>' + (x.website ? '<a href="' + h(x.website) + '" target="_blank" rel="noopener noreferrer">Site</a>' : '') + (x.phone ? '<a href="tel:' + h(x.phone.replace(/[^\d+]/g, '')) + '">Appeler</a>' : '') + '<a href="' + h(x.osm) + '" target="_blank" rel="noopener noreferrer">Fiche OSM</a></span></article>';
+        body = head + chips + (list.length ? '<div class="ex-shop-grid">' + (sel ? '<div class="ex-shop-mapbox">' + exShopsMap(sel.lat, sel.lon) + '<small>' + h(sel.name) + '</small></div>' : '') + '<div class="ex-shop-list">' + list.map(card).join('') + '</div></div>'
+          : '<p class="ex-note">Aucune boutique trouvée dans ce rayon. Élargissez le rayon ci-dessus. OpenStreetMap est tenu par des bénévoles : s\'il manque votre boutique, vous pouvez l\'ajouter sur <a href="https://www.openstreetmap.org" target="_blank" rel="noopener noreferrer">openstreetmap.org</a>.</p>');
+      }
+    }
+    return exBack() + '<section class="ex-sec ex-shops"><div class="ex-sec-head"><span class="ex-kicker">Près de chez vous</span><h3>Boutiques de comics et de BD</h3><p>Comics VO, BD et librairies spécialisées autour de vous. Le type est déduit des informations d\'OpenStreetMap (catégorie, nom, description) : vérifiez auprès de la boutique pour la VO ou la VF.</p></div>' +
+      ask + '<div id="exShopsBody" aria-live="polite">' + body + '</div><p class="ex-credit">Données © contributeurs OpenStreetMap, licence ODbL. Recherche par Overpass et Nominatim.</p></section>';
+  };
+  const exWireShops = root => {
+    const loc = root.querySelector('[data-shop-locate]'); if (loc) loc.onclick = () => exShopsLocate();
+    const form = root.querySelector('[data-shop-form]');
+    if (form) form.onsubmit = e => { e.preventDefault(); const q = String(form.elements.q.value || '').trim().slice(0, 80); if (q.length < 2) return; const pref = shopsPref(); pref.q = q; shopsPrefSave(pref); exShopsRun({ q }); };
+    root.querySelectorAll('[data-shop-r]').forEach(b => { b.onclick = () => { const pref = shopsPref(); pref.r = Number(b.dataset.shopR); shopsPrefSave(pref); if (exShops.last && exShops.status !== 'loading') exShopsRun(exShops.last); else renderExplorer(); }; });
+    root.querySelectorAll('[data-shop-kind]').forEach(b => { b.onclick = () => { exShops.kind = b.dataset.shopKind; exShops.sel = ''; renderExplorer(); }; });
+    root.querySelectorAll('[data-shop-sel]').forEach(b => { b.onclick = () => { exShops.sel = b.dataset.shopSel; renderExplorer(); const m = document.querySelector('.ex-shop-mapbox'); if (m && window.innerWidth < 760 && !navigator.webdriver) m.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); }; });
+    const rt = root.querySelector('[data-shop-retry]'); if (rt) rt.onclick = () => exShopsRun(exShops.last);
+  };
+  // ==========================================================================
+  // Actualités (D-69) : flux RSS publics par le relais local. Titre, court extrait, image du flux et lien vers
+  // l'article d'origine. « Pour vous » : articles qui citent un personnage suivi ou une série de la collection.
+  // ==========================================================================
+  const NEWS_PREF_KEY = 'panel_news_v1';
+  const exNews = { status: 'idle', data: null, err: '', at: 0, shown: 9, test: false, lang: (() => { try { const v = JSON.parse(localStorage.getItem(NEWS_PREF_KEY) || '{}'); return ['fr', 'en'].includes(v.lang) ? v.lang : ''; } catch (_) { return ''; } })() };
+  let exNewsFetch = async () => { const r = await fetch(location.origin + '/api/news', { cache: 'no-store' }); if (!r.ok) throw new Error('Actualités indisponibles'); return r.json(); };
+  const exNewsInterests = () => {
+    const out = new Map();
+    Object.values(exFollows()).forEach(x => { const n = catNorm(x.name); if (n.length >= 4) out.set(n, x.name); });
+    const facets = exFacets(); // collection lue par le pont du domaine Explorer, jamais directement
+    if (facets) facets.series.filter(x => x.owned || x.wish).sort((a, b) => (b.owned + b.wish) - (a.owned + a.wish)).slice(0, 150).forEach(x => { const name = String(x.name).replace(/\s*\(\s*\d{4}\s*\)\s*$/, '').trim(); const n = catNorm(name).replace(/^the /, ''); if (n.length >= 5 && !out.has(n)) out.set(n, name); });
+    return out;
+  };
+  const exNewsWhy = (a, interests) => { const t = ' ' + catNorm(a.title + ' ' + a.excerpt + ' ' + a.categories.join(' ')) + ' '; for (const [n, label] of interests) if (t.includes(' ' + n + ' ')) return label; return ''; };
+  const exNewsAgo = iso => { const m = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? 'il y a ' + m + ' min' : m < 1440 ? 'il y a ' + Math.round(m / 60) + ' h' : m < 2880 ? 'hier' : 'il y a ' + Math.round(m / 1440) + ' j'; };
+  const exNewsCard = (a, why, big) => '<a class="ex-nw' + (big ? ' is-big' : '') + (a.image ? '' : ' no-img') + '" href="' + h(a.url) + '" target="_blank" rel="noopener noreferrer">' +
+    (a.image ? '<span class="ex-nw-img"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></span>' : '') +
+    '<span class="ex-nw-body"><span class="ex-nw-meta"><b>' + h(a.source) + '</b><i>' + a.lang.toUpperCase() + '</i>' + (a.date ? '<time datetime="' + h(a.date) + '">' + h(exNewsAgo(a.date)) + '</time>' : '') + '</span>' +
+    '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') + (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : '') + '</span></a>';
+  const exNewsBoxHtml = () => {
+    if (!exNews.test && (!relayStatus || !relayStatus.news)) return '<p class="ex-note">Les actualités passent par le relais local de Panel (<b>Lancer Panel.cmd</b>). Panel n\'affiche jamais d\'actualité inventée.</p>';
+    const st = exNews;
+    if (st.status === 'error' && !st.data) return '<div class="ex-shop-err" role="alert">' + h(st.err) + ' <button class="btn secondary rel-mini" data-news-retry>Réessayer</button></div>';
+    if (!st.data) return '<div class="ex-nw-grid is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-nw-skel"></span>').join('') + '</div>';
+    const interests = exNewsInterests();
+    const all = st.data.items.filter(a => !st.lang || a.lang === st.lang);
+    const tagged = all.map(a => ({ a, why: exNewsWhy(a, interests) }));
+    const forYou = tagged.filter(x => x.why).slice(0, 3);
+    const rest = tagged.filter(x => !forYou.includes(x));
+    const tabs = '<div class="ex-chips" role="tablist" aria-label="Langue des actualités">' + [['', 'Tout'], ['fr', 'En français'], ['en', 'In English']].map(([k, l]) => '<button role="tab" aria-selected="' + (st.lang === k) + '" class="ex-chip' + (st.lang === k ? ' active' : '') + '" data-news-lang="' + k + '">' + l + '</button>').join('') + '</div>';
+    return tabs + (forYou.length ? '<h4 class="ex-nw-h">Pour vous</h4><div class="ex-nw-grid is-foryou">' + forYou.map(x => exNewsCard(x.a, x.why, true)).join('') + '</div><h4 class="ex-nw-h">Dernières nouvelles</h4>' : '') +
+      (rest.length ? '<div class="ex-nw-grid">' + rest.slice(0, st.shown).map(x => exNewsCard(x.a, '', false)).join('') + '</div>' : '<p class="ex-note">Aucune actualité récente pour ce choix.</p>') +
+      (rest.length > st.shown ? '<div class="ex-row"><button class="btn secondary rel-mini" data-news-more>Afficher plus</button></div>' : '') +
+      '<p class="ex-credit">Sources : ' + st.data.sources.map(x => '<a href="' + h(x.home) + '" target="_blank" rel="noopener noreferrer">' + h(x.name) + '</a>').join(', ') + '. ' + h(st.data.notice || '') + (st.data.unavailable && st.data.unavailable.length ? ' Momentanément indisponible : ' + h(st.data.unavailable.join(', ')) + '.' : '') + '</p>';
+  };
+  const exNewsWire = () => {
+    const box = $('exNewsBox'); if (!box) return;
+    box.querySelectorAll('[data-news-lang]').forEach(b => { b.onclick = () => { exNews.lang = b.dataset.newsLang; exNews.shown = 9; try { localStorage.setItem(NEWS_PREF_KEY, JSON.stringify({ lang: exNews.lang })); } catch (_) {} exNewsPaint(); }; });
+    const more = box.querySelector('[data-news-more]'); if (more) more.onclick = () => { exNews.shown += 12; exNewsPaint(); };
+    const rt = box.querySelector('[data-news-retry]'); if (rt) rt.onclick = () => exNewsLoad(true);
+  };
+  const exNewsPaint = () => { const box = $('exNewsBox'); if (box) { box.innerHTML = exNewsBoxHtml(); exNewsWire(); } };
+  const exNewsLoad = async force => {
+    if ((!exNews.test && (!relayStatus || !relayStatus.news)) || exNews.status === 'loading') return exNewsWire();
+    if (!force && exNews.data && Date.now() - exNews.at < 10 * 60000) return exNewsWire();
+    exNews.status = 'loading';
+    try { exNews.data = await exNewsFetch(); exNews.at = Date.now(); exNews.status = 'done'; exNews.err = ''; }
+    catch (e) { exNews.status = 'error'; exNews.err = String(e && e.message || e).slice(0, 120); }
+    exNewsPaint();
+  };
   const exCvLoad = async ref => {
     const [t, id] = String(ref).split(':');
     if (!EX_CV_PATH[t] || !/^\d+$/.test(id || '')) return;
@@ -15138,9 +15344,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
       root.querySelectorAll('[data-ex-scope]').forEach(b => { b.onclick = () => { exScope = b.dataset.exScope; renderExplorer(); }; });
       wireExSocial(root); exWireFilters(root); exWireOnline(root);
+      exNewsLoad();
     } else if (exView.page === 'cv') {
       root.innerHTML = exCvHtml();
       exWireCv(root);
+    } else if (exView.page === 'shops') {
+      root.innerHTML = exShopsHtml();
+      exWireShops(root);
     } else if (exView.page === 'guide') {
       const g = exEditorial.get(exView.id);
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
@@ -15758,6 +15968,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<p class="stat-sub">Portraits : Comic Vine (nom exact du personnage), chargés au fil de l\'ouverture ; sinon emblème Panel. L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
   };
   let pfGramTab = 'stories';
+  const pfAvatarHtml = ini => {
+    const st = storyLoad().stories;
+    if (!st.length) return '<span class="pf-avatar">' + escapeHtml(ini) + '</span>';
+    const seen = storySeen(), fresh = st.some(x => !seen.has(x.id));
+    return '<button type="button" class="pf-avatar pf-av-story' + (fresh ? ' is-new' : '') + '" data-pf-stories aria-label="Voir mes stories (' + st.length + (fresh ? ', dont des nouvelles' : '') + ')">' + escapeHtml(ini) + '</button>';
+  };
+  // Numéros lus, du plus récent au plus ancien (date de lecture du domaine Lecture)
+  const pfReadList = owned => owned.filter(rdReadOfCopy).map(x => ({ x, at: String(((rdFind(x) || {}).state || {}).lastReadAt || '') })).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 90);
   const pfGramHtml = (p, owned) => {
     const stories = storyLoad().stories.slice().sort((a, b) => String(b.readAt || b.at || '').localeCompare(String(a.readAt || a.at || '')));
     const drafts = commLoad().drafts;
@@ -15768,17 +15986,22 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const hl = groups.length ? '<div class="ig-hl" role="list">' + groups.map(g => '<button class="ig-hl-item" role="listitem" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
     const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString('fr-FR') + '</b></span></button>';
     const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + '"><span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
-    const grid = pfGramTab === 'stories'
+    const rtile = e => '<button class="ig-tile" data-pf-copy="' + escapeHtml(e.x.id) + '" aria-label="' + escapeHtml((e.x.series || '') + ' ' + (e.x.issue || '')) + (e.at ? ', lu le ' + escapeHtml(new Date(e.at).toLocaleDateString('fr-FR')) : '') + '">' + coverImgTag(e.x) + '<span class="ig-tile-meta"><b>' + escapeHtml(String(e.x.series || '').slice(0, 22)) + ' #' + escapeHtml(String(e.x.issue || '?')) + '</b></span></button>';
+    const grid = pfGramTab === 'lus'
+      ? (read ? '<div class="ig-grid">' + pfReadList(owned).map(rtile).join('') + '</div>' : '<div class="ig-empty"><b>Aucun numéro lu.</b><span>Cochez « Lu » sur une fiche, ou ouvrez Lecture.</span></div>')
+      : pfGramTab === 'stories'
       ? (stories.length ? '<div class="ig-grid">' + stories.map(tile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune story pour l’instant.</b><span>Marquez un numéro « Lu », notez-le : la story apparaît ici.</span><button class="btn rel-mini" data-pf-newstory>Créer une story</button></div>')
       : (drafts.length ? '<div class="ig-grid">' + drafts.map(ptile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune planche.</b><span>Composez une planche depuis le Fil (pull de la semaine, pépite, boîte…).</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>');
     return '<section class="ig">' +
       '<div class="ig-stats">' + n(stories.length, 'stories') + n(drafts.length, 'planches') + n(read, 'lus') + n(owned.length, 'en collection') + '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>' + hl +
-      '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button></nav>' + grid + '</section>';
+      '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button><button role="tab" aria-selected="' + (pfGramTab === 'lus') + '" data-pf-gtab="lus"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lus</button></nav>' + grid + '</section>';
   };
   const pfGramWire = host => {
     host.querySelectorAll('[data-pf-gtab]').forEach(b => { b.onclick = () => { pfGramTab = b.dataset.pfGtab; renderCommunityProfile(); }; });
     host.querySelectorAll('.ig [data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
     host.querySelectorAll('[data-pf-newstory]').forEach(b => { b.onclick = () => openStoryPicker(); });
+    host.querySelectorAll('[data-pf-copy]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.pfCopy); if (it) openSingleInspector(it); }; });
+    host.querySelectorAll('[data-pf-stories]').forEach(b => { b.onclick = () => { const st = storyLoad().stories, seen = storySeen(); const first = st.find(x => !seen.has(x.id)) || st[0]; if (first) openStoryViewer(first.id); }; });
     host.querySelectorAll('[data-pf-feed], [data-pf-planche]').forEach(b => { b.onclick = () => { commTab = 'feed'; renderCommunityView(); }; });
   };
   const renderCommunityProfile = () => {
@@ -15812,7 +16035,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.innerHTML =
       '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
         (p && !profileEditing
-          ? '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
+          ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
       '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfLadderHtml(rk) + artefactsHtml(ar) +
@@ -15945,7 +16168,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.querySelector('[data-cancel]').onclick = () => box.classList.remove('open');
     wire();
   };
-  // Lecteur plein écran, à la manière des stories : barres de progression, touche gauche/droite, avance automatique
+  // Stories vues (D-70) : seuls les identifiants des stories déjà regardées, sur cet appareil
+  const STORY_SEEN_KEY = 'panel_story_seen_v1';
+  const storySeen = () => { try { const v = JSON.parse(localStorage.getItem(STORY_SEEN_KEY) || '[]'); return new Set(Array.isArray(v) ? v.filter(x => typeof x === 'string') : []); } catch (_) { return new Set(); } };
+  const storyMarkSeen = id => {
+    const seen = storySeen(); if (seen.has(id)) return;
+    seen.add(id);
+    const ids = new Set(storyLoad().stories.map(x => x.id));
+    try { localStorage.setItem(STORY_SEEN_KEY, JSON.stringify([...seen].filter(x => ids.has(x)).slice(-400))); } catch (_) {}
+  };
+  const storyInfoHtml = s => {
+    const st = STORY_STYLES[s.style] || STORY_STYLES[storyStyleKey(s)];
+    const copy = s.copyId ? physicalSingles.find(x => x.id === s.copyId) : null;
+    const d = s.readAt ? new Date(s.readAt + 'T12:00:00') : null;
+    const facts = [s.publisher || st.label, s.variant && !/^cover a$/i.test(s.variant) ? s.variant : '', d && !isNaN(d) ? 'lu le ' + d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '', Number(s.rating) ? String(s.rating).replace('.', ',') + ' / 5' : 'sans note'].filter(Boolean);
+    return '<div class="st-vinfo"><div><b>' + escapeHtml(String(s.series || 'Sans titre')) + ' <span>#' + escapeHtml(String(s.issue || '?')) + '</span></b><small>' + facts.map(escapeHtml).join(' · ') + '</small></div>' +
+      (copy ? '<button class="btn secondary rel-mini" data-st-copy>Ouvrir la fiche</button>' : '') + '</div>';
+  };
+  // Lecteur plein écran, à la manière des stories : barres de progression, touche gauche/droite, avance automatique,
+  // pause en maintenant le doigt (ou Espace), glisser à gauche / droite pour changer, vers le bas pour fermer (D-70)
   const openStoryViewer = startId => {
     const stories = storyLoad().stories;
     let i = Math.max(0, stories.findIndex(s => s.id === startId));
@@ -15953,31 +16194,59 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const box = bunModal('storyViewer');
     box.classList.add('st-viewer-wrap');
     let timer = null;
-    const close = () => { clearTimeout(timer); box.classList.remove('open'); document.removeEventListener('keydown', onKey); };
+    const DUR = 7000;
+    let left = DUR, t0 = 0, paused = false;
+    const arm = () => { clearTimeout(timer); if (navigator.webdriver || paused) return; t0 = Date.now(); timer = setTimeout(() => { if (i < stories.length - 1) { i++; show(); } }, left); };
+    const pause = on => {
+      if (on === paused) return;
+      paused = on;
+      const v = box.querySelector('.st-viewer'); if (v) v.classList.toggle('is-paused', on);
+      const pb = box.querySelector('[data-pause]'); if (pb) { pb.setAttribute('aria-pressed', String(on)); pb.textContent = on ? 'Reprendre' : 'Pause'; }
+      if (on) { clearTimeout(timer); left = Math.max(300, left - (Date.now() - t0)); } else arm();
+    };
+    const close = () => { clearTimeout(timer); box.classList.remove('open'); document.removeEventListener('keydown', onKey); try { if (activeSinglesView === 'community') renderCommunityView(); } catch (_) {} };
     const show = () => {
       clearTimeout(timer);
+      left = DUR; paused = false;
       const s = stories[i];
+      storyMarkSeen(s.id);
       box.innerHTML = '<div class="st-viewer" role="dialog" aria-modal="true" aria-label="Story ' + (i + 1) + ' sur ' + stories.length + '">' +
         '<div class="st-prog">' + stories.map((_, k) => '<i class="' + (k < i ? 'is-done' : k === i ? 'is-now' : '') + '"></i>').join('') + '</div>' +
-        storyCardHtml(s, { big: true }) +
+        storyCardHtml(s, { big: true }) + storyInfoHtml(s) +
         '<button class="st-nav st-prev" data-prev aria-label="Story précédente"></button><button class="st-nav st-next" data-next aria-label="Story suivante"></button>' +
-        '<div class="st-vbar"><button class="btn secondary" data-edit>Modifier</button><button class="btn secondary" data-del>Retirer</button><button class="btn secondary" disabled title="Avec les comptes en ligne">Publier</button><button class="btn" data-close>Fermer</button></div></div>';
+        '<div class="st-vbar"><button class="btn secondary" data-pause aria-pressed="false">Pause</button><button class="btn secondary" data-edit>Modifier</button><button class="btn secondary" data-del>Retirer</button><button class="btn secondary" disabled title="Avec les comptes en ligne">Publier</button><button class="btn" data-close>Fermer</button></div></div>';
       box.querySelector('[data-prev]').onclick = () => { if (i > 0) { i--; show(); } };
       box.querySelector('[data-next]').onclick = () => { if (i < stories.length - 1) { i++; show(); } else close(); };
       box.querySelector('[data-close]').onclick = close;
       box.querySelector('[data-edit]').onclick = () => { close(); openStoryEditor(physicalSingles.find(x => x.id === s.copyId) || null, s); };
       box.querySelector('[data-del]').onclick = () => { const prevRaw = localStorage.getItem(STORY_KEY), d = storyLoad(); d.stories = d.stories.filter(x => x.id !== s.id); storySave(d); close(); renderSinglesCollection(); showToastAction('Story retirée.', 'Annuler', () => { localStorage.setItem(STORY_KEY, prevRaw); renderSinglesCollection(); }); };
-      if (!navigator.webdriver) timer = setTimeout(() => { if (i < stories.length - 1) { i++; show(); } }, 7000);
+      box.querySelector('[data-pause]').onclick = () => pause(!paused);
+      const oc = box.querySelector('[data-st-copy]'); if (oc) oc.onclick = () => { const it = physicalSingles.find(x => x.id === s.copyId); close(); if (it) openSingleInspector(it); };
+      const v = box.querySelector('.st-viewer');
+      let hold = null, held = false, sx = 0, sy = 0;
+      v.addEventListener('pointerdown', e => { if (e.target.closest('.st-vbar')) return; held = false; sx = e.clientX; sy = e.clientY; hold = setTimeout(() => { held = true; pause(true); }, 220); });
+      const up = e => {
+        clearTimeout(hold);
+        if (e.target.closest && e.target.closest('.st-vbar')) return;
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        if (held) { pause(false); return; }
+        if (dy > 90 && Math.abs(dy) > Math.abs(dx)) { held = true; close(); }
+        else if (Math.abs(dx) > 60) { held = true; box.querySelector(dx < 0 ? '[data-next]' : '[data-prev]').click(); }
+      };
+      v.addEventListener('pointerup', up);
+      v.addEventListener('pointercancel', () => { clearTimeout(hold); if (held) pause(false); });
+      v.addEventListener('click', e => { if (held && e.target.closest('.st-nav')) { e.stopPropagation(); e.preventDefault(); held = false; } }, true);
+      arm();
     };
-    const onKey = e => { if (!box.classList.contains('open')) return; if (e.key === 'Escape') close(); if (e.key === 'ArrowRight') box.querySelector('[data-next]').click(); if (e.key === 'ArrowLeft') box.querySelector('[data-prev]').click(); };
+    const onKey = e => { if (!box.classList.contains('open')) return; if (e.key === 'Escape') close(); if (e.key === ' ') { e.preventDefault(); pause(!paused); } if (e.key === 'ArrowRight') box.querySelector('[data-next]').click(); if (e.key === 'ArrowLeft') box.querySelector('[data-prev]').click(); };
     document.addEventListener('keydown', onKey);
     box.classList.add('open');
     show();
   };
   const storiesBarHtml = () => {
-    const stories = storyLoad().stories;
+    const stories = storyLoad().stories, seen = storySeen();
     return '<section class="st-bar" aria-label="Stories de lecture"><button class="st-ring st-new" data-st-new><span class="st-ring-img"><b>+</b></span><small>Ma story</small></button>' +
-      stories.slice(0, 30).map(s => { const st = STORY_STYLES[s.style] || STORY_STYLES.indie; return '<button class="st-ring" data-st-open="' + escapeHtml(s.id) + '" style="--acc:' + st.acc + ';--bg2:' + st.bg2 + '"><span class="st-ring-img">' + coverImgTag(s) + '</span><small>' + escapeHtml(String(s.series || '').slice(0, 14)) + '</small></button>'; }).join('') +
+      stories.slice(0, 30).sort((a, b) => seen.has(a.id) - seen.has(b.id)).map(s => { const st = STORY_STYLES[s.style] || STORY_STYLES.indie; return '<button class="st-ring' + (seen.has(s.id) ? ' is-seen' : '') + '" data-st-open="' + escapeHtml(s.id) + '" aria-label="Story : ' + escapeHtml(String(s.series || '') + ' ' + (s.issue || '')) + (seen.has(s.id) ? ', vue' : ', nouvelle') + '" style="--acc:' + st.acc + ';--bg2:' + st.bg2 + '"><span class="st-ring-img">' + coverImgTag(s) + '</span><small>' + escapeHtml(String(s.series || '').slice(0, 14)) + '</small></button>'; }).join('') +
       (stories.length ? '' : '<p class="st-bar-hint">Vous venez de lire un comic ? Notez-le en story : une carte à ses couleurs, comme un journal de lecture.</p>') + '</section>';
   };
   const wireStoriesBar = host => {
@@ -16328,6 +16597,66 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const goSinglesView = view => { if (hostedViews.has(view)) { hostedViews.get(view)(); return; } if (activeModule !== 'singles') switchModule('singles'); showSinglesView(view); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 
   const applySecondHand = x => { if ($('singleSecondHandInput') && $('singleSecondHandInput').checked) x.secondHand = true; else delete x.secondHand; };
+  // ── Pour vous (D-70) : sélection calculée sur cet appareil, à partir de la collection, de la lecture et des stories.
+  // Rien n'est envoyé ni inventé : chaque carte vient d'un numéro que vous possédez ou d'une story que vous avez écrite.
+  const commForYouFrom = ({ copies, stateOf, stories, now }) => {
+    const t = now instanceof Date ? now : new Date();
+    const storied = new Set(stories.map(x => x.copyId).filter(Boolean));
+    const next = [], tell = [], memo = [];
+    const bySeries = new Map();
+    copies.forEach(x => {
+      if (!x || !x.series) return;
+      const n = issueNumber(x); if (!isFinite(n)) return;
+      const st = stateOf(x) || {};
+      const k = catNorm(x.series);
+      if (!bySeries.has(k)) bySeries.set(k, []);
+      bySeries.get(k).push({ x, n, read: st.read === true, at: String(st.at || '') });
+    });
+    bySeries.forEach(list => {
+      const read = list.filter(e => e.read); if (!read.length) return;
+      const last = read.slice().sort((a, b) => b.n - a.n)[0];
+      const nx = list.filter(e => !e.read && e.n > last.n).sort((a, b) => a.n - b.n)[0];
+      if (!nx) return;
+      const fresh = last.at ? Math.max(0, 1 - (t - new Date(last.at)) / (120 * 86400000)) : 0;
+      next.push({ kind: 'next', score: 3 + fresh, item: nx.x, why: 'Vous avez lu le n° ' + last.x.issue + ' : le suivant est dans votre collection.' });
+    });
+    copies.forEach(x => {
+      const st = stateOf(x) || {};
+      if (!st.read || !st.at || storied.has(x.id)) return;
+      const days = (t - new Date(st.at)) / 86400000;
+      if (days >= 0 && days <= 30) tell.push({ kind: 'story', score: 2.5 + (30 - days) / 60, item: x, why: days < 1 ? 'Lu aujourd\'hui. Une note, une phrase : votre story est prête.' : 'Lu il y a ' + Math.round(days) + ' j. Racontez-le en une story.' });
+    });
+    stories.forEach(s => {
+      if (!s.readAt) return;
+      const d = new Date(s.readAt + 'T12:00:00');
+      const years = t.getFullYear() - d.getFullYear();
+      if (years >= 1 && d.getMonth() === t.getMonth()) memo.push({ kind: 'memory', score: 2 + (Number(s.rating) || 0) / 10, story: s, why: 'Lu il y a ' + years + ' an' + (years > 1 ? 's' : '') + ', ce mois-ci.' });
+    });
+    const top = (a, n) => a.sort((x, y) => y.score - x.score).slice(0, n);
+    return top(next, 3).concat(top(tell, 2), top(memo, 2)).sort((x, y) => y.score - x.score);
+  };
+  const commForYou = () => commForYouFrom({
+    copies: physicalSingles.filter(isOwned),
+    stateOf: x => { const f = rdFind(x); return f ? { read: f.state.status === 'read', at: f.state.lastReadAt || '' } : { read: false, at: '' }; },
+    stories: storyLoad().stories
+  });
+  const FY_LABEL = { next: ['À lire ensuite', 'Ouvrir la fiche'], story: ['Racontez-le', 'Créer la story'], memory: ['Souvenir de lecture', 'Revoir la story'] };
+  const commForYouHtml = () => {
+    let list = [];
+    try { list = commForYou(); } catch (_) { list = []; }
+    if (!list.length) return '';
+    return '<section class="fy" aria-label="Pour vous"><div class="fy-head"><h3 class="pf-section">Pour vous</h3><small>Calculé sur cet appareil à partir de votre collection, de vos lectures et de vos stories. Rien n\'est envoyé.</small></div><div class="fy-row">' +
+      list.map(c => {
+        const ref = c.item || c.story, lab = FY_LABEL[c.kind];
+        const data = c.kind === 'memory' ? 'data-fy-mem="' + escapeHtml(c.story.id) + '"' : c.kind === 'story' ? 'data-fy-story="' + escapeHtml(c.item.id) + '"' : 'data-fy-open="' + escapeHtml(c.item.id) + '"';
+        return '<article class="fy-card is-' + c.kind + '" style="--c:' + cboxHue(ref) + '"><span class="fy-cover">' + coverImgTag(ref) + '</span><div class="fy-body"><small>' + lab[0] + '</small><b>' + escapeHtml(String(ref.series || '') + ' #' + (ref.issue || '?')) + '</b><p>' + escapeHtml(c.why) + '</p><button class="btn secondary rel-mini" ' + data + '>' + lab[1] + '</button></div></article>';
+      }).join('') + '</div></section>';
+  };
+  const commForYouWire = host => {
+    host.querySelectorAll('[data-fy-open]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.fyOpen); if (it) openSingleInspector(it); }; });
+    host.querySelectorAll('[data-fy-story]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.fyStory); if (it) openStoryEditor(it); }; });
+    host.querySelectorAll('[data-fy-mem]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.fyMem); });
+  };
   const renderCommunityView = () => {
     try { renderCommunityProfile(); } catch (_) {}
     const headEl = $('communityHead');
@@ -16361,10 +16690,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       (commTab !== 'live' ? '' : '<section class="live-teaser"><div class="live-teaser-main"><span class="live-dot">Bientôt</span><h3>Débats en direct</h3><p>Des salons vocaux pour parler comics à plusieurs : un animateur, des intervenants qui lèvent la main, et un tableau où chacun montre la case ou la couverture dont il parle. Débat du mercredi sur les sorties, procès d\'un event, « quel est le meilleur run de Daredevil ? ». Les débats animés rapportent des points de rang.</p></div>' +
         '<ul class="live-teaser-list"><li><b>Salon vocal</b> animateur, intervenants, auditeurs</li><li><b>Tableau d\'images</b> cases et couvertures de votre collection</li><li><b>Modération</b> signalement, exclusion, règles du salon</li></ul>' +
         '<p class="stat-sub live-teaser-note">Le direct demande un compte et un serveur audio : il ouvrira avec les comptes en ligne. Aucun salon n\'est simulé en attendant.</p></section>') +
+      (commTab === 'live' ? '' : commForYouHtml()) +
       '<div class="notice-box pl-notice">Service communautaire : <b>non configuré</b>. Vos planches restent sur cet appareil ; publication, abonnés, réactions et signalements arriveront avec les comptes (lots 3.2 et 3.3). Les règles de partage sont déjà appliquées.</div>' +
       (commTab === 'live' ? '' : '<h3 class="pf-section">Mon fil <span class="stat-sub">' + d.drafts.length + ' planche' + (d.drafts.length > 1 ? 's' : '') + '</span></h3>' +
       (d.drafts.length ? '<div class="pl-feed">' + d.drafts.map(planche).join('') + '</div>'
         : '<div class="notice-box" style="margin-top:8px">Aucune planche. Choisissez un modèle ci-dessus, ou ouvrez une fiche puis « Partager… ».</div>'));
+    commForYouWire(host);
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
@@ -20205,6 +20536,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (d) { relView.anchor = startOfWeek(new Date(d + 'T12:00:00')); releasesWeekStart = relView.anchor; }
       renderReleasesGrid();
     },
+    social: { forYouFrom: o => JSON.parse(JSON.stringify(commForYouFrom(o))), seen: () => [...storySeen()], openStories: id => openStoryViewer(id) },
+    news: { setFetcherForTest: fn => { exNewsFetch = fn; Object.assign(exNews, { status: 'idle', data: null, err: '', at: 0, shown: 9, test: true }); }, load: () => exNewsLoad(true) },
+    shops: { setFetcherForTest: fn => { exShopsFetch = fn; Object.assign(exShops, { status: 'idle', data: null, err: '', sel: '', kind: '', last: null, test: true }); }, search: q => exShopsRun({ q }), state: () => JSON.parse(JSON.stringify(exShops)) },
     notifications: { items: async () => (await notifItems()).map(n => ({ id: n.id, kind: n.kind, title: n.title, read: n.read })), badge: () => notifBadge(), open: () => notifOpen(), close: () => notifClose() },
     explorer: {
       load: () => loadExplorerData(true),

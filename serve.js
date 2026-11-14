@@ -464,6 +464,142 @@ const handleBnf = async (u, res) => {
   }
 };
 
+// ---------- Relais boutiques (D-69) : /api/shops?lat=48.85&lon=2.35&r=10  ou  /api/shops?q=Lyon&r=10
+// Données OpenStreetMap (ODbL) : Overpass pour les boutiques, Nominatim pour une ville ou un code postal tapé.
+// La position n'est jamais conservée telle quelle : arrondie à 0,01° (environ 1 km) avant tout envoi, et c'est cette
+// position arrondie qui sert de clé de cache (7 jours, .cache/shops.json). Quota : 30 recherches par heure.
+const SHOPS_HOURLY_MAX = 30;
+const shopsCacheFile = path.join(root, '.cache', 'shops.json');
+let shopsCache = {};
+try { shopsCache = JSON.parse(fs.readFileSync(shopsCacheFile, 'utf8')) || {}; } catch (_) { shopsCache = {}; }
+const shopsCalls = [];
+const shopsBudget = () => { const now = Date.now(); while (shopsCalls.length && now - shopsCalls[0] > 3600000) shopsCalls.shift(); return SHOPS_HOURLY_MAX - shopsCalls.length; };
+let shopsPersist = true;
+const OSM_UA = 'PanelComics/1.0 (local comic collection manager; OpenStreetMap relay)';
+// Instances Overpass publiques (Allemagne) : la principale d'abord, puis une instance de secours si elle est saturée (25 s chacune)
+const OVERPASS = ['https://overpass-api.de/api/interpreter', 'https://overpass.private.coffee/api/interpreter'];
+let osmGet = async (url, body) => {
+  const r = await fetch(url, Object.assign(body ? { method: 'POST', headers: { 'User-Agent': OSM_UA, 'Content-Type': 'application/x-www-form-urlencoded', Accept: 'application/json' }, body } : { headers: { 'User-Agent': OSM_UA, Accept: 'application/json', 'Accept-Language': 'fr,en' } }, { signal: AbortSignal.timeout(body ? 25000 : 12000) }));
+  if (!r.ok) throw Object.assign(new Error('OSM HTTP ' + r.status), { status: r.status });
+  return r.json();
+};
+const round2 = x => Math.round(Number(x) * 100) / 100;
+const kmBetween = (a, b, c, d) => { const R = 6371, t = Math.PI / 180, x = Math.sin((c - a) * t / 2) ** 2 + Math.cos(a * t) * Math.cos(c * t) * Math.sin((d - b) * t / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(x)); };
+const shopsQuery = (lat, lon, m) => '[out:json][timeout:20];(' +
+  'nwr(around:' + m + ',' + lat + ',' + lon + ')["shop"~"^(comics?|comic_books?)$"];' +
+  'nwr(around:' + m + ',' + lat + ',' + lon + ')["shop"="books"]["books"~"comic|bande",i];' +
+  'nwr(around:' + m + ',' + lat + ',' + lon + ')["shop"~"^(books|games|collector|hobby|anime|toys)$"]["name"~"comic|bd|b\\\\.d\\\\.|bande dessin|bulle|bédé|super ?h[ée]ros",i];' +
+  ');out center tags 80;';
+const httpsOnly = u => /^https:\/\/[^\s"<>]+$/i.test(String(u || '')) ? String(u).slice(0, 300) : (/^www\.[^\s"<>]+$/i.test(String(u || '')) ? 'https://' + String(u).slice(0, 290) : '');
+const shopOf = (e, lat, lon) => {
+  const t = e.tags || {}, la = e.lat !== undefined ? e.lat : e.center && e.center.lat, lo = e.lon !== undefined ? e.lon : e.center && e.center.lon;
+  if (!t.name || typeof la !== 'number' || typeof lo !== 'number') return null;
+  const txt = [t.name, t.description, t.books, t['description:fr']].filter(Boolean).join(' ').toLowerCase();
+  const kinds = [];
+  if (/comic|\bus\b|import|vo\b|marvel|dc /.test(txt) || /^comics?$/.test(t.shop || '')) kinds.push('Comics');
+  if (/\bbd\b|b\.d\.|bande dessin|bulle|bédé|franco/.test(txt)) kinds.push('BD');
+  if (/manga/.test(txt)) kinds.push('Manga');
+  if (t.shop === 'games' || /jeux|games/.test(txt)) kinds.push('Jeux');
+  const addr = [[t['addr:housenumber'], t['addr:street']].filter(Boolean).join(' '), [t['addr:postcode'], t['addr:city']].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  return { id: e.type[0] + e.id, name: String(t.name).slice(0, 120), lat: la, lon: lo, km: Math.round(kmBetween(lat, lon, la, lo) * 10) / 10, address: addr.slice(0, 200),
+    hours: String(t.opening_hours || '').slice(0, 200), website: httpsOnly(t.website || t['contact:website']), phone: String(t.phone || t['contact:phone'] || '').replace(/[^\d+ ().-]/g, '').slice(0, 30),
+    kinds: kinds.length ? kinds : ['Librairie'], wheelchair: t.wheelchair === 'yes', osm: 'https://www.openstreetmap.org/' + e.type + '/' + e.id };
+};
+const handleShops = async (u, res) => {
+  if (u.pathname !== '/api/shops') return sendJson(res, 404, { error: 'introuvable' });
+  const r = [5, 10, 25, 50].includes(Number(u.searchParams.get('r'))) ? Number(u.searchParams.get('r')) : 10;
+  const q = String(u.searchParams.get('q') || '').replace(/[^\p{L}\p{N} '\-,.]/gu, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+  let lat = Number(u.searchParams.get('lat')), lon = Number(u.searchParams.get('lon')), place = '';
+  if (!q && !(Number.isFinite(lat) && Number.isFinite(lon) && Math.abs(lat) <= 90 && Math.abs(lon) <= 180)) return sendJson(res, 400, { error: 'paramètres invalides' });
+  try {
+    if (q) {
+      if (q.length < 2) return sendJson(res, 400, { error: 'paramètres invalides' });
+      const gk = 'q:' + q.toLowerCase();
+      if (shopsCache[gk] && Date.now() - shopsCache[gk].at < 30 * 86400000) ({ lat, lon, place } = shopsCache[gk].data);
+      else {
+        if (shopsBudget() < 2) return sendJson(res, 429, { error: 'quota de recherche atteint, réessayez dans une heure' });
+        shopsCalls.push(Date.now());
+        const g = await osmGet('https://nominatim.openstreetmap.org/search?' + new URLSearchParams({ format: 'jsonv2', limit: '1', addressdetails: '0', q }).toString());
+        if (!Array.isArray(g) || !g[0]) return sendJson(res, 200, { place: '', center: null, radius: r, shops: [], notFound: true });
+        lat = Number(g[0].lat); lon = Number(g[0].lon); place = String(g[0].display_name || q).split(',').slice(0, 3).join(',').slice(0, 120);
+        shopsCache[gk] = { at: Date.now(), data: { lat, lon, place } };
+      }
+    }
+    lat = round2(lat); lon = round2(lon);
+    const key = lat + ',' + lon + ',' + r, hit = shopsCache[key];
+    if (hit && Date.now() - hit.at < 7 * 86400000) return sendJson(res, 200, Object.assign({ cached: true }, hit.data, { place: place || hit.data.place }));
+    if (shopsBudget() < 1) return sendJson(res, 429, { error: 'quota de recherche atteint, réessayez dans une heure' });
+    shopsCalls.push(Date.now());
+    let d = null, lastErr = null;
+    for (const url of OVERPASS) {
+      try { d = await osmGet(url, 'data=' + encodeURIComponent(shopsQuery(lat, lon, r * 1000))); if (d && Array.isArray(d.elements) && !/error|timed out|out of memory/i.test(String(d.remark || ''))) break; d = null; lastErr = new Error('Overpass incomplet'); }
+      catch (e) { d = null; lastErr = e; }
+    }
+    if (!d) throw Object.assign(lastErr || new Error('Overpass indisponible'), { status: 503 });
+    const seen = new Set();
+    const shops = ((d && d.elements) || []).map(e => shopOf(e, lat, lon)).filter(x => x && x.km <= r + 0.5 && !seen.has(x.name.toLowerCase() + '|' + Math.round(x.lat * 500)) && seen.add(x.name.toLowerCase() + '|' + Math.round(x.lat * 500)))
+      .sort((a, b) => a.km - b.km).slice(0, 60);
+    const data = { place, center: { lat, lon }, radius: r, shops, source: 'OpenStreetMap (ODbL), contributeurs OpenStreetMap' };
+    shopsCache[key] = { at: shops.length ? Date.now() : Date.now() - 6 * 86400000, data }; // résultat vide : gardé un jour seulement
+    if (shopsPersist) { try { fs.mkdirSync(path.dirname(shopsCacheFile), { recursive: true }); fs.writeFileSync(shopsCacheFile, JSON.stringify(shopsCache)); } catch (_) {} }
+    return sendJson(res, 200, data);
+  } catch (e) {
+    return sendJson(res, e.status === 429 ? 429 : 503, { error: 'OpenStreetMap est saturé ou indisponible, réessayez dans quelques minutes', detail: String(e.message || e).slice(0, 120) });
+  }
+};
+
+// ---------- Relais actualités (D-69) : /api/news
+// Flux RSS publics de sites spécialisés. Panel ne reprend que le titre, un court extrait (240 caractères au plus),
+// la date, l'auteur, les rubriques et l'image d'illustration fournie par le flux, avec le lien vers l'article d'origine.
+// Chaque flux est relu au plus toutes les 30 minutes (cache disque .cache/news.json).
+const NEWS_SOURCES = [
+  { id: 'cbr', name: 'CBR', lang: 'en', url: 'https://www.cbr.com/feed/', keep: /comic|marvel|dc |image comics|manga|graphic novel/i },
+  { id: 'bleedingcool', name: 'Bleeding Cool', lang: 'en', url: 'https://bleedingcool.com/comics/feed/' },
+  { id: 'comicsbeat', name: 'The Comics Beat', lang: 'en', url: 'https://www.comicsbeat.com/feed/' },
+  { id: 'comicbook', name: 'ComicBook.com', lang: 'en', url: 'https://comicbook.com/category/comics/feed/' },
+  { id: 'superpouvoir', name: 'Superpouvoir', lang: 'fr', url: 'https://www.superpouvoir.com/feed/', keep: /comic|marvel|dc |bd|bande dessin/i },
+  { id: 'actuabd', name: 'ActuaBD', lang: 'fr', url: 'https://www.actuabd.com/spip.php?page=backend' },
+  { id: 'urban', name: 'Urban Comics', lang: 'fr', url: 'https://www.urban-comics.com/feed/' }
+];
+const newsCacheFile = path.join(root, '.cache', 'news.json');
+let newsCache = {};
+try { newsCache = JSON.parse(fs.readFileSync(newsCacheFile, 'utf8')) || {}; } catch (_) { newsCache = {}; }
+let newsPersist = true;
+let newsGet = async url => { const r = await fetch(url, { headers: { 'User-Agent': 'PanelComics/1.0 (local comic collection manager; news relay)', Accept: 'application/rss+xml, application/xml, text/xml' }, signal: AbortSignal.timeout(15000) }); if (!r.ok && !(r.status >= 300 && r.status < 400)) throw new Error('HTTP ' + r.status); const t = await r.text(); if (!/<(rss|rdf:RDF|channel)[\s>]/i.test(t)) throw new Error('flux illisible'); return t; }; // certains sites renvoient le flux avec un code 301
+const ENT = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ', rsquo: '’', lsquo: '‘', ldquo: '“', rdquo: '”', hellip: '…', ndash: '–', mdash: '—', eacute: 'é', egrave: 'è', agrave: 'à', ccedil: 'ç', ecirc: 'ê' };
+const htmlDecode = t => String(t || '').replace(/&#x([0-9a-f]+);/gi, (_, x) => String.fromCodePoint(parseInt(x, 16))).replace(/&#(\d+);/g, (_, d) => String.fromCodePoint(Number(d))).replace(/&([a-z]+);/gi, (m, n) => ENT[n.toLowerCase()] !== undefined ? ENT[n.toLowerCase()] : m);
+const cdata = t => String(t || '').replace(/^\s*<!\[CDATA\[([\s\S]*?)\]\]>\s*$/, '$1');
+const plain = t => htmlDecode(htmlDecode(cdata(t)).replace(/<[^>]*>/g, ' ')).replace(/\s+/g, ' ').trim();
+const tagOf = (it, tag) => { const m = new RegExp('<' + tag + '(?:\\s[^>]*)?>([\\s\\S]*?)</' + tag + '>', 'i').exec(it); return m ? m[1] : ''; };
+const parseFeed = (xml, src) => xml.split(/<item[\s>]/i).slice(1).map(raw => {
+  const it = raw.split(/<\/item>/i)[0];
+  const link = plain(tagOf(it, 'link'));
+  const date = new Date(plain(tagOf(it, 'pubDate')) || plain(tagOf(it, 'dc:date')) || 0);
+  const cats = [...it.matchAll(/<(?:category|dc:subject)(?:\s[^>]*)?>([\s\S]*?)<\/(?:category|dc:subject)>/gi)].map(m => plain(m[1])).filter(c => c && !/^\d+$/.test(c)).slice(0, 5);
+  let img = (/<enclosure[^>]+url="([^"]+)"[^>]*type="image/i.exec(it) || /<media:(?:content|thumbnail)[^>]+url="([^"]+)"/i.exec(it) || /<img[^>]+src="([^"]+)"/i.exec(htmlDecode(cdata(tagOf(it, 'content:encoded') || tagOf(it, 'description')))) || [])[1] || '';
+  img = htmlDecode(img);
+  let excerpt = plain(tagOf(it, 'description'));
+  if (excerpt.length > 240) excerpt = excerpt.slice(0, 240).replace(/\s+\S*$/, '') + '…';
+  return { id: src.id + ':' + link.replace(/^https?:\/\//, '').slice(0, 160), source: src.name, sourceId: src.id, lang: src.lang, title: plain(tagOf(it, 'title')).slice(0, 220), url: /^https:\/\//.test(link) ? link.slice(0, 400) : '',
+    date: isNaN(date) ? '' : date.toISOString(), author: plain(tagOf(it, 'dc:creator')).slice(0, 80), categories: cats, excerpt, image: /^https:\/\/[^\s"<>]+$/.test(img) ? img.slice(0, 400) : '' };
+}).filter(a => a.title && a.url && (!src.keep || src.keep.test(a.title + ' ' + a.categories.join(' ') + ' ' + a.excerpt)));
+const handleNews = async (u, res) => {
+  if (u.pathname !== '/api/news') return sendJson(res, 404, { error: 'introuvable' });
+  const lang = ['fr', 'en'].includes(u.searchParams.get('lang')) ? u.searchParams.get('lang') : '';
+  const now = Date.now(), errors = [];
+  await Promise.all(NEWS_SOURCES.filter(src => !lang || src.lang === lang).map(async src => {
+    const hit = newsCache[src.id];
+    if (hit && now - hit.at < 30 * 60000) return;
+    try { const items = parseFeed(await newsGet(src.url), src).slice(0, 25); newsCache[src.id] = { at: now, items }; }
+    catch (e) { errors.push(src.name); if (hit) hit.at = now - 25 * 60000; } // en cas d'échec : l'ancienne liste reste servie, nouvel essai dans 5 minutes
+  }));
+  if (newsPersist) { try { fs.mkdirSync(path.dirname(newsCacheFile), { recursive: true }); fs.writeFileSync(newsCacheFile, JSON.stringify(newsCache)); } catch (_) {} }
+  const items = NEWS_SOURCES.filter(src => (!lang || src.lang === lang) && newsCache[src.id]).flatMap(src => newsCache[src.id].items)
+    .filter(a => a.date && now - new Date(a.date).getTime() < 21 * 86400000).sort((a, b) => b.date.localeCompare(a.date)).slice(0, 80);
+  return sendJson(res, 200, { items, sources: NEWS_SOURCES.filter(src => !lang || src.lang === lang).map(src => ({ id: src.id, name: src.name, lang: src.lang, home: new URL(src.url).origin })), unavailable: errors,
+    notice: 'Titres, extraits courts et images d\'illustration fournis par les flux RSS publics des sites cités ; les articles restent sur leur site.' });
+};
+
 // ---------- Durcissement (D-68)
 // 1. Hôte : seules les adresses locales sont servies (protection contre le « DNS rebinding » : un site tiers qui ferait
 //    pointer son nom vers 127.0.0.1 ne peut ni lire Panel ni utiliser les relais et leurs quotas).
@@ -498,11 +634,13 @@ const server = http.createServer((req, res) => {
   try { p = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch (_) { res.writeHead(400); return res.end(); }
   if (!requestGuard(req, res, p)) return;
   // État des relais (aucun secret renvoyé) : l'app vérifie au démarrage quels outils en ligne sont réellement disponibles
-  if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true, wd: true, bnf: true });
+  if (p === '/api/status' && req.method === 'GET') return void sendJson(res, 200, { ok: true, cv: !!cvApiKey, metron: !!metronCreds, gcd: true, wd: true, bnf: true, shops: true, news: true });
   if (p.startsWith('/api/gcd/') && req.method === 'GET') return void handleGcd(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/metron/') && req.method === 'GET') return void handleMetron(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/cv/') && req.method === 'GET') return void handleCv(new URL(req.url, 'http://x'), res);
   if (p === '/api/cv-appearances' && req.method === 'GET') return void handleCvAppearances(new URL(req.url, 'http://x'), res);
+  if (p === '/api/news' && req.method === 'GET') return void handleNews(new URL(req.url, 'http://x'), res);
+  if (p === '/api/shops' && req.method === 'GET') return void handleShops(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/bnf/') && req.method === 'GET') return void handleBnf(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/wd/') && req.method === 'GET') return void handleWd(new URL(req.url, 'http://x'), res);
   if (!ALLOWED.test(p)) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); return res.end('Introuvable'); }
@@ -530,6 +668,8 @@ module.exports.setMetronForTest = (fetchFn, creds) => { metronFetch = fetchFn; m
 
 module.exports.setCvForTest = (fn, key) => { cvGet = fn; cvApiKey = key; Object.keys(cvCalls).forEach(k => delete cvCalls[k]); };
 module.exports.setCvAppearancesForTest = () => { cvAppCache = {}; cvAppPersist = false; };
+module.exports.setNewsGetForTest = fn => { newsGet = fn; newsCache = {}; newsPersist = false; };
+module.exports.setOsmGetForTest = fn => { osmGet = fn; shopsCalls.length = 0; shopsCache = {}; shopsPersist = false; };
 module.exports.setBnfGetForTest = fn => { bnfGet = fn; bnfCalls.length = 0; bnfCache = {}; bnfPersist = false; };
 module.exports.setWdGetForTest = fn => { wdGet = fn; wdCalls.length = 0; wdCache = {}; wdPersist = false; };
 module.exports.setGcdGetForTest = fn => { gcdGet = fn; gcdCalls.length = 0; gcdCache = {}; gcdPersist = false; };

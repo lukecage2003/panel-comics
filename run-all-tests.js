@@ -1273,6 +1273,53 @@ const waitForCdp = async () => {
         t20.bnf = b1.status === 200 && b1.body.editions.length === 1 && b1.body.editions[0].isbn === '9791026823384' && b1.body.editions[0].title === 'Absolute Batman. 1, Le zoo'
           && b1.body.editions[0].url === 'https://catalogue.bnf.fr/ark:/12148/cb1' && b1.body.editions[0].collection === 'DC Black Label' && b2.body.cached === true && bnfUrls.length === 1
           && bBad.status === 400 && st.body.wd === true && st.body.bnf === true;
+        // D-69 : boutiques OpenStreetMap (Overpass et Nominatim simulés) — position arrondie, secours, ville, cache
+        const osmCalls = [];
+        let overFail = 1;
+        srv.setOsmGetForTest(async (url, body) => {
+          osmCalls.push({ url, body: body ? decodeURIComponent(body) : '' });
+          if (url.includes('nominatim')) return url.includes('q=Introuvable') ? [] : [{ lat: '45.7640', lon: '4.8357', display_name: 'Lyon, Métropole de Lyon, Rhône, France' }];
+          if (overFail-- > 0) throw Object.assign(new Error('saturé'), { status: 504 });
+          return { elements: [
+            { type: 'node', id: 11, lat: 45.765, lon: 4.836, tags: { name: 'Boutique fixture Comics', shop: 'comics', 'addr:street': 'rue A', 'addr:city': 'Lyon', website: 'http://non-securise.example', opening_hours: 'Mo-Sa 10:00-19:00' } },
+            { type: 'way', id: 22, center: { lat: 45.77, lon: 4.84 }, tags: { name: 'Librairie fixture BD', shop: 'books', books: 'comics', website: 'https://bd.example' } },
+            { type: 'node', id: 33, lat: 46.9, lon: 4.84, tags: { name: 'Trop loin', shop: 'comics' } },
+            { type: 'node', id: 44, lat: 45.766, lon: 4.837, tags: { shop: 'comics' } } ] };
+        });
+        const s1 = await jget('/api/shops?lat=45.76456&lon=4.83571&r=10');
+        const overBody = (osmCalls.find(c => c.url.includes('interpreter')) || {}).body || '';
+        const s2 = await jget('/api/shops?lat=45.7612&lon=4.8399&r=10');
+        const nCalls = osmCalls.length;
+        const s3 = await jget('/api/shops?q=Lyon&r=10');
+        const nAfterCity = osmCalls.length;
+        const s4 = await jget('/api/shops?q=Introuvable&r=5');
+        const sBad = await jget('/api/shops?lat=999&lon=1');
+        t20.shops = s1.status === 200 && s1.body.shops.length === 2 && s1.body.shops[0].name === 'Boutique fixture Comics' && s1.body.shops[0].website === '' && s1.body.shops[1].website === 'https://bd.example'
+          && s1.body.shops[1].kinds.includes('Comics') && s1.body.center.lat === 45.76 && /around:10000,45\.76,4\.84/.test(overBody) && !/45\.764/.test(overBody)
+          && osmCalls.filter(c => c.url.includes('interpreter')).length === 2 && s2.body.cached === true && nAfterCity === nCalls + 1 && osmCalls[nCalls].url.includes('nominatim') && s3.body.place.startsWith('Lyon') && s3.body.cached === true
+          && s4.body.notFound === true && sBad.status === 400;
+        // D-69 : actualités (flux RSS simulés) — extraits courts, liens https, image du flux, filtre comics, échec toléré
+        const newsUrls = [];
+        const iso = new Date(Date.now() - 3600000).toUTCString(), old = new Date(Date.now() - 40 * 86400000).toUTCString();
+        const longTxt = 'Mot '.repeat(120);
+        srv.setNewsGetForTest(async url => {
+          newsUrls.push(url);
+          if (url.includes('cbr.com')) return '<rss><channel><item><title><![CDATA[Static returns in a new comic]]></title><link>https://www.cbr.com/a</link><pubDate>' + iso + '</pubDate><category>Comics</category><enclosure url="https://img.example/a.jpg" type="image/jpeg"/><description><![CDATA[<p>' + longTxt + '</p>]]></description></item>' +
+            '<item><title>A movie only story</title><link>https://www.cbr.com/b</link><pubDate>' + iso + '</pubDate><category>Movies</category><description>Film.</description></item></channel></rss>';
+          if (url.includes('actuabd')) return '<rss><channel><item xml:lang="fr"><title>March&#233; de la BD</title><link>http://www.actuabd.com/non-https</link><dc:date>2026-11-13T10:49:30Z</dc:date><description>x</description></item>' +
+            '<item><title>Ancien article</title><link>https://www.actuabd.com/old</link><pubDate>' + old + '</pubDate><description>x</description></item>' +
+            '<item><title>L&#8217;actu BD</title><link>https://www.actuabd.com/ok</link><pubDate>' + iso + '</pubDate><dc:subject>BD</dc:subject><description>&lt;p&gt;Texte &amp;amp; image&lt;/p&gt;</description></item></channel></rss>';
+          if (url.includes('urban-comics')) throw new Error('HTTP 500');
+          return '<rss><channel></channel></rss>';
+        });
+        const nw1 = await jget('/api/news');
+        const newsN1 = newsUrls.length;
+        const nw2 = await jget('/api/news?lang=fr');
+        const cbr = nw1.body.items.find(a => a.sourceId === 'cbr');
+        const fr = nw1.body.items.filter(a => a.sourceId === 'actuabd');
+        t20.news = nw1.status === 200 && !!cbr && cbr.title === 'Static returns in a new comic' && cbr.image === 'https://img.example/a.jpg' && cbr.excerpt.length <= 241 && cbr.excerpt.endsWith('…')
+          && !nw1.body.items.some(a => a.title === 'A movie only story') && fr.length === 1 && fr[0].title === 'L’actu BD' && fr[0].excerpt === 'Texte & image' && !nw1.body.items.some(a => /non-https|old/.test(a.url))
+          && nw1.body.unavailable.includes('Urban Comics') && newsN1 === 7 && nw2.body.items.every(a => a.lang === 'fr') && newsUrls.length === 8 && nw2.body.sources.every(x => x.lang === 'fr');
         // D-68 : durcissement du serveur local (hôte, origine, méthodes, en-têtes)
         const raw = (pathname, headers = {}, method = 'GET') => new Promise(res => { const q = require('http').request({ host: '127.0.0.1', port: 8099, path: pathname, method, headers }, r => { r.resume(); r.on('end', () => res({ status: r.statusCode, headers: r.headers })); }); q.on('error', () => res({ status: 0, headers: {} })); q.end(); });
         const hOk = await raw('/'), hHost = await raw('/', { Host: 'rebind.example:8099' }), hOrigin = await raw('/api/status', { Origin: 'https://site-tiers.example' });
@@ -1286,7 +1333,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'hardening', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
@@ -2429,7 +2476,7 @@ const waitForCdp = async () => {
         r.uiHome = vis(document.getElementById('singlesExplorerView')) && ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
           getComputedStyle(document.querySelector('.singles-stats-bar')).display === 'none' && document.getElementById('navExplorer').classList.contains('active') &&
           ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'].every(n => [...root.querySelectorAll('.ex-unitile b')].some(b => b.textContent === n)) &&
-          /Aucune source d'actualités/.test(document.getElementById('exSecNews').textContent) &&
+          /Les actualités passent par le relais local/.test(document.getElementById('exSecNews').textContent) &&
           // D-64 : les événements ne sont plus affichés sur l'accueil, mais restent référencés et trouvés par la recherche
           !root.querySelector('[data-ex-guide="gd_king_in_black"]') && !!(X.search('king in black').guides || { items: [] }).items.includes('gd_king_in_black');
         const inp = document.getElementById('exSearch');
@@ -4479,6 +4526,150 @@ const waitForCdp = async () => {
       console.log('Résultat Test 54:', JSON.stringify(t54));
       testResults.push({ test: 'Centre de notifications (D-68) : nouvelle apparition d\'un suivi, pastille, panneau accessible, tout marquer lu, préférence par type, rien envoyé, données restaurées',
         ok: !!t54 && !t54.error && ['followItem', 'badge', 'panel', 'readAll', 'prefOff', 'closed', 'nothingSent'].every(k => t54[k] === true) });
+
+      // ==========================================
+      // TEST 55 : Boutiques proches (D-69) — aucune localisation sans geste, liste, filtre, carte, préférence sans position
+      // ==========================================
+      console.log('\n[TEST 55] Boutiques proches : consentement, recherche par ville, filtre, carte OpenStreetMap...');
+      const t55 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const pref0 = localStorage.getItem('panel_shops_v1');
+        let geoAsked = false; const geo0 = navigator.geolocation && navigator.geolocation.getCurrentPosition;
+        try {
+          if (navigator.geolocation) navigator.geolocation.getCurrentPosition = () => { geoAsked = true; };
+          const calls = [];
+          window.Panel.shops.setFetcherForTest(async p => { calls.push(p); return { place: 'Ville fixture', center: { lat: 45.76, lon: 4.84 }, radius: 10, shops: [
+            { id: 'n1', name: 'Fixture Comics', lat: 45.761, lon: 4.841, km: 0.2, address: '1 rue A', hours: 'Mo-Sa 10:00-19:00', website: '', phone: '', kinds: ['Comics'], wheelchair: false, osm: 'https://www.openstreetmap.org/node/1' },
+            { id: 'n2', name: 'Fixture BD', lat: 45.77, lon: 4.85, km: 1.4, address: '', hours: '', website: 'https://bd.example', phone: '', kinds: ['BD'], wheelchair: true, osm: 'https://www.openstreetmap.org/node/2' } ] }; });
+          await window.Panel.explorer.open('home'); await wait(150);
+          r.promo = !!document.querySelector('[data-ex-go="shops"]');
+          await window.Panel.explorer.open('shops'); await wait(150);
+          r.consent = !!document.querySelector('[data-shop-locate]') && /arrondit à environ 1 km/.test(document.querySelector('.ex-shop-why').textContent) && !geoAsked && calls.length === 0;
+          const form = document.querySelector('[data-shop-form]');
+          form.elements.q.value = 'Ville fixture'; form.dispatchEvent(new Event('submit', { cancelable: true })); await wait(300);
+          r.list = document.querySelectorAll('.ex-shop').length === 2 && calls.length === 1 && calls[0].q === 'Ville fixture' && calls[0].r === 10 && !('lat' in calls[0]);
+          r.map = /openstreetmap\\.org\\/export\\/embed\\.html/.test(document.querySelector('.ex-shop-map').src) && /45\\.76100/.test(document.querySelector('.ex-shop-map').src);
+          document.querySelector('[data-shop-sel="n2"]').click(); await wait(150);
+          r.select = /45\\.77000/.test(document.querySelector('.ex-shop-map').src) && document.querySelector('.ex-shop.is-sel').dataset.shopId === 'n2';
+          document.querySelector('[data-shop-kind="BD"]').click(); await wait(150);
+          r.filter = document.querySelectorAll('.ex-shop').length === 1;
+          document.querySelector('[data-shop-r="25"]').click(); await wait(300);
+          r.radius = calls.length === 2 && calls[1].r === 25;
+          const pref = JSON.parse(localStorage.getItem('panel_shops_v1'));
+          r.prefNoPosition = pref.q === 'Ville fixture' && pref.r === 25 && Object.keys(pref).sort().join() === 'q,r';
+          r.links = [...document.querySelectorAll('.ex-shop-links a[target="_blank"]')].every(a => a.rel.includes('noopener'));
+          r.noGeo = !geoAsked;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (geo0) navigator.geolocation.getCurrentPosition = geo0;
+          if (pref0 === null) localStorage.removeItem('panel_shops_v1'); else localStorage.setItem('panel_shops_v1', pref0);
+          const back = document.querySelector('#explorerRoot .ex-back'); if (back) back.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 55:', JSON.stringify(t55));
+      testResults.push({ test: 'Boutiques proches (D-69) : aucune localisation sans geste, recherche par ville, liste, sélection sur la carte, filtre, rayon, préférence sans position',
+        ok: !!t55 && !t55.error && ['promo', 'consent', 'list', 'map', 'select', 'filter', 'radius', 'prefNoPosition', 'links', 'noGeo'].every(k => t55[k] === true) });
+
+      // ==========================================
+      // TEST 56 : Actualités (D-69) — « Pour vous » d'après les suivis, langue, liens sortants sûrs, préférence
+      // ==========================================
+      console.log('\n[TEST 56] Actualités : flux simulés, sélection « Pour vous », filtre de langue, liens vers les sites...');
+      const t56 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const f0 = localStorage.getItem('panel_follows_v1'), n0 = localStorage.getItem('panel_news_v1');
+        try {
+          localStorage.removeItem('panel_news_v1');
+          localStorage.setItem('panel_follows_v1', JSON.stringify({ 'character:26578': { name: 'Static', image: '', lastId: 1, lastLabel: '', lastDate: '', isNew: false } }));
+          const d = new Date().toISOString();
+          window.Panel.news.setFetcherForTest(async () => ({ items: [
+            { id: 'a', source: 'Fixture EN', lang: 'en', title: 'Static gets a new series', url: 'https://news.example/a', date: d, author: '', categories: ['Comics'], excerpt: 'Virgil is back.', image: '' },
+            { id: 'b', source: 'Fixture FR', lang: 'fr', title: 'Un festival de BD', url: 'https://news.example/b', date: d, author: '', categories: ['BD'], excerpt: 'Programme.', image: '' },
+            { id: 'c', source: 'Fixture EN', lang: 'en', title: 'Another story', url: 'https://news.example/c', date: d, author: '', categories: [], excerpt: '', image: '' } ],
+            sources: [{ id: 'fx', name: 'Fixture EN', lang: 'en', home: 'https://news.example' }], unavailable: [], notice: 'Avis fixture.' }));
+          await window.Panel.explorer.open('home'); await wait(200);
+          window.__noRelay = !(document.getElementById('exNewsBox'));
+          await window.Panel.news.load(); await wait(200);
+          const box = document.getElementById('exNewsBox');
+          r.section = !!box;
+          const fy = [...box.querySelectorAll('.ex-nw-grid.is-foryou .ex-nw')];
+          r.forYou = fy.length === 1 && /Static gets a new series/.test(fy[0].textContent) && /Static/.test(fy[0].querySelector('em').textContent);
+          r.rest = box.querySelectorAll('.ex-nw-grid:not(.is-foryou) .ex-nw').length === 2;
+          r.links = [...box.querySelectorAll('a.ex-nw')].every(a => a.target === '_blank' && a.rel.includes('noopener') && a.href.startsWith('https://'));
+          box.querySelector('[data-news-lang="fr"]').click(); await wait(150);
+          r.langFr = document.querySelectorAll('#exNewsBox .ex-nw').length === 1 && /festival/.test(document.querySelector('#exNewsBox .ex-nw').textContent);
+          r.pref = JSON.parse(localStorage.getItem('panel_news_v1')).lang === 'fr';
+          r.credit = /Avis fixture/.test(document.querySelector('#exNewsBox .ex-credit').textContent);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (f0 === null) localStorage.removeItem('panel_follows_v1'); else localStorage.setItem('panel_follows_v1', f0);
+          if (n0 === null) localStorage.removeItem('panel_news_v1'); else localStorage.setItem('panel_news_v1', n0);
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 56:', JSON.stringify(t56));
+      testResults.push({ test: 'Actualités (D-69) : sélection « Pour vous » d\'après les suivis, dernières nouvelles, filtre de langue mémorisé, liens sortants sûrs, crédit des sources',
+        ok: !!t56 && !t56.error && ['section', 'forYou', 'rest', 'links', 'langFr', 'pref', 'credit'].every(k => t56[k] === true) });
+
+      // ==========================================
+      // TEST 57 : Social local (D-70) — « Pour vous » calculé sur l'appareil, stories vues, lecteur en pause, onglet « Lus »
+      // ==========================================
+      console.log('\n[TEST 57] Social local : sélection « Pour vous » (fixtures), stories vues, pause du lecteur, onglet Lus...');
+      const t57 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const s0 = localStorage.getItem('panel_stories_v1'), v0 = localStorage.getItem('panel_story_seen_v1');
+        try {
+          // 1. Sélection pure, sur des données fictives
+          const now = new Date('2026-11-14T12:00:00Z');
+          const copies = [{ id: 'fx1', series: 'Fixture Saga', issue: '1' }, { id: 'fx2', series: 'Fixture Saga', issue: '2' }, { id: 'fx3', series: 'Fixture Saga', issue: '3' }, { id: 'fx9', series: 'Autre Fixture', issue: '5' }];
+          const states = { fx1: { read: true, at: '2026-11-12T10:00:00Z' }, fx9: { read: true, at: '2026-11-13T10:00:00Z' } };
+          const stories = [{ id: 'stfx1', copyId: 'fx9', series: 'Autre Fixture', issue: '5', readAt: '2025-11-02', rating: 4 }];
+          const fy = window.Panel.social.forYouFrom({ copies, stateOf: x => states[x.id], stories, now: now });
+          const next = fy.filter(c => c.kind === 'next'), tell = fy.filter(c => c.kind === 'story'), memo = fy.filter(c => c.kind === 'memory');
+          r.next = next.length === 1 && next[0].item.id === 'fx2';
+          r.tell = tell.length === 1 && tell[0].item.id === 'fx1';
+          r.memory = memo.length === 1 && memo[0].story.id === 'stfx1' && /1 an/.test(memo[0].why);
+          r.order = fy[0].kind === 'next';
+          // 2. Stories vues, lecteur avec pause (stories fictives, restaurées ensuite)
+          localStorage.setItem('panel_stories_v1', JSON.stringify({ version: 1, stories: [
+            { id: 'st_fx_a', series: 'Fixture Alpha', issue: '1', publisher: 'Fixture', coverUrl: '', rating: 4, review: 'Fictif.', readAt: '2026-11-10', style: 'indie' },
+            { id: 'st_fx_b', series: 'Fixture Beta', issue: '2', publisher: 'Fixture', coverUrl: '', rating: 3, review: '', readAt: '2026-11-11', style: 'noir' } ] }));
+          localStorage.removeItem('panel_story_seen_v1');
+          document.getElementById('navSinglesCommunity').click(); await wait(250);
+          const rings = () => [...document.querySelectorAll('#communityHead .st-ring[data-st-open]')];
+          r.unseen = rings().length === 2 && rings().every(b => !b.classList.contains('is-seen'));
+          rings()[0].click(); await wait(150);
+          const viewer = () => document.querySelector('.st-viewer');
+          r.viewer = !!viewer() && window.Panel.social.seen().includes('st_fx_a');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })); await wait(50);
+          r.paused = viewer().classList.contains('is-paused') && document.querySelector('[data-pause]').getAttribute('aria-pressed') === 'true';
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true })); await wait(50);
+          r.resumed = !viewer().classList.contains('is-paused');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(100);
+          r.second = window.Panel.social.seen().includes('st_fx_b');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(250);
+          r.seenRings = rings().length === 2 && rings().every(b => b.classList.contains('is-seen'));
+          // 3. Profil : onglet « Lus »
+          const pt = document.querySelector('#communityHead [data-cm-tab="profile"]'); if (pt) pt.click(); await wait(250);
+          const lt = document.querySelector('#communityProfile [data-pf-gtab="lus"]');
+          if (lt) { lt.click(); await wait(200); }
+          const lt2 = document.querySelector('#communityProfile [data-pf-gtab="lus"]');
+          r.lusTab = !!lt2 && lt2.getAttribute('aria-selected') === 'true' && !!document.querySelector('#communityProfile .ig .ig-grid, #communityProfile .ig .ig-empty');
+          const ft = document.querySelector('#communityHead [data-cm-tab="feed"]'); if (ft) ft.click(); await wait(100);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          const vb = document.querySelector('.st-viewer [data-close]'); if (vb) vb.click();
+          if (s0 === null) localStorage.removeItem('panel_stories_v1'); else localStorage.setItem('panel_stories_v1', s0);
+          if (v0 === null) localStorage.removeItem('panel_story_seen_v1'); else localStorage.setItem('panel_story_seen_v1', v0);
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 57:', JSON.stringify(t57));
+      testResults.push({ test: 'Social local (D-70) : « Pour vous » calculé sur l\'appareil (à lire ensuite, story à écrire, souvenir), stories vues, pause du lecteur, onglet Lus du profil',
+        ok: !!t57 && !t57.error && ['next', 'tell', 'memory', 'order', 'unseen', 'viewer', 'paused', 'resumed', 'second', 'seenRings', 'lusTab'].every(k => t57[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
