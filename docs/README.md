@@ -20,3 +20,4 @@ Mise à jour : 7 novembre 2026. Les documents qui font autorité, et leur ordre 
 | Phase 3 : audit de clôture du lot 3.1 | [`phase3/09-audit-cloture-lot-3.1.md`](phase3/09-audit-cloture-lot-3.1.md) |
 | Phase 3 : dossier technique des lots 3.2 à 3.7 | [`phase3/10-dossier-lots-3.2-3.7.md`](phase3/10-dossier-lots-3.2-3.7.md) |
 | Phase 4 : Explorer 2.0, frontières, contrats, sauvegardes par domaine, images R2, plan d'exécution | [`phase4/README.md`](phase4/README.md) |
+| **PANEL 2.0 (14 novembre 2026)** : audit du dépôt, vision, architecture, données, neuf modules (Source, Edition Intelligence, Canon, Lab, Debate, Multiverse, Signal, ID, Open), IA, sécurité, modèle économique, feuille de route, décisions à prendre | [`panel-2/PANEL_2_STRATEGIC_VISION.md`](panel-2/PANEL_2_STRATEGIC_VISION.md) |
