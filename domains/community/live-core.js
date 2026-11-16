@@ -12,7 +12,7 @@ const DEFAULT_RULES = Object.freeze([
   'Aucun enregistrement sans l\'accord de tous.'
 ]);
 const REACTIONS = Object.freeze(['POW!', 'WOW!', 'BOOM!', 'ZAP!', 'HMM…']);
-const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 12, rules: 6, rule: 140, rooms: 30, history: 30 });
+const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30 });
 
 const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
 const isoOrEmpty = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
@@ -20,20 +20,30 @@ const uniq = list => list.filter((x, i) => list.indexOf(x) === i);
 
 const emptyState = () => ({ rooms: [], history: [] });
 
-// Une image du tableau est une référence à un exemplaire de la collection (jamais un envoi d'image libre, cf. cahier des charges)
+// Une image du tableau est soit une couverture de la collection (kind « copy », référence à l'exemplaire), soit une page
+// choisie dans la galerie de l'appareil (kind « page », D-79). Une page n'est qu'une référence : l'image elle-même reste
+// sur l'appareil (IndexedDB « panel-live »), n'est jamais envoyée ni versée dans une planche publique.
 const sanitizeImage = im => {
   if (!im || typeof im !== 'object') return null;
   const ref = str(im.ref, 80);
   if (!ref) return null;
-  return { ref, series: str(im.series, 120), issue: str(im.issue, 20) };
+  if (im.kind === 'page') return { ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true };
+  return { ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) };
 };
+const isPage = im => !!im && im.kind === 'page';
+const imageLabel = im => isPage(im) ? (im.caption || 'Page de la galerie') : [im.series, im.issue].filter(Boolean).join(' ');
 
 const sanitizeRoom = r => {
   if (!r || typeof r !== 'object') return null;
   const topics = (Array.isArray(r.topics) ? r.topics : String(r.topics || '').split('\n')).map(t => str(t, LIMITS.topic)).filter(Boolean).slice(0, LIMITS.topics);
   const rules = (Array.isArray(r.rules) ? r.rules : String(r.rules || '').split('\n')).map(t => str(t, LIMITS.rule)).filter(Boolean).slice(0, LIMITS.rules);
   const images = [];
-  (Array.isArray(r.images) ? r.images : []).forEach(x => { const im = sanitizeImage(x); if (im && !images.some(y => y.ref === im.ref) && images.length < LIMITS.images) images.push(im); });
+  (Array.isArray(r.images) ? r.images : []).forEach(x => {
+    const im = sanitizeImage(x);
+    if (!im || images.some(y => y.ref === im.ref) || images.length >= LIMITS.images) return;
+    if (isPage(im) && images.filter(isPage).length >= LIMITS.pages) return;
+    images.push(im);
+  });
   return {
     id: str(r.id, 40),
     title: str(r.title, LIMITS.title),
@@ -109,6 +119,20 @@ const nextTopic = (session, room, now) => {
   const done = session.done.concat([{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }]);
   return Object.assign({}, session, { topic: session.topic + 1, topicStartedAt: now, done });
 };
+// Image suivante ou précédente du tableau (flèches du clavier, balayage) ; boucle en fin de liste
+const stepImage = (session, room, dir) => {
+  if (!session || !room.images.length) return session;
+  const i = room.images.findIndex(x => x.ref === session.shown);
+  const n = room.images.length, j = i < 0 ? (dir < 0 ? n - 1 : 0) : (i + (dir < 0 ? -1 : 1) + n) % n;
+  return showImage(Object.assign({}, session, { shown: null }), room, room.images[j].ref);
+};
+// Références de pages encore utiles (directs préparés et synthèses) : les autres pages stockées peuvent être libérées
+const pageRefs = state => {
+  const st = sanitizeState(state), out = new Set();
+  st.rooms.forEach(r => r.images.filter(isPage).forEach(im => out.add(im.ref)));
+  st.history.forEach(h => h.shown.filter(isPage).forEach(im => out.add(im.ref)));
+  return Array.from(out);
+};
 const showImage = (session, room, ref) => {
   const im = room.images.find(x => x.ref === ref);
   if (!session || !im) return session;
@@ -141,10 +165,15 @@ const fmtDuration = sec => {
 const clock = sec => { const s = Math.max(0, Math.floor(Number(sec) || 0)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
 
 // Texte de la planche de synthèse, à partir de la répétition seulement
-const summaryText = x => [
-  (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
-  x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
-  'Durée : ' + fmtDuration(x.durationSec)
-].filter(Boolean).join('\n');
+// Les pages de la galerie restent privées : la planche ne cite que leur nombre, jamais leur image
+const summaryText = x => {
+  const pages = (x.shown || []).filter(isPage).length;
+  return [
+    (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
+    x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
+    'Durée : ' + fmtDuration(x.durationSec),
+    pages ? pages + ' page' + (pages > 1 ? 's' : '') + ' commentée' + (pages > 1 ? 's' : '') : ''
+  ].filter(Boolean).join('\n');
+};
 
-module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };

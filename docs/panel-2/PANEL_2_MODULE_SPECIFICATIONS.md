@@ -127,9 +127,9 @@ Rôles utilisés (extension des rôles existants de `app.staff_roles`, migration
 
 | | |
 |---|---|
-| Existe déjà | Cahier des charges des débats en direct (`docs/LIVE-DEBATS.md`, D-61) ; onglet « Live » d'annonce dans Communauté, sans fonctionnement ; tables `community.posts`, `reactions`, `reports` (0013) |
+| Existe déjà | Cahier des charges des débats en direct (`docs/LIVE-DEBATS.md`, D-61) ; onglet « Directs » de Communauté devenu un studio de préparation et de répétition seul (D-78), avec pages de la galerie du téléphone gardées sur l'appareil (D-79) ; tables `community.posts`, `reactions`, `reports` (0013) |
 | Réutilisable | Modération, limites anti-abus, blocages (0013) ; preuves de Source ; écran Communauté |
-| À améliorer | L'onglet « Live » : l'utilisateur demande qu'il soit développé et testé (hors mission d'audit) |
+| À améliorer | Le salon à plusieurs (voix, mains levées, tableau partagé) : comptes en ligne, serveur audio et décision DR-13 sur l'affichage des pages de la galerie |
 | Manque réellement | Arborescence argument / contre-argument / réfutation ; votes séparés (accord et qualité) ; synthèses ; historique des positions |
 | Nouvelle architecture | Oui : schéma `debate` (étape D5) ; le direct audio reste une extension ultérieure (serveur audio, coût) |
 | Dépendances | Comptes, Source, modération |

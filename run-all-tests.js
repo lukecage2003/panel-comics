@@ -4906,6 +4906,86 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Studio de direct (D-78) : préparer un direct, répétition seul (tableau, ordre du jour chronométré, réactions), synthèse, planche, suppression annulable ; variantes Metron fusionnées dans la fiche',
         ok: !!t61 && !t61.error && ['studio', 'picked', 'saved', 'stage', 'shown', 'agenda', 'history', 'planche', 'undo', 'variants', 'noFake'].every(k => t61[k] === true) });
 
+      // ==========================================
+      // TEST 62 : Pages de la galerie dans le studio de direct (D-79) — pages FICTIVES dessinées, stockées sur l'appareil puis libérées
+      // ==========================================
+      console.log('\n[TEST 62] Pages de la galerie dans le studio de direct...');
+      const t62 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const live0 = localStorage.getItem('panel_live_v1');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const until = async (f, ms = 4000) => { const t = Date.now(); while (Date.now() - t < ms) { if (f()) return true; await wait(50); } return false; };
+        const page = (w, h, color, name) => new Promise(res => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = color; g.fillRect(0, 0, w, h); g.fillStyle = '#fff'; g.fillText('Page fictive', 10, 20); c.toBlob(b => res(new File([b], name, { type: 'image/png' })), 'image/png'); });
+        try {
+          localStorage.removeItem('panel_live_v1');
+          await P.live.gc();
+          const pages0 = await P.live.pageCount();
+          P.setSinglesInMemoryForTest([{ id: 'lv62a', series: 'Fixture Galerie', issue: '#1', year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, coverUrl: 'https://example.invalid/lv62a.jpg' }]);
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          document.querySelector('#communityHead [data-cm-tab="live"]').click(); await wait(250);
+          const studio = () => document.getElementById('liveStudio');
+          studio().querySelector('[data-lv-new]').click(); await wait(200);
+          const box = document.getElementById('liveEditDialog');
+          r.galleryBtn = !!box.querySelector('[data-lv-gal]') && box.querySelector('[data-lv-file]').accept === 'image/*' && box.querySelector('[data-lv-file]').multiple && !box.querySelector('[data-lv-file]').hasAttribute('capture') && !!box.querySelector('[data-lv-q]');
+          box.querySelector('[data-lv="title"]').value = 'Pages fictives';
+          box.querySelector('[data-lv="topics"]').value = 'Point A';
+          const fi = box.querySelector('[data-lv-file]'), dt = new DataTransfer();
+          dt.items.add(await page(2400, 3600, '#c0392b', 'p1.png')); dt.items.add(await page(800, 1200, '#2c3e50', 'p2.png')); dt.items.add(new File(['pas une image'], 'notes.txt', { type: 'text/plain' }));
+          fi.files = dt.files; fi.dispatchEvent(new Event('change'));
+          await until(() => box.querySelectorAll('.lv-pg-item').length === 2);
+          r.added = box.querySelectorAll('.lv-pg-item').length === 2 && /2 pages ajoutées/.test(box.querySelector('[data-lv-msg]').textContent) && /1 fichier illisible/.test(box.querySelector('[data-lv-msg]').textContent);
+          await until(() => [...box.querySelectorAll('.lv-pg-item img')].every(i => i.src.startsWith('blob:')));
+          r.thumbs = [...box.querySelectorAll('.lv-pg-item img')].length === 2 && [...box.querySelectorAll('.lv-pg-item img')].every(i => i.src.startsWith('blob:'));
+          const cap = box.querySelector('[data-lv-cap]'); cap.value = 'Fixture Galerie #1, p. 12'; cap.dispatchEvent(new Event('input'));
+          const sp = box.querySelectorAll('[data-lv-sp]')[1]; sp.checked = true; sp.dispatchEvent(new Event('change'));
+          const qi = box.querySelector('[data-lv-q]'); qi.value = '#1'; qi.dispatchEvent(new Event('input')); await wait(250);
+          box.querySelector('[data-lv-add="lv62a"]').click(); await wait(50);
+          box.querySelector('[data-save]').click(); await wait(250);
+          const room = P.live.state().rooms[0];
+          const pg = room.images.filter(x => x.kind === 'page');
+          r.saved = room.images.length === 3 && pg.length === 2 && pg[0].caption === 'Fixture Galerie #1, p. 12' && pg[1].spoiler === true && room.images[2].kind === 'copy' && !JSON.stringify(P.live.state()).includes('data:') && !JSON.stringify(P.live.state()).includes('blob:');
+          r.stored = (await P.live.pageCount()) === pages0 + 2;
+          await wait(100);
+          r.cardImg = await until(() => !!studio().querySelector('.lv-card-covers img[src^="blob:"]'));
+          studio().querySelector('[data-lv-start]').click(); await wait(250);
+          const stage = () => document.getElementById('liveStage');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(80);
+          r.shownPage = P.live.stage().session.shown === pg[0].ref && /visible seulement sur cet appareil/.test(stage().querySelector('.lv-cap').textContent) && await until(() => !!stage().querySelector('.lv-screen img[src^="blob:"]'));
+          stage().querySelector('[data-lv-zoom]').click(); await wait(50);
+          r.zoom = stage().querySelector('.lv-screen').classList.contains('is-zoom');
+          stage().querySelector('[data-lv-zoom]').click(); await wait(50);
+          stage().querySelector('[data-lv-step="1"]').click(); await wait(80);
+          r.spoiler = P.live.stage().session.shown === pg[1].ref && stage().querySelector('.lv-screen').classList.contains('is-sp') && !!stage().querySelector('[data-lv-reveal]');
+          stage().querySelector('[data-lv-reveal]').click(); await wait(50);
+          r.revealed = !stage().querySelector('.lv-screen').classList.contains('is-sp');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true })); await wait(80);
+          r.wrapCopy = P.live.stage().session.shown === 'lv62a' && /votre collection/.test(stage().querySelector('.lv-cap').textContent);
+          stage().querySelector('[data-lv-end]').click(); await wait(250);
+          const h = P.live.state().history[0];
+          r.history = h.shown.length === 3 && h.shown.filter(x => x.kind === 'page').length === 2;
+          studio().querySelector('[data-lv-post]').click(); await wait(200);
+          const sd = document.getElementById('communityShareDialog');
+          r.plancheText = !!sd && sd.classList.contains('open') && /2 pages commentées/.test(sd.querySelector('[data-text]').value) && !/blob:|data:/.test(sd.querySelector('[data-text]').value);
+          if (sd) sd.querySelector('[data-cancel]').click();
+          // Nettoyage : sans direct ni synthèse, les pages fictives sont libérées
+          localStorage.removeItem('panel_live_v1');
+          r.gc = (await P.live.gc()) === 2 && (await P.live.pageCount()) === pages0;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (document.getElementById('liveStage')) P.live.end();
+          if (live0 === null) localStorage.removeItem('panel_live_v1'); else localStorage.setItem('panel_live_v1', live0);
+          try { await P.live.gc(); } catch (_) {}
+          P.setSinglesInMemoryForTest(prev);
+          const ed = document.getElementById('liveEditDialog'); if (ed) ed.classList.remove('open');
+          const ft = document.querySelector('[data-cm-tab="feed"]'); if (ft) ft.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 62:', JSON.stringify(t62));
+      testResults.push({ test: 'Studio de direct (D-79) : pages choisies dans la galerie (plusieurs, fichier non image refusé), légende, spoiler flouté puis révélé, zoom, flèches, stockage local seulement, planche sans image, pages libérées',
+        ok: !!t62 && !t62.error && ['galleryBtn', 'added', 'thumbs', 'saved', 'stored', 'cardImg', 'shownPage', 'zoom', 'spoiler', 'revealed', 'wrapCopy', 'history', 'plancheText', 'gc'].every(k => t62[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

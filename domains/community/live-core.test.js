@@ -13,6 +13,7 @@ test('saveRoom : nettoyage, règles par défaut, validation', () => {
   assert.equal(r.room.title, 'Le meilleur run de Daredevil');
   assert.deepEqual(r.room.topics, ['Miller', 'Bendis et Maleev', 'Zdarsky']);
   assert.equal(r.room.images.length, 1);
+  assert.equal(r.room.images[0].kind, 'copy');
   assert.deepEqual(r.room.rules, L.DEFAULT_RULES.slice());
   assert.equal(r.state.rooms.length, 1);
   const bad = L.saveRoom(r.state, { title: '', topics: '' }, T0, 'lv_2');
@@ -63,4 +64,24 @@ test('sanitizeState rejette le mal formé ; formats de durée', () => {
   assert.equal(L.fmtDuration(3725), '1 h 02 min');
   assert.equal(L.fmtDuration(65), '1 min 05 s');
   assert.equal(L.clock(605), '10:05');
+});
+
+test('pages de la galerie : références seulement, plafond, navigation, planche sans image', () => {
+  const pages = Array.from({ length: 20 }, (_, i) => ({ ref: 'pg_' + i, kind: 'page', caption: 'Page fictive ' + i, spoiler: i === 0, dataUrl: 'data:image/jpeg;base64,xxx' }));
+  const r = L.saveRoom(L.emptyState(), { title: 'Pages', topics: 'a', images: [{ ref: 'c1', series: 'Série fictive', issue: '#1' }].concat(pages) }, T0, 'lv_p');
+  assert.equal(r.room.images.filter(L.isPage).length, L.LIMITS.pages);
+  assert.equal(r.room.images.length, 1 + L.LIMITS.pages);
+  assert.deepEqual(r.room.images[1], { ref: 'pg_0', kind: 'page', caption: 'Page fictive 0', spoiler: true });
+  assert.equal(L.imageLabel(r.room.images[0]), 'Série fictive #1');
+  assert.equal(L.imageLabel({ kind: 'page', caption: '' }), 'Page de la galerie');
+  let s = L.startSession(r.room, T0);
+  s = L.stepImage(s, r.room, 1); assert.equal(s.shown, 'c1');
+  s = L.stepImage(s, r.room, 1); assert.equal(s.shown, 'pg_0');
+  s = L.stepImage(s, r.room, -1); s = L.stepImage(s, r.room, -1); assert.equal(s.shown, r.room.images[r.room.images.length - 1].ref);
+  const end = L.endSession(r.state, s, r.room, at(30), 'h_p');
+  assert.ok(end.summary.shown.some(L.isPage));
+  assert.match(L.summaryText(end.summary), /pages? commentées?/);
+  assert.ok(!/pg_|data:/.test(L.summaryText(end.summary)));
+  const refs = L.pageRefs(end.state);
+  assert.ok(refs.includes('pg_0') && refs.includes('pg_15') && !refs.includes('pg_19'));
 });

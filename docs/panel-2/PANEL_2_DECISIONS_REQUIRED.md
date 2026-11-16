@@ -16,6 +16,7 @@ Seules les questions **réellement ouvertes** figurent ici. Pour chacune : le co
 | DR-10 | Seuil de validation d'une affirmation | Équilibre entre rigueur et vitesse | 1 ou 2 revues indépendantes | **2**, dont un vérificateur du domaine | Phase A |
 | DR-11 | Suppression des contributions à la clôture d'un compte | Intégrité documentaire et droit à l'effacement | a) anonymiser ; b) supprimer | **a)**, annoncé dans les règles avant l'inscription | Phase A |
 | DR-12 | Ordre entre PANEL 2.0 et les demandes d'interface du 14 novembre 2026 | L'utilisateur a demandé à la fois l'audit (sans code) et des améliorations : Explorer allégé, Lecture, toutes les variantes, police des boîtes, retrait de l'aspect « gradé », communauté et direct, lenteurs | a) terminer l'audit, puis traiter les améliorations dans le client existant ; b) l'inverse | **a)**, déjà appliqué : l'audit ne modifie aucun code ; les améliorations suivent, dans des lots distincts | Aucune |
+| DR-13 | Pages de la galerie dans un direct à plusieurs | Le studio accepte des pages de comics venues de la galerie du téléphone (D-79), gardées sur l'appareil. Les montrer à un salon revient à les diffuser | a) affichage éphémère, une page à la fois, sans copie côté serveur ni rediffusion, retrait par l'animateur ; b) couvertures et références seulement en ligne ; c) libre | **a)**, après avis juridique sur le droit de citation | Bloquant pour le tableau partagé du salon à plusieurs, pas pour la répétition locale |
 
 ## Arbitrages techniques déjà tranchés, à ne pas rouvrir
 

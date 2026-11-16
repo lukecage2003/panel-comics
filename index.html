@@ -3066,6 +3066,17 @@
     .lv-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .lv-thumb i { position: relative; z-index: 1; width: 100%; padding: 10px 4px 3px; font: 600 9.5px/1.15 var(--font-display); font-style: normal; color: #fff; text-align: left; background: linear-gradient(transparent, rgba(0,0,0,.75)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .lv-thumb.is-on { border-color: #ff375f; }
+    .lv-thumb.is-sp img { filter: blur(7px) brightness(.7); }
+    .lv-src { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; margin: 4px 0 8px; border-radius: 14px; background: color-mix(in srgb, var(--ink) 5%, var(--bg-card)); } .lv-src .btn { align-self: flex-start; } .lv-src small { font-weight: 500; line-height: 1.4; }
+    .lv-pg-item { flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; width: 112px; } .lv-pg-item .lv-thumb { width: 64px; }
+    .lv-pg-cap { padding: 5px 8px !important; font-size: 12px !important; min-height: 0 !important; }
+    .lv-pg-sp { display: flex; gap: 5px; align-items: center; font-size: 12px; font-weight: 500; color: var(--muted); }
+    .lv-scroll { display: grid; place-items: center; max-width: 100%; }
+    .lv-screen.is-zoom { min-height: 62vh; } .lv-screen.is-zoom .lv-scroll { position: absolute; inset: 0; display: block; overflow: auto; overscroll-behavior: contain; } .lv-screen.is-zoom .lv-scroll img { display: block; width: 100%; max-width: none; max-height: none; } .lv-screen.is-zoom .lv-cap, .lv-screen.is-zoom .lv-nav { display: none; } @media (max-width: 860px) { .lv-screen.is-zoom .lv-scroll img { width: 220%; } }
+    .lv-screen.is-sp img { filter: blur(22px) brightness(.55); }
+    .lv-reveal { position: absolute; z-index: 2; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .lv-nav { position: absolute; z-index: 2; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%; border: 0; cursor: pointer; font-size: 24px; line-height: 1; color: #fff; background: rgba(0,0,0,.45); } .lv-nav.is-prev { left: 10px; } .lv-nav.is-next { right: 10px; }
+    .lv-zoom { position: absolute; z-index: 2; top: 10px; right: 10px; border: 0; cursor: pointer; padding: 6px 12px; border-radius: 999px; font: 600 12px var(--font-display); color: #fff; background: rgba(0,0,0,.5); }
     .lv-stage { position: fixed; inset: 0; z-index: 3000; display: flex; flex-direction: column; color: #f4f2f8; background: radial-gradient(70% 90% at 80% 0%, rgba(255,55,95,.18), transparent 60%), #0d0c12; font-family: var(--font-display); }
     .lv-top { display: flex; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,.08); }
     .lv-top-t { flex: 1; min-width: 0; font: 650 17px var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -6631,7 +6642,7 @@ const DEFAULT_RULES = Object.freeze([
   'Aucun enregistrement sans l\'accord de tous.'
 ]);
 const REACTIONS = Object.freeze(['POW!', 'WOW!', 'BOOM!', 'ZAP!', 'HMM…']);
-const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 12, rules: 6, rule: 140, rooms: 30, history: 30 });
+const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30 });
 
 const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
 const isoOrEmpty = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
@@ -6639,20 +6650,30 @@ const uniq = list => list.filter((x, i) => list.indexOf(x) === i);
 
 const emptyState = () => ({ rooms: [], history: [] });
 
-// Une image du tableau est une référence à un exemplaire de la collection (jamais un envoi d'image libre, cf. cahier des charges)
+// Une image du tableau est soit une couverture de la collection (kind « copy », référence à l'exemplaire), soit une page
+// choisie dans la galerie de l'appareil (kind « page », D-79). Une page n'est qu'une référence : l'image elle-même reste
+// sur l'appareil (IndexedDB « panel-live »), n'est jamais envoyée ni versée dans une planche publique.
 const sanitizeImage = im => {
   if (!im || typeof im !== 'object') return null;
   const ref = str(im.ref, 80);
   if (!ref) return null;
-  return { ref, series: str(im.series, 120), issue: str(im.issue, 20) };
+  if (im.kind === 'page') return { ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true };
+  return { ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) };
 };
+const isPage = im => !!im && im.kind === 'page';
+const imageLabel = im => isPage(im) ? (im.caption || 'Page de la galerie') : [im.series, im.issue].filter(Boolean).join(' ');
 
 const sanitizeRoom = r => {
   if (!r || typeof r !== 'object') return null;
   const topics = (Array.isArray(r.topics) ? r.topics : String(r.topics || '').split('\n')).map(t => str(t, LIMITS.topic)).filter(Boolean).slice(0, LIMITS.topics);
   const rules = (Array.isArray(r.rules) ? r.rules : String(r.rules || '').split('\n')).map(t => str(t, LIMITS.rule)).filter(Boolean).slice(0, LIMITS.rules);
   const images = [];
-  (Array.isArray(r.images) ? r.images : []).forEach(x => { const im = sanitizeImage(x); if (im && !images.some(y => y.ref === im.ref) && images.length < LIMITS.images) images.push(im); });
+  (Array.isArray(r.images) ? r.images : []).forEach(x => {
+    const im = sanitizeImage(x);
+    if (!im || images.some(y => y.ref === im.ref) || images.length >= LIMITS.images) return;
+    if (isPage(im) && images.filter(isPage).length >= LIMITS.pages) return;
+    images.push(im);
+  });
   return {
     id: str(r.id, 40),
     title: str(r.title, LIMITS.title),
@@ -6728,6 +6749,20 @@ const nextTopic = (session, room, now) => {
   const done = session.done.concat([{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }]);
   return Object.assign({}, session, { topic: session.topic + 1, topicStartedAt: now, done });
 };
+// Image suivante ou précédente du tableau (flèches du clavier, balayage) ; boucle en fin de liste
+const stepImage = (session, room, dir) => {
+  if (!session || !room.images.length) return session;
+  const i = room.images.findIndex(x => x.ref === session.shown);
+  const n = room.images.length, j = i < 0 ? (dir < 0 ? n - 1 : 0) : (i + (dir < 0 ? -1 : 1) + n) % n;
+  return showImage(Object.assign({}, session, { shown: null }), room, room.images[j].ref);
+};
+// Références de pages encore utiles (directs préparés et synthèses) : les autres pages stockées peuvent être libérées
+const pageRefs = state => {
+  const st = sanitizeState(state), out = new Set();
+  st.rooms.forEach(r => r.images.filter(isPage).forEach(im => out.add(im.ref)));
+  st.history.forEach(h => h.shown.filter(isPage).forEach(im => out.add(im.ref)));
+  return Array.from(out);
+};
 const showImage = (session, room, ref) => {
   const im = room.images.find(x => x.ref === ref);
   if (!session || !im) return session;
@@ -6760,13 +6795,18 @@ const fmtDuration = sec => {
 const clock = sec => { const s = Math.max(0, Math.floor(Number(sec) || 0)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
 
 // Texte de la planche de synthèse, à partir de la répétition seulement
-const summaryText = x => [
-  (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
-  x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
-  'Durée : ' + fmtDuration(x.durationSec)
-].filter(Boolean).join('\n');
+// Les pages de la galerie restent privées : la planche ne cite que leur nombre, jamais leur image
+const summaryText = x => {
+  const pages = (x.shown || []).filter(isPage).length;
+  return [
+    (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
+    x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
+    'Durée : ' + fmtDuration(x.durationSec),
+    pages ? pages + ' page' + (pages > 1 ? 's' : '') + ' commentée' + (pages > 1 ? 's' : '') : ''
+  ].filter(Boolean).join('\n');
+};
 
-module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
   return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
@@ -18054,22 +18094,81 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const lvId = p => p + '_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const lvNow = () => new Date().toISOString();
   const lvCopy = ref => physicalSingles.find(x => x && x.id === ref) || null;
-  const lvImg = ref => { const c = lvCopy(ref), u = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : ''; return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : ''; };
+  // Pages de la galerie (D-79) : base IndexedDB à part (« panel-live »), jamais envoyée ni publiée ; réduites à 1600 px
+  const LV_PAGE_SIDE = 1600, LV_PAGE_MAXBYTES = 40 * 1024 * 1024;
+  let lvDbP = null, lvGcDone = false;
+  const lvPageUrls = new Map();
+  const lvDb = () => lvDbP || (lvDbP = new Promise(res => {
+    let req; try { req = indexedDB.open('panel-live', 1); } catch (_) { res(null); return; }
+    req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('pages')) db.createObjectStore('pages', { keyPath: 'id' }); };
+    req.onsuccess = () => res(req.result); req.onerror = () => res(null); req.onblocked = () => res(null);
+  }));
+  const lvTx = async (mode, fn) => {
+    const db = await lvDb(); if (!db) return null;
+    return new Promise(res => { try { const tx = db.transaction('pages', mode), rq = fn(tx.objectStore('pages')); tx.oncomplete = () => res(rq ? rq.result : true); tx.onerror = tx.onabort = () => res(null); } catch (_) { res(null); } });
+  };
+  const lvShrink = file => new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, LV_PAGE_SIDE / Math.max(img.naturalWidth, img.naturalHeight)), c = document.createElement('canvas');
+      c.width = Math.max(1, Math.round(img.naturalWidth * k)); c.height = Math.max(1, Math.round(img.naturalHeight * k));
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+      c.toBlob(b => b ? resolve({ blob: b, w: c.width, h: c.height }) : reject(new Error('Image illisible')), 'image/jpeg', 0.85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Image illisible')); };
+    img.src = url;
+  });
+  // Ajoute des pages choisies dans la galerie ; renvoie les références créées et le nombre d'échecs
+  const lvAddPages = async files => {
+    const refs = []; let failed = 0;
+    for (const f of files) {
+      if (!f || !/^image\//.test(f.type || '') || f.size > LV_PAGE_MAXBYTES) { failed++; continue; }
+      try {
+        const p = await lvShrink(f), id = lvId('pg');
+        const ok = await lvTx('readwrite', st => st.put({ id, blob: p.blob, w: p.w, h: p.h, bytes: p.blob.size, createdAt: lvNow() }));
+        if (ok === null) { failed++; continue; }
+        lvPageUrls.set(id, Promise.resolve(URL.createObjectURL(p.blob)));
+        refs.push(id);
+      } catch (_) { failed++; }
+    }
+    return { refs, failed };
+  };
+  const lvPageUrl = ref => {
+    if (!lvPageUrls.has(ref)) lvPageUrls.set(ref, lvTx('readonly', st => st.get(ref)).then(rec => rec && rec.blob ? URL.createObjectURL(rec.blob) : ''));
+    return lvPageUrls.get(ref);
+  };
+  const lvHydrate = root => { if (root) root.querySelectorAll('img[data-lv-pg]:not([src])').forEach(img => { lvPageUrl(img.dataset.lvPg).then(u => { if (u) img.src = u; else img.remove(); }); }); };
+  // Libère les pages qui ne servent plus à aucun direct ni synthèse (une fois par session, l'annulation d'une suppression reste possible jusque-là)
+  const lvGc = async () => {
+    const keep = new Set(LV().pageRefs(lvLoad())), keys = await lvTx('readonly', st => st.getAllKeys());
+    const drop = (keys || []).filter(k => !keep.has(k));
+    if (drop.length) await lvTx('readwrite', st => { drop.forEach(k => st.delete(k)); return null; });
+    drop.forEach(k => { const p = lvPageUrls.get(k); lvPageUrls.delete(k); if (p) p.then(u => { if (u) URL.revokeObjectURL(u); }); });
+    return drop.length;
+  };
+  const lvImg = x => {
+    const im = typeof x === 'string' ? { ref: x } : (x || {});
+    if (LV().isPage(im)) return '<img data-lv-pg="' + escapeHtml(im.ref) + '" alt="" decoding="async">';
+    const c = lvCopy(im.ref), u = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : '';
+    return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+  };
   const lvWhen = iso => iso ? new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sans date';
   const lvLocalInput = iso => { if (!iso) return ''; const d = new Date(iso), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()); };
   const lvHtml = () => {
     const st = lvLoad(), F = LV().FORMATS, rooms = LV().ordered(st, lvNow());
-    const card = r => '<article class="lv-card" data-lv-room="' + escapeHtml(r.id) + '"><div class="lv-card-covers" aria-hidden="true">' + (r.images.length ? r.images.slice(0, 3).map(im => '<span>' + lvImg(im.ref) + '<i>' + escapeHtml(String(im.series || '?').slice(0, 1)) + '</i></span>').join('') : '<span class="lv-card-ph">◉</span>') + '</div>' +
+    const card = r => '<article class="lv-card" data-lv-room="' + escapeHtml(r.id) + '"><div class="lv-card-covers" aria-hidden="true">' + (r.images.length ? r.images.slice(0, 3).map(im => '<span>' + lvImg(im) + '<i>' + escapeHtml(LV().isPage(im) ? '¶' : String(im.series || '?').slice(0, 1)) + '</i></span>').join('') : '<span class="lv-card-ph">◉</span>') + '</div>' +
       '<div class="lv-card-b"><small>' + escapeHtml(F[r.format]) + ' · ' + escapeHtml(lvWhen(r.when)) + '</small><b>' + escapeHtml(r.title) + '</b><span>' + r.topics.length + ' point' + (r.topics.length > 1 ? 's' : '') + ' à l\'ordre du jour · ' + r.images.length + ' image' + (r.images.length > 1 ? 's' : '') + ' au tableau</span></div>' +
       '<div class="lv-card-act"><button class="btn" data-lv-start="' + escapeHtml(r.id) + '">Répéter</button><button class="rd-act" data-lv-edit="' + escapeHtml(r.id) + '">Modifier</button><button class="rd-act" data-lv-del="' + escapeHtml(r.id) + '">Supprimer</button></div></article>';
     const hist = st.history.slice(0, 6).map(x => '<article class="lv-hist"><div><small>' + escapeHtml(lvWhen(x.endedAt)) + ' · ' + escapeHtml(LV().fmtDuration(x.durationSec)) + '</small><b>' + escapeHtml(x.title) + '</b><span>' + x.topics.length + ' sujet' + (x.topics.length > 1 ? 's' : '') + ' traité' + (x.topics.length > 1 ? 's' : '') + (x.shown.length ? ' · ' + x.shown.length + ' image' + (x.shown.length > 1 ? 's' : '') + ' montrée' + (x.shown.length > 1 ? 's' : '') : '') + '</span></div>' +
       '<button class="rd-act" data-lv-post="' + escapeHtml(x.id) + '">Planche de synthèse</button></article>').join('');
-    return '<section class="lv" id="liveStudio"><div class="lv-hero"><div class="lv-hero-t"><span class="live-dot is-studio">Studio</span><h3>Préparez votre direct</h3><p>Sujet, ordre du jour, couvertures au tableau et règles du salon. Répétez-le ici, chronomètre en main ; la synthèse reste sur cet appareil. Le salon à plusieurs (voix, mains levées, auditeurs) ouvrira avec les comptes en ligne : aucun participant n\'est simulé.</p></div><button class="btn" data-lv-new>+ Préparer un direct</button></div>' +
+    return '<section class="lv" id="liveStudio"><div class="lv-hero"><div class="lv-hero-t"><span class="live-dot is-studio">Studio</span><h3>Préparez votre direct</h3><p>Sujet, ordre du jour, couvertures de la collection et pages de votre galerie au tableau, règles du salon. Répétez-le ici, chronomètre en main ; la synthèse reste sur cet appareil. Le salon à plusieurs (voix, mains levées, auditeurs) ouvrira avec les comptes en ligne : aucun participant n\'est simulé.</p></div><button class="btn" data-lv-new>+ Préparer un direct</button></div>' +
       (rooms.length ? '<h4 class="lv-h">Mes directs <small>' + rooms.length + '</small></h4><div class="lv-list">' + rooms.map(card).join('') + '</div>'
         : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
       (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>';
   };
   const lvWire = host => {
+    lvHydrate(host);
+    if (!lvGcDone) { lvGcDone = true; setTimeout(() => { lvGc().catch(() => {}); }, 1500); }
     host.querySelectorAll('[data-lv-new]').forEach(b => { b.onclick = () => openLiveEditor(null); });
     host.querySelectorAll('[data-lv-edit]').forEach(b => { b.onclick = () => openLiveEditor(b.dataset.lvEdit); });
     host.querySelectorAll('[data-lv-start]').forEach(b => { b.onclick = () => openLiveStage(b.dataset.lvStart); });
@@ -18082,7 +18181,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-lv-post]').forEach(b => { b.onclick = () => {
       const x = lvLoad().history.find(y => y.id === b.dataset.lvPost);
       const copies = x ? x.shown.map(im => lvCopy(im.ref)).filter(Boolean) : [];
-      if (!copies.length) { showToast('Montrez au moins une couverture pendant la répétition pour en faire une planche.'); return; }
+      if (!copies.length) { showToast(x && x.shown.some(LV().isPage) ? 'Les pages de votre galerie restent privées : montrez aussi une couverture de la collection pour en faire une planche.' : 'Montrez au moins une couverture pendant la répétition pour en faire une planche.'); return; }
       openShareDialog(copies, null, { kind: 'free', text: LV().summaryText(x) });
     }; });
   };
@@ -18098,27 +18197,54 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<label class="lv-f">Date prévue (facultatif)<input class="field-input" type="datetime-local" data-lv="when" value="' + escapeHtml(prev ? lvLocalInput(prev.when) : '') + '"></label></div>' +
       '<label class="lv-f">Ordre du jour <small>un point par ligne, huit au plus</small><textarea class="field-input" data-lv="topics" rows="4" placeholder="Les sorties de la semaine&#10;Le numéro qui divise&#10;Vos coups de cœur">' + escapeHtml(prev ? prev.topics.join('\n') : '') + '</textarea></label>' +
       '<div class="lv-f"><span>Tableau d\'images <small data-lv-count></small></span><div class="lv-picked" data-lv-picked></div>' +
+        '<div class="lv-src"><button type="button" class="btn secondary" data-lv-gal>+ Pages de ma galerie</button><input type="file" accept="image/*" multiple hidden data-lv-file>' +
+        '<small>Choisissez des pages de comics dans la galerie de votre téléphone. Elles restent sur cet appareil et ne sont jamais publiées. Montrez des pages de numéros que vous possédez, pour en débattre : quelques pages, pas un numéro entier.</small></div>' +
         (owned.length ? '<input class="field-input" data-lv-q type="search" placeholder="Chercher une couverture dans votre collection…"><div class="lv-pick" data-lv-pick></div>' : '<p class="stat-sub">Ajoutez des numéros avec couverture à votre collection pour les montrer pendant le direct.</p>') + '</div>' +
       '<details class="lv-f"><summary>Règles du salon</summary><textarea class="field-input" data-lv="rules" rows="4">' + escapeHtml((prev ? prev.rules : LV().DEFAULT_RULES).join('\n')) + '</textarea></details>' +
       '<p class="stat-sub" data-lv-msg role="status"></p><div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (prev ? 'Enregistrer' : 'Créer le direct') + '</button></div></div>';
     box.classList.add('open');
     const q = sel => box.querySelector(sel);
     const label = c => (c.series || '') + ' ' + (c.issue || '');
+    const MAXP = LV().LIMITS.pages, nPages = () => picked.filter(LV().isPage).length;
+    const thumb = im => '<button type="button" class="lv-thumb is-on' + (im.spoiler ? ' is-sp' : '') + '" data-lv-unpick="' + escapeHtml(im.ref) + '" title="Retirer ' + escapeHtml(LV().imageLabel(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(LV().imageLabel(im)) + '</i></button>';
     const paint = () => {
-      q('[data-lv-count]').textContent = picked.length + ' / ' + MAXI;
-      q('[data-lv-picked]').innerHTML = picked.length ? picked.map(im => '<button type="button" class="lv-thumb is-on" data-lv-unpick="' + escapeHtml(im.ref) + '" title="Retirer ' + escapeHtml(label(im)) + '">' + lvImg(im.ref) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') : '<span class="stat-sub">Aucune image pour l\'instant.</span>';
+      q('[data-lv-count]').textContent = picked.length + ' / ' + MAXI + (nPages() ? ' · ' + nPages() + ' page' + (nPages() > 1 ? 's' : '') + ' de la galerie' : '');
+      q('[data-lv-picked]').innerHTML = picked.length ? picked.map(im => LV().isPage(im)
+        ? '<div class="lv-pg-item">' + thumb(im) + '<input class="field-input lv-pg-cap" data-lv-cap="' + escapeHtml(im.ref) + '" maxlength="80" placeholder="Légende (ex : p. 12)" value="' + escapeHtml(im.caption || '') + '"><label class="lv-pg-sp"><input type="checkbox" data-lv-sp="' + escapeHtml(im.ref) + '"' + (im.spoiler ? ' checked' : '') + '> Spoiler</label></div>'
+        : thumb(im)).join('') : '<span class="stat-sub">Aucune image pour l\'instant.</span>';
+      lvHydrate(q('[data-lv-picked]'));
       q('[data-lv-picked]').querySelectorAll('[data-lv-unpick]').forEach(b => { b.onclick = () => { picked = picked.filter(x => x.ref !== b.dataset.lvUnpick); paint(); }; });
+      q('[data-lv-picked]').querySelectorAll('[data-lv-cap]').forEach(inp => { inp.oninput = () => { const im = picked.find(x => x.ref === inp.dataset.lvCap); if (im) im.caption = inp.value; }; });
+      q('[data-lv-picked]').querySelectorAll('[data-lv-sp]').forEach(cb => { cb.onchange = () => { const im = picked.find(x => x.ref === cb.dataset.lvSp); if (im) { im.spoiler = cb.checked; const t = cb.closest('.lv-pg-item').querySelector('.lv-thumb'); if (t) t.classList.toggle('is-sp', cb.checked); } }; });
       const pick = q('[data-lv-pick]');
       if (!pick) return;
       const t = catNorm(q('[data-lv-q]').value);
       const list = owned.filter(c => !picked.some(x => x.ref === c.id) && (!t || catNorm(label(c)).includes(t))).slice(0, 24);
       pick.innerHTML = list.map(c => '<button type="button" class="lv-thumb" data-lv-add="' + escapeHtml(c.id) + '" title="Ajouter ' + escapeHtml(label(c)) + '">' + lvImg(c.id) + '<i>' + escapeHtml(label(c)) + '</i></button>').join('') || '<span class="stat-sub">Aucune couverture trouvée.</span>';
       pick.querySelectorAll('[data-lv-add]').forEach(b => { b.onclick = () => {
-        if (picked.length >= MAXI) { q('[data-lv-msg]').textContent = 'Douze images au plus sur le tableau.'; return; }
-        const c = lvCopy(b.dataset.lvAdd); if (c) picked.push({ ref: c.id, series: c.series || '', issue: c.issue || '' }); paint();
+        if (picked.length >= MAXI) { q('[data-lv-msg]').textContent = MAXI + ' images au plus sur le tableau.'; return; }
+        const c = lvCopy(b.dataset.lvAdd); if (c) picked.push({ ref: c.id, kind: 'copy', series: c.series || '', issue: c.issue || '' }); paint();
       }; });
     };
     if (q('[data-lv-q]')) q('[data-lv-q]').oninput = () => { clearTimeout(paint.tm); paint.tm = setTimeout(paint, 120); };
+    const fileIn = q('[data-lv-file]');
+    q('[data-lv-gal]').onclick = () => fileIn.click();
+    fileIn.onchange = async () => {
+      const room = Math.min(MAXI - picked.length, MAXP - nPages()), files = Array.from(fileIn.files || []);
+      fileIn.value = '';
+      if (!files.length) return;
+      const msg = q('[data-lv-msg]');
+      if (room <= 0) { msg.textContent = 'Tableau complet : ' + MAXP + ' pages de la galerie et ' + MAXI + ' images au plus.'; return; }
+      msg.textContent = 'Préparation de ' + Math.min(room, files.length) + ' page' + (Math.min(room, files.length) > 1 ? 's' : '') + '…';
+      q('[data-lv-gal]').disabled = true;
+      const r = await lvAddPages(files.slice(0, room));
+      q('[data-lv-gal]').disabled = false;
+      r.refs.forEach(ref => picked.push({ ref, kind: 'page', caption: '', spoiler: false }));
+      paint();
+      msg.textContent = [r.refs.length ? r.refs.length + ' page' + (r.refs.length > 1 ? 's' : '') + ' ajoutée' + (r.refs.length > 1 ? 's' : '') + ' au tableau.' : '',
+        r.failed ? r.failed + ' fichier' + (r.failed > 1 ? 's' : '') + ' illisible' + (r.failed > 1 ? 's' : '') + ' (image attendue, 40 Mo au plus).' : '',
+        files.length > room ? (files.length - room) + ' de trop, ignorée' + (files.length - room > 1 ? 's' : '') + '.' : ''].filter(Boolean).join(' ');
+    };
     paint();
     const close = () => box.classList.remove('open');
     q('[data-cancel]').onclick = close;
@@ -18175,12 +18301,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const lvPaintStage = () => {
     const { el, room, session } = lvStage;
-    const cur = room.topics[session.topic], label = im => (im.series || '') + ' ' + (im.issue || '');
+    const cur = room.topics[session.topic], label = im => LV().imageLabel(im);
     const shownIm = session.shown ? room.images.find(x => x.ref === session.shown) : null;
+    const hidden = !!(shownIm && shownIm.spoiler && !lvStage.revealed.has(shownIm.ref));
     const counts = Object.entries(session.reactions).map(([k, n]) => escapeHtml(k) + ' ×' + n).join(' · ');
     el.innerHTML = '<header class="lv-top"><span class="live-dot is-rec">Répétition</span><b class="lv-top-t">' + escapeHtml(room.title) + '</b><span class="lv-clock" data-lv-elapsed>00:00</span><button class="btn lv-end" data-lv-end>Terminer</button></header>' +
-      '<div class="lv-body"><section class="lv-board"><div class="lv-screen" data-lv-screen>' + (shownIm ? lvImg(shownIm.ref) + '<p class="lv-cap">' + escapeHtml(label(shownIm)) + ' · votre collection</p>' : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une couverture ci-dessous pour la montrer en grand.' : 'Aucune image au tableau : ajoutez-en en modifiant le direct.') + '</p>') + '</div>' +
-        (room.images.length ? '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im.ref) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') + '</div>' : '') +
+      '<div class="lv-body"><section class="lv-board"><div class="lv-screen' + (lvStage.zoom && shownIm ? ' is-zoom' : '') + (hidden ? ' is-sp' : '') + '" data-lv-screen>' + (shownIm ? '<div class="lv-scroll">' + lvImg(shownIm) + '</div><p class="lv-cap">' + escapeHtml(label(shownIm)) + (LV().isPage(shownIm) ? ' · page de votre galerie, visible seulement sur cet appareil' : ' · votre collection') + '</p>' +
+          (hidden ? '<button class="btn lv-reveal" data-lv-reveal>Révéler la page (spoiler)</button>' : '') +
+          (room.images.length > 1 ? '<button class="lv-nav is-prev" data-lv-step="-1" aria-label="Image précédente">‹</button><button class="lv-nav is-next" data-lv-step="1" aria-label="Image suivante">›</button>' : '') +
+          '<button class="lv-zoom" data-lv-zoom aria-pressed="' + (lvStage.zoom ? 'true' : 'false') + '">' + (lvStage.zoom ? 'Ajuster' : 'Zoom') + '</button>'
+          : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une image ci-dessous pour la montrer en grand ; flèches du clavier ou balayage pour passer à la suivante.' : 'Aucune image au tableau : ajoutez-en en modifiant le direct.') + '</p>') + '</div>' +
+        (room.images.length ? '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + (im.spoiler && !lvStage.revealed.has(im.ref) ? ' is-sp' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') + '</div>' : '') +
         '<div class="lv-react">' + LV().REACTIONS.map(k => '<button class="lv-onoma" data-lv-react="' + escapeHtml(k) + '">' + escapeHtml(k) + '</button>').join('') + '<span class="lv-react-n">' + (counts ? 'Vos réactions : ' + counts : 'Vos réactions, pour rythmer la répétition') + '</span></div></section>' +
         '<aside class="lv-side"><h4>Ordre du jour</h4><ol class="lv-agenda">' + room.topics.map((t, i) => '<li class="' + (i < session.topic ? 'is-done' : i === session.topic ? 'is-cur' : '') + '"><span>' + escapeHtml(t) + '</span>' + (i < session.topic ? '<small>' + escapeHtml(LV().clock(session.done[i].secs)) + '</small>' : i === session.topic ? '<small data-lv-topictime>00:00</small>' : '') + '</li>').join('') + '</ol>' +
         '<button class="btn secondary lv-next" data-lv-next' + (cur ? '' : ' disabled') + '>' + (!cur ? 'Ordre du jour terminé' : session.topic === room.topics.length - 1 ? 'Clore ce dernier point' : 'Point suivant') + '</button>' +
@@ -18188,6 +18319,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<details class="lv-rules"><summary>Règles du salon</summary><ul>' + room.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul></details>' +
         '<p class="lv-solo">Vous êtes seul dans ce salon de répétition. Les auditeurs et les intervenants arriveront avec les comptes en ligne.</p></aside></div>';
     el.querySelector('[data-lv-end]').onclick = closeLiveStage;
+    lvHydrate(el);
+    const rv = el.querySelector('[data-lv-reveal]'); if (rv) rv.onclick = () => { lvStage.revealed.add(session.shown); lvPaintStage(); };
+    el.querySelectorAll('[data-lv-step]').forEach(b => { b.onclick = () => lvStep(Number(b.dataset.lvStep)); });
+    const zm = el.querySelector('[data-lv-zoom]'); if (zm) zm.onclick = () => { lvStage.zoom = !lvStage.zoom; lvPaintStage(); };
+    const scr = el.querySelector('[data-lv-screen]');
+    scr.addEventListener('touchstart', e => { lvStage.tx = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive: true });
+    scr.addEventListener('touchend', e => { const x0 = lvStage.tx; lvStage.tx = null; if (x0 == null || lvStage.zoom) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) lvStep(dx < 0 ? 1 : -1); }, { passive: true });
     el.querySelectorAll('[data-lv-show]').forEach(b => { b.onclick = () => { lvStage.session = LV().showImage(lvStage.session, room, b.dataset.lvShow); lvPaintStage(); }; });
     el.querySelectorAll('[data-lv-react]').forEach(b => { b.onclick = () => {
       lvStage.session = LV().react(lvStage.session, b.dataset.lvReact);
@@ -18199,13 +18337,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     el.querySelector('[data-lv-mic]').onclick = () => { if (lvStage.mic) { lvMicStop(); const nt = el.querySelector('[data-lv-micnote]'); if (nt) nt.textContent = 'Micro coupé.'; const m = el.querySelector('[data-lv-meter]'); if (m) m.style.width = '0'; lvPaintMic(); } else lvMicStart(); };
     lvPaintMic(); lvTick();
   };
+  const lvStep = dir => { if (!lvStage) return; lvStage.session = LV().stepImage(lvStage.session, lvStage.room, dir); lvPaintStage(); };
   const openLiveStage = id => {
     const room = lvLoad().rooms.find(x => x.id === id);
     if (!room || lvStage) return false;
     const el = document.createElement('div');
     el.className = 'lv-stage'; el.id = 'liveStage'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Répétition : ' + room.title);
     document.body.appendChild(el);
-    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, onKey: e => { if (e.key === 'Escape') closeLiveStage(); } };
+    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, zoom: false, revealed: new Set(), tx: null, onKey: e => {
+      if (e.key === 'Escape') closeLiveStage();
+      else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) { e.preventDefault(); lvStep(e.key === 'ArrowRight' ? 1 : -1); }
+    } };
     document.addEventListener('keydown', lvStage.onKey);
     lvPaintStage();
     return true;
@@ -18228,7 +18370,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     save: input => { const r = LV().saveRoom(lvLoad(), input, lvNow(), lvId('lv')); if (r.errors.length) return { ok: false, errors: r.errors }; lvStore(r.state); return { ok: true, id: r.room.id }; },
     start: id => openLiveStage(id),
     stage: () => lvStage ? JSON.parse(JSON.stringify({ roomId: lvStage.room.id, session: lvStage.session, mic: !!lvStage.mic })) : null,
-    end: () => closeLiveStage()
+    end: () => closeLiveStage(),
+    pageCount: async () => ((await lvTx('readonly', st => st.getAllKeys())) || []).length,
+    gc: () => lvGc()
   });
   const renderCommunityView = () => {
     if (commTab === 'profile') { try { renderCommunityProfile(); } catch (_) {} }

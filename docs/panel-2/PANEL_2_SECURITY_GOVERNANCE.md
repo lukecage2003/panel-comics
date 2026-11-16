@@ -68,7 +68,7 @@ Toutes ces règles sont appliquées **côté base** (RLS et fonctions `api.*`, c
 
 | Contenu | Règle |
 |---|---|
-| Scans, pages, cases | **Jamais** hébergés ni redistribués. Une preuve peut citer « page 12, case 3 » d'un document légalement consulté, sans image |
+| Scans, pages, cases | **Jamais** hébergés ni redistribués. Une preuve peut citer « page 12, case 3 » d'un document légalement consulté, sans image. Exception locale (D-79) : le studio de direct accepte des pages de la galerie du téléphone, gardées sur l'appareil seulement ; leur affichage dans un salon à plusieurs est soumis à DR-13 |
 | Citations | Courtes (≤ 300 caractères), attribuées, à but de démonstration (droit de citation) |
 | Couvertures | Règles existantes : `license` (`licensed`, `user_private`, `none`) du PRD, droits par référence de `media-core.js` |
 | Données importées | Chaque source a sa licence (`catalog.source.license`) ; une donnée sous licence non redistribuable n'est **pas** exposée par Open |
