@@ -5097,6 +5097,60 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Source et Edition (D-81) : affirmations relevées avec preuves et conflits gardés, un fait sans preuve refusé, proposition locale signée, niveaux œuvre / publication / édition / exemplaire, correspondance établie (choisie) ou probable (avec raisons), rien relié automatiquement',
         ok: !!t64 && !t64.error && ['claims', 'conflicts', 'factNeedsProof', 'saved', 'shownLocal', 'levels', 'established', 'probable', 'noAutoLink', 'cleaned'].every(k => t64[k] === true) });
 
+      // ==========================================
+      // TEST 65 : Compte en ligne, préparation des lots 3.2 et 3.3 (D-82), bibliothèque Supabase FICTIVE sans réseau — données FICTIVES restaurées
+      // ==========================================
+      console.log('\n[TEST 65] Compte en ligne (préparation)...');
+      const t65 = await evalExpr(`(async () => {
+        const wait = ms => new Promise(res => setTimeout(res, ms)), r = {}, saved = localStorage.getItem('panel_cloud_config');
+        const open = async () => { document.getElementById('settingsModal').classList.remove('open'); document.getElementById('openSettingsBtnSide').click(); await wait(300); const t = document.querySelector('#settingsModal [data-set-tab="account"]'); if (t) { t.click(); await wait(150); } };
+        const body = () => document.getElementById('acctBody'), state = () => document.getElementById('acctState').textContent;
+        try {
+          localStorage.removeItem('panel_cloud_config');
+          await open();
+          r.inAccountTab = !!document.querySelector('#settingsModal [data-acct-slot] #acctBox');
+          r.localState = state() === 'Mode local' && !!body().querySelector('[data-acct-cfg]');
+          const fill = (u, k) => { body().querySelector('[data-acct="url"]').value = u; body().querySelector('[data-acct="key"]').value = k; body().querySelector('[data-acct-cfg] button[type=submit]').click(); };
+          fill('https://abcdefghijklmnopqrst.supabase.co', 'sb_' + 'secret_' + 'FixtureKey123'); await wait(50);
+          r.secretRefused = /SECRÈTE/.test(body().querySelector('[data-acct-msg]').textContent) && !localStorage.getItem('panel_cloud_config');
+          fill('https://abcdefghijklmnopqrst.supabase.co', 'sb_publishable_FixtureKey123'); await wait(100);
+          r.savedCfg = JSON.parse(localStorage.getItem('panel_cloud_config')).publishableKey === 'sb_publishable_FixtureKey123';
+          r.noLib = /pas encore installée/.test(body().textContent) && /projet configuré/.test(state());
+          const calls = [];
+          let session = null;
+          window.supabase = { createClient: (u, k, o) => { calls.push(['create', u, o.auth.flowType]); return { auth: {
+            getSession: async () => ({ data: { session: session }, error: null }),
+            signUp: async a => { calls.push(['signUp', a.email]); return { data: {}, error: { code: 'user_already_exists' } }; },
+            signInWithPassword: async a => { calls.push(['signIn']); session = { user: { email: a.email, email_confirmed_at: 'x' }, expires_at: 2e9, refresh_token: 'r' }; return { data: { session: session }, error: null }; },
+            signOut: async o => { calls.push(['signOut', o.scope]); session = null; return { error: null }; },
+            resetPasswordForEmail: async () => ({ error: null }) } }; } };
+          await open(); await wait(100);
+          r.forms = !!body().querySelector('[data-acct-auth]') && calls[0][2] === 'pkce';
+          body().querySelector('[data-acct="email"]').value = 'fixture@example.invalid'; body().querySelector('[data-acct="pw"]').value = 'motdepasse2026';
+          body().querySelector('[data-acct-do="up"]').click(); await wait(100);
+          r.neutral = /Si cette adresse peut être utilisée/.test(body().querySelector('[data-acct-msg]').textContent);
+          body().querySelector('[data-acct-auth] button[type=submit]').click(); await wait(200);
+          r.signedIn = state() === 'Connecté' && /fixture@example.invalid/.test(body().textContent);
+          body().querySelector('[data-acct-out]').click(); await wait(200);
+          r.signedOutLocal = calls.some(c => c[0] === 'signOut' && c[1] === 'local') && !!body().querySelector('[data-acct-auth]');
+          body().querySelector('[data-acct-forget]').click(); await wait(100);
+          r.forgotten = !localStorage.getItem('panel_cloud_config') && !!body().querySelector('[data-acct-cfg]');
+          const t = document.querySelector('#settingsModal [data-set-tab="display"]'); t.click(); await wait(100);
+          document.querySelector('#settingsModal [data-set-tab="account"]').click(); await wait(100);
+          r.survivesTabs = !!document.querySelector('#settingsModal [data-acct-slot] #acctBox');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          delete window.supabase;
+          if (saved === null) localStorage.removeItem('panel_cloud_config'); else localStorage.setItem('panel_cloud_config', saved);
+          localStorage.removeItem('panel_cloud_auth');
+          document.getElementById('settingsModal').classList.remove('open');
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 65:', JSON.stringify(t65));
+      testResults.push({ test: 'Compte en ligne (D-82) : encadré dans l onglet Compte, clé secrète refusée, projet gardé sur l appareil, rien sans bibliothèque installée, flux PKCE, inscription sans énumération, connexion puis déconnexion locale, projet oublié',
+        ok: !!t65 && !t65.error && ['inAccountTab', 'localState', 'secretRefused', 'savedCfg', 'noLib', 'forms', 'neutral', 'signedIn', 'signedOutLocal', 'forgotten', 'survivesTabs'].every(k => t65[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -212,3 +212,17 @@ Restant, avec un service externe ou une décision : projet Supabase et `verify-s
 | Suppression de compte | `app.delete_account` (cascade vérifiée sur toutes les tables à `user_id`) ; `functions/delete-account` : jeton, phrase « SUPPRIMER MON COMPTE », effacement des données puis compte, arrêt avant suppression du compte si l'effacement échoue | Déploiement, clé de service en variable d'environnement du projet |
 | Runbook | [`runbooks/incident.md`](runbooks/incident.md) | Relecture par l'utilisateur ; démarche CNIL validée par un professionnel |
 | Tests | `limits.test.js` (3), `delete-account.test.js` (3), `verify-supabase.sql` étendu | `verify-supabase.sql` sur un vrai projet |
+
+## 13. Préparation du branchement des comptes sur la préproduction (16 novembre 2026)
+**Statut : préparé et vérifié localement ; aucun compte créé ; aucune bibliothèque Supabase installée ; synchronisation toujours désactivée.** Décision : D-82 (suite de DR-08 : production créée plus tard).
+
+| Élément | Réalisé | Reste |
+|---|---|---|
+| Préproduction | `verify-supabase.sql` exécuté en lecture seule sur le projet de préproduction : **conforme** (migrations 1 à 13, 0 compte). Conseiller de sécurité : 5 remarques d'information « RLS sans politique » sur des tables réservées au service (`service_limits`, `staff_role_log`, `community.limits`, `moderation_log`, `rate_events`), voulues | — |
+| Module `domains/account/auth-core.js` | Configuration (URL du projet, clé PUBLIQUE seulement : `sb_secret_…` et jeton `service_role` refusés) ; e-mail et mot de passe (10 caractères, lettres et chiffres) contrôlés avant envoi ; erreurs Supabase traduites en français ; inscription et mot de passe oublié sans énumération ; déconnexion locale par défaut, « tous les appareils » en option ; client injecté, jamais chargé par le module. 5 tests | — |
+| Écran Compte | Encadré « Compte en ligne » dans Réglages › Compte & profil : mode local, enregistrement du projet sur l'appareil (`panel_cloud_config`), puis connexion, inscription, mot de passe oublié, déconnexion, oubli du projet. Le client n'est créé (flux PKCE, `storageKey` `panel_cloud_auth`) que si la bibliothèque est présente. Test Edge 65 avec une bibliothèque fictive, sans réseau | — |
+| Bibliothèque supabase-js | Non installée : l'encadré l'indique | Téléchargement d'une version figée dans `vendor/` (accord de l'utilisateur requis), ajout à `serve.js` (`ALLOWED`), au service worker et à l'application Android |
+| CSP stricte | Non faite | **Avant** d'installer la bibliothèque (§ 2.3) : scripts en ligne par empreinte, fin des CDN (JSZip, zxing-wasm) |
+| Réglages Auth du projet | — | Par l'utilisateur dans le tableau de bord : URL du site et URL de redirection (`http://localhost:8085/`), confirmation d'e-mail, SMTP (l'envoi intégré de Supabase suffit pour quelques testeurs) |
+| Premier compte et appareil | — | Création par l'utilisateur ; `api.register_device` à la première connexion ; premier administrateur par geste manuel |
+
