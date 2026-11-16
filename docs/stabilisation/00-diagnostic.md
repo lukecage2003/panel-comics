@@ -64,9 +64,10 @@ Collection de comics (numéros, séries, variantes, état, prix, achat, cession)
 
 | # | Gravité | Problème | Détail | Statut |
 |---|---|---|---|---|
-| F1 | Élevée | Date « du jour » calculée en UTC | `new Date().toISOString().slice(0, 10)` donne la date UTC : entre 0 h et 1 h (France, 2 h l'été) la date d'achat, de cession, « aujourd'hui » du calendrier et les noms d'export sont ceux de la veille ; jusqu'à 5 h au Québec. 13 occurrences (lignes ≈ 8921, 8980, 12001, 12072, 12231, 12247, 19724, 20521, 20537, 20549, 21625, 22359, 22617) | Identifié mais non corrigé — étape C |
+| F1 | Élevée | Date « du jour » calculée en UTC | `new Date().toISOString().slice(0, 10)` donne la date UTC : entre 0 h et 1 h (France, 2 h l'été) la date d'achat, de cession, « aujourd'hui » du calendrier et les noms d'export sont ceux de la veille ; jusqu'à 5 h au Québec. 13 occurrences (lignes ≈ 8921, 8980, 12001, 12072, 12231, 12247, 19724, 20521, 20537, 20549, 21625, 22359, 22617) | **Corrigé et vérifié** (D-86) : module `local-date.js`, 13 dates du jour + 2 clés de mois remplacées, 6 tests Node (fuseaux imposés) et test Edge 67 (horloge simulée à 0 h 30) |
 | F2 | Moyenne | Suite Edge complète lente / blocages IndexedDB sur cette machine | Historique de blocages ; contournée par exécution ciblée dans le navigateur | Non testable dans l'environnement actuel (partiellement) |
-| F3 | Faible | Trois `isoDate` homonymes à portées différentes | Lignes 4991, 5791 (validation), 13333 (formatage local) : risque de confusion lors des corrections | Identifié mais non corrigé |
+| F3 | Faible | Trois `isoDate` homonymes à portées différentes | Lignes ≈ 4991, 5791 (validation, modules distincts), ≈ 13360 (formatage local) : risque de confusion ; la date du jour passe désormais par `todayLocal()` | Identifié mais non corrigé (sans effet fonctionnel) |
+| F4 | Moyenne | Suite Edge d'audit : 4 tests en dépassement de délai (57, 60, 61, 65), test 62 en échec, test 66 non atteint (limite de 15 min) | Test 62 rejoué seul sur 8097 : 16/16 — échec dû à l'état laissé par le test 61 ; départ propre ajouté. Les dépassements relèvent du blocage IndexedDB connu de cette machine | Test 62 : **Corrigé et vérifié** ; 57, 60, 61, 65 : Non testable dans l'environnement actuel (à rejouer à l'étape H) |
 
 ## 7. Problèmes UX et responsive
 

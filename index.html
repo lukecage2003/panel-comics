@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-SjUhCk4Kvmf0uFPRbCJdd4WW5DozudDirqaZSKIJUhw=' 'sha256-8RccBvv6jBZ+y8J/U54OIfSGhLvbB0vKl+DQzT1UjFA=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-+caimrG/qkddfZ44Qo4509Qzc91LGvwHKQtkxadD2ic=' 'sha256-/XNhVDriyE5RsUMMK5nbNqRa1nAk1zrOHXu28QYJ7gs=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -7123,6 +7123,33 @@ function correspondences(pub, relations, candidates) {
 
 module.exports = { LEVELS, CERTAINTY, workKey, levels, established, probable, correspondences };
   return Object.freeze(module.exports); })();
+  /* domains/catalog/local-date.js */
+  out.localDate = (() => { const module = { exports: {} };
+'use strict';
+// Dates « du jour » à l'heure locale (stabilisation, étape C, F1) — module pur : ni DOM, ni réseau, ni stockage.
+// Pourquoi : toISOString() tronqué à 10 caractères donne la date UTC. Entre minuit et 1 h (2 h l'été) en France,
+// et jusqu'à 5 h au Québec, la date d'achat, de cession, « aujourd'hui » du calendrier et les noms d'export
+// étaient ceux de la veille. Les dates saisies par l'utilisateur (AAAA-MM-JJ) sont locales : on compare local à local.
+// Ne pas utiliser pour les horodatages techniques (addedAt, updatedAt…), qui restent en ISO UTC complet.
+
+const pad = n => String(n).padStart(2, '0');
+const asDate = d => (d instanceof Date ? d : d === undefined ? new Date() : new Date(d));
+
+// AAAA-MM-JJ du jour local de l'instant donné (maintenant par défaut)
+const localDay = d => { const x = asDate(d); return x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate()); };
+
+// AAAA-MM du mois local
+const localMonth = d => localDay(d).slice(0, 7);
+
+// Les `count` derniers mois locaux, du plus ancien au mois courant (AAAA-MM), sans dépendre du jour du mois
+const localMonthsBack = (d, count = 12) => {
+  const x = asDate(d), out = [];
+  for (let i = count - 1; i >= 0; i--) out.push(localMonth(new Date(x.getFullYear(), x.getMonth() - i, 1, 12)));
+  return out;
+};
+
+module.exports = { localDay, localMonth, localMonthsBack };
+  return Object.freeze(module.exports); })();
   /* domains/account/auth-core.js */
   out.accountAuth = (() => { const module = { exports: {} };
 'use strict';
@@ -8096,6 +8123,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   const $ = id => document.getElementById(id);
   const $$ = sel => document.querySelectorAll(sel);
+  // Stabilisation C (F1) : « aujourd'hui » à l'heure locale, jamais la date UTC (domains/catalog/local-date.js)
+  const LD = window.PanelDomains.localDate;
+  const todayLocal = () => LD.localDay();
 
   // ÉTAT DE L'APPLICATION
   let activeModule = 'singles';
@@ -8918,7 +8948,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         id: 's_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
         series: e.series, issue: e.issue || (parsed.issueNum ? '#' + parsed.issueNum : ''), publisher: e.publisher || parsed.publisher, variant: e.variant || 'Cover A',
         keyType: (checkKeyIssueInfo(e.series, e.issue, e.coverYear) || {}).tier || 'none', condition: '',
-        coverPrice: numOrNull(e.coverPrice), estValue: null, purchaseDate: new Date().toISOString().slice(0, 10), isRead: false, rating: 0,
+        coverPrice: numOrNull(e.coverPrice), estValue: null, purchaseDate: todayLocal(), isRead: false, rating: 0,
         box: 'Boîte Scan Rapide', divider: '', location: 'Boîte Scan Rapide', isProtected: true, isWishlist: false, notes: '',
         coverUrl: e.coverUrl || '', coverYear: e.coverYear || null, barcode: parsed.raw, addedAt: new Date().toISOString()
       };
@@ -8977,7 +9007,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const csv = [cols.map(c => cell(c[1])).join(';')].concat(scanJournal.map(e => cols.map(c => cell(c[0] === 'code' && e.code ? '⁠' + e.code : e[c[0]])).join(';'))).join('\r\n');
     const a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' }));
-    a.download = 'panel_journal_scans_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.download = 'panel_journal_scans_' + todayLocal() + '.csv';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
   };
@@ -12007,7 +12037,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     item.estValue = v;
     item.valueSource = 'market';
     item.marketSource = source || 'Vente constatée';
-    item.marketDate = new Date().toISOString().slice(0, 10);
+    item.marketDate = todayLocal();
     pushValueHistory(item, v, 'market', item.marketSource);
     return true;
   };
@@ -12078,7 +12108,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!fin || fin.mixed) return; // lot F1 : jamais de total entre devises différentes
     try {
       const snaps = JSON.parse(localStorage.getItem('panel_value_snapshots') || '{}') || {};
-      const today = new Date().toISOString().slice(0, 10);
+      const today = todayLocal();
       const cur = snaps[today];
       if (cur && !cur.m) return;
       if (cur && Math.abs(cur.v - fin.value) < 0.01 && Math.abs((cur.i || 0) - fin.invested) < 0.01 && cur.n === fin.ownedCount && cur.nv === fin.valueKnown && cur.ni === fin.costKnown) return;
@@ -12237,7 +12267,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     else if ('acquisitionFees' in target) target.acquisitionFees = null;
     const kind = $('singleDisposalKind') ? $('singleDisposalKind').value : '';
     if (kind && !target.isWishlist) {
-      const d = finCleanDisposal({ kind, date: $('singleDisposalDate').value || new Date().toISOString().slice(0, 10), price: $('singleDisposalPrice').value, fees: $('singleDisposalFees').value,
+      const d = finCleanDisposal({ kind, date: $('singleDisposalDate').value || todayLocal(), price: $('singleDisposalPrice').value, fees: $('singleDisposalFees').value,
         currency: (prev && prev.disposal && prev.disposal.currency) || cur, note: prev && prev.disposal ? prev.disposal.note : '' });
       if (d) target.disposal = d;
     } else if (target.disposal) delete target.disposal;
@@ -12253,7 +12283,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     fillFinanceFormFields(null);
     setPurchasePrefill(false);
     syncPurchasePrefill();
-    if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = new Date().toISOString().slice(0, 10);
+    if ($('singlePurchaseDateInput')) $('singlePurchaseDateInput').value = todayLocal();
     if ($('singleReadCheckbox')) $('singleReadCheckbox').checked = false;
     renderStarInput($('singleRatingInput'), 0);
     if ($('singleYearInput')) $('singleYearInput').value = '';
@@ -17546,7 +17576,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const inCur = all.filter(s => !disposedOf(s) && (purchaseCurOf(s) || 'none') === cur);
     const avg = x.costKnown ? x.invested / x.costKnown : null;
     const gainPct = x.gain !== null && x.gainCost ? Math.round(x.gain / x.gainCost * 1000) / 10 : null;
-    const mKey = new Date().toISOString().slice(0, 7);
+    const mKey = LD.localMonth();
     const monthSpent = inCur.reduce((a, s) => { const c = costOf(s); return c !== null && String(s.purchaseDate || s.addedAt || '').slice(0, 7) === mKey ? a + toCents(c) : a; }, 0) / 100;
     const budget = finBudgetGet(cur);
     const bPct = budget ? Math.min(100, Math.round(monthSpent / budget * 100)) : 0;
@@ -17591,7 +17621,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const rows = Object.keys(by).sort().map(c => { const x = by[c]; return `<tr><td>${escapeHtml(curLabel(c))}</td><td>${fmtCur(x.costKnown ? x.invested : null, c)}</td><td>${fmtCur(x.valueKnown ? x.value : null, c)}</td><td>${x.gain === null ? '—' : fmtCur(x.gain, c) + (x.gainPct === null ? '' : ' (' + x.gainPct + ' %)')}</td><td>${x.realizedN ? fmtCur(x.realized, c) : '—'}</td></tr>`; }).join('');
     // Dépenses par mois (date d'achat connue), 12 derniers mois, par devise
     const months = [];
-    for (let i = 11; i >= 0; i--) { const dt = new Date(); dt.setDate(1); dt.setMonth(dt.getMonth() - i); months.push(dt.toISOString().slice(0, 7)); }
+    months.push(...LD.localMonthsBack(new Date(), 12));
     const spend = {};
     all.forEach(x => { const m = String(x.purchaseDate || '').slice(0, 7), c = costOf(x); if (c === null || !months.includes(m)) return; const k = purchaseCurOf(x) || 'none'; (spend[k] = spend[k] || {})[m] = ((spend[k][m] || 0) * 100 + toCents(c)) / 100; });
     const spendHtml = Object.keys(spend).length ? Object.keys(spend).sort().map(c => { const max = Math.max(...Object.values(spend[c]), 1); return `<p class="stat-sub" style="margin:6px 0 2px"><b>${escapeHtml(curLabel(c))}</b></p>` + months.map(m => `<div class="hbar-row"><span>${new Date(m + '-15').toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })}</span><div class="hbar"><div style="width:${((spend[c][m] || 0) / max) * 100}%"></div></div><span class="hbar-val">${spend[c][m] ? fmtCur(spend[c][m], c) : '—'}</span></div>`).join(''); }).join('') : '<p class="stat-sub">Aucun achat daté avec un prix sur les 12 derniers mois.</p>';
@@ -19730,7 +19760,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (download) {
       const a = document.createElement('a');
       a.href = URL.createObjectURL(out);
-      a.download = 'panel_archive_numerique_' + new Date().toISOString().slice(0, 10) + '.zip';
+      a.download = 'panel_archive_numerique_' + todayLocal() + '.zip';
       a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 60000);
       showToast('Archive exportée : ' + files.length + ' fichier(s). Vos données restent conservées dans l’application.');
@@ -20527,7 +20557,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const blob = new Blob(['﻿' + csvContent], { type: 'text/csv;charset=utf-8;' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'panel_collection_singles_us_' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.download = 'panel_collection_singles_us_' + todayLocal() + '.csv';
     a.click();
     setTimeout(() => URL.revokeObjectURL(a.href), 2000);
     showToast('Inventaire CSV téléchargé !');
@@ -20543,7 +20573,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
     try {
       const b = await exportCollectionBundle();
-      bunDownload(b, 'panel_collection_' + new Date().toISOString().slice(0, 10) + '.json');
+      bunDownload(b, 'panel_collection_' + todayLocal() + '.json');
       showToastAction('Sauvegarde JSON de votre collection téléchargée (Collection seule).', 'Ancien format', () => { exportSinglesLegacyV2().catch(err => showToast('Export impossible : ' + (err && err.message || err))); });
     } catch (err) { showToast('Export impossible : ' + (err && err.message || err)); }
   };
@@ -20555,7 +20585,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const exportSinglesLegacyV2Data = async () => bundleToSinglesV2(await bundleExport({ domains: ['collection', 'reading', 'explorer', 'app'] }));
   const exportSinglesLegacyV2 = async () => {
     const d = await exportSinglesLegacyV2Data();
-    bunDownload(d, 'panel_singles_backup_' + new Date().toISOString().slice(0, 10) + '.json');
+    bunDownload(d, 'panel_singles_backup_' + todayLocal() + '.json');
     showToast('Sauvegarde de la collection à l\'ancien format (panel-singles v2) téléchargée.');
     return d;
   };
@@ -21632,7 +21662,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `panel_sauvegarde_complete_${new Date().toISOString().slice(0, 10)}.json`;
+      a.download = `panel_sauvegarde_complete_${todayLocal()}.json`;
       a.click();
       showToast('Sauvegarde complète exportée (format compatible) !');
     };
@@ -22366,7 +22396,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   };
   const bundleDownloadFull = async () => {
     const b = await bundleExport({ legacyDigital: true });
-    bunDownload(b, 'panel_sauvegarde_complete_' + new Date().toISOString().slice(0, 10) + '.json');
+    bunDownload(b, 'panel_sauvegarde_complete_' + todayLocal() + '.json');
     showToast('Sauvegarde complète exportée (panel-bundle, par domaine) !');
     return b;
   };
@@ -22624,7 +22654,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       try {
         const b = await bundleExport({ domains, legacyDigital: q('input[name=bunLegacy]').checked, secretsPassword });
         const all = domains.length === 4;
-        bunDownload(b, 'panel_sauvegarde_' + (all ? 'complete' : domains.join('-')) + '_' + new Date().toISOString().slice(0, 10) + '.json');
+        bunDownload(b, 'panel_sauvegarde_' + (all ? 'complete' : domains.join('-')) + '_' + todayLocal() + '.json');
         box.classList.remove('open');
         showToast('Sauvegarde exportée : ' + domains.map(id => BUNDLE_LABELS[id]).join(', ') + (secretsPassword ? ' + clés chiffrées' : '') + '.');
       } catch (err) { msg.textContent = String(err.message || err); q('[data-go]').disabled = false; }

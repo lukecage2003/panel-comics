@@ -31,7 +31,10 @@ const CONTEXT_OK = {
 // Liste blanche explicite : chaque exception est justifiée.
 const ALLOW = [
   // Le détecteur lui-même décrit les motifs.
-  { file: /^scripts\/check-secrets\.js$/, name: /.*/, reason: 'définition des motifs' }
+  { file: /^scripts\/check-secrets\.js$/, name: /.*/, reason: 'définition des motifs' },
+  // Bibliothèque tierce figée (D-85), identique octet pour octet au paquet npm zxing-wasm 3.1.3 (empreinte dans vendor/README.md) :
+  // la chaîne hexadécimale fait partie du code compilé du lecteur, pas d'une clé. Exception limitée à ce fichier et à ce motif.
+  { file: /^vendor\/zxing-wasm-3\.1\.3\/iife\/reader\/index\.js$/, name: 'clé hexadécimale de 40 caractères (format Comic Vine)', reason: 'code tiers vérifié par empreinte' }
 ];
 
 const mask = s => (s.length <= 8 ? '****' : s.slice(0, 4) + '…' + '*'.repeat(4) + ` (${s.length} car.)`);

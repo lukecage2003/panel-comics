@@ -4922,6 +4922,8 @@ const waitForCdp = async () => {
         const until = async (f, ms = 4000) => { const t = Date.now(); while (Date.now() - t < ms) { if (f()) return true; await wait(50); } return false; };
         const page = (w, h, color, name) => new Promise(res => { const c = document.createElement('canvas'); c.width = w; c.height = h; const g = c.getContext('2d'); g.fillStyle = color; g.fillRect(0, 0, w, h); g.fillStyle = '#fff'; g.fillText('Page fictive', 10, 20); c.toBlob(b => res(new File([b], name, { type: 'image/png' })), 'image/png'); });
         try {
+          // Stabilisation C : départ propre même si un test précédent (61) a dépassé son délai en laissant un direct ouvert
+          if (document.getElementById('liveStage')) P.live.end();
           localStorage.removeItem('panel_live_v1');
           await P.live.gc();
           const pages0 = await P.live.pageCount();
@@ -5189,6 +5191,39 @@ const waitForCdp = async () => {
       console.log('Résultat Test 66:', JSON.stringify(t66));
       testResults.push({ test: 'CSP stricte (D-83) : scripts autorisés par empreinte, aucun gestionnaire en ligne, échecs d images et boutons relais délégués, script et gestionnaire injectés bloqués, application intacte',
         ok: !!t66 && !t66.error && ['meta', 'noInlineHandlers', 'delegatedErrors', 'proxy', 'injectionBlocked', 'appAlive'].every(k => t66[k] === true) });
+
+      // ==========================================
+      // TEST 67 : Date du jour à l'heure locale (stabilisation C, F1), horloge simulée à 0 h 30 puis rétablie, rien n'est enregistré
+      // ==========================================
+      console.log('\n[TEST 67] Date du jour locale...');
+      const t67 = await evalExpr(`(async () => {
+        const wait = ms => new Promise(res => setTimeout(res, ms));
+        const RealDate = Date, r = {};
+        const off = new RealDate(2026, 10, 17).getTimezoneOffset();
+        r.tzOffsetMin = off;
+        // Fuseau UTC : aucune différence possible ici, le cas est couvert par domains/catalog/local-date.test.js (fuseaux imposés)
+        if (off === 0) return { skipped: 'UTC', ok: true, domain: window.PanelDomains.localDate.localDay(new RealDate(2026, 10, 17, 0, 30)) === '2026-11-17', restored: true };
+        const fixed = off < 0 ? new RealDate(2026, 10, 17, 0, 30) : new RealDate(2026, 10, 16, 23, 30);
+        const want = off < 0 ? '2026-11-17' : '2026-11-16';
+        r.utcWouldBe = fixed.toISOString().slice(0, 10);
+        class FakeDate extends RealDate { constructor(...a) { if (a.length === 0) super(fixed.getTime()); else super(...a); } static now() { return fixed.getTime(); } }
+        window.Date = FakeDate;
+        try {
+          document.getElementById('addSingleModalOpenBtn').click(); await wait(200);
+          r.purchaseDefault = document.getElementById('singlePurchaseDateInput').value;
+          r.ok = r.purchaseDefault === want && r.utcWouldBe !== want;
+          r.domain = window.PanelDomains.localDate.localDay() === want && window.PanelDomains.localDate.localMonth() === want.slice(0, 7);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.Date = RealDate;
+          document.getElementById('singleIssueDetailModal').classList.remove('open');
+        }
+        r.restored = window.Date === RealDate;
+        return r;
+      })()`);
+      console.log('Résultat Test 67:', JSON.stringify(t67));
+      testResults.push({ test: 'Date du jour locale (F1) : à 0 h 30, la date d achat proposée est celle du jour local et non la date UTC de la veille',
+        ok: !!t67 && !t67.error && ['ok', 'domain', 'restored'].every(k => t67[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');

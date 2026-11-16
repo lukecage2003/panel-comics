@@ -23,6 +23,7 @@ const MODULES = [
   ['liveCore', 'domains/community/live-core.js'],
   ['sourceClaims', 'domains/source/claims-core.js'],
   ['editionCore', 'domains/catalog/edition-core.js'],
+  ['localDate', 'domains/catalog/local-date.js'],
   ['accountAuth', 'domains/account/auth-core.js'],
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
