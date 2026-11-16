@@ -1398,6 +1398,11 @@ const waitForCdp = async () => {
         r.badLoginNotSaved = !bad.ok && !localStorage.getItem('panel_metron_creds');
         const good = await P.appRelay.metronLogin('u', 'p');
         r.loginSaved = good.ok && JSON.parse(localStorage.getItem('panel_metron_creds')).username === 'u';
+        // Stabilisation S2 : le mot de passe reste en session (sessionStorage), jamais dans localStorage ; l'ancien format est migré
+        r.noPasswordStored = !JSON.parse(localStorage.getItem('panel_metron_creds')).password && sessionStorage.getItem('panel_metron_pass') === 'p';
+        localStorage.setItem('panel_metron_creds', JSON.stringify({ username: 'u', password: 'p' })); sessionStorage.removeItem('panel_metron_pass');
+        const mig = P.appRelay.metronCreds();
+        r.legacyMigrated = !!mig && mig.password === 'p' && !JSON.parse(localStorage.getItem('panel_metron_creds')).password && sessionStorage.getItem('panel_metron_pass') === 'p';
         const m1 = await P.appRoute('app:/metron/scan?code=76194138584600138&issue=1');
         r.metronExact = m1.found === 'exact' && m1.edition.name === 'Cover J Jim Lee Foil Virgin Variant' && m1.issue.series.name === 'Absolute Batman' && lastAuth === 'Basic ' + btoa('u:p') && m1.remaining === 4990;
         const n = calls.length;
@@ -1417,7 +1422,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 21:', t21);
       testResults.push({
         test: 'App Android : relais intégré (Metron identifiants vérifiés avant enregistrement, édition exacte, cache, GCD, quota)',
-        ok: !!t21 && ['notConfigured', 'badLoginNotSaved', 'loginSaved', 'metronExact', 'metronCached', 'gcdExact', 'status', 'gcdQuota', 'webModeUnchanged'].every(k => t21[k] === true)
+        ok: !!t21 && ['notConfigured', 'badLoginNotSaved', 'loginSaved', 'noPasswordStored', 'legacyMigrated', 'metronExact', 'metronCached', 'gcdExact', 'status', 'gcdQuota', 'webModeUnchanged'].every(k => t21[k] === true)
       });
 
       // ==========================================

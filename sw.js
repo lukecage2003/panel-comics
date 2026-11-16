@@ -1,12 +1,12 @@
 /* Panel — service worker
  * - Coquille de l'app (HTML, manifest, icônes) en cache : Panel s'ouvre hors ligne.
- * - Bibliothèques CDN (PDF.js, JSZip, lecteur de codes-barres zxing-wasm) et polices : cache puis mise à jour
+ * - Bibliothèques servies par Panel (vendor/ : JSZip, zxing-wasm, supabase-js) : cache d'abord ; polices : cache puis mise à jour
  *   en arrière-plan (le scanner fonctionne hors ligne après une première utilisation).
  * - API Comic Vine, couvertures et tout le reste : réseau uniquement (données toujours fraîches,
  *   pas de réponses opaques qui gonfleraient le quota de stockage).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-16-supabase-js-d84';
+const VERSION = 'panel-2026-11-16-vendor-local';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [
@@ -21,6 +21,7 @@ const SHELL = [
   './fonts/barlow-condensed-600-latin.woff2',
   './fonts/barlow-condensed-700-latin.woff2',
   './fonts/barlow-condensed-800-latin.woff2',
+  './vendor/jszip-3.10.1.min.js',
   './data/cosmos-marvel.json'
 ];
 const LIB_HOSTS = ['cdnjs.cloudflare.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
@@ -66,6 +67,19 @@ self.addEventListener('fetch', event => {
 
   // Relais local (GCD) : toujours le réseau
   if (url.origin === self.location.origin && url.pathname.startsWith('/api/')) return;
+
+  // Bibliothèques servies par Panel (vendor/, versions figées) : cache d'abord, mises en cache à la première utilisation
+  if (url.origin === self.location.origin && url.pathname.includes('/vendor/')) {
+    event.respondWith((async () => {
+      const cache = await caches.open(LIB_CACHE);
+      const hit = await cache.match(req, { ignoreSearch: true });
+      if (hit) return hit;
+      const res = await fetch(req);
+      if (res && res.ok) cache.put(req, res.clone());
+      return res;
+    })());
+    return;
+  }
 
   // Fichiers de l'app (manifest, icônes) : cache d'abord
   if (url.origin === self.location.origin) {

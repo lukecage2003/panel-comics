@@ -22,15 +22,11 @@ function inlineScripts(html) {
 
 function policy(html) {
   const hashes = inlineScripts(html).map(s => "'sha256-" + crypto.createHash('sha256').update(s, 'utf8').digest('base64') + "'");
-  const zx = (/const ZXING_VERSION = '([0-9.]+)'/.exec(html) || [])[1];
-  if (!zx) throw new Error('ZXING_VERSION introuvable dans index.html');
   const directives = [
     "default-src 'self'",
-    // Scripts : ceux de la page (empreintes), JSZip et zxing-wasm en version figée, réponses JSONP de Comic Vine (clé personnelle) ;
+    // Scripts : ceux de la page (empreintes), bibliothèques servies par Panel (vendor/, plus aucun CDN), réponses JSONP de Comic Vine (clé personnelle) ;
     // 'wasm-unsafe-eval' pour le lecteur de codes-barres (WebAssembly), jamais 'unsafe-eval' ni 'unsafe-inline'
     ["script-src 'self'"].concat(hashes, [
-      'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',
-      'https://cdn.jsdelivr.net/npm/zxing-wasm@' + zx + '/dist/iife/reader/index.js',
       'https://comicvine.gamespot.com/api/',
       "'wasm-unsafe-eval'"]).join(' '),
     "script-src-attr 'none'",

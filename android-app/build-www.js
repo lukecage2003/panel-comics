@@ -1,6 +1,6 @@
 // Prépare www/ pour l'APK à partir de la source unique ../index.html :
-//  - bibliothèques (PDF.js, JSZip, zxing-wasm) embarquées localement → l'app fonctionne hors ligne ;
-//  - empreintes SHA-256 vérifiées (vendor.lock.json) : un fichier modifié côté CDN bloque la construction ;
+//  - bibliothèques (JSZip, zxing-wasm) copiées depuis ../vendor → l'app fonctionne hors ligne ;
+//  - empreintes SHA-256 vérifiées (vendor.lock.json) : un fichier modifié bloque la construction ;
 //  - pas de service worker (inutile dans l'app).
 const fs = require('fs');
 const path = require('path');
@@ -8,13 +8,13 @@ const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
 const WWW = path.join(__dirname, 'www');
-const CACHE = path.join(__dirname, 'vendor-cache');
 const LOCK = path.join(__dirname, 'vendor.lock.json');
 
+// Fichiers versionnés dans ../vendor (stabilisation S6) ; l'adresse d'origine sert de clé au verrou d'empreintes
 const VENDOR = [
-  { url: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', out: 'vendor/jszip.min.js' },
-  { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js', out: 'vendor/zxing/iife/reader/index.js' },
-  { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/reader/zxing_reader.wasm', out: 'vendor/zxing/reader/zxing_reader.wasm' }
+  { url: 'https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', out: 'vendor/jszip-3.10.1.min.js' },
+  { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js', out: 'vendor/zxing-wasm-3.1.3/iife/reader/index.js' },
+  { url: 'https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/reader/zxing_reader.wasm', out: 'vendor/zxing-wasm-3.1.3/reader/zxing_reader.wasm' }
 ];
 
 const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
@@ -25,15 +25,9 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   fs.mkdirSync(WWW, { recursive: true });
 
   for (const v of VENDOR) {
-    const cached = path.join(CACHE, v.out);
-    let buf = fs.existsSync(cached) ? fs.readFileSync(cached) : null;
-    if (!buf) {
-      const r = await fetch(v.url);
-      if (!r.ok) throw new Error(`Téléchargement impossible : ${v.url} (HTTP ${r.status})`);
-      buf = Buffer.from(await r.arrayBuffer());
-      fs.mkdirSync(path.dirname(cached), { recursive: true });
-      fs.writeFileSync(cached, buf);
-    }
+    const src = path.join(ROOT, v.out);
+    if (!fs.existsSync(src)) throw new Error('Bibliothèque absente du dépôt : ' + v.out);
+    const buf = fs.readFileSync(src);
     const h = sha(buf);
     if (lock[v.url] && lock[v.url] !== h) throw new Error(`Empreinte différente pour ${v.url} : fichier modifié, construction arrêtée.`);
     lock[v.url] = h;
@@ -47,9 +41,8 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
     if (!html.includes(from)) throw new Error('Motif absent de index.html : ' + from);
     html = html.split(from).join(to);
   };
-  swap('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', 'vendor/jszip.min.js');
-  swap("'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/iife/reader/index.js'", "'vendor/zxing/iife/reader/index.js'");
-  swap("'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/reader/'", "new URL('vendor/zxing/reader/', location.href).href");
+  // Les bibliothèques sont déjà appelées par leur chemin local (vendor/) : aucune adresse à remplacer
+  if (/cdnjs\.cloudflare\.com|cdn\.jsdelivr\.net/.test(html)) throw new Error('index.html appelle encore un CDN');
   // Les balises <script> des bibliothèques ne doivent plus demander d'en-têtes CORS au CDN
   html = html.replace(/(<script src="vendor\/[^"]+")\s+integrity="[^"]*"/g, '$1').replace(/(<script src="vendor\/[^"]+")\s+crossorigin="[^"]*"/g, '$1');
   // CSP (D-83) : le script principal vient d'être modifié, ses empreintes sont recalculées sur cette copie

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-SjUhCk4Kvmf0uFPRbCJdd4WW5DozudDirqaZSKIJUhw=' 'sha256-f/bR6oOhc0jzp/R/+t/xK2Rcn/TPcn4U6Umyw469q8c=' https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-SjUhCk4Kvmf0uFPRbCJdd4WW5DozudDirqaZSKIJUhw=' 'sha256-8RccBvv6jBZ+y8J/U54OIfSGhLvbB0vKl+DQzT1UjFA=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -38,8 +38,9 @@
   <meta name="description" content="Panel by Primestone — Collect. Discover. Connect. Gestionnaire de collection de comics physiques : scanner de codes-barres, variantes, grading, key issues, wishlist." />
   <title>Panel by Primestone — Collect. Discover. Connect.</title>
 
-  <!-- JSZip : lecture des fichiers Excel (.xlsx) importés ; le lecteur de codes-barres zxing-wasm est chargé à l'ouverture du scanner -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <!-- JSZip : lecture des fichiers Excel (.xlsx) importés ; le lecteur de codes-barres zxing-wasm est chargé à l'ouverture du scanner.
+       Les deux sont servis par Panel depuis vendor/ (versions figées, empreintes dans vendor/README.md), plus aucun CDN -->
+  <script src="vendor/jszip-3.10.1.min.js"></script>
   <link rel="preload" href="fonts/barlow-condensed-800-latin.woff2" as="font" type="font/woff2" crossorigin>
 
   <style>
@@ -4388,7 +4389,7 @@
 
     <!-- METRON DANS L'APP ANDROID (identifiants gardés sur le téléphone) -->
     <div id="appMetronBox" class="snapshot-box dev-only" hidden>
-      <div style="font-size: 12px;color:var(--muted);margin-bottom:6px">Metron (identification exacte des variantes au scan) : compte gratuit sur metron.cloud. Le <b>pseudo</b>, pas l'e-mail.</div>
+      <div style="font-size: 12px;color:var(--muted);margin-bottom:6px">Metron (identification exacte des variantes au scan) : compte gratuit sur metron.cloud. Le <b>pseudo</b>, pas l'e-mail. Le mot de passe n'est gardé que jusqu'à la fermeture de l'app (jamais enregistré sur le téléphone).</div>
       <div style="display:flex;gap:6px;flex-wrap:wrap">
         <input id="appMetronUser" placeholder="Pseudo Metron" autocomplete="username" autocapitalize="none" spellcheck="false" style="flex:1;min-width:120px;font-size:12px">
         <input id="appMetronPass" type="password" placeholder="Mot de passe" autocomplete="current-password" style="flex:1;min-width:120px;font-size:12px">
@@ -8842,8 +8843,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Audit de novembre 2026 : html5-qrcode ne lit jamais le supplément (numéro + édition) et échoue
   // sur les photos dégradées ; zxing-wasm en mode « Require » lit les 17 chiffres (8 cas sur 11).
   const ZXING_VERSION = '3.1.3';
-  const ZXING_SCRIPT = 'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/iife/reader/index.js';
-  const ZXING_WASM_BASE = 'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/reader/';
+  const ZXING_SCRIPT = 'vendor/zxing-wasm-' + ZXING_VERSION + '/iife/reader/index.js';
+  const ZXING_WASM_BASE = new URL('vendor/zxing-wasm-' + ZXING_VERSION + '/reader/', location.href).href;
   let zxingReady = null;
   const loadZxing = () => {
     if (zxingReady) return zxingReady;
@@ -8852,9 +8853,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const sc = document.createElement('script');
       sc.src = ZXING_SCRIPT;
       sc.async = true;
-      sc.crossOrigin = 'anonymous';
       sc.onload = () => (window.ZXingWASM ? resolve(window.ZXingWASM) : reject(new Error('Lecteur zxing absent')));
-      sc.onerror = () => reject(new Error('Lecteur de codes-barres indisponible (connexion requise au premier lancement)'));
+      sc.onerror = () => reject(new Error('Lecteur de codes-barres indisponible (fichier du lecteur introuvable)'));
       document.head.appendChild(sc);
     }).then(Z => {
       Z.prepareZXingModule({ overrides: { locateFile: (p, prefix) => (p.endsWith('.wasm') ? ZXING_WASM_BASE + p : prefix + p) } });
@@ -9643,7 +9643,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // --- Metron : identifiants saisis dans les Paramètres de l'app, 1 requête / 3,2 s, pause sur 429
     metronState: { last: 0, blockedUntil: 0, remaining: null, authFailed: false, chain: Promise.resolve() },
     metronSpacing: 3200,
-    metronCreds() { const c = appStore('panel_metron_creds', null); return c && c.username && c.password ? c : null; },
+    // Stabilisation S2 : le mot de passe n'est plus enregistré durablement (sessionStorage) ; le pseudo reste mémorisé.
+    // Ancien format (mot de passe dans localStorage) : déplacé vers la session à la première lecture.
+    metronCreds() {
+      const c = appStore('panel_metron_creds', null);
+      if (c && c.password) { try { sessionStorage.setItem('panel_metron_pass', c.password); } catch (_) {} appSave('panel_metron_creds', { username: c.username }); }
+      let pw = '';
+      try { pw = sessionStorage.getItem('panel_metron_pass') || ''; } catch (_) {}
+      return c && c.username && pw ? { username: c.username, password: pw } : null;
+    },
     metronGet(pathAndQuery, credsOverride) {
       const st = this.metronState;
       const run = async () => {
@@ -9724,7 +9732,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (!creds.username || !creds.password) return { ok: false, message: 'Pseudo et mot de passe requis.' };
       try {
         await this.metronGet('/issue/?upc=76194138584600111', creds);
-        appSave('panel_metron_creds', creds);
+        appSave('panel_metron_creds', { username: creds.username });
+        try { sessionStorage.setItem('panel_metron_pass', creds.password); } catch (_) {}
         this.metronState.authFailed = false;
         return { ok: true, message: 'Connexion acceptée par Metron.' };
       } catch (e) {
@@ -21439,6 +21448,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
     if ($('appMetronForgetBtn')) $('appMetronForgetBtn').onclick = () => {
       localStorage.removeItem('panel_metron_creds');
+      try { sessionStorage.removeItem('panel_metron_pass'); } catch (_) {}
       $('appMetronUser').value = '';
       $('appMetronMsg').textContent = 'Identifiants supprimés du téléphone.';
     };
@@ -21448,9 +21458,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       renderSnapshotList();
       if ($('appMetronBox')) {
         $('appMetronBox').hidden = !IS_NATIVE_APP;
-        const c = appRelay.metronCreds();
-        $('appMetronUser').value = c ? c.username : '';
-        $('appMetronMsg').textContent = c ? 'Connecté.' : '';
+        const c = appRelay.metronCreds(), saved = appStore('panel_metron_creds', null);
+        $('appMetronUser').value = c ? c.username : (saved && saved.username) || '';
+        $('appMetronMsg').textContent = c ? 'Connecté.' : saved && saved.username ? "Mot de passe à ressaisir : il n'est gardé que jusqu'à la fermeture de l'app." : '';
       }
       if ($('metronStatusText')) {
         const base = metronProxyBase();

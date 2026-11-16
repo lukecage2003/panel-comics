@@ -1,2 +1,3 @@
 # Bibliothèques tierces : conservées octet pour octet (empreintes de vendor/README.md)
-vendor/*.js -text
+vendor/** -text
+*.wasm binary
