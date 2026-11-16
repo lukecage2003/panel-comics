@@ -24,6 +24,8 @@ Cette feuille de route se place **après** les lots déjà prévus dans [`../ROA
 
 ### Phase A — Fondations documentaires : Source, Edition Intelligence, ID minimal
 
+> **Avancement (D-81, 16 novembre 2026)** : la partie locale a commencé sans attendre la Phase 0 — affirmations et preuves dans Explorer (Source), niveaux et certitude des correspondances dans la fiche publication (Edition Intelligence), signature des propositions par le pseudo du profil local (ID minimal). Tout reste sur l'appareil ; la relecture partagée, le schéma `catalog` côté serveur et la migration des données écrites dans le code attendent les comptes (DR-08).
+
 | | |
 |---|---|
 | Prérequis | Phase 0 ; licences des sources vérifiées (DR-06) |

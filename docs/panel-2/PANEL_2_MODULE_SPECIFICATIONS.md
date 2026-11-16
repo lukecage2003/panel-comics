@@ -18,6 +18,8 @@ Rôles utilisés (extension des rôles existants de `app.staff_roles`, migration
 
 **Mission** : rendre chaque information vérifiable.
 
+> **État (D-81, 16 novembre 2026)** : premier incrément local livré. `domains/source/claims-core.js` (affirmations, statut fait / interprétation / hypothèse, preuves localisées, relecture, révisions sans effacement, conflits conservés) ; section « Affirmations et preuves » des guides d'événement d'Explorer (affirmations relevées depuis `events-crossref.js`, propositions de l'utilisateur gardées sur l'appareil dans `panel_source_v1`). Un fait sans preuve est refusé à la saisie et affiché comme hypothèse s'il vient d'un relevé. La relecture par d'autres membres attend les comptes (Phase 0, DR-08). Tests : 7 tests de domaine, test Edge 64.
+
 | | |
 |---|---|
 | Existe déjà | Provenance par champ et centre des conflits (lot 2.5, tests 28 et 45) ; recoupement multi-sources avec divergences conservées et statut « non vérifié » (`events-crossref.js`, test 51) ; vocabulaire de vérification et droits par référence (`media-core.js`, test 43) ; niveaux de fiabilité (`CZ_CERT`, `event-levels.js`) |
@@ -48,6 +50,8 @@ Rôles utilisés (extension des rôles existants de `app.staff_roles`, migration
 ## Module 02 — PANEL EDITION INTELLIGENCE
 
 **Mission** : comprendre les relations entre publications, de la VO à la VF.
+
+> **État (D-81, 16 novembre 2026)** : premier incrément local livré. `domains/catalog/edition-core.js` distingue œuvre, publication, édition et exemplaire ; la fiche publication affiche ces quatre niveaux et qualifie chaque correspondance : « Établie » (relation choisie par l'utilisateur) ou « Probable » (suggestion, avec ses raisons : titre d'œuvre, marché, langue, numéro, format). Rien n'est relié automatiquement ; les relations existantes (`REL_RELATIONS`) et les suggestions (`relSuggest`) sont réutilisées, sans second catalogue. Contenus détaillés des recueils (D3) : à venir. Tests : 3 tests de domaine, test Edge 64.
 
 | | |
 |---|---|

@@ -5042,6 +5042,61 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Direct et Communauté (D-80) : pages de la galerie ajoutées en plein direct (choix, collage) et affichées aussitôt, rappel du prochain direct dans le fil, modèles de planche sans « ## », studio de planches compact, auteur « Vous »',
         ok: !!t63 && !t63.error && ['nextCard', 'pullText', 'fullStudio', 'tile', 'addedLive', 'paste', 'history', 'compact', 'author', 'gc'].every(k => t63[k] === true) });
 
+      // ==========================================
+      // TEST 64 : PANEL SOURCE (affirmations, preuves, conflits) et Edition Intelligence (niveaux, VO/VF établie ou probable) (D-81) — données FICTIVES restaurées
+      // ==========================================
+      console.log('\n[TEST 64] Source et Edition Intelligence...');
+      const t64 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, R = P.releases;
+        const saved0 = localStorage.getItem('panel_source_v1'), ids = [];
+        try {
+          localStorage.removeItem('panel_source_v1');
+          // 1. PANEL SOURCE : affirmations relevées, conflits gardés, un fait exige une preuve
+          P.explorer.open('guide', 'gd_civil_war'); await wait(400);
+          const sec = () => document.getElementById('exClaims');
+          r.claims = !!sec() && sec().querySelectorAll('li.ex-claim').length > 10;
+          r.conflicts = !!sec() && !!sec().querySelector('[data-claim-conflict]');
+          sec().querySelector('[data-ex-src-new]').click(); await wait(100);
+          const box = document.getElementById('exSrcDialog'), q = k => box.querySelector('[data-src="' + k + '"]');
+          q('label').value = 'Sujet fictif T64'; q('value').value = 'Affirmation fictive T64'; q('status').value = 'fact';
+          box.querySelector('[data-save]').click(); await wait(100);
+          r.factNeedsProof = box.classList.contains('open') && /preuve/.test(box.querySelector('[data-msg]').textContent) && !localStorage.getItem('panel_source_v1');
+          q('status').value = 'hypothesis'; box.querySelector('[data-save]').click(); await wait(300);
+          const st = JSON.parse(localStorage.getItem('panel_source_v1') || 'null');
+          r.saved = !box.classList.contains('open') && !!st && st.claims.length === 1 && st.claims[0].status === 'hypothesis';
+          r.shownLocal = !!sec() && !!sec().querySelector('[data-claim-local]');
+          // 2. EDITION INTELLIGENCE : niveaux et certitude des correspondances (publications FICTIVES supprimées ensuite)
+          await R.ready();
+          const a = await R.upsert({ series: 'Fixture Saga T64', issue: '1', market: 'US', language: 'en', format: 'single', publisher: 'Fictif US' }, 'manual');
+          const b = await R.upsert({ series: 'Fixture Saga T64', issue: '1', market: 'FR', language: 'fr', format: 'album', publisher: 'Fictif FR' }, 'manual');
+          const c = await R.upsert({ series: 'Fixture Saga T64', issue: '2', market: 'FR', language: 'fr', format: 'album', publisher: 'Fictif FR' }, 'manual');
+          ids.push(a.pub.id, b.pub.id, c.pub.id);
+          await R.addRelation(b.pub.id, 'translated_from', a.pub.id);
+          R.openSheet(a.pub.id); await wait(200);
+          const sh = document.getElementById('pubModalBody'), lv = sh.querySelector('[data-pub-levels]');
+          r.levels = !!lv && ['work', 'publication', 'edition', 'copy'].every(k => !!lv.querySelector('[data-level="' + k + '"]'));
+          r.established = sh.querySelectorAll('.pub-rel [data-ed-cert="established"]').length === 1;
+          r.probable = sh.querySelectorAll('.pub-rel [data-ed-cert="probable"]').length === 1 && /Pourquoi/.test(sh.querySelector('[data-ed-why]').textContent);
+          r.noAutoLink = R.relationsOf(a.pub.id).length === 1;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (saved0 === null) localStorage.removeItem('panel_source_v1'); else localStorage.setItem('panel_source_v1', saved0);
+          const pm = document.getElementById('pubModal'); if (pm) pm.classList.remove('open');
+          const dlg = document.getElementById('exSrcDialog'); if (dlg) dlg.classList.remove('open');
+          if (ids.length) {
+            const db = await new Promise(res => { const o = indexedDB.open('panel-catalog'); o.onsuccess = () => res(o.result); });
+            await new Promise(res => { const tx = db.transaction(['publications'], 'readwrite'); ids.forEach(id => tx.objectStore('publications').delete(id)); tx.oncomplete = res; });
+            db.close(); await R.reloadFromDb();
+          }
+          r.cleaned = !R.all().some(p => /T64/.test(p.series));
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 64:', JSON.stringify(t64));
+      testResults.push({ test: 'Source et Edition (D-81) : affirmations relevées avec preuves et conflits gardés, un fait sans preuve refusé, proposition locale signée, niveaux œuvre / publication / édition / exemplaire, correspondance établie (choisie) ou probable (avec raisons), rien relié automatiquement',
+        ok: !!t64 && !t64.error && ['claims', 'conflicts', 'factNeedsProof', 'saved', 'shownLocal', 'levels', 'established', 'probable', 'noAutoLink', 'cleaned'].every(k => t64[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -21,6 +21,8 @@ const MODULES = [
   ['seriesProgress', 'domains/reading/series-progress.js'],
   ['feedCore', 'domains/community/feed-core.js'],
   ['liveCore', 'domains/community/live-core.js'],
+  ['sourceClaims', 'domains/source/claims-core.js'],
+  ['editionCore', 'domains/catalog/edition-core.js'],
   ['releaseViews', 'domains/releases/release-views.js'],
   ['collectionBoxes', 'domains/collection/boxes-core.js'],
   ['trophiesCore', 'domains/community/trophies-core.js'],
