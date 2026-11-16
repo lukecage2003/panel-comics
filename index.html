@@ -2,6 +2,9 @@
 <html lang="fr">
 <head>
   <meta charset="utf-8" />
+  <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-wGqz62SB5LVIni90T+8by8OAQtcb/K0ndvb9AWv1sMs=' 'sha256-HZkcX9CbFWTHfgmw8tjG/zUsrBXWorGlIoUGAvLSVM8=' https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
   <script>
@@ -8069,6 +8072,23 @@ module.exports = { GUIDES, pick, byId };
      ========================================================================== -->
 <script>
 window.__panel_init_errors = [];
+// CSP (D-83) : aucun gestionnaire en ligne (script-src-attr 'none'). Échec d'image et boutons relais par attributs data-, délégués ici.
+window.addEventListener('error', e => {
+  const t = e.target;
+  if (!t || t === window || !t.dataset || !t.dataset.onerr) return;
+  const k = t.dataset.onerr;
+  if (k === 'media') { if (window.panelMediaFail) window.panelMediaFail(t); return; }
+  delete t.dataset.onerr;
+  if (k === 'remove') t.remove();
+  else if (k === 'parent') { if (t.parentNode) t.parentNode.remove(); }
+  else if (k === 'hide') t.style.visibility = 'hidden';
+}, true);
+document.addEventListener('click', e => {
+  const b = e.target && e.target.closest ? e.target.closest('[data-click-proxy]') : null;
+  if (!b) return;
+  const t = document.getElementById(b.dataset.clickProxy);
+  if (t) t.click();
+});
 window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.message, line: e.lineno, error: e.error ? e.error.stack : '' }));
 (()=>{
   'use strict';
@@ -8780,7 +8800,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const src = COVER_SOURCE_LABEL[v.source] || 'Actuelle';
       const conf = v.source === 'manual' ? 'protégée' : v.match ? (v.confidence === 'approchee' ? 'approchée' : 'correspond') : '';
       card.innerHTML =
-        '<img src="' + escapeHtml(v.url) + '" alt="' + escapeHtml(v.name) + '" loading="lazy" data-fallback="' + escapeHtml(fb) + '" onerror="panelMediaFail(this)">' +
+        '<img src="' + escapeHtml(v.url) + '" alt="' + escapeHtml(v.name) + '" loading="lazy" data-fallback="' + escapeHtml(fb) + '" data-onerr="media">' +
         '<span class="variant-src-badge src-' + escapeHtml(v.source || 'current') + '">' + escapeHtml(src) + (conf ? ' · ' + conf : '') + '</span>' +
         '<span class="variant-label">' + escapeHtml(v.name) + '</span>' +
         '<div class="variant-check-badge"><svg class=ic aria-hidden=true><use href=#ic-check /></svg></div>';
@@ -9493,7 +9513,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
         card.innerHTML = 
           '<div style="position:relative">' +
-            '<img src="' + safeImgSrc(cand.cover) + '" class="cover-match-thumb" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
+            '<img src="' + safeImgSrc(cand.cover) + '" class="cover-match-thumb" data-onerr="hide">' +
             '<div style="position:absolute;top:6px;left:6px">' +
               '<span class="confidence-badge ' + badgeClass + '">' + cand.score + '% ' + (isBest ? '★ TOP' : '') + '</span>' +
             '</div>' +
@@ -10109,7 +10129,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const credit = ok ? mediaCredit(ref) : '';
     return '<img class="' + mediaEsc((o.cls || 'media-img') + (ok ? '' : ' is-fallback')) + '" src="' + mediaEsc(ok ? ref.url : fb) + '" alt="' + mediaEsc(o.alt || '') + '" loading="' + (o.eager ? 'eager' : 'lazy') + '" decoding="async"' +
       (o.w ? ' width="' + Number(o.w) + '"' : '') + (o.h ? ' height="' + Number(o.h) + '"' : '') + ' data-fallback="' + mediaEsc(fb) + '"' + (ok ? '' : ' data-media-placeholder="1"') +
-      (credit ? ' title="' + mediaEsc(credit) + '"' : '') + ' onerror="panelMediaFail(this)">';
+      (credit ? ' title="' + mediaEsc(credit) + '"' : '') + ' data-onerr="media">';
   };
 
   const coverFor = s => {
@@ -10123,7 +10143,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Balise <img> sûre avec repli automatique sur la couverture générée
   const coverImgTag = (s, extra = '') => {
     const fb = placeholderCover(s.series, s.issue);
-    return `<img src="${escapeHtml(coverFor(s))}" data-fallback="${escapeHtml(fb)}" alt="${escapeHtml((s.series || '') + ' ' + (s.issue || ''))}" loading="lazy" onerror="panelMediaFail(this)" ${extra}>`;
+    return `<img src="${escapeHtml(coverFor(s))}" data-fallback="${escapeHtml(fb)}" alt="${escapeHtml((s.series || '') + ' ' + (s.issue || ''))}" loading="lazy" data-onerr="media" ${extra}>`;
   };
 
   const numOrNull = v => {
@@ -12955,8 +12975,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
             : physicalSingles.length ? 'Modifiez les filtres, la boîte ou la recherche.' : 'Scannez le code-barres UPC/ISBN d\'un comic ou ajoutez-le manuellement avec sa variante.') + '</p>' +
           (isWishView || physicalSingles.length ? '' :
           '<div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-top:6px">' +
-            '<button class="btn accent-scan" onclick="document.getElementById(\'quickScanBtn\').click()"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg> Scanner un code-barres</button>' +
-            '<button class="btn" onclick="document.getElementById(\'addSingleModalOpenBtn\').click()"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter manuellement</button>' +
+            '<button class="btn accent-scan" data-click-proxy="quickScanBtn"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg> Scanner un code-barres</button>' +
+            '<button class="btn" data-click-proxy="addSingleModalOpenBtn"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter manuellement</button>' +
           '</div>') +
         '</div>';
       return;
@@ -16583,7 +16603,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (parus === null && relayStatus && relayStatus.bnf) return head + '<div class="ex-cv-grid is-issues is-loading">' + Array.from({ length: 4 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></div>';
     let html = '';
     if (announced.length) html += '<h5 class="ex-vf-h">À paraître <small>calendrier Panel</small></h5><div class="ex-vf-list">' + announced.map(p => '<div class="ex-vf-item is-soon"><b>' + h(relLabel(p)) + '</b><small>' + h([p.publisher, relFmtDate(p.dates.current)].filter(Boolean).join(' · ')) + '</small></div>').join('') + '</div>';
-    if (parus && parus.length) html += '<h5 class="ex-vf-h">Déjà parus <small>catalogue de la BnF, depuis ' + (from || 'le début') + '</small></h5><div class="ex-vf-grid">' + parus.slice(0, 12).map(e => '<a class="ex-vf-ed" href="' + h(e.url || '#') + '" target="_blank" rel="noopener noreferrer"><span class="ex-vf-cover">' + (e.isbn ? '<img src="https://covers.openlibrary.org/b/isbn/' + h(e.isbn) + '-M.jpg?default=false" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '<i>' + h(e.publisher.split(' (')[0]) + '</i></span><b>' + h(e.title) + '</b><small>' + h([e.date, e.collection].filter(Boolean).join(' · ')) + (e.isbn ? '<br>ISBN ' + h(e.isbn) : '') + '</small></a>').join('') + '</div><p class="ex-credit">Résultats du catalogue de la BnF pour « ' + h(d.name) + ' » : vérifiez la correspondance avec la série. Couvertures : Open Library.</p>';
+    if (parus && parus.length) html += '<h5 class="ex-vf-h">Déjà parus <small>catalogue de la BnF, depuis ' + (from || 'le début') + '</small></h5><div class="ex-vf-grid">' + parus.slice(0, 12).map(e => '<a class="ex-vf-ed" href="' + h(e.url || '#') + '" target="_blank" rel="noopener noreferrer"><span class="ex-vf-cover">' + (e.isbn ? '<img src="https://covers.openlibrary.org/b/isbn/' + h(e.isbn) + '-M.jpg?default=false" alt="" loading="lazy" referrerpolicy="no-referrer" data-onerr="remove">' : '') + '<i>' + h(e.publisher.split(' (')[0]) + '</i></span><b>' + h(e.title) + '</b><small>' + h([e.date, e.collection].filter(Boolean).join(' · ')) + (e.isbn ? '<br>ISBN ' + h(e.isbn) : '') + '</small></a>').join('') + '</div><p class="ex-credit">Résultats du catalogue de la BnF pour « ' + h(d.name) + ' » : vérifiez la correspondance avec la série. Couvertures : Open Library.</p>';
     if (!html) {
       const y = new Date().getFullYear();
       const firstDate = exCvDetail.issues && exCvDetail.issues[0] && exCvDetail.issues[0].date ? exCvDetail.issues[0].date : from ? from + '-01-01' : '';
@@ -16668,7 +16688,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     $('notifTabs').innerHTML = [['all', 'Tout']].concat(Object.entries(NOTIF_KINDS)).map(([k, l]) => '<button role="tab" aria-selected="' + (notifView.tab === k) + '" data-ntab="' + k + '">' + h(k === 'all' ? l : NOTIF_TABS[k]) + (counts[k] ? ' <b>' + counts[k] + '</b>' : '') + '</button>').join('');
     const shown = items.filter(x => notifView.tab === 'all' || x.kind === notifView.tab);
     const unread = shown.filter(x => !x.read), read = shown.filter(x => x.read);
-    const row = n => '<button class="notif-item is-' + n.kind + (n.read ? '' : ' is-unread') + '" data-nid="' + h(n.id) + '"><span class="notif-thumb">' + (n.cover ? '<img src="' + h(n.cover) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '') + '<i aria-hidden="true">' + ({ release: '◆', wish: '♥', follow: '★' }[n.kind]) + '</i></span><span class="notif-txt"><b>' + h(n.title) + '</b><small>' + h(n.body) + '</small></span>' + (n.read ? '' : '<em class="notif-dot" aria-label="non lue"></em>') + '</button>';
+    const row = n => '<button class="notif-item is-' + n.kind + (n.read ? '' : ' is-unread') + '" data-nid="' + h(n.id) + '"><span class="notif-thumb">' + (n.cover ? '<img src="' + h(n.cover) + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-onerr="remove">' : '') + '<i aria-hidden="true">' + ({ release: '◆', wish: '♥', follow: '★' }[n.kind]) + '</i></span><span class="notif-txt"><b>' + h(n.title) + '</b><small>' + h(n.body) + '</small></span>' + (n.read ? '' : '<em class="notif-dot" aria-label="non lue"></em>') + '</button>';
     list.innerHTML = shown.length ? (unread.length ? '<h3 class="notif-sec">Nouveau</h3>' + unread.map(row).join('') : '') + (read.length ? '<h3 class="notif-sec">Déjà vu</h3>' + read.map(row).join('') : '')
       : '<div class="notif-empty"><b>Rien de neuf.</b><span>Ajoutez des numéros à votre pull list, des fiches à votre wishlist ou suivez un personnage dans l\'Explorer : leurs nouvelles apparaîtront ici.</span></div>';
     list.querySelectorAll('[data-nid]').forEach(b => { b.onclick = () => { const n = items.find(x => x.id === b.dataset.nid); if (!n) return; const v = notifState(); v.read[n.id] = Date.now(); notifSave(v); notifClose(); n.open(); notifBadge(); }; });
@@ -16802,7 +16822,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const exNewsAgo = iso => { const m = Math.max(1, Math.round((Date.now() - new Date(iso).getTime()) / 60000)); return m < 60 ? 'il y a ' + m + ' min' : m < 1440 ? 'il y a ' + Math.round(m / 60) + ' h' : m < 2880 ? 'hier' : 'il y a ' + Math.round(m / 1440) + ' j'; };
   const exNewsCard = (a, why, big, extra) => '<a class="ex-nw' + (big ? ' is-big' : '') + (a.image ? '' : ' no-img') + '" href="' + h(a.url) + '" target="_blank" rel="noopener noreferrer" data-news-id="' + h(a.id) + '">' +
-    (a.image ? '<span class="ex-nw-img"><img class="ex-nw-bg" src="' + h(a.image) + '" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentNode.remove()"></span>' : '') +
+    (a.image ? '<span class="ex-nw-img"><img class="ex-nw-bg" src="' + h(a.image) + '" alt="" aria-hidden="true" loading="lazy" referrerpolicy="no-referrer"><img src="' + h(a.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-onerr="parent"></span>' : '') +
     '<span class="ex-nw-body"><span class="ex-nw-meta"><b>' + h(a.source) + '</b>' + (exNews.lang !== 'fr' ? '<i>' + h(String(a.lang || '').toUpperCase()) + '</i>' : '') + (a.date ? '<time datetime="' + h(a.date) + '">' + h(exNewsAgo(a.date)) + '</time>' : '') + '</span>' +
     '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') +
     (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : extra ? '<em class="is-learn">' + h(extra) + '</em>' : '') + '</span></a>';
@@ -17002,7 +17022,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     catch (e) { cz.status = 'error'; cz.err = location.protocol === 'file:' ? 'Ouvrez Panel avec « Lancer Panel.cmd » pour charger les cartes.' : 'Cartes indisponibles (' + String(e && e.message || e).slice(0, 80) + ').'; }
     if (exView.page === 'cosmos' || exView.page === 'cosmos-e') renderExplorer();
   };
-  const exCzImg = (e, cls) => e && e.img && /^https:\/\//.test(e.img) ? '<img class="' + (cls || '') + '" src="' + h(e.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+  const exCzImg = (e, cls) => e && e.img && /^https:\/\//.test(e.img) ? '<img class="' + (cls || '') + '" src="' + h(e.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">' : '';
   const exCzCard = id => { const e = cz.data.E[id], cat = CZ_CATS[e.k] || ['', '#999']; return '<button class="cz-card" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '" style="--cz:' + cat[1] + '"><span class="cz-card-img">' + exCzImg(e) + '<span class="cz-card-ini" aria-hidden="true">' + h(String(e.n || '?').replace(/^(L[ea]s?\s|L’|L')/i, '').slice(0, 1)) + '</span></span><span class="cz-card-b"><b>' + h(e.n) + '</b><span>' + h(exCzSub(id)) + '</span></span></button>'; };
   const CZ_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', '', 'VIII'];
   const exCzCredit = '<p class="ex-credit">Cartes d\'après <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a>. Personnages et illustrations © Marvel ; images tirées de la Marvel Database (Fandom), citées à titre d\'illustration.</p>';
@@ -17427,7 +17447,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         .map(x => `<button class="rd-act${x === 'read' ? ' is-main' : ''}" data-rdset="${x}" data-key="${escapeHtml(st.workKey)}">${x === 'read' && st.status === 'read' ? 'Relu' : RD_LABEL[x]}</button>`).join(' ') +
         (st.status === 'read' && owned ? ` <button class="rd-act" data-rdstory="${escapeHtml(st.workKey)}">Story</button>` : '');
       return `<div class="top-item rd-row is-${escapeHtml(st.status || 'none')}" data-work="${escapeHtml(st.workKey)}">
-        <span class="rd-row-cov" aria-hidden="true">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i>${escapeHtml(String(st.series || '?').trim().slice(0, 1).toUpperCase())}</i></span>
+        <span class="rd-row-cov" aria-hidden="true">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">` : ''}<i>${escapeHtml(String(st.series || '?').trim().slice(0, 1).toUpperCase())}</i></span>
         <span class="rd-row-b"><b>${escapeHtml(st.series || '—')} ${escapeHtml(st.issue || '')}</b>
         <span class="stat-sub" style="display:block">${RD_LABEL[st.status] || '—'}${st.readCount > 1 ? ' · lu ' + st.readCount + ' fois' : ''}${st.lastReadAt ? ' · ' + new Date(st.lastReadAt).toLocaleDateString('fr-FR') : ''}${owned ? '' : ' · non possédé'}${prog && prog.known ? ' · série ' + prog.read + '/' + prog.known + (prog.next ? ', prochain ' + escapeHtml(prog.next) : '') : ''}</span></span>
         <span class="rd-row-act">${acts}</span></div>`;
@@ -17451,7 +17471,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const upNext = sip.filter(x => x.next && x.nextOwned).slice(0, 6);
     const upHtml = upNext.length ? `<section class="rd-up"><div class="rd-up-head"><h3>Continuer la lecture</h3><p>Le numéro suivant de vos séries, déjà dans votre collection.</p></div><div class="rd-up-row">${upNext.map(x => {
       const c = nextCopy(x), cov = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : '';
-      return `<article class="rd-up-card"><div class="rd-up-cov">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">` : ''}<i aria-hidden="true">${escapeHtml(String(x.next))}</i><span class="rd-up-pct" style="--p:${x.pct}%"></span></div>
+      return `<article class="rd-up-card"><div class="rd-up-cov">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">` : ''}<i aria-hidden="true">${escapeHtml(String(x.next))}</i><span class="rd-up-pct" style="--p:${x.pct}%"></span></div>
         <div class="rd-up-b"><small>${escapeHtml(x.label)}</small><b>${escapeHtml(x.next)}</b><span>${x.read} lu${x.read > 1 ? 's' : ''} sur ${x.known}</span></div>
         <button class="btn rd-up-go" data-sip-read="${escapeHtml(x.key)}" data-sip-issue="${escapeHtml(x.next)}">Marquer lu</button></article>`;
     }).join('')}</div></section>` : '';
@@ -18223,7 +18243,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     gem_space: AF_GEM, gem_mind: AF_GEM, gem_reality: AF_GEM, gem_power: AF_GEM, gem_time: AF_GEM, gem_soul: AF_GEM
   };
   const afArt = a => (AF_ART[a.id] ? '<svg viewBox="0 0 64 64" aria-hidden="true">' + AF_ART[a.id] + '</svg>' : '<i>' + escapeHtml(a.glyph) + '</i>') +
-    (a.img && /^https:\/\//.test(a.img) ? '<img class="af-photo" src="' + escapeHtml(a.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">' : '');
+    (a.img && /^https:\/\//.test(a.img) ? '<img class="af-photo" src="' + escapeHtml(a.img) + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-onerr="remove">' : '');
 
   // Portraits des rangs (D-64) : image du personnage tirée de Comic Vine (correspondance exacte du nom), avec crédit.
   // Seuls le rang actuel et le suivant sont cherchés (2 requêtes au plus), réponse gardée 30 jours ; sinon aucun portrait.
@@ -18700,7 +18720,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const im = typeof x === 'string' ? { ref: x } : (x || {});
     if (LV().isPage(im)) return '<img data-lv-pg="' + escapeHtml(im.ref) + '" alt="" decoding="async">';
     const c = lvCopy(im.ref), u = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : '';
-    return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="this.remove()">' : '';
+    return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">' : '';
   };
   const lvWhen = iso => iso ? new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sans date';
   const lvLocalInput = iso => { if (!iso) return ''; const d = new Date(iso), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()); };
@@ -21033,7 +21053,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           const row = document.createElement('div');
           row.className = 'search-row';
           row.innerHTML = 
-            '<img src="' + safeImgSrc(s.coverUrl) + '" class="search-row-icon" style="object-fit:contain;background:#0d0d12;border-radius:3px" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
+            '<img src="' + safeImgSrc(s.coverUrl) + '" class="search-row-icon" style="object-fit:contain;background:#0d0d12;border-radius:3px" data-onerr="hide">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:600;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(s.series) + ' ' + escapeHtml(s.issue) + '</div>' +
               '<div style="font-size: 12px;color:var(--muted)">' + escapeHtml(s.publisher) + ' · ' + escapeHtml(s.variant || 'Cover A') + ' · <strong style="color:var(--gold)">$' + (s.estValue || 0).toFixed(2) + '</strong></div>' +
@@ -21115,7 +21135,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           card.className = 'cv-hit';
 
           card.innerHTML = 
-            '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:contain;background:#0d0d12;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" onerror="this.onerror=null;this.style.visibility=\'hidden\'">' +
+            '<img src="' + safeImgSrc(item.cover) + '" style="width:58px;height:86px;object-fit:contain;background:#0d0d12;border-radius:4px;border:1px solid var(--cyan-line);flex-shrink:0" data-onerr="hide">' +
             '<div style="flex:1;min-width:0">' +
               '<div style="font-weight:700;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">' + escapeHtml(item.volume) + ' #' + escapeHtml(item.issue) + '</div>' +
               '<div style="font-size: 12px;color:var(--lime);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px">' + escapeHtml(item.title || 'Édition Régulière') + '</div>' +

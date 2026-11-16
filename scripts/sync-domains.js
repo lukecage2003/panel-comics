@@ -54,6 +54,7 @@ const current = b >= 0 && e > b ? html.slice(b, e + END.length) : null;
 if (process.argv.includes('--check')) {
   if (current !== block) { console.error('sync-domains : le bloc intégré dans index.html diffère de domains/ (lancer node scripts/sync-domains.js)'); process.exit(1); }
   console.log('sync-domains : ' + MODULES.length + ' module(s) intégré(s), identiques à la source.');
+  require('./csp').run(true); // CSP (D-83) : empreintes des scripts en ligne à jour
   process.exit(0);
 }
 if (current !== null) html = html.slice(0, b) + block + html.slice(e + END.length);
@@ -64,3 +65,4 @@ else {
 }
 fs.writeFileSync(HTML, html);
 console.log('sync-domains : bloc écrit (' + MODULES.length + ' modules).');
+require('./csp').run(false); // CSP (D-83) : le bloc a changé, ses empreintes aussi

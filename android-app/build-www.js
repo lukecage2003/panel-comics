@@ -52,6 +52,8 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   swap("'https://cdn.jsdelivr.net/npm/zxing-wasm@' + ZXING_VERSION + '/dist/reader/'", "new URL('vendor/zxing/reader/', location.href).href");
   // Les balises <script> des bibliothèques ne doivent plus demander d'en-têtes CORS au CDN
   html = html.replace(/(<script src="vendor\/[^"]+")\s+integrity="[^"]*"/g, '$1').replace(/(<script src="vendor\/[^"]+")\s+crossorigin="[^"]*"/g, '$1');
+  // CSP (D-83) : le script principal vient d'être modifié, ses empreintes sont recalculées sur cette copie
+  html = require(path.join(ROOT, 'scripts', 'csp.js')).apply(html);
   fs.writeFileSync(path.join(WWW, 'index.html'), html);
 
   fs.copyFileSync(path.join(ROOT, 'manifest.webmanifest'), path.join(WWW, 'manifest.webmanifest'));

@@ -5151,6 +5151,39 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Compte en ligne (D-82) : encadré dans l onglet Compte, clé secrète refusée, projet gardé sur l appareil, rien sans bibliothèque installée, flux PKCE, inscription sans énumération, connexion puis déconnexion locale, projet oublié',
         ok: !!t65 && !t65.error && ['inAccountTab', 'localState', 'secretRefused', 'savedCfg', 'noLib', 'forms', 'neutral', 'signedIn', 'signedOutLocal', 'forgotten', 'survivesTabs'].every(k => t65[k] === true) });
 
+      // ==========================================
+      // TEST 66 : Politique de sécurité du contenu stricte (D-83), injections de test bloquées — données FICTIVES restaurées
+      // ==========================================
+      console.log('\n[TEST 66] CSP stricte...');
+      const t66 = await evalExpr(`(async () => {
+        const wait = ms => new Promise(res => setTimeout(res, ms)), r = {}, v = [];
+        const onV = e => v.push(e.violatedDirective);
+        document.addEventListener('securitypolicyviolation', onV);
+        const host = document.createElement('div'); document.body.appendChild(host);
+        try {
+          const meta = document.querySelector('meta[http-equiv="Content-Security-Policy"]');
+          const csp = meta ? meta.getAttribute('content') : '';
+          const scriptDir = csp.split(';').map(d => d.trim()).find(d => d.indexOf('script-src ') === 0) || '';
+          r.meta = scriptDir.indexOf("'sha256-") > 0 && scriptDir.indexOf('unsafe-inline') < 0 && csp.indexOf("script-src-attr 'none'") >= 0 && csp.indexOf("'unsafe-eval'") < 0;
+          r.noInlineHandlers = !document.querySelector('[onclick],[onerror],[onload]');
+          host.innerHTML = '<span><img data-onerr="remove" src="/introuvable-t66a.png"></span><span id="t66p"><img data-onerr="parent" src="/introuvable-t66b.png"></span><img data-onerr="hide" id="t66h" src="/introuvable-t66c.png"><button data-click-proxy="t66Target" id="t66P">p</button><button id="t66Target">t</button>';
+          let clicked = false; document.getElementById('t66Target').addEventListener('click', () => { clicked = true; });
+          await wait(600);
+          r.delegatedErrors = !host.querySelector('img[src$="t66a.png"]') && !document.getElementById('t66p') && document.getElementById('t66h').style.visibility === 'hidden';
+          document.getElementById('t66P').click(); r.proxy = clicked;
+          window.__t66 = 0;
+          host.insertAdjacentHTML('beforeend', '<img src="/introuvable-t66d.png" onerror="window.__t66=1">'); await wait(400);
+          const s = document.createElement('script'); s.textContent = 'window.__t66=2'; document.body.appendChild(s); await wait(50);
+          r.injectionBlocked = window.__t66 === 0 && v.indexOf('script-src-attr') >= 0 && v.indexOf('script-src-elem') >= 0;
+          r.appAlive = !!window.Panel && !!window.PanelDomains && (window.__panel_init_errors || []).length === 0;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { host.remove(); document.removeEventListener('securitypolicyviolation', onV); try { delete window.__t66; } catch (_) {} }
+        return r;
+      })()`);
+      console.log('Résultat Test 66:', JSON.stringify(t66));
+      testResults.push({ test: 'CSP stricte (D-83) : scripts autorisés par empreinte, aucun gestionnaire en ligne, échecs d images et boutons relais délégués, script et gestionnaire injectés bloqués, application intacte',
+        ok: !!t66 && !t66.error && ['meta', 'noInlineHandlers', 'delegatedErrors', 'proxy', 'injectionBlocked', 'appAlive'].every(k => t66[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
