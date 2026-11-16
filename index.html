@@ -3066,6 +3066,12 @@
     .lv-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .lv-thumb i { position: relative; z-index: 1; width: 100%; padding: 10px 4px 3px; font: 600 9.5px/1.15 var(--font-display); font-style: normal; color: #fff; text-align: left; background: linear-gradient(transparent, rgba(0,0,0,.75)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .lv-thumb.is-on { border-color: #ff375f; }
+    .lv-next-card { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px 12px; padding: 12px 14px; margin: 0 0 14px; border-radius: 18px; border: 1px solid color-mix(in srgb, #ff375f 35%, var(--line)); background: color-mix(in srgb, #ff375f 7%, var(--bg-card)); }
+    .lv-next-card > .live-dot { grid-column: 1 / -1; justify-self: start; } @media (max-width: 560px) { .lv-next-card { grid-template-columns: auto auto 1fr; } .lv-next-card > div { grid-column: 1 / -1; } }
+    .lv-next-card > div { min-width: 0; display: flex; flex-direction: column; gap: 1px; } .lv-next-card small { color: var(--muted); font-size: 12px; } .lv-next-card b { font: 650 16px var(--font-display); }
+    .pl-studio.is-compact { padding-top: 16px; padding-bottom: 16px; } .pl-studio.is-compact h3 { font-size: 20px; margin-bottom: 2px; }
+    .pl-studio.is-compact .pl-templates { display: flex; overflow-x: auto; scroll-snap-type: x proximity; padding-bottom: 4px; } .pl-studio.is-compact .pl-tpl { flex: 0 0 210px; scroll-snap-align: start; }
+    .pl-how > summary { cursor: pointer; font-size: 13px; opacity: .8; } .pl-how > p { margin-top: 6px; }
     .lv-thumb.is-sp img { filter: blur(7px) brightness(.7); }
     .lv-src { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; margin: 4px 0 8px; border-radius: 14px; background: color-mix(in srgb, var(--ink) 5%, var(--bg-card)); } .lv-src .btn { align-self: flex-start; } .lv-src small { font-weight: 500; line-height: 1.4; }
     .lv-pg-item { flex: 0 0 auto; display: flex; flex-direction: column; gap: 4px; width: 112px; } .lv-pg-item .lv-thumb { width: 64px; }
@@ -3089,6 +3095,8 @@
     .lv-cap { position: absolute; left: 0; right: 0; bottom: 0; margin: 0; padding: 18px 16px 12px; font-size: 13px; background: linear-gradient(transparent, rgba(0,0,0,.8)); }
     .lv-screen-empty { color: rgba(255,255,255,.55); padding: 20px; text-align: center; }
     .lv-stage .lv-thumb { width: 72px; }
+    .lv-thumb.lv-add { align-items: center; justify-content: center; flex-direction: column; gap: 2px; border: 2px dashed rgba(255,255,255,.35); background: rgba(255,255,255,.04); color: #fff; } .lv-thumb.lv-add b { font: 300 30px/1 var(--font-display); } .lv-thumb.lv-add i { background: none; padding: 0 4px; text-align: center; color: rgba(255,255,255,.8); } .lv-thumb.lv-add:disabled { opacity: .6; cursor: progress; }
+    .lv-screen.is-drop { outline: 3px dashed #FFE500; outline-offset: -8px; }
     .lv-react { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .lv-onoma { border: 0; cursor: pointer; padding: 8px 14px; border-radius: 999px; font: 800 14px var(--font-comic, var(--font-display)); letter-spacing: .02em; color: #111; background: #FFE500; transform: rotate(-2deg); transition: transform .12s; }
     .lv-onoma:nth-child(2n) { background: #ff375f; color: #fff; transform: rotate(2deg); } .lv-onoma:active { transform: scale(.92); }
@@ -3523,7 +3531,7 @@
 
       <!-- ===== VUE : COMMUNAUTÉ (brouillons locaux, D-34) ===== -->
       <div id="singlesCommunityView" hidden>
-        <div class="section-head"><div><p>Vos planches, vos stories et vos directs, à partir de votre vraie collection.</p><details class="cm-share-rules"><summary>Ce qui est repris quand vous partagez</summary><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></details></div></div>
+        <div class="section-head"><div><details class="cm-share-rules"><summary>Ce qui est repris quand vous partagez</summary><p>Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.</p></details></div></div>
         <div id="communityHead"></div>
         <div id="communityProfile"></div>
         <div id="communityDashboard"></div>
@@ -12259,7 +12267,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       releases: ['Calendrier', 'Sorties comics US et francophones'],
       stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
       reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
-      community: ['Communauté', 'Brouillons de partage préparés sur cet appareil ; aucune publication sans service configuré'],
+      community: ['Communauté', 'Planches, stories et directs, à partir de votre vraie collection'],
       finances: ['Finances', 'Coût d\'acquisition, valeur, plus-values latentes et réalisées, par devise'],
       explorer: ['Explorer', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
     };
@@ -17315,6 +17323,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ca = host.querySelector('[data-pf-cancel]'); if (ca) ca.onclick = () => { profileEditing = false; renderCommunityProfile(); };
   };
   // Idées de planches calculées à partir de la collection (rien n'est enregistré tant que l'utilisateur ne valide pas)
+  const plTitle = x => [x.series, x.issue ? '#' + String(x.issue).trim().replace(/^#+\s*/, '') : ''].filter(Boolean).join(' ');
   const plancheSuggestions = () => {
     const owned = physicalSingles.filter(isOwned);
     const out = [];
@@ -17322,15 +17331,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const recent = owned.slice().sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0));
     const fresh = recent.filter(x => new Date(x.addedAt || 0).getTime() >= week);
     const pull = (fresh.length ? fresh : recent).slice(0, 4);
-    if (pull.length) out.push({ kind: 'pull', items: pull, text: 'Mon pull de la semaine : ' + pull.map(x => [x.series, x.issue].filter(Boolean).join(' #')).join(', ') + '.' });
+    if (pull.length) out.push({ kind: 'pull', items: pull, text: 'Mon pull de la semaine : ' + pull.map(plTitle).join(', ') + '.' });
     try {
       const boxes = window.PanelDomains.collectionBoxes.buildBoxes(owned, 'run').sort((a, b) => b.count - a.count);
       if (boxes[0] && boxes[0].count >= 2) out.push({ kind: 'shelfie', items: boxes[0].items.slice(0, 4), text: 'Ma boîte ' + boxes[0].label + ' : ' + boxes[0].count + ' numéros rangés.' });
     } catch (_) {}
     const gem = owned.filter(x => x.keyType && x.keyType !== 'none').sort((a, b) => descNullLast(valueOf(a), valueOf(b)))[0] || owned.filter(x => valueOf(x) !== null).sort((a, b) => valueOf(b) - valueOf(a))[0];
-    if (gem) out.push({ kind: 'gem', items: [gem], text: 'Ma pépite : ' + [gem.series, gem.issue].filter(Boolean).join(' #') + (gem.variant ? ' (' + gem.variant + ')' : '') + '.' });
+    if (gem) out.push({ kind: 'gem', items: [gem], text: 'Ma pépite : ' + plTitle(gem) + (gem.variant ? ' (' + gem.variant + ')' : '') + '.' });
     const lastRead = owned.filter(rdReadOfCopy).sort((a, b) => new Date(b.readAt || b.addedAt || 0) - new Date(a.readAt || a.addedAt || 0))[0];
-    if (lastRead) out.push({ kind: 'read', items: [lastRead], text: 'Je viens de lire ' + [lastRead.series, lastRead.issue].filter(Boolean).join(' #') + '. Verdict : ' });
+    if (lastRead) out.push({ kind: 'read', items: [lastRead], text: 'Je viens de lire ' + plTitle(lastRead) + '. Verdict : ' });
     return out;
   };
   const plancheFace = c => c.coverUrl ? coverImgTag(c) : '<span class="pl-face" style="--c:' + cboxHue(c) + '"><b>' + escapeHtml(cboxInitials(c.series)) + '</b><em>' + escapeHtml(String(c.issue || '').replace(/^#?/, '#')) + '</em></span>';
@@ -17976,8 +17985,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const igStars = r => { const n = Number(r) || 0; return n ? '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : '') : ''; };
   const igIcon = id => '<svg class=ic aria-hidden=true><use href=#' + id + ' /></svg>';
   const igPostHtml = (p, prof) => {
-    const handle = prof ? '@' + prof.handle : 'vous';
-    const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'P';
+    const handle = prof ? '@' + prof.handle : 'Vous';
+    const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
     const kindLabel = p.type === 'story' ? 'Story de lecture' : (PLANCHE_KINDS[p.kind] || PLANCHE_KINDS.free);
     const when = p.at ? storyAgo(p.at) : '';
     const vis = p.type === 'story' ? 'Moi seul' : (COMM_VIS[p.visibility] || 'Moi seul');
@@ -18166,7 +18175,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
       (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>';
   };
+  // Rappel du prochain direct préparé, en tête du fil (rien si aucun direct n'est daté à venir)
+  const lvNextHtml = () => {
+    const now = lvNow(), r = LV().ordered(lvLoad(), now).find(x => x.when && Date.parse(x.when) >= Date.parse(now));
+    if (!r) return '';
+    return '<article class="lv-next-card" data-lv-room="' + escapeHtml(r.id) + '"><span class="live-dot is-rec">Prochain direct</span><div><small>' + escapeHtml(LV().FORMATS[r.format]) + ' · ' + escapeHtml(lvWhen(r.when)) + '</small><b>' + escapeHtml(r.title) + '</b></div>' +
+      '<button class="btn" data-lv-start="' + escapeHtml(r.id) + '">Répéter</button><button class="rd-act" data-lv-golive>Mes directs</button></article>';
+  };
   const lvWire = host => {
+    host.querySelectorAll('[data-lv-golive]').forEach(b => { b.onclick = () => { commTab = 'live'; renderCommunityView(); }; });
     lvHydrate(host);
     if (!lvGcDone) { lvGcDone = true; setTimeout(() => { lvGc().catch(() => {}); }, 1500); }
     host.querySelectorAll('[data-lv-new]').forEach(b => { b.onclick = () => openLiveEditor(null); });
@@ -18310,8 +18327,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           (hidden ? '<button class="btn lv-reveal" data-lv-reveal>Révéler la page (spoiler)</button>' : '') +
           (room.images.length > 1 ? '<button class="lv-nav is-prev" data-lv-step="-1" aria-label="Image précédente">‹</button><button class="lv-nav is-next" data-lv-step="1" aria-label="Image suivante">›</button>' : '') +
           '<button class="lv-zoom" data-lv-zoom aria-pressed="' + (lvStage.zoom ? 'true' : 'false') + '">' + (lvStage.zoom ? 'Ajuster' : 'Zoom') + '</button>'
-          : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une image ci-dessous pour la montrer en grand ; flèches du clavier ou balayage pour passer à la suivante.' : 'Aucune image au tableau : ajoutez-en en modifiant le direct.') + '</p>') + '</div>' +
-        (room.images.length ? '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + (im.spoiler && !lvStage.revealed.has(im.ref) ? ' is-sp' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') + '</div>' : '') +
+          : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une image ci-dessous pour la montrer en grand ; flèches du clavier ou balayage pour passer à la suivante.' : 'Aucune image au tableau : touchez « + Galerie » pour montrer une page de votre téléphone, même en plein direct.') + '</p>') + '</div>' +
+        '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + (im.spoiler && !lvStage.revealed.has(im.ref) ? ' is-sp' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') +
+          '<button class="lv-thumb lv-add" data-lv-gal title="Ajouter des pages de ma galerie pendant le direct"' + (lvStage.busy ? ' disabled' : '') + '><b aria-hidden="true">' + (lvStage.busy ? '…' : '+') + '</b><i>' + (lvStage.busy ? 'Ajout…' : 'Galerie') + '</i></button><input type="file" accept="image/*" multiple hidden data-lv-file></div>' +
         '<div class="lv-react">' + LV().REACTIONS.map(k => '<button class="lv-onoma" data-lv-react="' + escapeHtml(k) + '">' + escapeHtml(k) + '</button>').join('') + '<span class="lv-react-n">' + (counts ? 'Vos réactions : ' + counts : 'Vos réactions, pour rythmer la répétition') + '</span></div></section>' +
         '<aside class="lv-side"><h4>Ordre du jour</h4><ol class="lv-agenda">' + room.topics.map((t, i) => '<li class="' + (i < session.topic ? 'is-done' : i === session.topic ? 'is-cur' : '') + '"><span>' + escapeHtml(t) + '</span>' + (i < session.topic ? '<small>' + escapeHtml(LV().clock(session.done[i].secs)) + '</small>' : i === session.topic ? '<small data-lv-topictime>00:00</small>' : '') + '</li>').join('') + '</ol>' +
         '<button class="btn secondary lv-next" data-lv-next' + (cur ? '' : ' disabled') + '>' + (!cur ? 'Ordre du jour terminé' : session.topic === room.topics.length - 1 ? 'Clore ce dernier point' : 'Point suivant') + '</button>' +
@@ -18327,6 +18345,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     scr.addEventListener('touchstart', e => { lvStage.tx = e.touches.length === 1 ? e.touches[0].clientX : null; }, { passive: true });
     scr.addEventListener('touchend', e => { const x0 = lvStage.tx; lvStage.tx = null; if (x0 == null || lvStage.zoom) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 50) lvStep(dx < 0 ? 1 : -1); }, { passive: true });
     el.querySelectorAll('[data-lv-show]').forEach(b => { b.onclick = () => { lvStage.session = LV().showImage(lvStage.session, room, b.dataset.lvShow); lvPaintStage(); }; });
+    const gal = el.querySelector('[data-lv-gal]'), gfi = el.querySelector('[data-lv-file]');
+    gal.onclick = () => gfi.click();
+    gfi.onchange = () => { const f = Array.from(gfi.files || []); gfi.value = ''; lvStageAdd(f); };
+    scr.addEventListener('dragover', e => { if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) { e.preventDefault(); scr.classList.add('is-drop'); } });
+    scr.addEventListener('dragleave', () => scr.classList.remove('is-drop'));
+    scr.addEventListener('drop', e => { e.preventDefault(); scr.classList.remove('is-drop'); lvStageAdd(Array.from((e.dataTransfer && e.dataTransfer.files) || [])); });
     el.querySelectorAll('[data-lv-react]').forEach(b => { b.onclick = () => {
       lvStage.session = LV().react(lvStage.session, b.dataset.lvReact);
       const n = el.querySelector('.lv-react-n'); if (n) n.textContent = 'Vos réactions : ' + Object.entries(lvStage.session.reactions).map(([k, c]) => k + ' ×' + c).join(' · ');
@@ -18338,17 +18362,44 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     lvPaintMic(); lvTick();
   };
   const lvStep = dir => { if (!lvStage) return; lvStage.session = LV().stepImage(lvStage.session, lvStage.room, dir); lvPaintStage(); };
+  // Pendant le direct (D-80) : des pages de la galerie (choix, glisser-déposer, coller) rejoignent le tableau et s'affichent aussitôt
+  const lvStageAdd = async files => {
+    if (!lvStage || lvStage.busy) return 0;
+    const imgs = files.filter(f => f && /^image\//.test(f.type || ''));
+    if (!imgs.length) { if (files.length) showToast('Choisissez une image (photo ou capture d\'une page).'); return 0; }
+    const L = LV().LIMITS, room0 = lvStage.room;
+    const cap = Math.min(L.images - room0.images.length, L.pages - room0.images.filter(LV().isPage).length);
+    if (cap <= 0) { showToast('Tableau complet : ' + L.pages + ' pages de la galerie et ' + L.images + ' images au plus.'); return 0; }
+    lvStage.busy = true; lvPaintStage();
+    let added = [];
+    try {
+      const r = await lvAddPages(imgs.slice(0, cap));
+      if (!lvStage) return 0;
+      added = r.refs.map(ref => ({ ref, kind: 'page', caption: '', spoiler: false }));
+      if (added.length) {
+        const sv = LV().saveRoom(lvLoad(), { id: room0.id, images: lvStage.room.images.concat(added) }, lvNow(), room0.id);
+        if (!sv.errors.length && sv.room) { lvStore(sv.state); lvStage.room = sv.room; }
+        else lvStage.room = Object.assign({}, lvStage.room, { images: lvStage.room.images.concat(added) });
+        lvStage.session = LV().showImage(Object.assign({}, lvStage.session, { shown: null }), lvStage.room, added[0].ref);
+      }
+      showToast((added.length ? added.length + ' page' + (added.length > 1 ? 's' : '') + ' au tableau, affichée' + (added.length > 1 ? 's' : '') + ' en direct.' : 'Aucune page ajoutée.') + (r.failed ? ' ' + r.failed + ' illisible' + (r.failed > 1 ? 's' : '') + '.' : '') + (imgs.length > cap ? ' ' + (imgs.length - cap) + ' de trop.' : ''));
+    } finally { if (lvStage) { lvStage.busy = false; lvPaintStage(); } }
+    return added.length;
+  };
   const openLiveStage = id => {
     const room = lvLoad().rooms.find(x => x.id === id);
     if (!room || lvStage) return false;
     const el = document.createElement('div');
     el.className = 'lv-stage'; el.id = 'liveStage'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Répétition : ' + room.title);
     document.body.appendChild(el);
-    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, zoom: false, revealed: new Set(), tx: null, onKey: e => {
+    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, zoom: false, revealed: new Set(), tx: null, busy: false,
+      onPaste: e => { const f = Array.from((e.clipboardData && e.clipboardData.files) || []).filter(x => /^image\//.test(x.type || '')); if (f.length) { e.preventDefault(); lvStageAdd(f); } },
+      onKey: e => {
       if (e.key === 'Escape') closeLiveStage();
       else if ((e.key === 'ArrowRight' || e.key === 'ArrowLeft') && !/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '')) { e.preventDefault(); lvStep(e.key === 'ArrowRight' ? 1 : -1); }
     } };
     document.addEventListener('keydown', lvStage.onKey);
+    document.addEventListener('paste', lvStage.onPaste);
     lvPaintStage();
     return true;
   };
@@ -18357,6 +18408,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     lvMicStop();
     clearInterval(lvStage.timer);
     document.removeEventListener('keydown', lvStage.onKey);
+    document.removeEventListener('paste', lvStage.onPaste);
     const r = LV().endSession(lvLoad(), lvStage.session, lvStage.room, lvNow(), lvId('lh'));
     lvStage.el.remove();
     lvStage = null;
@@ -18387,8 +18439,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!host) return;
     host.hidden = commTab === 'profile';
     const sugg = plancheSuggestions();
+    const plCompact = commTab !== 'live' && (commLoad().drafts.length + storyLoad().stories.length) > 0;
     host.innerHTML =
-      (commTab === 'live' ? '' : '<section class="pl-studio"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>Racontez votre collection en cases de BD</h3><p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p></div></div>' +
+      (commTab === 'live' ? '' : lvNextHtml()) +
+      (commTab === 'live' ? '' : '<section class="pl-studio' + (plCompact ? ' is-compact' : '') + '"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>' + (plCompact ? 'Nouvelle planche' : 'Racontez votre collection en cases de BD') + '</h3>' + (plCompact ? '<details class="pl-how"><summary>Comment ça marche</summary>' : '') + '<p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p>' + (plCompact ? '</details>' : '') + '</div></div>' +
       '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div></section>') +
       (commTab !== 'live' ? '' : lvHtml()) +
       (commTab === 'live' ? '' : commForYouHtml()) +

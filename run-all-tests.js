@@ -4986,6 +4986,62 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Studio de direct (D-79) : pages choisies dans la galerie (plusieurs, fichier non image refusé), légende, spoiler flouté puis révélé, zoom, flèches, stockage local seulement, planche sans image, pages libérées',
         ok: !!t62 && !t62.error && ['galleryBtn', 'added', 'thumbs', 'saved', 'stored', 'cardImg', 'shownPage', 'zoom', 'spoiler', 'revealed', 'wrapCopy', 'history', 'plancheText', 'gc'].every(k => t62[k] === true) });
 
+      // ==========================================
+      // TEST 63 : Pages ajoutées en plein direct (galerie, collage) et fil de la Communauté (D-80) — données FICTIVES restaurées
+      // ==========================================
+      console.log('\n[TEST 63] Pages en plein direct et fil de la Communauté...');
+      const t63 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const until = async (f, ms = 4000) => { const t = Date.now(); while (Date.now() - t < ms) { if (f()) return true; await wait(50); } return false; };
+        const page = name => new Promise(res => { const c = document.createElement('canvas'); c.width = 600; c.height = 900; const g = c.getContext('2d'); g.fillStyle = '#27ae60'; g.fillRect(0, 0, 600, 900); c.toBlob(b => res(new File([b], name, { type: 'image/png' })), 'image/png'); });
+        const keys = ['panel_live_v1', 'panel_community_drafts_v1', 'panel_stories_v1'], saved0 = keys.map(k => localStorage.getItem(k));
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        try {
+          keys.forEach(k => localStorage.removeItem(k)); await P.live.gc();
+          // 1. Pages ajoutées en plein direct : choix dans la galerie puis collage
+          const sv = P.live.save({ title: 'Direct fictif', topics: 'Point A', when: new Date(Date.now() + 2 * 864e5).toISOString() });
+          P.setSinglesInMemoryForTest([{ id: 'cm63', series: 'Fixture Héros', issue: '#4', year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, addedAt: new Date().toISOString(), coverUrl: '' }]);
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          const ft = document.querySelector('#communityHead [data-cm-tab="feed"]'); if (ft) { ft.click(); await wait(250); }
+          r.nextCard = !!document.querySelector('#communityDashboard .lv-next-card [data-lv-start="' + sv.id + '"]');
+          r.pullText = /Fixture Héros #4/.test(document.querySelector('[data-tpl="pull"]').textContent) && !/##/.test(document.querySelector('#communityDashboard .pl-templates').textContent);
+          r.fullStudio = !document.querySelector('.pl-studio.is-compact');
+          document.querySelector('.lv-next-card [data-lv-start]').click(); await wait(250);
+          const st = () => document.getElementById('liveStage');
+          r.tile = !!st() && !!st().querySelector('.lv-strip [data-lv-gal]');
+          const fi = st().querySelector('[data-lv-file]'), dt = new DataTransfer(); dt.items.add(await page('a.png')); dt.items.add(await page('b.png'));
+          fi.files = dt.files; fi.dispatchEvent(new Event('change'));
+          await until(() => st().querySelectorAll('.lv-strip [data-lv-show]').length === 2);
+          const room = P.live.state().rooms[0];
+          r.addedLive = room.images.length === 2 && room.images.every(x => x.kind === 'page') && P.live.stage().session.shown === room.images[0].ref && await until(() => !!st().querySelector('.lv-screen img[src^="blob:"]'));
+          const dt2 = new DataTransfer(); dt2.items.add(await page('c.png'));
+          document.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt2, bubbles: true }));
+          await until(() => st().querySelectorAll('.lv-strip [data-lv-show]').length === 3);
+          r.paste = P.live.state().rooms[0].images.length === 3 && P.live.stage().session.shown === P.live.state().rooms[0].images[2].ref;
+          st().querySelector('[data-lv-end]').click(); await wait(250);
+          r.history = P.live.state().history[0].shown.length === 2 && !st();
+          // 2. Fil : studio de planches compact dès qu'il y a une publication, auteur « Vous »
+          localStorage.setItem('panel_stories_v1', JSON.stringify({ version: 1, stories: [{ id: 'st_fx63', series: 'Fixture Héros', issue: '#4', publisher: 'Fictif', rating: 4, review: 'Avis fictif.', readAt: '2026-11-15', style: 'marvel', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }] }));
+          document.querySelector('#communityHead [data-cm-tab="feed"]').click(); await wait(250);
+          r.compact = !!document.querySelector('.pl-studio.is-compact details.pl-how') && /Nouvelle planche/.test(document.querySelector('.pl-studio h3').textContent);
+          r.author = /Vous/.test(document.querySelector('#communityDashboard .igp').textContent);
+          keys.forEach(k => localStorage.removeItem(k));
+          r.gc = (await P.live.gc()) === 3 && (await P.live.pageCount()) === 0;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (document.getElementById('liveStage')) P.live.end();
+          keys.forEach((k, i) => { if (saved0[i] === null) localStorage.removeItem(k); else localStorage.setItem(k, saved0[i]); });
+          try { await P.live.gc(); } catch (_) {}
+          P.setSinglesInMemoryForTest(prev);
+          const f2 = document.querySelector('[data-cm-tab="feed"]'); if (f2) f2.click();
+          document.getElementById('navAllSingles').click();
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 63:', JSON.stringify(t63));
+      testResults.push({ test: 'Direct et Communauté (D-80) : pages de la galerie ajoutées en plein direct (choix, collage) et affichées aussitôt, rappel du prochain direct dans le fil, modèles de planche sans « ## », studio de planches compact, auteur « Vous »',
+        ok: !!t63 && !t63.error && ['nextCard', 'pullText', 'fullStudio', 'tile', 'addedLive', 'paste', 'history', 'compact', 'author', 'gc'].every(k => t63[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

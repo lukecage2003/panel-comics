@@ -9,6 +9,8 @@ Statut : **studio de préparation construit (D-78), salon à plusieurs non const
 - **Après la répétition** : synthèse gardée sur l'appareil (durée, points traités et leur durée, images montrées) et planche de synthèse préparée dans le compositeur de planches, comme brouillon local.
 - Données : `panel_live_v1` (validé à la lecture par `domains/community/live-core.js`) ; suppression annulable.
 - **Pages de la galerie (D-79)** : le bouton « Pages de ma galerie » ouvre la galerie du téléphone (plusieurs images à la fois). Chaque page est réduite à 1 600 px, stockée dans une base IndexedDB à part (`panel-live`, magasin `pages`) et n'est jamais envoyée ni publiée. `panel_live_v1` ne garde qu'une référence, une légende et le drapeau « spoiler ». La planche de synthèse cite le nombre de pages commentées, jamais leur image. Les pages qui ne servent plus à aucun direct ni synthèse sont libérées à la session suivante (l'annulation d'une suppression reste possible d'ici là).
+- **En plein direct (D-80)** : la tuile « + Galerie » du tableau, le glisser-déposer sur l'écran ou le collage (Ctrl+V) ajoutent des pages pendant la répétition ; elles rejoignent le tableau du direct et s'affichent aussitôt. Mêmes règles : stockage sur l'appareil seulement, plafond de seize pages.
+- **Dans le fil** : le prochain direct daté est rappelé en tête (« Répéter », « Mes directs »).
 - **Règle d'usage affichée** : montrer des pages de numéros que l'on possède, pour en débattre ; quelques pages, pas un numéro entier.
 
 ## Ce que l'utilisateur obtient
