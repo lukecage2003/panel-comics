@@ -24,7 +24,7 @@ const MESSAGES = Object.freeze({
   device_revoked: 'Cet appareil a été déconnecté du compte. Vos données restent sur cet appareil.',
   network: 'Pas de connexion au service. Panel continue en local.',
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
-  unavailable: 'La bibliothèque de connexion n\'est pas encore installée sur cet appareil.',
+  unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
   unknown: 'Action impossible pour le moment. Réessayez plus tard.'
 });
 

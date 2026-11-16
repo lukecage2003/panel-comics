@@ -59,6 +59,8 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   fs.copyFileSync(path.join(ROOT, 'manifest.webmanifest'), path.join(WWW, 'manifest.webmanifest'));
   fs.cpSync(path.join(ROOT, 'icons'), path.join(WWW, 'icons'), { recursive: true });
   fs.cpSync(path.join(ROOT, 'fonts'), path.join(WWW, 'fonts'), { recursive: true });
+  // Bibliothèque de connexion (D-84) : versionnée dans vendor/, chargée seulement si un projet en ligne est configuré
+  fs.readdirSync(path.join(ROOT, 'vendor')).filter(f => /^supabase-js-[0-9.]+\.js$/.test(f)).forEach(f => fs.copyFileSync(path.join(ROOT, 'vendor', f), path.join(WWW, 'vendor', f)));
   fs.cpSync(path.join(ROOT, 'data'), path.join(WWW, 'data'), { recursive: true });
   const size = fs.readdirSync(WWW, { recursive: true }).length;
   console.log(`www/ prêt : ${size} fichiers, bibliothèques locales vérifiées (${VENDOR.length}).`);

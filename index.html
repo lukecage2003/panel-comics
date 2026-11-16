@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-wGqz62SB5LVIni90T+8by8OAQtcb/K0ndvb9AWv1sMs=' 'sha256-HZkcX9CbFWTHfgmw8tjG/zUsrBXWorGlIoUGAvLSVM8=' https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-SjUhCk4Kvmf0uFPRbCJdd4WW5DozudDirqaZSKIJUhw=' 'sha256-f/bR6oOhc0jzp/R/+t/xK2Rcn/TPcn4U6Umyw469q8c=' https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js https://cdn.jsdelivr.net/npm/zxing-wasm@3.1.3/dist/iife/reader/index.js https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -7150,7 +7150,7 @@ const MESSAGES = Object.freeze({
   device_revoked: 'Cet appareil a été déconnecté du compte. Vos données restent sur cet appareil.',
   network: 'Pas de connexion au service. Panel continue en local.',
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
-  unavailable: 'La bibliothèque de connexion n\'est pas encore installée sur cet appareil.',
+  unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
   unknown: 'Action impossible pour le moment. Réessayez plus tard.'
 });
 
@@ -21819,18 +21819,34 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // Sans compte : application entièrement locale. Déconnexion : locale par défaut, aucune donnée de l'appareil touchée.
   const ACCT_CFG_KEY = 'panel_cloud_config';
   const acctCore = () => (window.PanelDomains && window.PanelDomains.accountAuth) || null;
-  let acctClient = null, acctClientKey = '';
+  let acctClient = null, acctClientKey = '', acctClientLib = null;
   const acctConfig = () => {
     const A = acctCore(); if (!A) return null;
     try { const r = A.parseConfig(JSON.parse(localStorage.getItem(ACCT_CFG_KEY) || 'null') || {}); return r.ok ? r.config : null; } catch (_) { return null; }
   };
   const acctLib = () => (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase : null;
+  // Bibliothèque supabase-js en version figée (D-84), servie par Panel lui-même (jamais par un CDN), chargée à la demande :
+  // seulement quand un projet est configuré sur cet appareil. Empreinte vérifiée : docs/phase3/10 § 13.
+  const ACCT_LIB_SRC = 'vendor/supabase-js-2.118.0.js';
+  let acctLibLoading = null;
+  const acctLoadLib = () => {
+    if (acctLib()) return Promise.resolve(acctLib());
+    if (acctLibLoading) return acctLibLoading;
+    acctLibLoading = new Promise(resolve => {
+      const sc = document.createElement('script');
+      sc.src = ACCT_LIB_SRC; sc.async = true;
+      sc.onload = () => resolve(acctLib());
+      sc.onerror = () => { acctLibLoading = null; resolve(null); };
+      document.head.appendChild(sc);
+    });
+    return acctLibLoading;
+  };
   const acctGetClient = cfg => {
     const lib = acctLib(); if (!lib || !cfg) return null;
     const k = cfg.url + '|' + cfg.publishableKey;
-    if (!acctClient || acctClientKey !== k) {
+    if (!acctClient || acctClientKey !== k || acctClientLib !== lib) {
       acctClient = lib.createClient(cfg.url, cfg.publishableKey, { auth: { flowType: 'pkce', persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: 'panel_cloud_auth' } });
-      acctClientKey = k;
+      acctClientKey = k; acctClientLib = lib;
     }
     return acctClient;
   };
@@ -21838,6 +21854,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const renderAccountBox = async () => {
     const body = $('acctBody'), stateEl = $('acctState'), A = acctCore();
     if (!body || !stateEl || !A) return;
+    const cfg0 = acctConfig();
+    if (cfg0 && !acctLib()) await acctLoadLib();
     const cfg = acctConfig(), client = acctGetClient(cfg);
     const msgHtml = '<p class="acct-msg" data-acct-msg role="status"></p>';
     const say = t => { const m = body.querySelector('[data-acct-msg]'); if (m) m.textContent = t || ''; };
@@ -21847,7 +21865,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<form data-acct-cfg><b>Projet en ligne (préproduction)</b>' +
         '<label>Adresse du projet<input class="field-input" data-acct="url" placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co" autocomplete="off" spellcheck="false"></label>' +
         '<label>Clé publique<input class="field-input" data-acct="key" placeholder="sb_publishable_…" autocomplete="off" spellcheck="false"></label>' +
-        '<span class="acct-note">Seule la clé PUBLIQUE va ici. Une clé secrète est refusée. Rien n\'est envoyé tant que la bibliothèque de connexion n\'est pas installée.</span>' +
+        '<span class="acct-note">Seule la clé PUBLIQUE va ici. Une clé secrète est refusée. Rien n\'est envoyé avant que vous vous connectiez ou créiez un compte.</span>' +
         '<div class="acct-row"><button class="btn secondary" type="submit">Enregistrer le projet</button></div>' + msgHtml + '</form>';
       body.querySelector('[data-acct-cfg]').onsubmit = ev => {
         ev.preventDefault();
@@ -21863,7 +21881,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const wireForget = () => { const b = body.querySelector('[data-acct-forget]'); if (b) b.onclick = () => { try { localStorage.removeItem(ACCT_CFG_KEY); } catch (_) {} acctClient = null; acctClientKey = ''; renderAccountBox(); }; };
     if (!client) {
       stateEl.textContent = 'Mode local · projet configuré';
-      body.innerHTML = where + '<p>' + escapeHtml(A.MESSAGES.unavailable) + ' La connexion s\'ouvrira avec elle, après la politique de sécurité du contenu (CSP).</p><div class="acct-row">' + forget + '</div>';
+      body.innerHTML = where + '<p>' + escapeHtml(A.MESSAGES.unavailable) + ' Réessayez une fois en ligne.</p><div class="acct-row">' + forget + '</div>';
       wireForget();
       return;
     }

@@ -5115,7 +5115,8 @@ const waitForCdp = async () => {
           r.secretRefused = /SECRÈTE/.test(body().querySelector('[data-acct-msg]').textContent) && !localStorage.getItem('panel_cloud_config');
           fill('https://abcdefghijklmnopqrst.supabase.co', 'sb_publishable_FixtureKey123'); await wait(100);
           r.savedCfg = JSON.parse(localStorage.getItem('panel_cloud_config')).publishableKey === 'sb_publishable_FixtureKey123';
-          r.noLib = /pas encore installée/.test(body().textContent) && /projet configuré/.test(state());
+          for (let i = 0; i < 50 && !(window.supabase && body().querySelector('[data-acct-auth]')); i++) await wait(100);
+          r.libLoaded = typeof window.supabase.createClient === 'function' && !!document.querySelector('script[src="vendor/supabase-js-2.118.0.js"]') && !!body().querySelector('[data-acct-auth]');
           const calls = [];
           let session = null;
           window.supabase = { createClient: (u, k, o) => { calls.push(['create', u, o.auth.flowType]); return { auth: {
@@ -5149,7 +5150,7 @@ const waitForCdp = async () => {
       })()`);
       console.log('Résultat Test 65:', JSON.stringify(t65));
       testResults.push({ test: 'Compte en ligne (D-82) : encadré dans l onglet Compte, clé secrète refusée, projet gardé sur l appareil, rien sans bibliothèque installée, flux PKCE, inscription sans énumération, connexion puis déconnexion locale, projet oublié',
-        ok: !!t65 && !t65.error && ['inAccountTab', 'localState', 'secretRefused', 'savedCfg', 'noLib', 'forms', 'neutral', 'signedIn', 'signedOutLocal', 'forgotten', 'survivesTabs'].every(k => t65[k] === true) });
+        ok: !!t65 && !t65.error && ['inAccountTab', 'localState', 'secretRefused', 'savedCfg', 'libLoaded', 'forms', 'neutral', 'signedIn', 'signedOutLocal', 'forgotten', 'survivesTabs'].every(k => t65[k] === true) });
 
       // ==========================================
       // TEST 66 : Politique de sécurité du contenu stricte (D-83), injections de test bloquées — données FICTIVES restaurées
