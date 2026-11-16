@@ -61,8 +61,18 @@ function apply(html) {
   return html.slice(0, a) + block(policy(html).csp).replace(/\n/g, eol) + html.slice(b + END.length);
 }
 
+// Garde-fou (stabilisation, étape B) : script-src-attr 'none' bloquerait silencieusement tout gestionnaire en ligne réintroduit
+function inlineHandlers(html) {
+  const out = [], re = /\son(?:click|error|load|input|change|submit|focus|blur|key(?:down|up|press)|mouse[a-z]+|touch[a-z]+|pointer[a-z]+)\s*=\s*\\?["']/gi;
+  let m;
+  while ((m = re.exec(html))) out.push(html.slice(0, m.index).split('\n').length);
+  return out;
+}
+
 function run(check) {
   const html = fs.readFileSync(FILE, 'utf8');
+  const handlers = inlineHandlers(html);
+  if (handlers.length) { console.error('csp : gestionnaire(s) en ligne interdit(s) aux lignes ' + handlers.slice(0, 10).join(', ') + ' (utiliser data-onerr / data-click-proxy ou addEventListener)'); process.exit(1); }
   const { csp, count } = policy(html);
   const eol = html.includes('\r\n') ? '\r\n' : '\n';
   const want = block(csp).replace(/\n/g, eol);
@@ -84,4 +94,4 @@ function run(check) {
 }
 
 if (require.main === module) run(process.argv.includes('--check'));
-module.exports = { policy, inlineScripts, run, apply };
+module.exports = { policy, inlineScripts, inlineHandlers, run, apply };
