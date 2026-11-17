@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-+caimrG/qkddfZ44Qo4509Qzc91LGvwHKQtkxadD2ic=' 'sha256-/XNhVDriyE5RsUMMK5nbNqRa1nAk1zrOHXu28QYJ7gs=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-Ycdo/7hDWBUfUxOvNMoBmwpxz+uGGNXhd2N2+Hbqxmg=' 'sha256-ZAEnNl1bSguKC41VqKgWW836cJd5IqYdDbuVC8fqkFc=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -7984,9 +7984,13 @@ const rank = (items, opts = {}) => {
     return { a, topics, score, why: why ? why[1] : '', learnedTopic: !why && learned > 0.25 && l.clicks >= 3 && best ? TOPICS[best] ? TOPICS[best].label : 'Comics' : '', i };
   }).sort((x, y) => y.score - x.score || x.i - y.i);
 };
+// Périmètre (D-12, stabilisation D) : Explorer ne montre que des comics. Un article qui ne parle que de manga ou d'anime
+// est masqué à l'affichage (le flux n'est pas modifié) ; un article qui relie un manga à un univers comics reste visible.
+const COMICS_TOPICS = Object.freeze(['marvel', 'dc', 'bd', 'indie']);
+const inScope = a => { const t = classify(a); return !t.includes('manga') || t.some(k => COMICS_TOPICS.includes(k)); };
 const topicLabel = k => k === 'comics' ? 'Comics' : TOPICS[k] ? TOPICS[k].label : '';
 
-module.exports = { TOPICS, TOPIC_KEYS, HALF_LIFE_DAYS, classify, emptyLearn, sanitizeLearn, decay, learnFrom, rank, topicLabel };
+module.exports = { TOPICS, TOPIC_KEYS, HALF_LIFE_DAYS, COMICS_TOPICS, inScope, classify, emptyLearn, sanitizeLearn, decay, learnFrom, rank, topicLabel };
   return Object.freeze(module.exports); })();
   /* domains/explorer/watch-guides.js */
   out.watchGuides = (() => { const module = { exports: {} };
@@ -12746,13 +12750,38 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const viewHooks = new Map();
   const registerViewHooks = (name, hooks) => { if (hooks && (typeof hooks.open === 'function' || typeof hooks.render === 'function')) viewHooks.set(name, hooks); else viewHooks.delete(name); };
   const registerHostedView = (name, open) => { if (typeof open === 'function') hostedViews.set(name, open); else hostedViews.delete(name); };
+  // Navigation (stabilisation D) : l'entrée active est annoncée aux lecteurs d'écran (aria-current) ; Wishlist et Pull List ont leur propre titre,
+  // et le titre de l'onglet suit la vue. Appelé à chaque changement de vue et quand la case « Ma pull list seulement » change.
+  const SINGLES_TITLES = {
+    collection: ['Ma collection', 'Inventaire physique : singles, variantes et rangement'],
+    wishlist: ['Wishlist', 'Les numéros que vous cherchez encore'],
+    series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
+    releases: ['Calendrier', 'Sorties comics US et francophones'],
+    pull: ['Pull List', 'Vos séries suivies et leurs prochaines sorties'],
+    stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
+    reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
+    community: ['Communauté', 'Planches, stories et directs, à partir de votre vraie collection'],
+    finances: ['Finances', "Coût d'acquisition, valeur, plus-values latentes et réalisées, par devise"],
+    explorer: ['Explorer', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
+  };
+  const syncSinglesNav = () => {
+    const view = activeSinglesView;
+    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
+    const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : view === 'releases' && $('releasesPullOnly') && $('releasesPullOnly').checked ? 'navSinglesPullList' : navMap[view];
+    $$('#navSinglesBlock .nav-btn').forEach(b => { const on = b.id === navId; b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    const subKey = view === 'collection' && activeSingleFilter === 'wishlist' ? 'wishlist' : view;
+    $$('#singlesSubnav .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sview === subKey));
+    const t = SINGLES_TITLES[navId === 'navSinglesWishlist' ? 'wishlist' : navId === 'navSinglesPullList' ? 'pull' : view];
+    if (t && $('mainTitleHeading')) { $('mainTitleHeading').textContent = t[0]; $('mainTitleSub').textContent = t[1]; }
+    if (t) document.title = t[0] + ' · Panel';
+  };
   const showSinglesView = view => {
     activeSinglesView = view;
     const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView', reading: 'singlesReadingView', finances: 'singlesFinanceView', community: 'singlesCommunityView' };
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-explorer', view === 'explorer');
     // Barre du bas : Collection regroupe Collection, Séries, Wishlist, Stats, Lecture et Finances ; Calendrier, Communauté et Explorer ont leur bouton
     const dockId = { explorer: 'mobExplorer', community: 'mobCommunity', releases: 'mobReleases' }[view] || 'mobSingles';
-    ['mobSingles', 'mobReleases', 'mobCommunity', 'mobExplorer'].forEach(b => $(b) && $(b).classList.toggle('active', b === dockId));
+    ['mobSingles', 'mobReleases', 'mobCommunity', 'mobExplorer'].forEach(b => { if (!$(b)) return; $(b).classList.toggle('active', b === dockId); if (b === dockId) $(b).setAttribute('aria-current', 'page'); else $(b).removeAttribute('aria-current'); });
     // Les chiffres de la collection ne s'affichent que sur la page Collection
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('hide-coll-stats', view !== 'collection');
     // Collection et Séries sont deux regards sur la même collection : un sélecteur commun les relie
@@ -12760,26 +12789,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     document.querySelectorAll('[data-coll-seg]').forEach(b => { const on = b.dataset.collSeg === view; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); });
     if ($('collSegHint')) $('collSegHint').textContent = view === 'series' ? 'Vos runs : numéros possédés, manquants et ce qu\'il reste pour les compléter.' : 'Chaque comic que vous possédez, exemplaire par exemplaire (état, variante, valeur, rangement).';
     Object.entries(map).forEach(([v, id]) => { if ($(id)) $(id).hidden = v !== view; });
-    const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
-    $$('#navSinglesBlock .nav-btn').forEach(b => b.classList.remove('active'));
-    const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : view === 'releases' && $('releasesPullOnly') && $('releasesPullOnly').checked ? 'navSinglesPullList' : navMap[view];
-    if ($(navId)) $(navId).classList.add('active');
-    const subKey = view === 'collection' && activeSingleFilter === 'wishlist' ? 'wishlist' : view;
-    $$('#singlesSubnav .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sview === subKey));
-    const titles = {
-      collection: ['Ma collection', 'Inventaire physique : singles, variantes et rangement'],
-      series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
-      releases: ['Calendrier', 'Sorties comics US et francophones'],
-      stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
-      reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
-      community: ['Communauté', 'Planches, stories et directs, à partir de votre vraie collection'],
-      finances: ['Finances', 'Coût d\'acquisition, valeur, plus-values latentes et réalisées, par devise'],
-      explorer: ['Explorer', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
-    };
-    if ($('mainTitleHeading') && titles[view]) {
-      $('mainTitleHeading').textContent = titles[view][0];
-      $('mainTitleSub').textContent = titles[view][1];
-    }
+    syncSinglesNav();
     renderSinglesCollection();
     { const hk = viewHooks.get(view); if (hk && typeof hk.open === 'function') hk.open(); }
   };
@@ -12927,10 +12937,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const renderBoxDig = (items) => {
     const wrap = document.createElement('div');
     wrap.className = 'cbox-dig';
-    wrap.setAttribute('role', 'list');
+    wrap.setAttribute('role', 'group');
     wrap.setAttribute('aria-label', 'Numéros de la boîte, à feuilleter');
     const sorted = items.slice().sort((a, b) => String(a.series || '').localeCompare(String(b.series || '')) || (issueNumber(a) || 0) - (issueNumber(b) || 0)).slice(0, 240);
-    wrap.innerHTML = sorted.map((x, j) => '<button class="dig-book" role="listitem" data-dig="' + j + '" style="--c:' + cboxHue(x) + ';--r:' + ((((j * 29) % 5) - 2) * 0.7).toFixed(1) + 'deg">' +
+    wrap.innerHTML = sorted.map((x, j) => '<button class="dig-book" data-dig="' + j + '" style="--c:' + cboxHue(x) + ';--r:' + ((((j * 29) % 5) - 2) * 0.7).toFixed(1) + 'deg">' +
       (x.coverUrl ? coverImgTag(x) : '<span class="dig-num">#' + escapeHtml(String(x.issue || '?')) + '</span>') +
       '<span class="dig-cap"><b>' + escapeHtml(x.series || 'Sans titre') + ' #' + escapeHtml(String(x.issue || '?')) + '</b>' + escapeHtml([x.variant, x.condition].filter(Boolean).join(' · ')) + '</span><i></i></button>').join('');
     wrap.querySelectorAll('[data-dig]').forEach(el => { el.onclick = () => openSingleInspector(sorted[+el.dataset.dig]); });
@@ -14893,7 +14903,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const qa = new Date(s0); qa.setDate(qa.getDate() - 3); const qb = new Date(s0); qb.setDate(qb.getDate() + 6 * 7 + 3);
       const pool = relQuery({ range: [isoDate(qa), isoDate(qb)] });
       const cur = range && relView.period === 'week' ? range[0] : '';
-      upStrip = '<div class="rel-up" role="list" aria-label="Prochaines semaines">' + Array.from({ length: 6 }, (_, w) => {
+      upStrip = '<div class="rel-up" role="group" aria-label="Prochaines semaines">' + Array.from({ length: 6 }, (_, w) => {
         const a = new Date(s0); a.setDate(a.getDate() + 7 * w); const b = new Date(a); b.setDate(b.getDate() + 6);
         const A = isoDate(a), B = isoDate(b);
         const its = pool.filter(p => { const d = relDay(p); return d >= A && d <= B; });
@@ -14902,7 +14912,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         const vf = its.filter(p => ['FR', 'BE', 'CH', 'CA', 'LU'].includes(String(p.market || '').toUpperCase())).length;
         const wed = new Date(a); wed.setDate(wed.getDate() + 2);
         const title = w === 0 ? 'Cette semaine' : w === 1 ? 'Semaine prochaine' : 'Mer. ' + wed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }).replace('.', '');
-        return '<button role="listitem" class="rel-upw' + (cur === A ? ' is-cur' : '') + (its.length ? '' : ' is-empty') + '" data-rel-jump="' + A + '"><small>' + title + '</small>' + (its.length || w === 0 ? '<b>' + its.length + '</b><span>sortie' + (its.length > 1 ? 's' : '') + '</span>' : '<b>—</b><span>Ouvrir la semaine</span>') +
+        return '<button class="rel-upw' + (cur === A ? ' is-cur' : '') + (its.length ? '' : ' is-empty') + '" data-rel-jump="' + A + '"><small>' + title + '</small>' + (its.length || w === 0 ? '<b>' + its.length + '</b><span>sortie' + (its.length > 1 ? 's' : '') + '</span>' : '<b>—</b><span>Ouvrir la semaine</span>') +
           (vf || pulled ? '<i>' + [vf ? vf + ' VF' : '', pulled ? pulled + ' suivie' + (pulled > 1 ? 's' : '') : ''].filter(Boolean).join(' · ') + '</i>' : '') + '</button>';
       }).join('') + '</div>';
     }
@@ -16186,7 +16196,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Galerie de couvertures (séries, événements) : seulement des visuels réels issus des données, jamais de remplacement
   const exGallery = (title, items, note) => items.length ? '<section class="ex-sec"><h3>' + h(title) + ' (' + items.length + ')</h3>' + (note ? '<p class="ex-note">' + h(note) + '</p>' : '') +
     (() => { const gid = 'g' + (++exLbSeq); exLbStore.set(gid, items.slice(0, 48)); if (exLbStore.size > 40) exLbStore.delete(exLbStore.keys().next().value);
-      return '<div class="ex-gallery" role="list">' + items.slice(0, 48).map((c, i) => '<button class="ex-gal-item" role="listitem" data-ex-lb="' + gid + '" data-ex-lb-i="' + i + '" aria-label="Agrandir : ' + h(c.label) + '">' + mediaImg(c.ref, { cls: 'ex-gal-img', alt: c.label, fallback: placeholderCover(c.label, ''), w: 160, h: 240 }) +
+      return '<div class="ex-gallery" role="group" aria-label="' + h(title) + '">' + items.slice(0, 48).map((c, i) => '<button class="ex-gal-item" data-ex-lb="' + gid + '" data-ex-lb-i="' + i + '" aria-label="Agrandir : ' + h(c.label) + '">' + mediaImg(c.ref, { cls: 'ex-gal-img', alt: c.label, fallback: placeholderCover(c.label, ''), w: 160, h: 240 }) +
         '<span class="ex-gal-cap">' + h(c.label) + (c.ref.source ? '<small>' + h(c.ref.source) + '</small>' : '') + '<small class="ex-st-' + exRefStatus(c.ref).code + '">' + h(exRefStatus(c.ref).label) + '</small></span></button>').join('') + '</div>'; })() + '</section>' : '';
   const exMediaEditBtn = (kind, key) => '<button class="btn secondary ex-media-edit" data-ex-media="' + h(kind) + '" data-ex-id="' + h(key) + '">' + (mediaGetRef(kind, key) ? 'Modifier le visuel' : 'Compléter le visuel') + '</button>';
   const exMediaDialog = (kind, key, name) => {
@@ -16873,10 +16883,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (st.status === 'error' && !st.data) return '<div class="ex-shop-err" role="alert">' + h(st.err) + ' <button class="btn secondary rel-mini" data-news-retry>Réessayer</button></div>';
     if (!st.data) return '<div class="ex-nw-grid is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-nw-skel"></span>').join('') + '</div>';
     const learn = exNewsLearn();
-    const inLang = st.data.items.filter(a => st.lang === 'all' || a.lang === st.lang);
+    const inLang = st.data.items.filter(a => (st.lang === 'all' || a.lang === st.lang) && NC.inScope(a));
     const ranked = NC.rank(inLang, { interests: [...exNewsInterests().entries()], learn });
     const counts = {}; ranked.forEach(x => x.topics.forEach(k => { counts[k] = (counts[k] || 0) + 1; }));
-    const topics = ['comics', ...NC.TOPIC_KEYS].filter(k => counts[k]);
+    const topics = ['comics', ...NC.TOPIC_KEYS].filter(k => counts[k] && k !== 'manga');
     const list = ranked.filter(x => !st.topic || x.topics.includes(st.topic));
     const forYou = list.filter(x => x.why).slice(0, 3);
     const rest = list.filter(x => !forYou.includes(x)).sort((x, y) => String(y.a.date).localeCompare(String(x.a.date)));
@@ -16916,7 +16926,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exWatchPageHtml = id => {
     const g = window.PanelDomains.watchGuides.byId(id);
     if (!g) return exBack() + '<div class="ex-empty">Dossier introuvable.</div>';
-    const arts = exNews.data ? exNews.data.items.filter(a => g.match.test(a.title + ' ' + (a.excerpt || '')) && (exNews.lang === 'all' || a.lang === exNews.lang)).slice(0, 6) : [];
+    const arts = exNews.data ? exNews.data.items.filter(a => g.match.test(a.title + ' ' + (a.excerpt || '')) && (exNews.lang === 'all' || a.lang === exNews.lang) && window.PanelDomains.newsCore.inScope(a)).slice(0, 6) : [];
     const days = Math.round((Date.parse(g.release + 'T12:00:00Z') - Date.now()) / 86400000);
     return exBack() + '<section class="ex-wg-page"><header class="ex-wg-hero"><span class="ex-kicker">Dossier · avant de voir</span><h2>' + h(g.title) + '</h2><p>' + h(g.studio) + ' · ' + h(g.releaseLabel) + (days > 0 ? ' · dans ' + days + ' jour' + (days > 1 ? 's' : '') : '') + '</p></header>' +
       '<div class="ex-wg-cols"><section><h3>À voir avant</h3><ol class="ex-wg-list">' + g.watch.map(w => '<li><b>' + h(w.t) + '</b> <span>(' + w.y + ')</span><small>' + h(w.why) + '</small></li>').join('') + '</ol></section>' +
@@ -17840,7 +17850,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const n = (v, l) => '<div class="ig-stat"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
     // À la une : stories regroupées par habillage (Marvel, DC, Image, indé, noir), comme des « highlights »
     const groups = Object.keys(STORY_STYLES).map(k => ({ k, list: stories.filter(st => (st.style || storyStyleKey(st)) === k) })).filter(g => g.list.length);
-    const hl = groups.length ? '<div class="ig-hl" role="list">' + groups.map(g => '<button class="ig-hl-item" role="listitem" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
+    const hl = groups.length ? '<div class="ig-hl" role="group" aria-label="À la une">' + groups.map(g => '<button class="ig-hl-item" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
     const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString('fr-FR') + '</b></span></button>';
     const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + (pinned.has('p:' + d.id) ? ', épinglée' : '') + '">' + (pinned.has('p:' + d.id) ? '<span class="ig-tile-pin" aria-hidden="true"><svg class=ic><use href=#ic-bookmark /></svg></span>' : '') + '<span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
     const rtile = e => '<button class="ig-tile" data-pf-copy="' + escapeHtml(e.x.id) + '" aria-label="' + escapeHtml((e.x.series || '') + ' ' + (e.x.issue || '')) + (e.at ? ', lu le ' + escapeHtml(new Date(e.at).toLocaleDateString('fr-FR')) : '') + '">' + coverImgTag(e.x) + '<span class="ig-tile-meta"><b>' + escapeHtml(String(e.x.series || '').slice(0, 22)) + ' #' + escapeHtml(String(e.x.issue || '?')) + '</b></span></button>';
@@ -21308,6 +21318,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navSinglesWishlist').onclick = () => goSingles('collection', 'wishlist');
     $('navSinglesSeries').onclick = () => goSingles('series');
     document.querySelectorAll('[data-coll-seg]').forEach(b => { b.onclick = () => goSingles(b.dataset.collSeg); });
+    if ($('releasesPullOnly')) $('releasesPullOnly').addEventListener('change', () => { if (activeSinglesView === 'releases') syncSinglesNav(); });
     const relSetPullOnly = on => { const cb = $('releasesPullOnly'); if (cb && cb.checked !== on) { cb.checked = on; if (typeof cb.onchange === 'function') cb.onchange(); } };
     $('navSinglesReleases').onclick = () => { relSetPullOnly(false); goSingles('releases'); };
     if ($('navSinglesPullList')) $('navSinglesPullList').onclick = () => { relSetPullOnly(true); goSingles('releases'); };

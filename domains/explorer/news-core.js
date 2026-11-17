@@ -74,6 +74,10 @@ const rank = (items, opts = {}) => {
     return { a, topics, score, why: why ? why[1] : '', learnedTopic: !why && learned > 0.25 && l.clicks >= 3 && best ? TOPICS[best] ? TOPICS[best].label : 'Comics' : '', i };
   }).sort((x, y) => y.score - x.score || x.i - y.i);
 };
+// Périmètre (D-12, stabilisation D) : Explorer ne montre que des comics. Un article qui ne parle que de manga ou d'anime
+// est masqué à l'affichage (le flux n'est pas modifié) ; un article qui relie un manga à un univers comics reste visible.
+const COMICS_TOPICS = Object.freeze(['marvel', 'dc', 'bd', 'indie']);
+const inScope = a => { const t = classify(a); return !t.includes('manga') || t.some(k => COMICS_TOPICS.includes(k)); };
 const topicLabel = k => k === 'comics' ? 'Comics' : TOPICS[k] ? TOPICS[k].label : '';
 
-module.exports = { TOPICS, TOPIC_KEYS, HALF_LIFE_DAYS, classify, emptyLearn, sanitizeLearn, decay, learnFrom, rank, topicLabel };
+module.exports = { TOPICS, TOPIC_KEYS, HALF_LIFE_DAYS, COMICS_TOPICS, inScope, classify, emptyLearn, sanitizeLearn, decay, learnFrom, rank, topicLabel };

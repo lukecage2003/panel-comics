@@ -39,3 +39,11 @@ test('rank : la fraîcheur, les suivis et les préférences apprises ordonnent l
   const r2 = N.rank(items, { now, learn: l });
   assert.equal(r2[0].a.title, 'Batman revient'); assert.equal(r2[0].learnedTopic, 'DC');
 });
+
+test('inScope (D-12) : un article seulement manga est masqué, un lien manga + univers comics reste', () => {
+  assert.equal(N.inScope(A('Les mangas de la semaine')), false);
+  assert.equal(N.inScope(A('One Piece : le tome 110 en librairie')), false);
+  assert.equal(N.inScope(A('Batman Ninja : un nouvel anime annoncé')), true);
+  assert.equal(N.inScope(A('Absolute Batman #14 en VF')), true);
+  assert.equal(N.inScope(A('Le festival d\'Angoulême dévoile sa sélection')), true);
+});

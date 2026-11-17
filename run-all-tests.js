@@ -5225,6 +5225,50 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Date du jour locale (F1) : à 0 h 30, la date d achat proposée est celle du jour local et non la date UTC de la veille',
         ok: !!t67 && !t67.error && ['ok', 'domain', 'restored'].every(k => t67[k] === true) });
 
+      // ==========================================
+      // TEST 68 : Explorer comics uniquement et navigation (stabilisation D), actualités fictives, préférences rétablies
+      // ==========================================
+      console.log('\n[TEST 68] Explorer et navigation...');
+      const t68 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const n0 = localStorage.getItem('panel_news_v1'), l0 = localStorage.getItem('panel_news_learn_v1');
+        const cb = document.getElementById('releasesPullOnly'), pull0 = !!(cb && cb.checked), title0 = document.title;
+        try {
+          localStorage.setItem('panel_news_v1', JSON.stringify({ lang: 'all' })); localStorage.removeItem('panel_news_learn_v1');
+          const d = new Date().toISOString();
+          window.Panel.news.setFetcherForTest(async () => ({ items: [
+            { id: 'm1', source: 'Fixture', lang: 'fr', title: 'Les mangas de la semaine', url: 'https://news.example/m1', date: d, author: '', categories: [], excerpt: 'Shonen et seinen.', image: '' },
+            { id: 'm2', source: 'Fixture', lang: 'fr', title: 'Batman Ninja : un nouvel anime', url: 'https://news.example/m2', date: d, author: '', categories: [], excerpt: '', image: '' },
+            { id: 'c1', source: 'Fixture', lang: 'fr', title: 'Absolute Batman en VF', url: 'https://news.example/c1', date: d, author: '', categories: [], excerpt: '', image: '' } ],
+            sources: [{ id: 'fx', name: 'Fixture', lang: 'fr', home: 'https://news.example' }], unavailable: [], notice: '' }));
+          document.getElementById('navExplorer').click(); await wait(250);
+          await window.Panel.news.load(); await wait(250);
+          const ids = [...document.querySelectorAll('#exNewsBox a.ex-nw')].map(a => a.dataset.newsId);
+          r.mangaHidden = !ids.includes('m1') && ids.includes('m2') && ids.includes('c1');
+          r.noMangaChip = !document.querySelector('#exNewsBox [data-news-topic="manga"]');
+          const nav = async id => { document.getElementById(id).click(); await wait(250); return { cur: [...document.querySelectorAll('#navSinglesBlock [aria-current="page"]')].map(b => b.id), h: document.getElementById('mainTitleHeading').textContent, t: document.title }; };
+          const w = await nav('navSinglesWishlist');
+          r.wishlist = w.cur.length === 1 && w.cur[0] === 'navSinglesWishlist' && w.h === 'Wishlist' && w.t === 'Wishlist · Panel';
+          const p = await nav('navSinglesPullList');
+          r.pull = p.cur.length === 1 && p.cur[0] === 'navSinglesPullList' && p.h === 'Pull List';
+          const c = document.getElementById('releasesPullOnly'); c.checked = false; c.dispatchEvent(new Event('change')); await wait(250);
+          r.pullSync = document.getElementById('navSinglesReleases').getAttribute('aria-current') === 'page' && !document.getElementById('navSinglesPullList').hasAttribute('aria-current') && document.getElementById('mainTitleHeading').textContent === 'Calendrier';
+          r.dock = document.getElementById('mobReleases').getAttribute('aria-current') === 'page' && document.querySelectorAll('[id^="mob"][aria-current]').length === 1;
+          r.buttonsKeepRole = document.querySelectorAll('button[role="listitem"]').length === 0 && (!document.querySelector('.rel-up') || document.querySelector('.rel-up').getAttribute('role') === 'group');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (n0 === null) localStorage.removeItem('panel_news_v1'); else localStorage.setItem('panel_news_v1', n0);
+          if (l0 === null) localStorage.removeItem('panel_news_learn_v1'); else localStorage.setItem('panel_news_learn_v1', l0);
+          const c2 = document.getElementById('releasesPullOnly'); if (c2 && c2.checked !== pull0) { c2.checked = pull0; c2.dispatchEvent(new Event('change')); }
+          document.getElementById('navAllSingles').click();
+          r.restored = localStorage.getItem('panel_news_v1') === n0 && localStorage.getItem('panel_news_learn_v1') === l0 && document.getElementById('navAllSingles').getAttribute('aria-current') === 'page' && title0.length > 0;
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 68:', JSON.stringify(t68));
+      testResults.push({ test: 'Explorer et navigation (D) : actualités manga masquées, entrée active annoncée (aria-current), titres Wishlist et Pull List, boutons du calendrier sans rôle listitem',
+        ok: !!t68 && !t68.error && ['mangaHidden', 'noMangaChip', 'wishlist', 'pull', 'pullSync', 'dock', 'buttonsKeepRole', 'restored'].every(k => t68[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -75,16 +75,22 @@ Collection de comics (numéros, séries, variantes, état, prix, achat, cession)
 |---|---|---|---|
 | U1 | Élevée | Animations « réservées au bureau » : 95 règles `:hover`, 0 garde `@media (hover: hover)` ; sur mobile les effets ne se déclenchent pas ou restent collés après un toucher | Identifié mais non corrigé — étape E |
 | U2 | Moyenne | Vue Lecture à 375 px : débordement horizontal de 11 px (coupable non isolé : probablement pseudo-élément ou transformation) | Identifié mais non corrigé |
-| U3 | Moyenne | 8 champs sans libellé accessible : `globalSearch`, `singlesSearchInput`, `singlesSortSelect`, `exSearch`, `pullManSeries`, `pullManIssue`, `seriesTrackSearch`, `seriesTrackSort` | Identifié mais non corrigé — étape F |
+| U3 | Moyenne | 11 champs sans libellé accessible : `globalSearch`, `singlesSearchInput`, `singlesSortSelect`, `exSearch`, `pullManSeries`, `pullManIssue`, `seriesTrackSearch`, `seriesTrackSort`, et (relevés à l'étape D) `releasesPullOnly`, `pullManPublisher`, `pullAddInput` | Identifié mais non corrigé — étape F |
 | U4 | Faible | Onglets de 30 px de haut sur mobile (WCAG 2.2 AA 24 px respecté, en dessous des 44 px recommandés) | Identifié mais non corrigé |
 | U5 | Faible | « Wishlist », « Pull List » en anglais | Identifié — terminologie à trancher (étape F) |
+| D1 | Élevée | Explorer, Actualités : rubrique « Manga » et 4 articles uniquement manga affichés, contraire à D-12 (« comics uniquement, mangas exclus ») | **Corrigé et vérifié** (D-87) : `newsCore.inScope` masque à l'affichage les articles seulement manga (le flux n'est pas modifié), garde ceux qui relient un manga à un univers comics ; plus de puce « Manga » ; test Node + test Edge 68 |
+| D2 | Moyenne | Navigation : l'entrée active n'était signalée que visuellement (aucun `aria-current`), barre du bas comprise | **Corrigé et vérifié** (D-87) : `aria-current="page"` sur l'entrée et le bouton de barre actifs ; test Edge 68 |
+| D3 | Moyenne | Titres incohérents : Wishlist titrée « Ma collection », Pull List titrée « Calendrier » ; décocher « Ma pull list seulement » laissait Pull List active | **Corrigé et vérifié** (D-87) : titres propres « Wishlist » et « Pull List », synchronisation à chaque changement de la case ; test Edge 68 |
+| D4 | Faible | Titre d'onglet identique pour toutes les vues (WCAG 2.4.2) | **Corrigé et vérifié** (D-87) : « <vue> · Panel » |
+| D5 | Moyenne | 4 groupes de boutons (semaines à venir du calendrier, boîte à feuilleter, galeries Explorer, « À la une » Communauté) avaient `role="listitem"` : les lecteurs d'écran ne les annonçaient plus comme boutons | **Corrigé et vérifié** (D-87) : conteneurs `role="group"` nommés, boutons natifs ; test Edge 68 |
+| — | — | Étape D, vérifié sans correction : Explorer et calendrier sans débordement à 375 px ; Explorer lit la Collection en lecture seule (statut possédé, compteurs) comme prévu par `02-frontieres-collection-explorer.md`, 0 couplage (`check-boundaries --strict`) ; sorties hors périmètre déjà masquées (D-37) ; aucune capacité retirée | Vérifié |
 | — | — | `lang="fr"`, un seul `h1`, 0 image sans `alt`, 0 bouton sans nom, 0 erreur d'initialisation, aucun débordement à 1280 px, 17 règles `prefers-reduced-motion` | Vérifié |
 
 ## 8. Plan de travail priorisé
 
 1. **B — Sécurité** : S7 fait ; S1 et S2 sur décision ; S6 (copie locale de JSZip/zxing) ; S4/S5 documentés.
 2. **C — Fiabilité** : F1 (fonction de date locale unique + test de non-régression à minuit), F3.
-3. **D — Interface** : Explorer, calendrier, navigation, cohérence visuelle (sans retrait de capacité).
+3. **D — Interface** : Explorer, calendrier, navigation, cohérence visuelle (sans retrait de capacité). **Fait (D-87)** : D1 à D5.
 4. **E — Responsive et animations** : U1 (gardes `hover`, équivalents tactiles), U2, mouvement réduit.
 5. **F — Français et accessibilité WCAG 2.2 AA** : U3, U4, U5, clavier et focus.
 6. **G — Performance** : compression gzip/brotli dans `serve.js` (1,84 Mo envoyés sans compression), chargement différé.
