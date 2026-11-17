@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-Ycdo/7hDWBUfUxOvNMoBmwpxz+uGGNXhd2N2+Hbqxmg=' 'sha256-lMtcRl9BZNTtxHkh+ktHJcl6grEbrkdBXSkbvXqYUIA=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-Ycdo/7hDWBUfUxOvNMoBmwpxz+uGGNXhd2N2+Hbqxmg=' 'sha256-BcWS8fbm1ZlHKAi4AH++KPKeal8z8khruuxZA+qb2v4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3271,6 +3271,8 @@
     }
     /* Stabilisation E (U2) : le long libellé d'import de la vue Lecture passe à la ligne au lieu de déborder à 375 px */
     .rd-sip-foot .btn { white-space: normal; max-width: 100%; text-align: center; }
+    /* Stabilisation F : le dialogue reçoit le focus à l'ouverture (annonce du titre) sans cadre parasite */
+    .modal-box[tabindex="-1"]:focus { outline: none; }
   </style>
 </head>
 <body>
@@ -3296,7 +3298,7 @@
           <div class="nav-btn-content"><span class="icon">★</span> Sorties & calendrier</div>
         </button>
       </nav>
-      <div class="nav-label" style="margin-top:14px">Collection Physique</div>
+      <div class="nav-label" style="margin-top:14px">Collection physique</div>
       <nav class="nav-list" aria-label="Collection">
         <button class="nav-btn active" id="navAllSingles">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-tag /></svg></span> Ma collection</div>
@@ -3307,7 +3309,7 @@
           <span class="nav-badge" id="badgeSeriesIncomplete">0</span>
         </button>
         <button class="nav-btn" id="navSinglesPullList" title="Séries suivies et prochaines sorties de votre pull list">
-          <div class="nav-btn-content"><span class="icon">⚑</span> Pull List</div>
+          <div class="nav-btn-content"><span class="icon">⚑</span> Pull list</div>
           <span class="nav-badge" id="badgePullCount">0</span>
         </button>
         <button class="nav-btn" id="navSinglesWishlist">
@@ -3332,16 +3334,16 @@
       <div class="nav-label" style="margin-top:14px">Ajouter</div>
       <nav class="nav-list">
         <button class="nav-btn" id="navScanBarcodeDirect">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span> Scanner Code-Barres</div>
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span> Scanner un code-barres</div>
         </button>
         <button class="nav-btn" id="navScanCoverDirect">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-camera /></svg></span> Scanner Couverture</div>
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-camera /></svg></span> Scanner une couverture</div>
         </button>
         <button class="nav-btn" id="navImportCsv">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-file /></svg></span> Importer CLZ / LoCG</div>
         </button>
         <button class="nav-btn" id="navAddSingleManual">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Ajouter un Single</div>
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Ajouter un single</div>
         </button>
       </nav>
     </div>
@@ -3350,7 +3352,7 @@
       <span class="sidebar-footer-title" title="Vos comics et inventaires physiques restent sur cet appareil."><svg class=ic aria-hidden=true><use href=#ic-save /></svg> Données sur cet appareil</span>
       <div id="sidebarAdmin" class="sidebar-admin" hidden>
       <div style="display:flex;gap:6px;margin-top:4px">
-        <button class="btn secondary" id="backupJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Export JSON</button>
+        <button class="btn secondary" id="backupJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Exporter (JSON)</button>
         <button class="btn secondary" id="restoreJsonBtn" style="font-size: 12px;padding:5px 8px;flex:1">Restaurer</button>
         <input type="file" id="backupFileInput" accept=".json" style="display:none">
       </div>
@@ -3380,7 +3382,7 @@
         <div class="search-box">
           <div class="search-bar">
             <span style="color:var(--muted);font-size:13px"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span>
-            <input class="search-input" id="globalSearch" type="search" placeholder="Rechercher une série, numéro..." autocomplete="off">
+            <input class="search-input" id="globalSearch" aria-label="Rechercher dans Panel" type="search" placeholder="Rechercher une série, numéro..." autocomplete="off">
           </div>
           <div class="search-results-menu" id="searchResultsMenu" hidden></div>
         </div>
@@ -3414,7 +3416,7 @@
         <button class="btn secondary notif-btn" id="notifBtn" title="Notifications" aria-label="Notifications" aria-haspopup="dialog" aria-expanded="false" style="font-size:12px;padding:8px 11px">
           <span><svg class=ic aria-hidden=true><use href=#ic-bell /></svg></span><b class="notif-count" id="notifCount" hidden>0</b>
         </button>
-        <button class="btn secondary" id="openSettingsBtnTop" title="Paramètres & Clés API" style="font-size:12px;padding:8px 11px">
+        <button class="btn secondary" id="openSettingsBtnTop" title="Paramètres et clés API" style="font-size:12px;padding:8px 11px">
           <span><svg class=ic aria-hidden=true><use href=#ic-settings /></svg></span>
         </button>
       </div>
@@ -3494,8 +3496,8 @@
             <p>Chaque série possédée, avec les numéros manquants entre le premier et le dernier (ou jusqu'au total que vous définissez). Cliquez une série pour voir la grille des numéros ; cliquez un numéro manquant pour l'ajouter à la wishlist.</p>
           </div>
           <div class="toolbar-row">
-            <input class="field-input" id="seriesTrackSearch" type="search" placeholder="Filtrer les séries…" style="width:180px">
-            <select class="field-input" id="seriesTrackSort">
+            <input class="field-input" id="seriesTrackSearch" aria-label="Filtrer les séries" type="search" placeholder="Filtrer les séries…" style="width:180px">
+            <select class="field-input" id="seriesTrackSort" aria-label="Trier les séries">
               <option value="nearly">Runs presque complets</option>
               <option value="missing">Le plus de manquants</option>
               <option value="completion">Complétion (%)</option>
@@ -3550,9 +3552,9 @@
           </span>
         </div>
         </details>
-        <details class="pull-panel" id="pullPanel"><summary>Ma Pull List <span id="pullPanelCount"></span></summary><div id="pullPanelBody"></div>
+        <details class="pull-panel" id="pullPanel"><summary>Ma pull list <span id="pullPanelCount"></span></summary><div id="pullPanelBody"></div>
         <div style="display:flex;gap:8px;align-items:center;margin:10px 0 8px;flex-wrap:wrap">
-          <input class="field-input" id="pullAddInput" placeholder="Suivre une série (ex : Absolute Batman)" style="width:240px">
+          <input class="field-input" id="pullAddInput" aria-label="Suivre une série" placeholder="Suivre une série (ex : Absolute Batman)" style="width:240px">
           <button class="btn secondary" id="pullAddBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Suivre</button>
         </div>
         <div class="pull-chips" id="pullListChips"></div>
@@ -3636,8 +3638,8 @@
         </div>
 
         <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input id="singlesSearchInput" placeholder=" Filtrer ou Entrée pour Comic Vine..." style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--ink);width:175px">
-          <select id="singlesSortSelect" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:12px;color:var(--ink)">
+          <input id="singlesSearchInput" aria-label="Filtrer la collection" placeholder=" Filtrer ou Entrée pour Comic Vine..." style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--ink);width:175px">
+          <select id="singlesSortSelect" aria-label="Trier la collection" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:12px;color:var(--ink)">
             <option value="recent">Plus récents</option>
             <option value="title">Titre (A-Z)</option>
             <option value="issue">Numéro (#)</option>
@@ -3698,8 +3700,8 @@
       <!-- FILTRE PAR BOÎTE PHYSIQUE & RANGEMENT (HIÉRARCHIE COLLECTION SECTION 8) -->
       <div class="box-filter-bar" id="singlesBoxFilterBar">
         <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Rangement :</span>
-        <select id="boxFilterSelect" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size: 12px;color:var(--ink)">
-          <option value="all">Toutes les Boîtes (Short & Long Boxes)</option>
+        <select id="boxFilterSelect" aria-label="Filtrer par boîte" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size: 12px;color:var(--ink)">
+          <option value="all">Toutes les boîtes (short et long boxes)</option>
         </select>
         <button type="button" class="btn secondary" id="manageLocationsBtn" style="font-size:12px;padding:5px 10px">Gérer les emplacements</button>
         <span id="boxCountSummary" style="font-size: 12px;color:var(--muted);margin-left:auto">0 comics</span>
@@ -3724,7 +3726,7 @@
   </button>
   <button class="mobile-dock-btn" id="mobScan">
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span>
-    <span>Scan</span>
+    <span>Scanner</span>
   </button>
   <button class="mobile-dock-btn" id="mobCommunity">
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-users /></svg></span>
@@ -3888,7 +3890,7 @@
 <div class="modal-backdrop" id="singleIssueDetailModal">
   <div class="modal-box">
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 id="singleModalTitle">Fiche du Single Issue</h2>
+      <h2 id="singleModalTitle">Fiche du single</h2>
       <button class="btn-icon" id="closeSingleDetailModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
 
@@ -3968,8 +3970,8 @@
         <label for="singleKeyTypeSelect">Type de Key Issue</label>
         <select id="singleKeyTypeSelect">
           <option value="none">Standard / Regular Issue</option>
-          <option value="major"> Key Issue Majeure (1ère app, mort...)</option>
-          <option value="minor"> Key Issue Mineure (nouvelle équipe...)</option>
+          <option value="major"> Key Issue majeure (1re apparition, mort…)</option>
+          <option value="minor"> Key Issue mineure (nouvelle équipe…)</option>
           <option value="ratio"> Ratio Incentive (1:25, 1:50, Foil)</option>
           <option value="signed"> Dédicacé / Signé</option>
         </select>
@@ -4327,7 +4329,7 @@
 <div class="modal-backdrop" id="settingsModal">
   <div class="modal-box" style="max-width:520px">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-      <h2>Paramètres & Clés API</h2>
+      <h2>Paramètres et clés API</h2>
       <button class="btn-icon" id="closeSettingsModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
     <div class="pwa-settings" id="pwaSettingsBox">
@@ -8138,6 +8140,57 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const LD = window.PanelDomains.localDate;
   const todayLocal = () => LD.localDay();
   // Stabilisation E : défilement animé seulement si l'utilisateur n'a pas demandé de réduire les animations
+  // Stabilisation F (WCAG 2.1.2, 2.4.3, 4.1.2) : toute fenêtre .modal-backdrop ouverte est annoncée comme dialogue modal nommé par son titre,
+  // reçoit le focus (sauf s'il y est déjà), garde Tab à l'intérieur, se ferme avec Échap par le même bouton que la croix (nettoyages compris),
+  // puis rend le focus à l'élément qui l'avait ouverte. Les dialogues qui gèrent déjà Échap ne sont pas fermés deux fois.
+  {
+    const FOCUSABLE = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+    const origin = new WeakMap(), isOpen = new WeakSet();
+    let dlgSeq = 0, escTop = null;
+    const topOpen = () => [...document.querySelectorAll('.modal-backdrop.open')].pop() || null;
+    const dlgBox = bd => bd.querySelector('[role="dialog"]') || bd.querySelector('.modal-box') || bd;
+    // Atteignable au clavier : visible, et hors d'un volet <details> replié (seul son <summary> l'est)
+    const reachable = x => { const d = x.closest('details:not([open])'); return (!d || (x.tagName === 'SUMMARY' && x.parentElement === d && !d.parentElement.closest('details:not([open])'))) && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== 'hidden'; };
+    const focusables = el => [...el.querySelectorAll(FOCUSABLE)].filter(reachable);
+    const onOpen = bd => {
+      isOpen.add(bd);
+      const box = dlgBox(bd);
+      if (!box.getAttribute('role')) box.setAttribute('role', 'dialog');
+      if (!box.hasAttribute('aria-modal')) box.setAttribute('aria-modal', 'true');
+      if (!box.hasAttribute('aria-labelledby') && !box.hasAttribute('aria-label')) { const hd = box.querySelector('h1, h2, h3'); if (hd) { if (!hd.id) hd.id = 'dlgTitle' + (++dlgSeq); box.setAttribute('aria-labelledby', hd.id); } }
+      const prev = document.activeElement;
+      if (prev && prev !== document.body && !bd.contains(prev)) origin.set(bd, prev);
+      setTimeout(() => { if (!bd.classList.contains('open') || bd.contains(document.activeElement)) return; if (!box.hasAttribute('tabindex')) box.setAttribute('tabindex', '-1'); box.focus({ preventScroll: true }); }, 0);
+    };
+    const onClose = bd => {
+      isOpen.delete(bd);
+      const prev = origin.get(bd); origin.delete(bd);
+      if (prev && prev.isConnected && !topOpen() && (!document.activeElement || document.activeElement === document.body || bd.contains(document.activeElement))) prev.focus({ preventScroll: true });
+    };
+    const sync = bd => { const o = bd.classList.contains('open'); if (o && !isOpen.has(bd)) onOpen(bd); else if (!o && isOpen.has(bd)) onClose(bd); };
+    new MutationObserver(list => { for (const m of list) {
+      if (m.type === 'attributes' && m.target.classList && m.target.classList.contains('modal-backdrop')) sync(m.target);
+      else if (m.type === 'childList') { m.addedNodes.forEach(n => { if (n.nodeType === 1 && n.classList.contains('modal-backdrop')) sync(n); }); m.removedNodes.forEach(n => { if (n.nodeType === 1 && isOpen.has(n)) onClose(n); }); }
+    } }).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+    document.querySelectorAll('.modal-backdrop.open').forEach(sync);
+    // Échap : la fenêtre du dessus au début de l'appui, seulement si aucun gestionnaire propre ne l'a déjà fermée
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') escTop = topOpen(); }, true);
+    document.addEventListener('keydown', e => {
+      const bd = topOpen();
+      if (e.key === 'Escape') {
+        if (!bd || bd !== escTop || e.defaultPrevented) return;
+        const btn = bd.querySelector('button[id^="close"], button[id*="Close"], [data-cancel], [data-close], .modal-close-btn, button[aria-label="Fermer"]');
+        if (btn) btn.click(); else bd.classList.remove('open');
+        e.preventDefault();
+      } else if (e.key === 'Tab' && bd) {
+        const f = focusables(dlgBox(bd)); if (!f.length) return;
+        const first = f[0], last = f[f.length - 1], a = document.activeElement;
+        if (!bd.contains(a)) { e.preventDefault(); first.focus(); }
+        else if (e.shiftKey && (a === first || a === dlgBox(bd))) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && a === last) { e.preventDefault(); first.focus(); }
+      }
+    });
+  }
   const smoothScroll = () => (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
 
   // ÉTAT DE L'APPLICATION
@@ -9582,7 +9635,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const applyVisualCandidateMatch = cand => {
     closeCoverVisualScanner();
     editingSingleId = null;
-    $('singleModalTitle').textContent = 'Fiche du Single Issue (Reconnaissance Visuelle)';
+    $('singleModalTitle').textContent = 'Fiche du single (reconnaissance visuelle)';
     $('decodedBarcodeBadge').hidden = false;
     $('decodedBarcodeBadge').querySelector('strong').textContent = cand.volume + ' #' + cand.issue + ' (' + cand.score + '% match)';
     if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = 'Reconnaissance Visuelle';
@@ -9910,7 +9963,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const identifyScannedInput = async barcodeOrQuery => {
     $('barcodeScannerModal').classList.remove('open');
     editingSingleId = null;
-    $('singleModalTitle').textContent = 'Fiche du Single Issue';
+    $('singleModalTitle').textContent = 'Fiche du single';
     const input = String(barcodeOrQuery || '').trim();
     const byTitle = /[a-zA-Z]/.test(input);
     const parsed = byTitle ? null : parseComicBarcode(input);
@@ -12334,7 +12387,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if ([...boxSelect.options].some(o => o.value === cur)) boxSelect.value = cur;
     } else if (boxSelect) {
       const cur = boxSelect.value;
-      boxSelect.innerHTML = '<option value="all">Toutes les Boîtes (Short & Long Boxes)</option>' +
+      boxSelect.innerHTML = '<option value="all">Toutes les boîtes (short et long boxes)</option>' +
         Array.from(boxes).sort((a, b) => a.localeCompare(b, 'fr', { numeric: true })).map(b => `<option value="${escapeHtml(b)}">${escapeHtml(b)} (${physicalSingles.filter(s => boxOf(s) === b).length})</option>`).join('');
       if (Array.from(boxes).includes(cur)) boxSelect.value = cur;
     }
@@ -12766,7 +12819,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     wishlist: ['Wishlist', 'Les numéros que vous cherchez encore'],
     series: ['Séries & complétion', 'Repérez les numéros qui manquent à vos runs'],
     releases: ['Calendrier', 'Sorties comics US et francophones'],
-    pull: ['Pull List', 'Vos séries suivies et leurs prochaines sorties'],
+    pull: ['Pull list', 'Vos séries suivies et leurs prochaines sorties'],
     stats: ['Statistiques', 'Valeur, investissement et composition de votre collection'],
     reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
     community: ['Communauté', 'Planches, stories et directs, à partir de votre vraie collection'],
@@ -14852,7 +14905,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const relHasCopy = st => !!st && (st.owned > 0 || st.unconfirmed === true);
   const relActions = (p, st) => '<div class="comic-card-action-bar">' +
     '<button class="card-action-btn" data-pull title="Suivre toute la série" style="color:' + (st && st.seriesSubscribed ? 'var(--gold)' : 'inherit') + '">★</button>' +
-    '<button class="card-action-btn" data-pulladd title="Ajouter ce numéro à la Pull List">' + (st && st.pullPending ? '✓ Pull' : '+ Pull') + '</button>' +
+    '<button class="card-action-btn" data-pulladd title="Ajouter ce numéro à la pull list">' + (st && st.pullPending ? '✓ Pull' : '+ Pull') + '</button>' +
     '<button class="card-action-btn" data-wish ' + (relHasCopy(st) || (st && st.wishlisted) ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wish</button>' +
     '<button class="card-action-btn" data-buy style="color:var(--lime);font-weight:700" ' + (relHasCopy(st) ? 'disabled' : '') + '><svg class=ic aria-hidden=true><use href=#ic-check /></svg> Acheté</button>' +
     '</div>';
@@ -14959,7 +15012,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const failed = r => { if (r && r.ok) return false; showToast(r && r.error === 'gesture_required' ? 'Action refusée : elle doit venir d\'un clic.' : 'Action impossible pour le moment.'); return true; };
       on('[data-open]', () => openPubSheet(p.id));
       on('[data-pull]', async ev => { const st = relLastLens && relLastLens.get(p.id); const r = await relCommand(ev, 'followSeries', { series: p.series }, { follow: !(st && st.seriesSubscribed) }); if (!failed(r)) renderReleasesGrid(); });
-      on('[data-pulladd]', async ev => { const r = await relCommand(ev, 'addToPullList', { pubId: p.id }, { from: 'calendrier' }); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans votre Pull List.' : relLabel(p) + ' ajouté à la Pull List.'); });
+      on('[data-pulladd]', async ev => { const r = await relCommand(ev, 'addToPullList', { pubId: p.id }, { from: 'calendrier' }); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans votre pull list.' : relLabel(p) + ' ajouté à la pull list.'); });
       on('[data-wish]', async ev => { const r = await relCommand(ev, 'addToWishlist', { pubId: p.id }, { from: 'calendrier' }); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans votre wishlist.' : relLabel(p) + ' ajouté à la wishlist.'); });
       on('[data-buy]', async ev => {
         // Collection crée ou convertit la fiche et propose elle-même « Saisir le prix » (le prix payé n'est jamais inventé, D-18)
@@ -15063,8 +15116,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '</div>';
     };
     body.innerHTML = '<div class="pull-add">' +
-      '<input class="field-input" id="pullManSeries" placeholder="Série (si absente du calendrier)"><input class="field-input" id="pullManIssue" placeholder="N°" style="width:60px">' +
-      '<input class="field-input" id="pullManPublisher" placeholder="Éditeur" style="width:130px"><select class="field-input" id="pullManMarket" aria-label="Marché"><option value="">Marché</option>' + Object.entries(REL_MARKETS).map(([k, m]) => '<option value="' + k + '">' + m.label + '</option>').join('') + '</select>' +
+      '<input class="field-input" id="pullManSeries" aria-label="Série à ajouter à la pull list" placeholder="Série (si absente du calendrier)"><input class="field-input" id="pullManIssue" aria-label="Numéro" placeholder="N°" style="width:60px">' +
+      '<input class="field-input" id="pullManPublisher" aria-label="Éditeur" placeholder="Éditeur" style="width:130px"><select class="field-input" id="pullManMarket" aria-label="Marché"><option value="">Marché</option>' + Object.entries(REL_MARKETS).map(([k, m]) => '<option value="' + k + '">' + m.label + '</option>').join('') + '</select>' +
       '<input class="field-input" id="pullManDate" type="date" aria-label="Date annoncée (facultative)"><button class="btn secondary rel-mini" id="pullManAdd">+ Ajouter</button></div>' +
       (active.length ? active.sort((a, b) => dateOf(a).localeCompare(dateOf(b))).map(row).join('') : '<p class="rel-note">Aucun numéro en attente. Ajoutez-en depuis le calendrier (« + Pull ») ou ci-dessus.</p>') +
       (done.length ? '<details class="pull-done"><summary>Récupérés et annulés (' + done.length + ')</summary>' + done.sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || '')).map(row).join('') + '</details>' : '');
@@ -15090,7 +15143,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const series = $('pullManSeries').value.trim();
       if (!series) { showToast('Indiquez au moins la série.'); return; }
       const r = await addManualPull({ series, issue: $('pullManIssue').value, publisher: $('pullManPublisher').value, market: $('pullManMarket').value, date: $('pullManDate').value });
-      showToast(!r.ok ? r.error : r.duplicate ? 'Déjà dans votre Pull List.' : 'Ajouté à la Pull List' + (r.pubCreated ? ' (publication créée en saisie manuelle).' : '.'));
+      showToast(!r.ok ? r.error : r.duplicate ? 'Déjà dans votre pull list.' : 'Ajouté à la pull list' + (r.pubCreated ? ' (publication créée en saisie manuelle).' : '.'));
       renderSinglesCollection();
     };
   };
@@ -15179,7 +15232,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (p.possibleDuplicates ? '<p class="rel-note">Doublon possible signalé à la création (non fusionné).</p>' : '') +
         (mine ? '<p class="pub-line" data-pub-mine>Dans votre collection : <b>' + mine.owned + '</b> exemplaire(s)' + (mine.unconfirmed ? ' (+ à confirmer)' : '') + ' · wishlist : ' + (mine.wishlisted ? 'oui' : 'non') + '</p>' : '') +
         '<div class="pub-actions"><input class="field-input" id="pubActVariant" placeholder="Variante" style="width:120px"><input class="field-input" id="pubActQty" type="number" min="1" max="99" value="1" style="width:60px" aria-label="Quantité">' +
-          '<button class="btn" id="pubToPull">+ Pull List</button><button class="btn secondary" id="pubToWish">Wishlist</button><button class="btn secondary" id="pubToCollection">Collection</button><button class="btn ghost" id="pubEdit">Modifier</button></div>' +
+          '<button class="btn" id="pubToPull">+ Pull list</button><button class="btn secondary" id="pubToWish">Wishlist</button><button class="btn secondary" id="pubToCollection">Collection</button><button class="btn ghost" id="pubEdit">Modifier</button></div>' +
       '</div></div>' + edLevelsHtml(p, mine) +
       '<h3 class="rel-group">Historique des dates</h3>' + ((p.dateHistory || []).length ? '<ul class="pub-hist">' + p.dateHistory.slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleDateString('fr-FR') + ' — ' + (kindTxt[h.kind] || h.kind) + (h.from && h.to && h.from !== h.to ? ' : ' + relFmtDate(h.from) + ' → ' + relFmtDate(h.to) : h.to ? ' : ' + relFmtDate(h.to) : '') + ' (source : ' + relSourceLabel(h.source) + ')') + '</li>').join('') + '</ul>' : '<p class="rel-note">Aucun changement enregistré.</p>') +
       '<h3 class="rel-group">Sources et identifiants</h3><p class="pub-line">' + (p.sources || []).map(s => escapeHtml(relSourceLabel(s.source) + ' (' + new Date(s.at).toLocaleDateString('fr-FR') + ')')).join(' · ') +
@@ -15196,7 +15249,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const qtyVar = () => ({ variant: $('pubActVariant').value, quantity: $('pubActQty').value });
     const failed = r => { if (r && r.ok) return false; showToast(r && r.error === 'gesture_required' ? 'Action refusée : elle doit venir d\'un clic.' : 'Action impossible pour le moment.'); return true; };
     // Actions personnelles : par S2 (E1), jeton de geste tiré du clic
-    $('pubToPull').onclick = async ev => { const r = await relCommand(ev, 'addToPullList', { pubId: p.id }, Object.assign(qtyVar(), { from: 'fiche publication' })); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans votre Pull List.' : 'Ajouté à la Pull List.'); };
+    $('pubToPull').onclick = async ev => { const r = await relCommand(ev, 'addToPullList', { pubId: p.id }, Object.assign(qtyVar(), { from: 'fiche publication' })); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans votre pull list.' : 'Ajouté à la pull list.'); };
     $('pubToWish').onclick = async ev => { const r = await relCommand(ev, 'addToWishlist', { pubId: p.id }, { variant: $('pubActVariant').value, from: 'fiche publication' }); if (!failed(r)) showToast(r.duplicate ? 'Déjà dans la wishlist.' : 'Ajouté à la wishlist.'); renderPubSheet(false); };
     $('pubToCollection').onclick = async ev => {
       const r = await relCommand(ev, 'addToCollection', { pubId: p.id }, qtyVar());
@@ -17117,7 +17170,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (exView.page === 'home') {
       const hist = exHistory();
       root.innerHTML = '<section class="ex-hero is-compact"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Toute la BD, numéro par numéro.</h2><p class="ex-hero-sub">Numéros, séries, personnages, créateurs, arcs et équipes : la base mondiale et vos données Panel, dans une seule recherche.</p>' +
-        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" type="search" autocomplete="off" placeholder="« Absolute Batman 1 », Miles Morales, Tom King, Krakoa…" value="' + h(exView.q) + '"></div>' +
+        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" aria-label="Rechercher dans Explorer" type="search" autocomplete="off" placeholder="« Absolute Batman 1 », Miles Morales, Tom King, Krakoa…" value="' + h(exView.q) + '"></div>' +
         (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') +
         exScopeChips() + (exScope === 'comics' ? exFiltersHtml() : '') + exPersonalizeHtml() + '</div></section>' +
         '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
@@ -20943,7 +20996,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       abandonScanTrial();
       editingSingleId = null;
       currentScannedRawBarcode = null;
-      $('singleModalTitle').textContent = 'Ajouter un Single Issue';
+      $('singleModalTitle').textContent = 'Ajouter un single';
       $('decodedBarcodeBadge').hidden = true;
 
       $('singleSeriesInput').value = '';
@@ -21218,7 +21271,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const openSingleIssueFromComicVineResult = async item => {
       $('comicVineSearchModal').classList.remove('open');
       editingSingleId = null;
-      $('singleModalTitle').textContent = 'Fiche du Single Issue';
+      $('singleModalTitle').textContent = 'Fiche du single';
       $('decodedBarcodeBadge').hidden = false;
       $('decodedBarcodeBadge').querySelector('strong').textContent = item.volume + ' #' + item.issue;
       if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = item.source || 'Comic Vine';

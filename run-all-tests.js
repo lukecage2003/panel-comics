@@ -4055,7 +4055,7 @@ const waitForCdp = async () => {
           const explorerLbl = document.getElementById('navExplorerLabel');
           const btns = [...document.querySelectorAll('#navSinglesBlock .nav-btn')].map(b => b.id);
           r.explorerSection = !!explorerLbl && btns.indexOf('navExplorer') < btns.indexOf('navAllSingles') && btns.indexOf('navSinglesReleases') < btns.indexOf('navAllSingles') && btns.includes('navSinglesPullList');
-          r.labels = /Accueil Explorer/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull List/.test(document.getElementById('navSinglesPullList').textContent);
+          r.labels = /Accueil Explorer/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull list/.test(document.getElementById('navSinglesPullList').textContent);
           r.badgeOnPullList = !!document.querySelector('#navSinglesPullList #badgePullCount') && !document.querySelector('#navSinglesReleases .nav-badge');
           document.getElementById('navSinglesPullList').click(); await wait(150);
           r.pullListView = !document.getElementById('singlesReleasesView').hidden && cb.checked === true && document.getElementById('navSinglesPullList').classList.contains('active') && !document.getElementById('navSinglesReleases').classList.contains('active');
@@ -5250,7 +5250,7 @@ const waitForCdp = async () => {
           const w = await nav('navSinglesWishlist');
           r.wishlist = w.cur.length === 1 && w.cur[0] === 'navSinglesWishlist' && w.h === 'Wishlist' && w.t === 'Wishlist · Panel';
           const p = await nav('navSinglesPullList');
-          r.pull = p.cur.length === 1 && p.cur[0] === 'navSinglesPullList' && p.h === 'Pull List';
+          r.pull = p.cur.length === 1 && p.cur[0] === 'navSinglesPullList' && p.h === 'Pull list';
           const c = document.getElementById('releasesPullOnly'); c.checked = false; c.dispatchEvent(new Event('change')); await wait(250);
           r.pullSync = document.getElementById('navSinglesReleases').getAttribute('aria-current') === 'page' && !document.getElementById('navSinglesPullList').hasAttribute('aria-current') && document.getElementById('mainTitleHeading').textContent === 'Calendrier';
           r.dock = document.getElementById('mobReleases').getAttribute('aria-current') === 'page' && document.querySelectorAll('[id^="mob"][aria-current]').length === 1;
@@ -5293,6 +5293,49 @@ const waitForCdp = async () => {
       console.log('Résultat Test 69:', JSON.stringify(t69));
       testResults.push({ test: 'Survol et tactile (E) : effets au survol réservés aux appareils qui survolent, appui visible au toucher, flèches visibles au toucher, mouvement réduit complet, libellé d import qui passe à la ligne',
         ok: !!t69 && !t69.error && ['allGuarded', 'touchPress', 'touchReveal', 'reduceGlobal', 'keyboardKept', 'importWraps'].every(k => t69[k] === true) });
+
+      // ==========================================
+      // TEST 70 : Dialogues au clavier, libellés et français (stabilisation F), fenêtres refermées
+      // ==========================================
+      console.log('\n[TEST 70] Dialogues et libellés...');
+      const t70 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms));
+        const key = (k, shift) => document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: k, shiftKey: !!shift, bubbles: true, cancelable: true }));
+        const FOC = 'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]:not([tabindex="-1"])';
+        const reach = x => { const d = x.closest('details:not([open])'); return (!d || (x.tagName === 'SUMMARY' && x.parentElement === d && !d.parentElement.closest('details:not([open])'))) && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== 'hidden'; };
+        try {
+          const dlg = {};
+          for (const [btnId, modalId] of [['openSettingsBtnTop', 'settingsModal'], ['navImportCsv', 'csvImportModal']]) {
+            const o = {}, opener = document.getElementById(btnId);
+            opener.focus(); opener.click(); await wait(250);
+            const m = document.getElementById(modalId), box = m.querySelector('[role="dialog"]');
+            o.named = !!box && box.getAttribute('aria-modal') === 'true' && !!document.getElementById(box.getAttribute('aria-labelledby')) && document.getElementById(box.getAttribute('aria-labelledby')).textContent.trim().length > 2;
+            o.focusInside = m.contains(document.activeElement);
+            const f = [...box.querySelectorAll(FOC)].filter(reach);
+            f[f.length - 1].focus(); key('Tab'); o.tab = document.activeElement === f[0];
+            key('Tab', true); o.shiftTab = document.activeElement === f[f.length - 1];
+            key('Escape'); await wait(200);
+            o.esc = !m.classList.contains('open'); o.back = document.activeElement === opener;
+            dlg[modalId] = o;
+          }
+          r.dialogs = Object.values(dlg).every(o => o.named && o.focusInside && o.tab && o.shiftTab && o.esc && o.back);
+          if (!r.dialogs) r.detail = JSON.stringify(dlg);
+          document.getElementById('navExplorer').click(); await wait(400);
+          const ids = ['globalSearch', 'singlesSearchInput', 'singlesSortSelect', 'boxFilterSelect', 'seriesTrackSearch', 'seriesTrackSort', 'pullAddInput', 'exSearch'];
+          r.labels = ids.every(i => document.getElementById(i) && (document.getElementById(i).getAttribute('aria-label') || '').length > 3);
+          const txt = id => document.getElementById(id).textContent.replace(/[0-9]+/g, '').trim();
+          r.french = /Scanner un code-barres/.test(txt('navScanBarcodeDirect')) && /Scanner une couverture/.test(txt('navScanCoverDirect')) && /Ajouter un single/.test(txt('navAddSingleManual')) && /Pull list/.test(txt('navSinglesPullList')) && document.getElementById('backupJsonBtn').textContent.trim() === 'Exporter (JSON)';
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          document.querySelectorAll('.modal-backdrop.open').forEach(m => { const b = m.querySelector('button[id^="close"]'); if (b) b.click(); });
+          document.getElementById('navAllSingles').click();
+          r.restored = !document.querySelector('.modal-backdrop.open');
+        }
+        return r;
+      })()`);
+      console.log('Résultat Test 70:', JSON.stringify(t70));
+      testResults.push({ test: 'Accessibilité (F) : dialogues nommés et modaux, focus déplacé, Tab gardé, Échap ferme et rend le focus ; champs nommés ; libellés en français',
+        ok: !!t70 && !t70.error && ['dialogs', 'labels', 'french', 'restored'].every(k => t70[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
