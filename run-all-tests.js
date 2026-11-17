@@ -5269,6 +5269,31 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Explorer et navigation (D) : actualités manga masquées, entrée active annoncée (aria-current), titres Wishlist et Pull List, boutons du calendrier sans rôle listitem',
         ok: !!t68 && !t68.error && ['mangaHidden', 'noMangaChip', 'wishlist', 'pull', 'pullSync', 'dock', 'buttonsKeepRole', 'restored'].every(k => t68[k] === true) });
 
+      // ==========================================
+      // TEST 69 : Survol, tactile et mouvement réduit (stabilisation E), lecture seule des feuilles de style
+      // ==========================================
+      console.log('\n[TEST 69] Survol et tactile...');
+      const t69 = await evalExpr(`(async () => {
+        const r = {};
+        try {
+          const all = [];
+          const walk = (rules, ctx) => { for (const x of rules) { if (x.media) walk(x.cssRules, ctx.concat(x.media.mediaText)); else if (x.selectorText) all.push({ sel: x.selectorText, ctx: ctx.join(' ; '), css: x.cssText }); } };
+          for (const ss of document.styleSheets) { try { walk(ss.cssRules, []); } catch (_) {} }
+          const hov = all.filter(x => x.sel.includes(':hover'));
+          r.hoverCount = hov.length;
+          r.allGuarded = hov.length > 80 && hov.every(x => /hover: hover|prefers-reduced-motion: reduce/.test(x.ctx));
+          r.touchPress = all.some(x => /hover: none/.test(x.ctx) && /prefers-reduced-motion: no-preference/.test(x.ctx) && x.sel.includes(':active') && /scale/.test(x.css));
+          r.touchReveal = all.some(x => x.ctx === '(hover: none)' && x.sel === '.igp-nav' && /opacity: 1/.test(x.css));
+          r.reduceGlobal = all.some(x => /prefers-reduced-motion: reduce/.test(x.ctx) && /animation-iteration-count: 1/.test(x.css));
+          r.keyboardKept = all.some(x => x.sel === '.dig-book:focus-visible' && !x.ctx) && all.some(x => x.sel === '.ex-chip.active' && !x.ctx);
+          r.importWraps = all.some(x => x.sel === '.rd-sip-foot .btn' && /white-space: normal/.test(x.css));
+        } catch (e) { r.error = String(e && e.message || e); }
+        return r;
+      })()`);
+      console.log('Résultat Test 69:', JSON.stringify(t69));
+      testResults.push({ test: 'Survol et tactile (E) : effets au survol réservés aux appareils qui survolent, appui visible au toucher, flèches visibles au toucher, mouvement réduit complet, libellé d import qui passe à la ligne',
+        ok: !!t69 && !t69.error && ['allGuarded', 'touchPress', 'touchReveal', 'reduceGlobal', 'keyboardKept', 'importWraps'].every(k => t69[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
