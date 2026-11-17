@@ -11,7 +11,8 @@
     "test:all": "npm run test:db && npm run test:domains && node scripts/sync-domains.js --check && npm run check:secrets && node scripts/check-dead-code.js && node scripts/check-boundaries.js --strict && node run-all-tests.js",
     "check:boundaries": "node scripts/check-boundaries.js",
     "check:dead-code": "node scripts/check-dead-code.js",
-    "check:motion": "node scripts/check-motion.js"
+    "check:motion": "node scripts/check-motion.js",
+    "test:serve": "node --test scripts/serve-static.test.js"
   },
   "devDependencies": {
     "@electric-sql/pglite": "0.5.11"

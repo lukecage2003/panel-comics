@@ -89,6 +89,17 @@ Collection de comics (numéros, séries, variantes, état, prix, achat, cession)
 | — | — | Étape D, vérifié sans correction : Explorer et calendrier sans débordement à 375 px ; Explorer lit la Collection en lecture seule (statut possédé, compteurs) comme prévu par `02-frontieres-collection-explorer.md`, 0 couplage (`check-boundaries --strict`) ; sorties hors périmètre déjà masquées (D-37) ; aucune capacité retirée | Vérifié |
 | — | — | `lang="fr"`, un seul `h1`, 0 image sans `alt`, 0 bouton sans nom, 0 erreur d'initialisation, aucun débordement à 1280 px, 17 règles `prefers-reduced-motion` | Vérifié |
 
+## 7 bis. Performance (étape G)
+
+| # | Gravité | Problème | Statut |
+|---|---|---|---|
+| G1 | Moyenne | `serve.js` envoyait tout sans compression : 3,38 Mo pour la page, le lecteur zxing, JSZip et l'atlas (dont 1,9 Mo pour `index.html`) | **Corrigé et vérifié** (D-90) : brotli (qualité 9), sinon gzip, pour HTML, JS, JSON, manifeste, CSS, SVG et WebAssembly ; 0,93 Mo envoyés (−72 %), `index.html` 429 ko (−77 %) ; compression faite une fois par version du fichier ; `npm run test:serve` (4 tests) |
+| G2 | Moyenne | Aucun validateur de cache : `index.html` (`no-cache`) retéléchargé en entier à chaque ouverture | **Corrigé et vérifié** (D-90) : `ETag` faible (taille + date) et réponse 304 sans corps ; `test:serve` |
+| G3 | Moyenne (risque induit) | Les réponses portent désormais `Vary: Accept-Encoding`, qui pouvait empêcher le service worker de retrouver ses copies | **Corrigé et vérifié** (D-90) : `ignoreVary` sur chaque recherche de `sw.js`, version `panel-2026-11-17-compression` ; Edge headless à profil temporaire : service worker actif, page contrôlée, coquille en cache, rechargement **hors ligne** réussi (Panel, JSZip, pastille hors ligne) |
+| — | — | Démarrage mesuré sur 8097 : premier octet 61 ms, page prête 445 ms, 1 309 nœuds, images en chargement différé, rendu de la collection déjà paginé (120) | Vérifié ; la mesure sur la vraie collection (8085) n'a pas été faite pour ne pas recharger cette page |
+| — | Faible | `index.html` reste un fichier unique de 1,9 Mo à analyser au démarrage | Identifié mais non corrigé : découpage = changement d'architecture, hors stabilisation (préparation PANEL 2.0) |
+| — | — | Le service worker ne s'enregistre pas dans le panneau de navigateur intégré (« unknown error when fetching the script », déjà présent avant l'étape G) | Non testable dans l'environnement actuel ; vérifié dans Edge |
+
 ## 8. Plan de travail priorisé
 
 1. **B — Sécurité** : S7 fait ; S1 et S2 sur décision ; S6 (copie locale de JSZip/zxing) ; S4/S5 documentés.
@@ -96,5 +107,5 @@ Collection de comics (numéros, séries, variantes, état, prix, achat, cession)
 3. **D — Interface** : Explorer, calendrier, navigation, cohérence visuelle (sans retrait de capacité). **Fait (D-87)** : D1 à D5.
 4. **E — Responsive et animations** : U1 (gardes `hover`, équivalents tactiles), U2, mouvement réduit. **Fait (D-88)** : U1, U2, E1.
 5. **F — Français et accessibilité WCAG 2.2 AA** : U3, U4, U5, clavier et focus. **Fait (D-89)** : U3, U5, F5, F6 ; U4 conforme AA, documenté. Contraste du texte (calcul sur les 10 vues) et éléments cliquables non-boutons : 0 défaut relevé.
-6. **G — Performance** : compression gzip/brotli dans `serve.js` (1,84 Mo envoyés sans compression), chargement différé.
+6. **G — Performance** : compression gzip/brotli dans `serve.js` (1,84 Mo envoyés sans compression), chargement différé. **Fait (D-90)** : G1 à G3.
 7. **H — Validation finale** : suite complète, 15 livrables.

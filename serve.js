@@ -684,6 +684,56 @@ const requestGuard = (req, res, p) => {
   return true;
 };
 
+// ---------- Stabilisation G : fichiers de l'application compressés (brotli, sinon gzip) et revalidés (ETag → 304)
+// Chaque fichier est compressé une seule fois par version (taille + date de modification) et gardé en mémoire.
+const zlib = require('zlib');
+const COMPRESSIBLE = /\.(html|js|json|webmanifest|css|svg|wasm)$/i;
+const staticCache = new Map();
+const pickEncoding = (req, file) => {
+  if (!COMPRESSIBLE.test(file)) return '';
+  const ae = String(req.headers['accept-encoding'] || '');
+  return /\bbr\b/.test(ae) ? 'br' : /\bgzip\b/.test(ae) ? 'gzip' : '';
+};
+const encodedBody = (entry, enc) => {
+  if (!enc) return entry.raw;
+  if (!entry[enc]) entry[enc] = enc === 'br'
+    ? zlib.brotliCompressSync(entry.raw, { params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 9, [zlib.constants.BROTLI_PARAM_SIZE_HINT]: entry.raw.length } })
+    : zlib.gzipSync(entry.raw, { level: 9 });
+  return entry[enc];
+};
+const etagMatches = (req, etag) => String(req.headers['if-none-match'] || '').split(',').map(x => x.trim()).some(x => x === etag || x === '*');
+const serveStatic = (req, res, file) => {
+  fs.stat(file, (err, st) => {
+    if (err || !st.isFile()) { res.writeHead(404, SECURITY_HEADERS); return res.end(); }
+    const key = st.size + '-' + Math.round(st.mtimeMs);
+    const send = entry => {
+      const enc = pickEncoding(req, file);
+      const headers = {
+        'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
+        // le service worker et la page doivent toujours être revalidés pour recevoir les mises à jour (l'ETag évite de tout retélécharger)
+        'Cache-Control': /\.(html|js|webmanifest)$/.test(file) ? 'no-cache' : /\.woff2$/.test(file) ? 'public, max-age=31536000, immutable' : 'public, max-age=86400',
+        ETag: entry.etag,
+        ...SECURITY_HEADERS
+      };
+      if (COMPRESSIBLE.test(file)) headers.Vary = 'Accept-Encoding';
+      if (etagMatches(req, entry.etag)) { res.writeHead(304, headers); return res.end(); }
+      const body = encodedBody(entry, enc);
+      if (enc) headers['Content-Encoding'] = enc;
+      headers['Content-Length'] = body.length;
+      res.writeHead(200, headers);
+      res.end(req.method === 'HEAD' ? undefined : body);
+    };
+    const cached = staticCache.get(file);
+    if (cached && cached.key === key) return send(cached);
+    fs.readFile(file, (err2, data) => {
+      if (err2) { res.writeHead(404, SECURITY_HEADERS); return res.end(); }
+      const entry = { key, etag: 'W/"' + key + '"', raw: data };
+      staticCache.set(file, entry);
+      send(entry);
+    });
+  });
+};
+
 const server = http.createServer((req, res) => {
   let p;
   if ((req.url || '').length > MAX_URL) { res.writeHead(414, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); return res.end('Adresse trop longue'); }
@@ -701,17 +751,7 @@ const server = http.createServer((req, res) => {
   if (p.startsWith('/api/bnf/') && req.method === 'GET') return void handleBnf(new URL(req.url, 'http://x'), res);
   if (p.startsWith('/api/wd/') && req.method === 'GET') return void handleWd(new URL(req.url, 'http://x'), res);
   if (!ALLOWED.test(p)) { res.writeHead(404, { 'Content-Type': 'text/plain; charset=utf-8', ...SECURITY_HEADERS }); return res.end('Introuvable'); }
-  const file = path.join(root, p === '/' ? 'index.html' : p);
-  fs.readFile(file, (err, data) => {
-    if (err) { res.writeHead(404); return res.end(); }
-    res.writeHead(200, {
-      'Content-Type': TYPES[path.extname(file).toLowerCase()] || 'application/octet-stream',
-      // le service worker et la page doivent toujours être revalidés pour recevoir les mises à jour
-      'Cache-Control': /\.(html|js|webmanifest)$/.test(file) ? 'no-cache' : /\.woff2$/.test(file) ? 'public, max-age=31536000, immutable' : 'public, max-age=86400',
-      ...SECURITY_HEADERS
-    });
-    res.end(req.method === 'HEAD' ? undefined : data);
-  });
+  serveStatic(req, res, path.join(root, p === '/' ? 'index.html' : p));
 });
 
 // Délais : en-têtes reçus en 10 s, requête complète en 30 s, connexion inactive fermée après 5 s (lenteurs volontaires « slowloris »)

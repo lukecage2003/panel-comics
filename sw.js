@@ -4,9 +4,11 @@
  *   en arrière-plan (le scanner fonctionne hors ligne après une première utilisation).
  * - API Comic Vine, couvertures et tout le reste : réseau uniquement (données toujours fraîches,
  *   pas de réponses opaques qui gonfleraient le quota de stockage).
+ * - serve.js compresse ses réponses (Vary: Accept-Encoding) : le cache garde le contenu décodé, identique quel que soit l'encodage,
+ *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-16-vendor-local';
+const VERSION = 'panel-2026-11-17-compression';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [
@@ -59,7 +61,7 @@ self.addEventListener('fetch', event => {
         if (net && net.ok) cache.put('./index.html', net.clone());
         return net;
       } catch (_) {
-        return (await cache.match('./index.html')) || (await cache.match('./')) || Response.error();
+        return (await cache.match('./index.html', { ignoreVary: true })) || (await cache.match('./', { ignoreVary: true })) || Response.error();
       }
     })());
     return;
@@ -72,7 +74,7 @@ self.addEventListener('fetch', event => {
   if (url.origin === self.location.origin && url.pathname.includes('/vendor/')) {
     event.respondWith((async () => {
       const cache = await caches.open(LIB_CACHE);
-      const hit = await cache.match(req, { ignoreSearch: true });
+      const hit = await cache.match(req, { ignoreSearch: true, ignoreVary: true });
       if (hit) return hit;
       const res = await fetch(req);
       if (res && res.ok) cache.put(req, res.clone());
@@ -83,7 +85,7 @@ self.addEventListener('fetch', event => {
 
   // Fichiers de l'app (manifest, icônes) : cache d'abord
   if (url.origin === self.location.origin) {
-    event.respondWith(caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req)));
+    event.respondWith(caches.match(req, { ignoreSearch: true, ignoreVary: true }).then(hit => hit || fetch(req)));
     return;
   }
 
@@ -91,7 +93,7 @@ self.addEventListener('fetch', event => {
   if (LIB_HOSTS.includes(url.hostname)) {
     event.respondWith((async () => {
       const cache = await caches.open(LIB_CACHE);
-      const hit = await cache.match(req);
+      const hit = await cache.match(req, { ignoreVary: true });
       const refresh = fetch(req).then(res => {
         if (res && (res.ok || res.type === 'opaque')) cache.put(req, res.clone());
         return res;
