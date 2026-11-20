@@ -4,7 +4,15 @@
 // en ligne et un serveur audio (docs/LIVE-DEBATS.md). Module pur : aucun participant, aucun message ni aucune réaction d'autrui
 // n'est jamais simulé ; tout ce qui est compté vient de l'utilisateur lui-même.
 
-const FORMATS = Object.freeze({ wednesday: 'Débat du mercredi', trial: 'Procès d\'un event', bestrun: 'Meilleur run', club: 'Club de lecture', free: 'Sujet libre' });
+const FORMATS = Object.freeze({ wednesday: 'Débat du mercredi', duel: 'Duel en direct', trial: 'Procès d\'un event', bestrun: 'Meilleur run', club: 'Club de lecture', free: 'Sujet libre' });
+// Duel en direct (D-96) : deux camps, des manches chronométrées (ouverture, réplique, conclusion), des preuves en images, puis le vote.
+const DUEL_ROUNDS = Object.freeze([
+  { key: 'a1', side: 0, label: 'Ouverture', secs: 90 }, { key: 'b1', side: 1, label: 'Ouverture', secs: 90 },
+  { key: 'a2', side: 0, label: 'Réplique', secs: 60 }, { key: 'b2', side: 1, label: 'Réplique', secs: 60 },
+  { key: 'a3', side: 0, label: 'Conclusion', secs: 45 }, { key: 'b3', side: 1, label: 'Conclusion', secs: 45 },
+  { key: 'vote', side: null, label: 'Vote', secs: 30 }
+]);
+const CHAT_MAX = 200, CHAT_LEN = 200;
 const DEFAULT_RULES = Object.freeze([
   'On débat des œuvres, jamais des personnes.',
   'Spoilers annoncés avant d\'en parler.',
@@ -12,7 +20,7 @@ const DEFAULT_RULES = Object.freeze([
   'Aucun enregistrement sans l\'accord de tous.'
 ]);
 const REACTIONS = Object.freeze(['POW!', 'WOW!', 'BOOM!', 'ZAP!', 'HMM…']);
-const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30 });
+const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30, side: 40 });
 
 const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
 const isoOrEmpty = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
@@ -27,8 +35,14 @@ const sanitizeImage = im => {
   if (!im || typeof im !== 'object') return null;
   const ref = str(im.ref, 80);
   if (!ref) return null;
-  if (im.kind === 'page') return { ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true };
-  return { ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) };
+  const side = im.side === 0 || im.side === 1 ? { side: im.side } : {};
+  if (im.kind === 'page') return Object.assign({ ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true }, side);
+  return Object.assign({ ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) }, side);
+};
+const duelOf = r => {
+  if (!r || r.format !== 'duel') return null;
+  const s = Array.isArray(r.duel && r.duel.sides) ? r.duel.sides : [];
+  return { sides: [str(s[0], LIMITS.side) || 'Pour', str(s[1], LIMITS.side) || 'Contre'] };
 };
 const isPage = im => !!im && im.kind === 'page';
 const imageLabel = im => isPage(im) ? (im.caption || 'Page de la galerie') : [im.series, im.issue].filter(Boolean).join(' ');
@@ -49,7 +63,7 @@ const sanitizeRoom = r => {
     title: str(r.title, LIMITS.title),
     format: FORMATS[r.format] ? r.format : 'free',
     when: isoOrEmpty(r.when),
-    topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images,
+    topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images, duel: duelOf(Object.assign({}, r, { format: FORMATS[r.format] ? r.format : 'free' })),
     createdAt: isoOrEmpty(r.createdAt), updatedAt: isoOrEmpty(r.updatedAt)
   };
 };
@@ -64,7 +78,9 @@ const sanitizeSummary = x => {
     durationSec: Math.max(0, Math.min(86400, Math.floor(Number(x.durationSec) || 0))),
     topics: (Array.isArray(x.topics) ? x.topics : []).map(t => ({ text: str(t && t.text, LIMITS.topic), secs: Math.max(0, Math.floor(Number(t && t.secs) || 0)) })).filter(t => t.text).slice(0, LIMITS.topics),
     shown: (Array.isArray(x.shown) ? x.shown : []).map(sanitizeImage).filter(Boolean).slice(0, LIMITS.images),
-    reactions
+    reactions,
+    duel: x.duel && Array.isArray(x.duel.sides) ? { sides: x.duel.sides.slice(0, 2).map(s => str(s, LIMITS.side)), vote: x.duel.vote === 0 || x.duel.vote === 1 ? x.duel.vote : null, rounds: Math.max(0, Math.min(DUEL_ROUNDS.length, Math.floor(Number(x.duel.rounds) || 0))) } : null,
+    chat: Math.max(0, Math.min(CHAT_MAX, Math.floor(Number(x.chat) || 0)))
   };
 };
 
@@ -81,7 +97,7 @@ const sanitizeState = s => {
 const validateRoom = r => {
   const errors = [];
   if (!r || !r.title) errors.push('Donnez un sujet au direct.');
-  if (!r || !r.topics.length) errors.push('Ajoutez au moins un point à l\'ordre du jour.');
+  if (r && r.format !== 'duel' && !r.topics.length) errors.push('Ajoutez au moins un point à l\'ordre du jour.');
   return errors;
 };
 
@@ -113,7 +129,30 @@ const ordered = (state, now) => {
 
 // ── Répétition : une session en mémoire, menée par l'utilisateur seul
 const secsBetween = (a, b) => Math.max(0, Math.round(((Date.parse(b) || 0) - (Date.parse(a) || 0)) / 1000));
-const startSession = (room, now) => ({ roomId: room.id, startedAt: now, topic: 0, topicStartedAt: now, done: [], shown: null, shownLog: [], reactions: {} });
+const startSession = (room, now) => ({ roomId: room.id, startedAt: now, topic: 0, topicStartedAt: now, done: [], shown: null, shownLog: [], reactions: {}, round: 0, roundStartedAt: now, vote: null, chat: [] });
+// Manche suivante du duel (la dernière est le vote) ; au-delà, le duel est clos
+const nextRound = (session, room, now) => {
+  if (!session || !room.duel || session.round >= DUEL_ROUNDS.length) return session;
+  return Object.assign({}, session, { round: session.round + 1, roundStartedAt: now });
+};
+const roundOf = session => session && session.round < DUEL_ROUNDS.length ? DUEL_ROUNDS[session.round] : null;
+// Votre vote (un seul) : même camp = retiré ; tant que les comptes ne sont pas actifs, aucun autre vote n'existe
+const castVote = (session, side) => {
+  if (!session || (side !== 0 && side !== 1)) return session;
+  return Object.assign({}, session, { vote: session.vote === side ? null : side });
+};
+// Chat du direct : vos messages seulement tant que les comptes ne sont pas actifs (aucun message d'autrui simulé)
+const sendChat = (session, text, now) => {
+  const t = str(text, CHAT_LEN);
+  if (!session || !t) return session;
+  return Object.assign({}, session, { chat: (session.chat || []).concat([{ at: now, text: t, by: 'me' }]).slice(-CHAT_MAX) });
+};
+// Preuves montrées par camp (images du tableau rattachées à un camp et montrées pendant le duel)
+const evidenceCount = (session, room) => {
+  const out = [0, 0];
+  uniq((session && session.shownLog) || []).forEach(ref => { const im = room.images.find(x => x.ref === ref); if (im && (im.side === 0 || im.side === 1)) out[im.side]++; });
+  return out;
+};
 const nextTopic = (session, room, now) => {
   if (!session || session.topic >= room.topics.length) return session;
   const done = session.done.concat([{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }]);
@@ -151,7 +190,9 @@ const endSession = (state, session, room, now, newId) => {
   const summary = sanitizeSummary({
     id: newId, roomId: room.id, title: room.title, format: room.format, startedAt: session.startedAt, endedAt: now,
     durationSec: secsBetween(session.startedAt, now), topics: session.done.concat(last),
-    shown: uniq(session.shownLog).map(ref => room.images.find(x => x.ref === ref)).filter(Boolean), reactions: session.reactions
+    shown: uniq(session.shownLog).map(ref => room.images.find(x => x.ref === ref)).filter(Boolean), reactions: session.reactions,
+    duel: room.duel ? { sides: room.duel.sides, vote: session.vote, rounds: Math.min(session.round || 0, DUEL_ROUNDS.length) } : null,
+    chat: (session.chat || []).length
   });
   st.history = [summary].concat(st.history).slice(0, LIMITS.history);
   return { state: st, summary };
@@ -170,10 +211,11 @@ const summaryText = x => {
   const pages = (x.shown || []).filter(isPage).length;
   return [
     (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
+    x.duel ? x.duel.sides.join(' contre ') + (x.duel.vote === 0 || x.duel.vote === 1 ? ' · mon vote : ' + x.duel.sides[x.duel.vote] : '') : '',
     x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
     'Durée : ' + fmtDuration(x.durationSec),
     pages ? pages + ' page' + (pages > 1 ? 's' : '') + ' commentée' + (pages > 1 ? 's' : '') : ''
   ].filter(Boolean).join('\n');
 };
 
-module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };

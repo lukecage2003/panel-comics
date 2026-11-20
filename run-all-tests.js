@@ -1053,7 +1053,7 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'PWA (manifest, icônes, service worker, hors ligne, raccourcis)',
         ok: !!t17 && !t17.error && t17.first.manifestLink && t17.first.name === 'Panel' && t17.first.display === 'standalone' && t17.first.iconsOk && t17.first.maskable &&
-          t17.first.shortcuts === 4 && t17.first.swActive && t17.first.backupBlocked && t17.second.controlled && t17.second.shellCached && t17.second.libsCached &&
+          t17.first.shortcuts === 6 && t17.first.swActive && t17.first.backupBlocked && t17.second.controlled && t17.second.shellCached && t17.second.libsCached &&
           t17.offlineLoaded && t17.offline.loaded && t17.offline.pill && t17.offline.noPdfjs && t17.offline.jszip && t17.shortcut.seriesVisible && t17.shortcut.cleanUrl
       });
 
@@ -5694,6 +5694,85 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Idées originales (lot S7, D-95) : Mercredi des sorties (bandeau, direct préparé avec l\'ordre du jour, ouvert depuis la pull list), Duel de couvertures (côte à côte, un vote local), Chasse aux variantes (trouvée dès qu\'un exemplaire correspond), Carte de collectionneur (profil public, aucun chiffre financier)',
         ok: !!t75 && !t75.error && ['wednesday', 'wedLive', 'templates', 'duel', 'vote', 'hunt', 'card', 'cardClosed', 'dataUntouched'].every(k => t75[k] === true) });
 
+      // ==========================================
+      // TEST 76 : Pensées (fil façon Twitter), J'aime personnalisé, Duel et chat en direct (D-96)
+      // ==========================================
+      console.log('\n[TEST 76] Pensées, J\'aime, Duel en direct...');
+      const t76 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const KEYS = ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1', 'panel_ig_v1', 'panel_community_drafts_v1'];
+        const fp0 = await P.backup.fingerprint('collection');
+        const k0 = KEYS.map(k => localStorage.getItem(k));
+        const q = s => document.querySelector(s);
+        try {
+          ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1'].forEach(k => localStorage.removeItem(k));
+          // Pensée : compositeur en haut de l'accueil, type Théorie, mot-dièse suggéré pendant la saisie
+          q('#navSinglesCommunity').click(); await wait(300);
+          const ta = q('#ntText');
+          ta.focus(); ta.value = 'Fixture 76 : le prochain arc relie tout #Théo'; ta.selectionStart = ta.selectionEnd = ta.value.length; ta.dispatchEvent(new Event('input')); await wait(100);
+          const sug = [...document.querySelectorAll('[data-nt-tag]')].map(b => b.dataset.ntTag);
+          q('[data-nt-kind="theory"]').click();
+          const tb = q('[data-nt-tag="Théorie"]'); if (tb) tb.click();
+          r.composer = !!q('.ntc.is-open') && sug.includes('Théorie') && /#Théorie $/.test(q('#ntText').value) && q('[data-nt-kind="theory"]').getAttribute('aria-checked') === 'true' && q('[data-nt-count]').textContent === String(500 - q('#ntText').value.length);
+          q('[data-nt-send]').click(); await wait(300);
+          const st = JSON.parse(localStorage.getItem('panel_notes_v1') || 'null');
+          const card = q('.ntp');
+          r.published = !!st && st.notes.length === 1 && st.notes[0].kind === 'theory' && st.notes[0].verdict === 'open' && !!card && card.classList.contains('is-theory') &&
+            !!card.querySelector('.ntp-tag[data-ig-tag="Théorie"]') && /En attente du verdict/.test(card.textContent) && !q('#ntText').value;
+          // Classement : la pensée apparaît dans le fil « Pour toi » et le filtre par mot-dièse la garde
+          card.querySelector('.ntp-tag').click(); await wait(250);
+          r.tagFilter = !!q('.ntp') && /Théorie/.test((q('.igf') || document.body).textContent);
+          // Verdict de la théorie depuis le menu
+          const c2 = q('.ntp'); c2.querySelector('[data-igp-more]').click(); await wait(50);
+          c2.querySelector('[data-nt-verdict="confirmed"]').click(); await wait(250);
+          r.verdict = JSON.parse(localStorage.getItem('panel_notes_v1')).notes[0].verdict === 'confirmed' && !!q('.ntp-verdict.is-confirmed');
+          // Pensée vide refusée, aucun enregistrement
+          const ta2 = q('#ntText'); ta2.focus(); ta2.value = '   '; ta2.dispatchEvent(new Event('input')); q('[data-nt-send]').click(); await wait(150);
+          r.emptyRefused = JSON.parse(localStorage.getItem('panel_notes_v1')).notes.length === 1 && !!q('[data-nt-msg]').textContent;
+          // J'aime personnalisé : choisi dans le Profil, utilisé sur les publications ; aucun logo
+          q('#navProfile').click(); await wait(300);
+          const opts = document.querySelectorAll('[data-pfl]');
+          q('[data-pfl="claws"]').click(); await wait(100);
+          r.likePicker = opts.length === 12 && localStorage.getItem('panel_like_icon_v1') === 'claws' && q('[data-pfl="claws"]').getAttribute('aria-checked') === 'true' && !/Marvel|DC Comics|Superman|Batman/.test(q('.pfl').textContent.replace(/sans logo ni personnage déposé/, ''));
+          q('#navSinglesCommunity').click(); await wait(300);
+          const lb = q('.ntp [data-igp-like]'); lb.click(); await wait(100);
+          r.likeUsed = lb.querySelector('use').getAttribute('href') === '#lk-claws' && /Griffes/.test(lb.getAttribute('aria-label')) && lb.getAttribute('aria-pressed') === 'true';
+          // Duel en direct : deux camps, manches chronométrées, vote, chat (seulement mes messages)
+          q('#navLive').click(); await wait(300);
+          q('[data-lv-new="duel"]').click(); await wait(300);
+          const set = (s, v) => { const e = q(s); e.value = v; e.dispatchEvent(new Event('input')); e.dispatchEvent(new Event('change')); };
+          set('[data-lv="title"]', 'Fixture 76 duel'); set('[data-lv="sideA"]', 'Camp Fixture A'); set('[data-lv="sideB"]', 'Camp Fixture B');
+          r.duelEditor = q('[data-lv="format"]').value === 'duel' && !q('[data-lv-duelf]').hidden;
+          [...q('[data-lv="sideA"]').closest('.modal-box').querySelectorAll('button')].find(b => /Créer le direct/.test(b.textContent)).click(); await wait(300);
+          const room = (JSON.parse(localStorage.getItem('panel_live_v1') || '{"rooms":[]}').rooms || []).find(x => x.title === 'Fixture 76 duel');
+          r.duelSaved = !!room && room.format === 'duel' && room.duel.sides[0] === 'Camp Fixture A';
+          const lc = [...document.querySelectorAll('.lv-card')].find(c => c.textContent.includes('Fixture 76 duel'));
+          lc.querySelector('[data-lv-start]').click(); await wait(400);
+          r.stage = !!q('.lv-duelbar') && /Camp Fixture A/.test(q('.lv-duelbar').textContent) && !!q('.lv-voice') && /Manche 1 sur 7/.test(q('.lv-round').textContent);
+          for (let i = 0; i < 6; i++) { q('[data-lv-round]').click(); await wait(40); }
+          q('[data-lv-vote="1"]').click(); await wait(80);
+          r.vote = /Vote/.test(q('.lv-round').textContent) && q('[data-lv-vote="1"]').getAttribute('aria-pressed') === 'true';
+          q('[data-lv-chat]').click(); await wait(50);
+          q('[data-lv-chatin]').value = 'Message fixture 76'; q('[data-lv-chatform]').dispatchEvent(new Event('submit', { cancelable: true })); await wait(80);
+          const items = [...document.querySelectorAll('[data-lv-chatlist] li')];
+          r.chat = items.length === 2 && /Message fixture 76/.test(items[0].textContent) && /seuls vos messages/.test(items[1].textContent);
+          q('[data-lv-chatin]').focus();
+          document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(80);
+          r.escInChat = !!q('.lv-duelbar');
+          q('[data-lv-end]').click(); await wait(300);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          const end = q('[data-lv-end]'); if (end) { end.click(); await wait(200); }
+          document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open'));
+          KEYS.forEach((k, i) => { if (k0[i] === null) localStorage.removeItem(k); else localStorage.setItem(k, k0[i]); });
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && KEYS.every((k, i) => localStorage.getItem(k) === k0[i]);
+        return r;
+      })()`);
+      console.log('Résultat Test 76:', JSON.stringify(t76));
+      testResults.push({ test: 'Pensées, théories et questions (mots-dièse suggérés, verdict, filtre, pensée vide refusée), J\'aime personnalisé (douze dessins originaux, choisi dans le Profil), Duel en direct (deux camps, sept manches, vote, chat de mes seuls messages, voix seule) (D-96)',
+        ok: !!t76 && !t76.error && ['composer', 'published', 'tagFilter', 'verdict', 'emptyRefused', 'likePicker', 'likeUsed', 'duelEditor', 'duelSaved', 'stage', 'vote', 'chat', 'escInChat', 'dataUntouched'].every(k => t76[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

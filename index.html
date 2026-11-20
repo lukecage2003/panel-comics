@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-fhDQyRyfUDQvuSd1frqFXiwr6N8yYJIJ2oqUeXTxbAc=' 'sha256-oNb8SS51rftIG8E7LltnbOFiPjdLtW4TFjH43NPtp+E=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-xy7pT16XKHHBrDsxPwGWBwawrJnPB/efLoqbIk+UNVo=' 'sha256-Ak/GFuftlIbaPWaev2s2+OOot0Jp42VP1jDiLmUw57I=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2989,7 +2989,7 @@
     .igp-act .ic { width: 25px; height: 25px; stroke-width: 1.8; transition: transform .15s; }
     @media (hover: hover) { .igp-act:hover .ic { transform: scale(1.08); opacity: .75; } }
     .igp-act.is-on .ic { fill: currentColor; }
-    .igp-act.is-like.is-on { color: #ff3040; }
+    .igp-act.is-like.is-on { color: var(--lk, #ff3040); }
     .igp-act.is-pop .ic { animation: igPop .35s cubic-bezier(.2,.9,.3,1.4); }
     @keyframes igPop { 0% { transform: scale(1); } 45% { transform: scale(1.3); } 100% { transform: scale(1); } }
     .igp-liked { margin: 0 14px; font: 650 13.5px var(--font-ui); }
@@ -3424,6 +3424,96 @@
     .modal-box.pfv { display: block; max-width: 560px; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
     .pfv-banner { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; background: var(--tint-cyan, rgba(127,209,255,.12)); border-radius: 10px; padding: 8px 10px; margin: 6px 0 14px; }
     .pfv-banner .ic { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 2px; }
+    /* D-96 : Pensées (fil façon Twitter), J'aime personnalisé, Duel et chat en direct */
+    .ntc { margin: 12px 0 14px; padding: 12px 14px; border: 1px solid var(--line, #333); border-radius: 16px; background: var(--bg-card, #111); }
+    .ntc-row { display: flex; gap: 10px; align-items: flex-start; }
+    .ntc-row .igp-av { flex: 0 0 38px; width: 38px; height: 38px; }
+    .ntc-text { flex: 1; min-width: 0; border: 0; background: transparent; color: inherit; font: inherit; font-size: 16px; line-height: 1.45; resize: none; padding: 8px 0; outline: none; }
+    .ntc-text::placeholder { color: var(--muted, #8a8a8a); }
+    .ntc:focus-within { border-color: var(--accent, #ffd400); }
+    .ntc:not(.is-open) .ntc-bar, .ntc:not(.is-open) .ntc-msg { display: none; }
+    .ntc-bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line, #333); }
+    .ntc-kinds { display: inline-flex; gap: 4px; }
+    .ntc-kinds button { border: 1px solid var(--line, #333); background: transparent; color: inherit; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; cursor: pointer; min-height: 36px; }
+    .ntc-kinds button[aria-checked="true"] { background: var(--ink, #f3f2ee); color: var(--bg, #070907); border-color: transparent; font-weight: 700; }
+    .ntc-tools { display: inline-flex; gap: 2px; align-items: center; }
+    .ntc-tool { border: 0; background: transparent; color: inherit; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; cursor: pointer; }
+    .ntc-tool .ic { width: 20px; height: 20px; }
+    .ntc-tool.is-on { color: #ffd400; background: rgba(255,212,0,.12); }
+    .ntc-vis { border: 1px solid var(--line, #333); background: transparent; color: inherit; font: inherit; font-size: 12px; border-radius: 999px; padding: 6px 8px; min-height: 36px; }
+    .ntc-count { margin-left: auto; font-size: 12px; opacity: .6; font-variant-numeric: tabular-nums; }
+    .ntc-count.is-low { color: #ff7a1a; opacity: 1; font-weight: 700; }
+    .ntc-send { border-radius: 999px; }
+    .ntc-sugg { display: flex; gap: 6px; flex-wrap: wrap; margin: 6px 0 0 48px; }
+    .ntc-sugg button { border: 0; background: rgba(127,209,255,.12); color: inherit; font: inherit; font-size: 13px; padding: 6px 10px; border-radius: 999px; cursor: pointer; min-height: 32px; }
+    .ntc-imgprev { position: relative; margin: 8px 0 0 48px; max-width: 320px; }
+    .ntc-imgprev img { width: 100%; max-height: 260px; object-fit: cover; border-radius: 14px; display: block; }
+    .ntc-x { position: absolute; top: 6px; right: 6px; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(0,0,0,.7); color: #fff; display: grid; place-items: center; cursor: pointer; }
+    .ntc-issue { position: relative; display: inline-flex; gap: 6px; align-items: center; margin: 8px 0 0 48px; padding: 6px 40px 6px 10px; border-radius: 999px; background: rgba(255,255,255,.06); font-size: 13px; }
+    .ntc-issue .ntc-x { top: 2px; right: 2px; width: 28px; height: 28px; }
+    .ntc-issuepick { margin: 8px 0 0 48px; }
+    .ntc-msg { margin: 6px 0 0; font-size: 12px; opacity: .8; min-height: 1em; }
+    .ntp { position: relative; display: flex; gap: 10px; padding: 14px 4px 10px; border-bottom: 1px solid var(--line, #333); }
+    .igf > .ntp:first-child { border-top: 0; }
+    .ntp > .igp-av { flex: 0 0 40px; width: 40px; height: 40px; }
+    .ntp-main { flex: 1; min-width: 0; position: relative; }
+    .ntp-head { display: flex; gap: 6px; align-items: baseline; flex-wrap: wrap; }
+    .ntp-head small { opacity: .6; font-size: 13px; }
+    .ntp-head .igp-menu-wrap { margin-left: auto; }
+    .ntp-kind { font-size: 11px; font-weight: 800; letter-spacing: .04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: rgba(255,212,0,.16); color: #ffd400; }
+    .ntp.is-question .ntp-kind { background: rgba(127,209,255,.16); color: #7fd1ff; }
+    .ntp-body { position: relative; margin-top: 2px; }
+    .ntp-text { margin: 0; font-size: 15px; line-height: 1.5; overflow-wrap: anywhere; }
+    .ntp-tag { border: 0; background: none; padding: 0; font: inherit; color: #7fd1ff; cursor: pointer; }
+    .ntp-img { margin: 10px 0 0; }
+    .ntp-img img { width: 100%; max-height: 520px; object-fit: cover; border-radius: 16px; border: 1px solid var(--line, #333); display: block; background: #111; }
+    .ntp-body.is-sp .ntp-text, .ntp-body.is-sp .ntp-img { filter: blur(10px); user-select: none; pointer-events: none; }
+    .ntp-reveal { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); border: 0; border-radius: 999px; padding: 8px 14px; background: rgba(0,0,0,.8); color: #fff; font: inherit; font-size: 13px; font-weight: 700; display: inline-flex; gap: 6px; align-items: center; cursor: pointer; min-height: 40px; }
+    .ntp-issue { margin-top: 8px; display: inline-flex; gap: 6px; align-items: center; border: 1px solid var(--line, #333); background: transparent; color: inherit; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; cursor: pointer; min-height: 36px; }
+    .ntp-verdict { margin: 8px 0 0; display: inline-flex; gap: 6px; align-items: center; font-size: 13px; font-weight: 700; opacity: .8; }
+    .ntp-verdict.is-confirmed { color: #3ecf8e; opacity: 1; }
+    .ntp-verdict.is-busted { color: #ff5a5f; opacity: 1; }
+    .ntp-verdict .ic { width: 16px; height: 16px; }
+    .ntp-bar { padding: 4px 0 0; margin-left: -8px; }
+    .ntp .igp-burst .ic { width: 72px; height: 72px; }
+    .pfl { margin: 18px 0 24px; }
+    .pfl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; margin-top: 10px; }
+    .pfl-opt { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; border: 1px solid var(--line, #333); border-radius: 14px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
+    .pfl-opt .ic { width: 28px; height: 28px; color: var(--lk); }
+    .pfl-opt small { font-size: 12px; }
+    .pfl-opt[aria-checked="true"] { border-color: var(--lk); box-shadow: 0 0 0 1px var(--lk) inset; background: color-mix(in srgb, var(--lk) 12%, transparent); }
+    .pfl-opt[aria-checked="true"] .ic { fill: currentColor; fill-opacity: .35; }
+    .pfl-sug { border: 0; background: none; color: #7fd1ff; font: inherit; text-decoration: underline; cursor: pointer; padding: 0; }
+    .igp-act.is-like.is-on .ic { fill-opacity: .9; }
+    .lv-head-b { display: flex; gap: 8px; flex-wrap: wrap; }
+    .lv-f-wide { grid-column: 1 / -1; margin: 0; }
+    .lv-side-sel { font-size: 12px; padding: 4px 6px; min-height: 32px; }
+    .lv-voice { display: inline-flex; gap: 4px; align-items: center; font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; white-space: nowrap; }
+    .lv-voice .ic { width: 13px; height: 13px; }
+    .lv-duelbar { position: absolute; left: 12px; right: 12px; top: 64px; z-index: 3; display: flex; gap: 6px; align-items: stretch; }
+    .lv-camp { flex: 1; min-width: 0; display: grid; grid-template-columns: auto 1fr; column-gap: 6px; align-items: center; padding: 6px 10px; border-radius: 12px; background: rgba(0,0,0,.55); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.12); }
+    .lv-camp b { grid-row: span 2; width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; background: #e0201b; }
+    .lv-camp.is-b b { background: #0b4fb3; }
+    .lv-camp span { font-size: 13px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lv-camp small { font-size: 11px; opacity: .75; }
+    .lv-camp.is-cur { border-color: #ffd400; box-shadow: 0 0 0 1px #ffd400 inset; }
+    .lv-vs { align-self: center; font-weight: 900; font-size: 13px; color: #ffd400; }
+    .lv-round .lv-roundbar, .lv-round .lv-votes { flex: 0 0 100%; }
+    .lv-roundbar { display: block; height: 4px; border-radius: 4px; background: rgba(255,255,255,.18); overflow: hidden; margin: 6px 0; }
+    .lv-roundbar i { display: block; height: 100%; width: 0; background: #ffd400; transition: width 1s linear; }
+    .lv-roundbar.is-over i { background: #ff5a5f; }
+    .lv-votes { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 4px 0 8px; }
+    .lv-vote { border: 1px solid rgba(255,255,255,.3); background: rgba(0,0,0,.4); color: #fff; font: inherit; font-size: 13px; padding: 8px; border-radius: 12px; cursor: pointer; min-height: 44px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .lv-vote.is-on { background: #ffd400; color: #141414; border-color: #ffd400; font-weight: 800; }
+    .lv-phone:has(.lv-duelbar) .lv-cap { top: 122px; }
+    .lv-chat { margin: 0 64px 8px 0; padding: 8px; border-radius: 14px; background: rgba(0,0,0,.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); color: #fff; }
+    .lv-chat-list { list-style: none; margin: 0 0 6px; padding: 0; max-height: 26vh; overflow-y: auto; display: grid; gap: 4px; font-size: 13px; }
+    .lv-chat-list b { color: #ffd400; margin-right: 4px; }
+    .lv-chat-note { opacity: .65; font-size: 11px; }
+    .lv-chat-form { display: flex; gap: 6px; }
+    .lv-chat-form input { flex: 1; min-width: 0; min-height: 40px; }
+    .lv-chat-form .btn { min-width: 44px; padding: 0 12px; }
+    @media (prefers-reduced-motion: reduce) { .lv-roundbar i { transition: none; } }
     /* Lot S7 (D-95) : Mercredi des sorties, Duel, Chasse, Carte de collectionneur */
     .wed { margin: 12px 0 16px; padding: 14px; border-radius: 16px; border: 1px solid var(--line, #333); background: linear-gradient(135deg, rgba(255,212,0,.14), rgba(255,212,0,0) 60%), var(--bg-card, #111); }
     .wed.is-today { border-color: #ffd400; box-shadow: 0 0 0 1px #ffd400 inset; }
@@ -3480,7 +3570,7 @@
   </style>
 </head>
 <body>
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
   <!-- SIDEBAR DESKTOP -->
@@ -6827,13 +6917,14 @@ const tagsOf = post => {
   const add = t => { if (t && !out.some(x => norm(x) === norm(t))) out.push(t); };
   String(post.text || '').replace(TEXT_TAG, (_, t) => { add(t); return ''; });
   if (post.type === 'planche') add(KIND_TAGS[post.kind] || KIND_TAGS.free);
+  if (post.type === 'note') add({ theory: 'Théorie', question: 'Question' }[post.kind] || '');
   if (post.type === 'story') { add('Lecture'); if (post.rating >= 4.5 || post.liked) add('CoupDeCœur'); if (post.reread) add('Relecture'); }
   (post.media || []).forEach(m => { add(publisherTag(m.publisher)); add(tagify(m.series)); });
   return out.filter(Boolean).slice(0, 8);
 };
 
 const emptyState = () => ({ version: 1, likes: {}, saves: {}, pins: [] });
-const ID = /^[sp]:[A-Za-z0-9_-]{1,60}$/;
+const ID = /^[spn]:[A-Za-z0-9_-]{1,60}$/;
 const sanitizeState = v => {
   const o = emptyState();
   if (!v || typeof v !== 'object') return o;
@@ -6857,7 +6948,7 @@ const toggle = (state, what, id, now) => {
 };
 
 // Publications : épinglées d'abord (dans l'ordre d'épinglage), puis de la plus récente à la plus ancienne
-const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {}) => {
+const buildFeed = ({ drafts = [], stories = [], notes = [], state, tag = '', only = '' } = {}) => {
   const st = sanitizeState(state);
   const posts = [];
   for (const d of drafts || []) {
@@ -6870,6 +6961,13 @@ const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {
     posts.push({ id: 's:' + s.id, ref: s.id, type: 'story', kind: 'read', at: s.createdAt || (s.readAt ? s.readAt + 'T12:00:00Z' : ''), text: String(s.review || ''), spoiler: !!s.spoiler, rating: Number(s.rating) || 0, liked: !!s.liked, reread: !!s.reread, readAt: s.readAt || '',
       media: [{ series: s.series || '', issue: s.issue || '', publisher: s.publisher || '', coverUrl: s.coverUrl || '', variant: s.variant || '' }], style: s.style || '' });
   }
+  // Pensées (D-96) : texte court, image facultative de la galerie (référence locale), numéro lié facultatif
+  for (const n of notes || []) {
+    if (!n || !n.id) continue;
+    posts.push({ id: 'n:' + n.id, ref: n.id, type: 'note', kind: n.kind || 'thought', at: n.createdAt || '', text: String(n.text || ''), spoiler: !!n.spoiler, verdict: n.verdict || '',
+      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', visibility: n.visibility || 'public',
+      media: n.issue && n.issue.series ? [{ series: n.issue.series, issue: n.issue.issue || '', publisher: n.issue.publisher || '', coverUrl: '', variant: '' }] : [] });
+  }
   posts.forEach(p => { p.tags = tagsOf(p); p.likedByMe = !!st.likes[p.id]; p.saved = !!st.saves[p.id]; p.pinned = st.pins.includes(p.id); });
   const t = norm(tag).replace(/^#/, '');
   const list = posts.filter(p => (!t || p.tags.some(x => norm(x) === t)) && (only !== 'saved' || p.saved));
@@ -6878,7 +6976,7 @@ const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {
   // Mots-dièse les plus présents (pour les filtres en haut du fil)
   const counts = new Map();
   posts.forEach(p => p.tags.forEach(x => counts.set(x, (counts.get(x) || 0) + 1)));
-  const kindSet = new Set(Object.values(KIND_TAGS).concat(['Lecture', 'CoupDeCœur', 'Relecture']));
+  const kindSet = new Set(Object.values(KIND_TAGS).concat(['Lecture', 'CoupDeCœur', 'Relecture', 'Théorie', 'Question']));
   const topTags = [...counts.entries()].sort((a, b) => b[1] - a[1] || kindSet.has(b[0]) - kindSet.has(a[0]) || a[0].localeCompare(b[0], 'fr')).slice(0, 12).map(([tg, n]) => ({ tag: tg, n }));
   return { posts: list, total: posts.length, topTags, likes: Object.keys(st.likes).length, saves: Object.keys(st.saves).length };
 };
@@ -6893,7 +6991,15 @@ module.exports = { KIND_TAGS, MAX_PINS, tagify, publisherTag, tagsOf, emptyState
 // en ligne et un serveur audio (docs/LIVE-DEBATS.md). Module pur : aucun participant, aucun message ni aucune réaction d'autrui
 // n'est jamais simulé ; tout ce qui est compté vient de l'utilisateur lui-même.
 
-const FORMATS = Object.freeze({ wednesday: 'Débat du mercredi', trial: 'Procès d\'un event', bestrun: 'Meilleur run', club: 'Club de lecture', free: 'Sujet libre' });
+const FORMATS = Object.freeze({ wednesday: 'Débat du mercredi', duel: 'Duel en direct', trial: 'Procès d\'un event', bestrun: 'Meilleur run', club: 'Club de lecture', free: 'Sujet libre' });
+// Duel en direct (D-96) : deux camps, des manches chronométrées (ouverture, réplique, conclusion), des preuves en images, puis le vote.
+const DUEL_ROUNDS = Object.freeze([
+  { key: 'a1', side: 0, label: 'Ouverture', secs: 90 }, { key: 'b1', side: 1, label: 'Ouverture', secs: 90 },
+  { key: 'a2', side: 0, label: 'Réplique', secs: 60 }, { key: 'b2', side: 1, label: 'Réplique', secs: 60 },
+  { key: 'a3', side: 0, label: 'Conclusion', secs: 45 }, { key: 'b3', side: 1, label: 'Conclusion', secs: 45 },
+  { key: 'vote', side: null, label: 'Vote', secs: 30 }
+]);
+const CHAT_MAX = 200, CHAT_LEN = 200;
 const DEFAULT_RULES = Object.freeze([
   'On débat des œuvres, jamais des personnes.',
   'Spoilers annoncés avant d\'en parler.',
@@ -6901,7 +7007,7 @@ const DEFAULT_RULES = Object.freeze([
   'Aucun enregistrement sans l\'accord de tous.'
 ]);
 const REACTIONS = Object.freeze(['POW!', 'WOW!', 'BOOM!', 'ZAP!', 'HMM…']);
-const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30 });
+const LIMITS = Object.freeze({ title: 90, topic: 120, topics: 8, images: 24, pages: 16, caption: 80, rules: 6, rule: 140, rooms: 30, history: 30, side: 40 });
 
 const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
 const isoOrEmpty = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
@@ -6916,8 +7022,14 @@ const sanitizeImage = im => {
   if (!im || typeof im !== 'object') return null;
   const ref = str(im.ref, 80);
   if (!ref) return null;
-  if (im.kind === 'page') return { ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true };
-  return { ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) };
+  const side = im.side === 0 || im.side === 1 ? { side: im.side } : {};
+  if (im.kind === 'page') return Object.assign({ ref, kind: 'page', caption: str(im.caption, LIMITS.caption), spoiler: im.spoiler === true }, side);
+  return Object.assign({ ref, kind: 'copy', series: str(im.series, 120), issue: str(im.issue, 20) }, side);
+};
+const duelOf = r => {
+  if (!r || r.format !== 'duel') return null;
+  const s = Array.isArray(r.duel && r.duel.sides) ? r.duel.sides : [];
+  return { sides: [str(s[0], LIMITS.side) || 'Pour', str(s[1], LIMITS.side) || 'Contre'] };
 };
 const isPage = im => !!im && im.kind === 'page';
 const imageLabel = im => isPage(im) ? (im.caption || 'Page de la galerie') : [im.series, im.issue].filter(Boolean).join(' ');
@@ -6938,7 +7050,7 @@ const sanitizeRoom = r => {
     title: str(r.title, LIMITS.title),
     format: FORMATS[r.format] ? r.format : 'free',
     when: isoOrEmpty(r.when),
-    topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images,
+    topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images, duel: duelOf(Object.assign({}, r, { format: FORMATS[r.format] ? r.format : 'free' })),
     createdAt: isoOrEmpty(r.createdAt), updatedAt: isoOrEmpty(r.updatedAt)
   };
 };
@@ -6953,7 +7065,9 @@ const sanitizeSummary = x => {
     durationSec: Math.max(0, Math.min(86400, Math.floor(Number(x.durationSec) || 0))),
     topics: (Array.isArray(x.topics) ? x.topics : []).map(t => ({ text: str(t && t.text, LIMITS.topic), secs: Math.max(0, Math.floor(Number(t && t.secs) || 0)) })).filter(t => t.text).slice(0, LIMITS.topics),
     shown: (Array.isArray(x.shown) ? x.shown : []).map(sanitizeImage).filter(Boolean).slice(0, LIMITS.images),
-    reactions
+    reactions,
+    duel: x.duel && Array.isArray(x.duel.sides) ? { sides: x.duel.sides.slice(0, 2).map(s => str(s, LIMITS.side)), vote: x.duel.vote === 0 || x.duel.vote === 1 ? x.duel.vote : null, rounds: Math.max(0, Math.min(DUEL_ROUNDS.length, Math.floor(Number(x.duel.rounds) || 0))) } : null,
+    chat: Math.max(0, Math.min(CHAT_MAX, Math.floor(Number(x.chat) || 0)))
   };
 };
 
@@ -6970,7 +7084,7 @@ const sanitizeState = s => {
 const validateRoom = r => {
   const errors = [];
   if (!r || !r.title) errors.push('Donnez un sujet au direct.');
-  if (!r || !r.topics.length) errors.push('Ajoutez au moins un point à l\'ordre du jour.');
+  if (r && r.format !== 'duel' && !r.topics.length) errors.push('Ajoutez au moins un point à l\'ordre du jour.');
   return errors;
 };
 
@@ -7002,7 +7116,30 @@ const ordered = (state, now) => {
 
 // ── Répétition : une session en mémoire, menée par l'utilisateur seul
 const secsBetween = (a, b) => Math.max(0, Math.round(((Date.parse(b) || 0) - (Date.parse(a) || 0)) / 1000));
-const startSession = (room, now) => ({ roomId: room.id, startedAt: now, topic: 0, topicStartedAt: now, done: [], shown: null, shownLog: [], reactions: {} });
+const startSession = (room, now) => ({ roomId: room.id, startedAt: now, topic: 0, topicStartedAt: now, done: [], shown: null, shownLog: [], reactions: {}, round: 0, roundStartedAt: now, vote: null, chat: [] });
+// Manche suivante du duel (la dernière est le vote) ; au-delà, le duel est clos
+const nextRound = (session, room, now) => {
+  if (!session || !room.duel || session.round >= DUEL_ROUNDS.length) return session;
+  return Object.assign({}, session, { round: session.round + 1, roundStartedAt: now });
+};
+const roundOf = session => session && session.round < DUEL_ROUNDS.length ? DUEL_ROUNDS[session.round] : null;
+// Votre vote (un seul) : même camp = retiré ; tant que les comptes ne sont pas actifs, aucun autre vote n'existe
+const castVote = (session, side) => {
+  if (!session || (side !== 0 && side !== 1)) return session;
+  return Object.assign({}, session, { vote: session.vote === side ? null : side });
+};
+// Chat du direct : vos messages seulement tant que les comptes ne sont pas actifs (aucun message d'autrui simulé)
+const sendChat = (session, text, now) => {
+  const t = str(text, CHAT_LEN);
+  if (!session || !t) return session;
+  return Object.assign({}, session, { chat: (session.chat || []).concat([{ at: now, text: t, by: 'me' }]).slice(-CHAT_MAX) });
+};
+// Preuves montrées par camp (images du tableau rattachées à un camp et montrées pendant le duel)
+const evidenceCount = (session, room) => {
+  const out = [0, 0];
+  uniq((session && session.shownLog) || []).forEach(ref => { const im = room.images.find(x => x.ref === ref); if (im && (im.side === 0 || im.side === 1)) out[im.side]++; });
+  return out;
+};
 const nextTopic = (session, room, now) => {
   if (!session || session.topic >= room.topics.length) return session;
   const done = session.done.concat([{ text: room.topics[session.topic], secs: secsBetween(session.topicStartedAt, now) }]);
@@ -7040,7 +7177,9 @@ const endSession = (state, session, room, now, newId) => {
   const summary = sanitizeSummary({
     id: newId, roomId: room.id, title: room.title, format: room.format, startedAt: session.startedAt, endedAt: now,
     durationSec: secsBetween(session.startedAt, now), topics: session.done.concat(last),
-    shown: uniq(session.shownLog).map(ref => room.images.find(x => x.ref === ref)).filter(Boolean), reactions: session.reactions
+    shown: uniq(session.shownLog).map(ref => room.images.find(x => x.ref === ref)).filter(Boolean), reactions: session.reactions,
+    duel: room.duel ? { sides: room.duel.sides, vote: session.vote, rounds: Math.min(session.round || 0, DUEL_ROUNDS.length) } : null,
+    chat: (session.chat || []).length
   });
   st.history = [summary].concat(st.history).slice(0, LIMITS.history);
   return { state: st, summary };
@@ -7059,13 +7198,14 @@ const summaryText = x => {
   const pages = (x.shown || []).filter(isPage).length;
   return [
     (FORMATS[x.format] || FORMATS.free) + ' : ' + x.title,
+    x.duel ? x.duel.sides.join(' contre ') + (x.duel.vote === 0 || x.duel.vote === 1 ? ' · mon vote : ' + x.duel.sides[x.duel.vote] : '') : '',
     x.topics.length ? 'Au programme : ' + x.topics.map(t => t.text).join(' · ') : '',
     'Durée : ' + fmtDuration(x.durationSec),
     pages ? pages + ' page' + (pages > 1 ? 's' : '') + ' commentée' + (pages > 1 ? 's' : '') : ''
   ].filter(Boolean).join('\n');
 };
 
-module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
   return Object.freeze(module.exports); })();
   /* domains/community/rituals-core.js */
   out.rituals = (() => { const module = { exports: {} };
@@ -7176,6 +7316,165 @@ const cardModel = ({ view = {}, favorite = null } = {}) => {
 };
 
 module.exports = { VERSION, wednesdayOf, releaseWeek, wednesdayTopics, duelCandidates, duelText, emptyVotes, sanitizeVotes, vote, myVote, huntItem, huntText, huntCandidates, huntFound, cardModel, light };
+  return Object.freeze(module.exports); })();
+  /* domains/community/notes-core.js */
+  out.notes = (() => { const module = { exports: {} };
+'use strict';
+// Pensées (D-96) : la partie « Twitter » de Panel. Un texte court sur les comics (pensée, théorie, question), avec mots-dièse,
+// une image facultative (page de la galerie, gardée sur l'appareil), un numéro lié facultatif et un voile anti-spoiler.
+// Les théories reçoivent un verdict de leur auteur quand le numéro sort (« Confirmée » ou « Ratée »), idée propre à Panel.
+// Module pur : l'appelant fournit l'état et l'heure ; aucune personne, aucune réponse ni réaction d'autrui n'est simulée.
+
+const VERSION = 1;
+const KINDS = Object.freeze({ thought: 'Pensée', theory: 'Théorie', question: 'Question' });
+const KIND_TAGS = Object.freeze({ thought: '', theory: 'Théorie', question: 'Question' });
+const VERDICTS = Object.freeze({ open: 'En attente du verdict', confirmed: 'Confirmée', busted: 'Ratée' });
+const VISIBILITY = Object.freeze(['private', 'followers', 'public']);
+const LIMITS = Object.freeze({ text: 500, notes: 1000, tag: 30, tags: 10, series: 120, issue: 20 });
+const ID = /^[A-Za-z0-9_-]{1,60}$/;
+const TAG = /#([\p{L}\p{N}_]{2,30})/gu;
+
+const str = (v, n) => String(v === undefined || v === null ? '' : v).slice(0, n);
+const iso = v => { const t = Date.parse(v); return v && Number.isFinite(t) ? new Date(t).toISOString() : ''; };
+const strip = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+
+const emptyState = () => ({ version: VERSION, notes: [] });
+
+// Mots-dièse écrits dans le texte, sans doublon (casse et accents ignorés), dix au plus
+const hashtags = text => {
+  const out = [];
+  String(text || '').replace(TAG, (_, t) => { if (!out.some(x => strip(x) === strip(t)) && out.length < LIMITS.tags) out.push(t); return ''; });
+  return out;
+};
+
+const sanitizeNote = n => {
+  if (!n || typeof n !== 'object' || !ID.test(String(n.id || ''))) return null;
+  const text = str(n.text, LIMITS.text).replace(/\r\n?/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
+  const imageRef = ID.test(String(n.imageRef || '')) ? n.imageRef : '';
+  if (!text && !imageRef) return null;
+  const kind = KINDS[n.kind] ? n.kind : 'thought';
+  const issue = n.issue && typeof n.issue === 'object' && n.issue.series ? { series: str(n.issue.series, LIMITS.series).trim(), issue: str(n.issue.issue, LIMITS.issue).trim(), publisher: str(n.issue.publisher, 100).trim() } : null;
+  return {
+    id: n.id, kind, text, imageRef, imageAlt: str(n.imageAlt, 140).trim(), issue,
+    spoiler: n.spoiler === true,
+    verdict: kind === 'theory' && VERDICTS[n.verdict] ? n.verdict : (kind === 'theory' ? 'open' : ''),
+    visibility: VISIBILITY.includes(n.visibility) ? n.visibility : 'public',
+    createdAt: iso(n.createdAt), editedAt: iso(n.editedAt)
+  };
+};
+
+const sanitizeState = s => {
+  const o = emptyState();
+  if (!s || typeof s !== 'object' || !Array.isArray(s.notes)) return o;
+  for (const n of s.notes) { const x = sanitizeNote(n); if (x && x.createdAt && !o.notes.some(y => y.id === x.id)) o.notes.push(x); if (o.notes.length >= LIMITS.notes) break; }
+  return o;
+};
+
+const validate = n => {
+  const errors = [];
+  if (!n) { errors.push('Écrivez quelque chose ou ajoutez une image.'); return errors; }
+  if (n.text.length > LIMITS.text) errors.push('Cinq cents caractères au plus.');
+  if (/<[a-z!/]/i.test(n.text)) errors.push('Les balises ne sont pas acceptées.');
+  return errors;
+};
+
+// Ajoute ou modifie une pensée ; renvoie { state, note, errors } sans toucher l'état d'origine
+const save = (state, input, now, newId) => {
+  const st = sanitizeState(state);
+  const prev = input && input.id ? st.notes.find(x => x.id === input.id) : null;
+  const raw = Object.assign({}, prev || {}, input || {}, { id: prev ? prev.id : newId, createdAt: prev ? prev.createdAt : now, editedAt: prev ? now : '' });
+  if (raw.text && String(raw.text).length > LIMITS.text) return { state: st, note: null, errors: ['Cinq cents caractères au plus.'] };
+  const note = sanitizeNote(raw);
+  const errors = validate(note);
+  if (errors.length) return { state: st, note: null, errors };
+  if (!prev && st.notes.length >= LIMITS.notes) return { state: st, note: null, errors: ['Mille pensées au plus sur cet appareil.'] };
+  st.notes = prev ? st.notes.map(x => x.id === note.id ? note : x) : [note].concat(st.notes);
+  return { state: st, note, errors: [] };
+};
+const remove = (state, id) => { const st = sanitizeState(state); const removed = st.notes.find(x => x.id === id) || null; st.notes = st.notes.filter(x => x.id !== id); return { state: st, removed }; };
+// Verdict d'une théorie, donné par son auteur
+const setVerdict = (state, id, verdict, now) => {
+  const st = sanitizeState(state);
+  const n = st.notes.find(x => x.id === id);
+  if (!n || n.kind !== 'theory' || !VERDICTS[verdict]) return { state: st, ok: false };
+  n.verdict = verdict; n.editedAt = new Date(now || Date.now()).toISOString();
+  return { state: st, ok: true };
+};
+// Images encore utiles (pour libérer les autres)
+const imageRefs = state => sanitizeState(state).notes.map(n => n.imageRef).filter(Boolean);
+
+// Tendances : mots-dièse des sept derniers jours, pondérés par la fraîcheur (demi-vie 48 h), puis les plus anciens
+const trending = (tagLists, now, limit = 8) => {
+  const t0 = Date.parse(now) || Date.now(), score = new Map(), label = new Map();
+  for (const x of tagLists || []) {
+    const age = Math.max(0, (t0 - (Date.parse(x.at) || 0)) / 36e5);
+    const w = age > 24 * 7 ? 0.05 : Math.pow(0.5, age / 48);
+    for (const tg of x.tags || []) { const k = strip(tg); score.set(k, (score.get(k) || 0) + w); if (!label.has(k)) label.set(k, tg); }
+  }
+  return [...score.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0])).slice(0, limit).map(([k, s]) => ({ tag: label.get(k), score: Math.round(s * 100) / 100 }));
+};
+// Suggestions pendant la saisie : le mot-dièse en cours (« #abs ») complété par les tendances et les séries de la collection
+const suggest = (text, caret, pool, limit = 6) => {
+  const before = String(text || '').slice(0, caret === undefined ? undefined : caret);
+  const m = before.match(/#([\p{L}\p{N}_]{0,30})$/u);
+  if (!m) return { prefix: null, items: [] };
+  const p = strip(m[1]);
+  const seen = new Set(), items = [];
+  for (const tg of pool || []) { const k = strip(tg); if (!tg || seen.has(k) || (p && !k.startsWith(p)) || k === p) continue; seen.add(k); items.push(tg); if (items.length >= limit) break; }
+  return { prefix: m[1], items };
+};
+
+module.exports = { VERSION, KINDS, KIND_TAGS, VERDICTS, LIMITS, emptyState, hashtags, sanitizeNote, sanitizeState, save, remove, setVerdict, imageRefs, trending, suggest };
+  return Object.freeze(module.exports); })();
+  /* domains/community/likes-core.js */
+  out.likes = (() => { const module = { exports: {} };
+'use strict';
+// J'aime personnalisé (D-96) : chacun choisit la forme de son « J'aime ». Les formes sont des dessins originaux de Panel
+// (griffes, éclair, toile, marteau…), jamais un logo ni un personnage déposé : aucune marque de Marvel, DC ou d'un autre éditeur.
+// Une suggestion peut venir du personnage favori écrit dans le profil ; le choix reste toujours celui de l'utilisateur.
+
+const ICONS = Object.freeze([
+  { key: 'heart', label: 'Cœur', hint: 'Le classique' },
+  { key: 'claws', label: 'Griffes', hint: 'Pour les félins et les rois' },
+  { key: 'bolt', label: 'Éclair', hint: 'Pour les bolides et les dieux du tonnerre' },
+  { key: 'web', label: 'Toile', hint: 'Pour les tisseurs' },
+  { key: 'hammer', label: 'Marteau', hint: 'Pour les dignes' },
+  { key: 'wings', label: 'Ailes de nuit', hint: 'Pour les justiciers de la nuit' },
+  { key: 'flame', label: 'Flamme', hint: 'Pour ceux qui s\'embrasent' },
+  { key: 'cosmic', label: 'Cosmique', hint: 'Pour les voyageurs des étoiles' },
+  { key: 'ring', label: 'Anneau', hint: 'Pour les porteurs de lumière' },
+  { key: 'mask', label: 'Masque', hint: 'Pour les identités secrètes' },
+  { key: 'shield', label: 'Bouclier', hint: 'Pour les protecteurs' },
+  { key: 'skull', label: 'Crâne', hint: 'Pour les antihéros' }
+]);
+const KEYS = ICONS.map(i => i.key);
+const DEFAULT = 'heart';
+const sanitize = v => KEYS.includes(v) ? v : DEFAULT;
+const labelOf = k => (ICONS.find(i => i.key === sanitize(k)) || ICONS[0]).label;
+
+// Mots du personnage favori (texte libre de l'utilisateur) -> forme suggérée. Simple correspondance de mots, rien n'est envoyé.
+const HINTS = [
+  [/panth|wakanda|t.?challa|shuri|tigr|catwoman|wolverine|logan|griff/, 'claws'],
+  [/flash|shazam|thor|storm|tonnerre|eclair|static|black lightning|captain marvel/, 'bolt'],
+  [/spider|araign|miles|gwen|venom|tisse/, 'web'],
+  [/thor|mjolnir|marteau|beta ray|steel/, 'hammer'],
+  [/bat|nightwing|robin|chauve|dark knight|moon knight/, 'wings'],
+  [/torch|torche|phoenix|phenix|ghost rider|firestorm|feu|flamme|human torch|johnny storm|starfire/, 'flame'],
+  [/silver surfer|surfer|galactus|nova|cosmi|star.?lord|guardians|gardiens|captain marvel|carol|thanos/, 'cosmic'],
+  [/lantern|lanterne|green lantern|hal jordan|anneau|ring/, 'ring'],
+  [/daredevil|deadpool|zorro|masque|mask|rorschach|v pour|kick.?ass/, 'mask'],
+  [/captain america|cap |steve rogers|wonder woman|diana|bouclier|shield|superman|clark/, 'shield'],
+  [/punisher|ghost|crane|skull|red hood|lobo|venom|carnage/, 'skull']
+];
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const suggestFor = favorite => {
+  const f = norm(favorite);
+  if (!f.trim()) return null;
+  for (const [re, k] of HINTS) if (re.test(f)) return k;
+  return null;
+};
+
+module.exports = { ICONS, KEYS, DEFAULT, sanitize, labelOf, suggestFor };
   return Object.freeze(module.exports); })();
   /* domains/community/ranking-core.js */
   out.rankingCore = (() => { const module = { exports: {} };
@@ -18511,7 +18810,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p></details>' +
-      pfPublicHtml();
+      pfPublicHtml() + pfLikeHtml();
     const f = host.querySelector('#profileForm');
     if (f) f.onsubmit = ev => {
       ev.preventDefault();
@@ -19192,6 +19491,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // ── Lot S1 (D-92) : modèles de planche (accueil vide et feuille Publier)
   const plTemplatesHtml = sugg => '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : k === 'duel' ? 'Deux variantes d\'un même numéro, avec leur couverture.' : k === 'hunt' ? 'Ajoutez un numéro à votre Wishlist.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div>';
   // Feuille « Publier » : un seul bouton pour tout créer ; les ajouts à la collection y sont rangés
+  const ntFocus = () => { igMode = 'forYou'; ntDraft.open = true; if ($('navSinglesCommunity')) $('navSinglesCommunity').click(); setTimeout(() => { const ta = $('ntText'); if (ta) { ta.scrollIntoView({ block: 'center', behavior: smoothScroll() }); ta.focus(); } }, 150); };
   const openPublishSheet = () => {
     const box = bunModal('publishSheet');
     const sugg = plancheSuggestions();
@@ -19200,6 +19500,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="pub-head"><h3 id="publishSheetTitle">Publier</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
       '<h4 class="pub-h">Une planche avec vos numéros</h4>' + plTemplatesHtml(sugg) +
       '<h4 class="pub-h">Autre publication</h4><div class="pub-grid">' +
+        pb('note', 'ic-pen', 'Pensée, théorie ou question', 'Du texte, une image de la galerie, des mots-dièse') +
         pb('story', 'ic-book', 'Story de lecture', 'Depuis un numéro lu, avec ou sans avis') +
         pb('v3d', 'ic-box', 'Numéro en 3D', 'Ouvrez un numéro puis « Voir en 3D »') +
         pb('live', 'ic-live', 'Préparer un direct', 'Montrez vos numéros en direct') +
@@ -19214,7 +19515,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const act = {
       story: () => { click('navSinglesReading')(); showToast('Choisissez un numéro lu, puis « Story ».'); },
       v3d: () => { click('navAllSingles')(); showToast('Ouvrez un numéro, puis « Voir en 3D ».'); },
-      live: click('navLive'), card: () => openCollectorCard(), scan: click('navScanBarcodeDirect'), cover: click('navScanCoverDirect'), manual: click('navAddSingleManual'), import: click('navImportCsv')
+      live: click('navLive'), note: () => ntFocus(), card: () => openCollectorCard(), scan: click('navScanBarcodeDirect'), cover: click('navScanCoverDirect'), manual: click('navAddSingleManual'), import: click('navImportCsv')
     };
     box.querySelectorAll('[data-pub]').forEach(b => { b.onclick = () => { close(); setTimeout(act[b.dataset.pub], 0); }; });
     box.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (!sg) return; close(); setTimeout(() => openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }), 0); }; });
@@ -19265,7 +19566,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const TC = window.PanelDomains.trophiesCore, owned = physicalSingles.filter(isOwned);
     let rank = null, unlocked = 0;
     try { const tr = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); const rk = pfRank(owned, tr); rank = rk.rank; unlocked = tr.trophies.filter(x => x.tier).length; } catch (_) {}
-    const posts = window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories }).posts.map(x => ({ id: x.id, kind: x.kind, text: x.text, at: x.at, media: x.media, visibility: x.type === 'story' ? 'private' : x.visibility }));
+    const posts = window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, notes: ntLoad().notes }).posts.map(x => ({ id: x.id, kind: x.kind, text: x.text, at: x.at, media: x.media, visibility: x.type === 'story' ? 'private' : x.visibility }));
     return window.PanelDomains.profilePublic.publicView({ profile: profileLoad(), copies: owned, wishlist: physicalSingles.filter(s => s.isWishlist), readCount: owned.filter(rdReadOfCopy).length, rank, trophiesUnlocked: unlocked, posts }, pfpLoad());
   };
   const openProfilePreview = () => {
@@ -19380,7 +19681,20 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     draw();
     return box;
   };
+  const pfLikeHtml = () => {
+    const L = window.PanelDomains.likes, cur = likeKey(), pr = profileLoad(), sug = pr ? L.suggestFor(pr.favorite) : null;
+    return '<section class="pfl" aria-labelledby="pflTitle"><h3 class="pf-section" id="pflTitle">Mon J\'aime</h3>' +
+      '<p class="stat-sub">La forme de votre « J\'aime » sur les publications. Des dessins originaux de Panel, sans logo ni personnage déposé.' + (sug && sug !== cur ? ' Pour un fan de ' + escapeHtml(pr.favorite) + ' : <button type="button" class="pfl-sug" data-pfl-sug="' + sug + '">' + escapeHtml(L.labelOf(sug)) + '</button>' : '') + '</p>' +
+      '<div class="pfl-grid" role="radiogroup" aria-label="Forme du J\'aime">' + L.ICONS.map(i => '<button type="button" role="radio" aria-checked="' + (i.key === cur) + '" tabindex="' + (i.key === cur ? 0 : -1) + '" class="pfl-opt" data-pfl="' + i.key + '" style="--lk:' + LIKE_COLOR[i.key] + '" title="' + escapeHtml(i.hint) + '">' + igIcon(LIKE_SYM[i.key]) + '<small>' + escapeHtml(i.label) + '</small></button>').join('') + '</div></section>';
+  };
+  const pfLikeWire = root => {
+    const opts = [...root.querySelectorAll('[data-pfl]')];
+    const set = k => { try { localStorage.setItem(LIKE_KEY, window.PanelDomains.likes.sanitize(k)); } catch (_) { showToast('Impossible d\'enregistrer sur cet appareil.'); return; } opts.forEach(o => { const on = o.dataset.pfl === k; o.setAttribute('aria-checked', String(on)); o.tabIndex = on ? 0 : -1; }); const s = root.querySelector('[data-pfl-sug]'); if (s && s.dataset.pflSug === k) s.parentNode.removeChild(s); showToast('Votre J\'aime : ' + window.PanelDomains.likes.labelOf(k) + '.'); };
+    opts.forEach((o, i) => { o.onclick = () => set(o.dataset.pfl); o.onkeydown = e => { if (/^Arrow(Right|Left|Down|Up)$/.test(e.key)) { e.preventDefault(); const n = opts[(i + (/Right|Down/.test(e.key) ? 1 : -1) + opts.length) % opts.length]; set(n.dataset.pfl); n.focus(); } }; });
+    const sg = root.querySelector('[data-pfl-sug]'); if (sg) sg.onclick = () => { const k = sg.dataset.pflSug; set(k); const o = opts.find(x => x.dataset.pfl === k); if (o) o.focus(); };
+  };
   const pfPublicWire = root => {
+    pfLikeWire(root);
     root.querySelectorAll('[data-pfp]').forEach(c => { c.onchange = () => { const v = pfpLoad(); v[c.dataset.pfp] = c.checked; if (!pfpSave(v)) { showToast('Impossible d\'enregistrer sur cet appareil.'); c.checked = !c.checked; } }; });
     const b = root.querySelector('[data-pfp-preview]'); if (b) b.onclick = () => openProfilePreview();
     const cc = root.querySelector('[data-pfp-card]'); if (cc) cc.onclick = () => openCollectorCard();
@@ -19422,7 +19736,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const pinned = posts.filter(p => p.pinned), rest = posts.filter(p => !p.pinned);
     const series = {}, publishers = {};
     physicalSingles.filter(isOwned).forEach(c => { if (c.series) series[c.series] = (series[c.series] || 0) + 0.2; if (c.publisher) publishers[c.publisher] = (publishers[c.publisher] || 0) + 0.05; });
-    const conv = rest.map(p => ({ id: p.id, authorId: 'me', kind: p.type === 'story' ? 'review' : 'photo', createdAt: p.at, original: true,
+    const conv = rest.map(p => ({ id: p.id, authorId: 'me', kind: p.type === 'story' ? 'review' : p.type === 'note' ? 'text' : 'photo', createdAt: p.at, original: true,
       topics: { series: p.media.map(m => m.series).filter(Boolean), publishers: p.media.map(m => m.publisher).filter(Boolean) }, issueRefs: [], stats: {} }));
     const r = RK.rank(conv, { viewerId: 'me', following: [], interests: { series, publishers } }, { mode: igMode === 'following' ? 'following' : 'forYou' });
     const byId = new Map(rest.map(p => [p.id, p]));
@@ -19436,9 +19750,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const igLoad = () => { try { return window.PanelDomains.feedCore.sanitizeState(JSON.parse(localStorage.getItem(IG_KEY) || 'null')); } catch (_) { return window.PanelDomains.feedCore.emptyState(); } };
   const igSave = st => { try { localStorage.setItem(IG_KEY, JSON.stringify(st)); return true; } catch (_) { return false; } };
   let igTag = '';
-  const igFeed = only => window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, state: igLoad(), tag: only === 'saved' ? '' : igTag, only });
+  const igFeed = only => window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, notes: ntLoad().notes, state: igLoad(), tag: only === 'saved' ? '' : igTag, only });
   const igStars = r => { const n = Number(r) || 0; return n ? '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : '') : ''; };
   const igIcon = id => '<svg class=ic aria-hidden=true><use href=#' + id + ' /></svg>';
+  // ── J'aime personnalisé (D-96) : la forme du « J'aime » choisie dans le Profil ; dessins originaux, aucun logo d'éditeur
+  const LIKE_KEY = 'panel_like_icon_v1';
+  const LIKE_SYM = { heart: 'ic-heart', claws: 'lk-claws', bolt: 'ic-bolt', web: 'lk-web', hammer: 'lk-hammer', wings: 'lk-wings', flame: 'lk-flame', cosmic: 'lk-cosmic', ring: 'lk-ring', mask: 'lk-mask', shield: 'ic-shield', skull: 'lk-skull' };
+  const LIKE_COLOR = { heart: '#ff3040', claws: '#a78bfa', bolt: '#ffc400', web: '#ef4444', hammer: '#94a3b8', wings: '#60a5fa', flame: '#ff7a1a', cosmic: '#c4b5fd', ring: '#22c55e', mask: '#f43f5e', shield: '#3b82f6', skull: '#e5e7eb' };
+  const likeKey = () => { try { return window.PanelDomains.likes.sanitize(localStorage.getItem(LIKE_KEY)); } catch (_) { return 'heart'; } };
+  const likeIc = () => LIKE_SYM[likeKey()] || 'ic-heart';
+  const likeBtn = on => '<button class="igp-act is-like' + (on ? ' is-on' : '') + '" data-igp-like aria-pressed="' + on + '" aria-label="J\'aime (' + escapeHtml(window.PanelDomains.likes.labelOf(likeKey())) + ')" style="--lk:' + LIKE_COLOR[likeKey()] + '">' + igIcon(likeIc()) + '</button>';
   // ── Lot S7 (D-95) : Duel de couvertures et Chasse aux variantes, dans le fil
   // Un vote par duel, enregistré sur cet appareil (panel_duel_votes_v1) ; les votes des autres arriveront avec les comptes : aucun n'est simulé.
   const DUEL_KEY = 'panel_duel_votes_v1';
@@ -19519,6 +19840,199 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     fill();
     if (!wedTest) loadReleaseData().then(fill, () => {});
   };
+  // ── Pensées (D-96) : la partie « Twitter » du fil. Texte court, mots-dièse, image de la galerie, numéro lié, voile anti-spoiler.
+  // Enregistrées sur cet appareil (panel_notes_v1, images dans la base « panel-notes ») ; aucune réponse ni personne simulée.
+  const NT_KEY = 'panel_notes_v1';
+  const NT = () => window.PanelDomains.notes;
+  const ntLoad = () => { try { return NT().sanitizeState(JSON.parse(localStorage.getItem(NT_KEY) || 'null')); } catch (_) { return NT().emptyState(); } };
+  const ntStore = st => { try { localStorage.setItem(NT_KEY, JSON.stringify(st)); return true; } catch (_) { showToast('Stockage plein : pensée non enregistrée.'); return false; } };
+  let ntDbP = null, ntGcDone = false;
+  const ntImgUrls = new Map();
+  const ntDb = () => ntDbP || (ntDbP = new Promise(res => {
+    let req; try { req = indexedDB.open('panel-notes', 1); } catch (_) { res(null); return; }
+    req.onupgradeneeded = () => { const db = req.result; if (!db.objectStoreNames.contains('images')) db.createObjectStore('images', { keyPath: 'id' }); };
+    req.onsuccess = () => res(req.result); req.onerror = () => res(null); req.onblocked = () => res(null);
+  }));
+  const ntTx = async (mode, fn) => {
+    const db = await ntDb(); if (!db) return null;
+    return new Promise(res => { try { const tx = db.transaction('images', mode), rq = fn(tx.objectStore('images')); tx.oncomplete = () => res(rq ? rq.result : true); tx.onerror = tx.onabort = () => res(null); } catch (_) { res(null); } });
+  };
+  const ntAddImage = async file => {
+    if (!file || !/^image\//.test(file.type || '') || file.size > 40 * 1024 * 1024) return null;
+    try {
+      const im = await lvShrink(file), id = lvId('ni');
+      const ok = await ntTx('readwrite', st => st.put({ id, blob: im.blob, w: im.w, h: im.h, createdAt: lvNow() }));
+      if (ok === null) return null;
+      ntImgUrls.set(id, Promise.resolve(URL.createObjectURL(im.blob)));
+      return id;
+    } catch (_) { return null; }
+  };
+  const ntImgUrl = ref => { if (!ntImgUrls.has(ref)) ntImgUrls.set(ref, ntTx('readonly', st => st.get(ref)).then(r => r && r.blob ? URL.createObjectURL(r.blob) : '')); return ntImgUrls.get(ref); };
+  const ntHydrate = root => { if (root) root.querySelectorAll('img[data-nt-img]:not([src])').forEach(img => { ntImgUrl(img.dataset.ntImg).then(u => { if (u) img.src = u; else { const f = img.closest('.ntp-img, .ntc-imgprev'); if (f) f.remove(); } }); }); };
+  // Images qui ne servent plus à aucune pensée (une fois par session, avant tout nouvel ajout)
+  const ntGc = async () => {
+    const keep = new Set(NT().imageRefs(ntLoad())), keys = await ntTx('readonly', st => st.getAllKeys());
+    const drop = (keys || []).filter(k => !keep.has(k));
+    if (drop.length) await ntTx('readwrite', st => { drop.forEach(k => st.delete(k)); return null; });
+    return drop.length;
+  };
+  const ntFresh = () => ({ id: '', kind: 'thought', text: '', imageRef: '', issue: null, spoiler: false, visibility: 'public', open: false });
+  let ntDraft = ntFresh();
+  const NT_VIS = { public: 'Public', followers: 'Mes abonnés', private: 'Moi seul' };
+  const ntPlaceholder = k => k === 'theory' ? 'Ta théorie sur la suite ? Ajoute une page en preuve.' : k === 'question' ? 'Ta question aux fans de comics ?' : 'Quoi de neuf dans tes comics ?';
+  const ntTagPool = () => {
+    const FC = window.PanelDomains.feedCore;
+    const all = FC.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, notes: ntLoad().notes });
+    const tr = NT().trending(all.posts.map(x => ({ at: x.at, tags: x.tags })), lvNow(), 12).map(x => x.tag);
+    const ser = [...new Set(physicalSingles.filter(isOwned).map(c => FC.tagify(c.series)).filter(Boolean))].slice(0, 300);
+    return tr.concat(['Théorie', 'Question', 'PullDuMercredi', 'Spoiler'], ser);
+  };
+  const ntComposerHtml = () => {
+    const prof = profileLoad(), d = ntDraft, open = !!(d.open || d.text || d.imageRef || d.id);
+    const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
+    const owned = physicalSingles.filter(isOwned).slice().sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0)).slice(0, 300);
+    return '<section class="ntc' + (open ? ' is-open' : '') + '" aria-label="Écrire une pensée">' +
+      '<div class="ntc-row"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span>' +
+      '<textarea id="ntText" class="ntc-text" rows="' + (open ? 3 : 1) + '" maxlength="500" placeholder="' + escapeHtml(ntPlaceholder(d.kind)) + '" aria-label="Écrire une pensée, une théorie ou une question">' + escapeHtml(d.text || '') + '</textarea></div>' +
+      '<div class="ntc-sugg" data-nt-sugg role="group" aria-label="Mots-dièse suggérés" hidden></div>' +
+      (d.imageRef ? '<div class="ntc-imgprev"><img data-nt-img="' + escapeHtml(d.imageRef) + '" alt="Image jointe"><button type="button" class="ntc-x" data-nt-imgx aria-label="Retirer l\'image">' + igIcon('ic-x') + '</button></div>' : '') +
+      (d.issue ? '<p class="ntc-issue">' + igIcon('ic-books') + ' <span>' + escapeHtml(plTitle(d.issue)) + '</span><button type="button" class="ntc-x" data-nt-issuex aria-label="Retirer le numéro lié">' + igIcon('ic-x') + '</button></p>' : '') +
+      '<div class="ntc-issuepick" data-nt-issuepick hidden><input class="field-input" list="ntIssueList" data-nt-issuein placeholder="Lier un numéro de votre collection…" aria-label="Numéro lié"><datalist id="ntIssueList">' + owned.map(c => '<option value="' + escapeHtml(plTitle(c)) + '">').join('') + '</datalist></div>' +
+      '<div class="ntc-bar"><div class="ntc-kinds" role="radiogroup" aria-label="Type de publication">' + Object.entries(NT().KINDS).map(([k, l]) => '<button type="button" role="radio" aria-checked="' + (d.kind === k) + '" tabindex="' + (d.kind === k ? 0 : -1) + '" data-nt-kind="' + k + '">' + escapeHtml(l) + '</button>').join('') + '</div>' +
+        '<span class="ntc-tools"><button type="button" class="ntc-tool" data-nt-addimg aria-label="Ajouter une image de la galerie">' + igIcon('ic-image') + '</button><input type="file" accept="image/*" hidden data-nt-file>' +
+        '<button type="button" class="ntc-tool" data-nt-issue aria-expanded="false" aria-label="Lier un numéro de la collection">' + igIcon('ic-books') + '</button>' +
+        '<button type="button" class="ntc-tool' + (d.spoiler ? ' is-on' : '') + '" data-nt-spoiler aria-pressed="' + d.spoiler + '" aria-label="Voile anti-spoiler">' + igIcon('ic-eye') + '</button>' +
+        '<select class="ntc-vis" data-nt-vis aria-label="Visibilité">' + Object.entries(NT_VIS).map(([k, l]) => '<option value="' + k + '"' + (d.visibility === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></span>' +
+        '<span class="ntc-count" data-nt-count aria-live="polite">500</span>' + (d.id ? '<button type="button" class="btn secondary ntc-cancel" data-nt-cancel>Annuler</button>' : '') + '<button type="button" class="btn ntc-send" data-nt-send>' + (d.id ? 'Enregistrer' : 'Publier') + '</button></div>' +
+      '<p class="ntc-msg" data-nt-msg role="status"></p></section>';
+  };
+  const ntRepaint = (host, focus) => {
+    const box = host.querySelector('.ntc'); if (!box) return;
+    box.outerHTML = ntComposerHtml();
+    ntWireComposer(host);
+    if (focus) { const ta = host.querySelector('#ntText'); if (ta) { ta.focus(); ta.selectionStart = ta.selectionEnd = ta.value.length; } }
+  };
+  const ntWireComposer = host => {
+    const box = host.querySelector('.ntc'); if (!box) return;
+    const ta = box.querySelector('#ntText'), cnt = box.querySelector('[data-nt-count]'), sg = box.querySelector('[data-nt-sugg]'), msg = box.querySelector('[data-nt-msg]');
+    let pool = null;
+    const open = () => { if (ntDraft.open) return; ntDraft.open = true; box.classList.add('is-open'); ta.rows = 3; };
+    const upd = () => {
+      ntDraft.text = ta.value;
+      const left = 500 - ta.value.length; cnt.textContent = left; cnt.classList.toggle('is-low', left < 40);
+      const s = NT().suggest(ta.value, ta.selectionStart, pool || (pool = ntTagPool()));
+      sg.hidden = !s.items.length;
+      sg.innerHTML = s.items.map(x => '<button type="button" data-nt-tag="' + escapeHtml(x) + '">#' + escapeHtml(x) + '</button>').join('');
+      sg.querySelectorAll('[data-nt-tag]').forEach(b => { b.onmousedown = e => e.preventDefault(); b.onclick = () => {
+        const pos = ta.selectionStart, before = ta.value.slice(0, pos).replace(/#[\p{L}\p{N}_]*$/u, '#' + b.dataset.ntTag + ' ');
+        ta.value = before + ta.value.slice(pos); ta.selectionStart = ta.selectionEnd = before.length; ta.focus(); upd();
+      }; });
+    };
+    ta.addEventListener('focus', open);
+    ta.addEventListener('input', upd);
+    ta.addEventListener('click', upd);
+    ta.addEventListener('keyup', e => { if (/^(Arrow|Home|End)/.test(e.key)) upd(); });
+    ta.addEventListener('keydown', e => { if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); send(); } else if (e.key === 'Escape' && !sg.hidden) { e.stopPropagation(); sg.hidden = true; } });
+    cnt.textContent = 500 - ta.value.length;
+    const kinds = [...box.querySelectorAll('[data-nt-kind]')];
+    const setKind = b => { ntDraft.kind = b.dataset.ntKind; kinds.forEach(x => { const on = x === b; x.setAttribute('aria-checked', String(on)); x.tabIndex = on ? 0 : -1; }); ta.placeholder = ntPlaceholder(ntDraft.kind); };
+    kinds.forEach((b, i) => { b.onclick = () => { setKind(b); open(); }; b.onkeydown = e => { if (/^Arrow(Right|Left|Down|Up)$/.test(e.key)) { e.preventDefault(); const n = kinds[(i + (/Right|Down/.test(e.key) ? 1 : -1) + kinds.length) % kinds.length]; setKind(n); n.focus(); } }; });
+    const fileIn = box.querySelector('[data-nt-file]');
+    box.querySelector('[data-nt-addimg]').onclick = () => fileIn.click();
+    fileIn.onchange = async () => {
+      const f = (fileIn.files || [])[0]; fileIn.value = '';
+      if (!f) return;
+      msg.textContent = 'Préparation de l\'image…';
+      const ref = await ntAddImage(f);
+      if (!ref) { msg.textContent = 'Image illisible (image attendue, 40 Mo au plus).'; return; }
+      ntDraft.imageRef = ref; ntDraft.open = true; ntRepaint(host, true);
+    };
+    const ix = box.querySelector('[data-nt-imgx]'); if (ix) ix.onclick = () => { ntDraft.imageRef = ''; ntRepaint(host, true); };
+    const pick = box.querySelector('[data-nt-issuepick]'), ib = box.querySelector('[data-nt-issue]');
+    ib.onclick = () => { pick.hidden = !pick.hidden; ib.setAttribute('aria-expanded', String(!pick.hidden)); if (!pick.hidden) pick.querySelector('input').focus(); };
+    pick.querySelector('input').onchange = e => {
+      const v = catNorm(e.target.value), c = physicalSingles.filter(isOwned).find(x => catNorm(plTitle(x)) === v);
+      if (!c) { msg.textContent = 'Choisissez un numéro de la liste.'; return; }
+      ntDraft.issue = { series: c.series || '', issue: c.issue || '', publisher: c.publisher || '' }; ntRepaint(host, true);
+    };
+    const ixx = box.querySelector('[data-nt-issuex]'); if (ixx) ixx.onclick = () => { ntDraft.issue = null; ntRepaint(host, true); };
+    const sp = box.querySelector('[data-nt-spoiler]');
+    sp.onclick = () => { ntDraft.spoiler = !ntDraft.spoiler; sp.classList.toggle('is-on', ntDraft.spoiler); sp.setAttribute('aria-pressed', String(ntDraft.spoiler)); msg.textContent = ntDraft.spoiler ? 'Voile anti-spoiler : le texte et l\'image seront floutés jusqu\'au clic.' : ''; };
+    box.querySelector('[data-nt-vis]').onchange = e => { ntDraft.visibility = e.target.value; };
+    const cc = box.querySelector('[data-nt-cancel]'); if (cc) cc.onclick = () => { ntDraft = ntFresh(); ntRepaint(host); };
+    const send = () => {
+      const text = ta.value.trim();
+      if (text) { const v = commValidate(text, ntDraft.visibility, []); if (!v.ok) { msg.textContent = v.errors.map(x => x.charAt(0).toUpperCase() + x.slice(1)).join('. ') + '.'; return; } if (v.warnings && v.warnings.length) showToast('Attention : ' + v.warnings.join(' ')); }
+      const editing = !!ntDraft.id;
+      const r = NT().save(ntLoad(), { id: ntDraft.id || undefined, text, kind: ntDraft.kind, imageRef: ntDraft.imageRef, issue: ntDraft.issue, spoiler: ntDraft.spoiler, visibility: ntDraft.visibility }, lvNow(), lvId('nt'));
+      if (r.errors.length) { msg.textContent = r.errors.join(' '); return; }
+      if (!ntStore(r.state)) return;
+      ntDraft = ntFresh(); igTag = '';
+      renderCommunityView();
+      showToast(editing ? 'Pensée modifiée.' : (r.note.kind === 'theory' ? 'Théorie publiée : donnez-lui un verdict quand le numéro sort.' : 'Publié dans votre fil.') + (r.note.visibility !== 'private' ? ' Elle restera sur cet appareil jusqu\'à l\'arrivée des comptes.' : ''));
+    };
+    box.querySelector('[data-nt-send]').onclick = send;
+    ntHydrate(box);
+  };
+  const ntText = s => escapeHtml(s).replace(/#([\p{L}\p{N}_]{2,30})/gu, (m, tg) => '<button type="button" class="ntp-tag" data-ig-tag="' + tg + '">#' + tg + '</button>').replace(/\n/g, '<br>');
+  const ntPostHtml = (p, prof) => {
+    const handle = prof ? '@' + prof.handle : 'Vous';
+    const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
+    const id = escapeHtml(p.id), K = NT().KINDS, V = NT().VERDICTS;
+    const when = p.at ? storyAgo(p.at) : '';
+    const vIc = { confirmed: 'ic-check-circle', busted: 'ic-x', open: 'ic-hourglass' };
+    const menu = '<button role="menuitem" data-nt-edit>' + igIcon('ic-pencil') + ' Modifier</button>' +
+      (p.kind === 'theory' ? Object.entries(V).filter(([k]) => k !== p.verdict).map(([k, l]) => '<button role="menuitem" data-nt-verdict="' + k + '">' + igIcon(vIc[k]) + ' Verdict : ' + l.toLowerCase() + '</button>').join('') : '') +
+      '<button role="menuitem" data-igp-why>' + igIcon('ic-info') + ' Pourquoi je vois ça ?</button>' +
+      '<button role="menuitem" data-igp-pin="' + id + '">' + igIcon('ic-bookmark') + (p.pinned ? ' Désépingler du profil' : ' Épingler en haut') + '</button>' +
+      '<button role="menuitem" class="is-danger" data-nt-del>' + igIcon('ic-trash') + ' Supprimer</button>';
+    const m = p.media[0];
+    return '<article class="ntp' + (p.kind !== 'thought' ? ' is-' + p.kind : '') + '" data-ntp="' + id + '">' +
+      '<span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span><div class="ntp-main">' +
+      '<header class="ntp-head"><b>' + escapeHtml(handle) + '</b><small>' + (when ? escapeHtml(when) + ' · ' : '') + escapeHtml(NT_VIS[p.visibility] || 'Public') + '</small>' +
+        (p.kind !== 'thought' ? '<span class="ntp-kind">' + escapeHtml(K[p.kind]) + '</span>' : '') + (p.pinned ? '<span class="igp-pinned">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
+        '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
+      '<div class="ntp-body' + (p.spoiler ? ' is-sp' : '') + '">' + (p.text ? '<p class="ntp-text">' + ntText(p.text) + '</p>' : '') +
+        (p.imageRef ? '<figure class="ntp-img"><img data-nt-img="' + escapeHtml(p.imageRef) + '" alt="' + escapeHtml(p.imageAlt || 'Image jointe à la publication') + '" decoding="async"></figure>' : '') +
+        (p.spoiler ? '<button type="button" class="ntp-reveal" data-nt-reveal>' + igIcon('ic-eye') + ' Spoiler : afficher</button>' : '') + '</div>' +
+      (m ? '<button type="button" class="ntp-issue" data-nt-issue-open>' + igIcon('ic-books') + ' ' + escapeHtml(plTitle(m)) + '</button>' : '') +
+      (p.kind === 'theory' ? '<p class="ntp-verdict is-' + escapeHtml(p.verdict || 'open') + '">' + igIcon(vIc[p.verdict] || 'ic-hourglass') + ' ' + escapeHtml(V[p.verdict] || V.open) + '</p>' : '') +
+      '<div class="igp-bar ntp-bar">' + likeBtn(p.likedByMe) +
+        '<button class="igp-act" data-igp-share aria-label="Partager le texte">' + igIcon('ic-external') + '</button><span class="igp-sp"></span>' +
+        '<button class="igp-act is-save' + (p.saved ? ' is-on' : '') + '" data-igp-save aria-pressed="' + p.saved + '" aria-label="Enregistrer">' + igIcon('ic-bookmark') + '</button></div>' +
+      '<span class="igp-burst" aria-hidden="true">' + igIcon(likeIc()) + '</span></div></article>';
+  };
+  const ntWire = host => {
+    host.querySelectorAll('.ntp').forEach(card => {
+      const id = card.dataset.ntp, ref = id.slice(2);
+      const note = () => ntLoad().notes.find(x => x.id === ref);
+      const burst = () => { const b = card.querySelector('.igp-burst'); if (b) { b.classList.remove('is-go'); void b.offsetWidth; b.classList.add('is-go'); } };
+      card.querySelector('[data-igp-like]').onclick = () => { const r = igToggle('like', id, card); if (r && r.on) burst(); };
+      card.querySelector('[data-igp-save]').onclick = () => igToggle('save', id, card);
+      card.querySelector('.ntp-body').addEventListener('dblclick', e => { e.preventDefault(); if (!igLoad().likes[id]) igToggle('like', id, card); burst(); });
+      const rv = card.querySelector('[data-nt-reveal]'); if (rv) rv.onclick = () => { card.querySelector('.ntp-body').classList.remove('is-sp'); rv.remove(); };
+      const io = card.querySelector('[data-nt-issue-open]'); if (io) io.onclick = () => { const n = note(), c = n && n.issue && physicalSingles.find(x => catNorm(plTitle(x)) === catNorm(plTitle(n.issue))); if (c) openSingleInspector(c); else showToast('Ce numéro n\'est plus dans votre collection.'); };
+      card.querySelector('[data-igp-share]').onclick = async () => { const n = note(); if (!n) return; const txt = [n.text, n.issue ? plTitle(n.issue) : ''].filter(Boolean).join('\n'); try { if (navigator.share) await navigator.share({ text: txt }); else { await navigator.clipboard.writeText(txt); showToast('Texte copié : collez-le où vous voulez.'); } } catch (_) {} };
+      const more = card.querySelector('[data-igp-more]'), menu = card.querySelector('.igp-menu');
+      const closeMenu = () => { menu.hidden = true; more.setAttribute('aria-expanded', 'false'); document.removeEventListener('click', outside, true); };
+      const outside = e => { if (!card.querySelector('.igp-menu-wrap').contains(e.target)) closeMenu(); };
+      more.onclick = () => { const o = menu.hidden; menu.hidden = !o; more.setAttribute('aria-expanded', String(o)); if (o) { document.addEventListener('click', outside, true); const f = menu.querySelector('button'); if (f) f.focus(); } else closeMenu(); };
+      menu.addEventListener('keydown', e => { if (e.key === 'Escape') { closeMenu(); more.focus(); } });
+      menu.querySelectorAll('button').forEach(b => b.addEventListener('click', () => closeMenu()));
+      menu.querySelector('[data-igp-why]').onclick = () => showToast(igWhy.get(id) || window.PanelDomains.rankingCore.explain(null));
+      menu.querySelector('[data-igp-pin]').onclick = () => { const r = igToggle('pin', id); if (r) { renderCommunityView(); showToast(r.on ? 'Épinglé en haut du fil et du profil.' : 'Désépinglé.'); } };
+      menu.querySelector('[data-nt-edit]').onclick = () => { const n = note(); if (!n) return; ntDraft = Object.assign(ntFresh(), n, { open: true }); renderCommunityView(); const ta = $('ntText'); if (ta) { ta.scrollIntoView({ block: 'center', behavior: smoothScroll() }); ta.focus(); } };
+      menu.querySelectorAll('[data-nt-verdict]').forEach(b => { b.onclick = () => { const r = NT().setVerdict(ntLoad(), ref, b.dataset.ntVerdict, lvNow()); if (r.ok && ntStore(r.state)) { renderCommunityView(); showToast('Verdict : ' + NT().VERDICTS[b.dataset.ntVerdict].toLowerCase() + '.'); } }; });
+      menu.querySelector('[data-nt-del]').onclick = () => {
+        const before = localStorage.getItem(NT_KEY), r = NT().remove(ntLoad(), ref);
+        if (!r.removed || !ntStore(r.state)) return;
+        renderCommunityView();
+        showToastAction('Pensée supprimée.', 'Annuler', () => { if (before === null) localStorage.removeItem(NT_KEY); else localStorage.setItem(NT_KEY, before); renderCommunityView(); });
+      };
+    });
+    ntHydrate(host);
+    if (!ntGcDone) { ntGcDone = true; ntGc().catch(() => {}); }
+  };
   const igPostHtml = (p, prof) => {
     const handle = prof ? '@' + prof.handle : 'Vous';
     const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
@@ -19554,11 +20068,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (duel ? '<span class="igp-vs" aria-hidden="true">VS</span>' : '') + (hunt ? '<span class="igp-hunt">' + igIcon('ic-search') + ' On cherche</span>' : '') +
         (car ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
         (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString('fr-FR') + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
-        '<span class="igp-burst" aria-hidden="true">' + igIcon('ic-heart') + '</span></div>' +
+        '<span class="igp-burst" aria-hidden="true">' + igIcon(likeIc()) + '</span></div>' +
       (car ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
       (duel ? duelBarHtml(p) : '') + (hunt ? huntLineHtml(p) : '') +
       '<div class="igp-bar">' +
-        '<button class="igp-act is-like' + (p.likedByMe ? ' is-on' : '') + '" data-igp-like aria-pressed="' + p.likedByMe + '" aria-label="J\'aime">' + igIcon('ic-heart') + '</button>' +
+        likeBtn(p.likedByMe) +
         '<button class="igp-act" data-igp-open aria-label="' + (p.type === 'story' ? 'Ouvrir la story' : 'Modifier la planche') + '">' + igIcon(p.type === 'story' ? 'ic-play' : 'ic-pencil') + '</button>' +
         '<button class="igp-act" data-igp-share aria-label="Partager le texte">' + igIcon('ic-external') + '</button>' +
         '<span class="igp-sp"></span>' +
@@ -19578,9 +20092,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<button data-ig-tag="" aria-pressed="' + !igTag + '">Tout</button>' + f.topTags.map(t => '<button data-ig-tag="' + escapeHtml(t.tag) + '" aria-pressed="' + (igTag.toLowerCase() === t.tag.toLowerCase()) + '">#' + escapeHtml(t.tag) + ' <small>' + t.n + '</small></button>').join('') + '</div>' : '';
     f.posts = igRanked(f.posts);
     const head = '<h3 class="pf-section">Publications <span class="stat-sub">' + f.total + ' publication' + (f.total > 1 ? 's' : '') + (f.saves ? ' · ' + f.saves + ' enregistrée' + (f.saves > 1 ? 's' : '') : '') + '</span></h3>';
-    if (!f.total) return head + '<div class="notice-box" style="margin-top:8px">Aucune publication. Choisissez un modèle ci-dessus, ouvrez une fiche puis « Partager… », ou notez un numéro lu pour créer une story.</div>';
+    if (!f.total) return head + '<div class="notice-box" style="margin-top:8px">Aucune publication. Écrivez une pensée ci-dessus, choisissez un modèle de planche, ou notez un numéro lu pour créer une story.</div>';
     const filt = igTag ? '<p class="ig-filter">Publications avec <b>#' + escapeHtml(igTag) + '</b> · ' + f.posts.length + ' <button data-ig-tag="" aria-label="Retirer le filtre">' + igIcon('ic-x') + '</button></p>' : '';
-    return head + chips + filt + '<div class="igf">' + (f.posts.length ? f.posts.map(p => igPostHtml(p, prof)).join('') : '<div class="notice-box">Aucune publication avec ce mot-dièse.</div>') + '</div>';
+    return head + chips + filt + '<div class="igf">' + (f.posts.length ? f.posts.map(p => p.type === 'note' ? ntPostHtml(p, prof) : igPostHtml(p, prof)).join('') : '<div class="notice-box">Aucune publication avec ce mot-dièse.</div>') + '</div>';
   };
   // J'aime et Enregistrer se mettent à jour sur place (le carrousel garde sa position)
   const igToggle = (what, id, card) => {
@@ -19804,11 +20318,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const st = lvLoad(), F = LV().FORMATS, rooms = LV().ordered(st, lvNow());
     // Lot S6 (D-94) : chaque direct est une carte verticale plein cadre, comme un direct qu'on fait défiler
     const card = r => '<article class="lv-card" data-lv-room="' + escapeHtml(r.id) + '"><div class="lv-card-covers" aria-hidden="true">' + (r.images.length ? r.images.slice(0, 3).map(im => '<span>' + lvImg(im) + '<i>' + escapeHtml(LV().isPage(im) ? '¶' : String(im.series || '?').slice(0, 1)) + '</i></span>').join('') : '<span class="lv-card-ph">◉</span>') + '</div>' +
-      '<div class="lv-card-b"><span class="live-dot is-studio">' + escapeHtml(F[r.format]) + '</span><b>' + escapeHtml(r.title) + '</b><small>' + escapeHtml(lvWhen(r.when)) + '</small><span>' + r.topics.length + ' point' + (r.topics.length > 1 ? 's' : '') + ' · ' + r.images.length + ' image' + (r.images.length > 1 ? 's' : '') + '</span></div>' +
+      '<div class="lv-card-b"><span class="live-dot is-studio">' + escapeHtml(F[r.format]) + '</span><b>' + escapeHtml(r.title) + '</b><small>' + escapeHtml(lvWhen(r.when)) + '</small><span>' + (r.duel ? escapeHtml(r.duel.sides.join(' vs ')) + ' · ' : r.topics.length + ' point' + (r.topics.length > 1 ? 's' : '') + ' · ') + r.images.length + ' image' + (r.images.length > 1 ? 's' : '') + '</span></div>' +
       '<div class="lv-card-act"><button class="btn" data-lv-start="' + escapeHtml(r.id) + '">' + igIcon('ic-play') + ' Répéter</button><button class="rd-act" data-lv-edit="' + escapeHtml(r.id) + '">Modifier</button><button class="rd-act" data-lv-del="' + escapeHtml(r.id) + '">Supprimer</button></div></article>';
     const hist = st.history.slice(0, 6).map(x => '<article class="lv-hist"><div><small>' + escapeHtml(lvWhen(x.endedAt)) + ' · ' + escapeHtml(LV().fmtDuration(x.durationSec)) + '</small><b>' + escapeHtml(x.title) + '</b><span>' + x.topics.length + ' sujet' + (x.topics.length > 1 ? 's' : '') + ' traité' + (x.topics.length > 1 ? 's' : '') + (x.shown.length ? ' · ' + x.shown.length + ' image' + (x.shown.length > 1 ? 's' : '') + ' montrée' + (x.shown.length > 1 ? 's' : '') : '') + '</span></div>' +
       '<button class="rd-act" data-lv-post="' + escapeHtml(x.id) + '">Planche de synthèse</button></article>').join('');
-    return '<section class="lv" id="liveStudio"><div class="lv-head"><div><p>Format vertical, plein écran : vos couvertures et vos pages au tableau, l\'ordre du jour, vos réactions. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n\'est simulé.</p></div><button class="btn" data-lv-new>' + igIcon('ic-plus') + ' Préparer un direct</button></div>' +
+    return '<section class="lv" id="liveStudio"><div class="lv-head"><div><p>Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n\'est simulé.</p></div><span class="lv-head-b"><button class="btn" data-lv-new>' + igIcon('ic-plus') + ' Préparer un direct</button><button class="btn secondary" data-lv-new="duel">' + igIcon('ic-arrows-h') + ' Duel en direct</button></span></div>' +
       (rooms.length ? '<div class="lv-reel" aria-label="Mes directs">' + rooms.map(card).join('') + '</div>'
         : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
       (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>';
@@ -19824,7 +20338,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-lv-golive]').forEach(b => { b.onclick = () => { commTab = 'live'; renderCommunityView(); }; });
     lvHydrate(host);
     if (!lvGcDone) { lvGcDone = true; setTimeout(() => { lvGc().catch(() => {}); }, 1500); }
-    host.querySelectorAll('[data-lv-new]').forEach(b => { b.onclick = () => openLiveEditor(null); });
+    host.querySelectorAll('[data-lv-new]').forEach(b => { b.onclick = () => openLiveEditor(null, b.dataset.lvNew || ''); });
     host.querySelectorAll('[data-lv-edit]').forEach(b => { b.onclick = () => openLiveEditor(b.dataset.lvEdit); });
     host.querySelectorAll('[data-lv-start]').forEach(b => { b.onclick = () => openLiveStage(b.dataset.lvStart); });
     host.querySelectorAll('[data-lv-del]').forEach(b => { b.onclick = () => {
@@ -19840,17 +20354,20 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       openShareDialog(copies, null, { kind: 'free', text: LV().summaryText(x) });
     }; });
   };
-  const openLiveEditor = id => {
+  const openLiveEditor = (id, preset) => {
     const prev = id ? lvLoad().rooms.find(x => x.id === id) : null;
+    const fmt0 = prev ? prev.format : (preset === 'duel' ? 'duel' : 'wednesday');
     const box = bunModal('liveEditDialog');
     let picked = prev ? prev.images.slice() : [];
     const owned = physicalSingles.filter(x => x && isOwned(x) && x.coverUrl && isSafeImageUrl(x.coverUrl));
     const F = LV().FORMATS, MAXI = LV().LIMITS.images;
     box.innerHTML = '<div class="modal-box lv-edit" role="dialog" aria-modal="true" aria-labelledby="lvEditTitle"><h2 id="lvEditTitle">' + (prev ? 'Modifier le direct' : 'Préparer un direct') + '</h2>' +
       '<label class="lv-f">Sujet<input class="field-input" data-lv="title" maxlength="90" placeholder="ex : Le meilleur run de Daredevil" value="' + escapeHtml(prev ? prev.title : '') + '"></label>' +
-      '<div class="lv-f2"><label class="lv-f">Format<select class="field-input" data-lv="format">' + Object.entries(F).map(([k, l]) => '<option value="' + k + '"' + ((prev ? prev.format : 'wednesday') === k ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('') + '</select></label>' +
+      '<div class="lv-f2"><label class="lv-f">Format<select class="field-input" data-lv="format">' + Object.entries(F).map(([k, l]) => '<option value="' + k + '"' + (fmt0 === k ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('') + '</select></label>' +
       '<label class="lv-f">Date prévue (facultatif)<input class="field-input" type="datetime-local" data-lv="when" value="' + escapeHtml(prev ? lvLocalInput(prev.when) : '') + '"></label></div>' +
-      '<label class="lv-f">Ordre du jour <small>un point par ligne, huit au plus</small><textarea class="field-input" data-lv="topics" rows="4" placeholder="Les sorties de la semaine&#10;Le numéro qui divise&#10;Vos coups de cœur">' + escapeHtml(prev ? prev.topics.join('\n') : '') + '</textarea></label>' +
+      '<div class="lv-f2" data-lv-duelf' + (fmt0 === 'duel' ? '' : ' hidden') + '><label class="lv-f">Camp A<input class="field-input" data-lv="sideA" maxlength="40" placeholder="ex : Absolute Batman" value="' + escapeHtml(prev && prev.duel ? prev.duel.sides[0] : '') + '"></label><label class="lv-f">Camp B<input class="field-input" data-lv="sideB" maxlength="40" placeholder="ex : Ultimate Spider-Man" value="' + escapeHtml(prev && prev.duel ? prev.duel.sides[1] : '') + '"></label>' +
+        '<p class="stat-sub lv-f-wide">Six manches chronométrées (ouverture, réplique, conclusion pour chaque camp), puis le vote. Rattachez vos images à un camp : ce sont les preuves.</p></div>' +
+      '<label class="lv-f">Ordre du jour <small data-lv-topicshint>' + (fmt0 === 'duel' ? 'facultatif en duel' : 'un point par ligne, huit au plus') + '</small><textarea class="field-input" data-lv="topics" rows="4" placeholder="Les sorties de la semaine&#10;Le numéro qui divise&#10;Vos coups de cœur">' + escapeHtml(prev ? prev.topics.join('\n') : '') + '</textarea></label>' +
       '<div class="lv-f"><span>Tableau d\'images <small data-lv-count></small></span><div class="lv-picked" data-lv-picked></div>' +
         '<div class="lv-src"><button type="button" class="btn secondary" data-lv-gal>+ Pages de ma galerie</button><input type="file" accept="image/*" multiple hidden data-lv-file>' +
         '<small>Choisissez des pages de comics dans la galerie de votre téléphone. Elles restent sur cet appareil et ne sont jamais publiées. Montrez des pages de numéros que vous possédez, pour en débattre : quelques pages, pas un numéro entier.</small></div>' +
@@ -19861,15 +20378,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const q = sel => box.querySelector(sel);
     const label = c => (c.series || '') + ' ' + (c.issue || '');
     const MAXP = LV().LIMITS.pages, nPages = () => picked.filter(LV().isPage).length;
+    const isDuel = () => q('[data-lv="format"]').value === 'duel';
+    const sideSel = im => isDuel() ? '<select class="field-input lv-side-sel" data-lv-side="' + escapeHtml(im.ref) + '" aria-label="Preuve pour ' + escapeHtml(LV().imageLabel(im)) + '"><option value="">Neutre</option><option value="0"' + (im.side === 0 ? ' selected' : '') + '>Preuve A</option><option value="1"' + (im.side === 1 ? ' selected' : '') + '>Preuve B</option></select>' : '';
     const thumb = im => '<button type="button" class="lv-thumb is-on' + (im.spoiler ? ' is-sp' : '') + '" data-lv-unpick="' + escapeHtml(im.ref) + '" title="Retirer ' + escapeHtml(LV().imageLabel(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(LV().imageLabel(im)) + '</i></button>';
     const paint = () => {
       q('[data-lv-count]').textContent = picked.length + ' / ' + MAXI + (nPages() ? ' · ' + nPages() + ' page' + (nPages() > 1 ? 's' : '') + ' de la galerie' : '');
       q('[data-lv-picked]').innerHTML = picked.length ? picked.map(im => LV().isPage(im)
-        ? '<div class="lv-pg-item">' + thumb(im) + '<input class="field-input lv-pg-cap" data-lv-cap="' + escapeHtml(im.ref) + '" maxlength="80" placeholder="Légende (ex : p. 12)" value="' + escapeHtml(im.caption || '') + '"><label class="lv-pg-sp"><input type="checkbox" data-lv-sp="' + escapeHtml(im.ref) + '"' + (im.spoiler ? ' checked' : '') + '> Spoiler</label></div>'
-        : thumb(im)).join('') : '<span class="stat-sub">Aucune image pour l\'instant.</span>';
+        ? '<div class="lv-pg-item">' + thumb(im) + '<input class="field-input lv-pg-cap" data-lv-cap="' + escapeHtml(im.ref) + '" maxlength="80" placeholder="Légende (ex : p. 12)" value="' + escapeHtml(im.caption || '') + '"><label class="lv-pg-sp"><input type="checkbox" data-lv-sp="' + escapeHtml(im.ref) + '"' + (im.spoiler ? ' checked' : '') + '> Spoiler</label>' + sideSel(im) + '</div>'
+        : isDuel() ? '<div class="lv-pg-item">' + thumb(im) + sideSel(im) + '</div>' : thumb(im)).join('') : '<span class="stat-sub">Aucune image pour l\'instant.</span>';
       lvHydrate(q('[data-lv-picked]'));
       q('[data-lv-picked]').querySelectorAll('[data-lv-unpick]').forEach(b => { b.onclick = () => { picked = picked.filter(x => x.ref !== b.dataset.lvUnpick); paint(); }; });
       q('[data-lv-picked]').querySelectorAll('[data-lv-cap]').forEach(inp => { inp.oninput = () => { const im = picked.find(x => x.ref === inp.dataset.lvCap); if (im) im.caption = inp.value; }; });
+      q('[data-lv-picked]').querySelectorAll('[data-lv-side]').forEach(s => { s.onchange = () => { const im = picked.find(x => x.ref === s.dataset.lvSide); if (im) { if (s.value === '') delete im.side; else im.side = Number(s.value); } }; });
       q('[data-lv-picked]').querySelectorAll('[data-lv-sp]').forEach(cb => { cb.onchange = () => { const im = picked.find(x => x.ref === cb.dataset.lvSp); if (im) { im.spoiler = cb.checked; const t = cb.closest('.lv-pg-item').querySelector('.lv-thumb'); if (t) t.classList.toggle('is-sp', cb.checked); } }; });
       const pick = q('[data-lv-pick]');
       if (!pick) return;
@@ -19881,6 +20401,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         const c = lvCopy(b.dataset.lvAdd); if (c) picked.push({ ref: c.id, kind: 'copy', series: c.series || '', issue: c.issue || '' }); paint();
       }; });
     };
+    q('[data-lv="format"]').onchange = () => { const d = isDuel(); q('[data-lv-duelf]').hidden = !d; q('[data-lv-topicshint]').textContent = d ? 'facultatif en duel' : 'un point par ligne, huit au plus'; if (d && !q('[data-lv="title"]').value) q('[data-lv="title"]').placeholder = 'ex : Absolute Batman ou Ultimate Spider-Man ?'; paint(); };
     if (q('[data-lv-q]')) q('[data-lv-q]').oninput = () => { clearTimeout(paint.tm); paint.tm = setTimeout(paint, 120); };
     const fileIn = q('[data-lv-file]');
     q('[data-lv-gal]').onclick = () => fileIn.click();
@@ -19907,7 +20428,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     q('[data-save]').onclick = () => {
       const v = k => q('[data-lv="' + k + '"]').value;
       const when = v('when') ? new Date(v('when')).toISOString() : '';
-      const r = LV().saveRoom(lvLoad(), { id: prev && prev.id, title: v('title'), format: v('format'), when, topics: v('topics'), rules: v('rules'), images: picked }, lvNow(), lvId('lv'));
+      const r = LV().saveRoom(lvLoad(), { id: prev && prev.id, title: v('title'), format: v('format'), when, topics: v('topics'), rules: v('rules'), images: picked, duel: { sides: [v('sideA'), v('sideB')] } }, lvNow(), lvId('lv'));
       if (r.errors.length) { q('[data-lv-msg]').textContent = r.errors.join(' '); return; }
       if (!lvStore(r.state)) return;
       close(); commTab = 'live'; renderCommunityView();
@@ -19953,6 +20474,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const a = el.querySelector('[data-lv-elapsed]'), b = el.querySelector('[data-lv-topictime]');
     if (a) a.textContent = LV().clock(secs(lvStage.session.startedAt));
     if (b) b.textContent = LV().clock(secs(lvStage.session.topicStartedAt));
+    const R = lvStage.room.duel && LV().roundOf(lvStage.session);
+    if (R) {
+      const s = secs(lvStage.session.roundStartedAt), rt = el.querySelector('[data-lv-roundtime]'), bar = el.querySelector('[data-lv-roundbar]');
+      if (rt) rt.textContent = LV().clock(s);
+      if (bar) { bar.style.width = Math.min(100, Math.round(s / R.secs * 100)) + '%'; bar.parentNode.classList.toggle('is-over', s > R.secs); }
+    }
   };
   const lvPaintStage = () => {
     const { el, room, session } = lvStage;
@@ -19961,25 +20488,35 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const hidden = !!(shownIm && shownIm.spoiler && !lvStage.revealed.has(shownIm.ref));
     const counts = Object.entries(session.reactions).map(([k, n]) => escapeHtml(k) + ' ×' + n).join(' · ');
     const nT = room.topics.length;
+    const D = room.duel, R = D ? LV().roundOf(session) : null, NR = LV().DUEL_ROUNDS.length, ev = D ? LV().evidenceCount(session, room) : [0, 0], tot = [0, 1].map(s => room.images.filter(x => x.side === s).length);
+    const proof = shownIm && D && (shownIm.side === 0 || shownIm.side === 1) ? 'Preuve ' + 'AB'[shownIm.side] + ' · ' : '';
+    const duelBar = D ? '<div class="lv-duelbar" role="group" aria-label="Duel : ' + escapeHtml(D.sides.join(' contre ')) + '">' + [0, 1].map(i => '<span class="lv-camp is-' + 'ab'[i] + (R && R.side === i ? ' is-cur' : '') + '"><b>' + 'AB'[i] + '</b><span>' + escapeHtml(D.sides[i]) + '</span><small>' + ev[i] + ' / ' + tot[i] + ' preuve' + (tot[i] > 1 ? 's' : '') + ' montrée' + (ev[i] > 1 ? 's' : '') + '</small></span>').join('<span class="lv-vs" aria-hidden="true">VS</span>') + '</div>' : '';
+    const roundBox = !D ? '' : R ? '<div class="lv-topic lv-round"><small>Manche ' + (session.round + 1) + ' sur ' + NR + ' · <span data-lv-roundtime>00:00</span> / ' + LV().clock(R.secs) + '</small><b>' + (R.side === null ? 'Vote : quel camp l\'emporte ?' : escapeHtml(R.label + ' · ' + D.sides[R.side])) + '</b><span class="lv-roundbar" aria-hidden="true"><i data-lv-roundbar></i></span>' +
+        (R.side === null ? '<div class="lv-votes" role="group" aria-label="Votre vote">' + [0, 1].map(i => '<button class="lv-vote' + (session.vote === i ? ' is-on' : '') + '" data-lv-vote="' + i + '" aria-pressed="' + (session.vote === i) + '"><b>' + 'AB'[i] + '</b> ' + escapeHtml(D.sides[i]) + '</button>').join('') + '</div>' : '') +
+        '<button class="lv-nextbtn" data-lv-round>' + (session.round === NR - 1 ? 'Clore le duel' : 'Manche suivante ›') + '</button></div>'
+      : '<div class="lv-topic lv-round"><small>Duel terminé</small><b>' + (session.vote === null ? 'Sans vote' : 'Votre vote : ' + escapeHtml(D.sides[session.vote])) + '</b></div>';
+    const chat = '<section class="lv-chat' + (lvStage.chat ? ' is-open' : '') + '" id="lvChat" aria-label="Chat du direct"' + (lvStage.chat ? '' : ' hidden') + '><ol class="lv-chat-list" data-lv-chatlist aria-live="polite">' + lvChatItems(session) + '</ol>' +
+      '<form class="lv-chat-form" data-lv-chatform><input class="field-input" data-lv-chatin maxlength="200" autocomplete="off" placeholder="Écrire dans le chat…" aria-label="Message du chat"><button class="btn" type="submit" aria-label="Envoyer">' + igIcon('ic-arrow-right') + '</button></form></section>';
     el.innerHTML = '<div class="lv-vert"><div class="lv-phone">' +
-      '<div class="lv-screen' + (lvStage.zoom && shownIm ? ' is-zoom' : '') + (hidden ? ' is-sp' : '') + '" data-lv-screen>' + (shownIm ? '<span class="lv-bgblur" aria-hidden="true">' + lvImg(shownIm) + '</span><div class="lv-scroll">' + lvImg(shownIm) + '</div><p class="lv-cap">' + escapeHtml(label(shownIm)) + (LV().isPage(shownIm) ? ' · page de votre galerie, visible seulement sur cet appareil' : ' · votre collection') + '</p>' +
+      '<div class="lv-screen' + (lvStage.zoom && shownIm ? ' is-zoom' : '') + (hidden ? ' is-sp' : '') + '" data-lv-screen>' + (shownIm ? '<span class="lv-bgblur" aria-hidden="true">' + lvImg(shownIm) + '</span><div class="lv-scroll">' + lvImg(shownIm) + '</div><p class="lv-cap">' + escapeHtml(proof + label(shownIm)) + (LV().isPage(shownIm) ? ' · page de votre galerie, visible seulement sur cet appareil' : ' · votre collection') + '</p>' +
           (hidden ? '<button class="btn lv-reveal" data-lv-reveal>Révéler la page (spoiler)</button>' : '') +
           (room.images.length > 1 ? '<button class="lv-nav is-prev" data-lv-step="-1" aria-label="Image précédente">‹</button><button class="lv-nav is-next" data-lv-step="1" aria-label="Image suivante">›</button>' : '') +
           '<button class="lv-zoom" data-lv-zoom aria-pressed="' + (lvStage.zoom ? 'true' : 'false') + '">' + (lvStage.zoom ? 'Ajuster' : 'Zoom') + '</button>'
           : '<p class="lv-screen-empty">' + (room.images.length ? 'Touchez une image en bas pour la montrer en plein écran ; balayez vers le haut ou le côté pour passer à la suivante.' : 'Aucune image au tableau : touchez « + Galerie » pour montrer une page de votre téléphone, même en plein direct.') + '</p>') + '</div>' +
-      '<header class="lv-top"><span class="live-dot is-rec">Répétition</span><b class="lv-top-t">' + escapeHtml(room.title) + '</b><span class="lv-clock" data-lv-elapsed>00:00</span><button class="btn lv-end" data-lv-end>Terminer</button></header>' +
+      '<header class="lv-top"><span class="live-dot is-rec">Répétition</span><b class="lv-top-t">' + escapeHtml(room.title) + '</b><span class="lv-voice" title="Voix seule : jamais de caméra">' + igIcon('ic-mic') + '<span>Voix seule</span></span><span class="lv-clock" data-lv-elapsed>00:00</span><button class="btn lv-end" data-lv-end>Terminer</button></header>' + duelBar +
       '<div class="lv-rail" role="group" aria-label="Réactions et outils">' + LV().REACTIONS.map(k => '<button class="lv-onoma" data-lv-react="' + escapeHtml(k) + '">' + escapeHtml(k) + '</button>').join('') +
         '<button class="lv-railbtn" data-lv-mic aria-pressed="false" aria-label="Tester mon micro">' + igIcon('ic-mic') + '<small>Micro</small></button>' +
+        '<button class="lv-railbtn" data-lv-chat aria-expanded="' + (lvStage.chat ? 'true' : 'false') + '" aria-controls="lvChat">' + igIcon('ic-chat') + '<small>Chat</small></button>' +
         '<button class="lv-railbtn lv-sheet-btn" data-lv-sheet aria-expanded="' + (lvStage.sheet ? 'true' : 'false') + '" aria-controls="lvSheet">' + igIcon('ic-list') + '<small>Ordre du jour</small></button></div>' +
-      '<div class="lv-bottom"><div class="lv-topic"><small>' + (cur ? 'Point ' + (session.topic + 1) + ' sur ' + nT + ' · <span data-lv-topictime>00:00</span>' : nT ? 'Ordre du jour terminé' : 'Sans ordre du jour') + '</small><b>' + escapeHtml(cur || (nT ? 'Bravo, tous les points sont traités.' : room.title)) + '</b>' +
-        '<button class="lv-nextbtn" data-lv-next' + (cur ? '' : ' disabled') + '>' + (!cur ? 'Terminé' : session.topic === nT - 1 ? 'Clore ce point' : 'Point suivant ›') + '</button></div>' +
+      '<div class="lv-bottom">' + chat + (D ? roundBox : '<div class="lv-topic"><small>' + (cur ? 'Point ' + (session.topic + 1) + ' sur ' + nT + ' · <span data-lv-topictime>00:00</span>' : nT ? 'Ordre du jour terminé' : 'Sans ordre du jour') + '</small><b>' + escapeHtml(cur || (nT ? 'Bravo, tous les points sont traités.' : room.title)) + '</b>' +
+        '<button class="lv-nextbtn" data-lv-next' + (cur ? '' : ' disabled') + '>' + (!cur ? 'Terminé' : session.topic === nT - 1 ? 'Clore ce point' : 'Point suivant ›') + '</button></div>') +
         '<div class="lv-strip">' + room.images.map(im => '<button class="lv-thumb' + (session.shown === im.ref ? ' is-on' : '') + (im.spoiler && !lvStage.revealed.has(im.ref) ? ' is-sp' : '') + '" data-lv-show="' + escapeHtml(im.ref) + '" title="' + escapeHtml(label(im)) + '">' + lvImg(im) + '<i>' + escapeHtml(label(im)) + '</i></button>').join('') +
           '<button class="lv-thumb lv-add" data-lv-gal title="Ajouter des pages de ma galerie pendant le direct"' + (lvStage.busy ? ' disabled' : '') + '><b aria-hidden="true">' + (lvStage.busy ? '…' : '+') + '</b><i>' + (lvStage.busy ? 'Ajout…' : 'Galerie') + '</i></button><input type="file" accept="image/*" multiple hidden data-lv-file></div>' +
         '<span class="lv-react-n">' + (counts ? 'Vos réactions : ' + counts : 'Vos réactions rythment la répétition') + '</span></div></div>' +
       '<aside class="lv-side' + (lvStage.sheet ? ' is-open' : '') + '" id="lvSheet" aria-label="Ordre du jour et réglages"><div class="lv-side-h"><h4>Ordre du jour</h4><button class="lv-side-x" data-lv-sheet aria-label="Fermer l\'ordre du jour">' + igIcon('ic-x') + '</button></div><ol class="lv-agenda">' + room.topics.map((tp, i) => '<li class="' + (i < session.topic ? 'is-done' : i === session.topic ? 'is-cur' : '') + '"><span>' + escapeHtml(tp) + '</span>' + (i < session.topic ? '<small>' + escapeHtml(LV().clock(session.done[i].secs)) + '</small>' : i === session.topic ? '<small>en cours</small>' : '') + '</li>').join('') + '</ol>' +
         '<div class="lv-mic"><div class="lv-meter" aria-hidden="true"><span data-lv-meter></span></div><small data-lv-micnote>Micro facultatif : il vérifie le niveau, rien n\'est enregistré ni envoyé.</small></div>' +
         '<details class="lv-rules"><summary>Règles du salon</summary><ul>' + room.rules.map(r => '<li>' + escapeHtml(r) + '</li>').join('') + '</ul></details>' +
-        '<p class="lv-solo">Vous êtes seul dans ce salon de répétition. Les auditeurs et les intervenants arriveront avec les comptes en ligne.</p></aside></div>';
+        '<p class="lv-solo">Vous êtes seul dans ce salon de répétition : voix seule, jamais de caméra. Les auditeurs, leurs messages dans le chat et leurs votes arriveront avec les comptes en ligne ; rien n\'est simulé.</p></aside></div>';
     el.querySelectorAll('[data-lv-sheet]').forEach(b => { b.onclick = () => { lvStage.sheet = !lvStage.sheet; const sd = el.querySelector('.lv-side'); sd.classList.toggle('is-open', lvStage.sheet); el.querySelectorAll('[aria-controls="lvSheet"]').forEach(x => x.setAttribute('aria-expanded', String(lvStage.sheet))); if (lvStage.sheet) { const x = sd.querySelector('.lv-side-x'); if (x) x.focus(); } }; });
     el.querySelector('[data-lv-end]').onclick = closeLiveStage;
     lvHydrate(el);
@@ -20003,10 +20540,23 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const burst = document.createElement('span'); burst.className = 'lv-burst'; burst.textContent = b.dataset.lvReact;
       burst.style.left = (20 + Math.random() * 60) + '%'; el.querySelector('[data-lv-screen]').appendChild(burst); setTimeout(() => burst.remove(), 900);
     }; });
+    const rb = el.querySelector('[data-lv-round]'); if (rb) rb.onclick = () => { lvStage.session = LV().nextRound(lvStage.session, room, lvNow()); lvPaintStage(); const n = lvStage.el.querySelector('[data-lv-round], .lv-round b'); if (n && n.focus) n.focus(); };
+    el.querySelectorAll('[data-lv-vote]').forEach(b => { b.onclick = () => { lvStage.session = LV().castVote(lvStage.session, Number(b.dataset.lvVote)); lvPaintStage(); const x = lvStage.el.querySelector('[data-lv-vote="' + b.dataset.lvVote + '"]'); if (x) x.focus(); }; });
+    const cb = el.querySelector('[data-lv-chat]');
+    cb.onclick = () => { lvStage.chat = !lvStage.chat; const c = el.querySelector('.lv-chat'); c.hidden = !lvStage.chat; c.classList.toggle('is-open', lvStage.chat); cb.setAttribute('aria-expanded', String(lvStage.chat)); if (lvStage.chat) el.querySelector('[data-lv-chatin]').focus(); };
+    el.querySelector('[data-lv-chatform]').onsubmit = e => {
+      e.preventDefault();
+      const inp = el.querySelector('[data-lv-chatin]'), txt = inp.value.trim();
+      if (!txt) return;
+      lvStage.session = LV().sendChat(lvStage.session, txt, lvNow());
+      inp.value = '';
+      const ls = el.querySelector('[data-lv-chatlist]'); ls.innerHTML = lvChatItems(lvStage.session); ls.scrollTop = ls.scrollHeight;
+    };
     const nx = el.querySelector('[data-lv-next]'); if (nx) nx.onclick = () => { lvStage.session = LV().nextTopic(lvStage.session, room, lvNow()); lvPaintStage(); };
     el.querySelector('[data-lv-mic]').onclick = () => { if (lvStage.mic) { lvMicStop(); const nt = el.querySelector('[data-lv-micnote]'); if (nt) nt.textContent = 'Micro coupé.'; const m = el.querySelector('[data-lv-meter]'); if (m) m.style.width = '0'; lvPaintMic(); } else lvMicStart(); };
     lvPaintMic(); lvTick();
   };
+  const lvChatItems = session => (session.chat || []).slice(-40).map(m => '<li><b>Vous</b> ' + escapeHtml(m.text) + '</li>').join('') + '<li class="lv-chat-note">Le chat des auditeurs arrive avec les comptes : seuls vos messages s\'affichent pour l\'instant.</li>';
   const lvStep = dir => { if (!lvStage) return; lvStage.session = LV().stepImage(lvStage.session, lvStage.room, dir); lvPaintStage(); };
   // Pendant le direct (D-80) : des pages de la galerie (choix, glisser-déposer, coller) rejoignent le tableau et s'affichent aussitôt
   const lvStageAdd = async files => {
@@ -20038,10 +20588,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const el = document.createElement('div');
     el.className = 'lv-stage is-vertical'; el.id = 'liveStage'; el.setAttribute('role', 'dialog'); el.setAttribute('aria-modal', 'true'); el.setAttribute('aria-label', 'Répétition : ' + room.title);
     document.body.appendChild(el);
-    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, zoom: false, revealed: new Set(), tx: null, ty: null, wheelAt: 0, sheet: false, busy: false,
+    lvStage = { el, room, session: LV().startSession(room, lvNow()), timer: setInterval(lvTick, 1000), mic: null, zoom: false, revealed: new Set(), tx: null, ty: null, wheelAt: 0, sheet: false, busy: false, chat: false,
       onPaste: e => { const f = Array.from((e.clipboardData && e.clipboardData.files) || []).filter(x => /^image\//.test(x.type || '')); if (f.length) { e.preventDefault(); lvStageAdd(f); } },
       onKey: e => {
-      if (e.key === 'Escape') closeLiveStage();
+      if (e.key === 'Escape') { if (e.target && e.target.matches && e.target.matches('[data-lv-chatin]')) { e.target.blur(); return; } closeLiveStage(); }
       else if (/^Arrow(Right|Left|Up|Down)$/.test(e.key) && !/INPUT|TEXTAREA|SELECT/.test((e.target && e.target.tagName) || '') && !(lvStage && lvStage.zoom && /Up|Down/.test(e.key))) { e.preventDefault(); lvStep(e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1); }
     } };
     document.addEventListener('keydown', lvStage.onKey);
@@ -20085,9 +20635,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!host) return;
     host.hidden = commTab === 'profile';
     const sugg = plancheSuggestions();
-    const plCompact = commTab !== 'live' && (commLoad().drafts.length + storyLoad().stories.length) > 0;
+    const plCompact = commTab !== 'live' && (commLoad().drafts.length + storyLoad().stories.length + ntLoad().notes.length) > 0;
     host.innerHTML =
       (commTab === 'live' ? '' : igModeHtml()) +
+      (commTab === 'live' ? '' : ntComposerHtml()) +
       (commTab === 'live' ? '' : '<div id="wedSlot"></div>') +
       (commTab === 'live' ? '' : lvNextHtml()) +
       (commTab === 'live' || plCompact ? '' : '<section class="pl-studio' + (plCompact ? ' is-compact' : '') + '"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>' + (plCompact ? 'Nouvelle planche' : 'Racontez votre collection en cases de BD') + '</h3>' + (plCompact ? '<details class="pl-how"><summary>Comment ça marche</summary>' : '') + '<p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p>' + (plCompact ? '</details>' : '') + '</div></div>' +
@@ -20100,7 +20651,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-ig-mode]').forEach(b => { b.onclick = () => { igMode = b.dataset.igMode; renderCommunityView(); const s = host.querySelector('[data-ig-mode="' + igMode + '"]'); if (s) s.focus(); }; });
     igWire(host);
     lvWire(host);
-    if (commTab !== 'live') wedMount(host);
+    if (commTab !== 'live') { wedMount(host); ntWireComposer(host); ntWire(host); }
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
@@ -20114,6 +20665,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     setWednesdayForTest: v => { wedTest = v && Array.isArray(v.items) ? { items: v.items, today: v.today || '' } : null; },
     collectorCard: () => JSON.parse(JSON.stringify(ccState().model)),
     duelVote: id => window.PanelDomains.rituals.myVote(duelLoad(), id),
+    notes: () => JSON.parse(JSON.stringify(ntLoad().notes)),
+    likeIcon: () => likeKey(),
     copyOf: id => { const it = physicalSingles.find(x => x.id === id); return it ? commCopyOf(it) : null; },
     validate: commValidate,
     drafts: () => JSON.parse(JSON.stringify(commLoad().drafts)),
@@ -22891,6 +23444,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (view === 'wishlist') { if ($('navSinglesWishlist')) $('navSinglesWishlist').click(); }
     else if (['collection', 'series', 'releases', 'stats'].includes(view)) showSinglesView(view);
     if (action === 'scan') setTimeout(() => startBarcodeScanner(), 400);
+    if (action === 'note') setTimeout(() => ntFocus(), 300);
+    if (action === 'publish') setTimeout(() => openPublishSheet(), 300);
+    if (view === 'live' && $('navLive')) $('navLive').click();
+    if (view === 'profile' && $('navProfile')) $('navProfile').click();
     // URL propre (le raccourci ne se rejoue pas au rechargement)
     try { history.replaceState(null, '', location.pathname); } catch (_) {}
   };

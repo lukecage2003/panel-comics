@@ -20,13 +20,14 @@ const tagsOf = post => {
   const add = t => { if (t && !out.some(x => norm(x) === norm(t))) out.push(t); };
   String(post.text || '').replace(TEXT_TAG, (_, t) => { add(t); return ''; });
   if (post.type === 'planche') add(KIND_TAGS[post.kind] || KIND_TAGS.free);
+  if (post.type === 'note') add({ theory: 'Théorie', question: 'Question' }[post.kind] || '');
   if (post.type === 'story') { add('Lecture'); if (post.rating >= 4.5 || post.liked) add('CoupDeCœur'); if (post.reread) add('Relecture'); }
   (post.media || []).forEach(m => { add(publisherTag(m.publisher)); add(tagify(m.series)); });
   return out.filter(Boolean).slice(0, 8);
 };
 
 const emptyState = () => ({ version: 1, likes: {}, saves: {}, pins: [] });
-const ID = /^[sp]:[A-Za-z0-9_-]{1,60}$/;
+const ID = /^[spn]:[A-Za-z0-9_-]{1,60}$/;
 const sanitizeState = v => {
   const o = emptyState();
   if (!v || typeof v !== 'object') return o;
@@ -50,7 +51,7 @@ const toggle = (state, what, id, now) => {
 };
 
 // Publications : épinglées d'abord (dans l'ordre d'épinglage), puis de la plus récente à la plus ancienne
-const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {}) => {
+const buildFeed = ({ drafts = [], stories = [], notes = [], state, tag = '', only = '' } = {}) => {
   const st = sanitizeState(state);
   const posts = [];
   for (const d of drafts || []) {
@@ -63,6 +64,13 @@ const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {
     posts.push({ id: 's:' + s.id, ref: s.id, type: 'story', kind: 'read', at: s.createdAt || (s.readAt ? s.readAt + 'T12:00:00Z' : ''), text: String(s.review || ''), spoiler: !!s.spoiler, rating: Number(s.rating) || 0, liked: !!s.liked, reread: !!s.reread, readAt: s.readAt || '',
       media: [{ series: s.series || '', issue: s.issue || '', publisher: s.publisher || '', coverUrl: s.coverUrl || '', variant: s.variant || '' }], style: s.style || '' });
   }
+  // Pensées (D-96) : texte court, image facultative de la galerie (référence locale), numéro lié facultatif
+  for (const n of notes || []) {
+    if (!n || !n.id) continue;
+    posts.push({ id: 'n:' + n.id, ref: n.id, type: 'note', kind: n.kind || 'thought', at: n.createdAt || '', text: String(n.text || ''), spoiler: !!n.spoiler, verdict: n.verdict || '',
+      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', visibility: n.visibility || 'public',
+      media: n.issue && n.issue.series ? [{ series: n.issue.series, issue: n.issue.issue || '', publisher: n.issue.publisher || '', coverUrl: '', variant: '' }] : [] });
+  }
   posts.forEach(p => { p.tags = tagsOf(p); p.likedByMe = !!st.likes[p.id]; p.saved = !!st.saves[p.id]; p.pinned = st.pins.includes(p.id); });
   const t = norm(tag).replace(/^#/, '');
   const list = posts.filter(p => (!t || p.tags.some(x => norm(x) === t)) && (only !== 'saved' || p.saved));
@@ -71,7 +79,7 @@ const buildFeed = ({ drafts = [], stories = [], state, tag = '', only = '' } = {
   // Mots-dièse les plus présents (pour les filtres en haut du fil)
   const counts = new Map();
   posts.forEach(p => p.tags.forEach(x => counts.set(x, (counts.get(x) || 0) + 1)));
-  const kindSet = new Set(Object.values(KIND_TAGS).concat(['Lecture', 'CoupDeCœur', 'Relecture']));
+  const kindSet = new Set(Object.values(KIND_TAGS).concat(['Lecture', 'CoupDeCœur', 'Relecture', 'Théorie', 'Question']));
   const topTags = [...counts.entries()].sort((a, b) => b[1] - a[1] || kindSet.has(b[0]) - kindSet.has(a[0]) || a[0].localeCompare(b[0], 'fr')).slice(0, 12).map(([tg, n]) => ({ tag: tg, n }));
   return { posts: list, total: posts.length, topTags, likes: Object.keys(st.likes).length, saves: Object.keys(st.saves).length };
 };

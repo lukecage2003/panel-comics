@@ -85,3 +85,29 @@ test('pages de la galerie : références seulement, plafond, navigation, planche
   const refs = L.pageRefs(end.state);
   assert.ok(refs.includes('pg_0') && refs.includes('pg_15') && !refs.includes('pg_19'));
 });
+
+test('duel en direct : camps, manches, preuves par camp, vote et chat de l\'utilisateur seul', () => {
+  const L = require('./live-core');
+  const now = '2026-11-20T20:00:00Z';
+  const r = L.saveRoom(L.emptyState(), { title: 'Absolute Batman ou Ultimate Spider-Man ?', format: 'duel', duel: { sides: ['Absolute Batman', ''] },
+    images: [{ ref: 'a', kind: 'copy', series: 'X', issue: '#1', side: 0 }, { ref: 'b', kind: 'page', caption: 'p. 3', side: 1 }, { ref: 'c', kind: 'copy', side: 7 }] }, now, 'lv1');
+  assert.deepEqual(r.errors, []);
+  assert.deepEqual(r.room.duel.sides, ['Absolute Batman', 'Contre']);
+  assert.equal(r.room.images[2].side, undefined);
+  let s = L.startSession(r.room, now);
+  assert.equal(L.roundOf(s).label, 'Ouverture');
+  s = L.showImage(s, r.room, 'a'); s = L.showImage(s, r.room, 'b'); s = L.showImage(s, r.room, 'c');
+  assert.deepEqual(L.evidenceCount(s, r.room), [1, 1]);
+  for (let i = 0; i < 6; i++) s = L.nextRound(s, r.room, now);
+  assert.equal(L.roundOf(s).key, 'vote');
+  s = L.castVote(s, 1); assert.equal(s.vote, 1);
+  s = L.castVote(s, 1); assert.equal(s.vote, null);
+  s = L.castVote(s, 0);
+  s = L.sendChat(s, '   ', now); assert.equal(s.chat.length, 0);
+  s = L.sendChat(s, 'Preuve page 3 !', now); assert.equal(s.chat[0].by, 'me');
+  const end = L.endSession(r.state, s, r.room, now, 'h1');
+  assert.deepEqual(end.summary.duel, { sides: ['Absolute Batman', 'Contre'], vote: 0, rounds: 6 });
+  assert.equal(end.summary.chat, 1);
+  assert.match(L.summaryText(end.summary), /mon vote : Absolute Batman/);
+  assert.equal(L.saveRoom(L.emptyState(), { title: 'Solo', format: 'free' }, now, 'x').errors.length, 1);
+});

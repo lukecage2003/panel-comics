@@ -22,6 +22,8 @@ const MODULES = [
   ['feedCore', 'domains/community/feed-core.js'],
   ['liveCore', 'domains/community/live-core.js'],
   ['rituals', 'domains/community/rituals-core.js'],
+  ['notes', 'domains/community/notes-core.js'],
+  ['likes', 'domains/community/likes-core.js'],
   ['rankingCore', 'domains/community/ranking-core.js'],
   ['profilePublic', 'domains/community/profile-public.js'],
   ['sourceClaims', 'domains/source/claims-core.js'],

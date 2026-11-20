@@ -47,3 +47,13 @@ test('sanitizeState : clés, dates et épingles invalides retirées', () => {
   const s = F.sanitizeState({ likes: { 's:ok': '2026-01-01T00:00:00Z', 'bad id': '2026-01-01', 's:x': 'pas une date' }, saves: 3, pins: ['p:a', 'p:a', 'nope', 'p:b', 'p:c', 'p:d'] });
   assert.deepEqual(Object.keys(s.likes), ['s:ok']); assert.deepEqual(s.saves, {}); assert.deepEqual(s.pins, ['p:a', 'p:b', 'p:c']);
 });
+
+test('pensées dans le fil : type note, mots-dièse du texte et du type, numéro lié', () => {
+  const F = require('./feed-core');
+  const f = F.buildFeed({ notes: [{ id: 'n1', kind: 'theory', text: 'Le twist arrive #Saga', createdAt: '2026-11-20T10:00:00Z', issue: { series: 'Saga', issue: '#60', publisher: 'Image' } }] });
+  assert.equal(f.posts[0].id, 'n:n1');
+  assert.equal(f.posts[0].type, 'note');
+  assert.deepEqual(f.posts[0].tags.slice(0, 3), ['Saga', 'Théorie', 'ImageComics']);
+  const t = F.toggle(F.emptyState(), 'like', 'n:n1');
+  assert.equal(t.on, true);
+});
