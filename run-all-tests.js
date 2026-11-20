@@ -5557,6 +5557,63 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Profil social (lot S5, D-93) : étagère 3D (tranches, sortie au toucher, « Voir en 3D », remise par Échap), trophées repliés, six réglages publics (Wishlist coupée par défaut), aperçu visiteur nommé, finances, emplacements et notes jamais publiés',
         ok: !!t73 && !t73.error && ['shelf', 'pullOut', 'vitrine', 'putBack', 'folded', 'switches', 'neverPublished', 'toggles', 'preview', 'previewClosed', 'dataUntouched'].every(k => t73[k] === true) });
 
+      // ==========================================
+      // TEST 74 : Directs verticaux (lot S6, D-94) — cartes 9:16, scène plein écran, balayage vertical, molette, clavier, ordre du jour en feuille
+      // ==========================================
+      console.log('\n[TEST 74] Directs verticaux...');
+      const t74 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const fp0 = await P.backup.fingerprint('collection');
+        const k0 = localStorage.getItem('panel_live_v1');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const PX = c => { const k = document.createElement('canvas'); k.width = 30; k.height = 45; const g = k.getContext('2d'); g.fillStyle = c; g.fillRect(0, 0, 30, 45); return k.toDataURL('image/png'); };
+        try {
+          localStorage.removeItem('panel_live_v1');
+          P.setSinglesInMemoryForTest([['v74a', '#1', '#b3121b'], ['v74b', '#2', '#0b4fb3']].map(([id, n, c]) => ({ id, series: 'Fixture Vertical', issue: n, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, addedAt: new Date().toISOString(), coverUrl: PX(c) })));
+          const sv = P.live.save({ title: 'Direct vertical fictif', topics: 'Point A\\nPoint B\\nPoint C', images: [{ ref: 'v74a', kind: 'copy', series: 'Fixture Vertical', issue: '#1' }, { ref: 'v74b', kind: 'copy', series: 'Fixture Vertical', issue: '#2' }] });
+          document.getElementById('navLive').click(); await wait(300);
+          const card = document.querySelector('#communityDashboard .lv-reel .lv-card');
+          const cr = card.getBoundingClientRect();
+          r.reel = !!card && cr.height / cr.width > 1.6 && !!card.querySelector('[data-lv-start="' + sv.id + '"]') && card.querySelectorAll('.lv-card-covers img').length === 2;
+          card.querySelector('[data-lv-start]').click(); await wait(250);
+          const st = () => document.getElementById('liveStage');
+          const ph = st().querySelector('.lv-phone'), pr = ph.getBoundingClientRect();
+          r.vertical = st().classList.contains('is-vertical') && Math.abs(pr.height / pr.width - 16 / 9) < 0.05 && st().querySelectorAll('.lv-rail [data-lv-react]').length === 5 && !!st().querySelector('.lv-rail [data-lv-mic]') && /Point 1 sur 3/.test(st().querySelector('.lv-topic').textContent);
+          st().querySelector('[data-lv-show="v74a"]').click(); await wait(80);
+          const shown = () => P.live.stage().session.shown;
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true })); await wait(60);
+          const k1 = shown();
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true })); await wait(60);
+          r.keys = k1 === 'v74b' && shown() === 'v74a';
+          const scr = () => st().querySelector('[data-lv-screen]');
+          scr().dispatchEvent(new WheelEvent('wheel', { deltaY: 120, bubbles: true, cancelable: true })); await wait(60);
+          r.wheel = shown() === 'v74b';
+          const touch = (type, y) => { const s = scr(); const t = new Touch({ identifier: 1, target: s, clientX: 150, clientY: y }); s.dispatchEvent(new TouchEvent(type, { touches: type === 'touchstart' ? [t] : [], changedTouches: [t], bubbles: true, cancelable: true })); };
+          touch('touchstart', 600); touch('touchend', 380); await wait(60);
+          r.swipeUp = shown() === 'v74a';
+          st().querySelector('[data-lv-next]').click(); await wait(80);
+          r.nextTopic = P.live.stage().session.topic === 1 && /Point 2 sur 3/.test(st().querySelector('.lv-topic').textContent) && /Point B/.test(st().querySelector('.lv-topic b').textContent) && !!st().querySelector('.lv-agenda li.is-cur');
+          const sb = st().querySelector('.lv-sheet-btn'); sb.click(); await wait(50);
+          r.sheet = st().querySelector('.lv-side').classList.contains('is-open') && st().querySelector('.lv-sheet-btn').getAttribute('aria-expanded') === 'true';
+          st().querySelector('.lv-side-x').click(); await wait(50);
+          r.sheet = r.sheet && !st().querySelector('.lv-side').classList.contains('is-open');
+          st().querySelector('[data-lv-end]').click(); await wait(250);
+          r.ended = !st() && P.live.state().history.length === 1 && P.live.state().history[0].shown.length === 2;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (document.getElementById('liveStage')) P.live.end();
+          if (k0 === null) localStorage.removeItem('panel_live_v1'); else localStorage.setItem('panel_live_v1', k0);
+          try { await P.live.gc(); } catch (_) {}
+          P.setSinglesInMemoryForTest(prev);
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && localStorage.getItem('panel_live_v1') === k0;
+        return r;
+      })()`);
+      console.log('Résultat Test 74:', JSON.stringify(t74));
+      testResults.push({ test: 'Directs verticaux (lot S6, D-94) : cartes 9:16, scène plein écran 9:16 (réactions et micro en colonne), clavier haut/bas, molette, balayage vertical, point suivant, ordre du jour en feuille, synthèse gardée',
+        ok: !!t74 && !t74.error && ['reel', 'vertical', 'keys', 'wheel', 'swipeUp', 'nextTopic', 'sheet', 'ended', 'dataUntouched'].every(k => t74[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
