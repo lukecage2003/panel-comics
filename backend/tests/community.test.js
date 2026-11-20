@@ -100,7 +100,7 @@ test('blocage : réciproque, retire les abonnements et rend les contenus invisib
   await as(ADULT2);
   assert.ok((await q1('select count(*)::int n from community.posts where author_id = $1', [ADULT])).n >= 1);
   assert.equal((await q1("select api.react($1, 'kapow') r", [pubPost])).r.status, 'reacted');
-  await assert.rejects(db.query("select api.react($1, 'like')", [pubPost]), /invalid_reaction/);
+  await assert.rejects(db.query("select api.react($1, 'boum')", [pubPost]), /invalid_reaction/);
 });
 
 test('signalements : un par personne, masquage automatique à 3, immédiat pour la sécurité des mineurs', async () => {

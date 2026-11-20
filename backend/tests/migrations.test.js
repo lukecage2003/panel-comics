@@ -20,7 +20,7 @@ async function fingerprint(db) {
   ].join('\n---\n');
 }
 
-test('treize migrations horodatées, dans l\'ordre attendu', () => {
+test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
   assert.deepEqual(H.migrationFiles(), [
     '20261107000001_app_schema.sql',
     '20261107000002_profiles_settings_devices.sql',
@@ -34,7 +34,8 @@ test('treize migrations horodatées, dans l\'ordre attendu', () => {
     '20261110000010_roles_profile_devices.sql',
     '20261110000011_conflict_resolution.sql',
     '20261110000012_limits_purge_account.sql',
-    '20261114000013_community_moderation.sql'
+    '20261114000013_community_moderation.sql',
+    '20261120000014_social_notes_live.sql'
   ]);
 });
 

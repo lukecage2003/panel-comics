@@ -105,7 +105,7 @@ Le module est pur (`domains/community/ranking-core.js`), testé, et calcule tout
 | S6 | Directs verticaux (sur le studio de direct existant) — **fait (D-94)** : scène 9:16, cartes verticales | S1 ; la diffusion réelle exige un serveur audio et vidéo |
 | S7 | Mercredi des sorties, Duel, Chasse, Carte de collectionneur — **fait (D-95)** | S4, S5 |
 | S7b | Pensées façon Twitter (mots-dièse, image, verdict des théories), J'aime personnalisé, Duel et chat en direct, voix seule — **fait (D-96)** | S6, S7 |
-| S8 | Comptes en ligne et contenu des autres (préproduction Supabase) | Accord de l'utilisateur, CGU, modération |
+| S8 | Comptes en ligne et contenu des autres (préproduction Supabase) — **préparé (D-97)** : migration 14 et module client ; application et branchement sur accord ([12](12-s8-comptes-en-ligne.md)) | Accord de l'utilisateur, CGU, modération |
 
 Tant que S8 n'est pas fait, le réseau est **montré avec les seules publications de l'utilisateur** : aucune personne, aucun abonné, aucune réaction d'autrui n'est simulée.
 
