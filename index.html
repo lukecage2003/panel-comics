@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-OJ/BXd0cCtCsAWgxNfbF4MUk3vGGibZJPBOdOcIkjfA=' 'sha256-Ak/GFuftlIbaPWaev2s2+OOot0Jp42VP1jDiLmUw57I=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-OJ/BXd0cCtCsAWgxNfbF4MUk3vGGibZJPBOdOcIkjfA=' 'sha256-InBgrN/qAcfUNmCAUctU4+TuAg2FtE0ZsuWhspXu64s=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3021,6 +3021,28 @@
     /* D-78 : accueil d'Explorer (sommaire, paires, index replié) et cartes cosmiques */
     .ex-toc { position: sticky; top: 0; z-index: 6; display: flex; gap: 6px; overflow-x: auto; padding: 10px 2px; margin: 14px 0 -16px; background: color-mix(in srgb, var(--bg) 86%, transparent); -webkit-backdrop-filter: saturate(160%) blur(16px); backdrop-filter: saturate(160%) blur(16px); scrollbar-width: none; }
     .ex-toc::-webkit-scrollbar { display: none; }
+    .ex-trend-row, .ex-live-row { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; padding: 2px 2px 8px; scrollbar-width: none; }
+    .ex-trend-row::-webkit-scrollbar, .ex-live-row::-webkit-scrollbar { display: none; }
+    .ex-trend { flex: 0 0 auto; scroll-snap-align: start; display: inline-flex; gap: 8px; align-items: baseline; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); padding: 10px 16px; border-radius: 999px; cursor: pointer; font: 700 15px var(--font-display); min-height: 44px; }
+    .ex-trend small { font: 800 12px var(--font-display); color: var(--accent); }
+    .ex-live-card { flex: 0 0 168px; scroll-snap-align: start; aspect-ratio: 9 / 13; display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; text-align: left; padding: 14px; border-radius: 18px; border: 1px solid var(--line); cursor: pointer; color: #fff;
+      background: radial-gradient(120% 80% at 20% 0%, rgba(255,212,0,.22), transparent 60%), linear-gradient(160deg, #2b1055, #0b0b12 70%); }
+    .ex-live-card b { font: 800 16px/1.2 var(--font-display); }
+    .ex-live-card small { font-size: 12px; opacity: .75; }
+    .ex-live-card .live-dot { align-self: flex-start; margin-bottom: auto; }
+    .ex-live-card.is-new { background: var(--bg-card); color: var(--ink); border-style: dashed; justify-content: center; align-items: center; text-align: center; }
+    .ex-live-card.is-new .ic { width: 28px; height: 28px; }
+    .ex-more { margin: 28px 0 8px; border: 1px solid var(--line); border-radius: 18px; background: var(--bg-card); }
+    .ex-more > summary { list-style: none; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 18px; cursor: pointer; min-height: 56px; }
+    .ex-more > summary::-webkit-details-marker { display: none; }
+    .ex-more > summary b { display: block; font: 800 17px var(--font-display); }
+    .ex-more > summary small { color: var(--muted); font-size: 13px; }
+    .ex-more > summary .ic { width: 20px; height: 20px; transition: transform .2s; }
+    .ex-more[open] > summary .ic { transform: rotate(90deg); }
+    .ex-more[open] { padding-bottom: 8px; }
+    .ex-more > .ex-sec, .ex-more > .ex-index { padding: 0 18px; }
+    .ex-notes { margin-top: 8px; }
+    @media (prefers-reduced-motion: reduce) { .ex-more > summary .ic { transition: none; } }
     .ex-filt-wrap { margin-top: 8px; } .ex-filt-wrap > summary { cursor: pointer; width: fit-content; font: 600 13px var(--font-display); color: var(--muted); list-style: none; padding: 4px 0; }
     .ex-filt-wrap > summary::-webkit-details-marker { display: none; } .ex-filt-wrap > summary::after { content: ' ▾'; } .ex-filt-wrap[open] > summary::after { content: ' ▴'; }
     .ex-toc-b { flex: 0 0 auto; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font: 600 13px/1 var(--font-display); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: border-color .15s, background .15s; }
@@ -17272,8 +17294,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
     return exFollowsHtml() +
-      '<nav class="ex-toc" aria-label="Sommaire d\'Explorer">' + [['exSecNews', 'Actualités'], ['exSecGuides', 'Guides'], ['exSecReleases', 'Sorties'], ['exSecCosmos', 'Cosmos et multivers'], ['exSecUniverses', 'Univers'], ['exSecIndex', 'Personnages et créateurs']].map(([id, t]) => '<button class="ex-toc-b" data-ex-toc="' + id + '">' + t + '</button>').join('') + '</nav>' +
+      '<nav class="ex-toc" aria-label="Sommaire d\'Explorer">' + [['exSecTrends', 'Tendances'], ['exSecLive', 'Directs'], ['exSecGuides', 'Guides'], ['exSecReleases', 'Sorties'], ['exSecNews', 'Actualités'], ['exSecMore', 'Parcourir']].map(([id, t]) => '<button class="ex-toc-b" data-ex-toc="' + id + '">' + t + '</button>').join('') + '</nav>' +
       (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
+      exTrendsHtml() + exLiveRowHtml() +
       sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
       sec('exSecNews', 'Actualités', 'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.',
         (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
@@ -17288,13 +17311,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
       '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
       '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + '</div>' +
+      '<details class="ex-more" id="exSecMore"><summary><span><b>Parcourir</b><small>Éditeurs, personnages, créateurs et séries</small></span>' + igIcon('ic-arrow-right') + '</summary>' +
       sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
       '<div class="ex-index" id="exSecIndex">' + exBrowseHtml() +
       sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
       sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
       sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
-      '</div>' +
-      '';
+      '</div></details>';
   };
   const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
   const exSrcLabel = (g, id) => { const s = (g.sources || []).find(x => x.id === id); return s ? s.label : ''; };
@@ -17677,6 +17700,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (x.lastId && latest.id !== x.lastId && latest.date > (x.lastDate || '')) x.isNew = true;
     x.lastId = latest.id; x.lastLabel = gdStr(label, 160); x.lastDate = latest.date || ''; x.checkedAt = new Date().toISOString();
     exFollowsSave(f);
+  };
+  // Découvrir repensé (D-98) : tendances des mots-dièse et directs, en tête de page
+  const exTrendsHtml = () => {
+    const FC = window.PanelDomains.feedCore;
+    const all = FC.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, notes: ntLoad().notes }).posts;
+    const tr = window.PanelDomains.notes.trending(all.map(x => ({ at: x.at, tags: x.tags })), lvNow(), 12);
+    return '<section class="ex-sec ex-trends" id="exSecTrends"><div class="ex-sec-head"><h3>Tendances</h3><p>' + (tr.length ? 'Les mots-dièse du moment, les plus récents d\'abord. Touchez pour voir les publications.' : 'Écrivez une pensée avec un #mot-dièse : les tendances naîtront ici.') + '</p></div>' +
+      (tr.length ? '<div class="ex-trend-row">' + tr.map((x, i) => '<button class="ex-trend" data-ex-tag="' + h(x.tag) + '"><small>' + (i + 1) + '</small><b>#' + h(x.tag) + '</b></button>').join('') + '</div>'
+        : '<button class="btn secondary rel-mini" data-ex-write>' + igIcon('ic-pen') + ' Écrire une pensée</button>') + '</section>';
+  };
+  const exLiveRowHtml = () => {
+    const rooms = lvLoad().rooms.slice().sort((a, b) => String(a.when || '9').localeCompare(String(b.when || '9'))).slice(0, 8), F = window.PanelDomains.liveCore.FORMATS;
+    return '<section class="ex-sec ex-liverow" id="exSecLive"><div class="ex-sec-head"><h3>Directs</h3><p>Voix seule, pages de comics au tableau, chat et duels. Les directs des autres membres arriveront avec les comptes.</p></div>' +
+      '<div class="ex-live-row">' + rooms.map(r => '<button class="ex-live-card" data-ex-live><span class="live-dot is-studio">' + h(F[r.format] || 'Direct') + '</span><b>' + h(r.title) + '</b><small>' + h(r.duel ? r.duel.sides.join(' vs ') : lvWhen(r.when)) + '</small></button>').join('') +
+        '<button class="ex-live-card is-new" data-ex-live>' + igIcon('ic-plus') + '<b>Préparer un direct</b><small>Débat, pages commentées, duel</small></button></div></section>';
   };
   const exFollowsHtml = () => {
     const f = exFollows(), keys = Object.keys(f);
@@ -18154,6 +18192,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!root) return;
     root.querySelectorAll('[data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
     root.querySelectorAll('[data-ex-me]').forEach(b => { b.onclick = () => { commTab = 'profile'; goSinglesView('community'); }; });
+    root.querySelectorAll('[data-ex-tag]').forEach(b => { b.onclick = () => { igTag = b.dataset.exTag; igMode = 'forYou'; $('navSinglesCommunity').click(); }; });
+    root.querySelectorAll('[data-ex-live]').forEach(b => { b.onclick = () => $('navLive').click(); });
+    root.querySelectorAll('[data-ex-write]').forEach(b => { b.onclick = () => ntFocus(); });
+    if (root.querySelector('.ntp')) ntWire(root);
     root.querySelectorAll('[data-ex-comm]').forEach(b => { b.onclick = () => { commTab = /live/.test(b.textContent) || /débats/.test(b.textContent) ? 'live' : 'feed'; goSinglesView('community'); }; });
   };
   const exGo = (page, id) => {
@@ -19378,7 +19420,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // ── Explorer : chercher aussi des membres, des planches et des directs (D-63). Les comptes en ligne ne sont pas
   // encore ouverts : seuls votre profil, vos planches et vos stories sont trouvés ; rien n'est simulé.
   let exScope = 'comics';
-  const EX_SCOPES = [['comics', 'Comics'], ['members', 'Membres'], ['posts', 'Planches & stories'], ['live', 'Directs']];
+  const EX_SCOPES = [['comics', 'Comics'], ['posts', 'Publications'], ['members', 'Comptes'], ['live', 'Directs']];
   const exScopeChips = () => '<div class="ex-scope" role="tablist" aria-label="Que chercher ?">' + EX_SCOPES.map(([k, l]) => '<button role="tab" aria-selected="' + (exScope === k) + '" class="' + (exScope === k ? 'is-on' : '') + '" data-ex-scope="' + k + '">' + l + '</button>').join('') + '</div>';
   const exSocialResultsHtml = q => {
     const t = catNorm(q);
@@ -19392,10 +19434,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (exScope === 'posts') {
       const drafts = commLoad().drafts.filter(d => !t || catNorm(d.text + ' ' + d.items.map(c => c.series + ' ' + c.issue).join(' ')).includes(t));
       const stories = storyLoad().stories.filter(s => !t || catNorm(s.series + ' ' + s.issue + ' ' + s.review).includes(t));
-      return '<section class="ex-sec"><div class="ex-sec-head"><h3>Planches et stories</h3><p>Les vôtres pour l\'instant ; celles des autres membres avec les comptes en ligne.</p></div>' +
+      const notes = window.PanelDomains.feedCore.buildFeed({ notes: ntLoad().notes }).posts.filter(n => !t || catNorm(n.text + ' ' + (n.tags || []).join(' ') + ' ' + n.media.map(m => m.series).join(' ')).includes(t.replace(/^#/, '')));
+      return '<section class="ex-sec"><div class="ex-sec-head"><h3>Publications</h3><p>Pensées, théories, planches et stories : les vôtres pour l\'instant, celles des autres membres avec les comptes en ligne.</p></div>' +
+        (notes.length ? '<div class="igf ex-notes">' + notes.slice(0, 20).map(n => ntPostHtml(n, prof)).join('') + '</div>' : '') +
         (stories.length ? '<div class="st-grid">' + stories.slice(0, 12).map(s => '<button class="st-mini" data-st-open="' + escapeHtml(s.id) + '">' + storyCardHtml(s) + '</button>').join('') + '</div>' : '') +
         (drafts.length ? '<div class="ex-chips">' + drafts.slice(0, 20).map(d => '<button class="ex-chip" data-ex-comm>' + escapeHtml((PLANCHE_KINDS[d.kind] || 'Planche') + ' · ' + d.items.map(c => c.series + ' ' + (c.issue || '')).join(', ').slice(0, 60)) + '</button>').join('') + '</div>' : '') +
-        (!stories.length && !drafts.length ? '<p class="ex-note">Aucune planche ni story ' + (t ? 'pour « ' + escapeHtml(q) + ' »' : 'pour l\'instant') + '.</p>' : '') + '</section>';
+        (!stories.length && !drafts.length && !notes.length ? '<p class="ex-note">Aucune publication ' + (t ? 'pour « ' + escapeHtml(q) + ' »' : 'pour l\'instant') + '.</p>' : '') + '</section>';
     }
     return '<section class="ex-sec"><div class="ex-sec-head"><h3>Directs en cours</h3><p>Salons vocaux pour débattre comics, images à l\'appui.</p></div><div class="ex-live-empty"><span class="live-dot">Bientôt</span><p>Aucun direct en cours : le direct ouvrira avec les comptes en ligne et un serveur audio. Aucun salon n\'est simulé.</p><button class="btn secondary rel-mini" data-ex-comm>Préparer un direct</button></div></section>';
   };
