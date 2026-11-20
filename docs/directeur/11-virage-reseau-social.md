@@ -96,11 +96,11 @@ Le module est pur (`domains/community/ranking-core.js`), testé, et calcule tout
 
 | Lot | Contenu | Dépend de |
 |---|---|---|
-| S0 | Ce document, décision D-91 | — |
-| S1 | Navigation à cinq entrées, design social (accueil = fil) | S0 |
-| S2 | Collection épurée : gradation retirée de l'interface (données conservées), fiche d'ajout réduite | S0 |
-| S3 | Vitrine 360 (objet 3D, publication) et étagère du profil | S1 |
-| S4 | `ranking-core` (classement, diversité, anti-spoiler, « Pourquoi je vois ça ? ») | S1 |
+| S0 | Ce document, décision D-91 — **fait** | — |
+| S1 | Navigation à cinq entrées, design social (accueil = fil) — **fait (D-92)** ; la collection reste entière, dans la barre latérale et le Profil | S0 |
+| S2 | Collection épurée : gradation retirée de l'interface (données conservées), fiche d'ajout réduite — **fait (gradation)** | S0 |
+| S3 | Vitrine 360 (objet 3D, publication) et étagère du profil — **fait** (étagère : S1) | S1 |
+| S4 | `ranking-core` (classement, diversité, anti-spoiler, « Pourquoi je vois ça ? ») — **fait**, branché sur le fil en S1 | S1 |
 | S5 | Profil social (grille, étagère, rang, réglages privés) | S3 |
 | S6 | Directs verticaux (sur le studio de direct existant) | S1 ; la diffusion réelle exige un serveur audio et vidéo |
 | S7 | Mercredi des sorties, Duel, Chasse, Carte de collectionneur | S4, S5 |

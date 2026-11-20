@@ -362,8 +362,8 @@ const waitForCdp = async () => {
         const snapBefore = KEYS.map(k => localStorage.getItem(k)).join('|');
         // Actions courantes de l'app : vérification, rendu de la collection, rafraîchissement des boutons
         P.checkDataIntegrity && P.checkDataIntegrity();
-        document.getElementById('mobReleases').click();
-        document.getElementById('mobSingles').click();
+        document.getElementById('mobDiscover').click();
+        document.getElementById('mobProfile').click();
         await new Promise(res => setTimeout(res, 300));
         r.dataPreserved = (await tx('readonly', st => st.count())) === countBefore && KEYS.map(k => localStorage.getItem(k)).join('|') === snapBefore;
         r.inBackup = JSON.stringify(P.readStoredDigitalData().bookmarks) === seed.panel_bookmarks && P.readStoredDigitalData().readingPositions['t8-rec'] === 3;
@@ -4082,10 +4082,10 @@ const waitForCdp = async () => {
           r.m4 = o('single', 'IDW Publishing') === null && o('single', 'Dark Horse') === null && o('tpb', 'Glénat') === null && o('tpb', 'Delcourt') === null;
           r.rules = Rl.scopeRules().map(x => x.id).join() === 'manga,manhwa,bd,other'; // D-60 : éditeurs nommés hors comics US/FR masqués
           // Navigation
-          const explorerLbl = document.getElementById('navExplorerLabel');
-          const btns = [...document.querySelectorAll('#navSinglesBlock .nav-btn')].map(b => b.id);
-          r.explorerSection = !!explorerLbl && btns.indexOf('navExplorer') < btns.indexOf('navAllSingles') && btns.indexOf('navSinglesReleases') < btns.indexOf('navAllSingles') && btns.includes('navSinglesPullList');
-          r.labels = /Accueil Explorer/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull list/.test(document.getElementById('navSinglesPullList').textContent);
+          const social = [...document.querySelectorAll('#navSinglesBlock .nav-social .nav-btn')].map(b => b.id);
+          const coll = [...document.querySelectorAll('#navSinglesBlock nav[aria-label="Ma collection"] .nav-btn')].map(b => b.id);
+          r.explorerSection = social.join() === 'navSinglesCommunity,navExplorer,navPublish,navLive,navProfile' && !!document.getElementById('navCollectionLabel') && coll.includes('navAllSingles') && coll.includes('navSinglesReleases') && coll.includes('navSinglesPullList');
+          r.labels = /Découvrir/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull list/.test(document.getElementById('navSinglesPullList').textContent);
           r.badgeOnPullList = !!document.querySelector('#navSinglesPullList #badgePullCount') && !document.querySelector('#navSinglesReleases .nav-badge');
           document.getElementById('navSinglesPullList').click(); await wait(150);
           r.pullListView = !document.getElementById('singlesReleasesView').hidden && cb.checked === true && document.getElementById('navSinglesPullList').classList.contains('active') && !document.getElementById('navSinglesReleases').classList.contains('active');
@@ -4094,10 +4094,10 @@ const waitForCdp = async () => {
           document.getElementById('navExplorer').click(); await wait(300);
           r.explorerView = !document.getElementById('singlesExplorerView').hidden && document.getElementById('navExplorer').classList.contains('active');
           const dock = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')].map(b => b.id);
-          r.dock = dock.join() === 'mobSingles,mobReleases,mobScan,mobCommunity,mobExplorer';
-          r.dockActive = document.getElementById('mobExplorer').classList.contains('active');
+          r.dock = dock.join() === 'mobHome,mobDiscover,mobPublish,mobLive,mobProfile';
+          r.dockActive = document.getElementById('mobDiscover').classList.contains('active');
           document.getElementById('navAllSingles').click(); await wait(150);
-          r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobExplorer').classList.contains('active');
+          r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobDiscover').classList.contains('active') && document.getElementById('mobProfile').classList.contains('active');
           // Liens profonds conservés
           r.deepLink = (await P.explorer.open('home')) === 'home';
           document.getElementById('navAllSingles').click(); await wait(100);
@@ -5073,7 +5073,10 @@ const waitForCdp = async () => {
           // 2. Fil : studio de planches compact dès qu'il y a une publication, auteur « Vous »
           localStorage.setItem('panel_stories_v1', JSON.stringify({ version: 1, stories: [{ id: 'st_fx63', series: 'Fixture Héros', issue: '#4', publisher: 'Fictif', rating: 4, review: 'Avis fictif.', readAt: '2026-11-15', style: 'marvel', createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }] }));
           document.querySelector('#communityHead [data-cm-tab="feed"]').click(); await wait(250);
-          r.compact = !!document.querySelector('.pl-studio.is-compact details.pl-how') && /Nouvelle planche/.test(document.querySelector('.pl-studio h3').textContent);
+          r.compact = !document.querySelector('#communityDashboard .pl-studio') && !!document.querySelector('#communityDashboard .hm-seg');
+          document.getElementById('navPublish').click(); await wait(200);
+          r.compact = r.compact && !!document.querySelector('#publishSheet.open [data-tpl="pull"]');
+          document.querySelector('#publishSheet [data-close]').click(); await wait(150);
           r.author = /Vous/.test(document.querySelector('#communityDashboard .igp').textContent);
           keys.forEach(k => localStorage.removeItem(k));
           r.gc = (await P.live.gc()) === 3 && (await P.live.pageCount()) === 0;
@@ -5300,7 +5303,7 @@ const waitForCdp = async () => {
           r.pull = p.cur.length === 1 && p.cur[0] === 'navSinglesPullList' && p.h === 'Pull list';
           const c = document.getElementById('releasesPullOnly'); c.checked = false; c.dispatchEvent(new Event('change')); await wait(250);
           r.pullSync = document.getElementById('navSinglesReleases').getAttribute('aria-current') === 'page' && !document.getElementById('navSinglesPullList').hasAttribute('aria-current') && document.getElementById('mainTitleHeading').textContent === 'Calendrier';
-          r.dock = document.getElementById('mobReleases').getAttribute('aria-current') === 'page' && document.querySelectorAll('[id^="mob"][aria-current]').length === 1;
+          r.dock = document.getElementById('mobDiscover').getAttribute('aria-current') === 'page' && document.querySelectorAll('[id^="mob"][aria-current]').length === 1;
           r.buttonsKeepRole = document.querySelectorAll('button[role="listitem"]').length === 0 && (!document.querySelector('.rel-up') || document.querySelector('.rel-up').getAttribute('role') === 'group');
         } catch (e) { r.error = String(e && e.message || e); }
         finally {
@@ -5352,7 +5355,7 @@ const waitForCdp = async () => {
         const reach = x => { const d = x.closest('details:not([open])'); return (!d || (x.tagName === 'SUMMARY' && x.parentElement === d && !d.parentElement.closest('details:not([open])'))) && x.getClientRects().length > 0 && getComputedStyle(x).visibility !== 'hidden'; };
         try {
           const dlg = {};
-          for (const [btnId, modalId] of [['openSettingsBtnTop', 'settingsModal'], ['navImportCsv', 'csvImportModal']]) {
+          for (const [btnId, modalId] of [['openSettingsBtnTop', 'settingsModal'], ['navPublish', 'publishSheet']]) {
             const o = {}, opener = document.getElementById(btnId);
             opener.focus(); opener.click(); await wait(250);
             const m = document.getElementById(modalId), box = m.querySelector('[role="dialog"]');
@@ -5426,6 +5429,74 @@ const waitForCdp = async () => {
       console.log('Résultat Test 71:', JSON.stringify(t71));
       testResults.push({ test: 'Virage réseau social (D-91) : Vitrine 360 (dialogue nommé, recto, dos neutre jamais inventé, tranche, clavier, focus rendu), « Voir en 3D » dans la fiche, état en mots simples, classement « Pour toi » avec anti-spoiler',
         ok: !!t71 && !t71.error && ['opened', 'faces', 'noInventedBack', 'back', 'keyboard', 'closed', 'inspectorButton', 'simpleCondition', 'ranking', 'dataUntouched'].every(k => t71[k] === true) });
+
+      // ==========================================
+      // TEST 72 : Navigation sociale (lot S1, D-92) — Accueil, Découvrir, Publier, Directs, Profil ; fil classé ; collection dans le Profil
+      // ==========================================
+      console.log('\n[TEST 72] Navigation sociale, fil Pour toi / Abonnements, collection dans le profil...');
+      const t72 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const fp0 = await P.backup.fingerprint('collection');
+        const s0 = localStorage.getItem('panel_stories_v1');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const cur = () => [...document.querySelectorAll('#navSinglesBlock [aria-current="page"]')].map(b => b.id).join();
+        const dockOn = () => [...document.querySelectorAll('.mobile-dock [aria-current="page"]')].map(b => b.id).join();
+        try {
+          const now = Date.now(), iso = ms => new Date(now - ms).toISOString();
+          P.setSinglesInMemoryForTest([1, 2, 3, 4, 5].map(i => ({ id: 'fx72_' + i, series: 'Fixture Saga', issue: '#' + i, year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, addedAt: iso(i * 1000), coverUrl: '' }))
+            .concat([{ id: 'fx72_w', series: 'Fixture Voulu', issue: '#1', year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: true, addedAt: iso(9000), coverUrl: '' }]));
+          localStorage.setItem('panel_stories_v1', JSON.stringify({ version: 1, stories: [
+            { id: 'st72a', series: 'Fixture Saga', issue: '#1', publisher: 'Fictif', rating: 4, review: 'Avis fictif A.', readAt: '2026-11-10', style: 'marvel', createdAt: iso(2 * 36e5), updatedAt: iso(2 * 36e5) },
+            { id: 'st72b', series: 'Sans Lien', issue: '#9', publisher: 'Autre', rating: 3, review: 'Avis fictif B.', readAt: '2026-11-11', style: 'marvel', createdAt: iso(1 * 36e5), updatedAt: iso(1 * 36e5) }] }));
+          // Accueil : entrée active, titre, barre du bas, sélecteur Pour toi / Abonnements
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          const seg = [...document.querySelectorAll('#communityDashboard .hm-seg [data-ig-mode]')];
+          r.home = cur() === 'navSinglesCommunity' && dockOn() === 'mobHome' && document.title === 'Accueil · Panel' && seg.map(b => b.textContent).join('|') === 'Pour toi|Abonnements' && seg[0].getAttribute('aria-selected') === 'true';
+          const order = () => [...document.querySelectorAll('#communityDashboard .igp')].map(a => a.dataset.igp).join();
+          // Pour toi : le numéro lié à la collection passe devant le plus récent ; Abonnements : ordre de publication
+          r.forYou = order() === 's:st72a,s:st72b';
+          const whyBtn = document.querySelector('#communityDashboard .igp[data-igp="s:st72a"] [data-igp-why]');
+          whyBtn.click(); await wait(100);
+          r.why = /Lié à ce que tu lis ou collectionnes/.test(document.getElementById('toastPopup').textContent);
+          document.querySelector('#communityDashboard [data-ig-mode="following"]').click(); await wait(200);
+          r.following = order() === 's:st72b,s:st72a' && /ne suivez encore personne/.test(document.querySelector('#communityDashboard .hm-note').textContent) && !document.querySelector('#communityDashboard .fy');
+          document.querySelector('#communityDashboard [data-ig-mode="forYou"]').click(); await wait(150);
+          // Accueil épuré : pas de studio quand le fil a des publications, pas d'onglets ni d'Importer en double
+          r.declutter = !document.querySelector('#communityDashboard .pl-studio') && getComputedStyle(document.querySelector('#communityHead .cm-tabs')).display === 'none' && getComputedStyle(document.getElementById('importModalOpenBtn')).display === 'none';
+          // Directs
+          document.getElementById('navLive').click(); await wait(250);
+          r.live = cur() === 'navLive' && dockOn() === 'mobLive' && document.title === 'Directs · Panel';
+          // Profil : la collection reste entière, avec son étagère et l'accès à toutes ses vues
+          document.getElementById('navProfile').click(); await wait(400);
+          const pc = document.getElementById('profileCollection');
+          r.profile = cur() === 'navProfile' && dockOn() === 'mobProfile' && document.title === 'Profil · Panel' && !!pc && pc.querySelectorAll('.pfc-cover').length === 5 &&
+            ['collection', 'series', 'pull', 'releases', 'wishlist', 'reading', 'stats', 'finances'].every(k => !!pc.querySelector('[data-pfc-go="' + k + '"]'));
+          pc.querySelector('[data-pfc-go="wishlist"]').click(); await wait(250);
+          r.toCollection = cur() === 'navSinglesWishlist' && dockOn() === 'mobProfile' && !document.getElementById('singlesCollectionView').hidden;
+          // Publier : une seule feuille, publications et ajouts à la collection
+          const opener = document.getElementById('navPublish'); opener.focus(); opener.click(); await wait(250);
+          const sh = document.getElementById('publishSheet');
+          r.publish = sh.classList.contains('open') && sh.querySelector('[role="dialog"]').getAttribute('aria-labelledby') === 'publishSheetTitle' &&
+            ['story', 'v3d', 'live', 'scan', 'cover', 'manual', 'import'].every(k => !!sh.querySelector('[data-pub="' + k + '"]')) && !!sh.querySelector('[data-tpl]');
+          document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(200);
+          r.publishClosed = !sh.classList.contains('open') && document.activeElement === opener;
+          // Barre du bas : Publier ouvre la même feuille
+          document.getElementById('mobPublish').click(); await wait(200);
+          r.dockPublish = sh.classList.contains('open');
+          sh.querySelector('[data-close]').click(); await wait(150);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          const sh = document.getElementById('publishSheet'); if (sh) sh.classList.remove('open');
+          if (s0 === null) localStorage.removeItem('panel_stories_v1'); else localStorage.setItem('panel_stories_v1', s0);
+          P.setSinglesInMemoryForTest(prev);
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && localStorage.getItem('panel_stories_v1') === s0;
+        return r;
+      })()`);
+      console.log('Résultat Test 72:', JSON.stringify(t72));
+      testResults.push({ test: 'Navigation sociale (lot S1, D-92) : cinq entrées (Accueil, Découvrir, Publier, Directs, Profil), fil « Pour toi » classé et « Abonnements » chronologique, « Pourquoi je vois ça ? », Accueil épuré, collection gardée dans le Profil, feuille Publier unique',
+        ok: !!t72 && !t72.error && ['home', 'forYou', 'why', 'following', 'declutter', 'live', 'profile', 'toCollection', 'publish', 'publishClosed', 'dockPublish', 'dataUntouched'].every(k => t72[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
