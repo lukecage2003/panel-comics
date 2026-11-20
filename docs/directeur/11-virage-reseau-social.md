@@ -101,7 +101,7 @@ Le module est pur (`domains/community/ranking-core.js`), testé, et calcule tout
 | S2 | Collection épurée : gradation retirée de l'interface (données conservées), fiche d'ajout réduite — **fait (gradation)** | S0 |
 | S3 | Vitrine 360 (objet 3D, publication) et étagère du profil — **fait** (étagère : S1) | S1 |
 | S4 | `ranking-core` (classement, diversité, anti-spoiler, « Pourquoi je vois ça ? ») — **fait**, branché sur le fil en S1 | S1 |
-| S5 | Profil social (grille, étagère, rang, réglages privés) | S3 |
+| S5 | Profil social (grille, étagère, rang, réglages privés) — **fait (D-93)** : étagère 3D, réglages publics, aperçu visiteur | S3 |
 | S6 | Directs verticaux (sur le studio de direct existant) | S1 ; la diffusion réelle exige un serveur audio et vidéo |
 | S7 | Mercredi des sorties, Duel, Chasse, Carte de collectionneur | S4, S5 |
 | S8 | Comptes en ligne et contenu des autres (préproduction Supabase) | Accord de l'utilisateur, CGU, modération |

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-Jyb56WyDNPzx7QtgjlwXVp8Dt9fO1nfmCw7Gh0PLyBE=' 'sha256-tLJmZKe/EZ5aiVX7vIqYTaRZuJxLrnPuLas4q+lmiPw=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-PiN1PvhXX271vmnyA+rH9PgDqvDFdqrQmY3OzTbXLBc=' 'sha256-9heW2kYJA07WJD90yK5FOU3f7Y+KnJx/xD2JdhHkbWE=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3331,8 +3331,50 @@
     @media (hover: hover) { .pub-btn:hover { border-color: var(--accent, #FFD400); } }
     .pub-sheet .pl-templates { margin-top: 8px; }
     .pfc { margin: 16px 0 20px; }
+    /* Lot S5 (D-93) : étagère 3D, réglages publics, aperçu visiteur */
+    .sh3 { --wood: #6b4a2b; --wood2: #3e2a17; display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 3px; row-gap: 20px; padding: 8px 12px 12px; margin-top: 10px; perspective: 900px;
+      background: repeating-linear-gradient(to bottom, transparent 0 136px, var(--wood) 136px 140px, var(--wood2) 140px 148px); border-radius: 6px; }
+    .sh3-book { position: relative; flex: 0 0 auto; width: var(--w, 26px); height: 128px; padding: 0; border: 0; background: none; color: #fff; cursor: pointer; transform-style: preserve-3d; transition: width .35s cubic-bezier(.2,.7,.2,1), transform .25s; font: inherit; }
+    .sh3-book:nth-child(7n+3) { height: 120px; } .sh3-book:nth-child(5n+2) { height: 124px; }
+    .sh3-spine { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 7px 0 6px; overflow: hidden; border-radius: 2px 2px 1px 1px;
+      background: linear-gradient(90deg, rgba(0,0,0,.4), transparent 22%, rgba(255,255,255,.16) 48%, transparent 72%, rgba(0,0,0,.45)), color-mix(in srgb, var(--c, #7C5CFF) 72%, #000); box-shadow: inset 0 3px 0 color-mix(in srgb, var(--c, #7C5CFF) 60%, #fff), inset 0 -3px 0 rgba(0,0,0,.35); transition: opacity .2s; }
+    .sh3-spine b { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10.5px; font-weight: 800; letter-spacing: .02em; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-height: 92px; text-shadow: 0 1px 1px rgba(0,0,0,.6); }
+    .sh3-spine em { font-style: normal; font-size: 9.5px; font-weight: 800; background: rgba(0,0,0,.35); border-radius: 3px; padding: 1px 2px; }
+    .sh3-cover { position: absolute; inset: 0; width: 85px; opacity: 0; transform-origin: left center; transform: rotateY(85deg); transition: transform .4s cubic-bezier(.2,.7,.2,1), opacity .2s; border-radius: 2px; overflow: hidden; box-shadow: 0 10px 22px rgba(0,0,0,.5); pointer-events: none; }
+    .sh3-cover img, .sh3-cover .pl-face { width: 100%; height: 100%; object-fit: cover; display: flex; }
+    @media (hover: hover) { button.sh3-book:hover { transform: translateY(-8px); } }
+    button.sh3-book:focus-visible { transform: translateY(-8px); }
+    .sh3-book.is-out { width: 85px; transform: translateY(-10px) translateZ(24px); z-index: 2; }
+    .sh3-book.is-out .sh3-spine { opacity: 0; }
+    .sh3-book.is-out .sh3-cover { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) { .sh3-book, .sh3-cover, .sh3-spine { transition: none; } }
+    .sh3-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line, #333); border-radius: 12px; background: var(--bg-card, transparent); }
+    .sh3-bar b { font-size: 14px; } .sh3-acts { display: flex; gap: 6px; flex-wrap: wrap; }
+    .sh3-hint { font-size: 12.5px; color: var(--ink-dim, inherit); margin: 6px 2px 0; }
+    .pf-more { margin: 18px 0; border: 1px solid var(--line, #333); border-radius: 12px; padding: 0 14px; }
+    .pf-more > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 52px; cursor: pointer; font-weight: 800; list-style: none; }
+    .pf-more > summary::-webkit-details-marker { display: none; }
+    .pf-more > summary::after { content: '+'; font-size: 20px; color: var(--ink-dim, inherit); } .pf-more[open] > summary::after { content: '–'; }
+    .pf-more > summary small { margin-left: auto; color: var(--ink-dim, inherit); font-weight: 600; }
+    .pfp { margin: 18px 0 24px; }
+    .pfp-list { display: grid; gap: 2px; margin-top: 8px; border: 1px solid var(--line, #333); border-radius: 12px; overflow: hidden; }
+    .pfp-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; min-height: 48px; background: var(--bg-card, transparent); cursor: pointer; font-size: 14px; }
+    .pfp-switch { appearance: none; -webkit-appearance: none; flex: 0 0 auto; width: 44px; height: 26px; border-radius: 99px; background: var(--line, #444); position: relative; cursor: pointer; transition: background .2s; margin: 0; }
+    .pfp-switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: transform .2s; }
+    .pfp-switch:checked { background: var(--accent, #FFD400); } .pfp-switch:checked::after { transform: translateX(18px); background: #111; }
+    @media (prefers-reduced-motion: reduce) { .pfp-switch, .pfp-switch::after { transition: none; } }
+    .pfp-never { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--ink-dim, inherit); margin: 10px 2px 0; }
+    .pfp-never .ic { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 1px; }
+    .modal-box.pfv { display: block; max-width: 560px; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
+    .pfv-banner { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; background: var(--tint-cyan, rgba(127,209,255,.12)); border-radius: 10px; padding: 8px 10px; margin: 6px 0 14px; }
+    .pfv-banner .ic { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 2px; }
+    .pfv-id { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
+    .pfv-av { flex: 0 0 72px; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 24px; color: #fff; background: var(--pf); box-shadow: 0 0 0 3px var(--bg-card, #111), 0 0 0 5px var(--pf); }
+    .pfv-id b { font-size: 18px; display: block; } .pfv-id small { color: var(--ink-dim, inherit); } .pfv-id p { margin: 6px 0 0; font-size: 14px; }
+    .pfv-rank, .pfv-tops { font-size: 13.5px; margin: 8px 0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .pfv-rank .ic { width: 16px; height: 16px; }
+    .pfv .ig-grid .ig-tile { aspect-ratio: 2 / 3; overflow: hidden; }
     .pfc-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .pfc-shelf { display: flex; gap: 10px; overflow-x: auto; padding: 10px 2px 14px; scroll-snap-type: x mandatory; border-bottom: 6px solid var(--line, #333); border-radius: 0 0 4px 4px; }
     .pfc-cover { flex: 0 0 auto; width: 84px; aspect-ratio: 2 / 3; padding: 0; border: 0; border-radius: 4px; overflow: hidden; cursor: pointer; scroll-snap-align: start; background: hsl(var(--c, 260) 30% 22%); box-shadow: 0 4px 10px rgba(0,0,0,.35); transition: transform .2s; }
     .pfc-cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
     @media (hover: hover) { .pfc-cover:hover { transform: translateY(-4px) rotate(-1deg); } }
@@ -7071,6 +7113,71 @@ const tune = (tuning, kind, name, value) => {
 };
 
 module.exports = { VERSION, WEIGHTS, PRIOR, HALF_LIFE_H, SPOILER_DAYS, RULES, LABELS, TOPIC_KINDS, norm, topicKeys, rank, explain, tune };
+  return Object.freeze(module.exports); })();
+  /* domains/community/profile-public.js */
+  out.profilePublic = (() => { const module = { exports: {} };
+'use strict';
+// Profil social (lot S5, D-93, docs/directeur/11-virage-reseau-social.md) : ce qu'un visiteur verra du profil.
+// Module pur : l'appelant fournit le profil, la collection et les publications ; la sortie ne contient QUE ce qui est permis.
+// Jamais publiés, quels que soient les réglages : finances (prix d'achat, valeurs, plus-values), emplacements et rangement,
+// notes privées, état détaillé, numéros d'exemplaire. Les publications ne sortent que si leur visibilité est « public ».
+
+const VERSION = 1;
+const FIELDS = Object.freeze([
+  { key: 'shelf', label: 'Mon étagère (les numéros, par la tranche)', def: true },
+  { key: 'counts', label: 'Nombre de numéros et de séries', def: true },
+  { key: 'reading', label: 'Nombre de numéros lus', def: true },
+  { key: 'trophies', label: 'Rang et trophées', def: true },
+  { key: 'tops', label: 'Mes tops (personnages et runs)', def: true },
+  { key: 'wishlist', label: 'Ma Wishlist', def: false }
+]);
+const NEVER = Object.freeze(['Finances, prix d\'achat et valeurs', 'Emplacements et rangement', 'Notes privées et état détaillé']);
+const SHELF_MAX = 36;
+
+const defaults = () => FIELDS.reduce((o, f) => { o[f.key] = f.def; return o; }, {});
+const sanitize = prefs => {
+  const out = defaults();
+  if (prefs && typeof prefs === 'object') FIELDS.forEach(f => { if (typeof prefs[f.key] === 'boolean') out[f.key] = prefs[f.key]; });
+  return out;
+};
+
+const str = (v, max) => String(v == null ? '' : v).slice(0, max);
+const safeUrl = u => (/^https:\/\//i.test(String(u || '')) || /^data:image\/(png|jpe?g|webp|gif);base64,/i.test(String(u || '')) ? String(u) : '');
+// Un numéro tel qu'il peut être montré : titre, numéro, éditeur, variante, couverture. Rien d'autre.
+const light = c => ({ series: str(c && c.series, 120), issue: str(c && c.issue, 20), publisher: str(c && c.publisher, 80), variant: str(c && c.variant, 80), coverUrl: safeUrl(c && c.coverUrl) });
+
+const normKey = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/^(the|le|la|les)\s+/, '').trim();
+const issueNum = v => { const m = String(v || '').match(/-?\d+(?:[.,]\d+)?/); return m ? parseFloat(m[0].replace(',', '.')) : Infinity; };
+
+// Étagère : les derniers numéros ajoutés (au plus max), rangés comme sur une vraie étagère (série, puis numéro), sans doublon.
+const shelfOrder = (copies, max = SHELF_MAX) => {
+  const seen = new Set();
+  const recent = (Array.isArray(copies) ? copies : []).filter(c => c && c.series)
+    .slice().sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || '')))
+    .filter(c => { const k = normKey(c.series) + '#' + String(c.issue || '').trim() + '#' + normKey(c.variant); if (seen.has(k)) return false; seen.add(k); return true; })
+    .slice(0, Math.max(0, max));
+  return recent.sort((a, b) => normKey(a.series).localeCompare(normKey(b.series), 'fr') || issueNum(a.issue) - issueNum(b.issue) || String(a.issue).localeCompare(String(b.issue)))
+    .map(c => Object.assign({ id: str(c.id, 80) }, light(c)));
+};
+
+// Vue publique du profil. input : { profile, copies, wishlist, readCount, rank, trophiesUnlocked, posts }
+const publicView = (input, prefs) => {
+  const p = sanitize(prefs), i = input || {}, pr = i.profile || null;
+  const copies = Array.isArray(i.copies) ? i.copies : [];
+  const out = { version: VERSION, prefs: p, never: NEVER.slice() };
+  out.profile = pr ? { handle: str(pr.handle, 24), displayName: str(pr.displayName, 40), bio: str(pr.bio, 160), favorite: str(pr.favorite, 60), color: /^#[0-9a-f]{6}$/i.test(pr.color || '') ? pr.color : '#7C5CFF' } : null;
+  if (p.tops && pr) { out.topCharacters = (pr.topCharacters || []).filter(Boolean).slice(0, 3).map(x => str(x, 60)); out.topRuns = (pr.topRuns || []).filter(Boolean).slice(0, 3).map(x => str(x, 60)); }
+  if (p.counts) out.counts = { copies: copies.length, series: new Set(copies.map(c => normKey(c && c.series)).filter(Boolean)).size };
+  if (p.reading) out.read = Math.max(0, Number(i.readCount) || 0);
+  if (p.shelf) out.shelf = shelfOrder(copies).map(c => { const o = Object.assign({}, c); delete o.id; return o; });
+  if (p.wishlist) out.wishlist = (Array.isArray(i.wishlist) ? i.wishlist : []).slice(0, 60).map(light);
+  if (p.trophies && i.rank) out.rank = { name: str(i.rank.name, 60), rank: Number(i.rank.rank) || 0, trophies: Math.max(0, Number(i.trophiesUnlocked) || 0) };
+  out.posts = (Array.isArray(i.posts) ? i.posts : []).filter(x => x && x.visibility === 'public')
+    .map(x => ({ id: str(x.id, 80), kind: str(x.kind, 20), text: str(x.text, 2200), at: str(x.at, 40), media: (x.media || []).slice(0, 10).map(light) }));
+  return out;
+};
+
+module.exports = { VERSION, FIELDS, NEVER, SHELF_MAX, defaults, sanitize, light, shelfOrder, publicView };
   return Object.freeze(module.exports); })();
   /* domains/source/claims-core.js */
   out.sourceClaims = (() => { const module = { exports: {} };
@@ -18195,10 +18302,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
-      '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfRunsHtml(r.runs || []) + pfLadderHtml(rk) + artefactsHtml(ar) +
+      '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfRunsHtml(r.runs || []) + '<details class="pf-more"><summary><span>Rangs, artefacts et trophées</span><small>' + r.trophies.filter(t => t.tier).length + ' trophée' + (r.trophies.filter(t => t.tier).length > 1 ? 's' : '') + ' · ' + ar.unlocked + ' artefact' + (ar.unlocked > 1 ? 's' : '') + '</small></summary>' +
+      pfLadderHtml(rk) + artefactsHtml(ar) +
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
-      '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p>';
+      '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p></details>' +
+      pfPublicHtml();
     const f = host.querySelector('#profileForm');
     if (f) f.onsubmit = ev => {
       ev.preventDefault();
@@ -18899,16 +19008,91 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.classList.add('open');
     return box;
   };
+  // ── Lot S5 (D-93) : étagère 3D, réglages « Ce que les autres verront », aperçu visiteur
+  // L'étagère montre des numéros par la tranche ; un appui en sort un (couverture), puis « Voir en 3D » ou « Ouvrir la fiche ».
+  const sh3Spine = s => {
+    const ser = String(s.series || '?'), iss = String(s.issue || '').trim().replace(/^#?/, '#');
+    let h = 0; for (const ch of ser + iss) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+    return { w: 24 + (h % 9), title: ser.length > 22 ? ser.slice(0, 21) + '…' : ser, iss: iss === '#' ? '' : iss };
+  };
+  const sh3Html = (list, interactive) => '<div class="sh3' + (interactive ? '' : ' is-static') + '"' + (interactive ? ' role="group" aria-label="Étagère : ' + list.length + ' numéro' + (list.length > 1 ? 's' : '') + '"' : ' aria-hidden="true"') + '>' + list.map(s => {
+    const sp = sh3Spine(s), tag = interactive ? 'button' : 'span';
+    return '<' + tag + (interactive ? ' type="button" aria-pressed="false" data-sh3="' + escapeHtml(s.id || '') + '" aria-label="' + escapeHtml([s.series, s.issue].filter(Boolean).join(' ')) + '"' : '') + ' class="sh3-book" style="--c:' + cboxHue(s) + ';--w:' + sp.w + 'px">' +
+      '<span class="sh3-spine"><b>' + escapeHtml(sp.title) + '</b>' + (sp.iss ? '<em>' + escapeHtml(sp.iss) + '</em>' : '') + '</span>' +
+      (interactive ? '<span class="sh3-cover">' + plancheFace(s) + '</span>' : '') + '</' + tag + '>';
+  }).join('') + '</div>';
+  const sh3Wire = root => {
+    const bar = root.querySelector('#sh3Bar'), title = root.querySelector('#sh3Title');
+    if (!bar) return;
+    let cur = null;
+    const books = [...root.querySelectorAll('[data-sh3]')];
+    const set = b => {
+      books.forEach(x => { const on = x === b; x.classList.toggle('is-out', on); x.setAttribute('aria-pressed', String(on)); });
+      cur = b ? physicalSingles.find(x => x.id === b.dataset.sh3) || null : null;
+      bar.hidden = !cur;
+      if (cur) title.textContent = [cur.series, cur.issue].filter(Boolean).join(' ') + (cur.variant && !/^cover a$/i.test(cur.variant) ? ' · ' + cur.variant : '');
+    };
+    books.forEach(b => {
+      b.onclick = () => set(b.classList.contains('is-out') ? null : b);
+      b.addEventListener('keydown', e => { if (e.key === 'Escape' && b.classList.contains('is-out')) { e.stopPropagation(); set(null); } });
+    });
+    bar.querySelector('[data-sh3-3d]').onclick = () => { if (cur) openVitrine3d(cur); };
+    bar.querySelector('[data-sh3-open]').onclick = () => { if (cur) openSingleInspector(cur); };
+  };
+  const PFP_KEY = 'panel_profile_public_v1';
+  const pfpLoad = () => { try { return window.PanelDomains.profilePublic.sanitize(JSON.parse(localStorage.getItem(PFP_KEY) || 'null')); } catch (_) { return window.PanelDomains.profilePublic.defaults(); } };
+  const pfpSave = v => { try { localStorage.setItem(PFP_KEY, JSON.stringify(window.PanelDomains.profilePublic.sanitize(v))); return true; } catch (_) { return false; } };
+  const pfPublicHtml = () => {
+    const PP = window.PanelDomains.profilePublic, pr = pfpLoad();
+    return '<section class="pfp" id="profilePublic" aria-labelledby="pfpTitle"><div class="pfc-head"><h3 class="pf-section" id="pfpTitle">Ce que les autres verront</h3><button type="button" class="btn secondary rel-mini" data-pfp-preview>' + igIcon('ic-eye') + ' Voir comme un visiteur</button></div>' +
+      '<div class="pfp-list">' + PP.FIELDS.map(f => '<label class="pfp-row"><span>' + escapeHtml(f.label) + '</span><input type="checkbox" role="switch" class="pfp-switch" data-pfp="' + f.key + '"' + (pr[f.key] ? ' checked' : '') + '></label>').join('') + '</div>' +
+      '<p class="pfp-never">' + igIcon('ic-shield') + ' <span><b>Jamais publié :</b> ' + PP.NEVER.map(escapeHtml).join(', ').toLowerCase().replace(/^./, c => c.toUpperCase()) + '. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n\'est en ligne avant l\'arrivée des comptes.</span></p></section>';
+  };
+  const pfPublicView = () => {
+    const TC = window.PanelDomains.trophiesCore, owned = physicalSingles.filter(isOwned);
+    let rank = null, unlocked = 0;
+    try { const tr = TC.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); const rk = pfRank(owned, tr); rank = rk.rank; unlocked = tr.trophies.filter(x => x.tier).length; } catch (_) {}
+    const posts = window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories }).posts.map(x => ({ id: x.id, kind: x.kind, text: x.text, at: x.at, media: x.media, visibility: x.type === 'story' ? 'private' : x.visibility }));
+    return window.PanelDomains.profilePublic.publicView({ profile: profileLoad(), copies: owned, wishlist: physicalSingles.filter(s => s.isWishlist), readCount: owned.filter(rdReadOfCopy).length, rank, trophiesUnlocked: unlocked, posts }, pfpLoad());
+  };
+  const openProfilePreview = () => {
+    const v = pfPublicView(), pr = v.profile;
+    const box = bunModal('profilePreview');
+    const ini = pr ? (pr.displayName || pr.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
+    const stat = (n, l) => '<div class="ig-stat"><b>' + Number(n).toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
+    box.innerHTML = '<div class="modal-box pfv" role="dialog" aria-modal="true" aria-labelledby="pfvTitle">' +
+      '<div class="pub-head"><h3 id="pfvTitle">Aperçu visiteur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
+      '<p class="pfv-banner">' + igIcon('ic-info') + ' Ce profil n\'est pas en ligne : voici ce qu\'un visiteur verrait avec vos réglages actuels.</p>' +
+      '<div class="pfv-id" style="--pf:' + escapeHtml(pr ? pr.color : '#7C5CFF') + '"><span class="pfv-av">' + escapeHtml(ini) + '</span><div><b>' + escapeHtml(pr ? (pr.displayName || pr.handle) : 'Profil sans pseudo') + '</b>' + (pr ? '<small>@' + escapeHtml(pr.handle) + (pr.favorite ? ' · fan de ' + escapeHtml(pr.favorite) : '') + '</small>' : '<small>Créez votre profil pour choisir un pseudo.</small>') + (pr && pr.bio ? '<p>' + escapeHtml(pr.bio) + '</p>' : '') + '</div></div>' +
+      '<div class="ig-stats">' + stat(v.posts.length, 'publications') + (v.counts ? stat(v.counts.copies, 'numéros') + stat(v.counts.series, 'séries') : '') + (typeof v.read === 'number' ? stat(v.read, 'lus') : '') + '<div class="ig-stat is-soon"><b>—</b><small>abonnés</small></div></div>' +
+      (v.rank ? '<p class="pfv-rank">' + igIcon('ic-star') + ' Rang ' + v.rank.rank + ' · ' + escapeHtml(v.rank.name) + ' · ' + v.rank.trophies + ' trophée' + (v.rank.trophies > 1 ? 's' : '') + '</p>' : '') +
+      (v.topCharacters && v.topCharacters.length ? '<p class="pfv-tops"><b>Top personnages :</b> ' + v.topCharacters.map(escapeHtml).join(', ') + '</p>' : '') +
+      (v.topRuns && v.topRuns.length ? '<p class="pfv-tops"><b>Top runs :</b> ' + v.topRuns.map(escapeHtml).join(', ') + '</p>' : '') +
+      (v.shelf && v.shelf.length ? '<h4 class="pub-h">Étagère</h4>' + sh3Html(v.shelf, false) : '') +
+      '<h4 class="pub-h">Publications</h4>' + (v.posts.length ? '<div class="ig-grid">' + v.posts.map(x => '<span class="ig-tile">' + (x.media[0] ? plancheFace(x.media[0]) : '') + '</span>').join('') + '</div>' : '<p class="stat-sub">Aucune publication publique. Une planche devient visible quand vous choisissez « Public ».</p>') +
+      (v.wishlist ? '<h4 class="pub-h">Wishlist</h4>' + (v.wishlist.length ? '<p class="pfv-tops">' + v.wishlist.map(w => escapeHtml([w.series, w.issue].filter(Boolean).join(' '))).join(' · ') + '</p>' : '<p class="stat-sub">Wishlist vide.</p>') : '') +
+      '<p class="pfp-never">' + igIcon('ic-shield') + ' <span>Jamais visibles : finances, valeurs, emplacements, notes privées.</span></p></div>';
+    const close = () => box.classList.remove('open');
+    box.onclick = e => { if (e.target === box) close(); };
+    box.querySelectorAll('[data-close]').forEach(b => { b.onclick = close; });
+    box.classList.add('open');
+    return v;
+  };
+  const pfPublicWire = root => {
+    root.querySelectorAll('[data-pfp]').forEach(c => { c.onchange = () => { const v = pfpLoad(); v[c.dataset.pfp] = c.checked; if (!pfpSave(v)) { showToast('Impossible d\'enregistrer sur cet appareil.'); c.checked = !c.checked; } }; });
+    const b = root.querySelector('[data-pfp-preview]'); if (b) b.onclick = () => openProfilePreview();
+  };
   const renderCommunityProfile = () => { renderCommunityProfileBase(); try { pfCollectionMount(); } catch (_) {} };
-  // Profil : la collection reste au cœur (étagère des derniers numéros et accès à toutes les vues de la collection)
+  // Profil : la collection reste au cœur (étagère 3D des derniers numéros et accès à toutes les vues de la collection)
   const PFC_GO = { collection: 'navAllSingles', series: 'navSinglesSeries', pull: 'navSinglesPullList', releases: 'navSinglesReleases', wishlist: 'navSinglesWishlist', reading: 'navSinglesReading', stats: 'navSinglesStats', finances: 'navSinglesFinances' };
   const pfCollectionHtml = () => {
     const owned = physicalSingles.filter(isOwned), wish = physicalSingles.filter(s => s.isWishlist).length;
     const nSeries = new Set(owned.map(s => s.series).filter(Boolean)).size;
-    const recent = owned.slice().sort((a, b) => String(b.addedAt || '').localeCompare(String(a.addedAt || ''))).slice(0, 12);
     const go = (k, icon, label, n) => '<button type="button" class="pfc-go" data-pfc-go="' + k + '">' + igIcon(icon) + '<span>' + label + '</span>' + (n != null ? '<b>' + n.toLocaleString('fr-FR') + '</b>' : '') + '</button>';
     return '<section class="pfc" id="profileCollection" aria-labelledby="pfcTitle"><div class="pfc-head"><h3 class="pf-section" id="pfcTitle">Ma collection</h3><button type="button" class="btn secondary rel-mini" data-pfc-go="collection">Tout voir</button></div>' +
-      (recent.length ? '<div class="pfc-shelf" aria-label="Derniers numéros ajoutés">' + recent.map(s => '<button type="button" class="pfc-cover" data-pfc-open="' + escapeHtml(s.id) + '" aria-label="' + escapeHtml([s.series, s.issue].filter(Boolean).join(' ')) + '" style="--c:' + cboxHue(s) + '">' + coverImgTag(s) + '</button>').join('') + '</div>'
+      (owned.length ? sh3Html(window.PanelDomains.profilePublic.shelfOrder(owned), true) +
+          '<div class="sh3-bar" id="sh3Bar" hidden><b id="sh3Title"></b><span class="sh3-acts"><button type="button" class="btn rel-mini" data-sh3-3d>' + igIcon('ic-box') + ' Voir en 3D</button><button type="button" class="btn secondary rel-mini" data-sh3-open>Ouvrir la fiche</button></span></div>' +
+          '<p class="sh3-hint">Vos derniers numéros, rangés par la tranche. Touchez-en un pour le sortir de l\'étagère.</p>'
         : '<div class="notice-box" style="margin-top:8px">Votre collection est vide : « Publier », puis « Ajouter à ma collection ».</div>') +
       '<div class="pfc-links">' + go('collection', 'ic-books', 'Mes numéros', owned.length) + go('series', 'ic-layers', 'Séries', nSeries) + go('pull', 'ic-bookmark', 'Pull list') + go('releases', 'ic-calendar', 'Sorties') +
         go('wishlist', 'ic-heart', 'Wishlist', wish) + go('reading', 'ic-book', 'Lecture') + go('stats', 'ic-chart', 'Statistiques') + go('finances', 'ic-key', 'Finances (privé)') + '</div></section>';
@@ -18921,7 +19105,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (first) first.insertAdjacentHTML('afterend', pfCollectionHtml()); else host.insertAdjacentHTML('afterbegin', pfCollectionHtml());
     const sec = $('profileCollection');
     sec.querySelectorAll('[data-pfc-go]').forEach(b => { b.onclick = () => { const id = PFC_GO[b.dataset.pfcGo]; if ($(id)) $(id).click(); }; });
-    sec.querySelectorAll('[data-pfc-open]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.pfcOpen); if (it) openSingleInspector(it); }; });
+    sh3Wire(sec);
+    pfPublicWire(host);
   };
   // Fil classé (lot S1) : « Pour toi » passe par rankingCore (S4), « Abonnements » reste chronologique.
   // Tant que les comptes ne sont pas actifs, seules vos publications existent : aucune autre n'est simulée.
@@ -19525,6 +19710,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const COMMUNITY_API = Object.freeze({
     configured: false,
+    publicProfile: () => JSON.parse(JSON.stringify(pfPublicView())),
     copyOf: id => { const it = physicalSingles.find(x => x.id === id); return it ? commCopyOf(it) : null; },
     validate: commValidate,
     drafts: () => JSON.parse(JSON.stringify(commLoad().drafts)),

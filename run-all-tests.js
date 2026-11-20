@@ -5469,7 +5469,7 @@ const waitForCdp = async () => {
           // Profil : la collection reste entière, avec son étagère et l'accès à toutes ses vues
           document.getElementById('navProfile').click(); await wait(400);
           const pc = document.getElementById('profileCollection');
-          r.profile = cur() === 'navProfile' && dockOn() === 'mobProfile' && document.title === 'Profil · Panel' && !!pc && pc.querySelectorAll('.pfc-cover').length === 5 &&
+          r.profile = cur() === 'navProfile' && dockOn() === 'mobProfile' && document.title === 'Profil · Panel' && !!pc && pc.querySelectorAll('.sh3 [data-sh3]').length === 5 &&
             ['collection', 'series', 'pull', 'releases', 'wishlist', 'reading', 'stats', 'finances'].every(k => !!pc.querySelector('[data-pfc-go="' + k + '"]'));
           pc.querySelector('[data-pfc-go="wishlist"]').click(); await wait(250);
           r.toCollection = cur() === 'navSinglesWishlist' && dockOn() === 'mobProfile' && !document.getElementById('singlesCollectionView').hidden;
@@ -5497,6 +5497,65 @@ const waitForCdp = async () => {
       console.log('Résultat Test 72:', JSON.stringify(t72));
       testResults.push({ test: 'Navigation sociale (lot S1, D-92) : cinq entrées (Accueil, Découvrir, Publier, Directs, Profil), fil « Pour toi » classé et « Abonnements » chronologique, « Pourquoi je vois ça ? », Accueil épuré, collection gardée dans le Profil, feuille Publier unique',
         ok: !!t72 && !t72.error && ['home', 'forYou', 'why', 'following', 'declutter', 'live', 'profile', 'toCollection', 'publish', 'publishClosed', 'dockPublish', 'dataUntouched'].every(k => t72[k] === true) });
+
+      // ==========================================
+      // TEST 73 : Profil social (lot S5, D-93) — étagère 3D, réglages publics, aperçu visiteur, finances jamais publiées
+      // ==========================================
+      console.log('\n[TEST 73] Étagère 3D, ce que les autres verront, aperçu visiteur...');
+      const t73 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const fp0 = await P.backup.fingerprint('collection');
+        const k0 = localStorage.getItem('panel_profile_public_v1');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        try {
+          localStorage.removeItem('panel_profile_public_v1');
+          const now = Date.now();
+          P.setSinglesInMemoryForTest([1, 2, 3, 4].map(i => ({ id: 'fx73_' + i, series: 'Fixture Étagère', issue: '#' + i, year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, addedAt: new Date(now - i * 6e4).toISOString(), coverUrl: '', purchasePrice: 123.45, location: 'Boîte secrète 73', notes: 'note-privee-73' }))
+            .concat([{ id: 'fx73_w', series: 'Fixture Souhait', issue: '#9', year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: true, addedAt: new Date(now).toISOString(), coverUrl: '' }]));
+          document.getElementById('navProfile').click(); await wait(500);
+          const books = [...document.querySelectorAll('#profileCollection .sh3 [data-sh3]')];
+          r.shelf = books.length === 4 && books.map(b => b.getAttribute('aria-label')).join('|') === 'Fixture Étagère #1|Fixture Étagère #2|Fixture Étagère #3|Fixture Étagère #4' && books.every(b => b.getAttribute('aria-pressed') === 'false');
+          books[1].click(); await wait(100);
+          const bar = document.getElementById('sh3Bar');
+          r.pullOut = books[1].classList.contains('is-out') && books[1].getAttribute('aria-pressed') === 'true' && !bar.hidden && document.getElementById('sh3Title').textContent === 'Fixture Étagère #2';
+          bar.querySelector('[data-sh3-3d]').click(); await wait(200);
+          const v3 = document.getElementById('vitrine3dDialog');
+          r.vitrine = !!v3 && v3.classList.contains('open') && /Fixture Étagère #2/.test(v3.textContent);
+          if (v3) { v3.querySelector('[data-close]').click(); await wait(100); }
+          books[1].dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(50);
+          r.putBack = !books[1].classList.contains('is-out') && bar.hidden;
+          // Profil épuré : rangs, artefacts et trophées repliés
+          const more = document.querySelector('#communityProfile details.pf-more');
+          r.folded = !!more && !more.open && more.querySelectorAll('.tr-card').length > 0;
+          // Réglages publics : six interrupteurs, Wishlist coupée par défaut
+          const sw = [...document.querySelectorAll('#profilePublic [data-pfp]')];
+          r.switches = sw.length === 6 && sw.every(c => c.getAttribute('role') === 'switch') && document.querySelector('#profilePublic [data-pfp="wishlist"]').checked === false;
+          const v0 = P.community.publicProfile();
+          const txt0 = JSON.stringify(v0);
+          r.neverPublished = !/123\\.45|Boîte secrète 73|note-privee-73|purchasePrice|location/.test(txt0) && !('wishlist' in v0) && v0.counts.copies === 4 && v0.shelf.length === 4;
+          const ws = document.querySelector('#profilePublic [data-pfp="wishlist"]'); ws.checked = true; ws.dispatchEvent(new Event('change'));
+          const sh = document.querySelector('#profilePublic [data-pfp="shelf"]'); sh.checked = false; sh.dispatchEvent(new Event('change'));
+          const v1 = P.community.publicProfile();
+          r.toggles = v1.wishlist.length === 1 && v1.wishlist[0].series === 'Fixture Souhait' && !('shelf' in v1) && JSON.parse(localStorage.getItem('panel_profile_public_v1')).wishlist === true;
+          // Aperçu visiteur : dialogue nommé, pas d'étagère (coupée), Wishlist visible, rien de privé
+          const opener = document.querySelector('#profilePublic [data-pfp-preview]'); opener.focus(); opener.click(); await wait(250);
+          const pv = document.getElementById('profilePreview'), dlg = pv.querySelector('[role="dialog"]');
+          r.preview = pv.classList.contains('open') && dlg.getAttribute('aria-labelledby') === 'pfvTitle' && !pv.querySelector('.sh3') && /Fixture Souhait #9/.test(pv.textContent) && /pas en ligne/.test(pv.textContent) && !/123,45|123\\.45|Boîte secrète 73|note-privee-73/.test(pv.textContent);
+          document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true })); await wait(200);
+          r.previewClosed = !pv.classList.contains('open') && document.activeElement === opener;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          ['vitrine3dDialog', 'profilePreview'].forEach(id => { const b = document.getElementById(id); if (b) b.classList.remove('open'); });
+          if (k0 === null) localStorage.removeItem('panel_profile_public_v1'); else localStorage.setItem('panel_profile_public_v1', k0);
+          P.setSinglesInMemoryForTest(prev);
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && localStorage.getItem('panel_profile_public_v1') === k0;
+        return r;
+      })()`);
+      console.log('Résultat Test 73:', JSON.stringify(t73));
+      testResults.push({ test: 'Profil social (lot S5, D-93) : étagère 3D (tranches, sortie au toucher, « Voir en 3D », remise par Échap), trophées repliés, six réglages publics (Wishlist coupée par défaut), aperçu visiteur nommé, finances, emplacements et notes jamais publiés',
+        ok: !!t73 && !t73.error && ['shelf', 'pullOut', 'vitrine', 'putBack', 'folded', 'switches', 'neverPublished', 'toggles', 'preview', 'previewClosed', 'dataUntouched'].every(k => t73[k] === true) });
 
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
