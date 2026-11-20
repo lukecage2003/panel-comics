@@ -65,3 +65,4 @@ Sauvegardes : aucune nouvelle copie n'a été nécessaire. Les copies `*.backup.
   - **R1 finition** (D-56) : encadré « Dans Panel » sur l'exemplaire et le numéro, écran Catalogue commun (rattachements à trancher, fusion, historique, annulation).
   - **R2 Event Center v2** (D-57) : niveaux de lecture justifiés pour les 9 événements, ordre recommandé Panel versionné, progression par niveau, test 53.
   - **Suite Edge fiabilisée** (20/11/2026) : profil neuf à chaque exécution, minuteurs non ralentis, rechargement après blocage ; tests 12, 39, 61, 68 et 70 corrigés ; 69/69 d'un seul tenant.
+  - **Virage réseau social** (D-91, 20/11/2026) : direction écrite (Twitter, Instagram, TikTok ; collection en identité sociale), classement « Pour toi » transparent avec anti-spoiler (`ranking-core`), Vitrine 360, gradation retirée de l'interface, test 71.

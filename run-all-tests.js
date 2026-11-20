@@ -5386,6 +5386,47 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Accessibilité (F) : dialogues nommés et modaux, focus déplacé, Tab gardé, Échap ferme et rend le focus ; champs nommés ; libellés en français',
         ok: !!t70 && !t70.error && ['dialogs', 'labels', 'french', 'restored'].every(k => t70[k] === true) });
 
+      // ==========================================
+      // TEST 71 : Virage réseau social (D-91) — Vitrine 360, état en mots simples, classement « Pour toi »
+      // ==========================================
+      console.log('\n[TEST 71] Vitrine 360, état simplifié, classement...');
+      const t71 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, RK = window.PanelDomains.rankingCore;
+        const PX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+        const fp0 = await P.backup.fingerprint('collection');
+        try {
+          const opener = document.getElementById('navAllSingles'); opener.focus();
+          const h = P.vitrine3d.open({ series: 'Fixture 3D', issue: '#7', publisher: 'Fictif', coverUrl: PX });
+          await wait(150);
+          const box = document.getElementById('vitrine3dDialog'), dlg = box.querySelector('[role="dialog"]');
+          r.opened = box.classList.contains('open') && dlg.getAttribute('aria-modal') === 'true' && document.getElementById(dlg.getAttribute('aria-labelledby')).textContent === 'Fixture 3D #7';
+          r.faces = ['.v3d-front img', '.v3d-back', '.v3d-spine', '.v3d-edge'].every(s => !!box.querySelector(s)) && getComputedStyle(box.querySelector('.v3d-obj')).transformStyle === 'preserve-3d';
+          r.noInventedBack = /Dos non photographié/.test(box.querySelector('.v3d-back').textContent) && !box.querySelector('.v3d-back img');
+          h.goFace('back'); await wait(50);
+          r.back = Math.abs(((h.state().ry % 360) + 360) % 360 - 180) < 1 && box.querySelector('[data-v3d-face="back"]').getAttribute('aria-pressed') === 'true';
+          const stage = box.querySelector('[data-v3d-stage]'), ry0 = h.state().ry;
+          stage.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+          r.keyboard = Math.abs(h.state().ry - ry0 - 15) < 0.01 && stage.getAttribute('role') === 'img' && stage.tabIndex === 0;
+          box.querySelector('[data-close]').click(); await wait(80);
+          r.closed = !box.classList.contains('open') && document.activeElement === opener;
+          // Fiche : bouton « Voir en 3D »
+          r.inspectorButton = !!document.getElementById('inspect3dBtn') && /Voir en 3D/.test(document.getElementById('inspect3dBtn').textContent);
+          // État en mots simples, sans échelle de gradation ; les anciennes valeurs restent lisibles
+          const sel = document.getElementById('singleConditionSelect');
+          r.simpleCondition = [...sel.options].slice(0, 5).map(o => o.textContent).join('|') === 'État non renseigné|Comme neuf|Très bon état|Bon état|Usé' && !sel.querySelector('optgroup') && document.getElementById('singleGradingDetails').hidden;
+          // Classement : module présent, versionné, explications en français
+          const now = Date.parse('2026-11-20T12:00:00Z');
+          const rk = RK.rank([{ id: 'a', authorId: 'u1', kind: 'review', createdAt: '2026-11-20T10:00:00Z', issueRefs: [{ key: 'k', releaseDate: '2026-11-18' }], topics: { series: ['Saga'] } }, { id: 'b', authorId: 'u2', kind: 'photo', createdAt: '2026-11-19T10:00:00Z' }], { interests: { series: { Saga: 1 } } }, { now });
+          r.ranking = RK.VERSION === 1 && rk.items[0].post.id === 'a' && !!rk.items[0].spoiler && /Lié à ce que tu lis/.test(RK.explain(rk.items[0]));
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { const b = document.getElementById('vitrine3dDialog'); if (b) b.classList.remove('open'); }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      console.log('Résultat Test 71:', JSON.stringify(t71));
+      testResults.push({ test: 'Virage réseau social (D-91) : Vitrine 360 (dialogue nommé, recto, dos neutre jamais inventé, tranche, clavier, focus rendu), « Voir en 3D » dans la fiche, état en mots simples, classement « Pour toi » avec anti-spoiler',
+        ok: !!t71 && !t71.error && ['opened', 'faces', 'noInventedBack', 'back', 'keyboard', 'closed', 'inspectorButton', 'simpleCondition', 'ranking', 'dataUntouched'].every(k => t71[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
