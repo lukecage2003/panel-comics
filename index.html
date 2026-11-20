@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-PiN1PvhXX271vmnyA+rH9PgDqvDFdqrQmY3OzTbXLBc=' 'sha256-AbjdLVu/2bTDmDNBIQpEBcEiJNbeCvkisiGNchJ06/I=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-fhDQyRyfUDQvuSd1frqFXiwr6N8yYJIJ2oqUeXTxbAc=' 'sha256-oNb8SS51rftIG8E7LltnbOFiPjdLtW4TFjH43NPtp+E=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3424,6 +3424,43 @@
     .modal-box.pfv { display: block; max-width: 560px; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
     .pfv-banner { display: flex; gap: 8px; align-items: flex-start; font-size: 13px; background: var(--tint-cyan, rgba(127,209,255,.12)); border-radius: 10px; padding: 8px 10px; margin: 6px 0 14px; }
     .pfv-banner .ic { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 2px; }
+    /* Lot S7 (D-95) : Mercredi des sorties, Duel, Chasse, Carte de collectionneur */
+    .wed { margin: 12px 0 16px; padding: 14px; border-radius: 16px; border: 1px solid var(--line, #333); background: linear-gradient(135deg, rgba(255,212,0,.14), rgba(255,212,0,0) 60%), var(--bg-card, #111); }
+    .wed.is-today { border-color: #ffd400; box-shadow: 0 0 0 1px #ffd400 inset; }
+    .wed-head { display: flex; gap: 12px; align-items: center; }
+    .wed-head h3 { margin: 0; font-size: 16px; }
+    .wed-head p { margin: 2px 0 0; font-size: 13px; opacity: .8; }
+    .wed-day { flex: 0 0 52px; height: 56px; border-radius: 12px; background: #ffd400; color: #141414; display: grid; place-items: center; line-height: 1; padding: 6px 0; }
+    .wed-day small { font-size: 10px; font-weight: 800; letter-spacing: .08em; }
+    .wed-day b { font-size: 24px; font-weight: 900; }
+    .wed-covers { display: flex; gap: 8px; margin: 12px 0; overflow-x: auto; scrollbar-width: none; }
+    .wed-cover { flex: 0 0 64px; aspect-ratio: 2 / 3; border-radius: 6px; overflow: hidden; background: #222; }
+    .wed-cover img, .wed-cover .pl-face { width: 100%; height: 100%; object-fit: cover; }
+    .wed-more { flex: 0 0 64px; aspect-ratio: 2 / 3; border-radius: 6px; display: grid; place-items: center; font-weight: 800; background: rgba(255,255,255,.08); }
+    .wed-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .wed-actions .btn { font-size: 13px; }
+    .igp-media.is-duel .igp-track { display: grid; grid-template-columns: 1fr 1fr; gap: 3px; overflow: hidden; }
+    .igp-media.is-duel .igp-slide { flex: none; }
+    .igp-vs { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%) rotate(-8deg); background: #e0201b; color: #fff; font-weight: 900; font-size: 22px; padding: 6px 12px; border-radius: 10px; box-shadow: 0 0 0 3px #fff, 0 6px 18px rgba(0,0,0,.4); pointer-events: none; }
+    .igp-hunt { position: absolute; left: 10px; top: 10px; display: inline-flex; gap: 6px; align-items: center; background: #ffd400; color: #141414; font-weight: 800; font-size: 12px; padding: 5px 10px; border-radius: 999px; pointer-events: none; }
+    .igp-hunt .ic { width: 14px; height: 14px; }
+    .igp-duel-tag { position: absolute; left: 8px; right: 8px; bottom: 34px; display: flex; gap: 6px; align-items: center; font-size: 12px; font-weight: 700; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.7); pointer-events: none; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+    .igp-duel-tag b { flex: 0 0 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #e0201b; text-shadow: none; }
+    .igp-duel { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 10px 12px 0; }
+    .igp-duel-btn { display: flex; gap: 8px; align-items: center; min-height: 44px; padding: 8px 10px; border-radius: 12px; border: 1px solid var(--line, #333); background: transparent; color: inherit; font: inherit; font-size: 13px; text-align: left; cursor: pointer; }
+    .igp-duel-btn span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .igp-duel-k { flex: 0 0 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; background: rgba(255,255,255,.1); }
+    .igp-duel-btn.is-on { border-color: #e0201b; background: rgba(224,32,27,.12); }
+    .igp-duel-btn.is-on .igp-duel-k { background: #e0201b; color: #fff; }
+    .igp-duel-note { margin: 6px 12px 0; font-size: 12px; opacity: .75; }
+    .igp-huntline { display: flex; gap: 8px; align-items: flex-start; margin: 10px 12px 0; font-size: 13px; }
+    .igp-huntline .ic { width: 16px; height: 16px; flex: 0 0 16px; margin-top: 2px; }
+    .igp-huntline.is-found { color: var(--ok, #3ecf8e); }
+    .pfp-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .modal-box.cc { display: block; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+    .cc-canvas { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: 14px; background: #121218; margin: 4px 0 12px; }
+    .cc-fav { display: grid; gap: 6px; font-size: 13px; margin-bottom: 10px; }
+    .cc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
     .pfv-id { display: flex; gap: 14px; align-items: center; margin-bottom: 12px; }
     .pfv-av { flex: 0 0 72px; width: 72px; height: 72px; border-radius: 50%; display: grid; place-items: center; font-weight: 900; font-size: 24px; color: #fff; background: var(--pf); box-shadow: 0 0 0 3px var(--bg-card, #111), 0 0 0 5px var(--pf); }
     .pfv-id b { font-size: 18px; display: block; } .pfv-id small { color: var(--ink-dim, inherit); } .pfv-id p { margin: 6px 0 0; font-size: 14px; }
@@ -3733,6 +3770,7 @@
         <div style="display:flex;gap:8px;align-items:center;margin:10px 0 8px;flex-wrap:wrap">
           <input class="field-input" id="pullAddInput" aria-label="Suivre une série" placeholder="Suivre une série (ex : Absolute Batman)" style="width:240px">
           <button class="btn secondary" id="pullAddBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Suivre</button>
+          <button class="btn ghost" id="pullWedBtn" style="font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-calendar /></svg> Mercredi des sorties</button>
         </div>
         <div class="pull-chips" id="pullListChips"></div>
         </details>
@@ -6773,7 +6811,7 @@ module.exports = { seriesInProgress, numOf };
 //  - « J'aime », « Enregistrer » et « Épingler » (trois au plus) : état local de l'appareil, jamais envoyé.
 //  - Module pur : l'appelant fournit planches, stories et état ; rien n'est inventé (aucun compte, aucun abonné simulé).
 
-const KIND_TAGS = Object.freeze({ pull: 'PullDuMercredi', shelfie: 'Shelfie', gem: 'Pépite', read: 'JeViensDeLire', free: 'Planche' });
+const KIND_TAGS = Object.freeze({ pull: 'PullDuMercredi', shelfie: 'Shelfie', gem: 'Pépite', read: 'JeViensDeLire', duel: 'DuelDeCouvertures', hunt: 'ChasseAuxVariantes', free: 'Planche' });
 const MAX_PINS = 3;
 
 const strip = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
@@ -7028,6 +7066,116 @@ const summaryText = x => {
 };
 
 module.exports = { FORMATS, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
+  return Object.freeze(module.exports); })();
+  /* domains/community/rituals-core.js */
+  out.rituals = (() => { const module = { exports: {} };
+'use strict';
+// Idées originales du virage social (lot S7, D-95) : Mercredi des sorties, Duel de couvertures, Chasse aux variantes,
+// Carte de collectionneur. Module pur : l'appelant fournit les vraies données (pull list, collection, Wishlist, profil public) ;
+// rien n'est inventé, aucun vote ni aucune réponse d'autrui n'est simulé, aucun chiffre financier ne sort.
+
+const VERSION = 1;
+const ISO = /^\d{4}-\d{2}-\d{2}$/;
+const str = (v, max) => String(v === undefined || v === null ? '' : v).trim().slice(0, max);
+const norm = t => str(t, 200).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/^#\s*/, '').replace(/\s+/g, ' ');
+const issueKey = c => norm(c && c.series) + '|' + norm(c && c.issue).replace(/^0+(?=\d)/, '');
+const safeCover = u => { const s = str(u, 4000); return /^https:\/\//i.test(s) || /^data:image\/(png|jpeg|webp|gif);/i.test(s) ? s : ''; };
+// Seuls ces champs d'un numéro peuvent apparaître dans un duel, une chasse ou une carte (jamais prix, valeur, emplacement, note, état)
+const light = c => ({ series: str(c && c.series, 200), issue: str(c && c.issue, 20), publisher: str(c && c.publisher, 100), variant: str(c && c.variant, 120), coverUrl: safeCover(c && c.coverUrl) });
+
+// ── Mercredi des sorties : la semaine (lundi à dimanche) et son mercredi, jour de sortie des comics en boutique
+const isoOf = d => d.toISOString().slice(0, 10);
+const wednesdayOf = day => {
+  if (!ISO.test(String(day || ''))) return '';
+  const d = new Date(day + 'T12:00:00Z');
+  const dow = (d.getUTCDay() + 6) % 7; // lundi = 0
+  d.setUTCDate(d.getUTCDate() - dow + 2);
+  return isoOf(d);
+};
+// items : [{ id, series, issue, variant, publisher, cover, day, pulled, status }] (publications datées de la pull list et des sorties)
+const releaseWeek = ({ items = [], today = '' } = {}) => {
+  const wed = wednesdayOf(today);
+  const out = { wednesday: wed, isWednesday: !!wed && wed === today, pulled: [], others: [] };
+  if (!wed) return out;
+  const seen = new Set();
+  for (const it of items || []) {
+    if (!it || it.status === 'cancelled' || it.cancelled === true || wednesdayOf(it.day) !== wed) continue;
+    const k = issueKey(it) + '|' + norm(it.variant);
+    if (seen.has(k)) continue;
+    seen.add(k);
+    const rec = Object.assign({ id: str(it.id, 80), day: it.day }, light({ series: it.series, issue: it.issue, publisher: it.publisher, variant: it.variant, coverUrl: it.cover || it.coverUrl }));
+    (it.pulled ? out.pulled : out.others).push(rec);
+  }
+  const by = (a, b) => a.series.localeCompare(b.series, 'fr') || a.issue.localeCompare(b.issue, 'fr', { numeric: true });
+  out.pulled.sort(by); out.others.sort(by);
+  return out;
+};
+const wednesdayTopics = week => (week.pulled.length ? week.pulled : week.others).slice(0, 8).map(x => [x.series, x.issue ? '#' + x.issue.replace(/^#/, '') : ''].filter(Boolean).join(' ') + (x.variant && !/^cover a$/i.test(x.variant) ? ' (' + x.variant + ')' : ''));
+
+// ── Duel de couvertures : deux variantes du même numéro, chacune avec sa couverture
+const duelCandidates = (copies = []) => {
+  const groups = new Map();
+  for (const c of copies || []) {
+    if (!c || !c.series || !safeCover(c.coverUrl)) continue;
+    const k = issueKey(c);
+    const g = groups.get(k) || [];
+    if (!g.some(x => norm(x.variant) === norm(c.variant) || x.coverUrl === c.coverUrl)) g.push(c);
+    groups.set(k, g);
+  }
+  return [...groups.values()].filter(g => g.length >= 2)
+    .map(g => ({ series: str(g[0].series, 200), issue: str(g[0].issue, 20), options: g.slice(0, 6) }))
+    .sort((a, b) => b.options.length - a.options.length || a.series.localeCompare(b.series, 'fr'));
+};
+const duelText = (a, b) => 'Duel de couvertures : ' + [a.series, a.issue ? '#' + String(a.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ') + '. ' + (a.variant || 'Couverture A') + ' ou ' + (b.variant || 'Couverture B') + ' ?';
+// Votes : un seul par duel et par personne ; tant que les comptes ne sont pas actifs, seul votre vote existe (rien n'est simulé)
+const VOTE_ID = /^[A-Za-z0-9_-]{1,80}$/;
+const emptyVotes = () => ({ version: VERSION, votes: {} });
+const sanitizeVotes = v => {
+  const o = emptyVotes();
+  if (!v || typeof v !== 'object' || !v.votes || typeof v.votes !== 'object') return o;
+  for (const [id, x] of Object.entries(v.votes).slice(0, 2000)) if (VOTE_ID.test(id) && x && (x.side === 0 || x.side === 1) && !isNaN(Date.parse(x.at))) o.votes[id] = { side: x.side, at: x.at };
+  return o;
+};
+// Même côté : le vote est retiré ; autre côté : il change. Renvoie un nouvel état.
+const vote = (state, duelId, side, now) => {
+  const s = sanitizeVotes(JSON.parse(JSON.stringify(state || {})));
+  if (!VOTE_ID.test(String(duelId)) || (side !== 0 && side !== 1)) return { state: s, side: null, error: 'invalid' };
+  if (s.votes[duelId] && s.votes[duelId].side === side) { delete s.votes[duelId]; return { state: s, side: null }; }
+  s.votes[duelId] = { side, at: new Date(now || Date.now()).toISOString() };
+  return { state: s, side };
+};
+const myVote = (state, duelId) => { const x = sanitizeVotes(state).votes[duelId]; return x ? x.side : null; };
+
+// ── Chasse aux variantes : une variante cherchée (depuis la Wishlist) ; le prix visé n'est jamais publié
+const huntItem = wish => {
+  const w = (wish && wish.wish) || {};
+  return light({ series: wish && wish.series, issue: wish && wish.issue, publisher: wish && wish.publisher, variant: str(w.variantWanted, 120) || (wish && wish.variant), coverUrl: wish && wish.coverUrl });
+};
+const huntText = it => 'Je cherche ' + [it.series, it.issue ? '#' + String(it.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ') + (it.variant ? ' (' + it.variant + ')' : '') + '. Quelqu\'un l\'a ?';
+const huntCandidates = (wishlist = []) => (wishlist || []).filter(w => w && w.series && !['found', 'abandoned'].includes(((w.wish || {}).status) || ''))
+  .sort((a, b) => (((b.wish || {}).priority === 'high') - ((a.wish || {}).priority === 'high')) || !!(b.wish || {}).variantWanted - !!(a.wish || {}).variantWanted || String(b.addedAt || '').localeCompare(String(a.addedAt || '')));
+// La chasse est trouvée dès qu'un exemplaire possédé correspond (même numéro, même variante quand elle est précisée)
+const huntFound = (it, copies = []) => (copies || []).some(c => c && issueKey(c) === issueKey(it) && (!it.variant || norm(c.variant) === norm(it.variant)));
+
+// ── Carte de collectionneur : uniquement des éléments du profil public (S5) et des chiffres non financiers
+const cardModel = ({ view = {}, favorite = null } = {}) => {
+  const pr = view.profile || null;
+  const facts = [];
+  if (view.counts) { facts.push({ n: Number(view.counts.copies) || 0, label: 'numéros' }); facts.push({ n: Number(view.counts.series) || 0, label: 'séries' }); }
+  if (typeof view.read === 'number') facts.push({ n: view.read, label: 'lus' });
+  if (view.rank && typeof view.rank.trophies === 'number') facts.push({ n: view.rank.trophies, label: 'trophées' });
+  return {
+    name: pr ? str(pr.displayName || pr.handle, 40) : 'Collectionneur Panel',
+    handle: pr ? str(pr.handle, 24) : '',
+    color: pr && /^#[0-9a-f]{6}$/i.test(pr.color || '') ? pr.color : '#7C5CFF',
+    favoriteCharacter: pr ? str(pr.favorite, 60) : '',
+    rank: view.rank ? { rank: Number(view.rank.rank) || 0, name: str(view.rank.name, 60) } : null,
+    facts: facts.slice(0, 4),
+    favorite: favorite ? light(favorite) : null
+  };
+};
+
+module.exports = { VERSION, wednesdayOf, releaseWeek, wednesdayTopics, duelCandidates, duelText, emptyVotes, sanitizeVotes, vote, myVote, huntItem, huntText, huntCandidates, huntFound, cardModel, light };
   return Object.freeze(module.exports); })();
   /* domains/community/ranking-core.js */
   out.rankingCore = (() => { const module = { exports: {} };
@@ -18128,7 +18276,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const COMM_VIS = { private: 'Moi seul', followers: 'Mes abonnés', public: 'Public' };
   // Planches : le format de publication de Panel (une case de BD par numéro, une bulle pour le message)
-  const PLANCHE_KINDS = { pull: 'Pull du mercredi', shelfie: 'Shelfie de boîte', gem: 'Pépite', read: 'Je viens de lire', free: 'Planche libre' };
+  const PLANCHE_KINDS = { pull: 'Pull du mercredi', shelfie: 'Shelfie de boîte', gem: 'Pépite', read: 'Je viens de lire', duel: 'Duel de couvertures', hunt: 'Chasse aux variantes', free: 'Planche libre' };
   const commValidate = (text, visibility, items) => {
     const P = commPolicy();
     if (!P) return { ok: false, errors: ['Module Communauté indisponible.'], warnings: [] };
@@ -18395,6 +18543,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (gem) out.push({ kind: 'gem', items: [gem], text: 'Ma pépite : ' + plTitle(gem) + (gem.variant ? ' (' + gem.variant + ')' : '') + '.' });
     const lastRead = owned.filter(rdReadOfCopy).sort((a, b) => new Date(b.readAt || b.addedAt || 0) - new Date(a.readAt || a.addedAt || 0))[0];
     if (lastRead) out.push({ kind: 'read', items: [lastRead], text: 'Je viens de lire ' + plTitle(lastRead) + '. Verdict : ' });
+    // Lot S7 (D-95) : duel de couvertures (deux variantes du même numéro) et chasse aux variantes (depuis la Wishlist)
+    try {
+      const RT = window.PanelDomains.rituals;
+      const dl = RT.duelCandidates(owned)[0];
+      if (dl) out.push({ kind: 'duel', items: dl.options.slice(0, 2), text: RT.duelText(dl.options[0], dl.options[1]) });
+      const hw = RT.huntCandidates(physicalSingles.filter(s => s.isWishlist))[0];
+      if (hw) { const it = RT.huntItem(hw); out.push({ kind: 'hunt', items: [it], text: RT.huntText(it) }); }
+    } catch (_) {}
     return out;
   };
   const plancheFace = c => c.coverUrl ? coverImgTag(c) : '<span class="pl-face" style="--c:' + cboxHue(c) + '"><b>' + escapeHtml(cboxInitials(c.series)) + '</b><em>' + escapeHtml(String(c.issue || '').replace(/^#?/, '#')) + '</em></span>';
@@ -19034,7 +19190,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-fy-mem]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.fyMem); });
   };
   // ── Lot S1 (D-92) : modèles de planche (accueil vide et feuille Publier)
-  const plTemplatesHtml = sugg => '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div>';
+  const plTemplatesHtml = sugg => '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : k === 'duel' ? 'Deux variantes d\'un même numéro, avec leur couverture.' : k === 'hunt' ? 'Ajoutez un numéro à votre Wishlist.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div>';
   // Feuille « Publier » : un seul bouton pour tout créer ; les ajouts à la collection y sont rangés
   const openPublishSheet = () => {
     const box = bunModal('publishSheet');
@@ -19046,7 +19202,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h4 class="pub-h">Autre publication</h4><div class="pub-grid">' +
         pb('story', 'ic-book', 'Story de lecture', 'Depuis un numéro lu, avec ou sans avis') +
         pb('v3d', 'ic-box', 'Numéro en 3D', 'Ouvrez un numéro puis « Voir en 3D »') +
-        pb('live', 'ic-live', 'Préparer un direct', 'Montrez vos numéros en direct') + '</div>' +
+        pb('live', 'ic-live', 'Préparer un direct', 'Montrez vos numéros en direct') +
+        pb('card', 'ic-star', 'Carte de collectionneur', 'Une image à partager hors de Panel') + '</div>' +
       '<h4 class="pub-h">Ajouter à ma collection</h4><div class="pub-grid">' +
         pb('scan', 'ic-barcode', 'Scanner un code-barres') + pb('cover', 'ic-camera', 'Scanner une couverture') +
         pb('manual', 'ic-plus', 'Ajouter un numéro') + pb('import', 'ic-file', 'Importer CLZ / LoCG') + '</div></div>';
@@ -19057,7 +19214,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const act = {
       story: () => { click('navSinglesReading')(); showToast('Choisissez un numéro lu, puis « Story ».'); },
       v3d: () => { click('navAllSingles')(); showToast('Ouvrez un numéro, puis « Voir en 3D ».'); },
-      live: click('navLive'), scan: click('navScanBarcodeDirect'), cover: click('navScanCoverDirect'), manual: click('navAddSingleManual'), import: click('navImportCsv')
+      live: click('navLive'), card: () => openCollectorCard(), scan: click('navScanBarcodeDirect'), cover: click('navScanCoverDirect'), manual: click('navAddSingleManual'), import: click('navImportCsv')
     };
     box.querySelectorAll('[data-pub]').forEach(b => { b.onclick = () => { close(); setTimeout(act[b.dataset.pub], 0); }; });
     box.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (!sg) return; close(); setTimeout(() => openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }), 0); }; });
@@ -19100,7 +19257,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const pfpSave = v => { try { localStorage.setItem(PFP_KEY, JSON.stringify(window.PanelDomains.profilePublic.sanitize(v))); return true; } catch (_) { return false; } };
   const pfPublicHtml = () => {
     const PP = window.PanelDomains.profilePublic, pr = pfpLoad();
-    return '<section class="pfp" id="profilePublic" aria-labelledby="pfpTitle"><div class="pfc-head"><h3 class="pf-section" id="pfpTitle">Ce que les autres verront</h3><button type="button" class="btn secondary rel-mini" data-pfp-preview>' + igIcon('ic-eye') + ' Voir comme un visiteur</button></div>' +
+    return '<section class="pfp" id="profilePublic" aria-labelledby="pfpTitle"><div class="pfc-head"><h3 class="pf-section" id="pfpTitle">Ce que les autres verront</h3><span class="pfp-btns"><button type="button" class="btn secondary rel-mini" data-pfp-card>' + igIcon('ic-star') + ' Ma carte</button><button type="button" class="btn secondary rel-mini" data-pfp-preview>' + igIcon('ic-eye') + ' Voir comme un visiteur</button></span></div>' +
       '<div class="pfp-list">' + PP.FIELDS.map(f => '<label class="pfp-row"><span>' + escapeHtml(f.label) + '</span><input type="checkbox" role="switch" class="pfp-switch" data-pfp="' + f.key + '"' + (pr[f.key] ? ' checked' : '') + '></label>').join('') + '</div>' +
       '<p class="pfp-never">' + igIcon('ic-shield') + ' <span><b>Jamais publié :</b> ' + PP.NEVER.map(escapeHtml).join(', ').toLowerCase().replace(/^./, c => c.toUpperCase()) + '. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n\'est en ligne avant l\'arrivée des comptes.</span></p></section>';
   };
@@ -19134,9 +19291,99 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.classList.add('open');
     return v;
   };
+  // ── Lot S7 (D-95) : Carte de collectionneur, une image à partager hors de Panel.
+  // Elle ne reprend que le profil public (réglages S5) : rang, numéros, séries, lus, trophées et un numéro préféré en 3D. Jamais de chiffre financier.
+  // Une couverture d'une autre origine qui refuse le partage d'image est remplacée par un aplat aux couleurs du numéro (rien n'est inventé).
+  let ccFav = 0;
+  const ccState = () => { const v = pfPublicView(), shelf = v.shelf || []; if (ccFav >= shelf.length) ccFav = 0; return { shelf, model: window.PanelDomains.rituals.cardModel({ view: v, favorite: shelf[ccFav] || null }) }; };
+  const ccImg = src => new Promise(res => {
+    if (!src) { res(null); return; }
+    const im = new Image(); if (/^https:/i.test(src)) im.crossOrigin = 'anonymous';
+    const to = setTimeout(() => res(null), 4000);
+    im.onload = () => { clearTimeout(to); res(im); }; im.onerror = () => { clearTimeout(to); res(null); };
+    im.src = src;
+  });
+  const ccFit = (g, txt, max) => { let s = String(txt || ''); while (s.length > 1 && g.measureText(s).width > max) s = s.slice(0, -2) + '…'; return s; };
+  const ccDraw = async (cv, m) => {
+    const W = 1080, H = 1350, g = cv.getContext('2d'), F = 'system-ui, "Segoe UI", Roboto, sans-serif';
+    cv.width = W; cv.height = H;
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, m.color); bg.addColorStop(.62, '#121218'); bg.addColorStop(1, '#08080b');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(255,255,255,.055)';
+    for (let y = 18; y < 820; y += 34) for (let x = 18 + ((y / 34) % 2) * 17; x < W; x += 34) { g.beginPath(); g.arc(x, y, 4.5 * (1 - y / 900), 0, 7); g.fill(); }
+    g.textBaseline = 'alphabetic';
+    g.fillStyle = '#fff'; g.font = '900 46px ' + F; g.fillText('PANEL', 72, 112);
+    g.textAlign = 'right'; g.fillStyle = 'rgba(255,255,255,.78)'; g.font = '700 28px ' + F; g.fillText('CARTE DE COLLECTIONNEUR', W - 72, 108); g.textAlign = 'left';
+    // Numéro préféré en 3D : tranche, couverture légèrement tournée, reflet
+    const fav = m.favorite, img = fav ? await ccImg(fav.coverUrl) : null;
+    const cw = 400, ch = 600, cx = (W - cw) / 2 + 24, cy = 176, depth = 44;
+    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 70; g.shadowOffsetY = 34; g.fillStyle = '#000'; g.fillRect(cx, cy + 12, cw, ch); g.restore();
+    g.fillStyle = fav ? cboxHue(fav) : '#2a2a33'; g.beginPath(); g.moveTo(cx - depth, cy + 34); g.lineTo(cx, cy + 12); g.lineTo(cx, cy + ch + 12); g.lineTo(cx - depth, cy + ch - 6); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(0,0,0,.45)'; g.fill();
+    g.save(); g.transform(1, -0.036, 0, 1, cx, cy + 26);
+    if (img) g.drawImage(img, 0, 0, cw, ch);
+    else {
+      g.fillStyle = fav ? cboxHue(fav) : '#2a2a33'; g.fillRect(0, 0, cw, ch);
+      g.fillStyle = 'rgba(255,255,255,.92)'; g.textAlign = 'center'; g.font = '900 54px ' + F;
+      g.fillText(ccFit(g, fav ? cboxInitials(fav.series) : '?', cw - 40), cw / 2, ch / 2 - 10);
+      g.font = '800 40px ' + F; g.fillText(fav ? String(fav.issue || '').replace(/^#?/, '#') : 'Étagère masquée', cw / 2, ch / 2 + 50); g.textAlign = 'left';
+    }
+    const gl = g.createLinearGradient(0, 0, cw, ch); gl.addColorStop(0, 'rgba(255,255,255,.22)'); gl.addColorStop(.35, 'rgba(255,255,255,0)'); gl.addColorStop(1, 'rgba(0,0,0,.18)');
+    g.fillStyle = gl; g.fillRect(0, 0, cw, ch); g.restore();
+    let y = 880;
+    g.fillStyle = '#fff'; g.font = '900 64px ' + F; g.fillText(ccFit(g, m.name, W - 144), 72, y);
+    const sub = [m.handle ? '@' + m.handle : '', m.favoriteCharacter ? 'fan de ' + m.favoriteCharacter : ''].filter(Boolean).join(' · ');
+    if (sub) { y += 50; g.fillStyle = 'rgba(255,255,255,.72)'; g.font = '600 32px ' + F; g.fillText(ccFit(g, sub, W - 144), 72, y); }
+    if (fav) { y += 46; g.fillStyle = 'rgba(255,255,255,.9)'; g.font = '700 30px ' + F; g.fillText(ccFit(g, '★ ' + [fav.series, fav.issue ? String(fav.issue).replace(/^#?/, '#') : ''].filter(Boolean).join(' ') + (fav.variant && !/^cover a$/i.test(fav.variant) ? ' · ' + fav.variant : ''), W - 144), 72, y); }
+    if (m.rank) { y += 54; g.fillStyle = m.color; const rt = 'RANG ' + m.rank.rank + ' · ' + m.rank.name.toUpperCase(); g.font = '900 28px ' + F; const tw = Math.min(W - 144, g.measureText(rt).width + 40); g.beginPath(); g.roundRect ? g.roundRect(72, y - 34, tw, 48, 24) : g.rect(72, y - 34, tw, 48); g.fill(); g.fillStyle = '#fff'; g.fillText(ccFit(g, rt, tw - 40), 92, y); }
+    if (m.facts.length) {
+      const fw = (W - 144 - (m.facts.length - 1) * 18) / m.facts.length, fy = H - 210;
+      m.facts.forEach((f, i) => {
+        const fx = 72 + i * (fw + 18);
+        g.fillStyle = 'rgba(255,255,255,.08)'; g.beginPath(); g.roundRect ? g.roundRect(fx, fy, fw, 120, 20) : g.rect(fx, fy, fw, 120); g.fill();
+        g.fillStyle = '#fff'; g.font = '900 52px ' + F; g.fillText(ccFit(g, f.n.toLocaleString('fr-FR'), fw - 40), fx + 22, fy + 66);
+        g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '600 26px ' + F; g.fillText(f.label, fx + 22, fy + 102);
+      });
+    }
+    g.fillStyle = 'rgba(255,255,255,.55)'; g.font = '600 24px ' + F; g.fillText('Ma collection sur Panel · ' + new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }), 72, H - 40);
+    cv.dataset.drawn = String(Date.now());
+    cv.setAttribute('aria-label', 'Carte de collectionneur : ' + m.name + (m.rank ? ', rang ' + m.rank.rank + ' ' + m.rank.name : '') + (m.facts.length ? ', ' + m.facts.map(f => f.n + ' ' + f.label).join(', ') : '') + (fav ? ', numéro préféré ' + [fav.series, fav.issue].filter(Boolean).join(' ') : '') + '.');
+    return !!img;
+  };
+  const ccBlob = cv => new Promise(res => { try { cv.toBlob(b => res(b), 'image/png'); } catch (_) { res(null); } });
+  const openCollectorCard = () => {
+    const box = bunModal('collectorCard');
+    const st = ccState();
+    let canFiles = false;
+    try { canFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([''], 'carte.png', { type: 'image/png' })] })); } catch (_) {}
+    box.innerHTML = '<div class="modal-box cc" role="dialog" aria-modal="true" aria-labelledby="ccTitle">' +
+      '<div class="pub-head"><h3 id="ccTitle">Carte de collectionneur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
+      '<canvas class="cc-canvas" width="1080" height="1350" role="img" aria-label="Carte de collectionneur"></canvas>' +
+      (st.shelf.length ? '<label class="cc-fav">Numéro préféré<select class="field-input" data-cc-fav>' + st.shelf.map((x, i) => '<option value="' + i + '"' + (i === ccFav ? ' selected' : '') + '>' + escapeHtml(plTitle(x) + (x.variant && !/^cover a$/i.test(x.variant) ? ' · ' + x.variant : '')) + '</option>').join('') + '</select></label>'
+        : '<p class="stat-sub">Étagère masquée ou vide : la carte s\'affiche sans numéro préféré (réglage dans « Ce que les autres verront »).</p>') +
+      '<p class="pfp-never">' + igIcon('ic-shield') + ' <span>La carte ne reprend que ce que vos réglages rendent public. Jamais de prix, de valeur ni d\'emplacement.</span></p>' +
+      '<div class="cc-actions"><button type="button" class="btn" data-cc-save>' + igIcon('ic-download') + ' Enregistrer l\'image</button>' + (canFiles ? '<button type="button" class="btn secondary" data-cc-share>' + igIcon('ic-external') + ' Partager</button>' : '') + '</div></div>';
+    const cv = box.querySelector('canvas');
+    const draw = () => ccDraw(cv, ccState().model).catch(() => false);
+    const close = () => box.classList.remove('open');
+    box.onclick = e => { if (e.target === box) close(); };
+    box.querySelectorAll('[data-close]').forEach(b => { b.onclick = close; });
+    const sel = box.querySelector('[data-cc-fav]'); if (sel) sel.onchange = () => { ccFav = Number(sel.value) || 0; draw(); };
+    box.querySelector('[data-cc-save]').onclick = async () => {
+      const b = await ccBlob(cv); if (!b) { showToast('Image impossible à créer sur cet appareil.'); return; }
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'panel-carte-collectionneur.png'; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    };
+    const sh = box.querySelector('[data-cc-share]');
+    if (sh) sh.onclick = async () => { const b = await ccBlob(cv); if (!b) return; try { await navigator.share({ files: [new File([b], 'panel-carte-collectionneur.png', { type: 'image/png' })], text: 'Ma collection sur Panel' }); } catch (_) {} };
+    box.classList.add('open');
+    draw();
+    return box;
+  };
   const pfPublicWire = root => {
     root.querySelectorAll('[data-pfp]').forEach(c => { c.onchange = () => { const v = pfpLoad(); v[c.dataset.pfp] = c.checked; if (!pfpSave(v)) { showToast('Impossible d\'enregistrer sur cet appareil.'); c.checked = !c.checked; } }; });
     const b = root.querySelector('[data-pfp-preview]'); if (b) b.onclick = () => openProfilePreview();
+    const cc = root.querySelector('[data-pfp-card]'); if (cc) cc.onclick = () => openCollectorCard();
   };
   const renderCommunityProfile = () => { renderCommunityProfileBase(); try { pfCollectionMount(); } catch (_) {} };
   // Profil : la collection reste au cœur (étagère 3D des derniers numéros et accès à toutes les vues de la collection)
@@ -19192,6 +19439,86 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const igFeed = only => window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories, state: igLoad(), tag: only === 'saved' ? '' : igTag, only });
   const igStars = r => { const n = Number(r) || 0; return n ? '★'.repeat(Math.floor(n)) + (n % 1 ? '½' : '') : ''; };
   const igIcon = id => '<svg class=ic aria-hidden=true><use href=#' + id + ' /></svg>';
+  // ── Lot S7 (D-95) : Duel de couvertures et Chasse aux variantes, dans le fil
+  // Un vote par duel, enregistré sur cet appareil (panel_duel_votes_v1) ; les votes des autres arriveront avec les comptes : aucun n'est simulé.
+  const DUEL_KEY = 'panel_duel_votes_v1';
+  const duelLoad = () => { try { return window.PanelDomains.rituals.sanitizeVotes(JSON.parse(localStorage.getItem(DUEL_KEY) || 'null')); } catch (_) { return window.PanelDomains.rituals.emptyVotes(); } };
+  const duelSave = st => { try { localStorage.setItem(DUEL_KEY, JSON.stringify(st)); return true; } catch (_) { return false; } };
+  const duelSideLabel = (m, i) => m.variant || 'Couverture ' + 'AB'[i];
+  const duelBarHtml = p => {
+    const mine = window.PanelDomains.rituals.myVote(duelLoad(), p.ref);
+    return '<div class="igp-duel" role="group" aria-label="Votre vote">' + p.media.slice(0, 2).map((m, i) => '<button type="button" class="igp-duel-btn' + (mine === i ? ' is-on' : '') + '" data-duel-vote="' + i + '" aria-pressed="' + (mine === i) + '"><span class="igp-duel-k">' + 'AB'[i] + '</span><span>' + escapeHtml(duelSideLabel(m, i)) + '</span></button>').join('') + '</div>' +
+      '<p class="igp-duel-note" data-duel-note>' + (mine === null ? 'Votez pour votre couverture préférée.' : 'Votre vote : ' + 'AB'[mine] + '.') + ' Les votes des autres collectionneurs arriveront avec les comptes.</p>';
+  };
+  const duelVoteClick = (card, ref, side) => {
+    const r = window.PanelDomains.rituals.vote(duelLoad(), ref, side);
+    if (r.error || !duelSave(r.state)) { showToast('Impossible d\'enregistrer sur cet appareil.'); return; }
+    card.querySelectorAll('[data-duel-vote]').forEach(b => { const on = Number(b.dataset.duelVote) === r.side; b.classList.toggle('is-on', on); b.setAttribute('aria-pressed', String(on)); });
+    const note = card.querySelector('[data-duel-note]');
+    if (note) note.textContent = (r.side === null ? 'Vote retiré.' : 'Votre vote : ' + 'AB'[r.side] + '.') + ' Les votes des autres collectionneurs arriveront avec les comptes.';
+  };
+  const huntLineHtml = p => {
+    const m = p.media[0];
+    const found = m && window.PanelDomains.rituals.huntFound(m, physicalSingles.filter(isOwned));
+    return '<p class="igp-huntline' + (found ? ' is-found' : '') + '">' + igIcon(found ? 'ic-check-circle' : 'ic-search') + ' <span>' + (found ? 'Trouvé : ce numéro est maintenant dans votre collection.' : 'Chasse en cours. Les réponses des collectionneurs qui l\'ont arriveront avec les comptes.') + '</span></p>';
+  };
+  // ── Lot S7 (D-95) : Mercredi des sorties, en haut de l'Accueil ; ouvert aussi depuis la pull list
+  let wedTest = null;
+  const wedItems = () => {
+    if (wedTest) return wedTest.items;
+    const out = [], pulled = new Set();
+    [...relPulls.values()].forEach(pl => {
+      if (!pl || !['planned', 'available', 'picked'].includes(pl.status)) return;
+      const pb = relPubs.get(pl.pubId); if (!pb) return;
+      pulled.add(pb.id);
+      out.push({ id: pb.id, series: pb.series, issue: pb.issue, variant: pl.variant || pb.variant, publisher: pb.publisher, cover: pb.cover, day: relDay(pb), pulled: true, cancelled: pb.cancelled });
+    });
+    const mine = new Set(physicalSingles.filter(isOwned).map(c => catNorm(c.series)));
+    relPubs.forEach(pb => { if (!pulled.has(pb.id) && mine.has(catNorm(pb.series))) out.push({ id: pb.id, series: pb.series, issue: pb.issue, variant: pb.variant, publisher: pb.publisher, cover: pb.cover, day: relDay(pb), pulled: false, cancelled: pb.cancelled }); });
+    return out;
+  };
+  const wedWeek = () => window.PanelDomains.rituals.releaseWeek({ items: wedItems(), today: (wedTest && wedTest.today) || relToday() });
+  const wedDate = (d, opt) => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', opt || { weekday: 'long', day: 'numeric', month: 'long' });
+  const wedList = w => w.pulled.length ? w.pulled : w.others;
+  const wedBannerHtml = w => {
+    const list = wedList(w), n = list.length;
+    if (!n) return '';
+    const s = n > 1 ? 's' : '', mine = !!w.pulled.length;
+    const title = w.isWednesday ? 'C\'est mercredi : les sorties du jour' : 'Mercredi des sorties · ' + wedDate(w.wednesday, { day: 'numeric', month: 'long' });
+    const sub = n + ' numéro' + s + (mine ? ' de votre pull list' : ' de vos séries') + (w.isWednesday ? ' sort' + (s ? 'ent' : '') + ' aujourd\'hui en boutique.' : ' sort' + (s ? 'ent' : '') + ' ' + wedDate(w.wednesday, { weekday: 'long', day: 'numeric' }) + '.');
+    return '<section class="wed' + (w.isWednesday ? ' is-today' : '') + '" aria-labelledby="wedTitle"><div class="wed-head"><span class="wed-day" aria-hidden="true"><small>MER</small><b>' + Number(w.wednesday.slice(8)) + '</b></span><div><h3 id="wedTitle">' + escapeHtml(title) + '</h3><p>' + escapeHtml(sub) + '</p></div></div>' +
+      '<div class="wed-covers">' + list.slice(0, 6).map(x => '<span class="wed-cover" title="' + escapeHtml(plTitle(x) + (x.variant ? ' · ' + x.variant : '')) + '">' + plancheFace(x) + '</span>').join('') + (n > 6 ? '<span class="wed-more">+' + (n - 6) + '</span>' : '') + '</div>' +
+      '<div class="wed-actions"><button type="button" class="btn" data-wed="post">' + igIcon('ic-pencil') + ' Publier mon pull</button><button type="button" class="btn secondary" data-wed="live">' + igIcon('ic-live') + ' Préparer le direct</button><button type="button" class="btn ghost" data-wed="feed">#PullDuMercredi</button></div></section>';
+  };
+  const wedLive = w => {
+    const RT = window.PanelDomains.rituals, list = wedList(w);
+    const title = 'Mercredi des sorties du ' + wedDate(w.wednesday, { day: 'numeric', month: 'long' });
+    const exists = lvLoad().rooms.some(r => r.title === title);
+    if (!exists) {
+      const keys = new Set(list.map(x => catNorm(x.series) + '|' + catNorm(String(x.issue).replace(/^#/, ''))));
+      const images = physicalSingles.filter(isOwned).filter(c => keys.has(catNorm(c.series) + '|' + catNorm(String(c.issue || '').replace(/^#/, '')))).slice(0, 12).map(c => ({ ref: c.id, kind: 'copy', series: c.series, issue: c.issue }));
+      const r = LV().saveRoom(lvLoad(), { title, topics: RT.wednesdayTopics(w).join('\n'), images }, lvNow(), lvId('lv'));
+      if (r.errors.length) { showToast(r.errors[0]); return; }
+      if (!lvStore(r.state)) return;
+    }
+    if ($('navLive')) $('navLive').click();
+    showToast(exists ? 'Le direct du mercredi est déjà prêt dans Directs.' : 'Direct du mercredi préparé : ordre du jour rempli avec vos sorties.');
+  };
+  const wedWire = slot => {
+    slot.querySelectorAll('[data-wed]').forEach(b => { b.onclick = () => {
+      const w = wedWeek(), list = wedList(w);
+      if (b.dataset.wed === 'post') { const items = list.slice(0, 4); openShareDialog(items, null, { kind: 'pull', text: 'Mon pull du mercredi ' + wedDate(w.wednesday, { day: 'numeric', month: 'long' }) + ' : ' + items.map(plTitle).join(', ') + '.' }); }
+      else if (b.dataset.wed === 'live') wedLive(w);
+      else { igTag = 'PullDuMercredi'; renderCommunityView(); }
+    }; });
+  };
+  const wedMount = host => {
+    const slot = host.querySelector('#wedSlot');
+    if (!slot) return;
+    const fill = () => { if (!slot.isConnected) return; slot.innerHTML = wedBannerHtml(wedWeek()); wedWire(slot); };
+    fill();
+    if (!wedTest) loadReleaseData().then(fill, () => {});
+  };
   const igPostHtml = (p, prof) => {
     const handle = prof ? '@' + prof.handle : 'Vous';
     const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
@@ -19199,10 +19526,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const when = p.at ? storyAgo(p.at) : '';
     const vis = p.type === 'story' ? 'Moi seul' : (COMM_VIS[p.visibility] || 'Moi seul');
     const id = escapeHtml(p.id), n = p.media.length;
+    const duel = p.type === 'planche' && p.kind === 'duel' && n >= 2, hunt = p.type === 'planche' && p.kind === 'hunt', car = n > 1 && !duel;
     const slide = (m, i) => {
       const face = m.coverUrl ? coverImgTag(m, 'class="igp-cover"') : plancheFace(m);
       return '<figure class="igp-slide" aria-roledescription="diapositive" aria-label="' + (i + 1) + ' sur ' + n + ' : ' + escapeHtml([m.series, m.issue].filter(Boolean).join(' ')) + '">' +
         (m.coverUrl ? coverImgTag(m, 'class="igp-bg" aria-hidden="true"') : '') + '<span class="igp-face">' + face + '</span>' +
+        (duel ? '<span class="igp-duel-tag" aria-hidden="true"><b>' + 'AB'[i] + '</b>' + escapeHtml(duelSideLabel(m, i)) + '</span>' : '') +
         '<button type="button" class="igp-3d" data-igp-3d="' + i + '" aria-label="Voir ' + escapeHtml([m.series, m.issue].filter(Boolean).join(' ')) + ' en 3D">3D</button></figure>';
     };
     const menu = (p.type === 'planche'
@@ -19220,12 +19549,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<span class="igp-who"><b>' + escapeHtml(handle) + '</b><small>' + escapeHtml(kindLabel) + (when ? ' · ' + escapeHtml(when) : '') + ' · ' + escapeHtml(vis) + '</small></span>' +
         (p.pinned ? '<span class="igp-pinned" title="Épinglé en haut du fil">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
         '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
-      '<div class="igp-media' + (p.type === 'story' ? ' is-story' : '') + '" data-igp-media tabindex="0" aria-label="Double-cliquez pour aimer">' +
-        '<div class="igp-track"' + (n > 1 ? ' aria-roledescription="carrousel"' : '') + '>' + p.media.map(slide).join('') + '</div>' +
-        (n > 1 ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
+      '<div class="igp-media' + (p.type === 'story' ? ' is-story' : '') + (duel ? ' is-duel' : '') + (hunt ? ' is-hunt' : '') + '" data-igp-media tabindex="0" aria-label="Double-cliquez pour aimer">' +
+        '<div class="igp-track"' + (car ? ' aria-roledescription="carrousel"' : '') + '>' + (duel ? p.media.slice(0, 2) : p.media).map(slide).join('') + '</div>' +
+        (duel ? '<span class="igp-vs" aria-hidden="true">VS</span>' : '') + (hunt ? '<span class="igp-hunt">' + igIcon('ic-search') + ' On cherche</span>' : '') +
+        (car ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
         (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString('fr-FR') + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
         '<span class="igp-burst" aria-hidden="true">' + igIcon('ic-heart') + '</span></div>' +
-      (n > 1 ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
+      (car ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
+      (duel ? duelBarHtml(p) : '') + (hunt ? huntLineHtml(p) : '') +
       '<div class="igp-bar">' +
         '<button class="igp-act is-like' + (p.likedByMe ? ' is-on' : '') + '" data-igp-like aria-pressed="' + p.likedByMe + '" aria-label="J\'aime">' + igIcon('ic-heart') + '</button>' +
         '<button class="igp-act" data-igp-open aria-label="' + (p.type === 'story' ? 'Ouvrir la story' : 'Modifier la planche') + '">' + igIcon(p.type === 'story' ? 'ic-play' : 'ic-pencil') + '</button>' +
@@ -19284,6 +19615,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       card.querySelectorAll('[data-igp-3d]').forEach(b => { b.onclick = e => { e.stopPropagation(); const p = igFeed().posts.find(x => x.id === id) || window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories }).posts.find(x => x.id === id); const m = p && p.media[Number(b.dataset.igp3d)]; if (m) openVitrine3d(m); }; });
       card.querySelector('[data-igp-like]').onclick = () => igToggle('like', id, card);
       card.querySelector('[data-igp-save]').onclick = () => igToggle('save', id, card);
+      card.querySelectorAll('[data-duel-vote]').forEach(b => { b.onclick = () => duelVoteClick(card, ref, Number(b.dataset.duelVote)); });
       card.querySelector('[data-igp-open]').onclick = () => { if (isStory) openStoryViewer(ref); else { const x = commLoad().drafts.find(y => y.id === ref); if (x) openShareDialog([], x); } };
       card.querySelector('[data-igp-share]').onclick = async () => {
         const p = igFeed().posts.find(x => x.id === id) || window.PanelDomains.feedCore.buildFeed({ drafts: commLoad().drafts, stories: storyLoad().stories }).posts.find(x => x.id === id);
@@ -19756,6 +20088,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const plCompact = commTab !== 'live' && (commLoad().drafts.length + storyLoad().stories.length) > 0;
     host.innerHTML =
       (commTab === 'live' ? '' : igModeHtml()) +
+      (commTab === 'live' ? '' : '<div id="wedSlot"></div>') +
       (commTab === 'live' ? '' : lvNextHtml()) +
       (commTab === 'live' || plCompact ? '' : '<section class="pl-studio' + (plCompact ? ' is-compact' : '') + '"><div class="pl-studio-head"><div><small>Panel · Planches</small><h3>' + (plCompact ? 'Nouvelle planche' : 'Racontez votre collection en cases de BD') + '</h3>' + (plCompact ? '<details class="pl-how"><summary>Comment ça marche</summary>' : '') + '<p>Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle, Panel prépare la planche à partir de vos vraies données.</p>' + (plCompact ? '</details>' : '') + '</div></div>' +
       plTemplatesHtml(sugg) + '</section>') +
@@ -19767,6 +20100,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-ig-mode]').forEach(b => { b.onclick = () => { igMode = b.dataset.igMode; renderCommunityView(); const s = host.querySelector('[data-ig-mode="' + igMode + '"]'); if (s) s.focus(); }; });
     igWire(host);
     lvWire(host);
+    if (commTab !== 'live') wedMount(host);
     host.querySelectorAll('[data-tpl]').forEach(b => { b.onclick = () => { const sg = plancheSuggestions().find(x => x.kind === b.dataset.tpl); if (sg) openShareDialog(sg.items, null, { kind: sg.kind, text: sg.text }); }; });
     host.querySelectorAll('[data-draft-edit]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftEdit); if (x) openShareDialog([], x); }; });
     host.querySelectorAll('[data-draft-preview]').forEach(b => { b.onclick = () => { const x = commLoad().drafts.find(y => y.id === b.dataset.draftPreview); if (x) openCommPreview(x); }; });
@@ -19776,6 +20110,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const COMMUNITY_API = Object.freeze({
     configured: false,
     publicProfile: () => JSON.parse(JSON.stringify(pfPublicView())),
+    wednesday: () => JSON.parse(JSON.stringify(wedWeek())),
+    setWednesdayForTest: v => { wedTest = v && Array.isArray(v.items) ? { items: v.items, today: v.today || '' } : null; },
+    collectorCard: () => JSON.parse(JSON.stringify(ccState().model)),
+    duelVote: id => window.PanelDomains.rituals.myVote(duelLoad(), id),
     copyOf: id => { const it = physicalSingles.find(x => x.id === id); return it ? commCopyOf(it) : null; },
     validate: commValidate,
     drafts: () => JSON.parse(JSON.stringify(commLoad().drafts)),
@@ -22031,6 +22369,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     $('navSinglesStats').onclick = () => goSingles('stats');
     if ($('navSinglesReading')) $('navSinglesReading').onclick = () => goSingles('reading');
     if ($('navSinglesFinances')) $('navSinglesFinances').onclick = () => goSingles('finances');
+    if ($('pullWedBtn')) $('pullWedBtn').onclick = () => { igMode = 'forYou'; igTag = ''; goCommunity('feed'); setTimeout(() => { const s = $('wedSlot'); if (s) { s.scrollIntoView({ block: 'start', behavior: smoothScroll() }); const f = s.querySelector('h3'); if (f) { f.tabIndex = -1; f.focus({ preventScroll: true }); } } }, 120); };
     const goCommunity = tab => { commTab = tab; if (activeSinglesView === 'community' && activeModule === 'singles') { renderCommunityView(); syncSinglesNav(); window.scrollTo({ top: 0, behavior: smoothScroll() }); } else goSingles('community'); };
     if ($('navSinglesCommunity')) $('navSinglesCommunity').onclick = () => goCommunity('feed');
     if ($('navLive')) $('navLive').onclick = () => goCommunity('live');

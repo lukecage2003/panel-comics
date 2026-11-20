@@ -5614,6 +5614,86 @@ const waitForCdp = async () => {
       testResults.push({ test: 'Directs verticaux (lot S6, D-94) : cartes 9:16, scène plein écran 9:16 (réactions et micro en colonne), clavier haut/bas, molette, balayage vertical, point suivant, ordre du jour en feuille, synthèse gardée',
         ok: !!t74 && !t74.error && ['reel', 'vertical', 'keys', 'wheel', 'swipeUp', 'nextTopic', 'sheet', 'ended', 'dataUntouched'].every(k => t74[k] === true) });
 
+      // ==========================================
+      // TEST 75 : Idées originales (lot S7, D-95) — Mercredi des sorties, Duel de couvertures, Chasse aux variantes, Carte de collectionneur
+      // ==========================================
+      console.log('\n[TEST 75] Mercredi, Duel, Chasse, Carte...');
+      const t75 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const KEYS = ['panel_community_drafts_v1', 'panel_live_v1', 'panel_duel_votes_v1', 'panel_ig_v1'];
+        const fp0 = await P.backup.fingerprint('collection');
+        const k0 = KEYS.map(k => localStorage.getItem(k));
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const PX = c => { const k = document.createElement('canvas'); k.width = 30; k.height = 45; const g = k.getContext('2d'); g.fillStyle = c; g.fillRect(0, 0, 30, 45); return k.toDataURL('image/png'); };
+        const now = new Date().toISOString();
+        try {
+          P.setSinglesInMemoryForTest([
+            { id: 'v75a', series: 'Fixture Duel', issue: '#1', publisher: 'Fictif', variant: 'Cover A', coverUrl: PX('#b3121b'), addedAt: now, isWishlist: false, purchasePrice: 77, location: 'Boîte secrète' },
+            { id: 'v75b', series: 'Fixture Duel', issue: '#1', publisher: 'Fictif', variant: 'Virgin', coverUrl: PX('#0b4fb3'), addedAt: now, isWishlist: false },
+            { id: 'v75c', series: 'Fixture Sortie', issue: '#4', publisher: 'Fictif', variant: 'Cover A', coverUrl: PX('#2b8a3e'), addedAt: now, isWishlist: false },
+            { id: 'v75w', series: 'Fixture Chasse', issue: '#2', publisher: 'Fictif', variant: 'Cover A', addedAt: now, isWishlist: true, wish: { variantWanted: 'Foil', targetPrice: 99, priority: 'high' } }]);
+          P.community.setWednesdayForTest({ today: '2026-11-18', items: [
+            { id: 'r1', series: 'Fixture Sortie', issue: '4', publisher: 'Fictif', day: '2026-11-18', pulled: true },
+            { id: 'r2', series: 'Fixture Autre', issue: '9', publisher: 'Fictif', day: '2026-11-20', pulled: true },
+            { id: 'r3', series: 'Fixture Plus Tard', issue: '1', publisher: 'Fictif', day: '2026-11-25', pulled: true }] });
+          ['panel_community_drafts_v1', 'panel_live_v1', 'panel_duel_votes_v1'].forEach(k => localStorage.removeItem(k));
+          // Mercredi des sorties : bandeau en haut de l'accueil, depuis la pull list
+          document.getElementById('navSinglesPullList').click(); await wait(250);
+          document.getElementById('pullWedBtn').click(); await wait(500);
+          const wed = document.querySelector('#communityDashboard #wedSlot .wed');
+          r.wednesday = !!wed && wed.classList.contains('is-today') && /2 numéros de votre pull list/.test(wed.textContent) && wed.querySelectorAll('.wed-cover').length === 2 && P.community.wednesday().wednesday === '2026-11-18';
+          wed.querySelector('[data-wed="live"]').click(); await wait(400);
+          const room = P.live.state().rooms.find(x => /^Mercredi des sorties du 18 novembre$/.test(x.title));
+          r.wedLive = !!room && room.topics.length === 2 && room.images.length === 1 && room.images[0].ref === 'v75c' && !!document.querySelector('#communityDashboard .lv-reel');
+          // Duel et Chasse : modèles proposés à partir des vraies données
+          document.getElementById('navSinglesCommunity').click(); await wait(300);
+          const tplOk = k => { const b = document.querySelector('#communityDashboard [data-tpl="' + k + '"]'); return !!b && !b.disabled; };
+          r.templates = tplOk('duel') && tplOk('hunt');
+          const c = id => P.community.copyOf(id).copy;
+          const d1 = P.community.saveDraft({ kind: 'duel', text: 'Duel de couvertures : Fixture Duel #1. Cover A ou Virgin ?', visibility: 'private', items: [c('v75a'), c('v75b')] });
+          const d2 = P.community.saveDraft({ kind: 'hunt', text: 'Je cherche Fixture Chasse #2 (Foil). Quelqu\\'un l\\'a ?', visibility: 'private', items: [{ series: 'Fixture Chasse', issue: '#2', publisher: 'Fictif', variant: 'Foil' }] });
+          document.getElementById('navProfile').click(); await wait(150); document.getElementById('navSinglesCommunity').click(); await wait(350);
+          const duelCard = document.querySelector('[data-igp="p:' + d1.id + '"]');
+          r.duel = !!duelCard && !!duelCard.querySelector('.igp-media.is-duel .igp-vs') && duelCard.querySelectorAll('.igp-slide').length === 2 && !duelCard.querySelector('.igp-count') && duelCard.querySelectorAll('.igp-duel-tag').length === 2 && /#DuelDeCouvertures/.test(duelCard.textContent);
+          duelCard.querySelector('[data-duel-vote="1"]').click(); await wait(50);
+          const v1 = P.community.duelVote(d1.id), pr = [...duelCard.querySelectorAll('[data-duel-vote]')].map(b => b.getAttribute('aria-pressed')).join();
+          duelCard.querySelector('[data-duel-vote="0"]').click(); await wait(50);
+          const v0 = P.community.duelVote(d1.id);
+          duelCard.querySelector('[data-duel-vote="0"]').click(); await wait(50);
+          r.vote = v1 === 1 && pr === 'false,true' && v0 === 0 && P.community.duelVote(d1.id) === null && /Vote retiré/.test(duelCard.querySelector('[data-duel-note]').textContent);
+          const huntCard = () => document.querySelector('[data-igp="p:' + d2.id + '"]');
+          const h0 = !!huntCard().querySelector('.igp-hunt') && !huntCard().querySelector('.igp-huntline.is-found') && /#ChasseAuxVariantes/.test(huntCard().textContent);
+          P.setSinglesInMemoryForTest(P.getPhysicalSingles().concat([{ id: 'v75f', series: 'Fixture Chasse', issue: '#2', publisher: 'Fictif', variant: 'Foil', addedAt: now, isWishlist: false }]));
+          document.getElementById('navProfile').click(); await wait(150); document.getElementById('navSinglesCommunity').click(); await wait(350);
+          r.hunt = h0 && !!huntCard().querySelector('.igp-huntline.is-found');
+          // Carte de collectionneur : profil public seulement, aucun chiffre financier
+          document.getElementById('navProfile').click(); await wait(350);
+          document.querySelector('#communityProfile [data-pfp-card]').click();
+          let cv = null; for (let i = 0; i < 40; i++) { await wait(100); cv = document.querySelector('#collectorCard canvas'); if (cv && cv.dataset.drawn) break; }
+          const box = document.getElementById('collectorCard');
+          const m = P.community.collectorCard(), txt = JSON.stringify(m);
+          const d0 = cv.dataset.drawn;
+          const sel = box.querySelector('[data-cc-fav]'); sel.value = '1'; sel.dispatchEvent(new Event('change'));
+          for (let i = 0; i < 40 && cv.dataset.drawn === d0; i++) await wait(100);
+          r.card = box.classList.contains('open') && box.querySelector('.modal-box').getAttribute('aria-labelledby') === 'ccTitle' && !!cv.dataset.drawn && cv.width === 1080 && cv.height === 1350 &&
+            m.facts.some(f => f.label === 'numéros' && f.n === 4) && !/77|99|Boîte secrète|purchasePrice|targetPrice/.test(txt) && sel.options.length >= 2 && cv.dataset.drawn !== d0 && /Carte de collectionneur :/.test(cv.getAttribute('aria-label')) && !!box.querySelector('[data-cc-save]');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(150);
+          r.cardClosed = !box.classList.contains('open');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          P.community.setWednesdayForTest(null);
+          KEYS.forEach((k, i) => { if (k0[i] === null) localStorage.removeItem(k); else localStorage.setItem(k, k0[i]); });
+          const box = document.getElementById('collectorCard'); if (box) box.classList.remove('open');
+          P.setSinglesInMemoryForTest(prev);
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && KEYS.every((k, i) => localStorage.getItem(k) === k0[i]);
+        return r;
+      })()`);
+      console.log('Résultat Test 75:', JSON.stringify(t75));
+      testResults.push({ test: 'Idées originales (lot S7, D-95) : Mercredi des sorties (bandeau, direct préparé avec l\'ordre du jour, ouvert depuis la pull list), Duel de couvertures (côte à côte, un vote local), Chasse aux variantes (trouvée dès qu\'un exemplaire correspond), Carte de collectionneur (profil public, aucun chiffre financier)',
+        ok: !!t75 && !t75.error && ['wednesday', 'wedLive', 'templates', 'duel', 'vote', 'hunt', 'card', 'cardClosed', 'dataUntouched'].every(k => t75[k] === true) });
+
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -21,6 +21,7 @@ const MODULES = [
   ['seriesProgress', 'domains/reading/series-progress.js'],
   ['feedCore', 'domains/community/feed-core.js'],
   ['liveCore', 'domains/community/live-core.js'],
+  ['rituals', 'domains/community/rituals-core.js'],
   ['rankingCore', 'domains/community/ranking-core.js'],
   ['profilePublic', 'domains/community/profile-public.js'],
   ['sourceClaims', 'domains/source/claims-core.js'],

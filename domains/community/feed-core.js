@@ -4,7 +4,7 @@
 //  - « J'aime », « Enregistrer » et « Épingler » (trois au plus) : état local de l'appareil, jamais envoyé.
 //  - Module pur : l'appelant fournit planches, stories et état ; rien n'est inventé (aucun compte, aucun abonné simulé).
 
-const KIND_TAGS = Object.freeze({ pull: 'PullDuMercredi', shelfie: 'Shelfie', gem: 'Pépite', read: 'JeViensDeLire', free: 'Planche' });
+const KIND_TAGS = Object.freeze({ pull: 'PullDuMercredi', shelfie: 'Shelfie', gem: 'Pépite', read: 'JeViensDeLire', duel: 'DuelDeCouvertures', hunt: 'ChasseAuxVariantes', free: 'Planche' });
 const MAX_PINS = 3;
 
 const strip = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '');
