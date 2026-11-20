@@ -9,10 +9,14 @@ const targetUrl = 'file:///C:/Users/tadeo/.gemini/antigravity/scratch/panel-comi
 console.log('--- SUITE DE TESTS COMPLÈTE & AUTOMATISÉE DE PANEL ---');
 console.log('Lancement du navigateur Microsoft Edge Headless...');
 
-const tempUserDataDir = path.join(__dirname, '.edge-test-profile');
+// Profil Edge : neuf à chaque exécution (dossier temporaire du système, supprimé à la fin) pour qu'aucun état laissé par une exécution
+// précédente ne fausse les tests. PANEL_TEST_PROFILE=persistent réutilise l'ancien profil .edge-test-profile (jamais supprimé).
+const persistentProfile = process.env.PANEL_TEST_PROFILE === 'persistent';
+const tempUserDataDir = persistentProfile ? path.join(__dirname, '.edge-test-profile') : fs.mkdtempSync(path.join(require('os').tmpdir(), 'panel-edge-test-'));
 if (!fs.existsSync(tempUserDataDir)) {
   fs.mkdirSync(tempUserDataDir, { recursive: true });
 }
+console.log('Profil Edge de test :', persistentProfile ? 'persistant (.edge-test-profile)' : 'neuf (' + tempUserDataDir + ')');
 
 const proc = execFile(edgePath, [
   '--headless',
@@ -20,6 +24,11 @@ const proc = execFile(edgePath, [
   `--user-data-dir=${tempUserDataDir}`,
   '--remote-debugging-port=9224',
   '--allow-file-access-from-files',
+  // Onglet headless jamais au premier plan : sans ces options, Edge ralentit fortement ses minuteurs (jusqu'à un réveil par minute)
+  '--disable-background-timer-throttling',
+  '--disable-renderer-backgrounding',
+  '--disable-backgrounding-occluded-windows',
+  '--disable-features=IntensiveWakeUpThrottling',
   targetUrl
 ]);
 
@@ -30,6 +39,10 @@ const killEdge = () => {
     const ps = "Get-CimInstance Win32_Process -Filter \"Name='msedge.exe'\" | Where-Object { $_.CommandLine -match [regex]::Escape('" + tempUserDataDir.replace(/'/g, "''") + "') } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }";
     require('child_process').execFileSync('powershell', ['-NoProfile', '-Command', ps], { stdio: 'ignore', timeout: 15000 });
   } catch (_) {}
+  // Le profil neuf a été créé par cette exécution dans le dossier temporaire du système : on le supprime (jamais le profil persistant)
+  if (!persistentProfile && tempUserDataDir.startsWith(require('os').tmpdir()) && path.basename(tempUserDataDir).startsWith('panel-edge-test-')) {
+    for (let i = 0; i < 5; i++) { try { fs.rmSync(tempUserDataDir, { recursive: true, force: true }); break; } catch (_) { const t = Date.now() + 500; while (Date.now() < t) {} } }
+  }
 };
 // Garde-fou global : un test bloqué ne doit jamais laisser Edge tourner indéfiniment
 const globalTimer = setTimeout(() => {
@@ -103,6 +116,17 @@ const waitForCdp = async () => {
         const res = await Promise.race([send('Runtime.evaluate', { expression: expr, returnByValue: true, awaitPromise: true }),
           new Promise(r => { stuck = setTimeout(() => { console.error('[Évaluation bloquée 120 s]', expr.replace(/\s+/g, ' ').slice(0, 160)); r({ result: { value: { error: 'timeout' } } }); }, 120000); })]);
         clearTimeout(stuck);
+        // Une évaluation bloquée continuerait de tourner dans la page et fausserait les tests suivants : on recharge la page
+        // (les données restent dans le stockage du profil de test) et on attend que l'application soit de nouveau prête
+        if (res.result && res.result.value && res.result.value.error === 'timeout') {
+          await Promise.race([send('Page.reload', { ignoreCache: false }), new Promise(r => setTimeout(r, 10000))]);
+          for (let i = 0; i < 80; i++) {
+            await new Promise(r => setTimeout(r, 250));
+            const ready = await Promise.race([send('Runtime.evaluate', { expression: '!!(window.Panel && document.readyState === "complete")', returnByValue: true }), new Promise(r => setTimeout(() => r(null), 2000))]);
+            if (ready && ready.result && ready.result.value) break;
+          }
+          console.error('[Page rechargée après le blocage]');
+        }
         if (res.exceptionDetails) {
           console.error('Eval Error:', res.exceptionDetails);
         }
@@ -515,7 +539,10 @@ const waitForCdp = async () => {
         document.getElementById('addSingleModalOpenBtn').click();
         document.getElementById('singleSeriesInput').value = 'Delta Test';
         document.getElementById('singleIssueInput').value = '#1';
-        document.getElementById('singleConditionSelect').value = 'CGC 9.8 (Certifié)';
+        // Slab CGC 9.8 saisi comme un utilisateur : société et note de gradation, l'état « CGC 9.8 (Certifié) » en découle
+        document.getElementById('singleGradingCompanySelect').value = 'CGC';
+        const gradeIn = document.getElementById('singleGradeInput');
+        gradeIn.value = '9.8'; gradeIn.dispatchEvent(new Event('change', { bubbles: true }));
         document.getElementById('singleEstValueInput').value = '';
         document.getElementById('singleYearInput').value = '2025';
         await P.saveSingleIssue();
@@ -3714,6 +3741,8 @@ const waitForCdp = async () => {
         const wait = ms => new Promise(res => setTimeout(res, ms));
         const CK = 'panel_community_drafts_v1', prevRaw = localStorage.getItem(CK);
         const saved = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        // La fiche de test range l'exemplaire dans « Boîte secrète » : une fois les emplacements migrés (tests précédents), ce texte crée un nœud ; on le retire en fin de test
+        const loc0 = P.locations.doc();
         const fpC = await P.backup.fingerprint('collection');
         let net = 0; const f0 = window.fetch, x0 = XMLHttpRequest.prototype.open;
         window.fetch = function () { net++; return f0.apply(this, arguments); };
@@ -3760,6 +3789,7 @@ const waitForCdp = async () => {
           window.fetch = f0; XMLHttpRequest.prototype.open = x0;
           const d = document.getElementById('communityShareDialog'); if (d) d.classList.remove('open');
           P.setPhysicalSingles(saved);
+          await P.locations.setDocForTest(loc0);
           if (prevRaw === null) localStorage.removeItem(CK); else localStorage.setItem(CK, prevRaw);
           await wait(200);
         }
@@ -4080,6 +4110,14 @@ const waitForCdp = async () => {
       await new Promise(res => setTimeout(res, 400));
       const t44m = await evalExpr(`(() => { const bs = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')]; const rs = bs.map(b => b.getBoundingClientRect()); return { n: bs.length, visible: getComputedStyle(document.querySelector('.mobile-dock')).display !== 'none', minW: Math.min(...rs.map(x => x.width)), minH: Math.min(...rs.map(x => x.height)), inside: rs.every(x => x.left >= 0 && x.right <= window.innerWidth + 0.5), overflow: document.documentElement.scrollWidth <= window.innerWidth + 1 }; })()`);
       await send('Emulation.clearDeviceMetricsOverride', {});
+      // L'annulation seule laisse parfois la page à 375 px (barre latérale cachée) : la suite reprend explicitement en largeur bureau
+      await new Promise(res => setTimeout(res, 200));
+      const wAfter = await evalExpr('window.innerWidth');
+      if (!(wAfter >= 1000)) {
+        await send('Emulation.setDeviceMetricsOverride', { width: 1280, height: 900, deviceScaleFactor: 1, mobile: false });
+        await new Promise(res => setTimeout(res, 300));
+        console.log('Largeur rétablie après le test mobile :', wAfter, '→', await evalExpr('window.innerWidth'));
+      }
       t44.mobile375 = !!t44m && t44m.n === 5 && t44m.visible && t44m.minW >= 44 && t44m.minH >= 44 && t44m.inside;
       console.log('Résultat Test 44:', JSON.stringify(t44), JSON.stringify(t44m));
       const t44keys = ['m1', 'm2', 'm3', 'm4', 'rules', 'explorerSection', 'labels', 'badgeOnPullList', 'pullListView', 'releasesView', 'explorerView', 'dock', 'dockActive', 'backToCollection', 'deepLink', 'mobile375'];
@@ -4849,7 +4887,10 @@ const waitForCdp = async () => {
         const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
         const live0 = localStorage.getItem('panel_live_v1'), drafts0 = localStorage.getItem('panel_community_drafts_v1');
         const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
-        const mk = (id, issue) => ({ id, series: 'Fixture Débat', issue, year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, coverUrl: 'https://example.invalid/' + id + '.jpg' });
+        // Image fictive chargeable sans réseau (data:) ; relais Metron simulé par une adresse fictive, le fetcher de test répond sans requête
+        const PX = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==';
+        const mk = (id, issue) => ({ id, series: 'Fixture Débat', issue, year: 2025, publisher: 'Fictif', variant: 'Cover A', isWishlist: false, coverUrl: PX });
+        const proxy0 = localStorage.getItem('panel_metron_proxy');
         try {
           localStorage.removeItem('panel_live_v1');
           P.setSinglesInMemoryForTest([mk('lv61a', '#1'), mk('lv61b', '#2')]);
@@ -4891,6 +4932,7 @@ const waitForCdp = async () => {
           // Variantes : Metron complète Fandom et Comic Vine (relais simulé, aucune requête réseau)
           P.setFandomFetcherForTest(async () => null);
           P.setCvFetcherForTest(async () => null);
+          localStorage.setItem('panel_metron_proxy', 'https://relais-metron.invalid/api/metron');
           P.setMetronFetcherForTest(async url => /\\/variants\\?q=Fixture%20Saga%20%233&year=2025/.test(url) ? { found: true, issue: { id: 61 }, editions: [{ name: 'Cover A', main: true, image: 'https://example.invalid/a.jpg' }, { name: 'Cover B Fixture Artist Variant', main: false, image: 'https://example.invalid/b.jpg' }, { name: 'Cover C 1:25', main: false, image: 'https://example.invalid/c.jpg' }] } : null);
           const props = await P.fetchComicCoversAndDetails('Fixture Saga (2025)', '#3', 'Fictif', { variant: 'Cover B Fixture Artist' });
           r.variants = props.length === 3 && props.every(p => p.source === 'metron') && props.filter(p => p.main).length === 1 && props.find(p => p.match) && props.find(p => p.match).url === 'https://example.invalid/b.jpg';
@@ -4900,6 +4942,7 @@ const waitForCdp = async () => {
           if (document.getElementById('liveStage')) P.live.end();
           if (live0 === null) localStorage.removeItem('panel_live_v1'); else localStorage.setItem('panel_live_v1', live0);
           if (drafts0 === null) localStorage.removeItem('panel_community_drafts_v1'); else localStorage.setItem('panel_community_drafts_v1', drafts0);
+          if (proxy0 === null) localStorage.removeItem('panel_metron_proxy'); else localStorage.setItem('panel_metron_proxy', proxy0);
           P.setSinglesInMemoryForTest(prev);
           try { P.resetFandomStateForTest(); P.resetCvStateForTest(); } catch (_) {}
           const ft = document.querySelector('[data-cm-tab="feed"]'); if (ft) ft.click();
@@ -5241,10 +5284,14 @@ const waitForCdp = async () => {
             { id: 'm2', source: 'Fixture', lang: 'fr', title: 'Batman Ninja : un nouvel anime', url: 'https://news.example/m2', date: d, author: '', categories: [], excerpt: '', image: '' },
             { id: 'c1', source: 'Fixture', lang: 'fr', title: 'Absolute Batman en VF', url: 'https://news.example/c1', date: d, author: '', categories: [], excerpt: '', image: '' } ],
             sources: [{ id: 'fx', name: 'Fixture', lang: 'fr', home: 'https://news.example' }], unavailable: [], notice: '' }));
+          r.state0 = JSON.stringify({ w: window.innerWidth, sidebar: !!document.querySelector('.sidebar') && document.querySelector('.sidebar').getClientRects().length > 0, hosted: window.Panel.views.hosted(), bodyClass: document.body.className.slice(0, 160) });
           document.getElementById('navExplorer').click(); await wait(250);
+          for (let i = 0; i < 5 && document.querySelector('#explorerRoot .ex-back'); i++) { document.querySelector('#explorerRoot .ex-back').click(); await wait(150); }
+          r.state1 = JSON.stringify({ root: !!document.getElementById('explorerRoot'), rootVisible: !!document.getElementById('explorerRoot') && document.getElementById('explorerRoot').getClientRects().length > 0, head: document.getElementById('explorerRoot') ? document.getElementById('explorerRoot').textContent.replace(/\s+/g, ' ').slice(0, 160) : '' });
           await window.Panel.news.load(); await wait(250);
           const ids = [...document.querySelectorAll('#exNewsBox a.ex-nw')].map(a => a.dataset.newsId);
           r.mangaHidden = !ids.includes('m1') && ids.includes('m2') && ids.includes('c1');
+          if (!r.mangaHidden) r.newsDetail = JSON.stringify({ ids, n: document.querySelectorAll('#exNewsBox a.ex-nw').length, box: (document.getElementById('exNewsBox') || {}).textContent ? document.getElementById('exNewsBox').textContent.replace(/\s+/g, ' ').slice(0, 300) : 'absent' });
           r.noMangaChip = !document.querySelector('#exNewsBox [data-news-topic="manga"]');
           const nav = async id => { document.getElementById(id).click(); await wait(250); return { cur: [...document.querySelectorAll('#navSinglesBlock [aria-current="page"]')].map(b => b.id), h: document.getElementById('mainTitleHeading').textContent, t: document.title }; };
           const w = await nav('navSinglesWishlist');
@@ -5316,6 +5363,7 @@ const waitForCdp = async () => {
             key('Tab', true); o.shiftTab = document.activeElement === f[f.length - 1];
             key('Escape'); await wait(200);
             o.esc = !m.classList.contains('open'); o.back = document.activeElement === opener;
+            if (!o.back) o.active = (document.activeElement && (document.activeElement.id || document.activeElement.tagName)) + ' / opener visible : ' + (opener.getClientRects().length > 0);
             dlg[modalId] = o;
           }
           r.dialogs = Object.values(dlg).every(o => o.named && o.focusInside && o.tab && o.shiftTab && o.esc && o.back);
@@ -5323,6 +5371,7 @@ const waitForCdp = async () => {
           document.getElementById('navExplorer').click(); await wait(400);
           const ids = ['globalSearch', 'singlesSearchInput', 'singlesSortSelect', 'boxFilterSelect', 'seriesTrackSearch', 'seriesTrackSort', 'pullAddInput', 'exSearch'];
           r.labels = ids.every(i => document.getElementById(i) && (document.getElementById(i).getAttribute('aria-label') || '').length > 3);
+          if (!r.labels) r.labelsMissing = ids.filter(i => !(document.getElementById(i) && (document.getElementById(i).getAttribute('aria-label') || '').length > 3)).map(i => i + (document.getElementById(i) ? '' : ' (absent)'));
           const txt = id => document.getElementById(id).textContent.replace(/[0-9]+/g, '').trim();
           r.french = /Scanner un code-barres/.test(txt('navScanBarcodeDirect')) && /Scanner une couverture/.test(txt('navScanCoverDirect')) && /Ajouter un single/.test(txt('navAddSingleManual')) && /Pull list/.test(txt('navSinglesPullList')) && document.getElementById('backupJsonBtn').textContent.trim() === 'Exporter (JSON)';
         } catch (e) { r.error = String(e && e.message || e); }

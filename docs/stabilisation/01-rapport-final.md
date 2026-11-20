@@ -183,3 +183,15 @@ Bilan : **aucune régression attribuable à la stabilisation n'a été trouvée.
 5. Poursuivre la revue des `innerHTML` par lots (S3).
 6. Planifier le découpage d'`index.html` comme premier lot technique de PANEL 2.0.
 7. Garder l'ordre : aucun module PANEL 2.0 avant ces points et la décision DR-08.
+
+## 16. Suite Edge fiabilisée (20 novembre 2026, recommandation 2)
+
+| Point | Cause trouvée | Correction |
+|---|---|---|
+| T1 Blocages et cascade | L'onglet headless n'est jamais au premier plan : Edge y ralentit fortement les minuteurs (jusqu'à un réveil par minute), si bien qu'un `await wait(150)` pouvait durer 60 s ; le profil persistant gardait en plus l'état des exécutions précédentes | `run-all-tests.js` lance Edge avec `--disable-background-timer-throttling`, `--disable-renderer-backgrounding`, `--disable-backgrounding-occluded-windows` et `--disable-features=IntensiveWakeUpThrottling` ; profil **neuf à chaque exécution** (dossier temporaire du système, supprimé à la fin ; `PANEL_TEST_PROFILE=persistent` garde l'ancien) ; après une évaluation bloquée, la page est rechargée avant le test suivant |
+| T2 Test 12 | L'état « CGC 9.8 (Certifié) » n'est plus une option de la liste : il naît des champs de gradation | Le test saisit la société et la note comme un utilisateur |
+| T3 Test 39 | Une fois les emplacements migrés par les tests précédents, « Boîte secrète » crée un nœud | Le test garde et restaure le document des emplacements |
+| T4 Test 61 | Pas de relais Metron en `file://`, image `example.invalid` non chargeable | Relais simulé par une adresse fictive (le fetcher de test répond, aucune requête) et image `data:` ; la préférence est restaurée |
+| Tests 68 et 70 dans la suite | Explorer resté dans une sous-vue ; largeur restée à 375 px après le test mobile (l'annulation de l'émulation ne suffit pas) | Retour à l'accueil d'Explorer ; largeur bureau (1280 px) imposée après le test mobile |
+
+Résultat : **suite complète réussie d'un seul tenant, 69/69, code de sortie 0**, dans un profil neuf.
