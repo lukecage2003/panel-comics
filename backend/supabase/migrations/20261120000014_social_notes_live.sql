@@ -4,7 +4,7 @@
 --   * Pensées (D-96) : publications de type « note » (pensée, théorie, question), 500 caractères, mots-dièse indexés,
 --     verdict des théories donné par leur auteur seulement. Les images restent sur l'appareil (D-04 : stockage à venir).
 --   * Tendances : mots-dièse des publications visibles par l'appelant, sept jours, pondérés par la fraîcheur (48 h).
---   * J'aime : réaction « like » ; chaque membre choisit la forme de son J'aime (dessins de Panel, aucun logo).
+--   * J'aime : réaction « like » ; chaque membre choisit la forme de son J'aime (dessins originaux de Panel, aucun logo).
 --   * Directs : salons (format, camps du duel), chat (200 caractères, 30 messages par minute), votes du duel
 --     (un par membre, jamais lisibles individuellement par les autres : seul le décompte est rendu).
 --     Voix seule : aucune vidéo ; le transport audio n'est pas dans la base (serveur à choisir, accord requis).
@@ -25,7 +25,7 @@ create index post_tags_tag_idx on community.post_tags (tag);
 alter table community.reactions drop constraint if exists reactions_kind_check;
 alter table community.reactions add constraint reactions_kind_check check (kind in ('like', 'pow', 'wow', 'bam', 'zap', 'kapow'));
 alter table community.members add column like_icon text not null default 'heart'
-  check (like_icon in ('heart', 'claws', 'bolt', 'web', 'hammer', 'wings', 'flame', 'cosmic', 'ring', 'mask', 'shield', 'skull'));
+  check (like_icon ~ '^[a-z][a-z0-9-]{1,31}$'); -- identifiant d'un dessin de Panel (catalogue côté application, plus de 150 formes)
 -- Même fonction qu'en migration 13 (même signature, droits conservés), « like » en plus
 create or replace function api.react(p_post uuid, p_kind text) returns jsonb
 language plpgsql security definer set search_path = ''
@@ -198,7 +198,7 @@ create function api.set_like_icon(p_icon text) returns jsonb
 language plpgsql security definer set search_path = ''
 as $$
 begin
-  if p_icon not in ('heart', 'claws', 'bolt', 'web', 'hammer', 'wings', 'flame', 'cosmic', 'ring', 'mask', 'shield', 'skull') then raise exception 'invalid_icon' using errcode = '22023'; end if;
+  if p_icon is null or p_icon !~ '^[a-z][a-z0-9-]{1,31}$' then raise exception 'invalid_icon' using errcode = '22023'; end if;
   update community.members set like_icon = p_icon, updated_at = now() where user_id = auth.uid();
   if not found then raise exception 'not_member' using errcode = '42501'; end if;
   return pg_catalog.jsonb_build_object('status', 'updated', 'like_icon', p_icon);

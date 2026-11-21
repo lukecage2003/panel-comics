@@ -64,6 +64,7 @@ const sanitizeRoom = r => {
     format: FORMATS[r.format] ? r.format : 'free',
     when: isoOrEmpty(r.when),
     topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images, duel: duelOf(Object.assign({}, r, { format: FORMATS[r.format] ? r.format : 'free' })),
+    cohosts: sanitizeCohosts(r.cohosts),
     createdAt: isoOrEmpty(r.createdAt), updatedAt: isoOrEmpty(r.updatedAt)
   };
 };
@@ -93,6 +94,25 @@ const sanitizeState = s => {
   out.history = out.history.slice(0, LIMITS.history);
   return out;
 };
+
+// Co-animation (D-98, migration 15) : jusqu'à trois personnes prévues, par pseudo ; rôle « co-animateur » ou « modérateur ».
+// Les invitations partent quand les comptes sont actifs (api.live_invite) : ici, seule la préparation est gardée.
+const COHOST_MAX = 3;
+const COHOST_ROLES = Object.freeze({ cohost: 'Co-animateur', moderator: 'Modérateur du salon' });
+const HANDLE = /^[A-Za-z0-9_.-]{3,24}$/;
+// Accepte une liste [{ handle, role }] ou un texte « @pseudo » / « @pseudo modérateur », une personne par ligne
+const sanitizeCohosts = v => {
+  const lines = Array.isArray(v) ? v : String(v || '').split(/\n|,/).map(l => { const m = l.trim().match(/^@?(\S+)(?:\s+(.*))?$/); return m ? { handle: m[1], role: /mod/i.test(m[2] || '') ? 'moderator' : 'cohost' } : null; });
+  const out = [];
+  lines.forEach(x => {
+    if (!x || typeof x !== 'object') return;
+    const h = String(x.handle || '').replace(/^@/, '').trim();
+    if (!HANDLE.test(h) || out.some(y => y.handle.toLowerCase() === h.toLowerCase()) || out.length >= COHOST_MAX) return;
+    out.push({ handle: h, role: COHOST_ROLES[x.role] ? x.role : 'cohost' });
+  });
+  return out;
+};
+const cohostsText = list => sanitizeCohosts(list).map(c => '@' + c.handle + (c.role === 'moderator' ? ' modérateur' : '')).join('\n');
 
 const validateRoom = r => {
   const errors = [];
@@ -218,4 +238,4 @@ const summaryText = x => {
   ].filter(Boolean).join('\n');
 };
 
-module.exports = { FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { COHOST_MAX, COHOST_ROLES, sanitizeCohosts, cohostsText, FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };

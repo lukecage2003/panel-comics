@@ -75,7 +75,7 @@ const postFromRow = (row, author, me) => {
     kind: NOTE_KINDS.includes(pay.note) ? pay.note : 'thought', at: row.created_at || '', text: str(row.body, 500), spoiler: !!row.spoiler,
     verdict: pay.note === 'theory' ? (VERDICTS.includes(pay.verdict) ? pay.verdict : 'open') : '', imageRef: '', imageAlt: '',
     visibility: row.visibility === 'followers' ? 'followers' : 'public',
-    author: { id: row.author_id, handle: str(a.handle, 24), name: str(a.display_name, 40), likeIcon: str(a.like_icon || 'heart', 12) },
+    author: { id: row.author_id, handle: str(a.handle, 24), name: str(a.display_name, 40), likeIcon: str(a.like_icon || 'heart', 32) },
     media: pay.issue && pay.issue.series ? [{ series: str(pay.issue.series, 120), issue: str(pay.issue.issue, 20), publisher: str(pay.issue.publisher, 100), coverUrl: '', variant: '' }] : []
   };
 };

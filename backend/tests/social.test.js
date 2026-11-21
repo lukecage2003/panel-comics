@@ -73,7 +73,9 @@ test('J\'aime : réaction « like » et forme choisie parmi les douze dessins', 
   const pid = (await q1("select id from community.posts where kind = 'note' and author_id = $1 limit 1", [ADULT])).id;
   assert.equal((await q1("select api.react($1, 'like') r", [pid])).r.status, 'reacted');
   assert.equal((await q1('select api.set_like_icon($1) r', ['claws'])).r.like_icon, 'claws');
-  await assert.rejects(db.query("select api.set_like_icon('logo_editeur')"), /invalid_icon/);
+  await assert.rejects(db.query("select api.set_like_icon('Logo Éditeur!')"), /invalid_icon/);
+  assert.equal((await q1("select api.set_like_icon('roi-panthere') r")).r.like_icon, 'roi-panthere');
+  await db.query("select api.set_like_icon('claws')");
   assert.equal((await q1("select like_icon from community.members where handle = 'lecteur_r1'")).like_icon, 'claws');
 });
 

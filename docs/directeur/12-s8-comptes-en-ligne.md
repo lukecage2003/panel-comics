@@ -1,6 +1,8 @@
 # Lot S8 : comptes en ligne et contenu des autres (D-97)
 
-Statut au 20/11/2026 : **préparé localement**. Rien n'est appliqué sur Supabase ni activé dans l'application.
+Statut au 21/11/2026 : **migrations 14 et 15 appliquées en préproduction** (projet Paris, sans utilisateur ; D-98). Rien n'est activé dans l'application : les comptes en ligne restent fermés.
+
+Statut au 20/11/2026 : préparé localement.
 
 ## 1. Ce qui est prêt
 
@@ -16,7 +18,7 @@ La migration 14 ajoute :
   - Un mot-dièse n'est retenu que s'il est réellement écrit dans le texte.
   - Le verdict d'une théorie est donné par son auteur seulement.
 - **Tendances** : `api.trending_tags`, sur sept jours, pondérées par la fraîcheur (demi-vie 48 h). Elles sont calculées sur les seules publications que l'appelant a le droit de voir.
-- **J'aime** : réaction `like` et forme choisie par chaque membre (`like_icon`, douze dessins de Panel).
+- **J'aime** : réaction `like` et forme choisie par chaque membre (`like_icon`, douze glyphes puis plus de 200 dessins originaux de Panel (D-98, motif `^[a-z][a-z0-9-]{1,31}$`)).
 - **Directs** :
   - salons (`live_rooms`, avec les deux camps du duel) ;
   - chat (`live_messages`, 200 caractères, 30 messages par minute, diffusé en temps réel sous RLS) ;

@@ -35,7 +35,8 @@ test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
     '20261110000011_conflict_resolution.sql',
     '20261110000012_limits_purge_account.sql',
     '20261114000013_community_moderation.sql',
-    '20261120000014_social_notes_live.sql'
+    '20261120000014_social_notes_live.sql',
+    '20261121000015_live_cohosts.sql'
   ]);
 });
 

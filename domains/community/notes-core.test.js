@@ -55,9 +55,9 @@ test('tendances pondérées par la fraîcheur et suggestions pendant la saisie',
 
 test('J\'aime personnalisé : formes originales, suggestion depuis le personnage favori', () => {
   assert.equal(K.sanitize('logo-officiel'), 'heart');
-  assert.equal(K.suggestFor('Black Panther'), 'claws');
-  assert.equal(K.suggestFor('Miles Morales (Spider-Man)'), 'web');
-  assert.equal(K.suggestFor('Green Lantern'), 'ring');
+  assert.equal(K.suggestFor('Black Panther'), 'roi-felin');
+  assert.equal(K.suggestFor('Miles Morales (Spider-Man)'), 'tisseur-brooklyn');
+  assert.equal(K.suggestFor('Green Lantern'), 'porteur-emeraude');
   assert.equal(K.suggestFor(''), null);
   assert.equal(K.suggestFor('Tintin'), null);
   assert.equal(K.ICONS.length, 12);

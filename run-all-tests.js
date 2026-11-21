@@ -5700,7 +5700,7 @@ const waitForCdp = async () => {
       console.log('\n[TEST 76] Pensées, J\'aime, Duel en direct...');
       const t76 = await evalExpr(`(async () => {
         const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
-        const KEYS = ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1', 'panel_ig_v1', 'panel_community_drafts_v1'];
+        const KEYS = ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1', 'panel_ig_v1', 'panel_community_drafts_v1', 'panel_affinity_v1'];
         const fp0 = await P.backup.fingerprint('collection');
         const k0 = KEYS.map(k => localStorage.getItem(k));
         const q = s => document.querySelector(s);
@@ -5773,6 +5773,83 @@ const waitForCdp = async () => {
       console.log('Résultat Test 76:', JSON.stringify(t76));
       testResults.push({ test: 'Pensées, théories et questions (mots-dièse suggérés, verdict, filtre, pensée vide refusée), J\'aime personnalisé (douze dessins originaux, choisi dans le Profil), Duel en direct (deux camps, sept manches, vote, chat de mes seuls messages, voix seule) (D-96)',
         ok: !!t76 && !t76.error && ['composer', 'published', 'tagFilter', 'verdict', 'emptyRefused', 'likePicker', 'likeUsed', 'duelEditor', 'duelSaved', 'stage', 'vote', 'chat', 'escInChat', 'dataUntouched'].every(k => t76[k] === true) });
+      // ==========================================
+      // TEST 77 : J'aime dessinés, ouverture, goûts appris, rencontres par ville, co-animation préparée (D-98)
+      // ==========================================
+      console.log('\n[TEST 77] J\'aime dessinés, goûts appris, rencontres, co-animation...');
+      const t77 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel;
+        const KEYS = ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1', 'panel_ig_v1', 'panel_affinity_v1', 'panel_meetups_v1', 'panel_meetup_city_v1'];
+        const fp0 = await P.backup.fingerprint('collection');
+        const k0 = KEYS.map(k => localStorage.getItem(k));
+        const q = s => document.querySelector(s);
+        const conf0 = window.confirm;
+        try {
+          ['panel_notes_v1', 'panel_like_icon_v1', 'panel_live_v1', 'panel_affinity_v1', 'panel_meetups_v1', 'panel_meetup_city_v1'].forEach(k => localStorage.removeItem(k));
+          // Ouverture : l'animation ne reste jamais devant l'application
+          r.splashGone = !q('#splash');
+          // Sélecteur de J'aime : recherche, familles, plus de 200 dessins, aucun nom déposé
+          q('#navProfile').click(); await wait(300);
+          const sq = q('[data-pfl-q]'); sq.value = 'tonnerre'; sq.dispatchEvent(new Event('input')); await wait(80);
+          const thor = q('[data-pfl="dieu-tonnerre"]');
+          thor.click(); await wait(80);
+          r.picker = !!thor && localStorage.getItem('panel_like_icon_v1') === 'dieu-tonnerre' && !!q('.pfl-big svg.hero') && /\\d{3} formes/.test(q('.pfl').textContent);
+          q('[data-pfl-cat="artefacts"]').click(); await wait(80);
+          r.families = document.querySelectorAll('[data-pfl]').length >= 30 && q('[data-pfl-cat="artefacts"]').getAttribute('aria-pressed') === 'true' && !q('[data-pfl-q]').value;
+          r.noTrademark = !/Batman|Spider|Superman|Marvel|Thor\\b|Wolverine/.test(q('.pfl').textContent.replace(/sans logo ni personnage déposé/, ''));
+          // Une pensée, un J'aime dessiné, et l'algorithme apprend le mot-dièse
+          q('#navSinglesCommunity').click(); await wait(300);
+          const ta = q('#ntText'); ta.focus(); ta.value = 'Fixture 77 pour le fil #Fixture77'; ta.dispatchEvent(new Event('input')); await wait(60);
+          q('[data-nt-send]').click(); await wait(300);
+          const lb = q('.ntp [data-igp-like]'); lb.click(); await wait(120);
+          const aff = JSON.parse(localStorage.getItem('panel_affinity_v1') || 'null');
+          r.heroLike = !!lb.querySelector('svg.ic.hero') && lb.getAttribute('aria-pressed') === 'true' && /Dieu du tonnerre/i.test(lb.getAttribute('aria-label'));
+          r.learned = !!aff && !!aff.w['tags:fixture77'] && aff.w['tags:fixture77'].v > 0;
+          q('#navSinglesCommunity').click(); await wait(300);
+          const box = q('.aff');
+          r.tastePanel = !!box && /Fixture77/.test(box.textContent) && /cet appareil seulement/.test(box.textContent);
+          box.querySelector('[data-aff-forget="tags:fixture77"]').click(); await wait(250);
+          r.forget = !(JSON.parse(localStorage.getItem('panel_affinity_v1')) || { w: {} }).w['tags:fixture77'];
+          // Rencontres : adresse privée et mineur refusés, lieu public accepté, invitation sans lieu exact
+          q('#navLive').click(); await wait(300);
+          const mt = q('.mt'); mt.querySelector('.mt-new').open = true;
+          const set = (k, v) => { mt.querySelector('[data-mt="' + k + '"]').value = v; };
+          const d = new Date(Date.now() + 3 * 86400000), pad = n => String(n).padStart(2, '0');
+          set('title', 'Fixture 77 rencontre'); set('city', 'Villefixture'); set('venue', '12 rue des Lilas');
+          set('when', d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + 'T18:00');
+          mt.querySelector('[data-mt-save]').click(); await wait(80);
+          r.meetRefused = /18 ans/.test(mt.querySelector('[data-mt-msg]').textContent) && /adresse personnelle/.test(mt.querySelector('[data-mt-msg]').textContent) && !localStorage.getItem('panel_meetups_v1');
+          set('venue', 'Boutique Fixture'); mt.querySelector('[data-mt-adult]').checked = true;
+          mt.querySelector('[data-mt-save]').click(); await wait(300);
+          const ms = JSON.parse(localStorage.getItem('panel_meetups_v1') || 'null');
+          const card = q('.mt-card');
+          r.meetSaved = !!ms && ms.meetups.length === 1 && ms.meetups[0].venueType === 'shop' && !!card && /Villefixture/.test(card.textContent) && localStorage.getItem('panel_meetup_city_v1') === 'Villefixture';
+          r.inviteNoVenue = !/Boutique Fixture/.test(window.PanelDomains.meetups.inviteText(ms.meetups[0]));
+          window.confirm = () => true;
+          card.querySelector('[data-mt-del]').click(); await wait(250);
+          r.meetDeleted = JSON.parse(localStorage.getItem('panel_meetups_v1')).meetups.length === 0 && !q('.mt-card');
+          // Co-animation préparée dans l'éditeur de direct
+          q('[data-lv-new]').click(); await wait(300);
+          const lset = (s, v) => { const e = q(s); e.value = v; e.dispatchEvent(new Event('input')); e.dispatchEvent(new Event('change')); };
+          lset('[data-lv="title"]', 'Fixture 77 direct'); lset('[data-lv="topics"]', 'Point fixture');
+          lset('[data-lv="cohosts"]', '@alice_fx\\n@bob_fx modérateur\\n@alice_fx\\n@<b>');
+          [...q('[data-lv="title"]').closest('.modal-box').querySelectorAll('button')].find(b => /Créer le direct/.test(b.textContent)).click(); await wait(300);
+          const room = (JSON.parse(localStorage.getItem('panel_live_v1') || '{"rooms":[]}').rooms || []).find(x => x.title === 'Fixture 77 direct');
+          const lc = [...document.querySelectorAll('.lv-card')].find(c => c.textContent.includes('Fixture 77 direct'));
+          r.cohosts = !!room && room.cohosts.length === 2 && room.cohosts[1].role === 'moderator' && !!lc && /@alice_fx/.test(lc.querySelector('.lv-team').textContent);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.confirm = conf0;
+          document.querySelectorAll('.modal.open').forEach(m => m.classList.remove('open'));
+          KEYS.forEach((k, i) => { if (k0[i] === null) localStorage.removeItem(k); else localStorage.setItem(k, k0[i]); });
+          document.getElementById('navAllSingles').click(); await wait(150);
+        }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0 && KEYS.every((k, i) => localStorage.getItem(k) === k0[i]);
+        return r;
+      })()`);
+      console.log('Résultat Test 77:', JSON.stringify(t77));
+      testResults.push({ test: 'Test 77 : J\'aime dessinés, goûts appris, rencontres par ville, co-animation (D-98)',
+        ok: !!t77 && !t77.error && ['splashGone', 'picker', 'families', 'noTrademark', 'heroLike', 'learned', 'tastePanel', 'forget', 'meetRefused', 'meetSaved', 'inviteNoVenue', 'meetDeleted', 'cohosts', 'dataUntouched'].every(k => t77[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

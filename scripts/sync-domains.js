@@ -25,6 +25,8 @@ const MODULES = [
   ['notes', 'domains/community/notes-core.js'],
   ['likes', 'domains/community/likes-core.js'],
   ['online', 'domains/community/online-core.js'],
+  ['affinity', 'domains/community/affinity-core.js'],
+  ['meetups', 'domains/community/meetups-core.js'],
   ['rankingCore', 'domains/community/ranking-core.js'],
   ['profilePublic', 'domains/community/profile-public.js'],
   ['sourceClaims', 'domains/source/claims-core.js'],

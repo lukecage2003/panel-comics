@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-OJ/BXd0cCtCsAWgxNfbF4MUk3vGGibZJPBOdOcIkjfA=' 'sha256-InBgrN/qAcfUNmCAUctU4+TuAg2FtE0ZsuWhspXu64s=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-FYhu3RNCk0b9Z6cnVbbdseBqv2euxKOOmRIQ7VwZlwI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3119,6 +3119,25 @@
     .lv-card-b b, .lv-hist b { font: 650 16px var(--font-display); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .lv-card-b span, .lv-hist span { color: var(--muted); font-size: 12.5px; }
     .lv-card-act { grid-column: 2; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .lv-team { display: flex; gap: 6px; align-items: center; font-size: 12.5px; margin: 6px 0 0; color: rgba(255,255,255,.8); } .lv-team .ic { width: 15px; height: 15px; flex: 0 0 auto; }
+    .mt { margin-top: 26px; }
+    .mt-head { display: flex; gap: 14px; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; margin-bottom: 12px; }
+    .mt-head > div { flex: 1 1 260px; min-width: 0; }
+    .mt-city { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); flex: 0 1 200px; }
+    .mt-list { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+    .mt-card { display: flex; gap: 12px; padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: var(--bg-card); }
+    .mt-date { flex: 0 0 58px; display: grid; place-items: center; align-content: center; border-radius: 12px; background: var(--ink); color: var(--bg); padding: 8px 0; }
+    .mt-date b { font: 800 15px var(--font-display); } .mt-date small { font-size: 11.5px; opacity: .8; }
+    .mt-b { min-width: 0; display: grid; gap: 2px; } .mt-b b { font: 700 15px var(--font-display); } .mt-b small { color: var(--muted); font-size: 12.5px; overflow-wrap: anywhere; }
+    .mt-theme { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--accent, #ffd400); font-weight: 700; }
+    .mt-act { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
+    .mt-new { margin-top: 12px; border: 1px solid var(--line); border-radius: 16px; padding: 10px 14px; }
+    .mt-new summary { cursor: pointer; font: 700 14px var(--font-display); display: flex; align-items: center; gap: 8px; min-height: 36px; }
+    .mt-new summary .ic { width: 16px; height: 16px; }
+    .mt-form { display: grid; gap: 10px; margin-top: 10px; }
+    .mt-adult { display: flex; gap: 8px; align-items: center; font-size: 14px; min-height: 40px; }
+    .mt-adult input { width: 20px; height: 20px; }
+    .mt-safety { margin: 0; padding-left: 18px; font-size: 12.5px; color: var(--muted); display: grid; gap: 3px; }
     .lv-empty { display: flex; flex-direction: column; gap: 4px; padding: 18px; border-radius: 18px; border: 1px dashed var(--line-strong); color: var(--muted); font-size: 13px; } .lv-empty b { color: var(--ink); font-size: 15px; }
     .lv-hist { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 14px; border: 1px solid var(--line); }
     .lv-hist > div { min-width: 0; display: flex; flex-direction: column; gap: 1px; }
@@ -3395,6 +3414,17 @@
     .hm-seg { position: sticky; top: 0; z-index: 3; display: flex; justify-content: center; gap: 28px; margin: 0 0 12px; padding: 4px 0 0; background: var(--bg, transparent); border-bottom: 1px solid var(--line, #333); }
     .hm-seg button { border: 0; background: none; color: var(--ink-dim, inherit); font: inherit; font-weight: 800; font-size: 15px; padding: 10px 2px; min-height: 44px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; }
     .hm-seg button[aria-selected="true"] { color: var(--ink, inherit); border-bottom-color: var(--accent, #FFD400); }
+    .aff { margin: -4px 0 12px; border: 1px solid var(--line); border-radius: 14px; padding: 8px 12px; background: var(--bg-card); }
+    .aff summary { cursor: pointer; font: 700 13px var(--font-display); min-height: 32px; display: flex; align-items: center; gap: 6px; }
+    .aff summary small { background: var(--ink); color: var(--bg); border-radius: 999px; padding: 0 7px; font-size: 11px; }
+    .aff-chips { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+    .aff-chip { display: inline-flex; align-items: center; gap: 4px; border-radius: 999px; padding: 2px 2px 2px 10px; font-size: 13px; border: 1px solid var(--line); }
+    .aff-chip.is-more { border-color: color-mix(in srgb, #22c55e 55%, var(--line)); }
+    .aff-chip.is-less { border-color: color-mix(in srgb, #ef4444 55%, var(--line)); opacity: .85; }
+    .aff-chip small { color: var(--muted); font-size: 11px; }
+    .aff-chip button { border: 0; background: transparent; color: inherit; width: 32px; height: 32px; display: grid; place-items: center; border-radius: 50%; cursor: pointer; }
+    .aff-chip .ic { width: 14px; height: 14px; }
+    .aff-reset { border: 0; background: none; color: var(--muted); text-decoration: underline; font: inherit; font-size: 12.5px; cursor: pointer; padding: 6px 0; min-height: 32px; }
     .hm-note { font-size: 12.5px; color: var(--ink-dim, inherit); margin: -4px 2px 12px; text-align: center; }
     .modal-box.pub-sheet { display: block; flex-wrap: nowrap; max-width: 560px; width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 32px); overflow-y: auto; overscroll-behavior: contain; }
     .pub-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 4px; }
@@ -3502,6 +3532,29 @@
     .pfl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)); gap: 8px; margin-top: 10px; }
     .pfl-opt { display: grid; justify-items: center; gap: 6px; padding: 12px 6px 10px; border: 1px solid var(--line, #333); border-radius: 14px; background: transparent; color: inherit; font: inherit; cursor: pointer; }
     .pfl-opt .ic { width: 28px; height: 28px; color: var(--lk); }
+    svg.ic.hero { fill-opacity: 1 !important; stroke: none; }
+    .pfl-opt .ic.hero { width: 54px; height: 54px; transition: transform .15s; }
+    @media (hover: hover) { .pfl-opt:hover .ic.hero { transform: scale(1.06); } }
+    .pfl-now { display: flex; gap: 14px; align-items: center; margin: 8px 0 12px; }
+    .pfl-now > div { min-width: 0; }
+    .pfl-big { flex: 0 0 auto; width: 80px; height: 80px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--lk) 16%, transparent); box-shadow: 0 0 0 2px var(--lk); color: var(--lk); }
+    .pfl-big .ic { width: 66px; height: 66px; }
+    .pfl-big.is-pop .ic { animation: igPop .35s cubic-bezier(.2,.9,.3,1.4); }
+    .pfl-now b { display: block; font: 800 17px var(--font-display); }
+    .pfl-now small { display: block; color: var(--muted); font-size: 13px; margin-top: 2px; }
+    .pfl-sug { margin-top: 8px; display: inline-flex; gap: 8px; align-items: center; border: 1px solid var(--line); background: var(--bg-card); color: inherit; border-radius: 999px; padding: 4px 12px 4px 4px; font: inherit; font-size: 13px; cursor: pointer; min-height: 40px; text-align: left; }
+    .pfl-sug .ic { width: 30px; height: 30px; }
+    .pfl-sug b { display: inline; font-size: 13px; }
+    .pfl-q { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; background: var(--bg-card); color: var(--ink); padding: 0 14px; font: inherit; }
+    .pfl-cats { display: flex; gap: 6px; overflow-x: auto; padding: 10px 0 4px; scrollbar-width: none; }
+    .pfl-cats::-webkit-scrollbar { display: none; }
+    .pfl-cat { flex: 0 0 auto; border: 1px solid var(--line); background: transparent; color: inherit; border-radius: 999px; padding: 7px 12px; font: 600 13px var(--font-display); min-height: 36px; cursor: pointer; }
+    .pfl-cat[aria-pressed="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .pfl .pfl-grid { max-height: 430px; overflow-y: auto; overscroll-behavior: contain; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); padding: 2px; }
+    .pfl-empty { grid-column: 1 / -1; }
+    .igp-act.is-like .ic.hero { width: 29px; height: 29px; filter: grayscale(1) brightness(1.1); opacity: .62; transition: filter .2s, opacity .2s, transform .15s; }
+    .igp-act.is-like.is-on .ic.hero { filter: none; opacity: 1; }
+    @media (prefers-reduced-motion: reduce) { .pfl-big.is-pop .ic { animation: none; } .pfl-opt .ic.hero, .igp-act.is-like .ic.hero { transition: none; } }
     .pfl-opt small { font-size: 12px; }
     .pfl-opt[aria-checked="true"] { border-color: var(--lk); box-shadow: 0 0 0 1px var(--lk) inset; background: color-mix(in srgb, var(--lk) 12%, transparent); }
     .pfl-opt[aria-checked="true"] .ic { fill: currentColor; fill-opacity: .35; }
@@ -3589,9 +3642,25 @@
     .pfc-go span { flex: 1; min-width: 0; }
     .pfc-go b { font-size: 12px; color: var(--ink-dim, inherit); }
     .pfc-go .ic { width: 18px; height: 18px; flex: 0 0 18px; }
-  </style>
+      /* Animation d'ouverture (D-98) : 1,2 s, une fois par session ; le contenu reste utilisable dessous */
+    .splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #0b0b12; pointer-events: none; animation: splashOut .32s ease-in .95s forwards; }
+    .splash-in { position: relative; display: grid; justify-items: center; gap: 14px; }
+    .splash-rays { position: absolute; left: 50%; top: 42px; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%;
+      background: repeating-conic-gradient(rgba(255,212,0,.16) 0 6deg, transparent 6deg 22.5deg); -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%); mask: radial-gradient(circle, #000 30%, transparent 70%);
+      animation: splashRays 1.2s cubic-bezier(.2,.8,.2,1) both; }
+    .splash-mark { position: relative; width: 84px; height: 84px; border-radius: 22px; display: grid; place-items: center; background: #ffd400; color: #0b0b12; font: 800 46px/1 var(--font-display); box-shadow: 0 0 0 4px #0b0b12, 0 0 0 7px #ffd400, 0 18px 50px rgba(255,212,0,.35);
+      animation: splashPop .55s cubic-bezier(.2,.9,.3,1.35) both; }
+    .splash-word { position: relative; color: #fff; font: 800 34px var(--font-display); letter-spacing: -1px; animation: splashWord .4s ease-out .22s both; }
+    @keyframes splashPop { 0% { transform: scale(0) rotate(-18deg); } 70% { transform: scale(1.12) rotate(3deg); } 100% { transform: none; } }
+    @keyframes splashRays { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1.05) rotate(8deg); opacity: .85; } }
+    @keyframes splashWord { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+    @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+    @media (prefers-reduced-motion: reduce) { .splash { display: none; } }
+</style>
 </head>
 <body>
+<div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><span class="splash-rays"></span><span class="splash-mark">▰</span><b class="splash-word">panel</b></div></div>
+<script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}setTimeout(function(){if(s.parentNode)s.remove()},1500)})();</script>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
@@ -7073,6 +7142,7 @@ const sanitizeRoom = r => {
     format: FORMATS[r.format] ? r.format : 'free',
     when: isoOrEmpty(r.when),
     topics, rules: rules.length ? rules : DEFAULT_RULES.slice(), images, duel: duelOf(Object.assign({}, r, { format: FORMATS[r.format] ? r.format : 'free' })),
+    cohosts: sanitizeCohosts(r.cohosts),
     createdAt: isoOrEmpty(r.createdAt), updatedAt: isoOrEmpty(r.updatedAt)
   };
 };
@@ -7102,6 +7172,25 @@ const sanitizeState = s => {
   out.history = out.history.slice(0, LIMITS.history);
   return out;
 };
+
+// Co-animation (D-98, migration 15) : jusqu'à trois personnes prévues, par pseudo ; rôle « co-animateur » ou « modérateur ».
+// Les invitations partent quand les comptes sont actifs (api.live_invite) : ici, seule la préparation est gardée.
+const COHOST_MAX = 3;
+const COHOST_ROLES = Object.freeze({ cohost: 'Co-animateur', moderator: 'Modérateur du salon' });
+const HANDLE = /^[A-Za-z0-9_.-]{3,24}$/;
+// Accepte une liste [{ handle, role }] ou un texte « @pseudo » / « @pseudo modérateur », une personne par ligne
+const sanitizeCohosts = v => {
+  const lines = Array.isArray(v) ? v : String(v || '').split(/\n|,/).map(l => { const m = l.trim().match(/^@?(\S+)(?:\s+(.*))?$/); return m ? { handle: m[1], role: /mod/i.test(m[2] || '') ? 'moderator' : 'cohost' } : null; });
+  const out = [];
+  lines.forEach(x => {
+    if (!x || typeof x !== 'object') return;
+    const h = String(x.handle || '').replace(/^@/, '').trim();
+    if (!HANDLE.test(h) || out.some(y => y.handle.toLowerCase() === h.toLowerCase()) || out.length >= COHOST_MAX) return;
+    out.push({ handle: h, role: COHOST_ROLES[x.role] ? x.role : 'cohost' });
+  });
+  return out;
+};
+const cohostsText = list => sanitizeCohosts(list).map(c => '@' + c.handle + (c.role === 'moderator' ? ' modérateur' : '')).join('\n');
 
 const validateRoom = r => {
   const errors = [];
@@ -7227,7 +7316,7 @@ const summaryText = x => {
   ].filter(Boolean).join('\n');
 };
 
-module.exports = { FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
+module.exports = { COHOST_MAX, COHOST_ROLES, sanitizeCohosts, cohostsText, FORMATS, DUEL_ROUNDS, CHAT_MAX, nextRound, roundOf, castVote, sendChat, evidenceCount, DEFAULT_RULES, REACTIONS, LIMITS, emptyState, sanitizeRoom, sanitizeState, validateRoom, saveRoom, removeRoom, ordered, startSession, nextTopic, showImage, stepImage, pageRefs, isPage, imageLabel, react, endSession, fmtDuration, clock, summaryText };
   return Object.freeze(module.exports); })();
   /* domains/community/rituals-core.js */
   out.rituals = (() => { const module = { exports: {} };
@@ -7451,10 +7540,19 @@ module.exports = { VERSION, KINDS, KIND_TAGS, VERDICTS, LIMITS, emptyState, hash
   /* domains/community/likes-core.js */
   out.likes = (() => { const module = { exports: {} };
 'use strict';
-// J'aime personnalisé (D-96) : chacun choisit la forme de son « J'aime ». Les formes sont des dessins originaux de Panel
-// (griffes, éclair, toile, marteau…), jamais un logo ni un personnage déposé : aucune marque de Marvel, DC ou d'un autre éditeur.
-// Une suggestion peut venir du personnage favori écrit dans le profil ; le choix reste toujours celui de l'utilisateur.
+// J'aime personnalisé (D-96, D-98) : chacun choisit la forme de son « J'aime ».
+//  - 12 formes classiques (glyphes de l'interface) ;
+//  - plus de 150 badges dessinés par Panel : têtes d'archétypes de héros et artefacts, générés ici en SVG.
+// Règles de droit, vérifiées par les tests :
+//  - chaque dessin est une composition originale de formes simples (cagoule, casque, cheveux, regard, accessoire) ;
+//    aucun logo, aucun emblème d'éditeur, aucun motif distinctif d'un costume déposé (pas de toile, pas de symbole de poitrine
+//    d'un personnage) ; les marques de poitrine sont des formes génériques (étoile, éclair, losange, anneau, lune…) ;
+//  - chaque nom affiché est un nom original en français, jamais le nom d'un personnage ou d'une marque ;
+//  - les « tags » ne servent qu'à retrouver un dessin à partir de ce que l'utilisateur tape (son personnage favori) :
+//    ils ne sont jamais affichés et ne revendiquent aucune affiliation.
+// Module pur : aucune dépendance, aucun réseau, aucun stockage. Les SVG sont mis en cache en mémoire.
 
+// ---------------------------------------------------------------- Classiques (symboles déjà présents dans l'interface)
 const ICONS = Object.freeze([
   { key: 'heart', label: 'Cœur', hint: 'Le classique' },
   { key: 'claws', label: 'Griffes', hint: 'Pour les félins et les rois' },
@@ -7469,12 +7567,592 @@ const ICONS = Object.freeze([
   { key: 'shield', label: 'Bouclier', hint: 'Pour les protecteurs' },
   { key: 'skull', label: 'Crâne', hint: 'Pour les antihéros' }
 ]);
-const KEYS = ICONS.map(i => i.key);
-const DEFAULT = 'heart';
-const sanitize = v => KEYS.includes(v) ? v : DEFAULT;
-const labelOf = k => (ICONS.find(i => i.key === sanitize(k)) || ICONS[0]).label;
 
-// Mots du personnage favori (texte libre de l'utilisateur) -> forme suggérée. Simple correspondance de mots, rien n'est envoyé.
+const CATEGORIES = Object.freeze([
+  { key: 'nuit', label: 'Justiciers de la nuit' },
+  { key: 'puissants', label: 'Les puissants' },
+  { key: 'cosmos', label: 'Cosmiques' },
+  { key: 'magie', label: 'Magie et mystère' },
+  { key: 'legendes', label: 'Dieux et légendes' },
+  { key: 'machines', label: 'Armures et machines' },
+  { key: 'dons', label: 'Pouvoirs nés' },
+  { key: 'indes', label: 'Héros indés' },
+  { key: 'anti', label: 'Antihéros' },
+  { key: 'vilains', label: 'Grands méchants' },
+  { key: 'betes', label: 'Bêtes et créatures' },
+  { key: 'artefacts', label: 'Artefacts' },
+  { key: 'classiques', label: 'Classiques' }
+]);
+
+// ---------------------------------------------------------------- Têtes : clé|nom|catégorie|dessin|couleurs|tags
+// Dessin : H coiffe (cowl, full, helmet, hood, robot, dome, bubble, nemes + variantes), R cheveux, E regard, M bouche,
+//          K marques (front, ou c- pour la poitrine ; :couleur), X détails, A accessoires.
+// Couleurs : fond, costume, accent, yeux, peau, cheveux[, masque]. Jetons : s1-s6 (teintes de peau), w, k, g, si, bo.
+const HEADS = `
+chevalier-nuit|Justicier de minuit|nuit|H=cowl.pointed E=slit M=stern K=c-moon:f5c518|1e293b,2f3542,f5c518,w,s2,k|batman bruce wayne dark knight chauve souris
+gardienne-nuit|Gardienne de la nuit|nuit|H=cowl.pointed R=long E=lens M=smile K=c-moon:facc15|0f172a,1e293b,facc15,w,s1,dc2626|batgirl barbara gordon
+aile-minuit|Acrobate de minuit|nuit|R=short E=domino M=smile K=c-chev:3b82f6|0f172a,111827,3b82f6,w,s3,k|nightwing dick grayson
+rouge-gorge|Jeune acolyte|nuit|R=short E=domino M=smile X=cape K=c-dot:facc15|7f1d1d,dc2626,facc15,w,s1,k|robin damian wayne tim drake jason todd
+feline-toits|Féline des toits|nuit|H=cowl.cat E=goggles M=smile|312e81,111827,6b7280,7dd3fc,s2,k|catwoman selina kyle chat
+chasseuse|Chasseuse à l'arbalète|nuit|R=long E=domino M=stern K=c-x:f8fafc|3b0764,6d28d9,f8fafc,w,s1,k,6d28d9|huntress helena bertinelli
+diable-aveugle|Diable aveugle|nuit|H=cowl.horns E=lens M=stern|450a0a,b91c1c,7f1d1d,991b1b,s2,k|daredevil matt murdock diable
+chevalier-lune|Gardien lunaire|nuit|H=full A=hood E=glow M=none K=moon:94a3b8|1e1b4b,f1f5f9,e2e8f0,c7d2fe,s2,k|moon knight marc spector lune
+archer-emeraude|Archer de la forêt|nuit|A=hood R=short E=domino M=smile X=goatee|14532d,16a34a,166534,w,s2,d97706,15803d|green arrow oliver queen fleche
+le-juge|Le Juge|nuit|R=short E=angry M=frown X=stubble,scar|111827,1f2937,ef4444,k,s2,1c1917|punisher frank castle
+ombre-ninja|Ombre ninja|nuit|H=full A=band E=ninja M=none|0c0a09,1c1917,dc2626,k,s3,k|ninja la main hand
+sans-visage|Le Sans-Visage|nuit|H=full A=hat E=none M=none|1e3a8a,f2d7b8,2563eb,k,s1,k|question vic sage
+detective|Détective de minuit|nuit|R=short A=hat E=human M=line X=stubble|292524,78350f,57534e,k,s2,292524|detective noir enqueteur
+fileuse-fantome|Fileuse fantôme|nuit|H=full A=hood E=lens M=none|1f2937,f8fafc,ec4899,f8fafc,s1,k|spider gwen ghost spider gwen stacy
+tisseur-ecarlate|Tisseur écarlate|nuit|H=full.seam E=lens M=none|1e3a8a,dc2626,b91c1c,w,s1,k|spider man spiderman peter parker araignee homme araignee
+tisseur-brooklyn|Tisseur de Brooklyn|nuit|H=full.seam E=lens M=none|b91c1c,111827,dc2626,w,s4,k|miles morales spider man
+veuve-rousse|Espionne rousse|nuit|R=long E=human M=line|111827,0f172a,dc2626,k,s1,b91c1c|black widow natasha romanoff veuve noire yelena
+archer-pourpre|Archer pourpre|nuit|R=short E=human M=smile X=paint|3b0764,6b21a8,a855f7,k,s1,a16207|hawkeye clint barton kate bishop
+lame-silencieuse|Lame silencieuse|nuit|R=long A=band E=human M=stern|450a0a,991b1b,dc2626,k,s2,k|elektra natchios
+lutteur-masque|Lutteur masqué|nuit|H=full.split E=lens M=line K=star:facc15|9d174d,db2777,7c3aed,w,s3,k|luchador catch masque
+fils-etoiles|Fils des étoiles|puissants|R=curl E=human M=smile X=cape K=c-gem:dc2626|1d4ed8,2563eb,dc2626,k,s1,k|superman clark kent kal el
+cousine-etoiles|Cousine des étoiles|puissants|R=long E=human M=smile X=cape K=c-gem:dc2626|1e40af,2563eb,dc2626,k,s1,fcd34d|supergirl kara zor el
+princesse-amazone|Princesse amazone|puissants|R=long A=tiara E=human M=smile|7f1d1d,b91c1c,f5c518,k,s2,k|wonder woman diana prince amazone
+capitaine-etoile|Capitaine étoilé|puissants|H=cowl E=human M=stern K=star:f8fafc,c-star:f8fafc|b91c1c,1d4ed8,f8fafc,k,s1,k|captain america steve rogers sam wilson
+colosse-emeraude|Colosse émeraude|puissants|R=wild E=angry M=frown|3b0764,7c3aed,a855f7,k,65a30d,1c1917|hulk bruce banner
+colosse-ecarlate|Colosse écarlate|puissants|R=short E=angry M=fangs|450a0a,111827,ef4444,k,dc2626,1c1917|red hulk rulk ross
+geante-emeraude|Géante émeraude|puissants|R=long E=human M=smile|581c87,f8fafc,7c3aed,k,4ade80,14532d|she hulk jennifer walters miss hulk
+capitaine-cometes|Capitaine des comètes|puissants|R=long E=human M=smile K=c-star:facc15|1e3a8a,b91c1c,1d4ed8,k,s1,fde68a|captain marvel carol danvers
+bolide-ecarlate|Coureur foudre|puissants|H=cowl.wings E=human M=smile K=bolt:facc15|7f1d1d,dc2626,facc15,k,s1,k|flash barry allen wally west
+champion-tonnerre|Champion du tonnerre|puissants|R=short E=human M=smile X=cape K=c-bolt:facc15|7f1d1d,dc2626,f8fafc,k,s1,k|shazam billy batson captain marvel
+sentinelle-doree|Sentinelle dorée|puissants|R=short E=human M=smile X=cape K=c-sun:1d4ed8|1e3a8a,f5c518,1d4ed8,k,s1,fde68a|sentry robert reynolds
+colosse-acier|Géant de métal|puissants|R=short E=human M=stern X=rock|7f1d1d,dc2626,facc15,k,cbd5e1,1c1917|colossus piotr rasputin
+demi-dieu|Demi-dieu|puissants|R=curl A=laurel E=human M=smile X=beard|78350f,b45309,f5c518,k,s2,451a03|hercule hercules heracles
+reine-volante|Reine volante|puissants|R=bob E=human M=smile X=cape K=c-star:f8fafc|0c4a6e,0284c7,f8fafc,k,s4,k|heroine volante
+gardien-montagnes|Gardien des montagnes|puissants|R=bald E=human M=stern X=beard|365314,4d7c0f,a3e635,k,s5,e7e5e4|gardien geant
+heraut-chrome|Héraut chromé|cosmos|R=bald E=glow M=line|1e1b4b,cbd5e1,e2e8f0,f8fafc,e2e8f0,k|silver surfer norrin radd surfeur argent
+titan-pourpre|Titan pourpre|cosmos|H=helmet.open E=human M=smile X=chinlines|312e81,f5c518,1d4ed8,k,7c3aed,k|thanos titan fou
+chasseur-etoiles|Chasseur d'étoiles|cosmos|H=helmet E=glow M=none|1f2937,7f1d1d,9ca3af,ef4444,s1,k|star lord peter quill
+arbre-gardien|Arbre-gardien|cosmos|A=leaves E=human M=smile X=bark|14532d,78350f,22c55e,k,92400e,k|groot arbre
+guerriere-emeraude|Guerrière émeraude|cosmos|R=long E=human M=stern|14532d,1f2937,f43f5e,k,22c55e,1c1917|gamora
+destructeur|Colosse tatoué|cosmos|R=bald E=angry M=stern X=tattoo|450a0a,7f1d1d,dc2626,k,64748b,k|drax destructeur
+centurion-nova|Centurion stellaire|cosmos|H=helmet.fins3 E=visor M=none|1e3a8a,111827,f5c518,fde68a,s1,k|nova richard rider sam alexander
+porteur-emeraude|Porteur d'émeraude|cosmos|R=short E=domino M=smile K=c-ring:f8fafc|052e16,15803d,111827,w,s2,k,15803d|green lantern hal jordan john stewart lanterne verte
+princesse-soleil|Princesse du soleil|cosmos|R=long E=glow M=smile|7c2d12,7c3aed,a855f7,4ade80,f59e0b,dc2626|starfire koriand r
+astronaute|Astronaute des confins|cosmos|H=bubble R=short E=human M=smile|0f172a,f8fafc,f97316,k,s3,k|astronaute espace
+visiteur-gris|Visiteur gris|cosmos|H=dome E=alien M=none|052e16,4b5563,a3e635,k,a1a1aa,k|alien extraterrestre gris
+chasseur-mars|Chasseur de Mars|cosmos|R=bald E=glow M=stern X=cape,brow K=c-x:dc2626|1e3a8a,1d4ed8,dc2626,ef4444,16a34a,k|martian manhunter j onn jonzz
+devoreur-mondes|Géant des étoiles|cosmos|H=helmet.open.prongs E=glow M=stern|1e1b4b,7c3aed,2563eb,f8fafc,9ca3af,k|galactus
+comete-blanche|Comète blanche|cosmos|R=long E=glow M=smile K=star:f8fafc|0c0a09,6366f1,f8fafc,e0f2fe,s4,f8fafc|comete etoile
+gardienne-galaxie|Gardienne de la galaxie|cosmos|R=bob E=visor M=smile|134e4a,0f766e,5eead4,5eead4,s5,k|gardienne galaxie
+pilote-etoile|Pilote d'étoile|cosmos|R=short A=goggleup E=human M=smile X=freckles|7c2d12,ea580c,1e3a8a,93c5fd,s1,b45309|pilote
+homme-atomique|Être atomique|cosmos|R=bald E=glow M=line K=atom:bfdbfe|0c4a6e,60a5fa,93c5fd,f8fafc,60a5fa,k|doctor manhattan docteur manhattan watchmen
+faucon-or|Faucon d'or|legendes|H=cowl.wings E=human M=stern X=wingsback|713f12,ca8a04,e5e7eb,k,s2,k|hawkman hawkgirl faucon
+sorcier-supreme|Maître des arcanes|magie|R=greytemples E=human M=stern X=goatee,mustache,collar K=c-eye:f5c518|1e3a8a,1d4ed8,dc2626,22c55e,s1,1c1917|doctor strange docteur strange stephen strange
+sorciere-ecarlate|Mage du chaos|magie|R=long A=crownspikes E=glow M=line|450a0a,b91c1c,dc2626,f87171,s1,7f1d1d|scarlet witch wanda maximoff
+magicienne-chapeau|Magicienne au chapeau|magie|R=long A=tophat E=human M=smile|1e1b4b,111827,111827,k,s1,k|zatanna magicienne
+corbeau|Corbeau|magie|A=hood E=human M=line K=gem:dc2626|1e1b4b,312e81,312e81,k,cbd5e1,k|raven rachel roth teen titans
+motard-ardent|Motard ardent|magie|A=flame E=void M=teeth X=skull|1c1917,1c1917,f97316,fbbf24,bo,k|ghost rider johnny blaze robbie reyes
+demon-coeur|Démon au grand cœur|magie|R=bun A=stumps E=human M=smile X=goatee|292524,7c2d12,f5c518,k,dc2626,k|hellboy
+exorciste|Exorciste en trench|magie|R=wild E=human M=line X=stubble|292524,a16207,dc2626,k,s1,fcd34d|constantine john constantine hellblazer
+enchanteresse|Charmeuse dorée|magie|R=long A=crown E=human M=smile|14532d,16a34a,f5c518,k,s1,fcd34d|enchantress amora
+prince-vampire|Prince vampire|magie|R=slick E=glow M=fangs X=collar|450a0a,111827,b91c1c,ef4444,e2e8f0,k|vampire dracula morbius
+momie|Momie éveillée|magie|H=full E=glow M=none X=wraps|422006,e7e5e4,a8a29e,22d3ee,s1,k|momie mummy
+chamane|Chamane des tempêtes|magie|R=braids A=band E=closed M=smile X=paint|0f766e,115e59,f59e0b,k,s4,k|chamane
+poing-jade|Poing de jade|magie|R=short E=domino M=stern|14532d,15803d,facc15,w,s1,facc15,166534|iron fist danny rand
+spectre-vengeur|Spectre vengeur|magie|A=hood E=void M=line|052e16,15803d,15803d,f8fafc,f8fafc,k|spectre jim corrigan
+seigneur-songes|Seigneur des songes|magie|R=wild E=void M=line|0c0a09,111827,f8fafc,f8fafc,f1f5f9,k|sandman morpheus dream reve
+sorciere-foret|Sorcière de la forêt|magie|R=long A=witchhat E=human M=smile|14532d,166534,1c1917,k,s3,7c2d12|sorciere foret
+mage-runes|Mage des runes|magie|A=hood E=glow M=none X=beard|1e1b4b,4338ca,312e81,a5b4fc,s2,e5e7eb|mage merlin sorcier
+necromancienne|Nécromancienne|magie|R=bob E=glow M=line X=paint|0c0a09,3f3f46,a855f7,c084fc,e2e8f0,k|necromancienne
+dieu-tonnerre|Dieu du tonnerre|legendes|H=helmet.open.wings R=long E=human M=stern X=beard|1e3a8a,9ca3af,dc2626,k,s1,fcd34d|thor odinson tonnerre
+prince-cornu|Prince cornu|legendes|H=helmet.open.horns R=long E=human M=smile|14532d,f5c518,f5c518,k,s1,k|loki laufeyson
+deesse-mort|Déesse de la mort|legendes|A=antlers R=long E=glow M=line|052e16,111827,1f2937,4ade80,e2e8f0,k|hela mort
+pere-borgne|Père borgne|legendes|H=helmet.open.wings R=long E=patch M=stern X=beard|422006,ca8a04,e5e7eb,k,s1,f1f5f9|odin borgne
+valkyrie|Valkyrie|legendes|H=helmet.open.wings R=long E=human M=stern X=paint|1e3a8a,cbd5e1,e5e7eb,k,s5,fde68a|valkyrie brunnhilde
+roi-marees|Roi des marées|legendes|R=long E=human M=smile X=beard|0e7490,f97316,16a34a,k,s1,f59e0b|aquaman arthur curry atlantis
+reine-marees|Reine des marées|legendes|R=long A=tiara E=human M=smile|064e3b,16a34a,f5c518,k,s1,dc2626|mera atlantis
+prince-abysses|Prince des abysses|legendes|R=slick E=angry M=stern X=elfears|0c4a6e,15803d,22c55e,k,s1,k|namor sub mariner
+pharaon-foudroye|Pharaon foudroyé|legendes|R=slick E=angry M=stern X=cape K=c-bolt:facc15|1c1917,111827,facc15,k,s4,k|black adam teth adam
+dieu-soleil|Dieu-soleil|legendes|H=nemes E=human M=line X=paint K=c-sun:f5c518|1e3a8a,f5c518,1d4ed8,k,s4,k|pharaon egypte soleil
+gorgone|Gorgone|legendes|R=snakes E=glow M=smile|14532d,166534,4ade80,facc15,a7f3d0,16a34a|meduse gorgone
+samourai|Samouraï|legendes|H=helmet.open.crescent E=human M=stern|1c1917,7f1d1d,f5c518,k,s2,k|samourai japon
+spartiate|Spartiate|legendes|H=helmet.open.crestbig E=angry M=stern X=beard|7c2d12,b45309,dc2626,k,s2,1c1917|spartiate grece
+chevalier-graal|Chevalier du Graal|legendes|H=helmet E=slit M=none K=c-x:dc2626|1e3a8a,cbd5e1,94a3b8,0f172a,s1,k|chevalier croisade
+viking|Viking|legendes|H=helmet.open A=hornsbull R=long E=human M=stern X=beard|0c4a6e,94a3b8,e7e5e4,k,s1,c2410c|viking nord
+ange-gardien|Ange gardien|legendes|R=long A=halo E=human M=smile X=wingsback|0c4a6e,f8fafc,f8fafc,k,s2,fde68a|ange angel
+reine-nil|Reine du Nil|legendes|R=bob A=crown E=human M=smile X=paint|1e3a8a,f5c518,1d4ed8,k,s4,k|cleopatre reine egypte
+roi-felin|Roi félin|legendes|H=full.cat E=slit M=none X=necklace|3b0764,1e1b2e,c4b5fd,f8fafc,s5,k|black panther t challa wakanda panthere noire
+princesse-genie|Princesse génie|machines|R=braids A=goggleup E=human M=smile|3b0764,111827,a855f7,a5b4fc,s5,k|shuri wakanda
+armure-ecarlate|Armure écarlate|machines|H=helmet E=slit M=none K=c-reactor:7dd3fc|451a03,b91c1c,f5c518,e0f2fe,s1,k|iron man tony stark armure
+machine-guerre|Armure lourde|machines|H=helmet E=slit M=none K=c-reactor:7dd3fc|1f2937,4b5563,9ca3af,e0f2fe,s1,k|war machine james rhodes
+armure-glace|Armure de glace|machines|H=helmet.crest E=visor M=none|0c4a6e,e0f2fe,38bdf8,22d3ee,s1,k|armure glace
+demi-machine|Demi-machine|machines|R=bald E=human M=stern X=halfmetal|1f2937,94a3b8,ef4444,k,s5,k|cyborg victor stone
+synthezoide|Androïde de rubis|machines|R=bald E=human M=line X=collar K=gem:f5c518|14532d,15803d,f5c518,k,dc2626,k|vision synthezoide
+robot-ami|Robot ami|machines|H=robot A=antennae E=glow M=smile|0c4a6e,60a5fa,f5c518,e0f2fe,s1,k|robot
+homme-fourmi|Pilote minuscule|machines|H=helmet A=antennae E=goggles M=none|7f1d1d,dc2626,1f2937,60a5fa,s1,k|ant man scott lang hank pym fourmi
+guepe|Reine bourdon|machines|R=bob A=antennae E=domino M=smile X=wingsback|1c1917,facc15,fef9c3,w,s1,k,1c1917|wasp janet van dyne guepe
+pilote-meca|Pilote de méca|machines|H=helmet.fins3 E=visor M=none|7f1d1d,f8fafc,dc2626,38bdf8,s1,k|mecha robot geant
+pirate-reseau|Pirate du réseau|machines|A=hood R=short E=visor M=smile|0f172a,1f2937,1f2937,22c55e,s3,k|hacker pirate informatique
+cyber-ninja|Cyber-ninja|machines|H=full.seam A=band E=visor M=none|0f172a,1e293b,ef4444,ef4444,s1,k|cyber ninja
+androide|Androïde argenté|machines|H=full.seam E=glow M=line|1e1b4b,e2e8f0,94a3b8,60a5fa,s1,k|androide
+le-griffu|Le Griffu|dons|H=cowl.fins E=slit M=grin X=stubble|1e3a8a,facc15,1d4ed8,w,s2,k|wolverine logan serval
+dame-orages|Dame des orages|dons|R=long E=glow M=line|1e1b4b,111827,e5e7eb,f8fafc,s5,f1f5f9|storm ororo munroe tornade
+bete-bleue|Bête bleue|dons|R=wild E=human M=fangs|1e3a8a,111827,1d4ed8,k,3b82f6,1e3a8a|beast hank mccoy le fauve
+diablotin-bleu|Diablotin bleu|dons|R=short E=glow M=smile X=elfears|450a0a,dc2626,111827,facc15,1e40af,1e1b4b|nightcrawler kurt wagner diablo
+professeur|Le Professeur|dons|R=bald E=human M=smile|1e3a8a,1f2937,facc15,k,s1,k|professor x professeur x charles xavier
+phenix|Flamme renaissante|dons|R=long E=glow M=line K=c-sun:facc15|7c2d12,dc2626,facc15,fde68a,s1,ea580c|phoenix phenix jean grey
+joueur-cajun|Joueur cajun|dons|H=cowl R=long E=glow M=smile X=stubble|1e1b4b,c026d3,78350f,ef4444,s1,78350f|gambit remy lebeau
+voleuse-ames|Voleuse d'âmes|dons|R=streak E=human M=smile|14532d,16a34a,facc15,k,s1,78350f|rogue malicia anna marie
+homme-glace|Homme de glace|dons|R=short E=glow M=smile|0c4a6e,bae6fd,38bdf8,f8fafc,bfdbfe,e0f2fe|iceman bobby drake iceberg
+torche-vivante|Torche vivante|dons|A=flame E=glow M=none|7c2d12,ea580c,facc15,fef08a,f97316,k|human torch johnny storm torche humaine
+femme-invisible|Dame transparente|dons|R=long E=human M=smile X=ghost|1e3a8a,1d4ed8,f8fafc,k,s1,fcd34d|invisible woman sue storm
+homme-elastique|Savant extensible|dons|R=greytemples E=human M=smile|1e3a8a,1d4ed8,f8fafc,k,s1,57534e|mr fantastic reed richards
+colosse-roche|Colosse de roche|dons|R=bald E=human M=stern X=rock|1e3a8a,1d4ed8,f8fafc,k,ea580c,k|thing la chose ben grimm
+oeil-laser|Œil-laser|dons|R=short E=visor M=stern|1e3a8a,1d4ed8,facc15,ef4444,s1,7c2d12|cyclops cyclope scott summers
+milles-visages|Aux mille visages|dons|R=short E=glow M=smile|1e1b4b,f8fafc,dc2626,facc15,2563eb,dc2626|mystique raven darkholme
+jeune-invulnerable|Jeune invulnérable|indes|R=short E=goggles M=smile|1d4ed8,facc15,1e40af,172554,s1,k|invincible mark grayson
+patriarche|Patriarche des étoiles|indes|R=short E=human M=stern X=mustache,cape|7f1d1d,f8fafc,dc2626,k,s1,e5e7eb|omni man nolan grayson invincible
+eclat-rose|Éclat rose|indes|R=long E=domino M=smile|831843,ec4899,f9a8d4,w,s1,dc2626,ec4899|atom eve samantha wilkins invincible
+bete-bataille|Lion guerrier|indes|R=wild E=angry M=fangs X=snout|7c2d12,1f2937,fde68a,k,d97706,92400e|battle beast invincible lion
+oeil-etoiles|Œil des étoiles|indes|R=bald E=cyclops M=smile|1e3a8a,f8fafc,1d4ed8,22c55e,60a5fa,k|allen alien invincible
+robot-gardien|Robot gardien|indes|H=robot E=cyclops M=none|1f2937,64748b,94a3b8,ef4444,s1,k|robot rex splode invincible
+revenant|Revenant|indes|H=full E=glow M=none X=spikes|7f1d1d,111827,f8fafc,4ade80,s1,k|spawn al simmons
+dragon-sauvage|Dragon à crête|indes|A=fin R=bald E=angry M=stern|14532d,111827,16a34a,k,4ade80,k|savage dragon
+soldate-ailee|Soldate ailée|indes|R=long E=human M=smile X=wingsback|134e4a,0f766e,a7f3d0,k,s3,ea580c|saga alana
+mage-cornu|Mage cornu|indes|R=short A=hornsbull E=human M=smile|1e1b4b,4338ca,e7e5e4,k,s2,1c1917|saga marko
+visage-encre|Visage d'encre|anti|H=full A=hat E=none M=none X=blots|1c1917,f8fafc,7c2d12,k,s1,k|rorschach watchmen
+mercenaire-bavard|Mercenaire bavard|anti|H=full E=patches M=none|1c1917,b91c1c,111827,w,s1,k|deadpool wade wilson
+exterminateur|Mercenaire bicolore|anti|H=full.split E=slit M=none|1c1917,f97316,111827,w,s1,k|deathstroke slade wilson
+masque-mort|Masque de mort|anti|H=full E=void M=teeth X=skull|0c0a09,f1f5f9,1c1917,dc2626,s1,k|crane tete de mort skull
+chasseur-primes|Chasseur de primes|anti|H=helmet E=visor M=none|1c1917,4d7c0f,b45309,0f172a,s1,k|chasseur de primes mercenaire
+pistolera|Pistolera|anti|R=long A=hat E=human M=smile|7c2d12,92400e,78350f,k,s3,k|cowboy western pistolera
+pirate-borgne|Pirate borgne|anti|R=wild A=band E=patch M=grin X=beard|0c4a6e,7f1d1d,dc2626,k,s2,1c1917|pirate
+mercenaire-cyber|Mercenaire du futur|anti|R=short E=human M=stern X=halfmetal,scar|1c1917,57534e,ef4444,k,s2,f8fafc|cable nathan summers
+tireuse-elite|Tireuse d'élite|anti|R=bob E=goggles M=stern|292524,57534e,d97706,22d3ee,s3,k|tireuse d elite
+chasseur-vampires|Chasseur de vampires|anti|R=short E=visor M=stern X=goatee|1c1917,111827,dc2626,0f172a,s5,k|blade eric brooks
+rebelle-cuir|Rebelle en cuir|anti|R=streak E=human M=smile|1c1917,111827,dc2626,k,s1,k|rebelle
+symbiote|Symbiote|anti|H=full E=jagged M=fangs|0f172a,0b0b12,334155,w,s1,k|venom eddie brock symbiote
+carnage-ecarlate|Symbiote écarlate|vilains|H=full E=jagged M=fangs|450a0a,b91c1c,7f1d1d,w,s1,k|carnage cletus kasady
+farceur|Le Farceur|vilains|R=short E=human M=grin|3b0764,6b21a8,16a34a,k,f8fafc,16a34a|joker
+arlequine|Arlequine|vilains|R=pigtails E=domino M=grin X=splithair|1c1917,dc2626,1d4ed8,w,f8fafc,f8fafc,111827|harley quinn
+epouvantail|Homme de paille|vilains|H=full A=witchhat E=void M=stitch X=stitches|422006,d6a565,57534e,f97316,s1,k|scarecrow jonathan crane
+double-visage|Visage brisé|vilains|R=short E=human M=line X=halfscar|1c1917,1f2937,7c3aed,k,s1,1c1917|two face double face harvey dent
+empoisonneuse|Empoisonneuse|vilains|R=long A=leaves E=human M=smile|14532d,16a34a,22c55e,k,bbf7d0,dc2626|poison ivy pamela isley
+genie-chauve|Génie chauve|vilains|R=bald E=human M=smile|14532d,7c3aed,16a34a,k,s1,k|lex luthor
+reine-gel|Reine du gel|vilains|R=long E=glow M=line|0c4a6e,e0f2fe,7dd3fc,38bdf8,bfdbfe,f8fafc|killer frost
+lutin-vert|Farfadet masqué|vilains|A=witchhat E=glow M=grin|3b0764,7c3aed,7c3aed,facc15,65a30d,k|green goblin bouffon vert norman osborn
+maitre-aimant|Roi des métaux|vilains|H=helmet.open.crest E=angry M=stern X=cape|3b0764,b91c1c,7c3aed,k,s1,k|magneto erik lehnsherr
+maitre-peur|Maître de la peur|vilains|R=slick E=human M=smile X=mustache|422006,facc15,111827,k,c026d3,k|sinestro
+conquerant-temps|Tyran du futur|vilains|H=helmet.open.crest E=human M=stern|3b0764,16a34a,7c3aed,k,60a5fa,k|kang conquerant
+intelligence-rebelle|Intelligence rebelle|vilains|H=robot E=glow M=slot|1c1917,9ca3af,6b7280,ef4444,s1,k|ultron
+tete-pensante|Tête pensante|vilains|H=dome A=band E=angry M=grin|365314,4d7c0f,facc15,k,fde68a,k|modok
+monarque-fer|Monarque de fer|vilains|H=full A=hood E=slit M=grill|14532d,9ca3af,15803d,0f172a,s1,k|doctor doom fatalis victor von doom
+reine-noire|Reine noire|vilains|R=long A=crown E=glow M=smile|0c0a09,111827,a855f7,a855f7,e2e8f0,k|reine noire
+sorcier-noir|Sorcier noir|vilains|A=hood E=glow M=grin|1c1917,3f3f46,27272a,ef4444,a1a1aa,k|sorcier noir
+gorille-telepathe|Gorille télépathe|betes|R=wild E=angry M=stern X=snout|14532d,111827,a8a29e,k,3f3f46,1c1917|gorilla grodd gorille
+roi-requin|Requin des abysses|betes|A=fin E=void M=fangs|0c4a6e,1e3a8a,e2e8f0,k,64748b,k|king shark requin
+croco-egouts|Crocodile des égouts|betes|R=bald E=glow M=fangs X=scales|1c1917,4d7c0f,a3e635,facc15,4d7c0f,k|killer croc crocodile
+raton-mecano|Raton mécanicien|betes|A=earsround E=domino M=smile X=snout,whiskers|7c2d12,ea580c,e5e7eb,w,9ca3af,6b7280,374151|rocket raccoon raton
+loup-garou|Loup-garou|betes|A=earswolf E=glow M=fangs X=snout|1e1b4b,57534e,d6d3d1,facc15,78716c,57534e|loup garou werewolf
+minotaure|Minotaure|betes|A=hornsbull E=angry M=stern X=snout|7c2d12,78350f,d6d3d1,k,92400e,1c1917|minotaure taureau
+gardien-hibou|Gardien hibou|betes|A=tufts E=goggles M=none X=beak|1e1b4b,78350f,f59e0b,facc15,a16207,a16207|hibou chouette
+panda-montagnes|Panda des montagnes|betes|A=earsround E=domino M=smile X=snout|14532d,1f2937,f8fafc,w,f8fafc,1f2937,1f2937|panda
+chat-etoiles|Chat des étoiles|betes|A=earscat E=glow M=smile X=snout,whiskers|1e1b4b,f97316,fed7aa,4ade80,fb923c,f97316|goose flerken chat
+chien-volant|Chien volant|betes|A=earsround E=human M=smile X=snout,cape|1e3a8a,dc2626,f8fafc,k,f8fafc,f8fafc|krypto chien
+fille-ecureuil|Amie des écureuils|betes|R=short A=earswolf E=human M=smile X=freckles|78350f,a16207,fde68a,k,s1,92400e|squirrel girl ecureuil doreen green
+renard-minuit|Renard de minuit|betes|A=earswolf E=domino M=smile X=snout|1e1b4b,ea580c,f8fafc,w,ea580c,ea580c,1c1917|renard fox
+ours-polaire|Ours polaire|betes|A=earsround E=human M=smile X=snout|0c4a6e,f1f5f9,e2e8f0,k,f8fafc,f1f5f9|ours polaire
+tigre-blanc|Tigre blanc|betes|A=earscat E=glow M=fangs X=snout,stripes|1e1b4b,f8fafc,f1f5f9,38bdf8,f8fafc,f8fafc|tigre blanc white tiger
+dragon-ecarlate|Dragon écarlate|betes|A=hornsbull E=glow M=fangs X=scales,snout|450a0a,b91c1c,fca5a5,facc15,dc2626,k|dragon
+aigle-cimes|Aigle des cimes|betes|A=tufts E=angry M=none X=beak|1e3a8a,78350f,f8fafc,k,f8fafc,f8fafc|aigle
+esprit-renard|Esprit renard|betes|A=earswolf E=closed M=smile X=paint,snout|7c2d12,ea580c,f8fafc,k,fb923c,fb923c|kitsune renard
+`;
+
+// ---------------------------------------------------------------- Artefacts : clé|nom|dessin|couleurs (fond, a, b, c)|tags
+const ARTS = `
+marteau-runique|Marteau runique|hammer|1e3a8a,94a3b8,cbd5e1,92400e|mjolnir marteau thor
+bouclier-etoile|Bouclier étoilé|shield|7f1d1d,dc2626,f8fafc,1d4ed8|bouclier captain america
+trident|Trident des mers|trident|0e7490,f5c518,fde68a,0|trident aquaman
+lasso|Lasso doré|lasso|7f1d1d,f5c518,fde68a,0|lasso verite wonder woman
+anneau-lumiere|Anneau de lumière|ring|052e16,cbd5e1,22c55e,0|anneau ring lanterne
+gantelet|Gantelet aux six gemmes|gauntlet|312e81,f5c518,ca8a04,0|gant infini gauntlet gemmes thanos
+cube-cosmique|Cube cosmique|cube|0c4a6e,38bdf8,0284c7,bae6fd|tesseract cube cosmique
+amulette-oeil|Amulette de l'œil|amulet|1e1b4b,f5c518,22c55e,0|oeil agamotto amulette
+lanterne|Lanterne de jade|lantern|052e16,9ca3af,4ade80,0|lanterne lantern
+grimoire|Grimoire interdit|book|1c1917,7c2d12,f5c518,0|grimoire livre magie
+epee-lumiere|Épée de lumière|sword|1e1b4b,f5c518,e0f2fe,7c2d12|epee excalibur sword
+arc-chasseur|Arc du chasseur|bow|14532d,92400e,cbd5e1,0|arc fleche
+boomerang|Boomerang|boomerang|7c2d12,f59e0b,dc2626,0|boomerang
+casque-aile|Casque ailé|helmet|1e3a8a,cbd5e1,94a3b8,f8fafc|casque aile
+cape-heroique|Cape héroïque|cape|1d4ed8,dc2626,991b1b,f5c518|cape
+ceinture|Ceinture à outils|belt|1f2937,4b5563,f5c518,374151|ceinture utilitaire
+couronne|Couronne royale|crown|3b0764,f5c518,dc2626,2563eb|couronne roi reine
+orbe|Orbe tourbillon|orb|1e1b4b,7c3aed,e9d5ff,0|orbe
+sceptre|Sceptre de gemme|scepter|14532d,f5c518,38bdf8,0|sceptre
+baton-mage|Bâton du mage|staff|1e1b4b,7c2d12,a5b4fc,0|baton mage
+potion|Potion de force|potion|14532d,22c55e,e0f2fe,92400e|potion fiole
+sablier|Sablier du temps|hourglass|422006,f5c518,e0f2fe,0|sablier temps
+masque-fer|Masque de fer|ironmask|14532d,9ca3af,15803d,0|masque fer
+cristal-vert|Cristal vert|crystal|052e16,4ade80,16a34a,0|kryptonite cristal
+coeur-reacteur|Cœur réacteur|reactor|0f172a,38bdf8,e0f2fe,0|reacteur arc
+planche-cosmique|Planche cosmique|board|1e1b4b,e2e8f0,94a3b8,0|planche surf
+griffes-metal|Griffes de métal|claws|1e3a8a,cbd5e1,facc15,0|griffes adamantium
+loupe|Loupe du détective|magnifier|292524,92400e,e0f2fe,0|loupe detective
+cle-mondes|Clé des mondes|key|3b0764,f5c518,a855f7,0|cle
+numero-un|Numéro 1|comic|7f1d1d,1d4ed8,facc15,f8fafc|comics numero un
+boussole|Boussole des étoiles|compass|0c4a6e,f5c518,dc2626,0|boussole
+faux-ombre|Faux de l'ombre|scythe|0c0a09,cbd5e1,57534e,0|faux mort
+boule-cristal|Boule de cristal|crystalball|1e1b4b,a855f7,e9d5ff,78350f|boule cristal voyance
+montre-temps|Montre temporelle|watch|134e4a,f5c518,e0f2fe,0|montre temps
+`;
+
+// ---------------------------------------------------------------- Dessin
+const INK = '#0d0d14';
+const TOK = { s1: '#f6d3b3', s2: '#e7b08a', s3: '#c68a5e', s4: '#9c6540', s5: '#6f4428', s6: '#4a2c1a', w: '#f8fafc', k: '#14141c', g: '#f5c518', si: '#cbd5e1', bo: '#efe6d2' };
+const colorOfTok = v => !v || v === '0' || v === '-' ? '' : TOK[v] || (/^[0-9a-f]{6}$/i.test(v) ? '#' + v.toLowerCase() : '');
+const n1 = v => Math.round(v * 10) / 10;
+const P = (d, fill, more) => '<path d="' + d + '" fill="' + (fill || 'none') + '"' + (more || '') + '/>';
+const NS = ' stroke="none"';
+const ST = (color, w, op) => ' stroke="' + color + '" stroke-width="' + w + '"' + (op ? ' stroke-opacity="' + op + '"' : '');
+const C = (cx, cy, r, fill, more) => '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="' + (fill || 'none') + '"' + (more || '') + '/>';
+const E = (cx, cy, rx, ry, fill, more) => '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="' + (fill || 'none') + '"' + (more || '') + '/>';
+const MIR = s => s + '<g transform="matrix(-1 0 0 1 48 0)">' + s + '</g>';
+// Trait épais encré : contour noir puis couleur (pour les objets fins)
+const LINE = (d, color, w) => P(d, 'none', ST(INK, n1(w + 2.2))) + P(d, 'none', ST(color, w));
+
+const starD = (cx, cy, r) => { let d = ''; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * 0.45 : r; d += (i ? 'L' : 'M') + n1(cx + rr * Math.cos(a)) + ' ' + n1(cy + rr * Math.sin(a)); } return d + 'Z'; };
+const boltD = (cx, cy, s) => 'M' + n1(cx + 0.35 * s) + ' ' + n1(cy - s) + 'L' + n1(cx - 0.7 * s) + ' ' + n1(cy + 0.15 * s) + 'H' + n1(cx - 0.05 * s) + 'L' + n1(cx - 0.35 * s) + ' ' + n1(cy + s) + 'L' + n1(cx + 0.7 * s) + ' ' + n1(cy - 0.15 * s) + 'H' + n1(cx + 0.05 * s) + 'Z';
+const gemD = (cx, cy, s) => 'M' + n1(cx) + ' ' + n1(cy - s) + 'L' + n1(cx + 0.7 * s) + ' ' + n1(cy) + 'L' + n1(cx) + ' ' + n1(cy + s) + 'L' + n1(cx - 0.7 * s) + ' ' + n1(cy) + 'Z';
+const moonD = (cx, cy, s) => 'M' + n1(cx + 0.3 * s) + ' ' + n1(cy - s) + 'A' + s + ' ' + s + ' 0 1 0 ' + n1(cx + 0.3 * s) + ' ' + n1(cy + s) + 'A' + n1(0.75 * s) + ' ' + n1(0.75 * s) + ' 0 1 1 ' + n1(cx + 0.3 * s) + ' ' + n1(cy - s) + 'Z';
+
+// Rayons de bande dessinée derrière chaque badge (dans le disque : aucun identifiant SVG, donc aucun conflit entre badges)
+const RAYS = (() => { let d = ''; for (let i = 0; i < 16; i++) { const a = i * Math.PI / 8, b = a + Math.PI / 22; d += 'M24 24L' + n1(24 + 21.5 * Math.cos(a)) + ' ' + n1(24 + 21.5 * Math.sin(a)) + 'L' + n1(24 + 21.5 * Math.cos(b)) + ' ' + n1(24 + 21.5 * Math.sin(b)) + 'Z'; } return d; })();
+const badgeOpen = bg => '<svg class="ic hero" viewBox="0 0 48 48" aria-hidden="true" focusable="false"><g stroke="' + INK + '" stroke-width="1.2" stroke-linejoin="round" stroke-linecap="round">' +
+  C(24, 24, 23, bg, NS) + P(RAYS, '#fff', NS + ' fill-opacity=".07"');
+const badgeClose = () => C(24, 24, 22.4, 'none', ST(INK, 1.6)) + P('M9 16.5A16.5 16.5 0 0 1 18.5 7.6', 'none', ST('#fff', 1.6, '.28')) + '</g></svg>';
+
+const mark = (type, cx, cy, s, color, eye) => {
+  switch (type) {
+    case 'star': return P(starD(cx, cy, s), color);
+    case 'bolt': return P(boltD(cx, cy, s), color);
+    case 'gem': case 'diamond': return P(gemD(cx, cy, s), color);
+    case 'dot': return C(cx, cy, n1(s * 0.7), color);
+    case 'ring': return C(cx, cy, n1(s * 0.72), 'none', ST(color, n1(s * 0.38)));
+    case 'moon': return P(moonD(cx, cy, s), color);
+    case 'x': return P('M' + n1(cx - s * 0.7) + ' ' + n1(cy - s * 0.7) + 'L' + n1(cx + s * 0.7) + ' ' + n1(cy + s * 0.7) + 'M' + n1(cx + s * 0.7) + ' ' + n1(cy - s * 0.7) + 'L' + n1(cx - s * 0.7) + ' ' + n1(cy + s * 0.7), 'none', ST(color, n1(s * 0.4)));
+    case 'chev': return P('M' + n1(cx - s) + ' ' + n1(cy - s * 0.45) + 'L' + cx + ' ' + n1(cy + s * 0.45) + 'L' + n1(cx + s) + ' ' + n1(cy - s * 0.45), 'none', ST(color, n1(s * 0.45)));
+    case 'sun': { let d = ''; for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; d += 'M' + n1(cx + s * 0.75 * Math.cos(a)) + ' ' + n1(cy + s * 0.75 * Math.sin(a)) + 'L' + n1(cx + s * 1.15 * Math.cos(a)) + ' ' + n1(cy + s * 1.15 * Math.sin(a)); } return P(d, 'none', ST(color, n1(s * 0.25))) + C(cx, cy, n1(s * 0.5), color); }
+    case 'eye': return E(cx, cy, n1(s * 1.1), n1(s * 0.7), color) + C(cx, cy, n1(s * 0.42), eye || '#22c55e', NS) + C(cx, cy, n1(s * 0.18), INK, NS);
+    case 'atom': return E(cx, cy, s, n1(s * 0.38), 'none', ST(color, 0.8)) + '<g transform="rotate(60 ' + cx + ' ' + cy + ')">' + E(cx, cy, s, n1(s * 0.38), 'none', ST(color, 0.8)) + '</g><g transform="rotate(-60 ' + cx + ' ' + cy + ')">' + E(cx, cy, s, n1(s * 0.38), 'none', ST(color, 0.8)) + '</g>' + C(cx, cy, n1(s * 0.22), color, NS);
+    case 'reactor': return C(cx, cy, n1(s * 1.3), color, NS + ' fill-opacity=".3"') + C(cx, cy, n1(s * 0.9), '#e0f2fe') + C(cx, cy, n1(s * 0.45), color, NS);
+    default: return '';
+  }
+};
+
+const parseSpec = spec => {
+  const o = { H: 'none', R: '', E: 'human', M: 'line', K: [], X: [], A: [] };
+  String(spec).trim().split(/\s+/).forEach(t => { const i = t.indexOf('='); if (i < 1) return; const k = t.slice(0, i), v = t.slice(i + 1); if (k === 'K' || k === 'X' || k === 'A') o[k] = v.split(','); else o[k] = v; });
+  return o;
+};
+
+// Formes de base (viewBox 48) : tête centrée en (24, 21.5)
+const HEAD = 'M24 11.1C29.4 11.1 32.8 15.4 32.8 21.5S29 31.9 24 31.9 15.2 27.6 15.2 21.5 18.6 11.1 24 11.1Z';
+const SHOULDERS = 'M12.6 44C13.4 38.6 17.6 35.4 24 35.4S34.6 38.6 35.4 44A23 23 0 0 1 12.6 44Z';
+const COWL = 'M15 27C14.4 16.4 17.6 10.6 24 10.6S33.6 16.4 33 27C31.2 25.4 29.6 24.6 28 24.8 26.8 25.6 25.4 26 24 26S21.2 25.6 20 24.8C18.4 24.6 16.8 25.4 15 27Z';
+const HOOD = 'M12.6 35C11.6 20.6 15 8.2 24 8.2S36.4 20.6 35.4 35C33.4 32.6 32.6 29 32.6 23.4 32.6 16.6 29.2 12.4 24 12.4S15.4 16.6 15.4 23.4C15.4 29 14.6 32.6 12.6 35Z';
+const HOOD_SHADE = 'M15.4 23.4C15.4 16.6 18.8 12.4 24 12.4S32.6 16.6 32.6 23.4C30.4 18.6 27.6 16.4 24 16.4S17.6 18.6 15.4 23.4Z';
+const HELMET = 'M14.2 25C13.6 15 17.8 9.4 24 9.4S34.4 15 33.8 25V30.2C31 32.4 27.6 33.4 24 33.4S17 32.4 14.2 30.2Z';
+const FACEPLATE = 'M17.4 18.4H30.6V27.2C29 30.2 26.6 31.6 24 31.6S19 30.2 17.4 27.2Z';
+const FACEOPEN = 'M17.4 17.4H30.6V27.6C29 30.4 26.6 31.8 24 31.8S19 30.4 17.4 27.6Z';
+const ROBOT = 'M15 13.4Q15 11 17.4 11H30.6Q33 11 33 13.4V28.6Q33 32 29.6 32H18.4Q15 32 15 28.6Z';
+const DOME = 'M13 18.4C13 11.4 17.8 7.4 24 7.4S35 11.4 35 18.4 29.4 32.4 24 32.4 13 25.4 13 18.4Z';
+const HALF_R = 'M24 11.1C29.4 11.1 32.8 15.4 32.8 21.5S29 31.9 24 31.9Z';
+const EARS_COWL = {
+  pointed: 'M16.4 15.4L15.8 5.6 20.6 11.8Z', cat: 'M16.2 14.2L16.6 7.6 21 11.4Z',
+  horns: 'M18.6 12.4C17.4 10 17.2 7.6 18 5.8 19.6 7.8 21 9.8 21.8 11.2Z', fins: 'M16.4 18C13.6 15.4 11.6 11.8 11.4 8 14.2 10.8 16.8 12.4 19 13.4Z',
+  wings: 'M15.6 19.4L10.6 16 11.6 19.6 10.2 22.4 15.4 23Z'
+};
+
+const hairBack = (R, c) => {
+  const r = c.r;
+  switch (R) {
+    case 'long': case 'streak': return P('M14 20C13.6 12.4 18.2 8.8 24 8.8S34.4 12.4 34 20C34.6 27 35.6 32 37 37.2 33.6 37.8 31 36.4 29.8 33.4H18.2C17 36.4 14.4 37.8 11 37.2 12.4 32 13.4 27 14 20Z', r);
+    case 'wild': return P('M12.4 23C10.6 15 15.6 7.2 24 7.2S37.4 15 35.6 23C36.4 27 35.4 30.6 33.4 32.4L32.6 22H15.4L14.6 32.4C12.6 30.6 11.6 27 12.4 23Z', r);
+    case 'bob': return P('M14.4 21C13.8 12.8 18.4 9.4 24 9.4S34.2 12.8 33.6 21V29.6H29.6L30 23H18L18.4 29.6H14.4Z', r);
+    case 'braids': return P('M14.6 21C14 12.6 18.6 9.4 24 9.4S34 12.6 33.4 21V34H30.4V23H17.6V34H14.6Z', r) + C(16.1, 35, 1.3, c.b) + C(31.9, 35, 1.3, c.b);
+    case 'pigtails': return E(12.4, 26, 2.8, 5.2, c.X.includes('splithair') ? c.a : r) + E(35.6, 26, 2.8, 5.2, c.X.includes('splithair') ? c.b : r);
+    case 'snakes': { let s = ''; [[15, 15, 10.6, 10, 9.6, 6.6], [19, 12, 16.6, 8, 17.4, 4.8], [24, 11, 24, 7, 25.6, 4], [29, 12, 31.4, 8, 30.6, 4.8], [33, 15, 37.4, 10, 38.4, 6.6]].forEach(([x1, y1, x2, y2, x3, y3]) => { s += LINE('M' + x1 + ' ' + y1 + 'Q' + x2 + ' ' + y2 + ' ' + x3 + ' ' + y3, r, 2) + C(x3, y3, 1.5, r); }); return s; }
+    default: return '';
+  }
+};
+const hairFront = (R, c) => {
+  const r = c.r;
+  const SHORT = P('M15.2 21C14.6 13.6 18.6 10 24 10S33.4 13.6 32.8 21C31.6 17.4 28.6 15.4 24 15.6S16.4 17.4 15.2 21Z', r);
+  const LONGF = P('M15.2 21C14.6 13.4 18.6 9.8 24 9.8S33.4 13.4 32.8 21C31 17.6 27.4 14.8 22.6 15.4 19.6 15.8 16.8 18 15.2 21Z', r);
+  switch (R) {
+    case 'short': case 'pigtails': case 'braids': return SHORT;
+    case 'curl': return SHORT + P('M23.4 15.4C21.6 16.4 21.8 18.6 23.6 18.6', 'none', ST(r, 1.4));
+    case 'greytemples': return SHORT + MIR(P('M15.3 21C15 18.6 15.4 17 16.2 15.8L17.6 19.4Z', '#d1d5db', NS));
+    case 'long': return LONGF;
+    case 'streak': return LONGF + P('M21 15.6C19.6 16.4 17.4 18.2 16 20.6 16.4 16.8 18 14 20.2 12.6Z', '#f8fafc', NS);
+    case 'wild': return P('M15.2 21.4L14.4 16 17.2 17 17.2 12.4 20.6 14.8 22.6 11 25 14.6 28 11.6 29.4 15.6 32.8 14.8 32.8 21.4C31 17.6 28 15.8 24 15.8S17 17.6 15.2 21.4Z', r);
+    case 'spiky': return P('M15.2 21L13.2 13.6 17.4 14.6 16.8 8.8 21 12 23.6 6.6 26.2 11.8 30.4 8.6 30.4 14 34.8 12.8 32.8 21C31.2 17.2 28 15.4 24 15.6S16.8 17.2 15.2 21Z', r);
+    case 'mohawk': return P('M21.6 16C21 11.4 22 7.6 24 5.4 26 7.6 27 11.4 26.4 16Z', r);
+    case 'bun': return SHORT + C(24, 8.8, 3.4, r);
+    case 'bob': return P('M15.2 20.4C15 13.6 18.8 10.2 24 10.2S33 13.6 32.8 20.4C30 18.6 27.2 18 24 18S18 18.6 15.2 20.4Z', r);
+    case 'slick': return P('M15.2 20C14.8 13.4 18.6 10 24 10S33.2 13.4 32.8 20C31 16.6 28.4 15 26 15.2L24 18 22 15.2C19.6 15 17 16.6 15.2 20Z', r);
+    default: return '';
+  }
+};
+
+const accessory = (a, c) => {
+  switch (a) {
+    case 'tiara': return P('M16.2 16C19 14.2 21.4 13.6 24 13.6S29 14.2 31.8 16L31.2 17.6C28.6 16.4 26.4 16 24 16S19.4 16.4 16.8 17.6Z', c.b) + P(starD(24, 14.4, 2.4), '#dc2626', ST(INK, 0.7));
+    case 'band': return P('M15.2 16.8C18 15.6 21 15 24 15S30 15.6 32.8 16.8V19C30 17.8 27 17.3 24 17.3S18 17.8 15.2 19Z', c.b) + P('M32.6 17.4L37.6 19.6 35.6 22.6Z', c.b);
+    case 'crown': return P('M16.8 14L16 7.6 19.6 10.6 22 6 24 10 26 6 28.4 10.6 32 7.6 31.2 14Z', c.b) + C(24, 12.2, 1.1, '#dc2626', ST(INK, 0.6));
+    case 'crownspikes': return P('M17 15.4C15 12.4 14.6 9 15.6 6.2 17.6 9 19.6 10.4 21.4 11.4L24 5 26.6 11.4C28.4 10.4 30.4 9 32.4 6.2 33.4 9 33 12.4 31 15.4 28.6 14.4 26.4 14 24 14S19.4 14.4 17 15.4Z', c.b);
+    case 'halo': return E(24, 7.4, 7, 2, 'none', ST(INK, 3.4)) + E(24, 7.4, 7, 2, 'none', ST('#facc15', 1.6));
+    case 'antennae': return LINE('M20.6 12.6C19.6 9 17.6 6.6 15.6 5.4M27.4 12.6C28.4 9 30.4 6.6 32.4 5.4', c.b, 1.3) + C(15.6, 5.4, 1.5, c.b) + C(32.4, 5.4, 1.5, c.b);
+    case 'antlers': return MIR(LINE('M19 12.4C17.4 9 14.6 7.2 12 6.8M15.6 8.4L14.6 4.6M17.8 10.2L19.4 6.2', c.b, 1.6));
+    case 'hornsbull': return MIR(P('M16.2 15.4C12.6 15 10.4 12.4 10.4 8.2 12.4 10.6 14.6 11.4 17.6 11.6Z', c.b));
+    case 'stumps': return C(19.6, 12.8, 1.7, '#57534e') + C(28.4, 12.8, 1.7, '#57534e');
+    case 'fin': return P('M20 12C20.8 8 23 4.6 26.8 3 25.8 6.6 26.6 9.8 28.6 12Z', c.s);
+    case 'leaves': return [[18, 10.4, 3], [23, 8.2, 3.4], [28.6, 9.8, 3], [31.8, 13.8, 2.4], [15.2, 13.8, 2.4]].map(([x, y, r]) => C(x, y, r, c.b)).join('') + P('M20.6 6.8l2 2.2M26.8 7.4l1.4 2.4', 'none', ST('#14532d', 0.8));
+    case 'hat': return P('M16.4 14.2C16.6 9.6 19.4 7.4 24 7.4S31.4 9.6 31.6 14.2C29 13.6 26.6 13.4 24 13.4S19 13.6 16.4 14.2Z', c.b) + P('M10.8 15.6C14 13.8 19 13 24 13S34 13.8 37.2 15.6C34 16.8 29 17.4 24 17.4S14 16.8 10.8 15.6Z', c.b) + P('M16.6 12.4C19 12 21.4 11.8 24 11.8S29 12 31.4 12.4', 'none', ST(INK, 1.4));
+    case 'tophat': return P('M17.8 13.6V4.6H30.2V13.6Z', c.b) + P('M17.8 11.2h12.4v1.8H17.8z', '#dc2626', NS) + P('M13.4 14.6C16.6 13.4 20.2 12.8 24 12.8S31.4 13.4 34.6 14.6C31.4 15.8 27.8 16.2 24 16.2S16.6 15.8 13.4 14.6Z', c.b);
+    case 'witchhat': return P('M17.4 14.6L24.6 2.4C26 4 27.6 4.4 29.8 3.8 27.4 6 27.6 9.4 30.6 14.6Z', c.b) + P('M12 16.2C16 14.4 20 13.8 24 13.8S32 14.4 36 16.2C32 17.4 28 17.8 24 17.8S16 17.4 12 16.2Z', c.b);
+    case 'laurel': return MIR(LINE('M15.8 18C16.6 14.6 19.4 12.4 22.8 11.8', '#65a30d', 1.3) + E(17, 15.4, 1.6, 0.8, '#84cc16', NS) + E(19.6, 13, 1.6, 0.8, '#84cc16', NS));
+    case 'hood': return P(HOOD, c.b) + P(HOOD_SHADE, '#000', NS + ' fill-opacity=".3"');
+    case 'goggleup': return P('M15.2 15.4C18 14.4 21 14 24 14S30 14.4 32.8 15.4', 'none', ST(INK, 1.4)) + C(20.4, 14.2, 2.6, c.e, ST(c.b, 1.4)) + C(27.6, 14.2, 2.6, c.e, ST(c.b, 1.4));
+    default: return '';
+  }
+};
+const animalEars = (a, c) => {
+  const fur = c.r || c.s, inner = c.b;
+  switch (a) {
+    case 'earsround': return MIR(C(16.6, 12.8, 3.6, fur) + C(16.6, 12.8, 1.7, c.m || inner, NS));
+    case 'earswolf': return MIR(P('M16 15.6L15.4 4.8 21.4 11.4Z', fur) + P('M16.6 13.6L16.4 7.8 19.6 11.2Z', inner, NS));
+    case 'earscat': return MIR(P('M16.2 14.4L16.8 7.2 21.2 11.6Z', fur) + P('M17 12.8L17.4 9.4 19.6 11.6Z', inner, NS));
+    case 'tufts': return MIR(P('M16.4 13.6L14.4 6.6 20 10.8Z', fur));
+    default: return '';
+  }
+};
+
+const eyes = (Ek, c) => {
+  const e = c.e || '#f8fafc';
+  switch (Ek) {
+    case 'none': return '';
+    case 'human': case 'angry': return (Ek === 'angry' ? P('M17.8 17.6L22 19.4M30.2 17.6L26 19.4', 'none', ST(INK, 1.3)) : P('M17.8 18.4L21.8 17.8M26.2 17.8L30.2 18.4', 'none', ST(c.r && c.r !== '#f8fafc' ? c.r : INK, 1.2))) + E(20.2, 21.3, 1.05, 1.3, INK, NS) + E(27.8, 21.3, 1.05, 1.3, INK, NS) + C(20.6, 20.8, 0.35, '#fff', NS) + C(28.2, 20.8, 0.35, '#fff', NS);
+    case 'lens': return MIR(P('M17 19.6C19 18.8 21.6 19.2 22.4 21 21.8 23.2 19 23.6 17.4 22.4 16.8 21.6 16.6 20.4 17 19.6Z', e, ST(INK, 1.4)));
+    case 'slit': return MIR(P('M17.4 20.4L22.4 21.8 21.8 23 17.8 21.8Z', e, NS));
+    case 'glow': return MIR(E(20.2, 21.4, 3.2, 2.1, e, NS + ' fill-opacity=".35"') + E(20.2, 21.4, 2, 1.25, e, NS) + E(20.2, 21.4, 0.9, 0.5, '#fff', NS));
+    case 'domino': return P('M15.6 19.4C18 18 21 18.6 24 20 27 18.6 30 18 32.4 19.4 32.2 22.8 30 24 27.6 23.8 26 23.6 25 22.6 24 22.6S22 23.6 20.4 23.8C18 24 15.8 22.8 15.6 19.4Z', c.m || INK) + MIR(P('M18.2 21.2C19 20.2 21 20.2 21.8 21.4 21 22.4 19 22.4 18.2 21.2Z', e, NS));
+    case 'visor': return P('M15.8 19H32.2V22.8C29.4 23.8 26.8 24.2 24 24.2S18.6 23.8 15.8 22.8Z', e) + P('M17.6 20.4h7', 'none', ST('#fff', 0.9, '.6'));
+    case 'goggles': return P('M15.4 20.6H32.6', 'none', ST(INK, 1.6)) + MIR(C(20.2, 21.2, 3, e, ST(c.b || INK, 1.6)) + C(19.2, 20.2, 0.8, '#fff', NS + ' fill-opacity=".7"'));
+    case 'cyclops': return C(24, 21, 4, '#f8fafc', ST(INK, 1.3)) + C(24, 21, 2.2, e, NS) + C(24, 21, 1, INK, NS) + C(24.8, 20.2, 0.5, '#fff', NS);
+    case 'void': return MIR(E(20.2, 21.6, 2.4, 2.8, '#14141c', NS) + C(20.2, 21.8, 0.8, e, NS));
+    case 'jagged': return MIR(P('M15.6 16.8C18.6 17.4 21.4 19 22.6 21.8 21.2 24.6 18.4 26 15.4 25.2 17 23.4 16.4 20.8 15.6 16.8Z', e, ST(INK, 1.2)));
+    case 'alien': return MIR(P('M15.6 18.6C18.8 18.4 22 19.6 22.6 22.6 19.6 24 16.6 22.4 15.6 18.6Z', '#0b0b12', NS) + E(18.4, 20, 0.9, 0.5, '#fff', NS + ' fill-opacity=".7"'));
+    case 'patches': return MIR(P('M15.8 18.4C18.6 17.6 21.8 18.6 22.6 21.4 22 24 19 24.8 16.4 23.6 15.4 22.2 15.2 20 15.8 18.4Z', c.b || INK) + P('M17.8 20.8C19 20.2 20.6 20.4 21.2 21.4 20.2 22.2 18.6 22 17.8 20.8Z', e, NS));
+    case 'ninja': return P('M16 19.2H32V23.6H16Z', c.s) + P('M17.8 19.8L21.8 20.6M26.2 20.6L30.2 19.8', 'none', ST(INK, 1.1)) + E(20.2, 21.8, 1, 1.1, INK, NS) + E(27.8, 21.8, 1, 1.1, INK, NS);
+    case 'closed': return P('M18.2 21.4C19.4 22.6 21 22.6 22.2 21.4M25.8 21.4C27 22.6 28.6 22.6 29.8 21.4', 'none', ST(INK, 1.2));
+    case 'patch': return P('M15.4 17.6L32.6 15.4', 'none', ST(INK, 1)) + E(20.2, 21.3, 2.6, 2.2, INK, NS) + P('M26.2 17.8L30.2 18.4', 'none', ST(INK, 1.2)) + E(27.8, 21.3, 1.05, 1.3, INK, NS);
+    default: return '';
+  }
+};
+const mouth = (Mk, c) => {
+  switch (Mk) {
+    case 'line': return P('M21.8 28.6h4.4', 'none', ST(INK, 1.2));
+    case 'smile': return P('M21 27.8C22.6 29.6 25.4 29.6 27 27.8', 'none', ST(INK, 1.2));
+    case 'stern': return P('M21.4 28.8h5.2', 'none', ST(INK, 1.4));
+    case 'frown': return P('M21.4 29.6C22.8 28.2 25.2 28.2 26.6 29.6', 'none', ST(INK, 1.3));
+    case 'grin': return P('M18.6 26.6C21 30.8 27 30.8 29.4 26.6 26 28.4 22 28.4 18.6 26.6Z', '#be123c', ST(INK, 1)) + P('M20 27.6C22.6 28.6 25.4 28.6 28 27.6', 'none', ST('#fff', 0.9));
+    case 'fangs': return P('M18.6 26.4C21 31 27 31 29.4 26.4Z', '#14141c') + P('M20 27L21 29 22 27.4ZM26 27.4L27 29 28 27Z', '#fff', NS);
+    case 'teeth': return P('M20.2 27.4h7.6v3h-7.6z', '#fff', ST(INK, 0.9)) + P('M22.1 27.4v3M24 27.4v3M25.9 27.4v3', 'none', ST(INK, 0.7));
+    case 'slot': return P('M19.6 27.4h8.8v1.8h-8.8z', (c && c.e) || '#ef4444');
+    case 'grill': return P('M21 27.4v3M23 27.4v3.4M25 27.4v3.4M27 27.4v3', 'none', ST(INK, 1));
+    case 'stitch': return P('M19.6 28.2h8.8M20.6 27v2.4M22.8 27v2.4M25.2 27v2.4M27.4 27v2.4', 'none', ST(INK, 0.9));
+    default: return '';
+  }
+};
+const faceExtra = (x, c) => {
+  switch (x) {
+    case 'beard': return P('M15.4 23.6C15.8 31 19.6 34.4 24 34.4S32.2 31 32.6 23.6C31.4 27.2 28.6 28.4 24 28.6S16.6 27.2 15.4 23.6Z', c.r);
+    case 'mustache': return P('M19.6 27.4C21.4 25.8 23 26 24 27 25 26 26.6 25.8 28.4 27.4 26.6 28 25 28.4 24 27.8 23 28.4 21.4 28 19.6 27.4Z', c.r);
+    case 'goatee': return P('M22 29.8h4l-.8 3.2h-2.4z', c.r);
+    case 'stubble': return P('M16.2 25C16.8 30.2 20 32.6 24 32.6S31.2 30.2 31.8 25C30 28.6 27.4 29.8 24 29.8S18 28.6 16.2 25Z', c.r || INK, NS + ' fill-opacity=".28"');
+    case 'scar': return P('M28.6 16.8L26.6 25.4', 'none', ST('#be123c', 1, '.85'));
+    case 'snout': return E(24, 27.4, 4.6, 3.4, c.b) + P('M22.4 25.6h3.2L24 27.4Z', INK, NS);
+    case 'beak': return P('M21 24.6H27L24 30.4Z', '#f5c518');
+    case 'whiskers': return MIR(P('M19.6 27.6L14.4 26.4M19.6 28.6L14.6 29.4', 'none', ST(INK, 0.6)));
+    case 'chinlines': return P('M20.4 29.4v2.2M22.2 30.2v2M25.8 30.2v2M27.6 29.4v2.2', 'none', ST(INK, 0.8, '.6'));
+    case 'tattoo': return P('M18 12.6C19.4 15.4 19.6 18 18.6 19.8M30 12.6C28.6 15.4 28.4 18 29.4 19.8M24 11.4V16', 'none', ST('#dc2626', 1.2));
+    case 'rock': return P('M17 15l4 2 1-4M27 13l1 4 4-1M16 24l4 1 1 4M32 24l-4 1-1 4M21 19.6h6', 'none', ST(INK, 0.8, '.4'));
+    case 'bark': return P('M19 13v5M24 12v3M29 13v5M17.6 24v4M30.4 24v4', 'none', ST('#451a03', 0.9, '.7'));
+    case 'scales': return P('M18 15c1 1 2 1 3 0M23 13c1 1 2 1 3 0M27 15c1 1 2 1 3 0M17 25c1 1 2 1 3 0M28 25c1 1 2 1 3 0', 'none', ST(INK, 0.7, '.45'));
+    case 'stripes': return MIR(P('M15.6 18.4L19 19.4M15.4 22.2L18.6 22.4M16.4 26L19 25.2', 'none', ST(INK, 1.1))) + P('M24 11.2V14.6', 'none', ST(INK, 1.1));
+    case 'paint': return MIR(P('M17.8 23.8L21.2 24.4', 'none', ST(c.b, 1.4)));
+    case 'freckles': return MIR(C(19, 24.6, 0.4, '#92400e', NS) + C(20.4, 25.2, 0.4, '#92400e', NS) + C(18.2, 25.6, 0.4, '#92400e', NS));
+    case 'seam': return P('M24 11.2V31.8', 'none', ST(c.b, 1));
+    case 'stitches': return P('M17 16.4l14 1.6M18 15.2l-.6 2.4M22 15.6l-.4 2.6M26 16l-.4 2.6M30 16.6l-.6 2.4', 'none', ST(INK, 0.7));
+    case 'wraps': return P('M15.6 16.4L32.4 18.2M15.2 24L32.8 22.4M16.6 28.6L31.4 29.8M17.4 13.2l13.4 1.4', 'none', ST('#a8a29e', 0.9));
+    case 'blots': return P('M18.4 17.6C20.8 16.6 22.4 18.6 21.6 20.6 20.8 22.6 18.6 23.4 17.6 21.6 16.8 20.2 17 18.2 18.4 17.6ZM29.6 17.6C27.2 16.6 25.6 18.6 26.4 20.6 27.2 22.6 29.4 23.4 30.4 21.6 31.2 20.2 31 18.2 29.6 17.6ZM22.6 26.4C23.6 25.4 24.8 25.6 25.4 26.8 25.8 28.2 24.6 29.4 23.4 29 22.2 28.6 22 27.2 22.6 26.4Z', INK, NS);
+    case 'skull': return P('M23 23.8L24 25.8 25 23.8Z', INK, NS) + MIR(P('M16.2 25.2C17.2 26.6 18.6 27.4 19.8 27.6', 'none', ST(INK, 0.7, '.5')));
+    case 'brow': return P('M16.6 18C19 16.6 21.6 16.6 24 17.6 26.4 16.6 29 16.6 31.4 18', 'none', ST(INK, 1.6));
+    default: return '';
+  }
+};
+const postEyes = (x, c) => {
+  switch (x) {
+    case 'halfmetal': return P(HALF_R, '#94a3b8') + P('M24 15h5.6M24 26h6.4M28.6 15v4', 'none', ST(INK, 0.7, '.6')) + C(27.8, 21.3, 2.2, c.b || '#ef4444', NS + ' fill-opacity=".35"') + C(27.8, 21.3, 1.3, c.b || '#ef4444', NS);
+    case 'halfscar': return P(HALF_R, '#7c3aed', NS + ' fill-opacity=".45"') + P('M25.6 14l2 3-1 3 2 3M25 26l3 2', 'none', ST(INK, 0.7, '.7')) + C(27.8, 21.3, 2, '#fff', ST(INK, 1)) + C(27.8, 21.3, 0.9, INK, NS);
+    default: return '';
+  }
+};
+
+const renderHead = (spec, c) => {
+  const S = parseSpec(spec); const col = Object.assign({}, c, { X: S.X });
+  const [hg, ...hv] = S.H.split('.');
+  const masked = hg === 'full' || hg === 'robot';
+  const helmet = hg === 'helmet', open = hv.includes('open');
+  let o = badgeOpen(c.bg);
+  // Arrière-plan : flammes, ailes, cape, col, cheveux longs
+  if (S.A.includes('flame')) o += P('M14 26C11 19.4 13 13.4 16 9.6 16.6 12.6 18 13.6 19 14 19 9.4 21.4 5.6 24.4 3 24.8 7 26.6 9.2 28.2 11.2 29 8.6 30.6 7.4 32.6 6.6 32.2 10.4 35.8 14.6 34.4 26Z', '#f97316') + P('M16.6 24C15.4 19.4 17 15.8 18.8 13.6 19.6 15.6 20.8 16.2 21.6 16.4 22 12.8 23.6 10 25.2 8.4 25.8 11.6 27.2 13.4 28.4 14.8 29.4 13 30.6 12.2 31.6 12 31.4 15 33 17.6 31.6 24Z', '#fde047', NS);
+  if (S.X.includes('wingsback')) o += MIR(P('M18 26C12 24 7.4 19.6 6.6 12.6 10.6 16 14.6 17.4 18.6 17.6Z', c.b) + P('M18.4 31C12.2 31 8.2 28 6.2 22.6 10.4 25 14.4 25.4 18.4 25Z', c.b));
+  if (S.X.includes('cape')) o += P('M11.2 44C10.4 36 13.6 31.4 20 31.6H28C34.4 31.4 37.6 36 36.8 44Z', c.b);
+  if (S.X.includes('collar')) o += MIR(P('M14.4 37.6L11.4 24.6 19 33.4Z', c.b));
+  if (hg !== 'cowl' || S.R === 'long') o += hairBack(S.R, col);
+  // Corps et marque de poitrine
+  o += P(SHOULDERS, c.a);
+  S.K.filter(k => k.startsWith('c-')).forEach(k => { const [t, cl] = k.slice(2).split(':'); o += mark(t, 24, 41.2, 3, colorOfTok(cl) || c.b, c.e); });
+  if (S.X.includes('necklace')) o += P('M17.6 36.6C20 39 22 39.8 24 39.8S28 39 30.4 36.6', 'none', ST(c.b, 1.2)) + [19.4, 22, 24, 26, 28.6].map((x, i) => P('M' + n1(x - 0.7) + ' ' + (i === 0 || i === 4 ? 38.2 : 39.4) + 'l.7 1.8.7-1.8z', c.b, NS)).join('');
+  if (S.X.includes('spikes')) o += MIR(P('M15 36.8L12.6 31.2 17.4 34.4Z', '#9ca3af'));
+  o += P('M20.4 28h7.2v8h-7.2z', masked || helmet ? c.a : c.s);
+  // Oreilles
+  S.A.forEach(a => { o += animalEars(a, col); });
+  if (!masked && !helmet && hg !== 'cowl' && !S.A.some(a => /^ears|tufts/.test(a))) o += S.X.includes('elfears') ? MIR(P('M15.8 24.6C14 24 12.4 21.4 11.8 16.8 13.8 18.6 15.4 19.6 16 20.4Z', c.s)) : MIR(E(15.4, 22.4, 1.6, 2.6, c.s));
+  if ((hg === 'cowl' || hg === 'full') && hv[0] && EARS_COWL[hv[0]]) o += MIR(P(EARS_COWL[hv[0]], hv[0] === 'wings' ? c.b : c.a));
+  // Tête
+  const ghost = S.X.includes('ghost');
+  if (ghost) o += '<g opacity=".6">';
+  if (hg === 'robot') o += P(ROBOT, c.a) + MIR(C(14.6, 22, 1.6, c.b));
+  else if (hg === 'dome') o += P(DOME, c.s);
+  else o += P(HEAD, masked ? c.a : c.s);
+  if (hg === 'full' && hv.includes('split')) o += P(HALF_R, c.b, NS) + P(HEAD, 'none');
+  if (hg === 'full' && hv.includes('seam')) o += faceExtra('seam', col);
+  ['bark', 'rock', 'scales', 'tattoo', 'stripes', 'chinlines', 'wraps', 'blots', 'stitches', 'skull', 'freckles', 'stubble'].forEach(x => { if (S.X.includes(x)) o += faceExtra(x, col); });
+  // Cheveux, coiffe
+  if (hg !== 'cowl' && !helmet && !masked) o += hairFront(S.R, col);
+  if (hg === 'cowl') o += P(COWL, c.a);
+  if (helmet) {
+    o += P(HELMET, c.a);
+    o += open ? P(FACEOPEN, c.s) : P(FACEPLATE, c.b);
+    if (hv.includes('wings')) o += MIR(P('M14.6 17.4C10.8 15.4 8.6 12.2 8.4 8.6 11.2 11.6 13.2 12.8 15.2 13.4Z', '#e5e7eb') + P('M14.4 21C11 20.2 8.6 18.4 7.6 15.8 10.6 17.4 12.6 17.8 14.6 17.6Z', '#e5e7eb'));
+    if (hv.includes('horns')) o += MIR(P('M17 12.6C14.2 9.8 12.8 6 13.8 2.8 15.4 6.2 17.4 8.4 19.8 10Z', c.b));
+    if (hv.includes('crest') || hv.includes('fins3')) o += P('M22.4 9.8C22 6.2 22.8 3.4 24 2 25.2 3.4 26 6.2 25.6 9.8Z', c.b);
+    if (hv.includes('fins3')) o += MIR(P('M17.6 12.6L15.4 6 19.6 9.6Z', c.b));
+    if (hv.includes('crestbig')) o += P('M17 11C17.6 5.6 20.6 2.6 24 2.6S30.4 5.6 31 11C28.4 9.4 26.4 8.8 24 8.8S19.6 9.4 17 11Z', c.b);
+    if (hv.includes('prongs')) o += MIR(P('M14.6 16L12 4.6 16.4 6.4 17.4 12.6Z', c.b));
+    if (hv.includes('crescent')) o += P('M16 9.6C17.4 12.4 20.4 13.4 24 13.4S30.6 12.4 32 9.6C31.4 13.6 28 15.6 24 15.6S16.6 13.6 16 9.6Z', c.b);
+  }
+  if (hg === 'hood') o += P(HOOD, c.a) + P(HOOD_SHADE, '#000', NS + ' fill-opacity=".3"');
+  if (hg === 'nemes') o += P('M14.6 20C14.6 12.6 18.6 9.6 24 9.6S33.4 12.6 33.4 20L36 36H30.8L30.4 22.4C28.6 20.6 26.4 19.8 24 19.8S19.4 20.6 17.6 22.4L17.2 36H12Z', c.a) + MIR(P('M13.8 25.4h3.4M13.2 29.6h3.6M12.6 33.8h4', 'none', ST(c.b, 1.2))) + P('M16 16.4C18.6 15.4 21.2 15 24 15S29.4 15.4 32 16.4', 'none', ST(c.b, 1.6));
+  ['beard', 'mustache', 'goatee', 'snout', 'beak', 'whiskers', 'scar', 'paint', 'brow'].forEach(x => { if (S.X.includes(x)) o += faceExtra(x, col); });
+  // Regard, bouche
+  o += eyes(S.E, col);
+  ['halfmetal', 'halfscar'].forEach(x => { if (S.X.includes(x)) o += postEyes(x, col); });
+  o += mouth(S.M, col);
+  // Accessoires au premier plan, verre du casque d'astronaute, marques du front
+  S.A.forEach(a => { if (!/^ears|tufts|flame/.test(a)) o += accessory(a, col); });
+  if (hg === 'bubble') o += C(24, 21.6, 13, '#bae6fd', NS + ' fill-opacity=".22"') + C(24, 21.6, 13, 'none', ST(INK, 1.4)) + P('M15.4 15.4A10.6 10.6 0 0 1 21.6 10.2', 'none', ST('#fff', 1.6, '.75')) + P('M13.2 30.4C16.4 33.2 20 34.4 24 34.4S31.6 33.2 34.8 30.4V34.6C31.6 37 27.8 38 24 38S16.4 37 13.2 34.6Z', c.a);
+  S.K.filter(k => !k.startsWith('c-')).forEach(k => { const [t, cl] = k.split(':'); o += mark(t, 24, 14.8, 2.4, colorOfTok(cl) || c.b, c.e); });
+  if (ghost) o += '</g>';
+  return o + badgeClose();
+};
+
+// ---------------------------------------------------------------- Artefacts : dessins (objets génériques)
+const ART_DRAW = {
+  hammer: (a, b, c) => '<g transform="rotate(-24 24 25)">' + P('M21.8 22.6h4.4v14h-4.4z', c || '#92400e') + P('M22 26.4h4M22 29.4h4M22 32.4h4', 'none', ST(INK, 0.7, '.6')) + P('M20.6 36.4h6.8v3.6h-6.8z', a) + P('M12.4 11.6h23.2v11.4H12.4z', a) + P('M16.8 11.6v11.4M31.2 11.6v11.4', 'none', ST(b, 1.6)) + P('M22 15.4l2 3 2-3', 'none', ST('#38bdf8', 1.2)) + '</g>',
+  shield: (a, b, c) => C(24, 24, 14, a) + C(24, 24, 10.4, b) + C(24, 24, 6.8, a) + C(24, 24, 4.8, c) + P(starD(24, 24, 4.4), b, NS) + P('M14.4 15.4A12 12 0 0 1 20 11.4', 'none', ST('#fff', 1.4, '.5')),
+  trident: a => LINE('M24 18V42', a, 2.4) + LINE('M15.6 9V14.6C15.6 18 19.4 19.6 24 19.6S32.4 18 32.4 14.6V9M24 6.6V19.6', a, 2.2) + P('M13.8 10.4L15.6 5.2 17.4 10.4ZM22.2 8L24 2.8 25.8 8ZM30.6 10.4L32.4 5.2 34.2 10.4Z', a),
+  lasso: (a, b) => C(24, 23, 13, b, NS + ' fill-opacity=".18"') + LINE('M24 14.4C31.6 14.4 36.6 18 36.6 22.2S31.6 30 24 30 11.4 26.4 11.4 22.2 16.4 14.4 24 14.4Z', a, 2) + LINE('M24 17.6C29.6 17.6 33.4 19.8 33.4 22.6S29.6 27.6 24 27.6 14.6 25.4 14.6 22.6 18.4 17.6 24 17.6Z', a, 1.6) + LINE('M30.4 29.4C31.4 33.6 29.4 37.6 25.6 40.6', a, 2),
+  ring: (a, b) => C(24, 24, 15, b, NS + ' fill-opacity=".2"') + C(24, 28, 7.6, 'none', ST(INK, 5.6)) + C(24, 28, 7.6, 'none', ST(a, 3.4)) + P('M24 10.4l4.4 4.6-4.4 5-4.4-5z', b) + P('M22.4 13.4l1.6-1.4', 'none', ST('#fff', 1, '.8')),
+  gauntlet: (a, b) => P('M17 35.4H31.6V41.6H17Z', b) + P('M14.6 27.4V18.6C14.6 17 15.6 16 17 16S19.4 17 19.4 18.6V15.6C19.4 14 20.4 13 21.8 13S24.2 14 24.2 15.6V15C24.2 13.4 25.2 12.4 26.6 12.4S29 13.4 29 15V17.2C29 15.8 30 14.8 31.2 14.8S33.4 15.8 33.4 17.2V27C33.4 32.4 29.6 36 24.4 36S14.6 32.6 14.6 27.4Z', a) +
+    [[17, 19.6, '#3b82f6'], [21.8, 16.6, '#ef4444'], [26.6, 16, '#a855f7'], [31.2, 18.4, '#facc15'], [24.2, 26.6, '#f97316'], [24.2, 38.6, '#22c55e']].map(([x, y, cl], i) => C(x, y, i === 4 ? 2.6 : 1.4, cl, ST(INK, 0.8))).join(''),
+  cube: (a, b, c) => C(24, 25, 16, a, NS + ' fill-opacity=".22"') + P('M24 10.4L35.4 16.6 24 22.8 12.6 16.6Z', c) + P('M12.6 16.6L24 22.8V36.4L12.6 30.2Z', a) + P('M35.4 16.6L24 22.8V36.4L35.4 30.2Z', b) + P('M15 18.6l6.6 3.6', 'none', ST('#fff', 1, '.6')),
+  amulet: (a, b) => P('M14 9.6C16 17 20 20.4 24 20.4S32 17 34 9.6', 'none', ST(a, 1.2)) + C(24, 28.4, 9, a) + C(24, 28.4, 6.6, '#7c2d12', NS + ' fill-opacity=".35"') + P('M17.6 28.4C20.6 24.8 27.4 24.8 30.4 28.4 27.4 32 20.6 32 17.6 28.4Z', '#f8fafc') + C(24, 28.4, 2.6, b, NS) + C(24, 28.4, 1.1, INK, NS),
+  lantern: (a, b) => C(24, 25, 14, b, NS + ' fill-opacity=".25"') + P('M19.6 12.2C19.6 8 28.4 8 28.4 12.2', 'none', ST(INK, 1.4)) + P('M18.6 12.4h10.8l-1.4 3H20z', a) + P('M19 15.4h10l1.4 15.2H17.6z', b) + P('M21.6 17.6v10', 'none', ST('#fff', 1, '.6')) + P('M16.6 30.6h14.8v3.6H16.6z', a) + P('M18.4 34.2h11.2l-1.4 3H19.8z', a),
+  book: (a, b) => P('M15.6 36.4V33.4H34.6V36.4Z', '#f8fafc') + P('M13.4 12.6H32.4Q34.6 12.6 34.6 14.8V33.4H15.6Q13.4 33.4 13.4 31.2Z', a) + P('M30.6 20.4h5.4v5.2h-5.4z', b) + mark('eye', 23, 23, 3.6, b, '#a855f7') + P('M17 15.4h12', 'none', ST(b, 1)),
+  sword: (a, b, c) => P('M24 3.4L27.2 8.2V30H20.8V8.2Z', b, ST(INK, 1.2)) + P('M24 6.4V29', 'none', ST('#fff', 0.9, '.8')) + P('M14.8 29.6h18.4v3.4H14.8z', a) + P('M22.4 33h3.2v6.6h-3.2z', c || '#7c2d12') + C(24, 41.4, 2.2, a),
+  bow: (a, b) => P('M17.2 7.6V40.4', 'none', ST(INK, 0.9)) + LINE('M17.2 7.6C27.4 13 27.4 35 17.2 40.4', a, 2.6) + LINE('M11 24H35.2', b, 1.4) + P('M35 20.8L39.8 24 35 27.2Z', b) + P('M11 24l-2.6-3M11 24l-2.6 3M13.4 24l-2.6-3M13.4 24l-2.6 3', 'none', ST('#dc2626', 1.2)),
+  boomerang: (a, b) => '<g transform="rotate(-8 24 24)">' + P('M12.6 34.6L21.6 12.6C22.2 11 24.4 10.8 25.2 12.4L36 33.6C36.6 35 35.2 36.2 33.8 35.4L25.4 30.4C24.6 29.9 23.6 29.9 22.8 30.4L14.8 36.4C13.6 37.4 12 36.2 12.6 34.6Z', a) + P('M16 32L22.6 15.6M32.4 32L25.6 16', 'none', ST(b, 1.6)) + '</g>',
+  helmet: (a, b, c) => MIR(P('M14.6 25.4C10.8 23.4 8.6 20.2 8.4 16.6 11.2 19.6 13.2 20.8 15.2 21.4Z', c) + P('M14.4 29C11 28.2 8.6 26.4 7.6 23.8 10.6 25.4 12.6 25.8 14.6 25.6Z', c)) + P('M14.6 32C14.6 21.4 18.8 14.4 24 14.4S33.4 21.4 33.4 32Z', a) + P('M13.6 31.4h20.8v4H13.6z', b) + P('M18 22.4C18.8 19.6 20.6 17.6 23 17', 'none', ST('#fff', 1.4, '.6')),
+  cape: (a, b, c) => P('M17 10.6C14.2 20 12 30 10 40.4 15 38.6 19 41.6 24 39.8 29 41.6 33 38.6 38 40.4 36 30 33.8 20 31 10.6Z', a) + P('M21 12.6C20 21 19.8 30 20.4 39.2M27 12.6C28 21 28.2 30 27.6 39.2', 'none', ST(b, 1.2, '.8')) + P('M16.4 9h15.2v3.4H16.4z', b) + C(18.4, 10.7, 2.2, c) + C(29.6, 10.7, 2.2, c),
+  belt: (a, b, c) => P('M8.4 21.2H39.6V28.8H8.4Z', a) + [10, 14.8, 29.2, 34].map(x => P('M' + x + ' 19.4h4v9.6h-4z', c)).join('') + P('M20 19h8v11h-8z', b) + C(24, 24.5, 2.4, c),
+  crown: (a, b, c) => P('M11.6 33.4L10 15.6 17 22 24 11.2 31 22 38 15.6 36.4 33.4Z', a) + P('M11.6 33.4h24.8v3.6H11.6z', a) + C(24, 27, 2.2, b) + C(17, 29, 1.5, c) + C(31, 29, 1.5, c) + C(10, 15.6, 1.4, a) + C(24, 11.2, 1.4, a) + C(38, 15.6, 1.4, a),
+  orb: (a, b) => C(24, 24, 15, a, NS + ' fill-opacity=".25"') + C(24, 24, 11.4, a) + P('M17 22C19 16 28 15.4 30.4 21 32.4 26 27 30 23.4 27.6 20.6 25.8 22.6 22.2 25.4 23.4', 'none', ST(b, 1.6)) + E(19.6, 17.6, 2.6, 1.6, '#fff', NS + ' fill-opacity=".45"'),
+  scepter: (a, b) => C(24, 13, 9, b, NS + ' fill-opacity=".25"') + P('M22.8 19.4h2.4v22h-2.4z', a) + P('M18 19.4C18 14 20 12.4 24 12.4S30 14 30 19.4C28 17.6 26 17 24 17S20 17.6 18 19.4Z', a) + P('M24 5L28.4 11 24 17.6 19.6 11Z', b) + C(24, 41.6, 1.8, a),
+  staff: (a, b) => C(24.6, 10, 9, b, NS + ' fill-opacity=".3"') + LINE('M27.6 42C26 35 22 31 22.4 23.6S25.4 14.6 24.4 10', a, 2.8) + C(24.6, 9.4, 4.4, b) + C(23.2, 8, 1.2, '#fff', NS + ' fill-opacity=".8"'),
+  potion: (a, b, c) => P('M21 8.6h6V16L32.6 30.4C34 34.4 31.4 38.6 27 38.6H21C16.6 38.6 14 34.4 15.4 30.4L21 16Z', b) + P('M17.2 27.4H30.8L32.6 31C33.6 34.4 31.4 37 27.4 37H20.6C16.6 37 14.4 34.4 15.4 31Z', a, NS) + P('M21 8.6h6V16L32.6 30.4C34 34.4 31.4 38.6 27 38.6H21C16.6 38.6 14 34.4 15.4 30.4L21 16Z', 'none') + P('M20.4 6h7.2v3.2h-7.2z', c) + C(22, 32, 1.2, '#fff', NS + ' fill-opacity=".7"') + C(26, 30, 0.8, '#fff', NS + ' fill-opacity=".7"'),
+  hourglass: (a, b) => P('M16.4 11.4H31.6C31.6 18 26.4 21 26.4 24S31.6 30 31.6 36.6H16.4C16.4 30 21.6 27 21.6 24S16.4 18 16.4 11.4Z', b) + P('M18.6 14.4h10.8C28.4 18 25.6 20.4 24 22 22.4 20.4 19.6 18 18.6 14.4Z', a, NS) + P('M18 35.2C19.4 31 22 30 24 29.6 26 30 28.6 31 30 35.2Z', a, NS) + P('M24 22v7.6', 'none', ST(a, 0.8)) + P('M13.6 8h20.8v3.4H13.6zM13.6 36.6h20.8V40H13.6z', a),
+  ironmask: (a, b) => P(HOOD, b) + P(HEAD, a) + MIR(P('M17.4 20.4L22.4 21.8 21.8 23 17.8 21.8Z', INK, NS)) + mouth('grill') + P('M24 12v7', 'none', ST(INK, 0.8, '.5')) + P('M17.6 14.4C19 13 20.6 12.4 22 12.2', 'none', ST('#fff', 1, '.55')),
+  crystal: (a, b) => C(24, 26, 15, a, NS + ' fill-opacity=".22"') + P('M16.6 16.4L20.6 22 19.8 38H15.2L13.2 23Z', b) + P('M31.4 16.4L34.8 23 32.8 38H28.2L27.4 22Z', b) + P('M24 6L29.4 16 27 38H21L18.6 16Z', a) + P('M24 9l-2.4 8 1 18', 'none', ST('#fff', 1, '.6')),
+  reactor: (a, b) => C(24, 24, 15, a, NS + ' fill-opacity=".25"') + C(24, 24, 11, '#1f2937') + C(24, 24, 8, 'none', ST(a, 2.4)) + Array.from({ length: 10 }, (_, i) => { const t = i * Math.PI / 5; return P('M' + n1(24 + 8 * Math.cos(t)) + ' ' + n1(24 + 8 * Math.sin(t)) + 'L' + n1(24 + 10.4 * Math.cos(t)) + ' ' + n1(24 + 10.4 * Math.sin(t)), 'none', ST(b, 1)); }).join('') + C(24, 24, 4, b) + C(24, 24, 2, '#fff', NS),
+  board: (a, b) => P(starD(12, 12, 2.6), '#fff', NS + ' fill-opacity=".8"') + P(starD(37, 33, 2), '#fff', NS + ' fill-opacity=".7"') + P('M7 35C13 24 28 12.6 41 11.6 37 22.4 22 34.6 7 35Z', a) + P('M11.6 31.8C18 24.4 28 17 37 14.6', 'none', ST(b, 1.2)) + P('M14 30.2C19.4 25 25 21 30.4 18.4', 'none', ST('#fff', 1, '.6')),
+  claws: (a, b) => [0, 6.4, 12.8].map(dx => P('M' + n1(15.4 + dx) + ' 35L' + n1(16 + dx) + ' 8.4C' + n1(17.8 + dx) + ' 11.6 ' + n1(18.8 + dx) + ' 23.6 ' + n1(18.6 + dx) + ' 35Z', a)).join('') + P('M16.6 12v20M23 12v20M29.4 12v20', 'none', ST('#fff', 0.8, '.6')) + P('M12.6 34.2h22.8v6H12.6z', b),
+  magnifier: (a, b) => LINE('M27.6 27.6l9.4 9.4', a, 4) + C(21, 21, 9.4, b, ST(INK, 1.4)) + C(21, 21, 9.4, 'none', ST(a, 2.6)) + P('M15.4 18.4A6.4 6.4 0 0 1 19.4 14.8', 'none', ST('#fff', 1.4, '.8')),
+  key: (a, b) => C(17, 17, 9, b, NS + ' fill-opacity=".25"') + C(17, 17, 6.4, 'none', ST(INK, 5.2)) + C(17, 17, 6.4, 'none', ST(a, 3)) + LINE('M21.8 21.8L36.4 36.4M31.4 31.4l-3 3M34.6 34.6l-3 3', a, 2.6) + P(gemD(17, 17, 2.4), b),
+  comic: (a, b, c) => P('M15.6 9.6h20v31h-20z', INK, NS + ' fill-opacity=".35"') + P('M13.4 7.6h20v31h-20z', a) + P('M13.4 7.6h20v7.4h-20z', b) + P(starD(23.4, 27, 8.4), c) + P(starD(23.4, 27, 5), b, NS) + P('M15.6 10.4h7M15.6 12.4h4.4', 'none', ST(a, 1.2)),
+  compass: (a, b) => C(24, 24, 13.6, a) + C(24, 24, 10.6, '#f8fafc') + P('M24 13.4L26.6 24H21.4Z', b, NS) + P('M24 34.6L21.4 24H26.6Z', '#1f2937', NS) + C(24, 24, 1.6, a) + P('M24 13v1.8M24 33.2V35M13 24h1.8M33.2 24H35', 'none', ST(INK, 1)),
+  scythe: (a, b) => LINE('M30 8.4L19.4 42', b, 2.6) + P('M30.2 8.6C23.4 5.2 14 6.6 8.6 13.6 14.4 11.6 21.4 12 28.4 15.4Z', a) + P('M12.6 11.4C17.4 9 22.6 9 27.2 10.6', 'none', ST('#fff', 0.9, '.7')),
+  crystalball: (a, b, c) => P('M15 36h18l2 5H13z', c) + C(24, 22, 12.4, a, NS + ' fill-opacity=".3"') + C(24, 22, 11, a) + P('M18.4 22.4C19.6 17 26.4 15.6 29 20 30.6 24 26.6 27 24 25 22.2 23.6 23.6 21 25.6 21.8', 'none', ST(b, 1.4)) + E(19.4, 16.6, 2.6, 1.4, '#fff', NS + ' fill-opacity=".55"'),
+  watch: (a, b) => P('M20 8h8l1 6h-10zM20 40h8l1-6h-10z', a) + C(24, 24, 11.6, a) + C(24, 24, 9, b) + P('M24 17.4V24L28.6 26.6', 'none', ST(INK, 1.4)) + Array.from({ length: 12 }, (_, i) => { const t = i * Math.PI / 6; return C(n1(24 + 7.4 * Math.cos(t)), n1(24 + 7.4 * Math.sin(t)), 0.5, INK, NS); }).join('') + C(24, 24, 1.2, a)
+};
+const renderArt = (draw, cs) => badgeOpen(cs[0]) + (ART_DRAW[draw] ? ART_DRAW[draw](cs[1], cs[2], cs[3]) : '') + badgeClose();
+
+// ---------------------------------------------------------------- Catalogue
+const parseColors = s => String(s).split(',').map(colorOfTok);
+const BADGES = Object.freeze([
+  ...HEADS.trim().split('\n').map(line => { const [key, label, cat, spec, colors, tags] = line.split('|'); const cs = parseColors(colors); return Object.freeze({ key, label, cat, kind: 'hero', spec, colors: Object.freeze({ bg: cs[0], a: cs[1], b: cs[2], e: cs[3], s: cs[4], r: cs[5], m: cs[6] || '' }), accent: cs[2] || cs[1], tags: tags || '' }); }),
+  ...ARTS.trim().split('\n').map(line => { const [key, label, draw, colors, tags] = line.split('|'); const cs = parseColors(colors); return Object.freeze({ key, label, cat: 'artefacts', kind: 'artifact', draw, cs: Object.freeze(cs), accent: cs[1], tags: tags || '' }); })
+]);
+const ALL = Object.freeze([...ICONS.map(i => Object.freeze({ key: i.key, label: i.label, hint: i.hint, cat: 'classiques', kind: 'glyph', tags: '' })), ...BADGES]);
+const BY = new Map(ALL.map(x => [x.key, x]));
+const KEYS = Object.freeze(ALL.map(x => x.key));
+const DEFAULT = 'heart';
+const sanitize = v => typeof v === 'string' && BY.has(v) ? v : DEFAULT;
+const get = k => BY.get(sanitize(k));
+const labelOf = k => get(k).label;
+const catOf = k => get(k).cat;
+const catLabel = c => (CATEGORIES.find(x => x.key === c) || { label: '' }).label;
+const hintOf = k => { const x = get(k); return x.hint || catLabel(x.cat); };
+const colorOf = k => { const x = get(k); return x.kind === 'glyph' ? '' : x.accent; };
+const byCat = c => ALL.filter(x => x.cat === c);
+
+const CACHE = new Map();
+// SVG complet d'un badge (null pour un glyphe classique, dessiné par l'interface)
+const svgOf = k => {
+  const x = BY.get(k);
+  if (!x || x.kind === 'glyph') return null;
+  if (!CACHE.has(k)) CACHE.set(k, x.kind === 'hero' ? renderHead(x.spec, x.colors) : renderArt(x.draw, x.cs));
+  return CACHE.get(k);
+};
+
+// Recherche et suggestion : sur le nom, la catégorie et les tags (personnages que l'utilisateur pourrait taper)
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+const STOP = new Set(['man', 'the', 'of', 'de', 'la', 'le', 'les', 'des', 'du', 'mr', 'dr', 'x', 'el', 'et', 'l', 'd', 'un', 'une']);
+const words = t => norm(t).split(' ').filter(w => w && !STOP.has(w));
+const score = (x, q) => {
+  const ws = words(q); if (!ws.length) return 0;
+  const tags = norm(x.tags), tw = tags ? tags.split(' ') : [], name = norm(x.label), nw = name.split(' ');
+  let s = 0;
+  ws.forEach(w => { if (tw.includes(w)) s += 1; else if (w.length >= 4 && tw.some(t => t.startsWith(w))) s += 0.6; if (nw.includes(w)) s += 1.2; else if (w.length >= 3 && name.includes(w)) s += 0.5; });
+  const nq = norm(q);
+  if (nq.length >= 4 && (' ' + tags + ' ').includes(' ' + nq + ' ')) s += 2;
+  if (tw.length && ws[0] === tw[0]) s += 0.5;
+  return s;
+};
+const search = (q, limit) => {
+  if (!norm(q)) return [];
+  return ALL.map((x, i) => ({ x, i, s: score(x, q) })).filter(r => r.s > 0).sort((a, b) => b.s - a.s || a.i - b.i).slice(0, limit || 60).map(r => r.x);
+};
+
+// Mots du personnage favori -> glyphe classique (repli)
 const HINTS = [
   [/panth|wakanda|t.?challa|shuri|tigr|catwoman|wolverine|logan|griff/, 'claws'],
   [/flash|shazam|thor|storm|tonnerre|eclair|static|black lightning|captain marvel/, 'bolt'],
@@ -7488,15 +8166,17 @@ const HINTS = [
   [/captain america|cap |steve rogers|wonder woman|diana|bouclier|shield|superman|clark/, 'shield'],
   [/punisher|ghost|crane|skull|red hood|lobo|venom|carnage/, 'skull']
 ];
-const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+// Suggestion depuis le personnage favori : d'abord un badge dessiné, sinon un glyphe classique ; jamais imposée.
 const suggestFor = favorite => {
   const f = norm(favorite);
-  if (!f.trim()) return null;
+  if (!f) return null;
+  const best = BADGES.map((x, i) => ({ x, i, s: score(x, favorite) })).filter(r => r.s >= 1).sort((a, b) => b.s - a.s || a.i - b.i)[0];
+  if (best) return best.x.key;
   for (const [re, k] of HINTS) if (re.test(f)) return k;
   return null;
 };
 
-module.exports = { ICONS, KEYS, DEFAULT, sanitize, labelOf, suggestFor };
+module.exports = { ICONS, CATEGORIES, ALL, KEYS, DEFAULT, sanitize, labelOf, catOf, catLabel, hintOf, colorOf, byCat, svgOf, search, suggestFor };
   return Object.freeze(module.exports); })();
   /* domains/community/online-core.js */
   out.online = (() => { const module = { exports: {} };
@@ -7577,7 +8257,7 @@ const postFromRow = (row, author, me) => {
     kind: NOTE_KINDS.includes(pay.note) ? pay.note : 'thought', at: row.created_at || '', text: str(row.body, 500), spoiler: !!row.spoiler,
     verdict: pay.note === 'theory' ? (VERDICTS.includes(pay.verdict) ? pay.verdict : 'open') : '', imageRef: '', imageAlt: '',
     visibility: row.visibility === 'followers' ? 'followers' : 'public',
-    author: { id: row.author_id, handle: str(a.handle, 24), name: str(a.display_name, 40), likeIcon: str(a.like_icon || 'heart', 12) },
+    author: { id: row.author_id, handle: str(a.handle, 24), name: str(a.display_name, 40), likeIcon: str(a.like_icon || 'heart', 32) },
     media: pay.issue && pay.issue.series ? [{ series: str(pay.issue.series, 120), issue: str(pay.issue.issue, 20), publisher: str(pay.issue.publisher, 100), coverUrl: '', variant: '' }] : []
   };
 };
@@ -7599,6 +8279,215 @@ const errorText = err => {
 };
 
 module.exports = { NOTE_KINDS, FORMATS, MESSAGES, tagsOf, noteCall, verdictCall, likeCall, likeIconCall, roomCall, sayCall, voteCall, postFromRow, chatFromRow, tallyText, errorText };
+  return Object.freeze(module.exports); })();
+  /* domains/community/affinity-core.js */
+  out.affinity = (() => { const module = { exports: {} };
+'use strict';
+// Goûts appris (D-98) : l'algorithme « Pour toi » s'adapte à ce que la personne fait sur CET appareil.
+// Module pur : l'appelant fournit les gestes (J'aime, Enregistrer, clic sur un mot-dièse, « Moins de ce sujet ») et leurs sujets.
+// Rien n'est envoyé : l'état vit dans le stockage local, se lit en clair (« Vos goûts ») et s'efface d'un geste.
+// Les poids s'estompent avec le temps (demi-vie HALF_LIFE_D jours) : un goût ancien ne fige pas le fil.
+
+const VERSION = 1;
+const KINDS = Object.freeze(['series', 'characters', 'creators', 'publishers', 'events', 'tags']);
+const SIGNALS = Object.freeze({ like: 1, unlike: -1, save: 1.5, unsave: -1.5, tag: 0.6, open: 0.4, less: -2.5 });
+const HALF_LIFE_D = 30;
+const CAP = 6;          // poids brut maximal d'un sujet (avant estompage)
+const FLOOR = -4;       // « Moins de ce sujet » peut descendre plus bas qu'un J'aime ne monte
+const MAX_KEYS = 240;   // au-delà, les sujets les plus faibles sont oubliés
+const KIND_LABEL = Object.freeze({ series: 'Série', characters: 'Personnage', creators: 'Auteur', publishers: 'Éditeur', events: 'Événement', tags: 'Mot-dièse' });
+
+const norm = t => String(t || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/\(\s*\d{4}[^)]*\)/g, ' ').replace(/[^a-z0-9]+/g, ' ').trim();
+const ms = d => { const t = d instanceof Date ? d.getTime() : Date.parse(d); return isNaN(t) ? Date.now() : t; };
+const KEY = /^(series|characters|creators|publishers|events|tags):[a-z0-9 ]{1,80}$/;
+
+const emptyState = () => ({ version: VERSION, w: {} });
+
+// Chaque entrée : { v: poids au moment at, at: ISO, n: libellé d'origine (affichage) }
+const sanitize = raw => {
+  const out = emptyState();
+  if (!raw || typeof raw !== 'object' || !raw.w || typeof raw.w !== 'object') return out;
+  Object.entries(raw.w).slice(0, MAX_KEYS * 2).forEach(([k, e]) => {
+    if (!KEY.test(k) || !e || typeof e !== 'object') return;
+    const v = Number(e.v);
+    if (!isFinite(v) || isNaN(Date.parse(e.at))) return;
+    out.w[k] = { v: Math.max(FLOOR, Math.min(CAP, v)), at: new Date(Date.parse(e.at)).toISOString(), n: String(e.n || k.split(':')[1]).slice(0, 80) };
+  });
+  return prune(out);
+};
+
+const decay = (v, at, now) => { const days = Math.max(0, (ms(now) - ms(at)) / 86400000); return v * Math.pow(0.5, days / HALF_LIFE_D); };
+
+const prune = st => {
+  const keys = Object.keys(st.w);
+  if (keys.length <= MAX_KEYS) return st;
+  keys.sort((a, b) => Math.abs(st.w[b].v) - Math.abs(st.w[a].v)).slice(MAX_KEYS).forEach(k => { delete st.w[k]; });
+  return st;
+};
+
+// topics : { series: [...], characters: [...], tags: [...] … } ; renvoie un nouvel état
+const record = (state, signal, topics, now) => {
+  const st = sanitize(state);
+  const s = SIGNALS[signal];
+  if (!s || !topics || typeof topics !== 'object') return st;
+  const t = new Date(ms(now)).toISOString();
+  KINDS.forEach(kind => {
+    const list = Array.isArray(topics[kind]) ? topics[kind] : [];
+    [...new Set(list.map(x => String(x || '').trim()).filter(Boolean))].slice(0, 12).forEach(name => {
+      const n = norm(name); if (!n || n.length > 80) return;
+      const k = kind + ':' + n, e = st.w[k];
+      const base = e ? decay(e.v, e.at, now) : 0;
+      // Plus un sujet est déjà fort, moins un geste de plus le renforce (rendements décroissants)
+      const gain = s > 0 ? s * (1 - Math.max(0, base) / (CAP + 1)) : s;
+      const v = Math.max(FLOOR, Math.min(CAP, base + gain));
+      if (Math.abs(v) < 0.05) { delete st.w[k]; return; }
+      st.w[k] = { v, at: t, n: name.slice(0, 80) };
+    });
+  });
+  return prune(st);
+};
+
+// Intérêts pour rankingCore : { series: { nom: 0..1 } … } (les tags se rangent dans series/characters selon leur nom, ici à part)
+// et réglages négatifs (tuning) pour ce que la personne fuit. Courbe douce : 1 J'aime ≈ 0,25 ; 4 gestes forts ≈ 0,7.
+const toRanking = (state, now) => {
+  const st = sanitize(state), interests = {}, tuning = {};
+  Object.entries(st.w).forEach(([k, e]) => {
+    const [kind, n] = [k.slice(0, k.indexOf(':')), k.slice(k.indexOf(':') + 1)];
+    const v = decay(e.v, e.at, now);
+    if (kind === 'tags') return;
+    if (v > 0.05) { (interests[kind] = interests[kind] || {})[e.n] = Math.round((v / (v + 3)) * 1000) / 1000; }
+    else if (v < -0.5) tuning[kind + ':' + n] = Math.max(-1, Math.round((v / 4) * 100) / 100);
+  });
+  return { interests, tuning };
+};
+
+// Poids d'un mot-dièse (pour classer les puces de filtre) : >0 aimé, <0 évité
+const tagWeight = (state, tag, now) => { const e = sanitize(state).w['tags:' + norm(tag)]; return e ? decay(e.v, e.at, now) : 0; };
+
+// « Vos goûts » : les sujets les plus forts, lisibles, avec leur sens
+const top = (state, now, n) => {
+  const st = sanitize(state);
+  return Object.entries(st.w).map(([k, e]) => ({ key: k, kind: k.slice(0, k.indexOf(':')), name: e.n, weight: Math.round(decay(e.v, e.at, now) * 100) / 100 }))
+    .filter(x => Math.abs(x.weight) >= 0.2)
+    .sort((a, b) => Math.abs(b.weight) - Math.abs(a.weight))
+    .slice(0, Math.max(1, n || 12))
+    .map(x => Object.assign(x, { kindLabel: KIND_LABEL[x.kind], direction: x.weight > 0 ? 'more' : 'less' }));
+};
+
+const forget = (state, key) => { const st = sanitize(state); delete st.w[key]; return st; };
+const size = state => Object.keys(sanitize(state).w).length;
+
+module.exports = { VERSION, KINDS, SIGNALS, HALF_LIFE_D, CAP, FLOOR, MAX_KEYS, KIND_LABEL, norm, emptyState, sanitize, record, toRanking, tagWeight, top, forget, size };
+  return Object.freeze(module.exports); })();
+  /* domains/community/meetups-core.js */
+  out.meetups = (() => { const module = { exports: {} };
+'use strict';
+// Rencontres par ville (D-98) : donner envie de se voir en vrai, sans jamais exposer personne.
+// Module pur. Règles fixes, non réglables :
+//   lieux publics seulement (boutique de comics, bibliothèque, café, salon ou festival, médiathèque, parc, ludothèque) ;
+//   jamais d'adresse personnelle : le texte est refusé s'il ressemble à un domicile ;
+//   18 ans et plus pour participer (les mineurs ne voient pas les rencontres) ;
+//   de 2 à 30 personnes, entre 2 heures et 90 jours à l'avance, en journée ou en soirée (8 h – 22 h) ;
+//   la ville est publique, le lieu exact n'est montré qu'aux inscrits (côté serveur, quand les comptes seront actifs).
+// Tant que les comptes ne sont pas actifs, la rencontre est préparée sur cet appareil : aucune inscription n'est simulée.
+
+const VERSION = 1;
+const VENUES = Object.freeze({
+  shop: 'Boutique de comics', library: 'Bibliothèque ou médiathèque', cafe: 'Café ou salon de thé', festival: 'Salon ou festival',
+  park: 'Parc ou jardin public', games: 'Ludothèque ou bar à jeux', other: 'Autre lieu public'
+});
+const THEMES = Object.freeze({
+  wednesday: 'Mercredi des sorties', swap: 'Troc de numéros', club: 'Club de lecture', signing: 'Dédicace annoncée', hunt: 'Chasse aux bacs', chat: 'Discussion libre'
+});
+const LIMITS = Object.freeze({ title: 80, city: 60, venue: 80, note: 300, minPeople: 2, maxPeople: 30, minLeadH: 2, maxLeadD: 90, firstHour: 8, lastHour: 22, saved: 20 });
+const SAFETY = Object.freeze([
+  'Rendez-vous dans un lieu public, à l\'heure dite, jamais chez quelqu\'un.',
+  'Prévenez un proche de l\'endroit où vous allez.',
+  'Venez et repartez par vos propres moyens.',
+  'N\'apportez que les numéros que vous êtes prêt à montrer ; un troc se décide sur place, sans pression.',
+  'Un comportement gênant ? Partez, puis signalez-le : l\'équipe Panel le traite en priorité.'
+]);
+// Ressemble à une adresse privée ou à un moyen de contact : refusé
+const PRIVATE = /\b(chez (moi|nous|lui|elle)|mon (appart|appartement|domicile)|notre (appart|maison)|domicile|[ée]tage|interphone|digicode|code porte|b[aâ]timent [a-z0-9]\b|appt?\b|n[°o] ?\d+\s*(rue|avenue|bd|boulevard|all[ée]e|impasse|chemin)|\d+\s*(bis|ter)?\s*,?\s*(rue|avenue|av\.|bd|boulevard|all[ée]e|impasse|chemin|place)\b|\+?\d[\d .-]{7,}\d|@[a-z0-9.-]+\.[a-z]{2,}|whatsapp|telegram|snap(chat)?)\b/i;
+
+const str = (v, n) => String(v == null ? '' : v).replace(/\s+/g, ' ').trim().slice(0, n);
+const cityKey = c => str(c, LIMITS.city).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+const sanitize = m => {
+  if (!m || typeof m !== 'object') return null;
+  const n = Math.round(Number(m.capacity));
+  return {
+    id: str(m.id, 40),
+    title: str(m.title, LIMITS.title),
+    city: str(m.city, LIMITS.city),
+    venueType: VENUES[m.venueType] ? m.venueType : 'other',
+    venue: str(m.venue, LIMITS.venue),
+    theme: THEMES[m.theme] ? m.theme : 'chat',
+    when: (() => { const t = Date.parse(m.when); return m.when && isFinite(t) ? new Date(t).toISOString() : ''; })(),
+    capacity: isFinite(n) ? Math.max(LIMITS.minPeople, Math.min(LIMITS.maxPeople, n)) : 8,
+    note: str(m.note, LIMITS.note),
+    createdAt: (() => { const t = Date.parse(m.createdAt); return isFinite(t) ? new Date(t).toISOString() : ''; })()
+  };
+};
+
+// Renvoie la liste des problèmes, en clair ; vide si la rencontre est publiable
+const validate = (m, ctx) => {
+  const e = [], now = Date.parse((ctx && ctx.now) || new Date().toISOString());
+  if (!ctx || ctx.adult !== true) e.push('Les rencontres sont réservées aux 18 ans et plus.');
+  if (!m) return e.concat(['Rencontre illisible.']);
+  if (!m.title) e.push('Donnez un titre à la rencontre.');
+  if (!m.city) e.push('Indiquez la ville.');
+  if (!m.venue) e.push('Indiquez le lieu public (nom de la boutique, de la bibliothèque…).');
+  if ([m.title, m.venue, m.note].some(x => PRIVATE.test(x || ''))) e.push('Pas d\'adresse personnelle ni de numéro de téléphone : choisissez un lieu public, les détails se donnent aux inscrits.');
+  const t = Date.parse(m.when);
+  if (!m.when || !isFinite(t)) e.push('Choisissez la date et l\'heure.');
+  else {
+    if (t < now + LIMITS.minLeadH * 3600000) e.push('Prévoyez la rencontre au moins deux heures à l\'avance.');
+    if (t > now + LIMITS.maxLeadD * 86400000) e.push('Quatre-vingt-dix jours à l\'avance au plus.');
+    const h = (ctx && typeof ctx.hourOf === 'function') ? ctx.hourOf(t) : new Date(t).getHours();
+    if (h < LIMITS.firstHour || h >= LIMITS.lastHour) e.push('Entre 8 h et 22 h, pour que chacun rentre sereinement.');
+  }
+  return e;
+};
+
+const emptyState = () => ({ version: VERSION, meetups: [] });
+const sanitizeState = s => {
+  const out = emptyState();
+  if (s && Array.isArray(s.meetups)) s.meetups.map(sanitize).filter(m => m && m.id).slice(0, LIMITS.saved).forEach(m => { if (!out.meetups.some(x => x.id === m.id)) out.meetups.push(m); });
+  return out;
+};
+const save = (state, input, ctx, newId) => {
+  const st = sanitizeState(state);
+  const prev = input && input.id ? st.meetups.find(x => x.id === input.id) : null;
+  const m = sanitize(Object.assign({}, prev || {}, input || {}, { id: prev ? prev.id : newId, createdAt: prev ? prev.createdAt : (ctx && ctx.now) }));
+  const errors = validate(m, ctx);
+  if (errors.length) return { state: st, meetup: null, errors };
+  if (!prev && st.meetups.length >= LIMITS.saved) return { state: st, meetup: null, errors: ['Vingt rencontres préparées au plus.'] };
+  st.meetups = prev ? st.meetups.map(x => x.id === m.id ? m : x) : [m].concat(st.meetups);
+  return { state: st, meetup: m, errors: [] };
+};
+const remove = (state, id) => { const st = sanitizeState(state); st.meetups = st.meetups.filter(x => x.id !== id); return st; };
+
+// À venir, de la ville choisie d'abord, puis par date
+const upcoming = (state, city, now) => {
+  const t0 = Date.parse(now || new Date().toISOString()), ck = cityKey(city);
+  return sanitizeState(state).meetups.filter(m => Date.parse(m.when) > t0 - 3 * 3600000)
+    .sort((a, b) => ((ck && cityKey(b.city) === ck) - (ck && cityKey(a.city) === ck)) || Date.parse(a.when) - Date.parse(b.when));
+};
+
+// Ce qu'un inconnu verra avant de s'inscrire : la ville et le type de lieu, jamais le nom exact ni la note
+const publicView = m => {
+  const s = sanitize(m);
+  return s && { title: s.title, city: s.city, venueType: VENUES[s.venueType], theme: THEMES[s.theme], when: s.when, capacity: s.capacity };
+};
+
+// Invitation à envoyer à quelqu'un (texte), sans le lieu exact
+const inviteText = m => {
+  const s = sanitize(m); if (!s) return '';
+  return s.title + ' · ' + THEMES[s.theme] + ' · ' + s.city + ' (' + VENUES[s.venueType].toLowerCase() + ') · ' + s.capacity + ' places. Le lieu exact est donné aux inscrits sur Panel.';
+};
+
+module.exports = { VERSION, VENUES, THEMES, LIMITS, SAFETY, cityKey, sanitize, validate, emptyState, sanitizeState, save, remove, upcoming, publicView, inviteText };
   return Object.freeze(module.exports); })();
   /* domains/community/ranking-core.js */
   out.rankingCore = (() => { const module = { exports: {} };
@@ -19827,17 +20716,47 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     draw();
     return box;
   };
+  let pflCat = '', pflQ = '';
+  const pflGridHtml = cur => {
+    const L = window.PanelDomains.likes, list = pflQ.trim() ? L.search(pflQ, 80) : L.byCat(pflCat || L.catOf(cur));
+    if (!list.length) return '<p class="stat-sub pfl-empty">Aucun dessin ne correspond. Essayez un pouvoir, un objet ou un nom de héros.</p>';
+    return list.map(i => '<button type="button" role="radio" aria-checked="' + (i.key === cur) + '" tabindex="' + (i.key === cur ? 0 : -1) + '" class="pfl-opt" data-pfl="' + i.key + '" style="--lk:' + likeTint(i.key) + '" title="' + escapeHtml(L.hintOf(i.key)) + '">' + likeArt(i.key) + '<small>' + escapeHtml(i.label) + '</small></button>').join('');
+  };
   const pfLikeHtml = () => {
     const L = window.PanelDomains.likes, cur = likeKey(), pr = profileLoad(), sug = pr ? L.suggestFor(pr.favorite) : null;
+    if (!pflCat) pflCat = L.catOf(cur);
     return '<section class="pfl" aria-labelledby="pflTitle"><h3 class="pf-section" id="pflTitle">Mon J\'aime</h3>' +
-      '<p class="stat-sub">La forme de votre « J\'aime » sur les publications. Des dessins originaux de Panel, sans logo ni personnage déposé.' + (sug && sug !== cur ? ' Pour un fan de ' + escapeHtml(pr.favorite) + ' : <button type="button" class="pfl-sug" data-pfl-sug="' + sug + '">' + escapeHtml(L.labelOf(sug)) + '</button>' : '') + '</p>' +
-      '<div class="pfl-grid" role="radiogroup" aria-label="Forme du J\'aime">' + L.ICONS.map(i => '<button type="button" role="radio" aria-checked="' + (i.key === cur) + '" tabindex="' + (i.key === cur ? 0 : -1) + '" class="pfl-opt" data-pfl="' + i.key + '" style="--lk:' + LIKE_COLOR[i.key] + '" title="' + escapeHtml(i.hint) + '">' + igIcon(LIKE_SYM[i.key]) + '<small>' + escapeHtml(i.label) + '</small></button>').join('') + '</div></section>';
+      '<div class="pfl-now"><span class="pfl-big" style="--lk:' + likeTint(cur) + '">' + likeArt(cur) + '</span><div><b data-pfl-name>' + escapeHtml(L.labelOf(cur)) + '</b>' +
+      '<small>' + L.ALL.length + ' formes pour vos « J\'aime » : des dessins originaux de Panel inspirés des grands archétypes, sans logo ni personnage déposé.</small>' +
+      (sug && sug !== cur ? '<button type="button" class="pfl-sug" data-pfl-sug="' + sug + '">' + likeArt(sug) + '<span>Pour un fan de ' + escapeHtml(pr.favorite) + ' : <b>' + escapeHtml(L.labelOf(sug)) + '</b></span></button>' : '') + '</div></div>' +
+      '<input type="search" class="pfl-q" data-pfl-q enterkeyhint="search" placeholder="Chercher : roi, tonnerre, armure, marteau…" aria-label="Chercher une forme de J\'aime" value="' + escapeHtml(pflQ) + '">' +
+      '<div class="pfl-cats" role="group" aria-label="Familles de formes">' + L.CATEGORIES.map(c => '<button type="button" class="pfl-cat" data-pfl-cat="' + c.key + '" aria-pressed="' + (!pflQ.trim() && c.key === pflCat) + '">' + escapeHtml(c.label) + '</button>').join('') + '</div>' +
+      '<div class="pfl-grid" role="radiogroup" aria-label="Forme du J\'aime" data-pfl-grid>' + pflGridHtml(cur) + '</div></section>';
   };
   const pfLikeWire = root => {
-    const opts = [...root.querySelectorAll('[data-pfl]')];
-    const set = k => { try { localStorage.setItem(LIKE_KEY, window.PanelDomains.likes.sanitize(k)); } catch (_) { showToast('Impossible d\'enregistrer sur cet appareil.'); return; } opts.forEach(o => { const on = o.dataset.pfl === k; o.setAttribute('aria-checked', String(on)); o.tabIndex = on ? 0 : -1; }); const s = root.querySelector('[data-pfl-sug]'); if (s && s.dataset.pflSug === k) s.parentNode.removeChild(s); showToast('Votre J\'aime : ' + window.PanelDomains.likes.labelOf(k) + '.'); };
-    opts.forEach((o, i) => { o.onclick = () => set(o.dataset.pfl); o.onkeydown = e => { if (/^Arrow(Right|Left|Down|Up)$/.test(e.key)) { e.preventDefault(); const n = opts[(i + (/Right|Down/.test(e.key) ? 1 : -1) + opts.length) % opts.length]; set(n.dataset.pfl); n.focus(); } }; });
-    const sg = root.querySelector('[data-pfl-sug]'); if (sg) sg.onclick = () => { const k = sg.dataset.pflSug; set(k); const o = opts.find(x => x.dataset.pfl === k); if (o) o.focus(); };
+    const L = window.PanelDomains.likes, grid = root.querySelector('[data-pfl-grid]'), q = root.querySelector('[data-pfl-q]');
+    if (!grid) return;
+    const set = k => {
+      k = L.sanitize(k);
+      try { localStorage.setItem(LIKE_KEY, k); } catch (_) { showToast('Impossible d\'enregistrer sur cet appareil.'); return; }
+      grid.querySelectorAll('[data-pfl]').forEach(o => { const on = o.dataset.pfl === k; o.setAttribute('aria-checked', String(on)); o.tabIndex = on ? 0 : -1; });
+      const big = root.querySelector('.pfl-big');
+      if (big) { big.innerHTML = likeArt(k); big.style.setProperty('--lk', likeTint(k)); big.classList.remove('is-pop'); void big.offsetWidth; big.classList.add('is-pop'); }
+      const nm = root.querySelector('[data-pfl-name]'); if (nm) nm.textContent = L.labelOf(k);
+      const s = root.querySelector('[data-pfl-sug]'); if (s && s.dataset.pflSug === k) s.remove();
+      showToast('Votre J\'aime : ' + L.labelOf(k) + '.');
+    };
+    const wireGrid = () => {
+      const opts = [...grid.querySelectorAll('[data-pfl]')];
+      if (opts.length && !opts.some(o => o.tabIndex === 0)) opts[0].tabIndex = 0;
+      opts.forEach((o, i) => { o.onclick = () => set(o.dataset.pfl); o.onkeydown = e => { if (/^Arrow(Right|Left|Down|Up)$/.test(e.key)) { e.preventDefault(); const n = opts[(i + (/Right|Down/.test(e.key) ? 1 : -1) + opts.length) % opts.length]; set(n.dataset.pfl); n.focus(); } }; });
+    };
+    const redraw = () => { grid.innerHTML = pflGridHtml(likeKey()); grid.scrollTop = 0; wireGrid(); root.querySelectorAll('[data-pfl-cat]').forEach(b => b.setAttribute('aria-pressed', String(!pflQ.trim() && b.dataset.pflCat === pflCat))); };
+    root.querySelectorAll('[data-pfl-cat]').forEach(b => { b.onclick = () => { pflCat = b.dataset.pflCat; pflQ = ''; if (q) q.value = ''; redraw(); }; });
+    if (q) q.oninput = () => { pflQ = q.value; redraw(); };
+    const sg = root.querySelector('[data-pfl-sug]');
+    if (sg) sg.onclick = () => { const k = sg.dataset.pflSug; pflCat = L.catOf(k); pflQ = ''; if (q) q.value = ''; set(k); redraw(); const o = grid.querySelector('[data-pfl="' + k + '"]'); if (o) o.focus(); };
+    wireGrid();
   };
   const pfPublicWire = root => {
     pfLikeWire(root);
@@ -19876,15 +20795,39 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   let igMode = 'forYou';
   let igWhy = new Map();
   const igModeHtml = () => '<div class="hm-seg" role="tablist" aria-label="Fil">' + [['forYou', 'Pour toi'], ['following', 'Abonnements']].map(([k, l]) => '<button type="button" role="tab" data-ig-mode="' + k + '" aria-selected="' + (igMode === k) + '" tabindex="' + (igMode === k ? 0 : -1) + '">' + l + '</button>').join('') + '</div>' +
-    '<p class="hm-note">' + (igMode === 'forYou' ? 'Classé sur cet appareil selon ce que vous collectionnez et lisez. Menu ••• d\'une publication : « Pourquoi je vois ça ? ».' : 'Dans l\'ordre de publication. Vous ne suivez encore personne : les abonnements arriveront avec les comptes.') + '</p>';
+    '<p class="hm-note">' + (igMode === 'forYou' ? 'Classé sur cet appareil selon ce que vous collectionnez, lisez et aimez. Menu ••• d\'une publication : « Pourquoi je vois ça ? ».' : 'Dans l\'ordre de publication. Vous ne suivez encore personne : les abonnements arriveront avec les comptes.') + '</p>' + (igMode === 'forYou' ? affTasteHtml() : '');
+  // Goûts appris (D-98, affinityCore) : J'aime, Enregistrer et clics sur un mot-dièse ajustent « Pour toi » ; tout reste sur cet appareil
+  const AFF_KEY = 'panel_affinity_v1';
+  const affLoad = () => { try { return window.PanelDomains.affinity.sanitize(JSON.parse(localStorage.getItem(AFF_KEY) || 'null')); } catch (_) { return window.PanelDomains.affinity.emptyState(); } };
+  const affSave = st => { try { localStorage.setItem(AFF_KEY, JSON.stringify(st)); return true; } catch (_) { return false; } };
+  let igById = new Map();
+  const affTopics = p => ({ series: (p.media || []).map(m => m.series), publishers: (p.media || []).map(m => m.publisher), tags: p.tags || [] });
+  const affRecord = (signal, topics) => { if (topics) affSave(window.PanelDomains.affinity.record(affLoad(), signal, topics)); };
+  const affTasteHtml = () => {
+    const top = window.PanelDomains.affinity.top(affLoad(), undefined, 10);
+    if (!top.length) return '';
+    return '<details class="aff"><summary>Vos goûts appris <small>' + top.length + '</small></summary><p class="stat-sub">Appris de vos « J\'aime », enregistrements et mots-dièses, sur cet appareil seulement. Ils s\'estompent en un mois sans nouveau geste.</p>' +
+      '<div class="aff-chips">' + top.map(x => '<span class="aff-chip is-' + x.direction + '"><small>' + escapeHtml(x.kindLabel) + '</small> ' + (x.kind === 'tags' ? '#' : '') + escapeHtml(x.name) + ' <button type="button" data-aff-forget="' + escapeHtml(x.key) + '" aria-label="Oublier ' + escapeHtml(x.name) + '">' + igIcon('ic-x') + '</button></span>').join('') + '</div>' +
+      '<button type="button" class="aff-reset" data-aff-reset>Effacer mes goûts appris</button></details>';
+  };
+  const affTasteWire = host => {
+    const box = host.querySelector('.aff'); if (!box) return;
+    box.querySelectorAll('[data-aff-forget]').forEach(b => { b.onclick = () => { affSave(window.PanelDomains.affinity.forget(affLoad(), b.dataset.affForget)); renderCommunityView(); const d = $('communityDashboard') && $('communityDashboard').querySelector('.aff'); if (d) { d.open = true; const s = d.querySelector('summary'); if (s) s.focus(); } }; });
+    const r = box.querySelector('[data-aff-reset]');
+    if (r) r.onclick = () => { if (!confirm('Effacer les goûts appris sur cet appareil ? Vos J\'aime et enregistrements restent.')) return; affSave(window.PanelDomains.affinity.emptyState()); renderCommunityView(); showToast('Goûts appris effacés.'); };
+  };
   const igRanked = posts => {
     const RK = window.PanelDomains.rankingCore;
+    igById = new Map(posts.map(p => [p.id, p]));
     const pinned = posts.filter(p => p.pinned), rest = posts.filter(p => !p.pinned);
     const series = {}, publishers = {};
     physicalSingles.filter(isOwned).forEach(c => { if (c.series) series[c.series] = (series[c.series] || 0) + 0.2; if (c.publisher) publishers[c.publisher] = (publishers[c.publisher] || 0) + 0.05; });
+    const learned = window.PanelDomains.affinity.toRanking(affLoad());
+    const interests = { series, publishers };
+    Object.entries(learned.interests).forEach(([kind, o]) => { const d = interests[kind] = interests[kind] || {}; Object.entries(o).forEach(([n, w]) => { d[n] = (d[n] || 0) + w; }); });
     const conv = rest.map(p => ({ id: p.id, authorId: 'me', kind: p.type === 'story' ? 'review' : p.type === 'note' ? 'text' : 'photo', createdAt: p.at, original: true,
       topics: { series: p.media.map(m => m.series).filter(Boolean), publishers: p.media.map(m => m.publisher).filter(Boolean) }, issueRefs: [], stats: {} }));
-    const r = RK.rank(conv, { viewerId: 'me', following: [], interests: { series, publishers } }, { mode: igMode === 'following' ? 'following' : 'forYou' });
+    const r = RK.rank(conv, { viewerId: 'me', following: [], interests, tuning: learned.tuning }, { mode: igMode === 'following' ? 'following' : 'forYou' });
     const byId = new Map(rest.map(p => [p.id, p]));
     igWhy = new Map(r.items.map(it => [it.post.id, RK.explain(it)]));
     pinned.forEach(p => igWhy.set(p.id, 'Épinglé par vous en haut du fil.'));
@@ -19904,8 +20847,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const LIKE_SYM = { heart: 'ic-heart', claws: 'lk-claws', bolt: 'ic-bolt', web: 'lk-web', hammer: 'lk-hammer', wings: 'lk-wings', flame: 'lk-flame', cosmic: 'lk-cosmic', ring: 'lk-ring', mask: 'lk-mask', shield: 'ic-shield', skull: 'lk-skull' };
   const LIKE_COLOR = { heart: '#ff3040', claws: '#a78bfa', bolt: '#ffc400', web: '#ef4444', hammer: '#94a3b8', wings: '#60a5fa', flame: '#ff7a1a', cosmic: '#c4b5fd', ring: '#22c55e', mask: '#f43f5e', shield: '#3b82f6', skull: '#e5e7eb' };
   const likeKey = () => { try { return window.PanelDomains.likes.sanitize(localStorage.getItem(LIKE_KEY)); } catch (_) { return 'heart'; } };
-  const likeIc = () => LIKE_SYM[likeKey()] || 'ic-heart';
-  const likeBtn = on => '<button class="igp-act is-like' + (on ? ' is-on' : '') + '" data-igp-like aria-pressed="' + on + '" aria-label="J\'aime (' + escapeHtml(window.PanelDomains.likes.labelOf(likeKey())) + ')" style="--lk:' + LIKE_COLOR[likeKey()] + '">' + igIcon(likeIc()) + '</button>';
+  // Badge dessiné (D-98, plus de 150 formes) ou glyphe classique de l'interface
+  const likeArt = k => window.PanelDomains.likes.svgOf(k) || igIcon(LIKE_SYM[k] || 'ic-heart');
+  const likeTint = k => LIKE_COLOR[k] || window.PanelDomains.likes.colorOf(k) || '#ff3040';
+  const likeBtn = on => '<button class="igp-act is-like' + (on ? ' is-on' : '') + '" data-igp-like aria-pressed="' + on + '" aria-label="J\'aime (' + escapeHtml(window.PanelDomains.likes.labelOf(likeKey())) + ')" style="--lk:' + likeTint(likeKey()) + '">' + likeArt(likeKey()) + '</button>';
   // ── Lot S7 (D-95) : Duel de couvertures et Chasse aux variantes, dans le fil
   // Un vote par duel, enregistré sur cet appareil (panel_duel_votes_v1) ; les votes des autres arriveront avec les comptes : aucun n'est simulé.
   const DUEL_KEY = 'panel_duel_votes_v1';
@@ -20146,7 +21091,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="igp-bar ntp-bar">' + likeBtn(p.likedByMe) +
         '<button class="igp-act" data-igp-share aria-label="Partager le texte">' + igIcon('ic-external') + '</button><span class="igp-sp"></span>' +
         '<button class="igp-act is-save' + (p.saved ? ' is-on' : '') + '" data-igp-save aria-pressed="' + p.saved + '" aria-label="Enregistrer">' + igIcon('ic-bookmark') + '</button></div>' +
-      '<span class="igp-burst" aria-hidden="true">' + igIcon(likeIc()) + '</span></div></article>';
+      '<span class="igp-burst" aria-hidden="true">' + likeArt(likeKey()) + '</span></div></article>';
   };
   const ntWire = host => {
     host.querySelectorAll('.ntp').forEach(card => {
@@ -20214,7 +21159,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (duel ? '<span class="igp-vs" aria-hidden="true">VS</span>' : '') + (hunt ? '<span class="igp-hunt">' + igIcon('ic-search') + ' On cherche</span>' : '') +
         (car ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
         (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString('fr-FR') + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
-        '<span class="igp-burst" aria-hidden="true">' + igIcon(likeIc()) + '</span></div>' +
+        '<span class="igp-burst" aria-hidden="true">' + likeArt(likeKey()) + '</span></div>' +
       (car ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
       (duel ? duelBarHtml(p) : '') + (hunt ? huntLineHtml(p) : '') +
       '<div class="igp-bar">' +
@@ -20247,6 +21192,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const r = window.PanelDomains.feedCore.toggle(igLoad(), what, id);
     if (r.error === 'too_many_pins') { showToast('Trois publications épinglées au plus : désépinglez-en une d\'abord.'); return null; }
     if (r.error || !igSave(r.state)) { showToast('Impossible d\'enregistrer sur cet appareil.'); return null; }
+    if (what !== 'pin' && igById.has(id)) affRecord((r.on ? '' : 'un') + what, affTopics(igById.get(id)));
     if (card && what !== 'pin') {
       const b = card.querySelector(what === 'like' ? '[data-igp-like]' : '[data-igp-save]');
       if (b) { b.classList.toggle('is-on', r.on); b.setAttribute('aria-pressed', String(r.on)); b.classList.remove('is-pop'); void b.offsetWidth; b.classList.add('is-pop'); }
@@ -20256,7 +21202,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return r;
   };
   const igWire = host => {
-    host.querySelectorAll('[data-ig-tag]').forEach(b => { b.onclick = () => { igTag = b.dataset.igTag; commTab = 'feed'; renderCommunityView(); const h = $('communityDashboard'); const t = h && h.querySelector('.ig-chips, .igf'); if (t && igTag) t.scrollIntoView({ block: 'nearest', behavior: smoothScroll() }); }; });
+    host.querySelectorAll('[data-ig-tag]').forEach(b => { b.onclick = () => { igTag = b.dataset.igTag; if (igTag) affRecord('tag', { tags: [igTag] }); commTab = 'feed'; renderCommunityView(); const h = $('communityDashboard'); const t = h && h.querySelector('.ig-chips, .igf'); if (t && igTag) t.scrollIntoView({ block: 'nearest', behavior: smoothScroll() }); }; });
     host.querySelectorAll('.igp').forEach(card => {
       const id = card.dataset.igp, ref = id.slice(2), isStory = id[0] === 's';
       const media = card.querySelector('[data-igp-media]'), track = card.querySelector('.igp-track');
@@ -20465,13 +21411,60 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Lot S6 (D-94) : chaque direct est une carte verticale plein cadre, comme un direct qu'on fait défiler
     const card = r => '<article class="lv-card" data-lv-room="' + escapeHtml(r.id) + '"><div class="lv-card-covers" aria-hidden="true">' + (r.images.length ? r.images.slice(0, 3).map(im => '<span>' + lvImg(im) + '<i>' + escapeHtml(LV().isPage(im) ? '¶' : String(im.series || '?').slice(0, 1)) + '</i></span>').join('') : '<span class="lv-card-ph">◉</span>') + '</div>' +
       '<div class="lv-card-b"><span class="live-dot is-studio">' + escapeHtml(F[r.format]) + '</span><b>' + escapeHtml(r.title) + '</b><small>' + escapeHtml(lvWhen(r.when)) + '</small><span>' + (r.duel ? escapeHtml(r.duel.sides.join(' vs ')) + ' · ' : r.topics.length + ' point' + (r.topics.length > 1 ? 's' : '') + ' · ') + r.images.length + ' image' + (r.images.length > 1 ? 's' : '') + '</span></div>' +
+      (r.cohosts.length ? '<p class="lv-team">' + igIcon('ic-users') + ' Avec ' + r.cohosts.map(c => '@' + escapeHtml(c.handle) + (c.role === 'moderator' ? ' (modération)' : '')).join(', ') + ' · invitations à l\'ouverture des comptes</p>' : '') +
       '<div class="lv-card-act"><button class="btn" data-lv-start="' + escapeHtml(r.id) + '">' + igIcon('ic-play') + ' Répéter</button><button class="rd-act" data-lv-edit="' + escapeHtml(r.id) + '">Modifier</button><button class="rd-act" data-lv-del="' + escapeHtml(r.id) + '">Supprimer</button></div></article>';
     const hist = st.history.slice(0, 6).map(x => '<article class="lv-hist"><div><small>' + escapeHtml(lvWhen(x.endedAt)) + ' · ' + escapeHtml(LV().fmtDuration(x.durationSec)) + '</small><b>' + escapeHtml(x.title) + '</b><span>' + x.topics.length + ' sujet' + (x.topics.length > 1 ? 's' : '') + ' traité' + (x.topics.length > 1 ? 's' : '') + (x.shown.length ? ' · ' + x.shown.length + ' image' + (x.shown.length > 1 ? 's' : '') + ' montrée' + (x.shown.length > 1 ? 's' : '') : '') + '</span></div>' +
       '<button class="rd-act" data-lv-post="' + escapeHtml(x.id) + '">Planche de synthèse</button></article>').join('');
     return '<section class="lv" id="liveStudio"><div class="lv-head"><div><p>Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n\'est simulé.</p></div><span class="lv-head-b"><button class="btn" data-lv-new>' + igIcon('ic-plus') + ' Préparer un direct</button><button class="btn secondary" data-lv-new="duel">' + igIcon('ic-arrows-h') + ' Duel en direct</button></span></div>' +
       (rooms.length ? '<div class="lv-reel" aria-label="Mes directs">' + rooms.map(card).join('') + '</div>'
         : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
-      (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>';
+      (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>' + mtHtml();
+  };
+  // ── Rencontres par ville (D-98, meetupsCore) : lieux publics seulement, 18 ans et plus, lieu exact réservé aux inscrits.
+  // Préparées sur cet appareil (panel_meetups_v1) ; aucune inscription n'est simulée.
+  const MT_KEY = 'panel_meetups_v1', MT_CITY = 'panel_meetup_city_v1';
+  const MT = () => window.PanelDomains.meetups;
+  const mtLoad = () => { try { return MT().sanitizeState(JSON.parse(localStorage.getItem(MT_KEY) || 'null')); } catch (_) { return MT().emptyState(); } };
+  const mtSave = st => { try { localStorage.setItem(MT_KEY, JSON.stringify(st)); return true; } catch (_) { return false; } };
+  const mtCity = () => { try { return localStorage.getItem(MT_CITY) || ''; } catch (_) { return ''; } };
+  let mtOpen = false;
+  const mtHtml = () => {
+    const list = MT().upcoming(mtLoad(), mtCity());
+    const opt = (o, cur) => Object.entries(o).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('');
+    const card = m => '<article class="mt-card"><div class="mt-date"><b>' + escapeHtml(new Date(m.when).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })) + '</b><small>' + escapeHtml(new Date(m.when).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })) + '</small></div>' +
+      '<div class="mt-b"><span class="mt-theme">' + escapeHtml(MT().THEMES[m.theme]) + '</span><b>' + escapeHtml(m.title) + '</b><small>' + escapeHtml(m.city) + ' · ' + escapeHtml(m.venue) + ' · ' + m.capacity + ' places</small>' +
+      '<div class="mt-act"><button type="button" class="rd-act" data-mt-copy="' + escapeHtml(m.id) + '">Copier l\'invitation</button><button type="button" class="rd-act" data-mt-del="' + escapeHtml(m.id) + '">Supprimer</button></div></div></article>';
+    return '<section class="mt" aria-labelledby="mtTitle"><div class="mt-head"><div><h3 class="pf-section" id="mtTitle">Se retrouver en vrai</h3><p class="stat-sub">Des rencontres de collectionneurs près de chez vous : mercredi des sorties en boutique, troc, club de lecture. Toujours dans un lieu public, entre adultes.</p></div>' +
+      '<label class="mt-city"><span>Ma ville</span><input class="field-input" data-mt-city maxlength="60" autocomplete="address-level2" placeholder="ex : Lyon" value="' + escapeHtml(mtCity()) + '"></label></div>' +
+      (list.length ? '<div class="mt-list">' + list.map(card).join('') + '</div>' : '<div class="lv-empty"><b>Aucune rencontre prévue</b><span>Les rencontres des autres collectionneurs de votre ville apparaîtront ici quand les comptes seront actifs.</span></div>') +
+      '<details class="mt-new"' + (mtOpen ? ' open' : '') + '><summary>' + igIcon('ic-plus') + ' Préparer une rencontre</summary><div class="mt-form">' +
+        '<label class="lv-f">Titre<input class="field-input" data-mt="title" maxlength="80" placeholder="ex : Mercredi des sorties à la boutique"></label>' +
+        '<div class="lv-f2"><label class="lv-f">Thème<select class="field-input" data-mt="theme">' + opt(MT().THEMES, 'wednesday') + '</select></label><label class="lv-f">Type de lieu<select class="field-input" data-mt="venueType">' + opt(MT().VENUES, 'shop') + '</select></label></div>' +
+        '<div class="lv-f2"><label class="lv-f">Ville<input class="field-input" data-mt="city" maxlength="60" value="' + escapeHtml(mtCity()) + '"></label><label class="lv-f">Lieu public<input class="field-input" data-mt="venue" maxlength="80" placeholder="Nom de la boutique, de la médiathèque…"></label></div>' +
+        '<div class="lv-f2"><label class="lv-f">Date et heure<input class="field-input" type="datetime-local" data-mt="when"></label><label class="lv-f">Places<input class="field-input" type="number" min="2" max="30" value="8" data-mt="capacity"></label></div>' +
+        '<label class="lv-f">Mot pour les inscrits (facultatif)<textarea class="field-input" data-mt="note" rows="2" maxlength="300" placeholder="ex : on se retrouve au rayon des nouveautés"></textarea></label>' +
+        '<label class="mt-adult"><input type="checkbox" data-mt-adult> J\'ai 18 ans ou plus</label>' +
+        '<ul class="mt-safety">' + MT().SAFETY.map(s => '<li>' + escapeHtml(s) + '</li>').join('') + '</ul>' +
+        '<p class="stat-sub" data-mt-msg role="status"></p><button type="button" class="btn" data-mt-save>Préparer la rencontre</button></div></details></section>';
+  };
+  const mtWire = host => {
+    const sec = host.querySelector('.mt'); if (!sec) return;
+    const city = sec.querySelector('[data-mt-city]');
+    if (city) city.onchange = () => { try { localStorage.setItem(MT_CITY, city.value.trim().slice(0, 60)); } catch (_) {} renderCommunityView(); };
+    const det = sec.querySelector('.mt-new'); if (det) det.ontoggle = () => { mtOpen = det.open; };
+    sec.querySelectorAll('[data-mt-del]').forEach(b => { b.onclick = () => { if (!confirm('Supprimer cette rencontre préparée ?')) return; mtSave(MT().remove(mtLoad(), b.dataset.mtDel)); renderCommunityView(); }; });
+    sec.querySelectorAll('[data-mt-copy]').forEach(b => { b.onclick = async () => { const m = mtLoad().meetups.find(x => x.id === b.dataset.mtCopy); if (!m) return; try { await navigator.clipboard.writeText(MT().inviteText(m)); showToast('Invitation copiée, sans le lieu exact.'); } catch (_) { showToast(MT().inviteText(m)); } }; });
+    const save = sec.querySelector('[data-mt-save]');
+    if (save) save.onclick = () => {
+      const v = k => sec.querySelector('[data-mt="' + k + '"]').value;
+      const when = v('when') ? new Date(v('when')).toISOString() : '';
+      const r = MT().save(mtLoad(), { title: v('title'), theme: v('theme'), venueType: v('venueType'), city: v('city'), venue: v('venue'), when, capacity: v('capacity'), note: v('note') },
+        { adult: sec.querySelector('[data-mt-adult]').checked, now: new Date().toISOString() }, 'mt' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6));
+      if (r.errors.length) { sec.querySelector('[data-mt-msg]').textContent = r.errors.join(' '); return; }
+      if (!mtSave(r.state)) { showToast('Impossible d\'enregistrer sur cet appareil.'); return; }
+      try { if (!mtCity()) localStorage.setItem(MT_CITY, r.meetup.city); } catch (_) {}
+      mtOpen = false; renderCommunityView(); showToast('Rencontre préparée. Elle sera proposée aux collectionneurs de ' + r.meetup.city + ' à l\'ouverture des comptes.');
+    };
   };
   // Rappel du prochain direct préparé, en tête du fil (rien si aucun direct n'est daté à venir)
   const lvNextHtml = () => {
@@ -20481,6 +21474,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<button class="btn" data-lv-start="' + escapeHtml(r.id) + '">Répéter</button><button class="rd-act" data-lv-golive>Mes directs</button></article>';
   };
   const lvWire = host => {
+    mtWire(host);
     host.querySelectorAll('[data-lv-golive]').forEach(b => { b.onclick = () => { commTab = 'live'; renderCommunityView(); }; });
     lvHydrate(host);
     if (!lvGcDone) { lvGcDone = true; setTimeout(() => { lvGc().catch(() => {}); }, 1500); }
@@ -20519,6 +21513,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<small>Choisissez des pages de comics dans la galerie de votre téléphone. Elles restent sur cet appareil et ne sont jamais publiées. Montrez des pages de numéros que vous possédez, pour en débattre : quelques pages, pas un numéro entier.</small></div>' +
         (owned.length ? '<input class="field-input" data-lv-q type="search" placeholder="Chercher une couverture dans votre collection…"><div class="lv-pick" data-lv-pick></div>' : '<p class="stat-sub">Ajoutez des numéros avec couverture à votre collection pour les montrer pendant le direct.</p>') + '</div>' +
       '<details class="lv-f"><summary>Règles du salon</summary><textarea class="field-input" data-lv="rules" rows="4">' + escapeHtml((prev ? prev.rules : LV().DEFAULT_RULES).join('\n')) + '</textarea></details>' +
+      '<details class="lv-f"' + (prev && prev.cohosts.length ? ' open' : '') + '><summary>Co-animation <small>' + LV().COHOST_MAX + ' personnes au plus</small></summary><textarea class="field-input" data-lv="cohosts" rows="3" placeholder="@pseudo&#10;@pseudo modérateur">' + escapeHtml(prev ? LV().cohostsText(prev.cohosts) : '') + '</textarea>' +
+        '<small class="stat-sub">Un pseudo par ligne ; ajoutez « modérateur » pour quelqu\'un qui veille seulement sur le chat. Les invitations partiront quand les comptes seront actifs : chacun accepte ou refuse, une invitation expire en 24 h. Un co-animateur peut passer au point suivant et retirer un message ; si vous quittez le direct, le premier co-animateur prend le relais, sinon le direct se termine. Pas d\'invitation entre comptes bloqués, ni entre mineurs et adultes.</small></details>' +
       '<p class="stat-sub" data-lv-msg role="status"></p><div class="modal-btns"><button class="btn secondary" data-cancel>Fermer</button><button class="btn" data-save>' + (prev ? 'Enregistrer' : 'Créer le direct') + '</button></div></div>';
     box.classList.add('open');
     const q = sel => box.querySelector(sel);
@@ -20574,7 +21570,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     q('[data-save]').onclick = () => {
       const v = k => q('[data-lv="' + k + '"]').value;
       const when = v('when') ? new Date(v('when')).toISOString() : '';
-      const r = LV().saveRoom(lvLoad(), { id: prev && prev.id, title: v('title'), format: v('format'), when, topics: v('topics'), rules: v('rules'), images: picked, duel: { sides: [v('sideA'), v('sideB')] } }, lvNow(), lvId('lv'));
+      const r = LV().saveRoom(lvLoad(), { id: prev && prev.id, title: v('title'), format: v('format'), when, topics: v('topics'), rules: v('rules'), cohosts: v('cohosts'), images: picked, duel: { sides: [v('sideA'), v('sideB')] } }, lvNow(), lvId('lv'));
       if (r.errors.length) { q('[data-lv-msg]').textContent = r.errors.join(' '); return; }
       if (!lvStore(r.state)) return;
       close(); commTab = 'live'; renderCommunityView();
@@ -20795,6 +21791,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       (commTab === 'live' ? '' : igFeedHtml());
     commForYouWire(host);
     host.querySelectorAll('[data-ig-mode]').forEach(b => { b.onclick = () => { igMode = b.dataset.igMode; renderCommunityView(); const s = host.querySelector('[data-ig-mode="' + igMode + '"]'); if (s) s.focus(); }; });
+    affTasteWire(host);
     igWire(host);
     lvWire(host);
     if (commTab !== 'live') { wedMount(host); ntWireComposer(host); ntWire(host); }
