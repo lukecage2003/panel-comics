@@ -35,7 +35,8 @@ function policy(html) {
     "media-src 'self' data: blob: https:",
     "font-src 'self' data:",
     "connect-src 'self' https: http://localhost:* http://127.0.0.1:*",
-    'frame-src https://www.openstreetmap.org',
+    // D-108 : les cartes de l'atlas (cartes/, même origine) s'ouvrent dans un cadre de Panel
+    "frame-src 'self' https://www.openstreetmap.org",
     "worker-src 'self' blob:",
     "manifest-src 'self'",
     "object-src 'none'",

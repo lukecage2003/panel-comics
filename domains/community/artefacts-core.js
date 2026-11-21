@@ -2,7 +2,7 @@
 // Artefacts Panel (D-63) : badges à débloquer, inspirés d'objets célèbres des univers Marvel et DC
 // (noms cités à titre de référence ; marques de leurs ayants droit).
 // D-75 : objectifs pensés pour une dizaine d'années de lecture et de collection (personne ne finit le Gant en quelques mois) ;
-//  les objets Marvel sont illustrés par leur vraie image de comic (Marvel Database, via l'atlas Marvel Primestone : img, imgSrc).
+//  les objets Marvel sont illustrés par leur vraie image de comic (Marvel Database, via l'atlas des cosmologies : img, imgSrc).
 //  - Chaque artefact se débloque sur une mesure réelle de l'activité locale (collection, lecture, avis, stories…).
 //  - Les six Gemmes de l'Infini se combinent : le Gant de l'Infini exige les six.
 //  - Module pur : rien n'est stocké ni envoyé ; aucun déblocage n'est inventé.

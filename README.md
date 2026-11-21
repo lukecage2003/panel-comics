@@ -1,4 +1,4 @@
-# Panel by Primestone — Collect. Discover. Connect.
+# Panel — Collect. Discover. Connect.
 
 Application 100% locale, sans serveur requis, centrée sur la collection de comics physiques.
 
@@ -14,7 +14,7 @@ Application 100% locale, sans serveur requis, centrée sur la collection de comi
 - **Périmètre** : comics uniquement, éditeurs américains et français de comics. Manga, manhwa, webtoon et BD franco-belge exclus (données existantes conservées et masquées).
 - **Décision d'architecture (13 novembre 2026)** : on garde ce client (`index.html` + `domains/**`), pas de migration Next.js. Backend Supabase préparé dans `backend/` (12 migrations), **non déployé** : comptes, synchronisation et communauté attendent la création du projet cloud par l'utilisateur.
 - **Livré depuis le 7 novembre** : lots 3.1 et 3.1b, Explorer 2.0 local, finances F0/F1, lecture L1, catalogue commun (D-55, D-56), Event Center v2 (D-57), mode sombre (D-53). Les puces ci-dessous datent de la clôture de la Phase 2 (historique).
-- **Vision (7 novembre)** : Panel by Primestone — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
+- **Vision (7 novembre)** : Panel — Collect. Discover. Connect. Comics physiques uniquement (aucun lecteur ni stockage de comics numériques).
 - **Architecture réelle** : application monopage locale (`index.html`, JS sans framework) ; stockage navigateur (localStorage + IndexedDB) ; relais local `serve.js` (GCD, Metron, Comic Vine) ; app Android Capacitor (`android-app/`) ; service worker hors ligne.
 - **Terminé** : Phase 0 (audit), Phase 1 (stabilisation, protection des données, retrait du numérique, finitions visuelles), **Phase 2 clôturée** : lots 2.1 à 2.6 validés (le lot 2.6 « Explorer & guides de lecture » a été validé le 7 novembre 2026 après huit contrôles fonctionnels, commit `fe19e3c`). Historique détaillé : [`docs/HISTORIQUE-LOTS.md`](docs/HISTORIQUE-LOTS.md).
 - **En cours** : préparation de la Phase 3 (comptes, profils, synchronisation local-first). Conception livrée dans [`docs/phase3/`](docs/phase3/), en attente de validation ; aucun code de la Phase 3 n'est écrit.

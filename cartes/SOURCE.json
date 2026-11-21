@@ -1,0 +1,9 @@
+{
+  "site": "Cosmologies Marvel & DC",
+  "repository": "https://github.com/lukecage2003/marvel-primeston",
+  "commit": "2720da505f379577528c7d1cb6970db888bf85f6",
+  "date": "2026-11-21T13:58:26Z",
+  "files": 43,
+  "bytes": 866354,
+  "note": "Cartes interactives seules (explorer.html et ses données), sans les autres pages du site. Nom de l’auteur, renvois vers le site et polices Google retirés ; panel-cartes.css et panel-cartes.js ne laissent que la carte. Atlas de fans, non commercial. Personnages et images © Marvel et © DC."
+}

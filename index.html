@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-SGBzBye70cqxzpMVNFc+DfBfWTMrHjuhqvzWhOmL6tQ=' 'sha256-h+pw0m30Lk1zmhXxaYbLgaLkaQnPZJqxn0xV9V2eclI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-F0HtQHG1TDvo7hs/IkP91TPFKzJ7XRGY2KENnulhklQ=' 'sha256-CLJHVFUCFxebuoqQPxkcwr/KLuhg+k4PrNcpwSOTCiQ=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -35,8 +35,8 @@
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
-  <meta name="description" content="Panel by Primestone — Collect. Discover. Connect. Le réseau social des fans de comics : montre ta collection en 3D, parle de tes lectures sans spoiler, découvre ce qui sort." />
-  <title>Panel by Primestone — Collect. Discover. Connect.</title>
+  <meta name="description" content="Panel — Collect. Discover. Connect. Le réseau social des fans de comics : montre ta collection en 3D, parle de tes lectures sans spoiler, découvre ce qui sort." />
+  <title>Panel — Collect. Discover. Connect.</title>
 
   <!-- JSZip : lecture des fichiers Excel (.xlsx) importés ; le lecteur de codes-barres zxing-wasm est chargé à l'ouverture du scanner.
        Les deux sont servis par Panel depuis vendor/ (versions figées, empreintes dans vendor/README.md), plus aucun CDN -->
@@ -1542,8 +1542,8 @@
       .comic-card:hover, .btn:hover { transform: none; }
     }
     /* ==========================================================================
-       DA PRIMESTONE — jaune et noir (novembre 2026)
-       Encre noire, jaune Primestone pour l'accent, gris neutres chauds. Les thèmes des
+       DA PANEL — jaune et noir (novembre 2026)
+       Encre noire, jaune pour l'accent, gris neutres chauds. Les thèmes des
        Paramètres ne changent que l'accent (--cyan-fill) ; le rail et les boutons restent noirs.
        ========================================================================== */
     :root {
@@ -1849,7 +1849,7 @@
     :root { --bg: #E2DFD6; --bg-surface: #EAE7DF; --bg-card: #F3F0E8; --bg-card-hover: #F1EAD3; --bg-glass: rgba(243, 240, 232, 0.97); }
     /* ==========================================================================
        APPARENCE (D-53) : clair, sombre ou selon le système (html[data-mode]).
-       Identité conservée : rail noir, accent jaune Primestone, titres condensés.
+       Identité conservée : rail noir, accent jaune, titres condensés.
        Affinage inspiré des interfaces Apple : filets fins plutôt que traits épais,
        ombres douces, coins plus ronds, barres translucides, transitions sobres.
        ========================================================================== */
@@ -3161,35 +3161,22 @@
     .mp-group { margin: 18px 0 10px; font-size: 18px; } .mp-group small { color: var(--muted); font-weight: 500; font-size: 13px; }
     .mp-tools > .field-input { max-width: 460px; }
     .mp-credit { margin-top: 22px; }
-    .mp-load { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: rgba(0,0,0,.65); color: #fff; font-size: 12px; padding: 6px 12px; border-radius: 999px; pointer-events: none; }
-    .mp-info h3 { margin: 0; font-size: 20px; } .mp-info h4 { margin: 6px 0 0; font-size: 14px; } .mp-info h4 small { opacity: .6; font-weight: 500; }
-    .mp-info p { margin: 0; font-size: 14px; line-height: 1.5; } .mp-info .mp-sub { opacity: .75; } .mp-info .mp-kick { margin: 0; color: rgba(255,255,255,.6); }
-    .mp-info a { color: #FDE68A; }
-    .mp-basis { font-style: italic; opacity: .85; }
-    .mp-rels { display: flex; flex-wrap: wrap; gap: 6px; }
-    .mp-rel { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.1); }
-    .mp-rel.is-t { background: rgba(167,139,250,.22); color: #DDD6FE; } .mp-rel.is-d { background: rgba(96,165,250,.2); color: #BFDBFE; } .mp-rel.is-u { background: rgba(250,204,21,.16); color: #FEF08A; } .mp-rel.is-c { background: rgba(74,222,128,.2); color: #BBF7D0; }
-    .mp-names { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 40vh; min-height: 120px; overflow: auto; font-size: 13px; }
-    @media (max-width: 720px) { .mp-names { max-height: none; min-height: 0; overflow: visible; } }
-    .mp-names li { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.06); } .mp-names small { opacity: .55; }
-    .mp-nav { justify-content: space-between; }
     .mp-card:focus-visible .mp-thumb { outline: 2px solid var(--accent, #FFD400); outline-offset: 3px; }
     body.mp-open { overflow: hidden; }
-    .mp-view { position: fixed; inset: 0; z-index: 9000; display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr; background: #07080A; color: #fff; }
-    .mp-view.has-info { grid-template-columns: 1fr minmax(280px, 340px); }
+    .mp-view { position: fixed; inset: 0; z-index: 9000; display: grid; grid-template-rows: auto 1fr; background: #07080A; color: #fff; }
+    .mp-body { position: relative; min-height: 0; }
+    .mp-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #07080A; }
+    .mp-load { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,.7); color: #fff; font-size: 13px; padding: 8px 14px; border-radius: 999px; pointer-events: none; }
+    .mp-return { position: fixed; z-index: 8990; left: 50%; transform: translateX(-50%); bottom: calc(18px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 6px; padding: 6px; border-radius: 999px; background: #07080A; box-shadow: 0 10px 30px -10px rgba(0,0,0,.6); }
+    .mp-return .mp-b { min-width: 38px; }
+    @media (max-width: 720px) { .mp-return { bottom: calc(76px + env(safe-area-inset-bottom)); } }
+    .mp-view[hidden] { display: none; }
+    .mp-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+    @media (max-width: 720px) { .mp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
     .mp-bar { grid-column: 1 / -1; display: flex; align-items: center; gap: 6px; padding: calc(8px + env(safe-area-inset-top)) 12px 8px; background: rgba(0,0,0,.6); }
     .mp-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 15px; }
-    .mp-zoom { font-size: 12px; opacity: .75; min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; }
     .mp-b { border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; font: inherit; font-size: 13px; min-width: 38px; min-height: 38px; padding: 0 10px; border-radius: 10px; cursor: pointer; }
     @media (hover: hover) { .mp-b:hover { background: rgba(255,255,255,.18); } }
-    .mp-stage { position: relative; overflow: hidden; touch-action: none; cursor: grab; outline: none; }
-    .mp-stage.is-drag { cursor: grabbing; }
-    .mp-img { position: absolute; left: 0; top: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; max-width: none; }
-    .mp-info { overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #111317; color: #fff; }
-    .mp-info > * { flex-shrink: 0; }
-    .mp-info label { display: grid; gap: 4px; font-size: 13px; } .mp-info label > span { opacity: .7; font-weight: 600; }
-    .mp-meta { font-size: 12px; opacity: .65; margin: 0; }
-    @media (max-width: 720px) { .mp-view.has-info { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; } .mp-info { max-height: 46vh; } .mp-zoom { display: none; } .mp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
     .ex-uhits { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
     .ex-uhits > span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
     .ex-random { margin-bottom: 10px; }
@@ -4980,7 +4967,7 @@
     <div class="form-row" style="margin-top:10px">
       <label style="font-weight:700"><svg class=ic aria-hidden=true><use href=#ic-palette /></svg> Couleur d'Accentuation :</label>
       <div style="display:flex;gap:6px;margin-top:4px;flex-wrap:wrap" id="themePickerRow">
-        <button type="button" class="btn secondary" data-theme="lime" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FFD400"></span> Primestone</button>
+        <button type="button" class="btn secondary" data-theme="lime" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FFD400"></span> Jaune</button>
         <button type="button" class="btn secondary" data-theme="cyan" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF52AE"></span> Magenta</button>
         <button type="button" class="btn secondary" data-theme="gold" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#00A3DA"></span> Cyan</button>
         <button type="button" class="btn secondary" data-theme="red" style="font-size: 12px;padding:6px 10px"><span class="swatch" style="background:#FF6B6F"></span> Rouge</button>
@@ -9906,7 +9893,7 @@ module.exports = { XP_RULES, EARTH, EARTH_DEF, DC_MULTIVERSE, COSMIC, RANKS, TIE
 // Artefacts Panel (D-63) : badges à débloquer, inspirés d'objets célèbres des univers Marvel et DC
 // (noms cités à titre de référence ; marques de leurs ayants droit).
 // D-75 : objectifs pensés pour une dizaine d'années de lecture et de collection (personne ne finit le Gant en quelques mois) ;
-//  les objets Marvel sont illustrés par leur vraie image de comic (Marvel Database, via l'atlas Marvel Primestone : img, imgSrc).
+//  les objets Marvel sont illustrés par leur vraie image de comic (Marvel Database, via l'atlas des cosmologies : img, imgSrc).
 //  - Chaque artefact se débloque sur une mesure réelle de l'activité locale (collection, lecture, avis, stories…).
 //  - Les six Gemmes de l'Infini se combinent : le Gant de l'Infini exige les six.
 //  - Module pur : rien n'est stocké ni envoyé ; aucun déblocage n'est inventé.
@@ -10423,20 +10410,18 @@ module.exports = { FAMILIES, UNIVERSES, CUSTOM_MAX, periodLabel, isActive, valid
   /* domains/explorer/maps-core.js */
   out.mapsCore = (() => { const module = { exports: {} };
 'use strict';
-// Cartes des univers (D-107) : catalogue des cartes de l'atlas Primestone « Cosmologies Marvel & DC », fournies par Panel
-// (data/atlas-maps.json et images dans maps/). Personne n'ajoute de carte personnelle.
-// Module pur : validation du catalogue, classement, recherche (titres et entités) et calcul du zoom de la visionneuse.
+// Cartes des univers (D-107, D-108) : catalogue des cartes de l'atlas « Cosmologies Marvel & DC » (atlas de fans), fourni par Panel
+// (data/atlas-maps.json et vignettes dans maps/). Chaque carte s'ouvre, animée, dans l'explorateur des cartes repris seul dans
+// cartes/ ; un personnage ou un lieu touché ouvre sa fiche dans Panel. Personne n'ajoute de carte personnelle.
+// Module pur : validation du catalogue, classement, recherche (titres et entités) et adresse de la carte dans l'atlas.
 
 const UNIS = Object.freeze({ marvel: 'Marvel', dc: 'DC' });
 const THEMES = Object.freeze({ cosmology: 'Structure du cosmos', beings: 'Entités et familles', realms: 'Lieux et royaumes', powers: 'Magie et forces', timeline: 'Chronologies' });
-// Niveaux de fiabilité de l'atlas (repris tels quels)
-const REL = Object.freeze({ c: 'Canon', o: 'Source officielle', d: 'Interprétation', t: 'Théorie', x: 'Contesté', u: 'À vérifier' });
-const BASIS = Object.freeze({ publications: 'D\'après', data: 'Construite à partir des fiches de l\'atlas.', plan: 'Plan Primestone, sans schéma officiel.' });
 
 const clean = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
 const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`]/g, ' ').replace(/\s+/g, ' ').trim();
 
-// Catalogue validé : clé « marvel-01 » ou « dc-01 », chemins d'images déduits de la clé (jamais lus dans les données)
+// Catalogue validé : clé « marvel-01 » ou « dc-01 », chemins déduits de la clé (jamais lus dans les données)
 const validate = raw => {
   const list = raw && Array.isArray(raw.maps) ? raw.maps : [];
   const seen = new Set(), out = [];
@@ -10446,15 +10431,16 @@ const validate = raw => {
     if (!k || seen.has(key) || m.uni !== k[1] || !THEMES[m.theme]) continue;
     const title = clean(m.title, 80); if (!title) continue;
     const w = Number(m.w), h = Number(m.h); if (!(w > 0 && h > 0)) continue;
-    const basis = m.basis && BASIS[m.basis.type] ? { type: m.basis.type, text: m.basis.type === 'publications' ? clean(m.basis.text, 200) : '' } : { type: 'plan', text: '' };
-    const rel = {}; Object.keys(REL).forEach(c => { const n = Number(m.rel && m.rel[c]); if (n > 0) rel[c] = Math.floor(n); });
+    const n = Number(k[2]); if (!(n >= 1)) continue;
     const names = (Array.isArray(m.names) ? m.names : []).map(x => (Array.isArray(x) ? x : [x]).map(s => clean(s, 80)).filter(Boolean).slice(0, 2)).filter(x => x.length).slice(0, 400);
     seen.add(key);
-    out.push({ key, uni: k[1], n: Number(k[2]), theme: m.theme, title, sub: clean(m.sub, 140), about: clean(m.about, 400), basis, w, h, rel, names,
-      img: 'maps/' + key + '.webp', thumb: 'maps/' + key + '-thumb.webp' });
+    out.push({ key, uni: k[1], n, theme: m.theme, title, sub: clean(m.sub, 140), about: clean(m.about, 400), w, h, names,
+      thumb: 'maps/' + key + '-thumb.webp', atlas: atlasUrl(k[1], n) });
   }
   return out.sort((a, b) => (a.uni === b.uni ? a.n - b.n : a.uni === 'marvel' ? -1 : 1));
 };
+// Adresse de la carte dans l'explorateur de l'atlas : « explorer.html?map=0 » (Marvel), « explorer.html?u=dc&map=0 » (DC)
+const atlasUrl = (uni, n) => 'cartes/explorer.html?' + (uni === 'dc' ? 'u=dc&' : '') + 'map=' + (n - 1);
 
 // Entités de la carte qui correspondent à la recherche (nom anglais ou français)
 const hits = (m, q) => { const t = norm(q); if (t.length < 2) return []; return m.names.filter(x => x.some(s => norm(s).includes(t))).map(x => x[0]); };
@@ -10464,34 +10450,8 @@ const filter = (list, opts = {}) => (list || []).filter(m => (!opts.uni || opts.
   (!opts.q || norm([m.title, m.sub, m.about].join(' ')).includes(norm(opts.q)) || hits(m, opts.q).length > 0));
 // Comptes par univers et par thème (pour les filtres)
 const counts = list => (list || []).reduce((o, m) => { o[m.uni] = (o[m.uni] || 0) + 1; o[m.theme] = (o[m.theme] || 0) + 1; return o; }, {});
-// Niveaux de fiabilité présents sur la carte, dans l'ordre de l'atlas : [['t', 13], ['u', 8]]
-const relSummary = m => Object.keys(REL).filter(c => m.rel[c]).map(c => [c, m.rel[c]]);
-// Libellé compté et accordé : « 13 théories », « 1 interprétation », « 8 à vérifier »
-const REL_COUNT = Object.freeze({ c: ['entrée canon', 'entrées canon'], o: ['source officielle', 'sources officielles'], d: ['interprétation', 'interprétations'], t: ['théorie', 'théories'], x: ['entrée contestée', 'entrées contestées'], u: ['à vérifier', 'à vérifier'] });
-const relLabel = (c, n) => REL_COUNT[c] ? n + ' ' + REL_COUNT[c][n > 1 ? 1 : 0] : '';
-// Cartes où figure une entité (nom exact, anglais ou français)
-const ofEntity = (list, name) => { const t = norm(name); if (t.length < 3) return []; return (list || []).filter(m => m.names.some(x => x.some(s => norm(s) === t))); };
 
-// ── Visionneuse : zoom autour d'un point, déplacement borné ─────────────────────
-const ZMIN = 1, ZMAX = 10;
-const clampZ = z => Math.min(ZMAX, Math.max(ZMIN, Number(z) || 1));
-// Taille de l'image ajustée à la vue (contenue), à zoom 1
-const fit = (vw, vh, iw, ih) => { if (!(vw > 0 && vh > 0 && iw > 0 && ih > 0)) return { w: 0, h: 0 }; const s = Math.min(vw / iw, vh / ih); return { w: iw * s, h: ih * s }; };
-// Position bornée : l'image reste centrée si elle est plus petite que la vue, sinon elle ne laisse pas de vide sur les bords
-const clampPan = (st, vw, vh, fw, fh) => {
-  const cw = fw * st.z, ch = fh * st.z;
-  const x = cw <= vw ? (vw - cw) / 2 : Math.min(0, Math.max(vw - cw, st.x));
-  const y = ch <= vh ? (vh - ch) / 2 : Math.min(0, Math.max(vh - ch, st.y));
-  return { z: st.z, x, y };
-};
-// Zoom d'un facteur autour du point (px, py) de la vue : ce point reste sous le doigt ou la souris
-const zoomAt = (st, factor, px, py, vw, vh, fw, fh) => {
-  const z = clampZ(st.z * factor), k = z / st.z;
-  return clampPan({ z, x: px - (px - st.x) * k, y: py - (py - st.y) * k }, vw, vh, fw, fh);
-};
-const initial = (vw, vh, fw, fh) => clampPan({ z: 1, x: 0, y: 0 }, vw, vh, fw, fh);
-
-module.exports = { UNIS, THEMES, REL, BASIS, validate, hits, filter, counts, relSummary, relLabel, ofEntity, ZMIN, ZMAX, clampZ, fit, clampPan, zoomAt, initial };
+module.exports = { UNIS, THEMES, validate, atlasUrl, hits, filter, counts };
   return Object.freeze(module.exports); })();
   /* domains/i18n/i18n-core.js */
   out.i18n = (() => { const module = { exports: {} };
@@ -10839,7 +10799,7 @@ const phrases = {
   "Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n'est simulé.": "Voice only, never a camera: your covers and gallery pages on the board, full screen and vertical. Live duel: two sides, evidence, a vote. Rehearse here; lives with listeners will open with accounts, no participant is simulated.",
   "Mode local, service communautaire non configuré : planches, stories, directs, « j'aime » et enregistrements restent sur cet appareil. Publication, abonnés et commentaires arriveront avec les comptes.": "Local mode, community service not configured: pages, stories, lives, likes and saves stay on this device. Posting, followers and comments will come with accounts.",
   "Portraits : Comic Vine (nom exact du personnage), chargés au fil de l'ouverture ; sinon emblème Panel. L'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l'ouverture des comptes en ligne.": "Portraits: Comic Vine (exact character name), loaded as you open them; otherwise a Panel emblem. The earthly ladder mixes Marvel and DC species; the “DC multiverse” tier follows an order of Panel's own. Cosmic ranks inspired by the hierarchy presented by House of Ideal (from Maki's videos, a fan ranking, unofficial). Followers, reactions, comments, posted pages and debates will count once online accounts open.",
-  "Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l'atlas Marvel Primestone, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte {n} XP.": "Objects from the Marvel and DC universes (trademarks of their owners). Images of Marvel objects: Marvel Database (Fandom), via the Primestone Marvel atlas, © Marvel; the others are drawn by Panel. Goals designed for years of reading: each unlocked artefact earns {n} XP.",
+  "Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l'atlas des cosmologies, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte {n} XP.": "Objects from the Marvel and DC universes (trademarks of their owners). Images of Marvel objects: Marvel Database (Fandom), via the cosmologies atlas, © Marvel; the others are drawn by Panel. Goals designed for years of reading: each unlocked artefact earns {n} XP.",
   "Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès {n} numéros d'un même personnage.": "Trophies computed from your local data, never stored or sent. Vibranium tier: the rarest. “Guardians” appear from {n} issues of the same character.",
   "Finances, prix d'achat et valeurs, emplacements et rangement, notes privées et état détaillé. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n'est en ligne avant l'arrivée des comptes.": "Finances, purchase prices and values, locations and storage, private notes and detailed condition. Your posts stay “Only me” until you make them public. Nothing is online before accounts arrive.",
   "Chaque série possédée, avec les numéros manquants entre le premier et le dernier (ou jusqu'au total que vous définissez). Cliquez une série pour voir la grille des numéros ; cliquez un numéro manquant pour l'ajouter à la wishlist.": "Every series you own, with the missing issues between the first and the last (or up to the total you set). Click a series to see its issue grid; click a missing issue to add it to the wishlist.",
@@ -11053,11 +11013,9 @@ const phrases = {
   'Riverdale et sa bande, apparus dans Pep Comics #{n} en décembre {n}.': 'Riverdale and its gang, introduced in Pep Comics #{n} in December {n}.',
   'Univers': 'Universes',
   'Univers d\'origine': 'Home universe',
-  // D-107 : Cartes des univers (atlas Primestone)
+  // D-107 : Cartes des univers (atlas des cosmologies)
   'Cartes des univers': 'Universe maps',
   'Marvel et DC en grand': 'Marvel and DC, up close',
-  '{n} grandes cartes de l’atlas Primestone : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC, à explorer en détail.': '{n} large maps from the Primestone atlas: Marvel and DC cosmologies, families, realms, magic and timelines, to explore in detail.',
-  'Découvrir · Atlas Primestone': 'Discover · Primestone atlas',
   'Les cosmologies de Marvel et de DC en grandes cartes : structure du cosmos, entités et familles, royaumes, magie et chronologies. Ouvrez une carte pour l\'explorer en détail, zoom compris.': 'Marvel and DC cosmologies as large maps: structure of the cosmos, beings and families, realms, magic and timelines. Open a map to explore it in detail, with zoom.',
   'Chargement des cartes…': 'Loading maps…',
   'Les cartes ne sont pas disponibles pour le moment. Vérifiez la connexion, puis réessayez.': 'Maps are not available right now. Check your connection, then try again.',
@@ -11077,13 +11035,11 @@ const phrases = {
   '{n} cartes': '{n} maps',
   'Tout afficher': 'Show all',
   'Cartes de l\'atlas': 'Maps from the',
-  'Primestone « Cosmologies Marvel & DC »': 'Primestone “Marvel & DC Cosmologies” atlas',
   ', un atlas de fans non officiel. Personnages et portraits © Marvel et © DC. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.': ', an unofficial fan atlas. Characters and portraits © Marvel and © DC. “Theory” entries are fan constructions; “to verify”: taken from a wiki, not yet checked against the comics.',
   'Chargement de la carte en haute définition…': 'Loading the high-resolution map…',
   'Image haute définition indisponible : aperçu affiché.': 'High-resolution image unavailable: preview shown.',
   'D\'après': 'Based on',
   'Construite à partir des fiches de l\'atlas.': 'Built from the atlas entries.',
-  'Plan Primestone, sans schéma officiel.': 'Primestone plan, with no official diagram.',
   '{n} théories': '{n} theories',
   '{n} théorie': '{n} theory',
   '{n} interprétations': '{n} interpretations',
@@ -11099,8 +11055,6 @@ const phrases = {
   'Théorie': 'Theory',
   'Contesté': 'Contested',
   'Canon': 'Canon',
-  'Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © Marvel.': 'Primestone plan, a fan layout: not an official page. Characters and portraits © Marvel.',
-  'Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © DC.': 'Primestone plan, a fan layout: not an official page. Characters and portraits © DC.',
   'Version interactive': 'Interactive version',
   '‹ Carte précédente': '‹ Previous map',
   'Carte suivante ›': 'Next map ›',
@@ -11158,6 +11112,38 @@ const phrases = {
   'La Présence, ses anges, Lucifer et Elaine Belloc': 'The Presence, its angels, Lucifer and Elaine Belloc',
   'La Présence, la Cité d\'Argent et ses anges, Lucifer et Elaine Belloc.': 'The Presence, the Silver City and its angels, Lucifer and Elaine Belloc.',
   'Source officielle': 'Official source',
+  // D-108 : cartes interactives de l'atlas dans Panel
+  '{n} cartes animées des cosmologies Marvel et DC : zoom, déplacement, Cosmos qui tournent. Touchez un personnage, une dimension ou une entité pour ouvrir sa fiche dans Panel, puis revenez à la carte là où vous l\'aviez laissée.': '{n} animated maps of the Marvel and DC cosmologies: zoom, pan, spinning Cosmoses. Tap a character, a dimension or an entity to open its entry in Panel, then come back to the map right where you left it.',
+  'Découvrir · Atlas des cosmologies': 'Discover · Cosmologies atlas',
+  'Fermer la carte': 'Close the map',
+  'Chargement de la carte…': 'Loading the map…',
+  'Ouverture de la fiche…': 'Opening the entry…',
+  '← Revenir à la carte': '← Back to the map',
+  'Atlas des cosmologies': 'Cosmologies atlas',
+  'Atlas des cosmologies, explorateur interactif': 'Cosmologies atlas, interactive explorer',
+  'Cartes de l\'atlas « Cosmologies Marvel & DC », un atlas de fans non officiel ; seules les cartes sont reprises dans Panel. Personnages et images © Marvel et © DC ; les portraits sont affichés depuis les wikis des fans. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.': 'Maps from the “Cosmologies Marvel & DC” atlas, an unofficial fan atlas; only the maps are included in Panel. Characters and images © Marvel and © DC; portraits are shown from the fan wikis. “Theory” entries are fan constructions; “to verify”: taken from a wiki, not yet checked against the comics.',
+  'Cartes d\'après l\'atlas des cosmologies Marvel et DC, un atlas de fans. Personnages et illustrations © Marvel ; images tirées de la Marvel Database (Fandom), citées à titre d\'illustration.': 'Maps based on the Marvel and DC cosmologies atlas, a fan atlas. Characters and artwork © Marvel; images from the Marvel Database (Fandom), quoted for illustration.',
+  '{n} grandes cartes animées : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC. Touchez un personnage pour sa fiche.': '{n} large animated maps: cosmologies, families, realms, magic and timelines of Marvel and DC. Tap a character for its entry.',
+  '← Cartes des univers': '← Universe maps',
+  'Cette fiche s\'ouvre depuis une carte : rouvrez la carte et touchez l\'entité.': 'This entry opens from a map: reopen the map and tap the entity.',
+  'Chercher ses comics': 'Find its comics',
+  'Première apparition': 'First appearance',
+  'Sur la carte avec': 'On the map with',
+  'L\'atlas ne décrit pas encore cette entité.': 'The atlas does not describe this entity yet.',
+  'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © Marvel.': 'Entry taken from the maps of the Marvel and DC cosmologies atlas, an unofficial fan atlas. Characters © Marvel.',
+  'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © DC.': 'Entry taken from the maps of the Marvel and DC cosmologies atlas, an unofficial fan atlas. Characters © DC.',
+  'Entités abstraites': 'Abstract entities',
+  'Lieux et dimensions': 'Places and dimensions',
+  'Groupes': 'Groups',
+  'Cosmos et firmaments': 'Cosmoses and firmaments',
+  'Célestes et puissances': 'Celestials and powers',
+  'Forces et énergies': 'Forces and energies',
+  'Ténèbres': 'Darkness',
+  'Objets de pouvoir': 'Objects of power',
+  'Événements': 'Events',
+  'Atlas': 'Atlas',
+  'Jaune': 'Yellow',
+  'Panel — Collect. Discover. Connect.': 'Panel — Collect. Discover. Connect.',
 };
 
 const same = [
@@ -11168,7 +11154,7 @@ const same = [
   'Jim Shooter', 'Jim Starlin', 'Joker', 'Jonathan Hickman', 'Knull', 'Kryptonite', 'Life', 'Lifebringer One', 'Lord Chaos', 'Lucifer Morningstar', 'Man of Tomorrow', 'Mark Millar',
   'Marv Wolfman', 'Marvel', 'Master Hate', 'Master Order', 'Mercredi BD', 'Metron', 'Mike Zeck', 'Miles Morales', 'Mirage', 'Mistress Love', 'Mjolnir', 'Monitor', 'Monstress', 'Némésis',
   'Now', 'Then', 'Numinus', 'Oblivion', 'Olivier Coipel', 'One Below All', 'Opal Luna Saturnyne', 'Open Library', 'Origin', 'Panel', 'panel', 'Panel · Explorer', 'Panel · Planches',
-  'Perpetua', 'Phil Jimenez', 'Powers That Be', 'Primestone', 'Queen of Nevers', 'Ron Lim', 'Ryan Stegman', 'Sara Grey', 'Scott Snyder', 'Something is Killing the Children', 'Spider-Man',
+  'Perpetua', 'Phil Jimenez', 'Powers That Be', 'Queen of Nevers', 'Ron Lim', 'Ryan Stegman', 'Sara Grey', 'Scott Snyder', 'Something is Killing the Children', 'Spider-Man',
   'Spider-Man: Beyond the Spider-Verse', 'Steve McNiven', 'Storm', 'Superman', 'Thanos', 'The Lost One', 'The Natural Order of Things', 'The One Above All', 'The Preordained', 'Tom King',
   'Transformers', 'Ultimate Nullifier', 'Ultimate Spider-Man', 'Unbeing', 'Venom', 'Venom (Eddie Brock)', 'Witchcraft', 'Wolverine', 'Wonder Woman', 'Infinity', 'node serve.js',
   'http://localhost:8080', 'https://xxxxxxxxxxxxxxxxxxxx.supabase.co', 'sb_publishable_…', 'Key Issues', 'Wishlist', 'Pull list'
@@ -19930,7 +19916,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
         sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>')) +
       pane('universes', exUniversesHtml() +
-        '<section class="ex-sec"><button class="ex-cz-promo mp-promo" data-ex-go="maps"><span class="ex-cz-promo-art mp-promo-art" aria-hidden="true"></span><span><b>Cartes des univers</b><small>18 grandes cartes de l’atlas Primestone : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC, à explorer en détail.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
+        '<section class="ex-sec"><button class="ex-cz-promo mp-promo" data-ex-go="maps"><span class="ex-cz-promo-art mp-promo-art" aria-hidden="true"></span><span><b>Cartes des univers</b><small>18 grandes cartes animées : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC. Touchez un personnage pour sa fiche.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
         sec('exSecUniverses', 'Éditeurs', personal ? 'Éditeurs connus de Panel et ceux de votre collection.' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small>' + (p.owned || p.guides ? '<span>' + [personal && p.owned ? p.owned + ' possédé(s)' : '', p.guides ? p.guides + ' guide(s)' : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</button>').join('') + '</div>') +
         '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
         '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section></div>' +
@@ -20755,9 +20741,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     root.querySelectorAll('[data-ex-follow]').forEach(b => { b.onclick = () => { if (!exCvDetail.data) return; const on = exFollowToggle(exView.id, exCvDetail.data); if (on && exCvDetail.extra && exCvDetail.extra.appearances && exCvDetail.extra.appearances.latest[0]) exFollowSeen(exView.id, exCvDetail.extra.appearances.latest[0]); showToast(on ? 'Suivi : ' + exCvDetail.data.name + '. Ses prochaines apparitions seront signalées ici.' : 'Suivi retiré.'); renderExplorer(); }; });
     root.querySelectorAll('[data-ex-cv-add]').forEach(b => { b.onclick = e => { const S2 = exCommands(); if (exCvDetail.data && exCvAdd(exCvDetail.data, b.dataset.exCvAdd === 'wish', S2 ? S2.gesture(e) : null)) renderExplorer(); }; });
   };
-  // ---------- Atlas cosmique (D-75) : encyclopédie de la cosmologie Marvel reprise du site Marvel Primestone (301 fiches)
+  // ---------- Atlas cosmique (D-75) : encyclopédie de la cosmologie Marvel reprise de l'atlas des cosmologies (301 fiches)
   // Données : data/cosmos-marvel.json (fiches, relations, sources, chronologie éditoriale), chargées à la demande.
-  const CZ_URL = 'data/cosmos-marvel.json', CZ_SITE = 'https://lukecage2003.github.io/marvel-primeston/';
+  const CZ_URL = 'data/cosmos-marvel.json';
   const CZ_CATS = { cos: ['Cosmos et firmaments', '#FFE500'], abs: ['Entités abstraites', '#B57CFF'], cel: ['Célestes et puissances', '#FF5A36'], pow: ['Forces et énergies', '#36C5FF'], dark: ['Ténèbres', '#8A8AA0'], pla: ['Lieux et dimensions', '#3DDC97'], grp: ['Groupes', '#FF9F1C'], per: ['Personnages', '#FF4F8B'], obj: ['Objets de pouvoir', '#FFD166'], evt: ['Événements', '#5B8CFF'] };
   const cz = { data: null, status: 'idle', err: '' };
   // D-78 : seulement les cartes des Cosmos et des dimensions du multivers (aucune hiérarchie, aucune encyclopédie)
@@ -20770,12 +20756,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     cz.status = 'loading';
     try { const r = await fetch(CZ_URL, { cache: 'force-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); const d = await r.json(); if (!d || !d.E) throw new Error('données illisibles'); cz.data = d; cz.status = 'done'; }
     catch (e) { cz.status = 'error'; cz.err = location.protocol === 'file:' ? 'Ouvrez Panel avec « Lancer Panel.cmd » pour charger les cartes.' : 'Cartes indisponibles (' + String(e && e.message || e).slice(0, 80) + ').'; }
-    if (exView.page === 'cosmos' || exView.page === 'cosmos-e') renderExplorer();
+    if (exView.page === 'cosmos' || exView.page === 'cosmos-e' || exView.page === 'map-e') renderExplorer();
   };
   const exCzImg = (e, cls) => e && e.img && /^https:\/\//.test(e.img) ? '<img class="' + (cls || '') + '" src="' + h(e.img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">' : '';
   const exCzCard = id => { const e = cz.data.E[id], cat = CZ_CATS[e.k] || ['', '#999']; return '<button class="cz-card" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '" style="--cz:' + cat[1] + '"><span class="cz-card-img">' + exCzImg(e) + '<span class="cz-card-ini" aria-hidden="true">' + h(String(e.n || '?').replace(/^(L[ea]s?\s|L’|L')/i, '').slice(0, 1)) + '</span></span><span class="cz-card-b"><b>' + h(e.n) + '</b><span>' + h(exCzSub(id)) + '</span></span></button>'; };
   const CZ_ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', '', 'VIII'];
-  const exCzCredit = '<p class="ex-credit">Cartes d\'après <a href="' + CZ_SITE + '" target="_blank" rel="noopener noreferrer">Marvel Primestone</a>. Personnages et illustrations © Marvel ; images tirées de la Marvel Database (Fandom), citées à titre d\'illustration.</p>';
+  const exCzCredit = '<p class="ex-credit">Cartes d\'après l\'atlas des cosmologies Marvel et DC, un atlas de fans. Personnages et illustrations © Marvel ; images tirées de la Marvel Database (Fandom), citées à titre d\'illustration.</p>';
   const exCzHtml = () => {
     if (cz.status === 'error') return exBack() + '<div class="ex-empty">' + h(cz.err) + '</div>';
     if (!cz.data) return exBack() + '<div class="ex-empty">Chargement des cartes…</div>';
@@ -20826,6 +20812,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     } else if (exView.page === 'cosmos' || exView.page === 'cosmos-e') {
       root.innerHTML = exView.page === 'cosmos' ? exCzHtml() : exCzEntityHtml(exView.id);
       exCzLoad();
+    } else if (exView.page === 'map-e') {
+      root.innerHTML = exMpEntityHtml(exView.id);
+      exCzLoad();
     } else if (exView.page === 'maps') {
       root.innerHTML = exMpHtml();
       exMpWire(root);
@@ -20837,22 +20826,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
     } else root.innerHTML = exEntityHtml();
   };
-  // ---------- D-107 : Cartes des univers — catalogue de l'atlas Primestone (data/atlas-maps.json, images dans maps/), fourni par Panel.
+  // ---------- D-107 : Cartes des univers — catalogue de l'atlas des cosmologies (data/atlas-maps.json, images dans maps/), fourni par Panel.
   // Personne n'ajoute de carte. Les cartes importées sur un appareil avant D-107 (base IndexedDB « panel_maps ») ne sont ni lues ni effacées.
   const MP = window.PanelDomains.mapsCore;
-  const EX_MP_URL = 'data/atlas-maps.json', EX_MP_SITE = 'https://lukecage2003.github.io/marvel-primeston/';
+  const EX_MP_URL = 'data/atlas-maps.json';
   const exMpState = { list: null, err: '', uni: 'all', theme: 'all', q: '' };
   const exMpLoad = async () => {
     try { const r = await fetch(EX_MP_URL, { cache: 'no-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); exMpState.list = MP.validate(await r.json()); exMpState.err = exMpState.list.length ? '' : 'Catalogue des cartes vide.'; }
     catch (_) { exMpState.list = []; exMpState.err = 'Les cartes ne sont pas disponibles pour le moment. Vérifiez la connexion, puis réessayez.'; }
     if (exView.page === 'maps') renderExplorer();
   };
-  const exMpRelHtml = m => MP.relSummary(m).map(([c, n]) => '<span class="mp-rel is-' + c + '" title="' + h(MP.REL[c]) + '">' + h(MP.relLabel(c, n)) + '</span>').join('');
-  // « D'après » et la liste des publications dans deux nœuds distincts : la phrase reste traduisible, les titres ne sont jamais traduits
-  const exMpBasisHtml = m => m.basis.type === 'publications' ? '<span>' + h(MP.BASIS.publications) + '</span> <span data-no-i18n>' + h(m.basis.text) + '</span>.' : '<span>' + h(MP.BASIS[m.basis.type]) + '</span>';
   const exMpHtml = () => {
     const list = exMpState.list;
-    const head = exBack() + '<section class="cz-hero mp-hero"><span class="ex-kicker">Découvrir · Atlas Primestone</span><h2>Cartes des univers</h2><p>Les cosmologies de Marvel et de DC en grandes cartes : structure du cosmos, entités et familles, royaumes, magie et chronologies. Ouvrez une carte pour l\'explorer en détail, zoom compris.</p></section>';
+    const head = exBack() + '<section class="cz-hero mp-hero"><span class="ex-kicker">Découvrir · Atlas des cosmologies</span><h2>Cartes des univers</h2><p>18 cartes animées des cosmologies Marvel et DC : zoom, déplacement, Cosmos qui tournent. Touchez un personnage, une dimension ou une entité pour ouvrir sa fiche dans Panel, puis revenez à la carte là où vous l\'aviez laissée.</p></section>';
     if (list === null) return head + '<div class="ex-empty" role="status">Chargement des cartes…</div>';
     if (exMpState.err) return head + '<div class="ex-empty">' + h(exMpState.err) + ' <button class="btn secondary rel-mini" data-mp-retry>Réessayer</button></div>';
     const c = MP.counts(list), q = exMpState.q.trim();
@@ -20869,7 +20855,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<input class="field-input" type="search" data-mp-q placeholder="Chercher une carte ou une entité (Galactus, Dream…)" aria-label="Chercher une carte ou une entité" value="' + h(exMpState.q) + '"></div>' +
       (shown.length ? groups.map(([u, l]) => (u ? '<h3 class="mp-group">' + h(MP.UNIS[u]) + ' <small>' + l.length + ' cartes</small></h3>' : '') + '<div class="mp-grid">' + l.map(card).join('') + '</div>').join('')
         : '<div class="ex-empty">Aucune carte ne correspond. <button class="btn secondary rel-mini" data-mp-reset>Tout afficher</button></div>') +
-      '<p class="ex-note mp-credit">Cartes de l\'atlas <a href="' + EX_MP_SITE + '" target="_blank" rel="noopener noreferrer">Primestone « Cosmologies Marvel &amp; DC »</a>, un atlas de fans non officiel. Personnages et portraits © Marvel et © DC. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.</p>';
+      '<p class="ex-note mp-credit">Cartes de l\'atlas « Cosmologies Marvel &amp; DC », un atlas de fans non officiel ; seules les cartes sont reprises dans Panel. Personnages et images © Marvel et © DC ; les portraits sont affichés depuis les wikis des fans. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.</p>';
   };
   const exMpWire = root => {
     root.querySelectorAll('[data-mp-uni]').forEach(b => { b.onclick = () => { exMpState.uni = b.dataset.mpUni; renderExplorer(); }; });
@@ -20879,61 +20865,150 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const q = root.querySelector('[data-mp-q]'); if (q) q.oninput = () => { exMpState.q = q.value; const pos = q.selectionStart; renderExplorer(); const q2 = $('explorerRoot').querySelector('[data-mp-q]'); if (q2) { q2.focus(); try { q2.setSelectionRange(pos, pos); } catch (_) {} } };
     root.querySelectorAll('[data-mp-open]').forEach(b => { b.onclick = () => exMpOpen(b.dataset.mpOpen, b); });
   };
-  // Visionneuse plein écran : molette ou pincement pour zoomer, glisser pour se déplacer, double clic pour zoomer, clavier
+  // D-108 : chaque carte s'ouvre dans l'explorateur des cartes de l'atlas, repris seul dans cartes/ (animations, zoom, sélection
+  // des personnages et des lieux). Plein écran dans Panel ; « ✕ » ou Échap ramènent à la liste.
   const exMpOpen = (key, opener) => {
-    const list = exMpState.list || [], at = list.findIndex(m => m.key === key), meta = list[at]; if (!meta) return;
+    const meta = (exMpState.list || []).find(m => m.key === key);
+    if (!meta) return;
+    exMpDrop();
     const ov = document.createElement('div');
-    ov.className = 'mp-view'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', meta.title);
-    const names = meta.names.map(x => '<li><span data-no-i18n>' + h(x[0]) + '</span>' + (x[1] ? '<small data-no-i18n>' + h(x[1]) + '</small>' : '') + '</li>').join('');
-    ov.innerHTML = '<div class="mp-bar"><b class="mp-title"></b><span class="mp-zoom" aria-live="polite">100 %</span><button class="mp-b" data-mp-z="out" aria-label="Dézoomer">−</button><button class="mp-b" data-mp-z="in" aria-label="Zoomer">+</button><button class="mp-b" data-mp-z="fit">Ajuster</button><button class="mp-b" data-mp-info aria-expanded="false">Infos</button><button class="mp-b mp-x" data-mp-close aria-label="Fermer">✕</button></div>' +
-      '<div class="mp-stage" tabindex="0" aria-label="Carte : glissez pour vous déplacer, molette ou pincement pour zoomer"><img class="mp-img" alt="" draggable="false" decoding="async"><span class="mp-load" role="status">Chargement de la carte en haute définition…</span></div>' +
-      '<aside class="mp-info" hidden><p class="mp-kick"><span>' + h(MP.UNIS[meta.uni]) + '</span> · <span>' + h(MP.THEMES[meta.theme]) + '</span></p><h3>' + h(meta.title) + '</h3><p class="mp-sub">' + h(meta.sub) + '</p><p>' + h(meta.about) + '</p>' +
-      '<p class="mp-basis">' + exMpBasisHtml(meta) + '</p><div class="mp-rels">' + exMpRelHtml(meta) + '</div>' +
-      '<h4>Sur la carte <small>' + meta.names.length + '</small></h4><ul class="mp-names">' + names + '</ul>' +
-      '<p class="mp-meta">Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © ' + (meta.uni === 'dc' ? 'DC' : 'Marvel') + '. <a href="' + EX_MP_SITE + 'explorer.html' + (meta.uni === 'dc' ? '?u=dc' : '') + '" target="_blank" rel="noopener noreferrer">Version interactive</a></p>' +
-      '<div class="ex-row mp-nav"><button class="btn secondary rel-mini" data-mp-step="-1"' + (at > 0 ? '' : ' disabled') + '>‹ Carte précédente</button><button class="btn secondary rel-mini" data-mp-step="1"' + (at < list.length - 1 ? '' : ' disabled') + '>Carte suivante ›</button></div></aside>';
-    ov.querySelector('.mp-title').textContent = meta.title;
+    ov.className = 'mp-view'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Atlas des cosmologies');
+    ov.innerHTML = '<div class="mp-bar"><b class="mp-title"></b><button class="mp-b mp-x" data-mp-close aria-label="Fermer la carte">✕</button></div>' +
+      '<div class="mp-body"><iframe class="mp-frame" title="Atlas des cosmologies, explorateur interactif" allow="fullscreen"></iframe><span class="mp-load" role="status">Chargement de la carte…</span></div>';
+    const frame = ov.querySelector('.mp-frame'), title = ov.querySelector('.mp-title');
+    title.textContent = meta.title;
     document.body.appendChild(ov); document.body.classList.add('mp-open');
-    const stage = ov.querySelector('.mp-stage'), img = ov.querySelector('.mp-img'), zl = ov.querySelector('.mp-zoom'), info = ov.querySelector('.mp-info');
-    let st = { z: 1, x: 0, y: 0 }, fw = 0, fh = 0;
-    const vw = () => stage.clientWidth, vh = () => stage.clientHeight;
-    const paint = () => { img.style.width = fw + 'px'; img.style.height = fh + 'px'; img.style.transform = 'translate(' + st.x + 'px,' + st.y + 'px) scale(' + st.z + ')'; zl.textContent = Math.round(st.z * 100) + ' %'; };
-    // Mise en page avec les dimensions du catalogue : la vignette s'affiche tout de suite, l'image haute définition la remplace
-    const layout = () => { const f2 = MP.fit(vw(), vh(), meta.w, meta.h); const keep = fw ? st.z : 1; fw = f2.w; fh = f2.h; st = keep === 1 ? MP.initial(vw(), vh(), fw, fh) : MP.clampPan(Object.assign({}, st, { z: keep }), vw(), vh(), fw, fh); paint(); };
-    img.src = meta.thumb;
-    const full = new Image(); full.decoding = 'async';
-    full.onload = () => { img.src = meta.img; stage.classList.add('is-hd'); const l = ov.querySelector('.mp-load'); if (l) l.remove(); };
-    full.onerror = () => { const l = ov.querySelector('.mp-load'); if (l) l.textContent = 'Image haute définition indisponible : aperçu affiché.'; };
-    full.src = meta.img;
-    const zoom = (factor, px, py) => { st = MP.zoomAt(st, factor, px == null ? vw() / 2 : px, py == null ? vh() / 2 : py, vw(), vh(), fw, fh); paint(); };
-    const pt = e => { const r = stage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
-    stage.addEventListener('wheel', e => { e.preventDefault(); const [x, y] = pt(e); zoom(Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0018)), x, y); }, { passive: false });
-    const ptrs = new Map(); let pinch = 0;
-    stage.onpointerdown = e => { stage.setPointerCapture(e.pointerId); ptrs.set(e.pointerId, pt(e)); if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; pinch = Math.hypot(a[0] - b[0], a[1] - b[1]); } stage.classList.add('is-drag'); };
-    stage.onpointermove = e => {
-      if (!ptrs.has(e.pointerId)) return;
-      const prev = ptrs.get(e.pointerId), cur = pt(e); ptrs.set(e.pointerId, cur);
-      if (ptrs.size === 2) { const [a, b] = [...ptrs.values()]; const d = Math.hypot(a[0] - b[0], a[1] - b[1]); if (pinch) zoom(d / pinch, (a[0] + b[0]) / 2, (a[1] + b[1]) / 2); pinch = d; return; }
-      st = MP.clampPan({ z: st.z, x: st.x + cur[0] - prev[0], y: st.y + cur[1] - prev[1] }, vw(), vh(), fw, fh); paint();
-    };
-    stage.onpointerup = stage.onpointercancel = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = 0; if (!ptrs.size) stage.classList.remove('is-drag'); };
-    stage.ondblclick = e => { const [x, y] = pt(e); zoom(st.z > 1.5 ? 1 / st.z : 2.5, x, y); };
-    const ro = window.ResizeObserver ? new ResizeObserver(layout) : null; if (ro) ro.observe(stage); else layout();
-    const close = (refocus = true) => { if (ro) ro.disconnect(); document.removeEventListener('keydown', onKey, true); full.onload = full.onerror = null; ov.remove(); document.body.classList.remove('mp-open'); if (refocus && opener && opener.isConnected) opener.focus(); };
-    const step = d => { const next = list[at + d]; if (!next) return; const wasInfo = !info.hidden; close(false); exMpOpen(next.key, opener); if (wasInfo) { const ib2 = document.querySelector('.mp-view [data-mp-info]'); if (ib2) ib2.click(); } };
-    const onKey = e => {
-      if (e.key === 'Escape') { e.preventDefault(); close(); return; }
-      if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
-      if (e.key === '+' || e.key === '=') { e.preventDefault(); zoom(1.25); } else if (e.key === '-') { e.preventDefault(); zoom(0.8); } else if (e.key === '0') { e.preventDefault(); st = MP.initial(vw(), vh(), fw, fh); paint(); }
-      else if ((e.key === 'PageDown' || e.key === 'PageUp')) { e.preventDefault(); step(e.key === 'PageDown' ? 1 : -1); }
-      else if (/^Arrow/.test(e.key)) { e.preventDefault(); const s = 60; st = MP.clampPan({ z: st.z, x: st.x + (e.key === 'ArrowLeft' ? s : e.key === 'ArrowRight' ? -s : 0), y: st.y + (e.key === 'ArrowUp' ? s : e.key === 'ArrowDown' ? -s : 0) }, vw(), vh(), fw, fh); paint(); }
-    };
+    let poll = 0, hooked = null;
+    const onKey = e => { if (e.key === 'Escape' && !ov.hidden) { e.preventDefault(); close(); } };
+    const close = () => { clearInterval(poll); document.removeEventListener('keydown', onKey, true); exMpDrop(); if (opener && opener.isConnected) opener.focus(); };
+    exMpLive = { ov, close };
+    // Échap ferme la carte quand la touche arrive à Panel ; dans la carte, Échap reste à la carte (désélectionner)
     document.addEventListener('keydown', onKey, true);
-    ov.querySelector('[data-mp-close]').onclick = () => close();
-    ov.querySelectorAll('[data-mp-z]').forEach(b => { b.onclick = () => { const k = b.dataset.mpZ; if (k === 'fit') { st = MP.initial(vw(), vh(), fw, fh); paint(); } else zoom(k === 'in' ? 1.4 : 1 / 1.4); }; });
-    ov.querySelectorAll('[data-mp-step]').forEach(b => { b.onclick = () => step(Number(b.dataset.mpStep)); });
-    const ib = ov.querySelector('[data-mp-info]'); ib.onclick = () => { info.hidden = !info.hidden; ib.setAttribute('aria-expanded', String(!info.hidden)); ov.classList.toggle('has-info', !info.hidden); };
-    setTimeout(() => ov.querySelector('[data-mp-close]').focus(), 0);
+    // Le message disparaît dès que la carte est lisible, sans attendre les portraits venus des wikis
+    const doc = () => { try { const d = frame.contentDocument; return d && /\/cartes\/explorer\.html$/.test(d.location.pathname) ? d : null; } catch (_) { return null; } };
+    const hideLoad = () => { const l = ov.querySelector('.mp-load'); if (l) l.remove(); };
+    // Un clic sur un personnage, une dimension ou une entité de la carte ouvre sa fiche dans Panel. L'atlas fait d'abord sa sélection
+    // (le nœud s'allume, l'adresse prend « #identifiant »), puis Panel prend le relais ; un glisser pour déplacer la carte n'ouvre rien.
+    const hook = d => {
+      let down = null;
+      d.addEventListener('pointerdown', e => { const n = e.target && e.target.closest ? e.target.closest('.n') : null; down = n ? { n, x: e.clientX, y: e.clientY } : null; }, true);
+      d.addEventListener('pointerup', e => {
+        const k = down; down = null;
+        if (!k || Math.hypot(e.clientX - k.x, e.clientY - k.y) > 6) return;
+        setTimeout(() => {
+          const id = decodeURIComponent(String(d.location.hash || '').slice(1));
+          if (!id || !k.n.classList.contains('on')) return;
+          // Fiches de l'univers ouvert : index de toutes ses cartes (exposé par cartes/panel-cartes.js), complété par la base d'entités
+          const w = d.defaultView, dc = /[?&]u=dc\b/.test(d.location.search), E = (dc ? w.DBDC && w.DBDC.E : w.DB && w.DB.E) || {};
+          const ix = typeof w.panelCartesIndex === 'function' ? w.panelCartesIndex() : null;
+          if (!E[id] && !(ix && ix[id])) return;
+          // Portrait affiché sur la carte : image des wikis (https) ou portrait de la carte (cartes/img/)
+          const im = k.n.querySelector('image'), href = im ? String(im.getAttribute('href') || '') : '';
+          const img = /^https:\/\//.test(href) ? href : /^img\/[a-z0-9_.-]+\.webp$/i.test(href) ? 'cartes/' + href : '';
+          const node = typeof w.panelCartesNode === 'function' ? w.panelCartesNode(id) : null;
+          setTimeout(() => exMpFiche({ id, uni: dc ? 'dc' : 'marvel', E, ix, img, node, map: title.textContent }, title.textContent), 420);
+        }, 0);
+      });
+    };
+    let tries = 0;
+    poll = setInterval(() => {
+      if (!ov.isConnected) { clearInterval(poll); return; }
+      const d = doc();
+      if (d && d.readyState !== 'loading') { hideLoad(); if (hooked !== d) { hooked = d; hook(d); } }
+      else if (++tries > 150) hideLoad();
+    }, 150);
+    frame.onload = hideLoad;
+    frame.src = meta.atlas;
+    ov.querySelector('[data-mp-close]').onclick = close;
+    setTimeout(() => frame.focus(), 0);
+  };
+  // Atlas ouvert (gardé en mémoire derrière une fiche pour y revenir exactement où on l'avait laissé)
+  let exMpLive = null;
+  const exMpDrop = () => { const v = document.querySelector('.mp-view'); if (v) v.remove(); const r = document.querySelector('.mp-return'); if (r) r.remove(); document.body.classList.remove('mp-open'); exMpLive = null; };
+  // Fiche de Panel pour une entité de la carte : la fiche cosmique de Panel quand elle existe, sinon la recherche de Découvrir sur son nom
+  // Entités des cartes touchées, gardées en mémoire le temps de la visite (rien n'est enregistré) : { marvel: {id: fiche}, dc: {…}, img: {"uni:id": portrait} }
+  const exMpEnt = { marvel: null, dc: null, img: {}, node: {} };
+  const exMpEntKeep = ctx => {
+    if (!exMpEnt[ctx.uni]) {
+      const out = {}, one = s => String(s == null ? '' : s).replace(/\s+/g, ' ').trim(), ok = k => /^[A-Za-z0-9_-]{1,60}$/.test(k);
+      const put = (k, n, en, cat, sub, desc, first, rel, fact) => {
+        const o = out[k] || {};
+        out[k] = { n: gdStr(one(n), 120) || o.n || '', en: gdStr(one(en), 120) || o.en || '', k: gdStr(one(cat), 8) || o.k || '', s: gdStr(one(sub), 200) || o.s || '', d: gdStr(one(desc), 1200) || o.d || '',
+          f: gdStr(one(first).replace(/\s*—\s*1ʳᵉ apparition non renseignée.*$/, ''), 240) || o.f || '', r: one(rel) ? one(rel).split(' ').filter(ok).slice(0, 40) : (o.r || []), x: gdStr(one(fact), 600) || o.x || '' };
+      };
+      // Base d'entités [fr, en, catégorie, sous-titre, description, 1re apparition, certitude, liens, anecdote], puis index des cartes
+      for (const [k, r] of Object.entries(ctx.E || {})) if (ok(k) && Array.isArray(r)) put(k, r[0], r[1], r[2], r[3], r[4], r[5], r[7], r[8]);
+      for (const [k, r] of Object.entries(ctx.ix || {})) if (ok(k) && r && typeof r === 'object') put(k, r.fr || r.t, r.en || r.t, r.cat, r.s, r.d, r.src, r.rel, r.fact);
+      exMpEnt[ctx.uni] = out;
+    }
+    if (ctx.img) exMpEnt.img[ctx.uni + ':' + ctx.id] = ctx.img;
+    // Ce que la carte affiche autour de l'entité : sa légende, ses étiquettes et le nom de la carte
+    const nd = ctx.node || {}, line = v => gdStr(String(v == null ? '' : v).replace(/\s+/g, ' '), 160);
+    exMpEnt.node[ctx.uni + ':' + ctx.id] = { k: line(nd.k), tags: (Array.isArray(nd.tags) ? nd.tags : []).map(line).filter(Boolean).slice(0, 8), map: line(ctx.map) };
+  };
+  // Personnage ou équipe de la base en ligne de Découvrir : nom exact (anglais ou français) chez le bon éditeur, le plus présent dans les comics
+  const exMpCvRef = async (e, uni) => {
+    if (!cvAvailable() || !['per', 'grp', 'abs', 'cel', 'dark'].includes(e.k)) return '';
+    const res = e.k === 'grp' ? 'team' : 'character', names = new Set([e.en, e.n].filter(Boolean).map(catNorm)), pub = uni === 'dc' ? 'dc comics' : 'marvel';
+    try {
+      const d = await Promise.race([
+        cvCall('search', 'search', { format: 'jsonp', resources: res, query: e.en || e.n, limit: 20, field_list: 'id,name,publisher,count_of_issue_appearances' }),
+        new Promise((_, no) => setTimeout(() => no(new Error('délai')), 6000))]);
+      const best = (d && d.results || []).filter(r => r && r.id && names.has(catNorm(r.name)) && catNorm(r.publisher ? r.publisher.name : '').includes(pub))
+        .sort((a, b) => (b.count_of_issue_appearances || 0) - (a.count_of_issue_appearances || 0))[0];
+      return best ? res + ':' + best.id : '';
+    } catch (_) { return ''; }
+  };
+  // Un clic sur la carte ouvre directement une fiche de Panel, comme un nom touché dans Découvrir (jamais une liste de résultats) :
+  // 1. la fiche cosmique de Panel (Marvel) ; 2. la fiche du personnage ou de l'équipe dans la base de Découvrir ;
+  // 3. sinon, la fiche de Panel tirée de la carte (description, première apparition, entités liées).
+  // La carte reste ouverte derrière : « ← Revenir à la carte » la retrouve telle qu'on l'avait laissée.
+  const exMpFiche = async (ctx, mapTitle) => {
+    const live = exMpLive; if (!live) return;
+    exMpEntKeep(ctx);
+    const e = (exMpEnt[ctx.uni] || {})[ctx.id]; if (!e) return;
+    const st = document.createElement('span'); st.className = 'mp-load'; st.setAttribute('role', 'status'); st.textContent = 'Ouverture de la fiche…';
+    const body = live.ov.querySelector('.mp-body'); if (body) body.appendChild(st);
+    let page = 'map-e', ref = ctx.uni + ':' + ctx.id;
+    if (ctx.uni === 'marvel') {
+      if (!cz.data && cz.status !== 'error') { exCzLoad(); for (let i = 0; i < 40 && cz.status === 'loading'; i++) await new Promise(r => setTimeout(r, 100)); }
+      if (cz.data && cz.data.E[ctx.id]) { page = 'cosmos-e'; ref = ctx.id; }
+    }
+    if (page === 'map-e') { const cv = await exMpCvRef(e, ctx.uni); if (cv) { page = 'cv'; ref = cv; } }
+    st.remove();
+    if (exMpLive !== live || !live.ov.isConnected) return;
+    live.ov.hidden = true; document.body.classList.remove('mp-open');
+    const back = document.createElement('div');
+    back.className = 'mp-return';
+    back.innerHTML = '<button class="btn" data-mp-back>← Revenir à la carte</button><button class="mp-b mp-x" data-mp-drop aria-label="Fermer la carte">✕</button>';
+    back.querySelector('[data-mp-back]').title = mapTitle || '';
+    back.querySelector('[data-mp-back]').onclick = () => { back.remove(); live.ov.hidden = false; document.body.classList.add('mp-open'); const f = live.ov.querySelector('.mp-frame'); if (f) f.focus(); };
+    back.querySelector('[data-mp-drop]').onclick = () => live.close();
+    document.body.appendChild(back);
+    exGo(page, ref);
+  };
+  // Fiche de Panel d'une entité des cartes (page « map-e », référence « marvel:id » ou « dc:id »)
+  const exMpEntityHtml = ref => {
+    const i = String(ref).indexOf(':'), uni = String(ref).slice(0, i), id = String(ref).slice(i + 1), E = exMpEnt[uni], e = E && E[id];
+    const backMaps = '<button class="btn secondary ex-back" data-ex-go="maps">← Cartes des univers</button>';
+    if (!e) return backMaps + '<div class="ex-empty">Cette fiche s\'ouvre depuis une carte : rouvrez la carte et touchez l\'entité.</div>';
+    const cat = CZ_CATS[e.k] || ['', '#999'], img = exMpEnt.img[ref] || '', nd = exMpEnt.node[ref] || { k: '', tags: [], map: '' };
+    const pic = /^(https:\/\/|cartes\/img\/)/.test(img) ? '<img src="' + h(img) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">' : '';
+    const go = k => uni === 'marvel' && cz.data && cz.data.E[k] ? ' data-ex-go="cosmos-e" data-ex-id="' + h(k) + '"' : ' data-ex-go="map-e" data-ex-id="' + h(uni + ':' + k) + '"';
+    const rel = e.r.filter(k => E[k] && k !== id).slice(0, 24);
+    const first = e.f ? e.f.split(/\s*·\s*/)[0].replace(/\s*\(.*$/, '').replace(/[«»]/g, '').trim().slice(0, 80) : '';
+    const q = e.en || e.n;
+    return backMaps + '<article class="cz-e" style="--cz:' + cat[1] + '">' +
+      '<header class="cz-e-head"><figure class="cz-e-port">' + (pic || '<span class="cz-card-ini">' + h(String(e.n || '?').slice(0, 1)) + '</span>') + '</figure><div>' +
+        '<span class="cz-e-cat"><span>' + h(cat[0] || 'Atlas') + '</span> · <span data-no-i18n>' + (uni === 'dc' ? 'DC' : 'Marvel') + '</span></span><h2>' + h(e.n) + '</h2>' + (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') +
+        (e.s || nd.k ? '<p class="cz-e-lead">' + h(e.s || nd.k) + '</p>' : '') +
+        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button></p></div></header>' +
+      '<div class="cz-e-prose">' + (e.d ? '<p class="cz-e-big">' + h(e.d) + '</p>' : '<p class="ex-note">L\'atlas ne décrit pas encore cette entité.</p>') + (e.x ? '<p>' + h(e.x) + '</p>' : '') +
+        (nd.tags.length ? '<div class="ex-chips">' + nd.tags.map(t => '<span class="ex-chip is-static">' + h(t) + '</span>').join('') + '</div>' : '') +
+        (nd.map ? '<p class="ex-note"><span>Sur la carte :</span> <b>' + h(nd.map) + '</b>' + (nd.k && nd.k !== e.s && nd.k !== (e.s || nd.k) && catNorm(nd.k) !== catNorm(nd.map) ? ' · <span>' + h(nd.k) + '</span>' : '') + '</p>' : '') +
+        (e.f ? '<h3>Première apparition</h3><p>' + (first ? '<button class="ex-link" data-ex-q="' + h(first) + '">' + h(e.f) + '</button>' : h(e.f)) + '</p>' : '') +
+        (rel.length ? '<h3>Sur la carte avec</h3><div class="ex-chips">' + rel.map(k => '<button class="ex-chip"' + go(k) + '>' + h(E[k].n) + '</button>').join('') + '</div>' : '') + '</div>' +
+      '<p class="ex-credit">' + (uni === 'dc' ? 'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © DC.' : 'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © Marvel.') + '</p></article>';
   };
   // D-78 : sommaire de l'accueil et listes longues repliées (personnages, créateurs, séries)
   const EX_UADD_ERR = { name: 'Le nom : 2 caractères au moins.', from: 'La première année : entre 1890 et cette année.', to: 'La dernière année : après la première, ou vide si l\'univers continue.', source: 'La source : un lien https complet.' };
@@ -22215,7 +22290,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     '<div class="af-grid">' + ar.list.map(a => '<div class="af-card is-' + a.rarity + (a.unlocked ? ' is-on' : '') + (a.gem ? ' is-gem' : '') + '" style="--h:' + a.hue + '" title="' + escapeHtml(a.lore) + '">' +
       '<span class="af-medal' + (AF_ART[a.id] ? ' has-art' : '') + (a.img ? ' has-photo' : '') + '">' + afArt(a) + '</span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
       '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString(uiLocale()) + ' / ' + a.goal.toLocaleString(uiLocale())) + '</em></div>').join('') + '</div>' +
-    '<p class="stat-sub" style="margin:8px 2px 18px">Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l\'atlas Marvel Primestone, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte 50 XP.</p>';
+    '<p class="stat-sub" style="margin:8px 2px 18px">Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l\'atlas des cosmologies, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte 50 XP.</p>';
 
   // ── Communauté : en-tête commun (profil compact, stories, onglets) ; un seul endroit pour naviguer (D-63)
   let commTab = 'feed';
@@ -22334,7 +22409,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>');
     if (tab === 'display') return '<h3>Affichage</h3>' +
       row('Apparence', 'Clair, sombre ou selon le réglage de l’appareil', '<span class="set-seg" role="group" aria-label="Apparence">' + [['light', 'Clair'], ['dark', 'Sombre'], ['system', 'Système']].map(([k, l]) => '<button type="button" class="set-seg-b" data-set-mode="' + k + '" aria-pressed="' + ((document.documentElement.dataset.modePref || 'system') === k) + '">' + l + '</button>').join('') + '</span>') +
-      row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Primestone'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
+      row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Jaune'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
       row('Langue', 'Dates et nombres suivent la langue choisie.', '<select class="field-input" data-set-lang data-no-i18n aria-label="Langue">' + Object.keys(I18N.LOCALES).map(k => '<option value="' + k + '"' + (k === uiLang ? ' selected' : '') + '>' + I18N.LOCALES[k] + '</option>').join('') + '</select>') +
       row('Vue de la collection', 'Cartes, liste, boîtes', btn('Cartes / liste', 'data-set-click="singlesViewModeBtn"') + ' ' + btn('Boîtes', 'data-set-click="singlesBoxesBtn"')) +
       row('Calendrier', 'Manga et éditeurs manga masqués par défaut (comics uniquement)', '<span class="set-pill is-ok">Comics</span>');

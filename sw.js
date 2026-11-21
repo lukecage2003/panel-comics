@@ -8,9 +8,11 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-21-atlas';
+const VERSION = 'panel-2026-11-21-cartes-interactives';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
+// D-108 : cartes interactives de l'atlas (cartes/), gardées une fois ouvertes pour être relues hors ligne
+const CARTES_CACHE = 'panel-cartes-v1';
 const SHELL = [
   './',
   './index.html',
@@ -68,6 +70,21 @@ self.addEventListener('fetch', event => {
   const req = event.request;
   if (req.method !== 'GET') return;
   const url = new URL(req.url);
+
+  // Cartes de l'atlas : réseau d'abord, puis la copie gardée ; elles ne remplacent jamais la page de Panel en cache
+  if (url.origin === self.location.origin && url.pathname.includes('/cartes/')) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CARTES_CACHE);
+      try {
+        const res = await fetch(req);
+        if (res && res.ok) cache.put(req, res.clone());
+        return res;
+      } catch (_) {
+        return (await cache.match(req, { ignoreVary: true })) || (await cache.match(req, { ignoreSearch: true, ignoreVary: true })) || Response.error();
+      }
+    })());
+    return;
+  }
 
   // Pages de l'app : réseau d'abord (3 s max), sinon la version en cache
   if (req.mode === 'navigate' && url.origin === self.location.origin) {

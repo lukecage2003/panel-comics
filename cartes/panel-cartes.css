@@ -1,0 +1,7 @@
+/* Panel (D-108) : seules les cartes de l'atlas sont affichées ; le reste du site n'est pas repris. */
+/* Titres aux polices de Panel, servies par Panel (aucune police chargée chez un tiers) */
+@font-face { font-family: 'Big Shoulders Display'; font-weight: 700 900; font-display: swap; src: url('../fonts/barlow-condensed-800-latin.woff2') format('woff2'); }
+@font-face { font-family: 'Anton'; font-display: swap; src: url('../fonts/barlow-condensed-800-latin.woff2') format('woff2'); }
+/* Une carte, seule : ni barre du haut (onglets des autres cartes), ni barre du bas (tour, versions, formats, vidéo, téléchargements) */
+header, footer, #card, #cap, #bars, #wm, #vbadge, #offplate, #toast, #codex, #quiz, #dl, #panel, #safe { display: none !important; }
+#app { grid-template-rows: minmax(0, 1fr) !important; }

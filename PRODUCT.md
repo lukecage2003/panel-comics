@@ -52,7 +52,7 @@ Comics only: American publishers and French comics publishers (Urban, Panini Com
 
 ## Brand Commitments
 
-Name "PANEL" (formerly "Panel by Primestone"). French UI copy. Black and yellow Primestone identity, Barlow Condensed headings, light/dark/system modes. Existing icons in `icons/`.
+Name "PANEL". French UI copy. Black and yellow identity, Barlow Condensed headings, light/dark/system modes. Existing icons in `icons/`.
 
 ## Evidence on Hand
 

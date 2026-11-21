@@ -1,7 +1,7 @@
 {
   "name": "panel-comics",
   "private": true,
-  "description": "Panel by Primestone — outillage de développement (backend Phase 3). L'application reste index.html sans dépendance d'exécution.",
+  "description": "Panel — outillage de développement (backend Phase 3). L'application reste index.html sans dépendance d'exécution.",
   "license": "UNLICENSED",
   "scripts": {
     "test:db": "node --test --test-reporter=spec --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=backend/tests/report.txt \"backend/tests/*.test.js\"",

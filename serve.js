@@ -39,7 +39,7 @@ const TYPES = {
   '.woff2': 'font/woff2'
 };
 // Seuls les fichiers de l'application sont servis (pas les sauvegardes, profils de test, etc.)
-const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|maps\/(?:marvel|dc)-\d{2}(?:-thumb)?\.webp|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
+const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|maps\/(?:marvel|dc)-\d{2}-thumb\.webp|cartes\/(?:img\/)?[a-z0-9_-][a-z0-9_.-]*\.(?:html|js|css|webp)|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
 
 // ---------- Relais GCD : quota, cache, aucune donnée personnelle transmise
 const GCD_HOURLY_MAX = 25;
@@ -707,6 +707,9 @@ const encodedBody = (entry, enc) => {
     : zlib.gzipSync(entry.raw, { level: 9 });
   return entry[enc];
 };
+// D-108 : les cartes interactives de l'atlas (cartes/) s'ouvrent dans un cadre de Panel : intégration permise par Panel lui-même, jamais par un autre site
+const CARTES_HEADERS = { ...SECURITY_HEADERS, 'X-Frame-Options': 'SAMEORIGIN', 'Content-Security-Policy': SECURITY_HEADERS['Content-Security-Policy'].replace("frame-ancestors 'none'", "frame-ancestors 'self'") };
+const isCartes = file => path.relative(root, file).split(/[\\/]/)[0] === 'cartes';
 const etagMatches = (req, etag) => String(req.headers['if-none-match'] || '').split(',').map(x => x.trim()).some(x => x === etag || x === '*');
 const serveStatic = (req, res, file) => {
   fs.stat(file, (err, st) => {
@@ -719,7 +722,7 @@ const serveStatic = (req, res, file) => {
         // le service worker et la page doivent toujours être revalidés pour recevoir les mises à jour (l'ETag évite de tout retélécharger)
         'Cache-Control': /\.(html|js|webmanifest)$/.test(file) ? 'no-cache' : /\.woff2$/.test(file) ? 'public, max-age=31536000, immutable' : 'public, max-age=86400',
         ETag: entry.etag,
-        ...SECURITY_HEADERS
+        ...(isCartes(file) ? CARTES_HEADERS : SECURITY_HEADERS)
       };
       if (COMPRESSIBLE.test(file)) headers.Vary = 'Accept-Encoding';
       if (etagMatches(req, entry.etag)) { res.writeHead(304, headers); return res.end(); }

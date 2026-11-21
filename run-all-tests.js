@@ -6285,7 +6285,7 @@ const waitForCdp = async () => {
             $('explorerRoot').querySelector('[data-ex-ufam="user"]').getAttribute('aria-pressed') === 'true';
           mine[0].querySelector('[data-ex-urm]').click(); await wait(250);
           r.removed = JSON.parse(localStorage.getItem(UKEY) || '[]').length === 0 && !$('explorerRoot').querySelector('.ex-ucard.is-user');
-          // Cartes des univers : catalogue de l'atlas Primestone (18 cartes), classement, recherche, visionneuse ; aucun import
+          // Cartes des univers : catalogue de l'atlas des cosmologies (18 cartes), classement, recherche, explorateur interactif ; aucun import
           window.Panel.explorer.open('home'); await wait(300);
           const tile = $('explorerRoot').querySelector('[data-ex-go="maps"]');
           r.tile = !!tile && tile.textContent.includes('Cartes des univers') && !!$('explorerRoot').querySelector('.is-random');
@@ -6309,20 +6309,36 @@ const waitForCdp = async () => {
           r.search = !!hit && hit.textContent.includes('Dream of the Endless') && $('explorerRoot').querySelectorAll('.mp-card').length < 18;
           q = $('explorerRoot').querySelector('[data-mp-q]'); q.value = ''; q.oninput(); await wait(150);
           $('explorerRoot').querySelector('.mp-card[data-mp-open="dc-04"]').click(); await wait(300);
+          // D-108 : la carte s'ouvre seule, animée (explorateur des cartes repris dans cartes/, sans le reste du site)
           const ov = document.querySelector('.mp-view');
-          const img = ov && ov.querySelector('.mp-img');
-          const stage = ov && ov.querySelector('.mp-stage');
-          for (let i = 0; i < 80 && stage && !stage.classList.contains('is-hd'); i++) await wait(100);
-          if (stage) { const b = stage.getBoundingClientRect(); stage.dispatchEvent(new WheelEvent('wheel', { deltaY: -400, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, bubbles: true, cancelable: true })); await wait(100); }
-          r.viewer = !!ov && ov.getAttribute('role') === 'dialog' && stage.classList.contains('is-hd') && img.src.endsWith('maps/dc-04.webp') && img.naturalWidth > 2000 &&
-            ov.querySelector('.mp-zoom').textContent !== '100 %' && ov.querySelector('.mp-title').textContent === 'Les Endless';
-          ov.querySelector('[data-mp-info]').click(); await wait(100);
-          const info = ov.querySelector('.mp-info');
-          r.info = !info.hidden && info.querySelector('.mp-meta').textContent.includes('pas une planche officielle') && info.querySelector('.mp-meta').textContent.includes('© DC') &&
-            info.querySelectorAll('.mp-names li').length >= 8;
-          ov.querySelector('[data-mp-step="1"]').click(); await wait(300);
-          const ov2 = document.querySelector('.mp-view');
-          r.next = !!ov2 && ov2.querySelector('.mp-title').textContent === 'Le Quatrième Monde';
+          const frame = ov && ov.querySelector('.mp-frame');
+          const fdoc = () => { try { return frame.contentDocument; } catch (_) { return null; } };
+          for (let i = 0; i < 100 && !(fdoc() && fdoc().location.pathname.endsWith('/cartes/explorer.html') && fdoc().querySelectorAll('.n').length); i++) await wait(100);
+          for (let i = 0; i < 30 && document.querySelector('.mp-load'); i++) await wait(100);
+          const d = fdoc(), fw = frame && frame.contentWindow;
+          const nodes = d ? [...d.querySelectorAll('.n')] : [];
+          const hidden = sel => { const e = d && d.querySelector(sel); return !e || fw.getComputedStyle(e).display === 'none'; };
+          r.viewer = !!ov && ov.getAttribute('role') === 'dialog' && ov.querySelector('.mp-title').textContent === 'Les Endless' &&
+            d.location.search === '?u=dc&map=3' && nodes.length >= 8 && nodes.some(n => n.textContent.includes('Dream of the Endless')) &&
+            !document.querySelector('.mp-load') && !ov.querySelector('[data-mp-home], .mp-img, .mp-stage');
+          // Une carte, seule : ni onglets des autres cartes (haut), ni tour, formats et vidéos (bas), ni titre d'introduction ; aucun lien vers le site
+          const sk = d && d.location.search;
+          if (fw) for (const k of ['ArrowRight', '2', ' ']) fw.dispatchEvent(new fw.KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+          await wait(300);
+          r.single = ['header', 'footer', '#card', '#cap', '#panel', '#dl', '#codex'].every(hidden) && !!d && !d.querySelector('a[href*="lukecage2003"], link[href*="fonts.googleapis"]') &&
+            fdoc() === d && d.location.search === sk && d.querySelectorAll('.n').length === nodes.length;
+          // Toucher Dream : la fiche de Panel s'ouvre directement (comme un nom touché dans Découvrir), la carte reste derrière
+          const dream = nodes.find(n => n.textContent.includes('Dream of the Endless'));
+          if (dream) { const b = dream.getBoundingClientRect(), o = { bubbles: true, pointerId: 9, isPrimary: true, button: 0, clientX: b.x + b.width / 2, clientY: b.y + b.height / 2 };
+            dream.dispatchEvent(new fw.PointerEvent('pointerdown', o)); dream.dispatchEvent(new fw.PointerEvent('pointerup', o)); }
+          for (let i = 0; i < 90 && !document.querySelector('.mp-return'); i++) await wait(100);
+          const art = $('explorerRoot').querySelector('.cz-e');
+          r.info = !!d && d.location.hash === '#dc_dream' && ov.hidden && !!document.querySelector('.mp-return') && !$('exSearch') &&
+            (!!art ? art.querySelector('h2').textContent === 'Dream' && art.querySelector('.cz-e-big').textContent.includes('Morphée') && art.querySelectorAll('.ex-chip[data-ex-go]').length >= 3
+              : !!$('explorerRoot').querySelector('.ex-cvd-block'));
+          // « ← Revenir à la carte » : la même carte, telle qu'on l'avait laissée
+          document.querySelector('[data-mp-back]').click(); await wait(150);
+          r.next = !ov.hidden && document.body.classList.contains('mp-open') && !document.querySelector('.mp-return') && fdoc() === d && d.location.hash === '#dc_dream';
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(150);
           r.escape = !document.querySelector('.mp-view') && !document.body.classList.contains('mp-open');
           window.Panel.explorer.open('home'); await wait(200);
@@ -6336,8 +6352,8 @@ const waitForCdp = async () => {
         return r;
       })()`);
       console.log('Résultat Test 85:', JSON.stringify(t85));
-      testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, cartes de l\'atlas (D-106, D-107)',
-        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'info', 'next', 'escape', 'dataUntouched'].every(k => t85[k] === true) });
+      testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, atlas interactif (D-106, D-107, D-108)',
+        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'next', 'escape', 'dataUntouched'].every(k => t85[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
