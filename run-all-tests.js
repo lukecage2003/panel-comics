@@ -6192,6 +6192,60 @@ const waitForCdp = async () => {
       console.log('Résultat Test 83:', JSON.stringify(t83));
       testResults.push({ test: 'Test 83 : Découvrir par thèmes, sans calendrier ni fournisseur, téléphone épuré, Légal & sécurité (D-104)',
         ok: !t83.error && ['tabs', 'onePane', 'noCalendar', 'separated', 'switch', 'noProvider', 'legal', 'mobileTop', 'mobileNoScroll', 'dataUntouched'].every(k => t83[k] === true) });
+      // ==========================================
+      // TEST 84 : Univers des comics, apparence dans Affichage, raccourci « / », guide au hasard (D-105)
+      // ==========================================
+      console.log('\n[TEST 84] Univers des comics, apparence, raccourci...');
+      const t84 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id);
+        const fp0 = await window.Panel.backup.fingerprint('collection');
+        const modePrev = document.documentElement.dataset.modePref || 'system', stored = localStorage.getItem('panel_color_mode');
+        try {
+          $('navExplorer').click(); await wait(400);
+          window.Panel.explorer.open('home'); await wait(300);
+          const root = $('explorerRoot');
+          root.querySelector('[data-ex-topic="universes"]').click(); await wait(250);
+          const cat = $('exSecUniverseCat');
+          const names = cat ? [...cat.querySelectorAll('.ex-ucard b')].map(b => b.textContent) : [];
+          r.catalog = names.length >= 20 && ['Marvel', 'DC', 'Milestone', 'The Walking Dead', 'Valiant', 'Image Comics'].every(n => names.includes(n)) && !!$('exSecUniverses');
+          cat.querySelector('[data-ex-ufam="dc"]').click(); await wait(250);
+          const cat2 = $('exSecUniverseCat');
+          r.family = [...cat2.querySelectorAll('.ex-ucard b')].map(b => b.textContent).includes('Milestone') && !cat2.querySelector('.ex-ucard b') .textContent.includes('Marvel') &&
+            cat2.querySelector('[data-ex-ufam="dc"]').getAttribute('aria-pressed') === 'true';
+          [...cat2.querySelectorAll('.ex-ucard-icons button')].find(b => b.textContent === 'Static').click(); await wait(300);
+          r.iconSearch = $('exSearch').value === 'Static';
+          // Remise à zéro de la recherche
+          const s = $('exSearch'); s.value = ''; s.dispatchEvent(new Event('input', { bubbles: true })); await wait(200);
+          window.Panel.explorer.open('home'); await wait(300);
+          $('explorerRoot').querySelector('[data-ex-ufam="all"]') && $('explorerRoot').querySelector('[data-ex-ufam="all"]').click(); await wait(150);
+          // Raccourci « / » : place le curseur dans la recherche de Découvrir
+          document.activeElement && document.activeElement.blur && document.activeElement.blur();
+          document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '/', bubbles: true }));
+          r.slash = document.activeElement === $('exSearch');
+          $('exSearch').blur();
+          // Guide au hasard : un vrai guide de la liste
+          $('explorerRoot').querySelector('[data-ex-topic="guides"]').click(); await wait(200);
+          const rnd = $('explorerRoot').querySelector('.ex-random');
+          r.random = !rnd || ($('explorerRoot').querySelectorAll('[data-ex-pane="guides"] .ex-gcard[data-ex-guide="' + rnd.dataset.exGuide + '"]').length >= 1);
+          $('explorerRoot').querySelector('[data-ex-topic="foryou"]').click(); await wait(150);
+          // Apparence dans Réglages › Affichage, puis retour au réglage d'origine
+          $('openSettingsBtnTop').click(); await wait(400);
+          document.querySelector('#settingsModal [data-set-tab="display"]').click(); await wait(200);
+          const other = document.documentElement.dataset.mode === 'dark' ? 'light' : 'dark';
+          document.querySelector('#settingsModal [data-set-mode="' + other + '"]').click(); await wait(150);
+          r.mode = document.documentElement.dataset.mode === other && document.querySelector('#settingsModal [data-set-mode="' + other + '"]').getAttribute('aria-pressed') === 'true';
+          document.querySelector('#settingsModal [data-set-mode="' + modePrev + '"]').click(); await wait(150);
+          r.modeBack = (document.documentElement.dataset.modePref || 'system') === modePrev;
+          document.querySelector('#settingsModal [data-set-tab="account"]').click(); await wait(100);
+          $('settingsModal').classList.remove('open');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { if (stored === null) localStorage.removeItem('panel_color_mode'); else localStorage.setItem('panel_color_mode', stored); }
+        r.dataUntouched = fp0 === await window.Panel.backup.fingerprint('collection');
+        return r;
+      })()`);
+      console.log('Résultat Test 84:', JSON.stringify(t84));
+      testResults.push({ test: 'Test 84 : Univers des comics, apparence dans Affichage, raccourci « / », guide au hasard (D-105)',
+        ok: !!t84 && !t84.error && ['catalog', 'family', 'iconSearch', 'slash', 'random', 'mode', 'modeBack', 'dataUntouched'].every(k => t84[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

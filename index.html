@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-4Nv8NzZLduaunucZlQ43xdxwLsaAx4ovg1oQZe+7c3g=' 'sha256-eqXjFVLTwdNVn1Cm0L2EpO5aTHbSyTvqfD7dozIcPVM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-G/AOjXFW69YNLXhrNQTjxfqTOEpaHlGLFgVv3Cm/KgI=' 'sha256-tKUJyo4lkXRyYXNVb8C3ZzkHJ3RDoA1EHik8yaLdyDc=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2302,6 +2302,9 @@
     .set-nav button.is-on { background: var(--accent, #FFD400); color: #111; }
     .set-main h3 { margin: 0 0 10px; }
     .set-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line, #333); }
+    .set-seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--bg-soft, rgba(127,127,127,.14)); }
+    .set-seg-b { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px; cursor: pointer; min-height: 34px; }
+    .set-seg-b[aria-pressed="true"] { background: var(--bg-card, #fff); color: var(--ink, var(--text)); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
     .set-legal-note { color: var(--muted); font-size: .86rem; margin: 0 0 10px; }
     .set-legal { border-bottom: 1px solid var(--line, #333); }
     .set-legal > summary { cursor: pointer; padding: 13px 0; font-weight: 700; list-style-position: inside; }
@@ -3105,6 +3108,26 @@
     .ex-qtools[hidden] { display: none; }
     .ex-topics { position: sticky; top: 0; z-index: 6; display: flex; gap: 8px; overflow-x: auto; padding: 10px 2px; margin: -14px 0 0; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: saturate(160%) blur(16px); backdrop-filter: saturate(160%) blur(16px); scrollbar-width: none; scroll-snap-type: x proximity; }
     .ex-topics::-webkit-scrollbar { display: none; }
+    /* D-105 : univers des comics */
+    .ex-ufams { margin-bottom: 12px; }
+    .ex-ucards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+    .ex-ucard { position: relative; display: flex; flex-direction: column; border-radius: 16px; overflow: hidden; color: #fff; isolation: isolate;
+      background: linear-gradient(140deg, hsl(var(--h) 62% 38%), hsl(calc(var(--h) + 38) 58% 22%)); box-shadow: 0 10px 24px -16px rgba(0,0,0,.6); }
+    .ex-ucard::after { content: ''; position: absolute; inset: 0; z-index: -1; background: radial-gradient(circle at 85% 0%, rgba(255,255,255,.22), transparent 55%); }
+    .ex-ucard-main { display: flex; flex-direction: column; gap: 4px; text-align: left; border: 0; background: none; color: inherit; font: inherit; padding: 16px 16px 10px; cursor: pointer; }
+    .ex-ucard-main small { font-size: 11px; letter-spacing: .04em; text-transform: uppercase; opacity: .82; font-weight: 700; }
+    .ex-ucard-main b { font-family: var(--font-display); font-size: 21px; line-height: 1.1; text-transform: uppercase; }
+    .ex-ucard-tag { font-size: 13px; line-height: 1.4; opacity: .92; }
+    .ex-ucard-icons { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 16px 14px; margin-top: auto; }
+    .ex-ucard-icons button { border: 1px solid rgba(255,255,255,.35); background: rgba(0,0,0,.18); color: #fff; font: inherit; font-size: 12px; padding: 5px 10px; border-radius: 999px; cursor: pointer; min-height: 30px; }
+    @media (hover: hover) { .ex-ucard-icons button:hover { background: rgba(255,255,255,.22); } .ex-ucard-main:hover b { text-decoration: underline; text-underline-offset: 3px; } }
+    .ex-ucard-main:focus-visible, .ex-ucard-icons button:focus-visible { outline: 2px solid #fff; outline-offset: -4px; border-radius: 12px; }
+    .ex-uhits { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 14px; }
+    .ex-uhits > span { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); }
+    .ex-random { margin-bottom: 10px; }
+    .ex-mychar-next { color: var(--accent, #FFD400); }
+    @media (max-width: 600px) { .ex-ufams { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin-left: -12px; margin-right: -12px; padding: 0 12px 2px; } .ex-ufams::-webkit-scrollbar { display: none; } .ex-ufams .ex-chip { flex: none; } .ex-ucards { grid-template-columns: 1fr 1fr; gap: 10px; } .ex-ucard-main { padding: 13px 12px 8px; } .ex-ucard-main b { font-size: 17px; } .ex-ucard-tag { font-size: 12px; } .ex-ucard-icons { padding: 0 12px 12px; } .ex-ucard-icons button { font-size: 11px; padding: 4px 8px; } }
+    @media (max-width: 380px) { .ex-ucards { grid-template-columns: 1fr; } }
     .ex-topic { flex: 0 0 auto; scroll-snap-align: start; border: 1.5px solid var(--line); background: var(--bg-card); color: var(--ink); font: 700 14px/1 var(--font-ui); padding: 10px 16px; min-height: 40px; border-radius: 999px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
     .ex-topic.is-on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
     .ex-topic:focus-visible { outline: 3px solid #FFD400; outline-offset: 2px; }
@@ -10212,6 +10235,86 @@ const byId = id => GUIDES.find(g => g.id === id) || null;
 
 module.exports = { GUIDES, pick, byId };
   return Object.freeze(module.exports); })();
+  /* domains/explorer/universes-core.js */
+  out.universes = (() => { const module = { exports: {} };
+'use strict';
+// Univers des comics (D-105) : catalogue éditorial rédigé pour Panel, sans image ni texte repris d'une source.
+// Chaque univers : clé, nom, éditeur, année de naissance, famille, phrase de présentation, recherche associée et personnages
+// ou séries phares (de simples noms, utilisés comme portes vers la recherche). Aucune donnée personnelle ; aucun accès au réseau.
+// Le classement des résultats de recherche en ligne (pertinence × notoriété) et le repérage des images « vides » des sources
+// sont aussi ici, pour être testés hors de l'interface.
+
+const FAMILIES = Object.freeze({ marvel: 'Marvel', dc: 'DC', image: 'Image et Skybound', indie: 'Indépendants', licence: 'Licences' });
+
+const U = (key, name, publisher, since, family, tagline, q, icons) => Object.freeze({ key, name, publisher, since, family, tagline, q, icons: Object.freeze(icons) });
+const UNIVERSES = Object.freeze([
+  U('marvel-616', 'Marvel', 'Marvel', 1961, 'marvel', 'L\'univers principal de Marvel, né avec les Fantastic Four.', 'Marvel', ['Spider-Man', 'X-Men', 'Avengers', 'Fantastic Four']),
+  U('ultimate', 'Ultimate Universe', 'Marvel', 2000, 'marvel', 'Les héros Marvel réinventés pour un nouveau départ, relancé en 2023.', 'Ultimate', ['Ultimate Spider-Man', 'Ultimate X-Men', 'The Ultimates']),
+  U('marvel-2099', 'Marvel 2099', 'Marvel', 1992, 'marvel', 'Le futur de Marvel, de Spider-Man 2099 aux héros de la fin du siècle.', '2099', ['Spider-Man 2099', 'Doom 2099']),
+  U('star-wars', 'Star Wars', 'Marvel', 2015, 'licence', 'La galaxie lointaine, très lointaine, en comics chez Marvel depuis 2015.', 'Star Wars', ['Darth Vader', 'Star Wars', 'Doctor Aphra']),
+  U('dc', 'DC', 'DC Comics', 1938, 'dc', 'Superman, Batman, Wonder Woman et la Justice League.', 'DC Comics', ['Superman', 'Batman', 'Wonder Woman', 'Justice League']),
+  U('absolute', 'Absolute Universe', 'DC Comics', 2024, 'dc', 'Les héros DC privés de leurs appuis, dans un monde plus hostile.', 'Absolute', ['Absolute Batman', 'Absolute Superman', 'Absolute Wonder Woman']),
+  U('black-label', 'DC Black Label', 'DC Comics', 2018, 'dc', 'Des récits pour lecteurs adultes, hors de la continuité.', 'Black Label', ['Batman: Damned', 'Superman: Space Age']),
+  U('vertigo', 'Vertigo', 'DC Comics', 1993, 'dc', 'Le label adulte de DC : fantastique, horreur et polar.', 'Vertigo', ['Sandman', 'Hellblazer', 'Preacher', 'Y: The Last Man']),
+  U('wildstorm', 'WildStorm', 'DC Comics', 1992, 'dc', 'L\'univers lancé par Jim Lee chez Image, puis repris par DC.', 'WildStorm', ['WildC.A.T.s', 'The Authority', 'Stormwatch']),
+  U('milestone', 'Milestone', 'DC Comics', 1993, 'dc', 'Fondé par Dwayne McDuffie, Denys Cowan, Michael Davis et Derek T. Dingle.', 'Milestone', ['Static', 'Icon', 'Hardware', 'Blood Syndicate']),
+  U('image', 'Image Comics', 'Image Comics', 1992, 'image', 'Des créateurs propriétaires de leurs œuvres.', 'Image Comics', ['Saga', 'Monstress', 'Paper Girls']),
+  U('spawn', 'Spawn', 'Image Comics', 1992, 'image', 'Le héros revenu des enfers de Todd McFarlane et ses séries dérivées.', 'Spawn', ['Spawn', 'King Spawn', 'Gunslinger Spawn']),
+  U('walking-dead', 'The Walking Dead', 'Image Comics', 2003, 'image', 'L\'apocalypse zombie de Robert Kirkman, Tony Moore et Charlie Adlard.', 'The Walking Dead', ['The Walking Dead', 'Negan', 'Clementine']),
+  U('invincible', 'Invincible', 'Image Comics', 2003, 'image', 'Le super-héros de Robert Kirkman, Cory Walker et Ryan Ottley.', 'Invincible', ['Invincible', 'Battle Beast', 'Atom Eve']),
+  U('energon', 'Energon Universe', 'Image Comics', 2023, 'image', 'Transformers et G.I. Joe réunis dans un même univers, chez Skybound.', 'Energon Universe', ['Transformers', 'G.I. Joe', 'Void Rivals', 'Duke']),
+  U('massive', 'Massive-Verse', 'Image Comics', 2021, 'image', 'Radiant Black et les héros qui partagent son monde.', 'Massive-Verse', ['Radiant Black', 'Rogue Sun', 'Inferno Girl Red']),
+  U('top-cow', 'Top Cow', 'Image Comics', 1992, 'image', 'Le studio de Marc Silvestri : magie, armes anciennes et artefacts.', 'Top Cow', ['Witchblade', 'The Darkness']),
+  U('hellboy', 'Hellboy et le Mignolaverse', 'Dark Horse', 1994, 'indie', 'Hellboy, le B.P.R.D. et l\'occulte de Mike Mignola.', 'Hellboy', ['Hellboy', 'B.P.R.D.', 'Abe Sapien']),
+  U('dark-horse', 'Dark Horse', 'Dark Horse', 1986, 'indie', 'Éditeur indépendant de créateurs et de grandes licences.', 'Dark Horse', ['Sin City', 'The Umbrella Academy', 'Black Hammer']),
+  U('valiant', 'Valiant', 'Valiant', 1989, 'indie', 'Un univers partagé de super-héros, relancé en 2012.', 'Valiant', ['X-O Manowar', 'Bloodshot', 'Ninjak']),
+  U('boom', 'BOOM! Studios', 'BOOM! Studios', 2005, 'indie', 'Horreur, fantastique et grandes séries de créateurs.', 'BOOM! Studios', ['Something is Killing the Children', 'Once & Future']),
+  U('tmnt', 'Teenage Mutant Ninja Turtles', 'IDW Publishing', 1984, 'licence', 'Les Tortues de Kevin Eastman et Peter Laird, chez IDW depuis 2011.', 'Teenage Mutant Ninja Turtles', ['Leonardo', 'Raphael', 'Donatello', 'Michelangelo']),
+  U('idw', 'IDW Publishing', 'IDW Publishing', 1999, 'indie', 'Licences et séries de créateurs, de Star Trek à Locke & Key.', 'IDW Publishing', ['Locke & Key', 'Star Trek', 'Sonic the Hedgehog']),
+  U('dynamite', 'Dynamite', 'Dynamite', 2004, 'indie', 'Héros classiques et récits musclés.', 'Dynamite', ['The Boys', 'Vampirella', 'Red Sonja']),
+  U('archie', 'Archie', 'Archie Comics', 1941, 'indie', 'Riverdale, Archie, Betty, Veronica et Jughead.', 'Archie', ['Archie', 'Jughead', 'Sabrina'])
+]);
+
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+// Univers d'une famille, dans l'ordre du catalogue ; « all » ou vide : tous
+const byFamily = fam => !fam || fam === 'all' ? UNIVERSES.slice() : UNIVERSES.filter(u => u.family === fam);
+// Univers dont le nom, l'éditeur ou un personnage phare correspond à la recherche
+const find = q => { const n = norm(q); if (n.length < 2) return []; return UNIVERSES.filter(u => [u.name, u.publisher, u.q].concat(u.icons).some(x => norm(x).includes(n))); };
+// Univers liés à un nom (personnage, série) : pour proposer « Son univers » sur une fiche
+const ofName = name => { const n = norm(name); if (n.length < 3) return []; return UNIVERSES.filter(u => u.icons.some(x => { const k = norm(x); return k === n || (' ' + n + ' ').includes(' ' + k + ' '); })); };
+// Teinte stable par univers (cartes sans image) : couleur de la famille (Marvel rouge, DC bleu…), légèrement variée
+const FAMILY_HUE = Object.freeze({ marvel: 356, dc: 214, image: 168, indie: 28, licence: 268 });
+const hue = key => { const u = UNIVERSES.find(x => x.key === key); const v = [...String(key)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 997, 11) % 30 - 15; return ((u ? FAMILY_HUE[u.family] : 0) + v + 360) % 360; };
+
+// ── Recherche en ligne ─────────────────────────────────────────────────────────
+// Images génériques des sources (« pas d'image ») : à remplacer par l'emblème de Panel, jamais présentées comme un portrait
+const isPlaceholderImage = url => !url || /(^|\/)[^/]*(blank|img_broken|image_not_found|no[-_]?image|default[-_]avatar)[^/]*\.(png|jpe?g|gif|webp)(\?|$)/i.test(String(url));
+
+// Pertinence du nom par rapport à la recherche : exact > début > mot entier > contenu
+const relevance = (name, q) => {
+  const n = norm(name), k = norm(q);
+  if (!n || !k) return 0;
+  if (n === k) return 3;
+  if (n.startsWith(k + ' ') || n.startsWith(k)) return 2.3;
+  if ((' ' + n + ' ').includes(' ' + k + ' ')) return 1.7;
+  if (n.includes(k)) return 1.2;
+  const words = k.split(' ');
+  return words.every(w => n.includes(w)) ? 1 : 0.4;
+};
+const MAJOR = new Set(['marvel', 'dc comics', 'image', 'image comics', 'dark horse comics', 'dark horse', 'idw publishing', 'boom studios', 'dynamite entertainment', 'valiant', 'skybound']);
+// Score : pertinence × notoriété (apparitions ou nombre de numéros, en logarithme), léger bonus aux grands éditeurs et aux images réelles
+const score = (r, q) => {
+  const rel = relevance(r.name || (r.volume && r.volume.name) || '', q);
+  const pop = Number(r.count_of_issue_appearances || r.count_of_issues || 0);
+  const pub = norm(r.publisher && r.publisher.name);
+  return rel * (1 + Math.log10(1 + Math.max(0, pop))) * (MAJOR.has(pub) ? 1.25 : 1) * (isPlaceholderImage(r.image && (r.image.small_url || r.image.medium_url)) ? 0.85 : 1);
+};
+// Tri stable par score décroissant (l'ordre d'origine départage)
+const rank = (list, q) => (list || []).map((r, i) => ({ r, i, s: score(r, q) })).sort((a, b) => b.s - a.s || a.i - b.i).map(x => x.r);
+
+module.exports = { FAMILIES, UNIVERSES, byFamily, find, ofName, hue, isPlaceholderImage, relevance, score, rank };
+  return Object.freeze(module.exports); })();
   /* domains/i18n/i18n-core.js */
   out.i18n = (() => { const module = { exports: {} };
 'use strict';
@@ -10628,6 +10731,44 @@ const phrases = {
   'Aucune clé d\'accès n\'est écrite dans l\'application : les sources en ligne passent par le serveur de Panel.': 'No access key is written in the app: online sources go through Panel\'s server.',
   'L\'équipe (administration et modération) devra se connecter avec une double authentification. Sans elle, elle n\'a aucun pouvoir. Elle n\'a jamais accès à votre collection ni à vos finances.': 'The team (administration and moderation) will have to sign in with two-factor authentication. Without it, they have no powers. They never have access to your collection or finances.',
   'Sauvegardez régulièrement votre collection (Données & sauvegardes) : elle n\'existe que sur cet appareil.': 'Back up your collection regularly (Data & backups): it only exists on this device.',
+  // D-105 : univers des comics, apparence, guides pour vos personnages
+  'Univers des comics': 'Comics universes',
+  'Image et Skybound': 'Image and Skybound',
+  'Indépendants': 'Independents',
+  'Licences': 'Licences',
+  'Des grands univers partagés aux mondes de créateurs. Touchez un univers pour ses séries, un nom pour ses comics.': 'From big shared universes to creator-owned worlds. Tap a universe for its series, a name for its comics.',
+  'depuis {n}': 'since {n}',
+  'Guides pour vos personnages': 'Guides for your characters',
+  'Événements et parcours où ils apparaissent.': 'Events and paths where they appear.',
+  'Un guide au hasard': 'A random guide',
+  'Clair, sombre ou selon le réglage de l’appareil': 'Light, dark or following the device setting',
+  'Système': 'System',
+  'L\'univers principal de Marvel, né avec les Fantastic Four.': 'Marvel\'s main universe, born with the Fantastic Four.',
+  'Les héros Marvel réinventés pour un nouveau départ, relancé en 2023.': 'Marvel heroes reinvented for a fresh start, relaunched in 2023.',
+  'Le futur de Marvel, de Spider-Man 2099 aux héros de la fin du siècle.': 'Marvel\'s future, from Spider-Man 2099 to the heroes of the century\'s end.',
+  'La galaxie lointaine, très lointaine, en comics chez Marvel depuis 2015.': 'A galaxy far, far away, in comics at Marvel since 2015.',
+  'Superman, Batman, Wonder Woman et la Justice League.': 'Superman, Batman, Wonder Woman and the Justice League.',
+  'Les héros DC privés de leurs appuis, dans un monde plus hostile.': 'DC heroes stripped of their support, in a harsher world.',
+  'Des récits pour lecteurs adultes, hors de la continuité.': 'Stories for mature readers, outside continuity.',
+  'Le label adulte de DC : fantastique, horreur et polar.': 'DC\'s mature imprint: fantasy, horror and crime.',
+  'L\'univers lancé par Jim Lee chez Image, puis repris par DC.': 'The universe Jim Lee launched at Image, later acquired by DC.',
+  'Fondé par Dwayne McDuffie, Denys Cowan, Michael Davis et Derek T. Dingle.': 'Founded by Dwayne McDuffie, Denys Cowan, Michael Davis and Derek T. Dingle.',
+  'Des créateurs propriétaires de leurs œuvres.': 'Creators who own their work.',
+  'Le héros revenu des enfers de Todd McFarlane et ses séries dérivées.': 'Todd McFarlane\'s hero back from hell, and its spin-offs.',
+  'L\'apocalypse zombie de Robert Kirkman, Tony Moore et Charlie Adlard.': 'The zombie apocalypse of Robert Kirkman, Tony Moore and Charlie Adlard.',
+  'Le super-héros de Robert Kirkman, Cory Walker et Ryan Ottley.': 'The superhero of Robert Kirkman, Cory Walker and Ryan Ottley.',
+  'Transformers et G.I. Joe réunis dans un même univers, chez Skybound.': 'Transformers and G.I. Joe together in one universe, at Skybound.',
+  'Radiant Black et les héros qui partagent son monde.': 'Radiant Black and the heroes who share its world.',
+  'Le studio de Marc Silvestri : magie, armes anciennes et artefacts.': 'Marc Silvestri\'s studio: magic, ancient weapons and artefacts.',
+  'Hellboy, le B.P.R.D. et l\'occulte de Mike Mignola.': 'Hellboy, the B.P.R.D. and Mike Mignola\'s occult.',
+  'Éditeur indépendant de créateurs et de grandes licences.': 'Independent publisher of creators and big licences.',
+  'Un univers partagé de super-héros, relancé en 2012.': 'A shared superhero universe, relaunched in 2012.',
+  'Horreur, fantastique et grandes séries de créateurs.': 'Horror, fantasy and major creator series.',
+  'Les Tortues de Kevin Eastman et Peter Laird, chez IDW depuis 2011.': 'Kevin Eastman and Peter Laird\'s Turtles, at IDW since 2011.',
+  'Licences et séries de créateurs, de Star Trek à Locke & Key.': 'Licences and creator series, from Star Trek to Locke & Key.',
+  'Héros classiques et récits musclés.': 'Classic heroes and hard-hitting stories.',
+  'Riverdale, Archie, Betty, Veronica et Jughead.': 'Riverdale, Archie, Betty, Veronica and Jughead.',
+  'Hellboy et le Mignolaverse': 'Hellboy and the Mignolaverse',
 };
 
 const same = [
@@ -10802,6 +10943,9 @@ const phrases = {
   "Actualiser": "Actualizar",
   "Chercher en ligne": "Buscar en línea",
   "Mentions légales": "Aviso legal",
+  // D-105
+  "Univers des comics": "Universos del cómic",
+  "Système": "Sistema",
 };
 
 module.exports = { locale: 'es', phrases, same: [] };
@@ -10962,6 +11106,9 @@ const phrases = {
   "Actualiser": "Atualizar",
   "Chercher en ligne": "Pesquisar online",
   "Mentions légales": "Aviso legal",
+  // D-105
+  "Univers des comics": "Universos dos quadrinhos",
+  "Système": "Sistema",
 };
 
 module.exports = { locale: 'pt', phrases, same: [] };
@@ -19276,6 +19423,30 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Découvrir repensé (D-104), à la manière des pages « Explorer » des réseaux sociaux : une recherche, puis des onglets
   // thématiques (un seul affiché à la fois). Pas de calendrier ici : les sorties restent dans « Sorties & calendrier ».
   // Personnages, séries et créateurs suivis ont chacun leur rangée ; les membres suivis auront la leur avec les comptes.
+  // D-105 : catalogue des univers des comics (module pur, testé) et classement de la recherche en ligne
+  const UNI = window.PanelDomains.universes;
+  const exUniversesHtml = () => {
+    const fam = UNI.FAMILIES[exView.uniFam] ? exView.uniFam : 'all';
+    return '<section class="ex-sec" id="exSecUniverseCat"><div class="ex-sec-head"><h3>Univers des comics</h3><p>Des grands univers partagés aux mondes de créateurs. Touchez un univers pour ses séries, un nom pour ses comics.</p></div>' +
+      '<div class="ex-chips ex-ufams" role="group" aria-label="Familles d\'univers">' + [['all', 'Tous']].concat(Object.entries(UNI.FAMILIES)).map(([k, l]) => '<button class="ex-chip' + (fam === k ? ' active' : '') + '" data-ex-ufam="' + k + '" aria-pressed="' + (fam === k) + '">' + h(l) + '</button>').join('') + '</div>' +
+      '<div class="ex-ucards">' + UNI.byFamily(fam).map(u => '<article class="ex-ucard" style="--h:' + UNI.hue(u.key) + '"><button class="ex-ucard-main" data-ex-q="' + h(u.q) + '" data-ex-browse="volume" aria-label="' + h(u.name + ' : voir ses séries') + '"><small><span>' + h(u.publisher) + '</span> · <span>depuis ' + u.since + '</span></small><b>' + h(u.name) + '</b><span class="ex-ucard-tag">' + h(u.tagline) + '</span></button>' +
+        '<div class="ex-ucard-icons">' + u.icons.map(n => '<button data-ex-q="' + h(n) + '">' + h(n) + '</button>').join('') + '</div></article>').join('') + '</div></section>';
+  };
+  const exCharGuidesHtml = () => {
+    const mine = exMyChars();
+    if (!mine.length) return '';
+    const keys = new Set(mine.map(x => x.key));
+    const gs = exGuides().filter(g => (g.characters || []).some(c => keys.has(catNorm(c.name)))).slice(0, 6);
+    if (!gs.length) return '';
+    return '<section class="ex-sec" id="exSecCharGuides"><div class="ex-sec-head"><h3>Guides pour vos personnages</h3><p>Événements et parcours où ils apparaissent.</p></div><div class="ex-ggrid">' + gs.map(g => exGuideCard(g)).join('') + '</div></section>';
+  };
+  // Raccourci « / » : chercher dans Découvrir (hors champ de saisie)
+  document.addEventListener('keydown', e => {
+    if (e.key !== '/' || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+    const tg = e.target; if (tg && (/^(INPUT|TEXTAREA|SELECT)$/.test(tg.tagName) || tg.isContentEditable)) return;
+    const s = $('exSearch'); if (!s || !document.body.classList.contains('view-discover') || !s.getClientRects().length) return;
+    e.preventDefault(); s.focus(); s.select();
+  });
   const EX_TOPICS = [['foryou', 'Pour toi'], ['characters', 'Personnages'], ['series', 'Séries'], ['guides', 'Guides'], ['news', 'Actualités'], ['universes', 'Univers']];
   const exHomeHtml = () => {
     const guides = exGuides();
@@ -19296,7 +19467,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const tile = (cls, attrs, title, sub) => '<button class="ex-tile ' + cls + '" ' + attrs + '><b>' + title + '</b><small>' + sub + '</small></button>';
     return '<nav class="ex-topics" role="tablist" aria-label="Thèmes de Découvrir">' + EX_TOPICS.map(([k, l]) => '<button role="tab" id="exTopic-' + k + '" aria-controls="exPane-' + k + '" aria-selected="' + (k === topic) + '" tabindex="' + (k === topic ? 0 : -1) + '" class="ex-topic' + (k === topic ? ' is-on' : '') + '" data-ex-topic="' + k + '">' + l + '</button>').join('') + '</nav>' +
       pane('foryou',
-        exMyCharsHtml() + exFollowSeriesHtml() + exFollowsHtml() +
+        exMyCharsHtml() + exCharGuidesHtml() + exFollowSeriesHtml() + exFollowsHtml() +
         (recos.length ? sec('exSecReco', 'Pour vous', 'D\'après votre collection, votre progression et votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
         exTrendsHtml() +
         (featured.length ? sec('exSecFeatured', 'À la une', '', '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>') : '<section class="ex-sec" id="exSecFeatured" hidden></section>') +
@@ -19315,6 +19486,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       pane('guides',
         sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
           (gCats.length > 1 ? '<div class="ex-chips">' + '<button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
+          (shown.length > 2 ? '<div class="ex-row"><button class="btn secondary rel-mini ex-random" data-ex-guide="' + h(shown[Math.floor(Math.random() * shown.length)].id) + '">Un guide au hasard</button></div>' : '') +
           '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
           '<div class="ex-row dev-only"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>')) +
       pane('news',
@@ -19322,8 +19494,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
           '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
         sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>')) +
-      pane('universes',
-        sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection.' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small>' + (p.owned || p.guides ? '<span>' + [personal && p.owned ? p.owned + ' possédé(s)' : '', p.guides ? p.guides + ' guide(s)' : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</button>').join('') + '</div>') +
+      pane('universes', exUniversesHtml() +
+        sec('exSecUniverses', 'Éditeurs', personal ? 'Éditeurs connus de Panel et ceux de votre collection.' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small>' + (p.owned || p.guides ? '<span>' + [personal && p.owned ? p.owned + ' possédé(s)' : '', p.guides ? p.guides + ' guide(s)' : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</button>').join('') + '</div>') +
         '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
         '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section></div>' +
         '<div class="ex-index">' + exBrowseHtml() +
@@ -19597,13 +19769,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (fp) l = l.filter(r => catNorm(exCvPub(r)).includes(fp) || (r.resource_type === 'issue' && !exCvPub(r)));
     if (from) l = l.filter(r => { const y = exCvYear(r); return y === null || y >= from; });
     if (to) l = l.filter(r => { const y = exCvYear(r); return y === null || y <= to; });
+    if (exFilt.sort === 'rel' && exView.q) l = UNI.rank(l, exView.q);
     if (exFilt.sort === 'new') l.sort((a, b) => (exCvYear(b) || 0) - (exCvYear(a) || 0));
     else if (exFilt.sort === 'old') l.sort((a, b) => (exCvYear(a) || 9999) - (exCvYear(b) || 9999));
     else if (exFilt.sort === 'pop') l.sort((a, b) => (b.count_of_issue_appearances || b.count_of_issues || 0) - (a.count_of_issue_appearances || a.count_of_issues || 0));
     return l;
   };
   const exCvCard = r => {
-    const t = r.resource_type, img = exCvImg(r.image), y = exCvYear(r);
+    const t = r.resource_type, img0 = exCvImg(r.image), img = UNI.isPlaceholderImage(img0) ? '' : img0, y = exCvYear(r);
     const owned = t === 'issue' ? exOwnedIssue(r.volume && r.volume.name, r.issue_number) : t === 'volume' ? exOwnedSeries(r.name) : 0;
     const sub = t === 'issue' ? [r.cover_date ? exShortDate(r.cover_date) : '', r.name && r.name !== (r.volume && r.volume.name) ? r.name : ''].filter(Boolean).join(' · ')
       : t === 'volume' ? [exCvPub(r), y, r.count_of_issues ? r.count_of_issues + ' n°' : ''].filter(Boolean).join(' · ')
@@ -19624,7 +19797,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (exOnline.status === 'error') return '<section class="ex-online">' + head + '<p class="ex-note">' + h(exOnline.error) + ' <button class="btn secondary rel-mini" data-ex-cv-retry>Réessayer</button></p></section>';
     if (!l.length) return exOnline.status === 'done' ? '<section class="ex-online">' + head + '<p class="ex-note">Aucun résultat' + (exFilt.pub || exFilt.from || exFilt.to ? ' avec ces filtres' : '') + '.</p></section>' : '';
     const more = exOnline.results.length < exOnline.total && exOnline.results.length < 200 ? '<button class="ex-more" data-ex-cv-more>' + (exOnline.status === 'loading' ? 'Chargement…' : 'Plus de résultats') + '</button>' : '';
-    return '<section class="ex-online">' + head + '<div class="ex-cv-grid">' + l.map(exCvCard).join('') + '</div>' + more + '<p class="ex-credit">Données et images : Comic Vine (comicvine.gamespot.com).</p></section>';
+    const unis = UNI.find(exView.q).slice(0, 4);
+    const uniRow = unis.length ? '<div class="ex-uhits"><span>Univers</span>' + unis.map(u => '<button class="ex-chip" data-ex-q="' + h(u.q) + '" data-ex-browse="volume" style="--h:' + UNI.hue(u.key) + '">' + h(u.name) + '</button>').join('') + '</div>' : '';
+    return '<section class="ex-online">' + head + uniRow + '<div class="ex-cv-grid">' + l.map(exCvCard).join('') + '</div>' + more + '<p class="ex-credit">Données et images : Comic Vine (comicvine.gamespot.com).</p></section>';
   };
   const exPaintOnline = () => { const host = $('exOnline'); if (host) { host.innerHTML = exOnlineHtml(); exWireOnline(host); } };
   const exWireOnline = root => {
@@ -19731,7 +19906,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (prof && prof.favorite) { const x = get(prof.favorite); if (x) x.fav = true; }
     const cc = exLensCall('collectionCharacters', 12);
     if (cc) cc.characters.forEach(c => { const x = get(c.name); if (x) { x.owned = c.owned; x.read = c.read; } });
-    return [...m.values()].sort((a, b) => (b.isNew - a.isNew) || (b.fav - a.fav) || (b.followed - a.followed) || (b.owned - a.owned) || a.name.localeCompare(b.name, 'fr')).slice(0, 16);
+    const list = [...m.values()].sort((a, b) => (b.isNew - a.isNew) || (b.fav - a.fav) || (b.followed - a.followed) || (b.owned - a.owned) || a.name.localeCompare(b.name, 'fr')).slice(0, 16);
+    // D-105 : prochaine sortie connue (45 jours) où le nom du personnage figure dans le titre ; simple mention sur la carte
+    if (list.length && relPubs.size) {
+      const today = relToday(), soon = isoDate(new Date(Date.now() + 45 * 86400000));
+      const up = [...relPubs.values()].filter(p => !p.cancelled && relDay(p) >= today && relDay(p) <= soon).sort((a, b) => relDay(a).localeCompare(relDay(b)));
+      list.forEach(x => { const n = x.key; const hit = n.length >= 3 && up.find(p => (' ' + catNorm(p.series + ' ' + (p.title || '')) + ' ').includes(' ' + n + ' ')); if (hit) x.next = { label: relLabel(hit), date: relDay(hit) }; });
+    }
+    return list;
   };
   const exMyCharsHtml = () => {
     const list = exMyChars();
@@ -19739,11 +19921,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const hue = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
     const card = x => {
         const tags = [x.fav ? '<i class="is-fav">Préféré</i>' : '', x.followed ? '<i>Suivi</i>' : '', x.owned ? '<i>' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + '</i>' : ''].join('');
-        const sub = x.isNew && x.lastLabel ? 'Nouvelle apparition : ' + h(x.lastLabel) : x.lastLabel ? 'Dernière apparition : ' + h(x.lastLabel) : '';
+        const sub = x.isNew && x.lastLabel ? 'Nouvelle apparition : ' + h(x.lastLabel) : x.next ? 'Prochaine sortie, ' + h(relFmtDate(x.next.date)) + ' : ' + h(x.next.label) : x.lastLabel ? 'Dernière apparition : ' + h(x.lastLabel) : '';
         const act = x.ref ? ' data-ex-cv="' + h(x.ref) + '"' : ' data-ex-browse="character" data-ex-q="' + h(x.name) + '"';
         const label = x.name + (x.fav ? ', préféré' : '') + (x.followed ? ', suivi' : '') + (x.owned ? ', ' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + ' possédé' + (x.owned > 1 ? 's' : '') : '') + (x.ref ? ' : ouvrir la fiche' : ' : chercher ses comics');
         return '<button class="ex-mychar' + (x.isNew ? ' is-new' : '') + '"' + act + ' aria-label="' + h(label) + '"><span class="ex-mychar-pt" style="--h:' + hue(x.key) + '" aria-hidden="true">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : h(x.name.trim().charAt(0).toUpperCase())) + '</span><b>' + h(x.name) + '</b>' +
-          (tags ? '<span class="ex-mychar-tags">' + tags + '</span>' : '') + (sub ? '<small>' + sub + '</small>' : '') + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>';
+          (tags ? '<span class="ex-mychar-tags">' + tags + '</span>' : '') + (sub ? '<small' + (x.next && !x.isNew ? ' class="ex-mychar-next"' : '') + '>' + sub + '</small>' : '') + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>';
     };
     const mine = list.filter(x => x.followed || x.fav), coll = list.filter(x => !x.followed && !x.fav);
     const row = (title, l) => l.length ? '<h4 class="ex-subh">' + title + '</h4><div class="ex-mychars-row">' + l.map(card).join('') + '</div>' : '';
@@ -20481,6 +20663,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       // Actions personnelles : uniquement par S2, avec un jeton de geste tiré de ce clic (jamais d'appel direct à Collection ni à Lecture)
       const S2 = exCommands(), gesture = () => S2 ? S2.gesture(e) : null;
       if (d.exCat !== undefined) { exView.cat = d.exCat; exRefreshResults(); }
+      else if (d.exUfam !== undefined) { exView.uniFam = d.exUfam; renderExplorer(); }
       else if (d.exQ) { if (exView.page !== 'home') { Object.assign(exView, { page: 'home', id: '', q: d.exQ }); renderExplorer(); const v = $('singlesExplorerView'); if (v && v.scrollIntoView && !navigator.webdriver) v.scrollIntoView({ block: 'start' }); } if (d.exBrowse) { exFilt.kind = d.exBrowse; root.querySelectorAll('[data-ex-kind]').forEach(x => { const on = x.dataset.exKind === d.exBrowse; x.classList.toggle('is-on', on); x.setAttribute('aria-selected', on); }); } exView.q = d.exQ; const s = $('exSearch'); if (s) s.value = d.exQ; exRefreshResults(); }
       else if (d.exGcat !== undefined) { exView.guideCat = d.exGcat; renderExplorer(); }
       else if (d.exLb) exLightbox(exLbStore.get(d.exLb), Number(d.exLbI) || 0);
@@ -21581,6 +21764,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Compte en ligne', 'Pseudo réservé, abonnés, publication des planches et stories, directs. Ouverture avec la synchronisation (Supabase).', '<span class="set-pill">' + (acctConfig() ? 'Préproduction' : 'Pas encore ouvert') + '</span>') + '<div data-acct-slot></div>' +
       row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>');
     if (tab === 'display') return '<h3>Affichage</h3>' +
+      row('Apparence', 'Clair, sombre ou selon le réglage de l’appareil', '<span class="set-seg" role="group" aria-label="Apparence">' + [['light', 'Clair'], ['dark', 'Sombre'], ['system', 'Système']].map(([k, l]) => '<button type="button" class="set-seg-b" data-set-mode="' + k + '" aria-pressed="' + ((document.documentElement.dataset.modePref || 'system') === k) + '">' + l + '</button>').join('') + '</span>') +
       row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Primestone'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
       row('Langue', 'Dates et nombres suivent la langue choisie.', '<select class="field-input" data-set-lang data-no-i18n aria-label="Langue">' + Object.keys(I18N.LOCALES).map(k => '<option value="' + k + '"' + (k === uiLang ? ' selected' : '') + '>' + I18N.LOCALES[k] + '</option>').join('') + '</select>') +
       row('Vue de la collection', 'Cartes, liste, boîtes', btn('Cartes / liste', 'data-set-click="singlesViewModeBtn"') + ' ' + btn('Boîtes', 'data-set-click="singlesBoxesBtn"')) +
@@ -21706,6 +21890,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       dyn.querySelectorAll('[data-set-go]').forEach(b => { b.onclick = () => { close(); commTab = 'profile'; profileEditing = true; goSinglesView('community'); }; });
       dyn.querySelectorAll('[data-set-view]').forEach(b => { b.onclick = () => { close(); goSinglesView(b.dataset.setView); }; });
       dyn.querySelectorAll('[data-set-story]').forEach(b => { b.onclick = () => { close(); openStoryPicker(); }; });
+      dyn.querySelectorAll('[data-set-mode]').forEach(b => { b.onclick = () => { if (window.panelSetColorMode) window.panelSetColorMode(b.dataset.setMode); dyn.querySelectorAll('[data-set-mode]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); document.querySelectorAll('#appearanceRow [data-mode-choice]').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.modeChoice === b.dataset.setMode))); }; });
       dyn.querySelectorAll('[data-set-accent]').forEach(b => { b.onclick = () => { const t = boxEl.querySelector('[data-set-pane="sources"] [data-theme="' + b.dataset.setAccent + '"]'); if (t) t.click(); }; });
       const ls = dyn.querySelector('[data-set-lang]'); if (ls) ls.onchange = e => { try { localStorage.setItem(I18N_KEY, e.target.value); } catch (_) {} location.reload(); };
       const cs = dyn.querySelector('[data-set-cur]'); if (cs) cs.onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };

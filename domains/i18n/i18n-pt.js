@@ -152,6 +152,9 @@ const phrases = {
   "Actualiser": "Atualizar",
   "Chercher en ligne": "Pesquisar online",
   "Mentions légales": "Aviso legal",
+  // D-105
+  "Univers des comics": "Universos dos quadrinhos",
+  "Système": "Sistema",
 };
 
 module.exports = { locale: 'pt', phrases, same: [] };
