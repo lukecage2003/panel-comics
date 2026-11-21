@@ -6077,6 +6077,55 @@ const waitForCdp = async () => {
       console.log('Résultat Test 81:', JSON.stringify(t81));
       testResults.push({ test: 'Test 81 : Modération plus rapide, file triée, raccourcis, mots interdits (D-102)',
         ok: !!t81 && !t81.error && ['emptyHonest', 'order', 'lateShown', 'summary', 'nav', 'navBounds', 'help', 'decide', 'noKeyInField', 'typedReason', 'noAuthorNoSanction', 'termsSaved', 'termFirst', 'nothingSent', 'restored', 'dataUntouched'].every(k => t81[k] === true) });
+
+      // ==========================================
+      // TEST 82 : Langues de l'interface : anglais à l'affichage, dates Intl, retour au français (D-103)
+      // ==========================================
+      console.log('\n[TEST 82] Langue de l\'interface...');
+      const t82reload = async () => {
+        await send('Page.reload', { ignoreCache: false });
+        for (let i = 0; i < 60; i++) { await new Promise(r => setTimeout(r, 250)); if (await evalExpr('!!(window.Panel && window.Panel.i18nForTest && window.Panel.backup) && document.readyState === "complete"')) break; }
+        await new Promise(r => setTimeout(r, 1200));
+      };
+      const t82 = {};
+      const t82before = await evalExpr(`(async () => ({ fp: await window.Panel.backup.fingerprint('collection'), lang: localStorage.getItem('panel_lang_v1'), fr: window.Panel.i18nForTest.lang() === 'fr' && !window.Panel.i18nForTest.active() && document.documentElement.lang !== 'en' }))()`);
+      t82.frDefault = !!t82before && t82before.fr === true;
+      try {
+        await evalExpr(`localStorage.setItem('panel_lang_v1', 'en'), true`);
+        await t82reload();
+        Object.assign(t82, await evalExpr(`(async () => {
+          const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, $ = id => document.getElementById(id), T = P.i18nForTest;
+          const txt = el => el ? el.textContent.replace(/\\s+/g, ' ').trim() : '';
+          r.active = T.lang() === 'en' && T.active() && T.locale() === 'en-US' && document.documentElement.lang === 'en' && T.applied() > 20;
+          r.nav = /Home/.test(txt($('navSinglesCommunity'))) && /Discover/.test(txt($('navExplorer')));
+          r.title = / · Panel$/.test(document.title) && !/Accueil/.test(document.title);
+          $('openSettingsBtnTop').click(); await wait(400);
+          document.querySelector('[data-set-tab="display"]').click(); await wait(250);
+          const sel = document.querySelector('[data-set-lang]');
+          r.selector = !!sel && sel.value === 'en' && [...sel.options].map(o => o.textContent).join('|') === 'Français|English|Español|Português';
+          r.settingsEn = /Display/.test(txt(document.querySelector('[data-set-pane="dyn"] h3')));
+          $('settingsModal').classList.remove('open');
+          // Un texte ajouté après coup est traduit à l'affichage ; une phrase inconnue (contenu d'utilisateur) reste intacte
+          const box = document.createElement('div'); box.id = 't82box';
+          box.innerHTML = '<span>Réglages</span><span>Ma note : Réglages du coffre</span><input placeholder="Rechercher dans Panel">';
+          document.body.appendChild(box); await wait(80);
+          const sp = box.querySelectorAll('span');
+          r.dynamic = sp[0].textContent === 'Settings' && sp[1].textContent === 'Ma note : Réglages du coffre' && box.querySelector('input').placeholder === 'Search Panel';
+          box.remove();
+          r.dates = new Date('2026-11-18T12:00:00').toLocaleDateString(T.locale(), { day: 'numeric', month: 'short' }) === 'Nov 18';
+          return r;
+        })()`));
+      } catch (e) { t82.error = String(e && e.message || e); }
+      finally {
+        await evalExpr(`(${JSON.stringify(t82before && t82before.lang)} === null ? localStorage.removeItem('panel_lang_v1') : localStorage.setItem('panel_lang_v1', ${JSON.stringify(t82before && t82before.lang)})), true`);
+        await t82reload();
+      }
+      const t82after = await evalExpr(`(async () => ({ fp: await window.Panel.backup.fingerprint('collection'), fr: window.Panel.i18nForTest.lang() === 'fr' && !window.Panel.i18nForTest.active() && /Accueil/.test(document.getElementById('navSinglesCommunity').textContent) }))()`);
+      t82.backToFr = !!t82after && t82after.fr === true;
+      t82.dataUntouched = !!t82before && !!t82after && t82before.fp === t82after.fp;
+      console.log('Résultat Test 82:', JSON.stringify(t82));
+      testResults.push({ test: 'Test 82 : Langues de l interface, anglais à l affichage, dates Intl (D-103)',
+        ok: !t82.error && ['frDefault', 'active', 'nav', 'title', 'selector', 'settingsEn', 'dynamic', 'dates', 'backToFr', 'dataUntouched'].every(k => t82[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

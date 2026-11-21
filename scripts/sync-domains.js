@@ -41,7 +41,11 @@ const MODULES = [
   ['artefactsCore', 'domains/community/artefacts-core.js'],
   ['collectionInsights', 'domains/collection/insights-core.js'],
   ['newsCore', 'domains/explorer/news-core.js'],
-  ['watchGuides', 'domains/explorer/watch-guides.js']
+  ['watchGuides', 'domains/explorer/watch-guides.js'],
+  ['i18n', 'domains/i18n/i18n-core.js'],
+  ['i18nEn', 'domains/i18n/i18n-en.js'],
+  ['i18nEs', 'domains/i18n/i18n-es.js'],
+  ['i18nPt', 'domains/i18n/i18n-pt.js']
 ];
 const BEGIN = '<!-- @domains:begin -->', END = '<!-- @domains:end -->';
 const ANCHOR = '<!-- ==========================================================================\n     LOGIQUE JAVASCRIPT DU LECTEUR';

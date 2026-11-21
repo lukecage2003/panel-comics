@@ -104,7 +104,7 @@ Avant un lancement commercial, prévoir une relecture par un juriste en proprié
    - raccourcis clavier pour les modérateurs ;
    - mots interdits réglables ;
    - délai de réponse affiché.
-6. **Monde entier (i18n)** :
+6. ~~**Monde entier (i18n)**~~ : socle fait (D-103) ; anglais complet sur les écrans principaux, espagnol et portugais pour la coque, le reste à compléter :
    - extraire les textes de l'interface dans des tables par langue (français, puis anglais, espagnol, portugais) ;
    - dates et nombres avec `Intl` ;
    - écriture de droite à gauche plus tard.

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ccLSmAS+dWJiYS7+nLpRuRWiDH2JOdO6UFxV8vwUINs=' 'sha256-5II3VpJqk9O6mnSe4YuEAPtDbc5cw0ExDgJCPhvGLNU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-hEU4f2/rKsnLlAsc+vYaPjfoL46j3UgHLgfzAo9dHNI=' 'sha256-yUGBfD/7ZMmCVJIREMSnpobwenKg2nQXz4iTcl67Q4o=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -10167,6 +10167,694 @@ const byId = id => GUIDES.find(g => g.id === id) || null;
 
 module.exports = { GUIDES, pick, byId };
   return Object.freeze(module.exports); })();
+  /* domains/i18n/i18n-core.js */
+  out.i18n = (() => { const module = { exports: {} };
+'use strict';
+// Langues de l'interface (D-103) : module pur. Le français reste la langue source de Panel ;
+// les autres langues sont des tables « phrase française -> traduction », appliquées à l'affichage.
+// Règles :
+//   - une phrase sans traduction reste en français (jamais de texte vide ni de clé technique affichée) ;
+//   - les nombres d'une phrase sont repérés et remis à leur place : la table contient « {n} numéros », pas chaque nombre ;
+//   - dates et nombres passent par Intl avec la locale de la langue choisie ;
+//   - le contenu des utilisateurs (titres, notes, pensées) n'est jamais traduit : seules les phrases connues de l'interface le sont.
+
+const LOCALES = Object.freeze({ fr: 'Français', en: 'English', es: 'Español', pt: 'Português' });
+const INTL = Object.freeze({ fr: 'fr-FR', en: 'en-US', es: 'es-ES', pt: 'pt-BR' });
+const RTL = Object.freeze([]); // écriture de droite à gauche : aucune langue pour l'instant (prévu)
+
+// Langue à utiliser : le choix enregistré, sinon « auto » d'après le navigateur, sinon le français
+const resolveLocale = (pref, navLangs) => {
+  const p = String(pref || '').toLowerCase();
+  if (LOCALES[p]) return p;
+  if (p === 'auto') {
+    for (const l of (Array.isArray(navLangs) ? navLangs : [navLangs])) { const k = String(l || '').toLowerCase().slice(0, 2); if (LOCALES[k]) return k; }
+  }
+  return 'fr';
+};
+const intlLocale = loc => INTL[loc] || INTL.fr;
+const dir = loc => RTL.includes(loc) ? 'rtl' : 'ltr';
+
+const NUM = /\d[\d   .,]*\d|\d/g;
+const norm = s => String(s == null ? '' : s).replace(/[\s  ]+/g, ' ').trim();
+// Gabarit d'une phrase : ses nombres remplacés par {n}
+const template = s => { const nums = []; const t = norm(s).replace(NUM, m => { nums.push(m); return '{n}'; }); return { t, nums }; };
+
+// Traducteur d'une langue : texte -> traduction (espaces de début et de fin conservés), ou null s'il n'y en a pas
+const translator = (loc, dict) => {
+  if (!dict || loc === 'fr' || !LOCALES[loc]) return () => null;
+  const phrases = dict.phrases || dict;
+  const map = new Map();
+  Object.keys(phrases).forEach(k => { const v = phrases[k]; if (typeof v === 'string' && v) map.set(norm(k), v); });
+  // Noms propres et mots identiques dans cette langue (personnages, créateurs, éditeurs) : conservés tels quels
+  (Array.isArray(dict.same) ? dict.same : []).forEach(k => { const n = norm(k); if (n && !map.has(n)) map.set(n, n); });
+  return text => {
+    const raw = String(text == null ? '' : text), n = norm(raw);
+    if (!n) return null;
+    const lead = raw.match(/^\s*/)[0], trail = raw.match(/\s*$/)[0];
+    let out = map.get(n);
+    if (out === undefined && /\d/.test(n)) {
+      const { t, nums } = template(n), hit = map.get(t);
+      if (hit !== undefined) { let i = 0; out = hit.replace(/\{n\}/g, () => (nums[i++] !== undefined ? nums[i - 1] : '')); }
+    }
+    return out === undefined ? null : lead + out + trail;
+  };
+};
+
+// Couverture d'une table sur une liste de phrases relevées
+const coverage = (strings, loc, dict) => {
+  const tr = translator(loc, dict), list = (Array.isArray(strings) ? strings : []).map(norm).filter(Boolean);
+  const missing = list.filter(s => tr(s) === null);
+  return { total: list.length, translated: list.length - missing.length, missing };
+};
+
+// Une table est-elle saine ? Pas de traduction vide, mêmes {n} des deux côtés, pas de balise
+const checkDict = dict => {
+  const errors = [], phrases = (dict && dict.phrases) || {};
+  Object.keys(phrases).forEach(k => {
+    const v = phrases[k];
+    if (typeof v !== 'string' || !v.trim()) errors.push('vide : ' + k);
+    else {
+      const a = (k.match(/\{n\}/g) || []).length, b = (v.match(/\{n\}/g) || []).length;
+      if (a !== b) errors.push('{n} différents : ' + k);
+      if (/<[a-z/!]/i.test(v)) errors.push('balise : ' + k);
+    }
+  });
+  return errors;
+};
+
+const fmtNumber = (n, loc, opts) => { try { return new Intl.NumberFormat(intlLocale(loc), opts).format(n); } catch (_) { return String(n); } };
+const fmtDate = (d, loc, opts) => { try { const x = d instanceof Date ? d : new Date(d); return Number.isNaN(x.getTime()) ? '' : x.toLocaleDateString(intlLocale(loc), opts); } catch (_) { return ''; } };
+
+module.exports = { LOCALES, INTL, RTL, resolveLocale, intlLocale, dir, norm, template, translator, coverage, checkDict, fmtNumber, fmtDate };
+  return Object.freeze(module.exports); })();
+  /* domains/i18n/i18n-en.js */
+  out.i18nEn = (() => { const module = { exports: {} };
+'use strict';
+// Table anglaise de l'interface (D-103) : phrase française exacte -> traduction. {n} = un nombre repris tel quel.
+// « same » : noms propres gardés à l'identique (personnages, créateurs, éditeurs, entités cosmiques, titres d'œuvres).
+// Ne jamais y mettre de contenu d'utilisateur : seule l'interface de Panel est traduite.
+const phrases = {
+  // Navigation et coque
+  'Accueil': 'Home', 'Collection': 'Collection', 'Lecture': 'Reading', 'Explorer': 'Explore', 'Communauté': 'Community', 'Profil': 'Profile',
+  'Découvrir': 'Discover', 'Directs': 'Live', 'Réglages': 'Settings', 'Paramètres et clés API': 'Settings and API keys', 'Plus': 'More',
+  'Ma collection': 'My collection', 'Mes séries': 'My series', 'Ma pull list': 'My pull list', 'Ma Wishlist': 'My Wishlist', 'Sorties': 'Releases',
+  'Statistiques': 'Statistics', 'Finances': 'Finances', 'Finances (privé)': 'Finances (private)', 'Séries & complétion': 'Series & completion',
+  'Sorties & calendrier': 'Releases & calendar', 'Calendrier': 'Calendar', 'Pull list': 'Pull list', 'Wishlist': 'Wishlist', 'Key Issues': 'Key Issues',
+  'Rechercher dans Panel': 'Search Panel', 'Rechercher une série, numéro...': 'Search a series, issue...', 'Rechercher dans Explorer': 'Search Explore',
+  'Collection, Lecture, Explorer, Communauté': 'Collection, Reading, Explore, Community', 'Fermer': 'Close', 'Ouvrir': 'Open', 'Masquer': 'Hide',
+  'Ajouter': 'Add', '+ Ajouter': '+ Add', 'Ajouter manuellement': 'Add manually', 'Ajouter un single': 'Add a single', 'Exporter': 'Export',
+  'Importer': 'Import', 'Import': 'Import', 'Restaurer': 'Restore', 'Restaurer…': 'Restore…', 'Vérifier': 'Check', 'Suivre': 'Follow', 'Publier': 'Post',
+  'Tout voir': 'See all', 'Tout': 'All', 'Tous': 'All', 'Tout afficher ({n})': 'Show all ({n})', 'Parcourir': 'Browse', 'Filtres': 'Filters',
+  'Filtres et outils': 'Filters and tools', 'Filtres et tri': 'Filters and sorting', 'Tri': 'Sort', 'Liste': 'List', 'Cartes / liste': 'Cards / list',
+  'Cartes, liste, boîtes': 'Cards, list, boxes', 'Boîtes': 'Boxes', 'Plus d\'actions': 'More actions', 'Basculer grille / liste': 'Toggle grid / list',
+  'Plus d\'actions : Comic Vine, cotation, exports et imports': 'More actions: Comic Vine, pricing, exports and imports',
+  'Afficher les raccourcis': 'Show shortcuts', 'Raccourcis clavier': 'Keyboard shortcuts', 'Bientôt': 'Soon', 'Disponible': 'Available', 'Indisponible': 'Unavailable',
+  'Actif': 'Active', 'Appliquée': 'Applied', 'Appliquée à toute l’interface': 'Applied to the whole interface', 'À jour': 'Up to date', 'Aujourd\'hui': 'Today',
+  'Cette semaine': 'This week', 'Semaine prochaine': 'Next week', 'Prochaines semaines': 'Coming weeks', 'Période': 'Period', 'Période précédente': 'Previous period',
+  'Période suivante': 'Next period', 'non vérifié': 'unverified', 'Normal': 'Normal', 'Faible': 'Low', 'Important': 'High', 'Urgent': 'Urgent', 'Prioritaire': 'Priority',
+  'Pas encore ouvert': 'Not open yet', 'Statut': 'Status', 'Titre': 'Title', 'Numéro': 'Issue', 'Numéros': 'Issues', 'Éditeur': 'Publisher', 'Éditeurs': 'Publishers',
+  'Personnages': 'Characters', 'Créateurs': 'Creators', 'Auteurs': 'Creators', 'Séries': 'Series', 'Arcs': 'Arcs', 'Équipes': 'Teams', 'Ères': 'Eras',
+  'Scénario': 'Writer', 'Dessin': 'Artist', 'Couvertures': 'Covers', 'Couverture': 'Cover', 'Rangement': 'Storage', 'Rang': 'Rank', 'Marché': 'Market',
+  'Investi': 'Invested', 'Plus-value': 'Gain', 'Valeur estimée': 'Estimated value', 'Prix payé': 'Price paid', 'prix payés': 'prices paid',
+  'valeur inconnue': 'value unknown', 'Aucune valeur connue': 'No known value', 'toutes valorisées': 'all valued', 'prix payé et valeur à renseigner': 'price paid and value to fill in',
+  'Possédés': 'Owned', 'Lus': 'Read', 'À lire': 'To read', 'En cours': 'In progress', 'Abandonnés': 'Dropped', 'Pile à lire': 'Reading pile', 'Journal': 'Log',
+  'Relecture': 'Reread', 'Relectures': 'Rereads', 'Je viens de lire': 'I just read', 'Lecture par œuvre': 'Reading by work', 'Lectures importées': 'Imported reads',
+  'Lectures sur 12 mois': 'Reads over 12 months', 'Terminés sur 12 mois': 'Finished over 12 months', 'Prochain numéro': 'Next issue', 'Prochain :': 'Next:',
+  'Séries en cours': 'Ongoing series', 'Séries du moment': 'Trending series', 'Tendances': 'Trending', 'À la une': 'Featured', 'Actualités': 'News',
+  'Guides': 'Guides', 'Guides de lecture': 'Reading guides', '+ Créer un guide': '+ Create a guide', 'Exploration': 'Exploration', 'Explorer les univers': 'Explore the universes',
+  'Multivers': 'Multiverse', 'Cosmiques': 'Cosmic', 'Cosmique': 'Cosmic', 'Classiques': 'Classics', 'Fil': 'Feed', 'Pour toi': 'For you', 'Abonnements': 'Following',
+  'Publications': 'Posts', 'Mes publications': 'My posts', '+ Publication': '+ Post', 'Planches': 'Pages', 'Stories': 'Stories', 'Ma story': 'My story',
+  'Créer une story': 'Create a story', 'Stories de lecture': 'Reading stories', 'Écrire une pensée': 'Write a thought', 'Quoi de neuf dans tes comics ?': 'What\'s new in your comics?',
+  'Écrire une pensée, une théorie ou une question': 'Write a thought, a theory or a question', 'Type de publication': 'Post type', 'Type de résultat': 'Result type',
+  'Que chercher ?': 'What to look for?', 'Comics': 'Comics', 'Mes numéros': 'My issues', 'Mes exemplaires': 'My copies', 'Mes tops (personnages et runs)': 'My tops (characters and runs)',
+  'Mon top 3 personnages': 'My top 3 characters', 'Mon top 3 runs': 'My top 3 runs', 'top 3 personnages': 'top 3 characters', 'top 3 runs': 'top 3 runs',
+  'Personnage favori': 'Favourite character', 'Pseudo': 'Username', 'Bio': 'Bio', 'Nom affiché': 'Display name', 'Ville': 'City', 'Ma ville': 'My city', 'Ma carte': 'My map',
+  'Couleur': 'Colour', 'Rouge': 'Red', 'Cyan': 'Cyan', 'Magenta': 'Magenta', 'Violet': 'Purple', 'Clair': 'Light', 'Sombre': 'Dark', 'Selon le système': 'System',
+  'Thème': 'Theme', 'Apparence': 'Appearance', 'Apparence :': 'Appearance:', 'Couleur d’accent': 'Accent colour', 'Couleur d\'Accentuation :': 'Accent colour:',
+  'Affichage': 'Display', 'Affichage de la collection': 'Collection display', 'Vue de la collection': 'Collection view', 'Préférences de l’appareil': 'Device preferences',
+  'Réglage propre à cet appareil.': 'Setting for this device only.', 'Enregistrer les préférences': 'Save preferences', 'Notifications': 'Notifications', 'Notification': 'Notification',
+  'Rappels : désactivés': 'Reminders: off', 'Effets sonores (bip scan & confirmation)': 'Sound effects (scan beep & confirmation)', 'Retour haptique (vibration mobile)': 'Haptic feedback (mobile vibration)',
+  'Langue': 'Language', 'Dates et nombres suivent la langue choisie.': 'Dates and numbers follow the chosen language.', 'Langue de l\'interface': 'Interface language',
+  // Collection
+  'Votre collection commence ici': 'Your collection starts here', 'Ajoutez des numéros à votre collection.': 'Add issues to your collection.',
+  'Scannez le code-barres UPC/ISBN d\'un comic ou ajoutez-le manuellement avec sa variante.': 'Scan a comic\'s UPC/ISBN barcode or add it manually with its variant.',
+  'Scanner': 'Scan', 'Scanner Couverture': 'Scan cover', 'Scanner un code-barres': 'Scan a barcode', 'Scanner un code-barres de comic américain': 'Scan a US comic barcode',
+  'Scanner la couverture d\'un comic (Reconnaissance Visuelle)': 'Scan a comic cover (visual recognition)', 'Filtrer la collection': 'Filter the collection',
+  'Filtrer par série ou titre': 'Filter by series or title', 'Filtrer, ou Entrée pour Comic Vine': 'Filter, or Enter for Comic Vine', 'Série ou titre…': 'Series or title…',
+  'Filtrer les séries': 'Filter series', 'Filtrer les séries…': 'Filter series…', 'Trier les séries': 'Sort series', 'Incomplètes seulement': 'Incomplete only',
+  'Ouvrir la collection': 'Open the collection', 'Voir la collection rangée en boîtes de comics': 'See the collection stored in comic boxes',
+  'Mon étagère (les numéros, par la tranche)': 'My shelf (issues, spine out)', 'Chaque comic que vous possédez, exemplaire par exemplaire (état, variante, valeur, rangement).': 'Every comic you own, copy by copy (condition, variant, value, storage).',
+  'Inventaire physique : singles, variantes et rangement': 'Physical inventory: singles, variants and storage', '{n} exemplaire(s) affiché(s) · valeur inconnue': '{n} copy(ies) shown · value unknown',
+  '{n} exemplaires possédés': '{n} copies owned', 'Nombre de numéros et de séries': 'Number of issues and series', 'Exporter (CSV)': 'Export (CSV)',
+  'Exporter l\'inventaire au format CSV': 'Export the inventory as CSV', 'Fichier JSON de toute la collection': 'JSON file of the whole collection',
+  'Coter': 'Price', 'Coter automatiquement la collection': 'Price the collection automatically', 'Actualiser (Comic Vine)': 'Refresh (Comic Vine)', 'Chercher Comic Vine': 'Search Comic Vine',
+  'Rechercher des comics en direct sur Comic Vine (Base Mondiale)': 'Search comics live on Comic Vine (world database)', 'Clé Comic Vine absente (Paramètres)': 'Comic Vine key missing (Settings)',
+  'Vos runs : numéros possédés, manquants et ce qu\'il reste pour les compléter.': 'Your runs: issues owned, missing and what is left to complete them.',
+  'Repérez les numéros qui manquent à vos runs': 'Spot the issues missing from your runs', 'Aucune série. Ajoutez des singles à votre collection pour suivre la complétion de vos runs.': 'No series yet. Add singles to your collection to track your runs.',
+  'Aucune série enregistrée.': 'No series saved.', '{n} runs complets': '{n} complete runs', 'Run complet': 'Complete run',
+  'Votre wishlist est vide': 'Your wishlist is empty', 'Ajoutez un numéro à votre Wishlist.': 'Add an issue to your Wishlist.', 'Les numéros que vous cherchez encore': 'The issues you are still looking for',
+  'Ajoutez des numéros manquants depuis « Séries & complétion » ou depuis les sorties de la semaine.': 'Add missing issues from “Series & completion” or from this week\'s releases.',
+  'Séries suivies et prochaines sorties de votre pull list': 'Followed series and upcoming releases on your pull list', 'Vos séries suivies et leurs prochaines sorties': 'Your followed series and their upcoming releases',
+  'Suivre une série': 'Follow a series', 'Suivre une série (ex : Absolute Batman)': 'Follow a series (e.g. Absolute Batman)', 'Série à ajouter à la pull list': 'Series to add to the pull list',
+  'Aucune série suivie. Ajoutez-en ci-dessus, ou cliquez ★ sur une sortie ou une série.': 'No followed series. Add some above, or click ★ on a release or a series.',
+  'Aucun numéro en attente. Ajoutez-en depuis le calendrier (« + Pull ») ou ci-dessus.': 'No pending issue. Add some from the calendar (“+ Pull”) or above.',
+  'Enregistrer la liste': 'Save the list', 'Ma pull list seulement': 'My pull list only', 'Pull du mercredi': 'Wednesday pull',
+  'Valeur, investissement et composition de votre collection': 'Value, investment and makeup of your collection', 'Répartition de la Collection': 'Collection breakdown',
+  'Regards sur la collection': 'Collection insights', 'Les statistiques apparaîtront dès que vous aurez des exemplaires possédés dans la collection.': 'Statistics will appear once you own copies in the collection.',
+  'Les finances apparaîtront dès que vous aurez des exemplaires dans la collection.': 'Finances will appear once you have copies in the collection.',
+  'Coût d\'acquisition, valeur, plus-values latentes et réalisées, par devise': 'Acquisition cost, value, unrealised and realised gains, by currency',
+  'Coût, valeur et plus-values par devise, sans conversion': 'Cost, value and gains by currency, without conversion',
+  'Montants par devise, jamais convertis. Une donnée inconnue s\'affiche « — » : elle n\'est jamais remplacée par zéro ni par le prix de couverture.': 'Amounts by currency, never converted. Unknown data shows “—”: it is never replaced by zero or by the cover price.',
+  'Calculées uniquement sur les exemplaires possédés (la wishlist est exclue). Valeurs : cote marché confirmée, sinon votre valeur saisie, sinon la cote auto.': 'Computed on owned copies only (the wishlist is excluded). Values: confirmed market price, else your entered value, else the automatic price.',
+  'Ajoutez une valeur ou un key issue.': 'Add a value or a key issue.', 'Devise par défaut': 'Default currency', 'Pour les nouvelles fiches ; aucune conversion automatique': 'For new records; no automatic conversion',
+  'Prérempli avec le prix de couverture pour un achat neuf ; « Seconde main » libère le prix': 'Prefilled with the cover price for a new purchase; “Second hand” frees the price',
+  'Manga et éditeurs manga masqués par défaut (comics uniquement)': 'Manga and manga publishers hidden by default (comics only)', 'Couvertures de variantes': 'Variant covers',
+  'Chasse aux variantes': 'Variant hunt', 'Shelfie de boîte': 'Box shelfie', 'Deux variantes d\'un même numéro, avec leur couverture.': 'Two variants of the same issue, with their covers.',
+  'Votre collection est vide : « Publier », puis « Ajouter à ma collection ».': 'Your collection is empty: “Post”, then “Add to my collection”.',
+  // Lecture
+  'En cours, à lire, prochain numéro de vos séries et journal de lecture': 'In progress, to read, next issue of your series and reading log',
+  'État de lecture par œuvre : en cours, à lire, journal, prochain numéro': 'Reading status by work: in progress, to read, log, next issue',
+  'Calculé d\'après vos lectures (imports compris) et votre collection : le prochain numéro à lire, ce que vous possédez déjà.': 'Based on your reads (imports included) and your collection: the next issue to read, what you already own.',
+  'Commencez une série (un numéro lu) pour voir ici le suivant à lire.': 'Start a series (one issue read) to see the next one to read here.',
+  'Aucune lecture enregistrée. Cochez « Lu » sur une fiche, ou regroupez vos anciennes lectures avec « Lecture par œuvre… ».': 'No reads saved. Tick “Read” on a record, or group your past reads with “Reading by work…”.',
+  'L\'état de lecture appartient à l\'œuvre : un geste vaut pour tous vos exemplaires, et un numéro lu sans être possédé est conservé.': 'Reading status belongs to the work: one action applies to all your copies, and an issue read without being owned is kept.',
+  'Importer mes lectures (League of Comic Geeks, CLZ, tableur)': 'Import my reads (League of Comic Geeks, CLZ, spreadsheet)', 'Tout est déjà dans Lecture': 'Everything is already in Reading',
+  '{n} lecture(s)': '{n} read(s)', '{n} lus': '{n} read', '{n} à lire': '{n} to read', '{n} à voir': '{n} to watch', 'première(s) lecture(s) ·': 'first read(s) ·',
+  'relecture(s). Calculé sur le journal de lecture.': 'reread(s). Computed from the reading log.', 'Semaine avec au moins une lecture': 'Week with at least one read',
+  '{n} œuvre suivie · {n} abandonnée · {n} lue sans possession': '{n} work followed · {n} dropped · {n} read without owning', 'Nombre de numéros lus': 'Number of issues read',
+  'Marquez un numéro « lu » pour l\'utiliser.': 'Mark an issue “read” to use it.', 'Marquez un numéro « Lu », notez-le : la story apparaît ici.': 'Mark an issue “Read”, rate it: the story appears here.',
+  // Sorties
+  'Sorties comics US et francophones': 'US and French-language comic releases', 'Sorties de comics, reports et annulations': 'Comic releases, delays and cancellations',
+  'Sorties et nouveautés': 'Releases and new issues', 'Mercredi des sorties': 'New comic Wednesday', 'Ouvrir la semaine': 'Open the week', 'Ouvrir le calendrier': 'Open the calendar',
+  'Importer un calendrier': 'Import a calendar', 'Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.': 'No release saved. Refresh the calendar or import a schedule.',
+  'Aucune publication sur cette période. Importez un calendrier (CSV ou JSON) ou ajoutez une publication.': 'No release in this period. Import a calendar (CSV or JSON) or add a release.',
+  'Aucune sortie sur cette période pour votre pull list. Importez un calendrier (CSV ou JSON) ou ajoutez une publication.': 'No release in this period for your pull list. Import a calendar (CSV or JSON) or add a release.',
+  'Aucune publication récente enregistrée.': 'No recent release saved.', 'Récemment disponibles · {n} jours': 'Recently available · {n} days', 'États-Unis': 'United States',
+  'États-Unis · {n} prochains jours': 'United States · next {n} days', 'Francophone · {n} prochains jours': 'French-language · next {n} days', 'D\'après le calendrier international de Panel.': 'From Panel\'s international calendar.',
+  'Série (si absente du calendrier)': 'Series (if missing from the calendar)', 'Date annoncée (facultative)': 'Announced date (optional)', 'Jours de la semaine': 'Days of the week',
+  'sortie': 'release', 'sorties': 'releases', '{n} sortie': '{n} release', '{n} sorties': '{n} releases', 'Semaine': 'Week', 'Mois': 'Month', 'Jour': 'Day', 'Cartes': 'Cards', 'Mercredi': 'Wednesday', '{n} possédé(s) · {n} au calendrier': '{n} owned · {n} on the calendar', '{n} possédé(s) · {n} au calendrier · {n} guide(s)': '{n} owned · {n} on the calendar · {n} guide(s)',
+  'lun': 'Mon', 'mar': 'Tue', 'mer': 'Wed', 'jeu': 'Thu', 'ven': 'Fri', 'sam': 'Sat', 'dim': 'Sun',
+  'janv': 'Jan', 'févr': 'Feb', 'mars': 'Mar', 'avr': 'Apr', 'mai': 'May', 'juin': 'Jun', 'juil': 'Jul', 'août': 'Aug', 'sept': 'Sep', 'oct': 'Oct', 'nov': 'Nov', 'déc': 'Dec',
+  // Explorer
+  'Sommaire d\'Explorer': 'Explore contents', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs': 'Search, universes, reading guides, releases, characters and creators',
+  'Recherche, univers, personnages, créateurs et sorties': 'Search, universes, characters, creators and releases', 'Éditeurs, personnages, créateurs et séries': 'Publishers, characters, creators and series',
+  'Numéros, séries, personnages, créateurs, arcs et équipes : la base mondiale et vos données Panel, dans une seule recherche.': 'Issues, series, characters, creators, arcs and teams: the world database and your Panel data, in one search.',
+  '« Absolute Batman 1 », Miles Morales, Tom King, Krakoa…': '“Absolute Batman 1”, Miles Morales, Tom King, Krakoa…', 'Un point de départ : touchez un nom pour lancer une recherche ciblée.': 'A starting point: tap a name to run a targeted search.',
+  'Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.': 'No featured guide yet. Search a series, a character or an event above.',
+  'Événements, crossovers, sagas et parcours, avec vos possessions et votre progression.': 'Events, crossovers, sagas and paths, with what you own and your progress.',
+  'Vos séries (d\'après votre collection) et celles du calendrier.': 'Your series (from your collection) and those on the calendar.', 'Personnaliser Explorer avec mes données': 'Personalise Explore with my data',
+  'Statuts possédé, wishlist, pull list et progression calculés sur cet appareil ; rien n\'est envoyé.': 'Owned, wishlist, pull list and progress statuses computed on this device; nothing is sent.',
+  'Personnages cités dans les guides, avec leur statut de vérification.': 'Characters cited in the guides, with their verification status.',
+  'Créateurs cités dans les guides et artistes de couverture d\'après votre collection.': 'Creators cited in the guides and cover artists from your collection.',
+  'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).': 'Publishers known to Panel and those in your collection (counts from your collection).',
+  'Les cartes des Cosmos et du multivers': 'Maps of the Cosmos and the multiverse', 'Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.': 'The eight Marvel Cosmos and the dimensions of the multiverse, as illustrated maps.',
+  'Cosmos et multivers': 'Cosmos and multiverse', 'Le multivers DC': 'The DC multiverse', 'Indés / Autres': 'Indies / Others', 'Indés & Autres': 'Indies & Others',
+  'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.': 'The latest news on comics and their adaptations, sorted for you. Articles open on their own site.',
+  'Les actualités passent par le relais local de Panel (': 'News goes through Panel\'s local relay (', '). Panel n\'affiche jamais d\'actualité inventée.': '). Panel never shows made-up news.',
+  'dans le dossier de Panel (ou lancez': 'in the Panel folder (or run', '), puis ouvrez': '), then open', 'Lancer Panel.cmd': 'Launch Panel.cmd', 'Pour tout activer, double-cliquez': 'To turn everything on, double-click',
+  'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.': 'Big releases based on comics: films to rewatch and comics to read first.', 'Avant de voir': 'Before watching',
+  'au cinéma le {n} décembre {n} (France, date annoncée)': 'in cinemas on {n} December {n} (France, announced date)', 'au cinéma en juin {n} (date annoncée)': 'in cinemas in June {n} (announced date)',
+  'au cinéma en juillet {n} (date annoncée)': 'in cinemas in July {n} (announced date)', 'Jamais publié :': 'Never published:', 'En {n} :': 'In {n}:',
+  'Personnage dans la collection': 'Character in the collection', 'Éditeur dans la collection': 'Publisher in the collection', 'Numéro dans la collection': 'Issue in the collection',
+  'Fandom (DC, Marvel, Image)': 'Fandom (DC, Marvel, Image)', 'Toute la BD, numéro par numéro.': 'All comics, issue by issue.',
+  // Communauté
+  'Votre fil : Pour toi et Abonnements': 'Your feed: For you and Following', 'Pour toi et Abonnements : planches, stories et numéros en 3D': 'For you and Following: pages, stories and 3D issues',
+  'Classé sur cet appareil selon ce que vous collectionnez, lisez et aimez. Menu ••• d\'une publication : « Pourquoi je vois ça ? ».': 'Ranked on this device from what you collect, read and like. A post\'s ••• menu: “Why am I seeing this?”.',
+  'Aucune publication. Écrivez une pensée ci-dessus, choisissez un modèle de planche, ou notez un numéro lu pour créer une story.': 'No posts. Write a thought above, pick a page template, or rate an issue you read to create a story.',
+  'Écrivez une pensée avec un #mot-dièse : les tendances naîtront ici.': 'Write a thought with a #hashtag: trends will start here.', 'Racontez votre collection en cases de BD': 'Tell your collection in comic panels',
+  'Planche, story, numéro en 3D, direct, ou ajout à la collection': 'Page, story, 3D issue, live, or adding to the collection', 'Planche préparée': 'Page prepared', 'Planche publiée': 'Page posted',
+  'Aucune story pour l’instant.': 'No story yet.', '{n} story(s) sur cet appareil': '{n} story(ies) on this device', 'Story de lecture créée': 'Reading story created',
+  'Vous venez de lire un comic ? Notez-le en story : une carte à ses couleurs, comme un journal de lecture.': 'Just read a comic? Rate it as a story: a card in its colours, like a reading log.',
+  'Ce que les autres verront': 'What others will see', 'Ce qui est repris quand vous partagez': 'What is included when you share', 'Voir comme un visiteur': 'View as a visitor',
+  'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).': 'Price, value, location and private notes are never shared (allow list).',
+  'Visible par vous seul': 'Visible to you only', '{n} publication': '{n} post', 'Préparez et lancez vos directs autour de vos numéros': 'Prepare and run your lives around your issues',
+  'Préparer un direct': 'Prepare a live', 'Aucun direct préparé': 'No live prepared', 'Débat en direct animé': 'Hosted live debate', 'Débat, pages commentées, duel': 'Debate, page commentary, duel',
+  'Duel en direct': 'Live duel', 'Duel de couvertures': 'Cover duel', 'Formats proposés : Débat du mercredi · Duel en direct · Procès d\'un event · Meilleur run.': 'Suggested formats: Wednesday debate · Live duel · Event on trial · Best run.',
+  'Voix seule, pages de comics au tableau, chat et duels. Les directs des autres membres arriveront avec les comptes.': 'Voice only, comic pages on the board, chat and duels. Other members\' lives will arrive with accounts.',
+  'Se retrouver en vrai': 'Meet in person', 'Préparer une rencontre': 'Prepare a meetup', 'Préparer la rencontre': 'Prepare the meetup', 'Aucune rencontre prévue': 'No meetup planned',
+  'Des rencontres de collectionneurs près de chez vous : mercredi des sorties en boutique, troc, club de lecture. Toujours dans un lieu public, entre adultes.': 'Collector meetups near you: new comic Wednesday at the shop, swaps, reading club. Always in a public place, between adults.',
+  'Les rencontres des autres collectionneurs de votre ville apparaîtront ici quand les comptes seront actifs.': 'Meetups from other collectors in your city will appear here once accounts are live.',
+  'Lieu public': 'Public place', 'Type de lieu': 'Place type', 'Date et heure': 'Date and time', 'Places': 'Spots', 'Mot pour les inscrits (facultatif)': 'Note for attendees (optional)',
+  'J\'ai {n} ans ou plus': 'I am {n} or older', 'Rendez-vous dans un lieu public, à l\'heure dite, jamais chez quelqu\'un.': 'Meet in a public place, at the agreed time, never at someone\'s home.',
+  'Venez et repartez par vos propres moyens.': 'Come and go by your own means.', 'Prévenez un proche de l\'endroit où vous allez.': 'Tell someone close where you are going.',
+  'N\'apportez que les numéros que vous êtes prêt à montrer ; un troc se décide sur place, sans pression.': 'Bring only the issues you are ready to show; a swap is decided on the spot, without pressure.',
+  'Un comportement gênant ? Partez, puis signalez-le : l\'équipe Panel le traite en priorité.': 'Uncomfortable behaviour? Leave, then report it: the Panel team handles it first.',
+  'Nom de la boutique, de la médiathèque…': 'Name of the shop, the library…', 'ex : Lyon': 'e.g. Lyon', 'ex : Mercredi des sorties à la boutique': 'e.g. New comic Wednesday at the shop',
+  'ex : on se retrouve au rayon des nouveautés': 'e.g. we meet at the new releases shelf', 'ex. Black Panther': 'e.g. Black Panther', 'ex. wakanda_reader': 'e.g. wakanda_reader',
+  '{n}. ex. Immortal Hulk (Ewing)': '{n}. e.g. Immortal Hulk (Ewing)', 'Boutiques près de chez vous': 'Shops near you', 'Comics VO, BD et librairies spécialisées autour de vous, sur une carte.': 'Comic shops and specialist bookshops around you, on a map.',
+  'Mon J\'aime': 'My Like', 'Forme du J\'aime': 'Like shape', 'Chercher une forme de J\'aime': 'Search a Like shape', 'Familles de formes': 'Shape families', 'Galerie de héros': 'Hero gallery',
+  '{n} formes pour vos « J\'aime » : des dessins originaux de Panel inspirés des grands archétypes, sans logo ni personnage déposé.': '{n} shapes for your “Likes”: original Panel drawings inspired by the great archetypes, with no logo or trademarked character.',
+  'Chercher : roi, tonnerre, armure, marteau…': 'Search: king, thunder, armour, hammer…', 'Commentaire reçu': 'Comment received', 'Réaction reçue (POW!, WOW!…)': 'Reaction received (POW!, WOW!…)',
+  'Abonné gagné': 'New follower', 'Suivre': 'Follow',
+  // Profil, rang et trophées
+  'Votre identité de collectionneur et votre collection': 'Your collector identity and your collection', 'Créez votre profil Panel': 'Create your Panel profile', 'Créer mon profil': 'Create my profile',
+  'Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.': 'A username, a colour, your favourite character: your trophies and level appear here.',
+  'Aucun profil sur cet appareil': 'No profile on this device', 'Profil enregistré sur cet appareil uniquement. Le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec la synchronisation.': 'Profile saved on this device only. The online account (reserved username, followers, public showcase) will come with sync.',
+  'Ajoutez votre': 'Add your', 'avec « Modifier » : ils s\'afficheront ici, sur votre future page publique.': 'with “Edit”: they will appear here, on your future public page.', 'et votre': 'and your',
+  'Rang et trophées': 'Rank and trophies', 'Rangs, artefacts et trophées': 'Ranks, artefacts and trophies', 'Vitrine des trophées': 'Trophy showcase', 'Paliers de trophées': 'Trophy tiers',
+  'Artefacts': 'Artefacts', 'Artefact débloqué': 'Artefact unlocked', 'Gagner des points': 'Earn points', 'et comment gagner des points': 'and how to earn points',
+  'Échelle des {n} rangs, de Civil à The One Above All': 'Ladder of {n} ranks, from Civilian to The One Above All', '{n} XP': '{n} XP', '{n} → {n} XP': '{n} → {n} XP',
+  '{n} XP · encore {n} XP pour devenir': '{n} XP · {n} more XP to become', '· {n} / {n} trophées': '· {n} / {n} trophies', '{n} / {n} débloqués · {n} / {n} gemmes': '{n} / {n} unlocked · {n} / {n} gems',
+  '{n} trophée · {n} artefact': '{n} trophy · {n} artefact', '{n} Bronze': '{n} Bronze', '{n} Argent': '{n} Silver', '{n} Or': '{n} Gold', '{n} Vibranium': '{n} Vibranium',
+  'Commun · DC': 'Common · DC', 'Commun · Marvel': 'Common · Marvel', 'Rare · DC': 'Rare · DC', 'Rare · Marvel': 'Rare · Marvel', 'Épique · DC': 'Epic · DC', 'Épique · Marvel': 'Epic · Marvel',
+  'Légendaire · Marvel': 'Legendary · Marvel', 'Mythique · Marvel': 'Mythic · Marvel',
+  'À débloquer · {n} éditeur': 'To unlock · {n} publisher', 'À débloquer · {n} ère': 'To unlock · {n} era', 'À débloquer · {n} key issue': 'To unlock · {n} key issue',
+  'À débloquer · {n} lecture': 'To unlock · {n} read', 'À débloquer · {n} long run': 'To unlock · {n} long run', 'À débloquer · {n} numéro': 'To unlock · {n} issue',
+  'À débloquer · {n} numéro {n}': 'To unlock · {n} issue #{n}', 'À débloquer · {n} numéro rangé': 'To unlock · {n} issue stored', 'À débloquer · {n} numéro récupéré': 'To unlock · {n} issue picked up',
+  'À débloquer · {n} personnage': 'To unlock · {n} character', 'À débloquer · {n} relecture': 'To unlock · {n} reread', 'À débloquer · {n} run complet': 'To unlock · {n} complete run',
+  'À débloquer · {n} run lu': 'To unlock · {n} run read',
+  'Éditeurs différents dans la collection : {n} / {n} pour le palier suivant': 'Different publishers in the collection: {n} / {n} for the next tier',
+  'Ères représentées dans la collection (Vibranium : les quatre, avec {n} numéros dans chacune) : {n} / {n} pour le palier suivant': 'Eras represented in the collection (Vibranium: all four, with {n} issues in each): {n} / {n} for the next tier',
+  'Key issues possédés : {n} / {n} pour le palier suivant': 'Key issues owned: {n} / {n} for the next tier', 'Numéros {n} possédés : {n} / {n} pour le palier suivant': 'Issue #{n}s owned: {n} / {n} for the next tier',
+  'Numéros de la pull list récupérés : {n} / {n} pour le palier suivant': 'Pull list issues picked up: {n} / {n} for the next tier', 'Numéros lus (premières lectures) : {n} / {n} pour le palier suivant': 'Issues read (first reads): {n} / {n} for the next tier',
+  'Numéros parus entre {n} et {n} : {n} / {n} pour le palier suivant': 'Issues published between {n} and {n}: {n} / {n} for the next tier',
+  'Numéros parus entre {n} et aujourd\'hui : {n} / {n} pour le palier suivant': 'Issues published between {n} and today: {n} / {n} for the next tier',
+  'Numéros possédés : {n} / {n} pour le palier suivant': 'Issues owned: {n} / {n} for the next tier', 'Numéros possédés avec un emplacement : {n} / {n} pour le palier suivant': 'Issues owned with a location: {n} / {n} for the next tier',
+  'Personnages différents dans la collection : {n} / {n} pour le palier suivant': 'Different characters in the collection: {n} / {n} for the next tier',
+  'Relectures notées dans le journal : {n} / {n} pour le palier suivant': 'Rereads logged: {n} / {n} for the next tier', 'Runs complets de {n} numéros ou plus : {n} / {n} pour le palier suivant': 'Complete runs of {n} issues or more: {n} / {n} for the next tier',
+  'Runs complets du premier au dernier numéro possédé : {n} / {n} pour le palier suivant': 'Complete runs owned from first to last issue: {n} / {n} for the next tier',
+  'Runs complets lus du premier au dernier numéro : {n} / {n} pour le palier suivant': 'Complete runs read from first to last issue: {n} / {n} for the next tier',
+  'Ère représentée (Golden, Silver, Bronze, Modern)': 'Era represented (Golden, Silver, Bronze, Modern)', 'Key issue possédé': 'Key issue owned', 'Numéro {n} possédé': 'Issue #{n} owned',
+  'Numéro lu': 'Issue read', 'Note donnée à un numéro': 'Rating given to an issue', 'Avis écrit ({n} caractères ou plus)': 'Written review ({n} characters or more)', 'Run complet de {n} numéros ou plus': 'Complete run of {n} issues or more',
+  'Run complet lu en entier': 'Complete run read in full',
+  '— Le premier outil d\'un justicier : votre premier comic. ({n} / {n})': '— A vigilante\'s first tool: your first comic. ({n} / {n})', 'Le premier outil d\'un justicier : votre premier comic.': 'A vigilante\'s first tool: your first comic.',
+  'Dix numéros lus : vous commencez à tisser votre toile.': 'Ten issues read: you are starting to spin your web.', 'Trois runs complets : la constance d\'un super-soldat.': 'Three complete runs: a super-soldier\'s steadiness.',
+  'Mille numéros lus, avec la volonté d\'un Lantern.': 'A thousand issues read, with a Lantern\'s willpower.', 'Cinq mille numéros lus : vous êtes digne.': 'Five thousand issues read: you are worthy.',
+  'Cinq mille numéros possédés.': 'Five thousand issues owned.', 'Deux mille cinq cents numéros lus.': 'Two thousand five hundred issues read.', 'Deux mille cinq cents numéros possédés.': 'Two thousand five hundred issues owned.',
+  'Cinquante key issues : des pièces rares et redoutées.': 'Fifty key issues: rare and feared pieces.', 'Douze éditeurs différents : vous voyagez entre les mondes.': 'Twelve different publishers: you travel between worlds.',
+  'Quinze éditeurs différents.': 'Fifteen different publishers.', 'Soixante personnages différents repérés dans votre collection.': 'Sixty different characters spotted in your collection.',
+  'Cent cinquante relectures : maître du temps qui repasse.': 'A hundred and fifty rereads: master of time coming around again.', 'Deux cents relectures.': 'Two hundred rereads.',
+  'Deux cent cinquante notes : un jugement éclairé.': 'Two hundred and fifty ratings: an enlightened judgement.', 'Mille avis écrits : une arme critique absolue.': 'A thousand written reviews: an ultimate critical weapon.',
+  'Trois cents avis écrits.': 'Three hundred written reviews.', 'Vingt-cinq avis sincères.': 'Twenty-five honest reviews.', 'Vingt-cinq planches préparées, dignes de la une du Bugle.': 'Twenty-five pages prepared, worthy of the Bugle\'s front page.',
+  'Vingt-cinq runs complets.': 'Twenty-five complete runs.', 'Votre première story de lecture.': 'Your first reading story.', 'Trois cent soixante-cinq stories de lecture : une par jour pendant un an.': 'Three hundred and sixty-five reading stories: one a day for a year.',
+  'Les six gemmes réunies.': 'All six gems gathered.', 'Une collection estimée à vingt-cinq mille unités ou plus.': 'A collection valued at twenty-five thousand units or more.',
+  'Collectionneur': 'Collector', 'Complétiste': 'Completionist', 'Archiviste': 'Archivist', 'Chasseur de #{n}': '#{n} hunter', 'Lecteur de runs': 'Run reader', 'Marathonien': 'Marathoner',
+  'Relecteur': 'Rereader', 'Fidèle du mercredi': 'Wednesday regular', 'Pépite': 'Gem', 'Clé de voûte': 'Keystone', 'Témoin d\'un combat': 'Witness to a fight', 'Une du Daily Planet': 'Daily Planet front page',
+  'Civil': 'Civilian', 'Justicier de quartier': 'Neighbourhood vigilante', 'Humain entraîné': 'Trained human', 'Humain optimisé': 'Enhanced human', 'Athlète de haut niveau': 'Elite athlete',
+  'Maître des arts martiaux': 'Martial arts master', 'Détective de Gotham': 'Gotham detective', 'Super-soldat': 'Super-soldier', 'Agent augmenté': 'Augmented agent', 'Mutant latent': 'Latent mutant',
+  'Mutant de classe Bêta': 'Beta-class mutant', 'Mutant de classe Alpha': 'Alpha-class mutant', 'Mutant de classe Oméga': 'Omega-class mutant', 'Inhumain révélé': 'Revealed Inhuman',
+  'Méta-humain': 'Metahuman', 'Sorcier initié': 'Initiate sorcerer', 'Sorcier suprême': 'Sorcerer Supreme', 'Kryptonien': 'Kryptonian', 'Atlante': 'Atlantean', 'Martien vert': 'Green Martian',
+  'Amazone de Themyscira': 'Amazon of Themyscira', 'Dieu d\'Asgard': 'God of Asgard', 'Nouveau Dieu': 'New God', 'Green Lantern d\'Oa': 'Green Lantern of Oa', 'Héraut cosmique': 'Cosmic herald',
+  'Voyageur temporel': 'Time traveller', 'Gardiens de l\'Univers': 'Guardians of the Universe', 'Dévoreur': 'Devourer', 'Les Watchers': 'The Watchers', 'Les Célestes': 'The Celestials',
+  'Les Elder Gods': 'The Elder Gods', 'Les Beyonders': 'The Beyonders', 'Les Aspirants': 'The Aspirants', 'Le Tribunal Vivant': 'The Living Tribunal', 'Le Phénix': 'The Phoenix', 'Le Spectre': 'The Spectre',
+  'Le Fulcrum': 'The Fulcrum', 'Le Monde-Forgeron': 'The World-Forger', 'Le Premier Firmament': 'The First Firmament', 'Le Black Winter': 'The Black Winter', 'L\'Étranger': 'The Stranger',
+  'L\'Enigma Force': 'The Enigma Force', 'L\'Anti-All': 'The Anti-All', 'L\'In-Betweener': 'The In-Betweener', 'L\'abstrait': 'The abstract', 'L\'équilibre': 'The balance',
+  'Les puissants': 'The mighty', 'Les forces': 'The forces', 'Le terrain': 'The ground', 'Le sommet': 'The summit', 'Le classique': 'The classic', 'Boîte-Mère': 'Mother Box',
+  'Anneau': 'Ring', 'Anneau de Green Lantern': 'Green Lantern ring', 'Bouclier': 'Shield', 'Bouclier de Captain America': 'Captain America\'s shield', 'Lance-toile': 'Web-shooter',
+  'Appareil de Peter Parker': 'Peter Parker\'s camera', 'Lasso de Vérité': 'Lasso of Truth', 'Casque de Nabu': 'Helmet of Nabu', 'Œil d\'Agamotto': 'Eye of Agamotto', 'Cube cosmique': 'Cosmic Cube',
+  'Gant de l\'Infini': 'Infinity Gauntlet', 'Gemme de l\'Âme': 'Soul Gem', 'Gemme de l\'Espace': 'Space Gem', 'Gemme de l\'Esprit': 'Mind Gem', 'Gemme de la Réalité': 'Reality Gem',
+  'Gemme du Pouvoir': 'Power Gem', 'Gemme du Temps': 'Time Gem', 'Lingot de vibranium': 'Vibranium ingot', 'Métal Nth': 'Nth Metal', 'Marteau': 'Hammer', 'Griffes': 'Claws', 'Masque': 'Mask',
+  'Crâne': 'Skull', 'Éclair': 'Lightning', 'Flamme': 'Flame', 'Toile': 'Web', 'Cœur': 'Heart', 'Terre': 'Earth', 'Ailes de nuit': 'Night wings',
+  'Pour ceux qui s\'embrasent': 'For those who catch fire', 'Pour les antihéros': 'For antiheroes', 'Pour les bolides et les dieux du tonnerre': 'For speedsters and thunder gods',
+  'Pour les dignes': 'For the worthy', 'Pour les félins et les rois': 'For felines and kings', 'Pour les identités secrètes': 'For secret identities', 'Pour les justiciers de la nuit': 'For night vigilantes',
+  'Pour les porteurs de lumière': 'For light bearers', 'Pour les protecteurs': 'For protectors', 'Pour les tisseurs': 'For web-spinners', 'Pour les voyageurs des étoiles': 'For star travellers',
+  'Antihéros': 'Antiheroes', 'Armures et machines': 'Armours and machines', 'Bêtes et créatures': 'Beasts and creatures', 'Dieux et légendes': 'Gods and legends', 'Grands méchants': 'Big villains',
+  'Héros indés': 'Indie heroes', 'Justiciers de la nuit': 'Night vigilantes', 'Magie et mystère': 'Magic and mystery', 'Pouvoirs nés': 'Born powers',
+  'Golden Age': 'Golden Age', 'Silver Age': 'Silver Age', 'Bronze Age': 'Bronze Age', 'Modern Age': 'Modern Age', 'Saga': 'Saga',
+  // Réglages
+  'Compte & profil': 'Account & profile', 'Compte en ligne': 'Online account', 'Comptes': 'Accounts', 'avec les comptes': 'with accounts', 'Confidentialité': 'Privacy',
+  'Données & sauvegardes': 'Data & backups', 'Données sur cet appareil': 'Data on this device', 'Sources & avancé': 'Sources & advanced', 'Sources & données': 'Sources & data', 'Sources de données': 'Data sources',
+  'Application': 'App', 'Stockage': 'Storage', 'Mode développeur': 'Developer mode', 'Mode limité': 'Limited mode', 'Mode local': 'Local mode', 'Collection & finances': 'Collection & finances',
+  'Affiche les clés API, le journal des scans et les outils éditoriaux. Inutile pour un usage normal.': 'Shows API keys, the scan log and editorial tools. Not needed for normal use.',
+  'Panel fonctionne entièrement sur cet appareil. Le compte en ligne est en préparation : il servira à retrouver votre collection sur plusieurs appareils.': 'Panel runs entirely on this device. The online account is being prepared: it will let you find your collection on several devices.',
+  'Pseudo réservé, abonnés, publication des planches et stories, directs. Ouverture avec la synchronisation (Supabase).': 'Reserved username, followers, posting pages and stories, lives. Opens with sync (Supabase).',
+  'Vos comics et inventaires physiques restent sur cet appareil.': 'Your comics and physical inventories stay on this device.', 'Projet en ligne (préproduction)': 'Online project (pre-production)',
+  'Adresse du projet': 'Project URL', 'Clé publique': 'Public key', 'Enregistrer le projet': 'Save the project',
+  'Seule la clé PUBLIQUE va ici. Une clé secrète est refusée. Rien n\'est envoyé avant que vous vous connectiez ou créiez un compte.': 'Only the PUBLIC key goes here. A secret key is refused. Nothing is sent before you sign in or create an account.',
+  'ouverte comme fichier local : lancez « node serve.js » ou hébergez Panel pour l\'installer': 'opened as a local file: run “node serve.js” or host Panel to install it',
+  '{n} Mo utilisés sur {n} Mo · non persistant (peut être purgé si l\'appareil manque d\'espace — installez l\'app)': '{n} MB used of {n} MB · not persistent (may be cleared if the device runs low on space — install the app)',
+  'Sauvegarde complète': 'Full backup', 'Sauvegarde complète JSON': 'Full JSON backup', 'Sauvegarde par domaine': 'Backup by area', 'Sauvegarder maintenant': 'Back up now',
+  'Restaurer sauvegarde JSON': 'Restore JSON backup', 'Sauvegardes automatiques de la collection (avant chaque traitement par lot)': 'Automatic collection backups (before each batch job)',
+  '· Avant migration des emplacements (lot {n}) · {n} comic(s)': '· Before locations migration (batch {n}) · {n} comic(s)', '· Avant migration du catalogue (lot {n}) · {n} comic(s)': '· Before catalogue migration (batch {n}) · {n} comic(s)',
+  'Importer une collection (CSV, Excel .xlsx) ou une sauvegarde Panel': 'Import a collection (CSV, Excel .xlsx) or a Panel backup', 'Import CLZ / LoCG': 'CLZ / LoCG import',
+  'Importer depuis CLZ Comics, League of Comic Geeks ou un tableur CSV': 'Import from CLZ Comics, League of Comic Geeks or a CSV spreadsheet', 'Fusion par défaut, annulation possible': 'Merge by default, can be undone',
+  'Aperçu détaillé, conflits de notes, annulation': 'Detailed preview, rating conflicts, undo', 'Vérifier l\'intégrité de la collection (ne supprime rien)': 'Check the collection\'s integrity (deletes nothing)',
+  'Contrôle d\'intégrité, ne supprime rien': 'Integrity check, deletes nothing', 'Vérifier les données': 'Check the data', 'Corbeille': 'Bin', '{n} fiche(s) retirée(s), restaurables': '{n} record(s) removed, restorable',
+  'Conflits': 'Conflicts', 'Doublons possibles à trancher': 'Possible duplicates to settle', 'Catalogue commun': 'Shared catalogue',
+  'Catalogue commun : doublons possibles et rattachements à trancher (rien n\'est automatique)': 'Shared catalogue: possible duplicates and links to settle (nothing is automatic)',
+  '{n} à trancher (notes, sources du calendrier, synchronisation)': '{n} to settle (ratings, calendar sources, sync)', 'Provenance des fiches et contrôle des sources': 'Record provenance and source checks',
+  'Couvertures, crédits, recherche mondiale de l’Explorer': 'Covers, credits, Explore\'s world search', 'Couvertures des recueils par ISBN': 'Collected edition covers by ISBN',
+  'Éditions et couvertures de repli (CC BY-SA {n})': 'Editions and fallback covers (CC BY-SA {n})', 'Variantes exactes au scan, couvertures de repli': 'Exact variants on scan, fallback covers',
+  'Récupération Fandom puis Comic Vine, en arrière-plan': 'Fetched from Fandom then Comic Vine, in the background', 'Codes-barres appris (titres + éditions confirmées) :': 'Barcodes learnt (titles + confirmed editions):',
+  'Vider l\'apprentissage': 'Clear what was learnt', 'Notification locale sur cet appareil quand un numéro de votre pull list sort dans les {n} jours ; aucun compte, aucun serveur': 'Local notification on this device when an issue on your pull list comes out within {n} days; no account, no server',
+  // Textes relevés écran par écran en anglais (D-103)
+  "Toutes les langues": "All languages",
+  "Français": "French",
+  "Indé": "Indie",
+  "Films & séries": "Films & TV",
+  "Plus vous ouvrez d'articles, plus le fil met en avant ce qui vous intéresse (calculé sur cet appareil).": "The more articles you open, the more the feed highlights what interests you (computed on this device).",
+  "Dans l'actu · {n} articles": "In the news · {n} articles",
+  "Dans l'actu · {n} article": "In the news · {n} article",
+  "au cinéma en décembre {n} (date annoncée)": "in cinemas in December {n} (announced date)",
+  "Prévu le {n}/{n}/{n}": "Planned for {n}/{n}/{n}",
+  "Acheté": "Bought",
+  "Aucune sortie sur cette période pour votre pull list.": "No release in this period for your pull list.",
+  "Partager, c'est copier : seuls le titre, le numéro, l'année du volume, l'éditeur, la variante, la couverture et l'état sont repris. Jamais le prix, la valeur, l'emplacement ni vos notes. Aucun service communautaire n'est configuré : vos brouillons restent sur cet appareil et rien n'est publié.": "Sharing means copying: only the title, issue number, volume year, publisher, variant, cover and condition are included. Never the price, value, location or your notes. No community service is configured: your drafts stay on this device and nothing is posted.",
+  "Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n'est simulé.": "Voice only, never a camera: your covers and gallery pages on the board, full screen and vertical. Live duel: two sides, evidence, a vote. Rehearse here; lives with listeners will open with accounts, no participant is simulated.",
+  "Mode local, service communautaire non configuré : planches, stories, directs, « j'aime » et enregistrements restent sur cet appareil. Publication, abonnés et commentaires arriveront avec les comptes.": "Local mode, community service not configured: pages, stories, lives, likes and saves stay on this device. Posting, followers and comments will come with accounts.",
+  "Portraits : Comic Vine (nom exact du personnage), chargés au fil de l'ouverture ; sinon emblème Panel. L'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l'ouverture des comptes en ligne.": "Portraits: Comic Vine (exact character name), loaded as you open them; otherwise a Panel emblem. The earthly ladder mixes Marvel and DC species; the “DC multiverse” tier follows an order of Panel's own. Cosmic ranks inspired by the hierarchy presented by House of Ideal (from Maki's videos, a fan ranking, unofficial). Followers, reactions, comments, posted pages and debates will count once online accounts open.",
+  "Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l'atlas Marvel Primestone, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte {n} XP.": "Objects from the Marvel and DC universes (trademarks of their owners). Images of Marvel objects: Marvel Database (Fandom), via the Primestone Marvel atlas, © Marvel; the others are drawn by Panel. Goals designed for years of reading: each unlocked artefact earns {n} XP.",
+  "Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès {n} numéros d'un même personnage.": "Trophies computed from your local data, never stored or sent. Vibranium tier: the rarest. “Guardians” appear from {n} issues of the same character.",
+  "Finances, prix d'achat et valeurs, emplacements et rangement, notes privées et état détaillé. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n'est en ligne avant l'arrivée des comptes.": "Finances, purchase prices and values, locations and storage, private notes and detailed condition. Your posts stay “Only me” until you make them public. Nothing is online before accounts arrive.",
+  "Chaque série possédée, avec les numéros manquants entre le premier et le dernier (ou jusqu'au total que vous définissez). Cliquez une série pour voir la grille des numéros ; cliquez un numéro manquant pour l'ajouter à la wishlist.": "Every series you own, with the missing issues between the first and the last (or up to the total you set). Click a series to see its issue grid; click a missing issue to add it to the wishlist.",
+  "Aucune série en cours pour l'instant. Importez votre export League of Comic Geeks ou CLZ (bouton ci-dessous) : les numéros marqués lus, même hors collection, rejoignent Lecture et vos séries en cours apparaissent ici.": "No ongoing series yet. Import your League of Comic Geeks or CLZ export (button below): issues marked read, even outside the collection, join Reading and your ongoing series appear here.",
+  "Chaque publication est une planche : vos numéros en cases, votre message en bulle, et des réactions en onomatopées. Choisissez un modèle :": "Every post is a comic page: your issues in panels, your message in a balloon, and reactions as sound effects. Pick a template:",
+  // Modération
+  'De': 'From', 'Enregistrés': 'Saved', 'Événement, saga ou parcours, avec ses sources': 'Event, saga or path, with its sources',
+  'Modération': 'Moderation', 'File de l\'équipe': 'Team queue', 'Aucun signalement à traiter.': 'No report to handle.', 'Mots interdits': 'Banned words', 'Mots interdits, un par ligne': 'Banned words, one per line',
+  'un mot ou une expression par ligne': 'one word or phrase per line', 'Délais de réponse visés': 'Target response times', 'Signalement précédent': 'Previous report', 'Signalement suivant': 'Next report',
+  'Masquer le contenu': 'Hide the content', 'Retirer le contenu': 'Remove the content', 'Rétablir (signalement infondé)': 'Restore (unfounded report)', 'Avertir l\'auteur': 'Warn the author',
+  'Suspendre l\'auteur {n} jours': 'Suspend the author for {n} days', 'Classer sans suite': 'Dismiss', 'Usurpation d\'identité': 'Impersonation', 'Spoiler non signalé': 'Unmarked spoiler',
+  'Sécurité d\'un mineur, Automutilation ou détresse': 'Child safety, Self-harm or distress', 'Harcèlement, Haine, Violence, Contenu sexuel': 'Harassment, Hate, Violence, Sexual content',
+  'Droit d\'auteur, Spam, Autre': 'Copyright, Spam, Other', 'La file se remplira à l\'ouverture des comptes : seuls les modérateurs et administrateurs la verront. Rien n\'est simulé ici.': 'The queue will fill up when accounts open: only moderators and administrators will see it. Nothing is simulated here.',
+  'Une seule touche, sans Ctrl ni Alt ; inactifs pendant la saisie du motif. Retirer et suspendre demandent une confirmation.': 'One key, without Ctrl or Alt; inactive while typing the reason. Remove and suspend ask for confirmation.',
+  '{n} mot · brouillon sur cet appareil, envoyé à la base à l\'ouverture des comptes (migration {n} préparée, non appliquée)': '{n} word · draft on this device, sent to the database when accounts open (migration {n} prepared, not applied)'
+};
+
+const same = [
+  'Abraxas', 'Absolute Batman', 'Andy Kubert', 'Anomaly', 'Anti-Monitor', 'Avengers: Doomsday', 'Batarang', 'Batman', 'Beacon', 'Black Panther', 'Bob Layton', 'BOOM! Studios',
+  'Brian Michael Bendis', 'Cerebro', 'Chip Zdarsky', 'Comic Vine', 'Continuum', 'CSV', 'JSON', 'Daniel Warren Johnson', 'Dark Horse', 'Darkseid', 'DC Comics', 'Deadpool', 'Death', 'Destiny',
+  'Divine Creator', 'Donny Cates', 'Dynamite', 'Empathy', 'Enmity', 'Entropy', 'Eon', 'Epiphany', 'Epoch', 'Eternity', 'Eulogy', 'Expediency', 'Flash (Barry Allen)', 'Galactus',
+  'Geoff Johns', 'George Pérez', 'Grand Comics Database', 'Griever', 'Harley Quinn', 'IDW Publishing', 'Image', 'Image Comics', 'Infinity', 'Ivan Reis', 'Jerry Ordway', 'Jim Lee',
+  'Jim Shooter', 'Jim Starlin', 'Joker', 'Jonathan Hickman', 'Knull', 'Kryptonite', 'Life', 'Lifebringer One', 'Lord Chaos', 'Lucifer Morningstar', 'Man of Tomorrow', 'Mark Millar',
+  'Marv Wolfman', 'Marvel', 'Master Hate', 'Master Order', 'Mercredi BD', 'Metron', 'Mike Zeck', 'Miles Morales', 'Mirage', 'Mistress Love', 'Mjolnir', 'Monitor', 'Monstress', 'Némésis',
+  'Now', 'Then', 'Numinus', 'Oblivion', 'Olivier Coipel', 'One Below All', 'Opal Luna Saturnyne', 'Open Library', 'Origin', 'Panel', 'panel', 'Panel · Explorer', 'Panel · Planches',
+  'Perpetua', 'Phil Jimenez', 'Powers That Be', 'Primestone', 'Queen of Nevers', 'Ron Lim', 'Ryan Stegman', 'Sara Grey', 'Scott Snyder', 'Something is Killing the Children', 'Spider-Man',
+  'Spider-Man: Beyond the Spider-Verse', 'Steve McNiven', 'Storm', 'Superman', 'Thanos', 'The Lost One', 'The Natural Order of Things', 'The One Above All', 'The Preordained', 'Tom King',
+  'Transformers', 'Ultimate Nullifier', 'Ultimate Spider-Man', 'Unbeing', 'Venom', 'Venom (Eddie Brock)', 'Witchcraft', 'Wolverine', 'Wonder Woman', 'Infinity', 'node serve.js',
+  'http://localhost:8080', 'https://xxxxxxxxxxxxxxxxxxxx.supabase.co', 'sb_publishable_…', 'Key Issues', 'Wishlist', 'Pull list'
+];
+
+module.exports = { locale: 'en', phrases, same };
+  return Object.freeze(module.exports); })();
+  /* domains/i18n/i18n-es.js */
+  out.i18nEs = (() => { const module = { exports: {} };
+'use strict';
+// Table espagnole de l'interface (D-103) : la coque (navigation, onglets, Réglages, boutons courants).
+// Le reste de l'interface s'affiche en français tant que la table n'est pas complétée (jamais de texte vide).
+const phrases = {
+  "Accueil": "Inicio",
+  "Collection": "Colección",
+  "Lecture": "Lectura",
+  "Explorer": "Explorar",
+  "Communauté": "Comunidad",
+  "Profil": "Perfil",
+  "Découvrir": "Descubrir",
+  "Directs": "Directos",
+  "Réglages": "Ajustes",
+  "Paramètres et clés API": "Ajustes y claves API",
+  "Plus": "Más",
+  "Ma collection": "Mi colección",
+  "Mes séries": "Mis series",
+  "Ma pull list": "Mi pull list",
+  "Ma Wishlist": "Mi Wishlist",
+  "Sorties": "Lanzamientos",
+  "Statistiques": "Estadísticas",
+  "Finances": "Finanzas",
+  "Finances (privé)": "Finanzas (privado)",
+  "Séries & complétion": "Series y compleción",
+  "Sorties & calendrier": "Lanzamientos y calendario",
+  "Calendrier": "Calendario",
+  "Rechercher dans Panel": "Buscar en Panel",
+  "Rechercher une série, numéro...": "Buscar una serie, número...",
+  "Fermer": "Cerrar",
+  "Ouvrir": "Abrir",
+  "Masquer": "Ocultar",
+  "Ajouter": "Añadir",
+  "+ Ajouter": "+ Añadir",
+  "Ajouter manuellement": "Añadir manualmente",
+  "Ajouter un single": "Añadir un número",
+  "Exporter": "Exportar",
+  "Importer": "Importar",
+  "Restaurer": "Restaurar",
+  "Vérifier": "Comprobar",
+  "Suivre": "Seguir",
+  "Publier": "Publicar",
+  "Tout voir": "Ver todo",
+  "Tout": "Todo",
+  "Tous": "Todos",
+  "Filtres": "Filtros",
+  "Tri": "Orden",
+  "Liste": "Lista",
+  "Boîtes": "Cajas",
+  "Plus d'actions": "Más acciones",
+  "Aujourd'hui": "Hoy",
+  "Cette semaine": "Esta semana",
+  "Semaine prochaine": "La próxima semana",
+  "Titre": "Título",
+  "Numéro": "Número",
+  "Numéros": "Números",
+  "Éditeur": "Editorial",
+  "Éditeurs": "Editoriales",
+  "Personnages": "Personajes",
+  "Créateurs": "Autores",
+  "Séries": "Series",
+  "Équipes": "Equipos",
+  "Possédés": "En propiedad",
+  "Lus": "Leídos",
+  "À lire": "Por leer",
+  "En cours": "En curso",
+  "Abandonnés": "Abandonados",
+  "Journal": "Diario",
+  "Prochain numéro": "Próximo número",
+  "Tendances": "Tendencias",
+  "Actualités": "Noticias",
+  "Guides": "Guías",
+  "Guides de lecture": "Guías de lectura",
+  "Fil": "Muro",
+  "Pour toi": "Para ti",
+  "Abonnements": "Siguiendo",
+  "Publications": "Publicaciones",
+  "Mes publications": "Mis publicaciones",
+  "Planches": "Páginas",
+  "Stories": "Historias",
+  "Créer une story": "Crear una historia",
+  "Écrire une pensée": "Escribir una idea",
+  "Quoi de neuf dans tes comics ?": "¿Qué hay de nuevo en tus cómics?",
+  "Pseudo": "Usuario",
+  "Bio": "Bio",
+  "Ville": "Ciudad",
+  "Couleur": "Color",
+  "Clair": "Claro",
+  "Sombre": "Oscuro",
+  "Selon le système": "Según el sistema",
+  "Thème": "Tema",
+  "Apparence": "Apariencia",
+  "Affichage": "Visualización",
+  "Notifications": "Notificaciones",
+  "Langue": "Idioma",
+  "Langue de l'interface": "Idioma de la interfaz",
+  "Compte & profil": "Cuenta y perfil",
+  "Compte en ligne": "Cuenta en línea",
+  "Confidentialité": "Privacidad",
+  "Données & sauvegardes": "Datos y copias de seguridad",
+  "Sources & avancé": "Fuentes y avanzado",
+  "Application": "Aplicación",
+  "Stockage": "Almacenamiento",
+  "Modération": "Moderación",
+  "Mots interdits": "Palabras prohibidas",
+  "Rang et trophées": "Rango y trofeos",
+  "Vitrine des trophées": "Vitrina de trofeos",
+  "Artefacts": "Artefactos",
+  "Créer mon profil": "Crear mi perfil",
+  "Créez votre profil Panel": "Crea tu perfil de Panel",
+  "Votre collection commence ici": "Tu colección empieza aquí",
+  "Ajoutez des numéros à votre collection.": "Añade números a tu colección.",
+  "Scanner": "Escanear",
+  "Scanner un code-barres": "Escanear un código de barras",
+  "Votre wishlist est vide": "Tu wishlist está vacía",
+  "Suivre une série": "Seguir una serie",
+  "Mercredi des sorties": "Miércoles de novedades",
+  "Importer un calendrier": "Importar un calendario",
+  "Sauvegarde complète": "Copia de seguridad completa",
+  "Sauvegarder maintenant": "Guardar ahora",
+  "Enregistrer les préférences": "Guardar preferencias",
+  "Préparer un direct": "Preparar un directo",
+  "Préparer une rencontre": "Preparar un encuentro",
+  "Se retrouver en vrai": "Encontrarse en persona",
+  "Lieu public": "Lugar público",
+  "Mon J'aime": "Mi Me gusta",
+  "{n} XP": "{n} XP",
+  "Exploration": "Exploración",
+  "Multivers": "Multiverso",
+  "lun": "lun",
+  "mar": "mar",
+  "mer": "mié",
+  "jeu": "jue",
+  "ven": "vie",
+  "sam": "sáb",
+  "dim": "dom",
+  "janv": "ene",
+  "févr": "feb",
+  "mars": "mar",
+  "avr": "abr",
+  "mai": "may",
+  "juin": "jun",
+  "juil": "jul",
+  "août": "ago",
+  "sept": "sep",
+  "oct": "oct",
+  "nov": "nov",
+  "déc": "dic",
+  "Dates et nombres suivent la langue choisie.": "Las fechas y los números siguen el idioma elegido."
+};
+
+module.exports = { locale: 'es', phrases, same: [] };
+  return Object.freeze(module.exports); })();
+  /* domains/i18n/i18n-pt.js */
+  out.i18nPt = (() => { const module = { exports: {} };
+'use strict';
+// Table portugaise (Brésil) de l'interface (D-103) : la coque (navigation, onglets, Réglages, boutons courants).
+// Le reste de l'interface s'affiche en français tant que la table n'est pas complétée (jamais de texte vide).
+const phrases = {
+  "Accueil": "Início",
+  "Collection": "Coleção",
+  "Lecture": "Leitura",
+  "Explorer": "Explorar",
+  "Communauté": "Comunidade",
+  "Profil": "Perfil",
+  "Découvrir": "Descobrir",
+  "Directs": "Ao vivo",
+  "Réglages": "Configurações",
+  "Paramètres et clés API": "Configurações e chaves de API",
+  "Plus": "Mais",
+  "Ma collection": "Minha coleção",
+  "Mes séries": "Minhas séries",
+  "Ma pull list": "Minha pull list",
+  "Ma Wishlist": "Minha Wishlist",
+  "Sorties": "Lançamentos",
+  "Statistiques": "Estatísticas",
+  "Finances": "Finanças",
+  "Finances (privé)": "Finanças (privado)",
+  "Séries & complétion": "Séries e conclusão",
+  "Sorties & calendrier": "Lançamentos e calendário",
+  "Calendrier": "Calendário",
+  "Rechercher dans Panel": "Pesquisar no Panel",
+  "Rechercher une série, numéro...": "Pesquisar uma série, edição...",
+  "Fermer": "Fechar",
+  "Ouvrir": "Abrir",
+  "Masquer": "Ocultar",
+  "Ajouter": "Adicionar",
+  "+ Ajouter": "+ Adicionar",
+  "Ajouter manuellement": "Adicionar manualmente",
+  "Ajouter un single": "Adicionar uma edição",
+  "Exporter": "Exportar",
+  "Importer": "Importar",
+  "Restaurer": "Restaurar",
+  "Vérifier": "Verificar",
+  "Suivre": "Seguir",
+  "Publier": "Publicar",
+  "Tout voir": "Ver tudo",
+  "Tout": "Tudo",
+  "Tous": "Todos",
+  "Filtres": "Filtros",
+  "Tri": "Ordenar",
+  "Liste": "Lista",
+  "Boîtes": "Caixas",
+  "Plus d'actions": "Mais ações",
+  "Aujourd'hui": "Hoje",
+  "Cette semaine": "Esta semana",
+  "Semaine prochaine": "Próxima semana",
+  "Titre": "Título",
+  "Numéro": "Edição",
+  "Numéros": "Edições",
+  "Éditeur": "Editora",
+  "Éditeurs": "Editoras",
+  "Personnages": "Personagens",
+  "Créateurs": "Autores",
+  "Séries": "Séries",
+  "Équipes": "Equipes",
+  "Possédés": "Na coleção",
+  "Lus": "Lidos",
+  "À lire": "Para ler",
+  "En cours": "Em andamento",
+  "Abandonnés": "Abandonados",
+  "Journal": "Diário",
+  "Prochain numéro": "Próxima edição",
+  "Tendances": "Tendências",
+  "Actualités": "Notícias",
+  "Guides": "Guias",
+  "Guides de lecture": "Guias de leitura",
+  "Fil": "Feed",
+  "Pour toi": "Para você",
+  "Abonnements": "Seguindo",
+  "Publications": "Publicações",
+  "Mes publications": "Minhas publicações",
+  "Planches": "Páginas",
+  "Stories": "Stories",
+  "Créer une story": "Criar um story",
+  "Écrire une pensée": "Escrever uma ideia",
+  "Quoi de neuf dans tes comics ?": "O que há de novo nos seus quadrinhos?",
+  "Pseudo": "Usuário",
+  "Bio": "Bio",
+  "Ville": "Cidade",
+  "Couleur": "Cor",
+  "Clair": "Claro",
+  "Sombre": "Escuro",
+  "Selon le système": "Conforme o sistema",
+  "Thème": "Tema",
+  "Apparence": "Aparência",
+  "Affichage": "Exibição",
+  "Notifications": "Notificações",
+  "Langue": "Idioma",
+  "Langue de l'interface": "Idioma da interface",
+  "Compte & profil": "Conta e perfil",
+  "Compte en ligne": "Conta on-line",
+  "Confidentialité": "Privacidade",
+  "Données & sauvegardes": "Dados e backups",
+  "Sources & avancé": "Fontes e avançado",
+  "Application": "Aplicativo",
+  "Stockage": "Armazenamento",
+  "Modération": "Moderação",
+  "Mots interdits": "Palavras proibidas",
+  "Rang et trophées": "Nível e troféus",
+  "Vitrine des trophées": "Vitrine de troféus",
+  "Artefacts": "Artefatos",
+  "Créer mon profil": "Criar meu perfil",
+  "Créez votre profil Panel": "Crie seu perfil no Panel",
+  "Votre collection commence ici": "Sua coleção começa aqui",
+  "Ajoutez des numéros à votre collection.": "Adicione edições à sua coleção.",
+  "Scanner": "Escanear",
+  "Scanner un code-barres": "Escanear um código de barras",
+  "Votre wishlist est vide": "Sua wishlist está vazia",
+  "Suivre une série": "Seguir uma série",
+  "Mercredi des sorties": "Quarta-feira de lançamentos",
+  "Importer un calendrier": "Importar um calendário",
+  "Sauvegarde complète": "Backup completo",
+  "Sauvegarder maintenant": "Fazer backup agora",
+  "Enregistrer les préférences": "Salvar preferências",
+  "Préparer un direct": "Preparar uma live",
+  "Préparer une rencontre": "Preparar um encontro",
+  "Se retrouver en vrai": "Encontrar-se pessoalmente",
+  "Lieu public": "Local público",
+  "Mon J'aime": "Meu Curtir",
+  "{n} XP": "{n} XP",
+  "Exploration": "Exploração",
+  "Multivers": "Multiverso",
+  "lun": "seg",
+  "mar": "ter",
+  "mer": "qua",
+  "jeu": "qui",
+  "ven": "sex",
+  "sam": "sáb",
+  "dim": "dom",
+  "janv": "jan",
+  "févr": "fev",
+  "mars": "mar",
+  "avr": "abr",
+  "mai": "mai",
+  "juin": "jun",
+  "juil": "jul",
+  "août": "ago",
+  "sept": "set",
+  "oct": "out",
+  "nov": "nov",
+  "déc": "dez",
+  "Dates et nombres suivent la langue choisie.": "Datas e números seguem o idioma escolhido."
+};
+
+module.exports = { locale: 'pt', phrases, same: [] };
+  return Object.freeze(module.exports); })();
   return Object.freeze(out);
 })();
 </script>
@@ -10197,6 +10885,70 @@ document.addEventListener('click', e => {
 window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.message, line: e.lineno, error: e.error ? e.error.stack : '' }));
 (()=>{
   'use strict';
+
+  // ── Langue de l'interface (D-103). Le français est la langue source ; une autre langue traduit l'affichage
+  // à partir des tables de domains/i18n (phrases connues de l'interface uniquement : le contenu des utilisateurs n'est jamais traduit).
+  // Une phrase sans traduction reste en français. Dates et nombres suivent la langue choisie (Intl).
+  const I18N = window.PanelDomains.i18n;
+  const I18N_KEY = 'panel_lang_v1';
+  const I18N_DICTS = { en: window.PanelDomains.i18nEn, es: window.PanelDomains.i18nEs, pt: window.PanelDomains.i18nPt };
+  let uiLangPref = 'fr';
+  try { uiLangPref = localStorage.getItem(I18N_KEY) || 'fr'; } catch (_) {}
+  const uiLang = I18N.resolveLocale(uiLangPref, navigator.languages || [navigator.language]);
+  function uiLocale() { return I18N.intlLocale(uiLang); }
+  const i18nRuntime = (() => {
+    const tr = uiLang === 'fr' ? null : I18N.translator(uiLang, I18N_DICTS[uiLang]);
+    if (!tr) return { active: false, count: () => 0 };
+    let applied = 0;
+    const ATTRS = ['title', 'aria-label', 'placeholder'];
+    const textDone = new WeakMap(), attrDone = new WeakMap();
+    // Le texte saisi (zone de saisie, contenu modifiable) n'est jamais touché ; les indications (placeholder, title) le sont
+    const skip = el => !el || !!el.closest('script,style,textarea,[contenteditable="true"],[data-no-i18n]');
+    const skipAttrs = el => !el || !!el.closest('[data-no-i18n]');
+    // Un texte déjà traduit n'est jamais retraduit (évite les chaînes du type « mars » -> « mar » -> « mardi »)
+    const doText = n => {
+      if (textDone.get(n) === n.nodeValue || skip(n.parentElement)) return;
+      const v = tr(n.nodeValue);
+      if (v !== null && v !== n.nodeValue) { n.nodeValue = v; applied++; }
+      textDone.set(n, n.nodeValue);
+    };
+    const doEl = el => {
+      if (skipAttrs(el)) return;
+      let done = attrDone.get(el); if (!done) { done = {}; attrDone.set(el, done); }
+      ATTRS.forEach(a => {
+        if (!el.hasAttribute(a)) return;
+        const cur = el.getAttribute(a); if (done[a] === cur) return;
+        const v = tr(cur);
+        if (v !== null && v !== cur) { el.setAttribute(a, v); applied++; }
+        done[a] = el.getAttribute(a);
+      });
+    };
+    const walk = root => {
+      if (!root) return;
+      if (root.nodeType === 3) { doText(root); return; }
+      if (root.nodeType !== 1) return;
+      doEl(root);
+      const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+      while ((n = w.nextNode())) doText(n);
+      root.querySelectorAll('[title],[aria-label],[placeholder]').forEach(doEl);
+    };
+    document.documentElement.lang = uiLang;
+    document.documentElement.dir = I18N.dir(uiLang);
+    const run = () => {
+      walk(document.body);
+      // Titre de l'onglet (« Accueil · Panel ») : chaque partie traduite séparément
+      const fixTitle = () => { const out = document.title.split(' · ').map(x => tr(x) || x).join(' · '); if (out !== document.title) document.title = out; };
+      fixTitle();
+      const te = document.querySelector('title'); if (te) new MutationObserver(fixTitle).observe(te, { childList: true, characterData: true, subtree: true });
+      new MutationObserver(muts => muts.forEach(m => {
+        if (m.type === 'characterData') doText(m.target);
+        else if (m.type === 'attributes') doEl(m.target);
+        else m.addedNodes.forEach(walk);
+      })).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ATTRS });
+    };
+    if (document.body) run(); else document.addEventListener('DOMContentLoaded', run, { once: true });
+    return { active: true, count: () => applied, translate: s => tr(s) };
+  })();
 
   const $ = id => document.getElementById(id);
   const $$ = sel => document.querySelectorAll(sel);
@@ -12322,7 +13074,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   // Lot F0 : une valeur inconnue s'affiche « — », jamais « 0.00 ». Devise inchangée tant que F-D2 est ouverte.
   const money = n => { const v = numOrNull(n); return v === null ? '—' : '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); };
-  const pctText = p => p === null || p === undefined || !Number.isFinite(p) ? '—' : (p >= 0 ? '+' : '') + p.toLocaleString('fr-FR', { maximumFractionDigits: 2 }) + ' %';
+  const pctText = p => p === null || p === undefined || !Number.isFinite(p) ? '—' : (p >= 0 ? '+' : '') + p.toLocaleString(uiLocale(), { maximumFractionDigits: 2 }) + ' %';
   const issueNumber = s => {
     const raw = typeof s === 'object' && s !== null ? s.issue : s;
     const m = String(raw == null ? '' : raw).replace(',', '.').match(/-?\d+(\.\d+)?/);
@@ -12421,7 +13173,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const v = numOrNull(n);
     if (v === null) return '—';
     if (!cur || cur === 'none') return money(v);
-    try { return v.toLocaleString('fr-FR', { style: 'currency', currency: cur }); } catch (_) { return v.toFixed(2) + ' ' + cur; }
+    try { return v.toLocaleString(uiLocale(), { style: 'currency', currency: cur }); } catch (_) { return v.toFixed(2) + ' ' + cur; }
   };
   // Totaux par devise (« none » = non précisée) ; la plus-value n'est calculée que dans une même devise
   const financeByCurrency = list => {
@@ -13978,7 +14730,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const d = trashLoad();
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="trashTitle"><h2 id="trashTitle">Corbeille</h2>' +
       '<p class="stat-sub">Les fiches retirées sont conservées ici sans limite de durée. « Restaurer » les remet dans la collection ; seule « Supprimer définitivement », confirmée, les efface.</p>' +
-      (d.items.length ? '<div data-list>' + d.items.map(x => '<div class="top-item" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:0"><b>' + escapeHtml((x.item.series || '') + ' ' + (x.item.issue || '')) + '</b><span class="stat-sub" style="display:block">' + escapeHtml(x.item.variant || '') + ' · retiré le ' + new Date(x.removedAt).toLocaleString('fr-FR') + '</span></span>' +
+      (d.items.length ? '<div data-list>' + d.items.map(x => '<div class="top-item" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><span style="flex:1;min-width:0"><b>' + escapeHtml((x.item.series || '') + ' ' + (x.item.issue || '')) + '</b><span class="stat-sub" style="display:block">' + escapeHtml(x.item.variant || '') + ' · retiré le ' + new Date(x.removedAt).toLocaleString(uiLocale()) + '</span></span>' +
         '<button class="btn secondary" style="font-size:12px;padding:3px 8px" data-trash-restore="' + escapeHtml(x.item.id) + '">Restaurer</button> <button class="btn secondary" style="font-size:12px;padding:3px 8px;color:var(--red)" data-trash-purge="' + escapeHtml(x.item.id) + '">Supprimer définitivement</button></div>').join('') + '</div>'
         : '<div class="notice-box">La corbeille est vide.</div>') +
       '<div class="modal-btns"><button class="btn secondary" data-close>Fermer</button></div></div>';
@@ -14650,7 +15402,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('inspectPurchaseMeta')) {
       const parts = [];
       if (numOrNull(item.coverPrice) !== null) parts.push('Couverture ' + money(item.coverPrice));
-      if (item.purchaseDate) parts.push('acheté le ' + new Date(item.purchaseDate).toLocaleDateString('fr-FR'));
+      if (item.purchaseDate) parts.push('acheté le ' + new Date(item.purchaseDate).toLocaleDateString(uiLocale()));
       $('inspectPurchaseMeta').textContent = parts.join(' · ');
       let cpBox = $('inspectCopiesBox');
       if (!cpBox) { cpBox = document.createElement('div'); cpBox.id = 'inspectCopiesBox'; cpBox.className = 'inspect-copies'; $('inspectPurchaseMeta').insertAdjacentElement('afterend', cpBox); }
@@ -14682,7 +15434,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (srcBadge) {
       const src = item.valueSource || (numOrNull(item.estValue) !== null ? 'manual' : 'auto');
       srcBadge.className = 'value-source ' + src;
-      srcBadge.textContent = src === 'market' ? 'Marché · ' + (item.marketSource || 'vente') + (item.marketDate ? ' · ' + new Date(item.marketDate).toLocaleDateString('fr-FR') : '')
+      srcBadge.textContent = src === 'market' ? 'Marché · ' + (item.marketSource || 'vente') + (item.marketDate ? ' · ' + new Date(item.marketDate).toLocaleDateString(uiLocale()) : '')
         : src === 'auto' ? '≈ Cote auto' : 'Valeur saisie';
       const est = item.valueSource === 'auto' && item.valuation ? item.valuation : estimateComicValue(item);
       $('inspectValueRange').textContent = (src === 'auto' ? 'Fourchette ' : 'Cote auto : ≈ ' + money(est.value) + ' · ') + money(est.low) + ' – ' + money(est.high) + ' · confiance ' + est.confidence;
@@ -14712,7 +15464,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const hist = (item.valueHistory || []).slice().reverse();
       const srcName = { auto: 'auto', market: 'marché', manual: 'saisie' };
       $('inspectValueHistory').innerHTML = hist.length
-        ? hist.map(h => '<div><span>' + new Date(h.date).toLocaleDateString('fr-FR') + ' · ' + escapeHtml(srcName[h.source] || h.source) + (h.note ? ' (' + escapeHtml(h.note) + ')' : '') + '</span><b>' + money(h.value) + '</b></div>').join('')
+        ? hist.map(h => '<div><span>' + new Date(h.date).toLocaleDateString(uiLocale()) + ' · ' + escapeHtml(srcName[h.source] || h.source) + (h.note ? ' (' + escapeHtml(h.note) + ')' : '') + '</span><b>' + money(h.value) + '</b></div>').join('')
         : '';
     }
 
@@ -14772,7 +15524,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         wishBox.innerHTML = '<label>Priorité<select class="field-input" data-w="priority">' + opt(WISH_PRIORITY, w.priority) + '</select></label>' +
           '<label>Statut<select class="field-input" data-w="status">' + opt(WISH_STATUS, w.status) + '</select></label>' +
           '<label>Prix cible ($)<input class="field-input" data-w="targetPrice" type="number" min="0" step="0.01" style="width:90px" value="' + (w.targetPrice ?? '') + '"></label>' +
-          '<span class="rel-note">Ajouté le ' + (w.addedAt ? new Date(w.addedAt).toLocaleDateString('fr-FR') : '—') + (w.updatedAt ? ' · modifié le ' + new Date(w.updatedAt).toLocaleDateString('fr-FR') : '') + (w.from ? ' · depuis ' + escapeHtml(w.from) : '') + '</span>';
+          '<span class="rel-note">Ajouté le ' + (w.addedAt ? new Date(w.addedAt).toLocaleDateString(uiLocale()) : '—') + (w.updatedAt ? ' · modifié le ' + new Date(w.updatedAt).toLocaleDateString(uiLocale()) : '') + (w.from ? ' · depuis ' + escapeHtml(w.from) : '') + '</span>';
         wishBox.querySelectorAll('[data-w]').forEach(el => { el.onchange = () => { setWish(item, { [el.dataset.w]: el.value }); renderSinglesCollection(); }; });
       }
     }
@@ -15753,7 +16505,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const relNumLabel = p => !p.issue ? '' : (['single', 'kiosque'].includes(p.format) ? '#' + p.issue : 'T. ' + p.issue);
   const relLabel = p => [p.series, relNumLabel(p)].filter(Boolean).join(' ') + (p.variant ? ' · ' + p.variant : '');
-  const relFmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString('fr-FR') : '';
+  const relFmtDate = d => d ? new Date(d + 'T12:00:00').toLocaleDateString(uiLocale()) : '';
   // D-67 — Sorties US : rangées au mercredi de leur semaine (New Comic Book Day). La date de la source reste stockée telle quelle.
   const relNcbd = d => { if (!/^\d{4}-\d{2}-\d{2}$/.test(d || '')) return d || ''; const x = new Date(d + 'T12:00:00'); x.setDate(x.getDate() + (3 - ((x.getDay() + 6) % 7 + 1))); return isoDate(x); };
   const REL_WED_MARKETS = ['US', 'FR', 'BE', 'CH', 'CA', 'LU'];
@@ -16497,7 +17249,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   // ---------- Interface : Sources & données
   const daState = { tab: 'sources', plan: null, report: null, provQuery: '', provId: '', showResolved: false, sourceType: 'user_import' };
-  const daDate = iso => iso ? new Date(iso).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+  const daDate = iso => iso ? new Date(iso).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' }) : '—';
   const daStatusBadge = st => '<span class="da-badge da-st-' + escapeHtml(st) + '">' + escapeHtml(SRC_STATUS[st] || st) + '</span>';
   const daClassBadge = cl => '<span class="da-badge da-cl-' + escapeHtml(cl) + '">' + escapeHtml(SRC_CLASS[cl] || cl) + '</span>';
   const DA_ACTIONS = { add: 'Nouvelle', update: 'Mise à jour', identical: 'Identique', conflict: 'Conflit', ambiguous: 'Doublon possible', duplicate: 'Doublon (fichier)', invalid: 'Invalide' };
@@ -16961,7 +17713,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const s = (relMeta.sync || {}).comicvine;
     const parts = [];
     if (!cvAvailable()) parts.push('Comic Vine non configuré : le calendrier affiche uniquement les publications importées ou saisies.');
-    else parts.push(s && s.lastOkAt ? 'Comic Vine actualisé le ' + new Date(s.lastOkAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + (s.lastStatus !== 'ok' ? ' (dernier essai : ' + (s.lastError || s.lastStatus) + ')' : '') : 'Comic Vine : jamais actualisé.');
+    else parts.push(s && s.lastOkAt ? 'Comic Vine actualisé le ' + new Date(s.lastOkAt).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' }) + (s.lastStatus !== 'ok' ? ' (dernier essai : ' + (s.lastError || s.lastStatus) + ')' : '') : 'Comic Vine : jamais actualisé.');
     parts.push('Actualisation manuelle ou à l\'ouverture de la semaine ; aucune mise à jour automatique en arrière-plan.');
     if (!navigator.onLine) parts.push('Hors ligne : dernières données enregistrées.');
     parts.push(relPubs.size + ' publication(s) enregistrée(s).');
@@ -16970,12 +17722,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const renderReleasesWeekLabel = () => {
     const el = $('releasesWeekLabel');
     if (!el) return;
-    const r = relRange(), f = d => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    const r = relRange(), f = d => new Date(d + 'T12:00:00').toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' });
     if (!r) el.textContent = 'Toutes les dates';
     else if (relView.period === 'week') {
       const wed = new Date(r[0] + 'T12:00:00'); wed.setDate(wed.getDate() + 2);
-      el.textContent = `Semaine du ${f(r[0])} au ${f(r[1])} ${r[1].slice(0, 4)} · NCBD mer. ${wed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
-    } else if (relView.period === 'month') el.textContent = new Date(r[0] + 'T12:00:00').toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+      el.textContent = uiLang === 'fr' ? `Semaine du ${f(r[0])} au ${f(r[1])} ${r[1].slice(0, 4)} · NCBD mer. ${wed.toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' })}`
+        : `${f(r[0])} – ${f(r[1])} ${r[1].slice(0, 4)} · NCBD ${wed.toLocaleDateString(uiLocale(), { weekday: 'short', day: 'numeric', month: 'short' })}`;
+    } else if (relView.period === 'month') el.textContent = new Date(r[0] + 'T12:00:00').toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' });
     else el.textContent = f(r[0]) + ' → ' + f(r[1]) + ' ' + r[1].slice(0, 4);
   };
   const relFillSelect = (id, options, current) => {
@@ -17056,7 +17809,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         const pulled = lm ? its.filter(p => relIsPulled(lm.get(p.id))).length : 0;
         const vf = its.filter(p => ['FR', 'BE', 'CH', 'CA', 'LU'].includes(String(p.market || '').toUpperCase())).length;
         const wed = new Date(a); wed.setDate(wed.getDate() + 2);
-        const title = w === 0 ? 'Cette semaine' : w === 1 ? 'Semaine prochaine' : 'Mer. ' + wed.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }).replace('.', '');
+        const title = w === 0 ? 'Cette semaine' : w === 1 ? 'Semaine prochaine' : uiLang === 'fr' ? 'Mer. ' + wed.toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' }).replace('.', '') : wed.toLocaleDateString(uiLocale(), { weekday: 'short', day: 'numeric', month: 'short' });
         return '<button class="rel-upw' + (cur === A ? ' is-cur' : '') + (its.length ? '' : ' is-empty') + '" data-rel-jump="' + A + '"><small>' + title + '</small>' + (its.length || w === 0 ? '<b>' + its.length + '</b><span>sortie' + (its.length > 1 ? 's' : '') + '</span>' : '<b>—</b><span>Ouvrir la semaine</span>') +
           (vf || pulled ? '<i>' + [vf ? vf + ' VF' : '', pulled ? pulled + ' suivie' + (pulled > 1 ? 's' : '') : ''].filter(Boolean).join(' · ') + '</i>' : '') + '</button>';
       }).join('') + '</div>';
@@ -17070,7 +17823,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       weekStrip = '<div class="rel-week" role="tablist" aria-label="Jours de la semaine">' + days.map(k => {
         const n = itemsAll.filter(p => relDay(p) === k).length, d = new Date(k + 'T12:00:00');
         return '<button role="tab" class="rel-day' + (relView.day === k ? ' is-sel' : '') + (k === relToday() ? ' is-today' : '') + (d.getDay() === 3 ? ' is-ncbd' : '') + (n ? '' : ' is-empty') + '" data-day="' + k + '" aria-selected="' + (relView.day === k) + '">' +
-          '<small>' + d.toLocaleDateString('fr-FR', { weekday: 'short' }).replace('.', '') + '</small><b>' + d.getDate() + '</b><span>' + (n ? n + ' sortie' + (n > 1 ? 's' : '') : '—') + '</span>' + (d.getDay() === 3 ? '<em>Mercredi BD</em>' : '') + '</button>';
+          '<small>' + d.toLocaleDateString(uiLocale(), { weekday: 'short' }).replace('.', '') + '</small><b>' + d.getDate() + '</b><span>' + (n ? n + ' sortie' + (n > 1 ? 's' : '') : '—') + '</span>' + (d.getDay() === 3 ? '<em>Mercredi BD</em>' : '') + '</button>';
       }).join('') + '</div>';
     } else relView.day = '';
     weekStrip = upStrip + weekStrip;
@@ -17111,7 +17864,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const variantsHtml = vs => !vs.length ? '' : '<details class="rel-variants"><summary>+' + vs.length + ' variante' + (vs.length > 1 ? 's' : '') + '</summary>' +
         vs.map(v => '<div data-id="' + escapeHtml(v.id) + '"><button class="rel-variant-item" data-open>' + escapeHtml(v.variant || 'Variante') + '</button></div>').join('') + '</details>';
       const focBadge = p => { const f = relViews.focOf(p); return f ? '<span class="rel-date is-foc" title="Date limite de commande chez le libraire (FOC)">FOC ' + relFmtDate(f) + '</span>' : ''; };
-      gridEl.innerHTML = weekStrip + `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${relView.day ? new Date(relView.day + 'T12:00:00').toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' : ''}${relView.mode === 'firsts' ? 'Nouveaux #1 à venir : ' : ''}${items.length} publication(s)${groups.length < items.length ? ' · ' + groups.length + ' numéro(s), variantes regroupées' : ''}${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
+      gridEl.innerHTML = weekStrip + `<div style="grid-column:1/-1;font-size:12px;color:var(--muted)">${relView.day ? new Date(relView.day + 'T12:00:00').toLocaleDateString(uiLocale(), { weekday: 'long', day: 'numeric', month: 'long' }) + ' · ' : ''}${relView.mode === 'firsts' ? 'Nouveaux #1 à venir : ' : ''}${items.length} publication(s)${groups.length < items.length ? ' · ' + groups.length + ' numéro(s), variantes regroupées' : ''}${pulledCount ? ` · <b style="color:var(--gold)">${pulledCount} dans votre pull list</b>` : ''}${undated ? ' · ' + undated + ' sans date (voir « Toutes les dates »)' : ''}</div>` +
         groups.map(({ main: p, variants }) => {
           const st = stOf(p), isP = relIsPulled(st);
           const s = { series: p.series, issue: relNumLabel(p), coverUrl: p.cover ? p.cover.url : '' };
@@ -17195,7 +17948,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<input class="field-input pull-qty" data-f="quantity" type="number" min="1" max="99" value="' + pl.quantity + '" aria-label="Quantité">' +
           '<button class="btn rel-mini" data-act="pick">Récupéré</button><button class="btn secondary rel-mini" data-act="wish">→ Wishlist</button><button class="btn ghost rel-mini" data-act="cancel">Annuler</button>'
           : (pl.status === 'cancelled' ? '<button class="btn secondary rel-mini" data-act="reactivate">Rétablir</button>' : '<span class="rel-note">×' + pl.quantity + (pl.variant ? ' · ' + escapeHtml(pl.variant) : '') + '</span>')) +
-        '<details class="pull-hist"><summary>Historique</summary><ul>' + (pl.history || []).slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) + ' — ' + h.detail) + '</li>').join('') + '</ul></details>' +
+        '<details class="pull-hist"><summary>Historique</summary><ul>' + (pl.history || []).slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' }) + ' — ' + h.detail) + '</li>').join('') + '</ul></details>' +
         '</div>';
     };
     body.innerHTML = '<div class="pull-add">' +
@@ -17310,15 +18063,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<table class="pub-dates"><tr><th>Date annoncée initialement</th><td>' + (relFmtDate(p.dates.initial) || '—') + '</td></tr>' +
           '<tr><th>Date annoncée actuelle</th><td>' + (relFmtDate(p.dates.current) || 'inconnue') + '</td></tr>' +
           '<tr><th>Date de sortie confirmée</th><td>' + (relFmtDate(p.dates.actual) || 'non confirmée') + '</td></tr>' +
-          '<tr><th>Dernière vérification</th><td>' + (p.dates.lastVerified ? new Date(p.dates.lastVerified).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' }) : '—') + '</td></tr></table>' +
-        (p.unseenSince ? '<p class="rel-note">Absente de la dernière actualisation ' + escapeHtml(relSourceLabel((p.sources[0] || {}).source)) + ' (' + new Date(p.unseenSince).toLocaleDateString('fr-FR') + ') : statut inchangé, à vérifier.</p>' : '') +
+          '<tr><th>Dernière vérification</th><td>' + (p.dates.lastVerified ? new Date(p.dates.lastVerified).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' }) : '—') + '</td></tr></table>' +
+        (p.unseenSince ? '<p class="rel-note">Absente de la dernière actualisation ' + escapeHtml(relSourceLabel((p.sources[0] || {}).source)) + ' (' + new Date(p.unseenSince).toLocaleDateString(uiLocale()) + ') : statut inchangé, à vérifier.</p>' : '') +
         (p.possibleDuplicates ? '<p class="rel-note">Doublon possible signalé à la création (non fusionné).</p>' : '') +
         (mine ? '<p class="pub-line" data-pub-mine>Dans votre collection : <b>' + mine.owned + '</b> exemplaire(s)' + (mine.unconfirmed ? ' (+ à confirmer)' : '') + ' · wishlist : ' + (mine.wishlisted ? 'oui' : 'non') + '</p>' : '') +
         '<div class="pub-actions"><input class="field-input" id="pubActVariant" placeholder="Variante" style="width:120px"><input class="field-input" id="pubActQty" type="number" min="1" max="99" value="1" style="width:60px" aria-label="Quantité">' +
           '<button class="btn" id="pubToPull">+ Pull list</button><button class="btn secondary" id="pubToWish">Wishlist</button><button class="btn secondary" id="pubToCollection">Collection</button><button class="btn ghost" id="pubEdit">Modifier</button></div>' +
       '</div></div>' + edLevelsHtml(p, mine) +
-      '<h3 class="rel-group">Historique des dates</h3>' + ((p.dateHistory || []).length ? '<ul class="pub-hist">' + p.dateHistory.slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleDateString('fr-FR') + ' — ' + (kindTxt[h.kind] || h.kind) + (h.from && h.to && h.from !== h.to ? ' : ' + relFmtDate(h.from) + ' → ' + relFmtDate(h.to) : h.to ? ' : ' + relFmtDate(h.to) : '') + ' (source : ' + relSourceLabel(h.source) + ')') + '</li>').join('') + '</ul>' : '<p class="rel-note">Aucun changement enregistré.</p>') +
-      '<h3 class="rel-group">Sources et identifiants</h3><p class="pub-line">' + (p.sources || []).map(s => escapeHtml(relSourceLabel(s.source) + ' (' + new Date(s.at).toLocaleDateString('fr-FR') + ')')).join(' · ') +
+      '<h3 class="rel-group">Historique des dates</h3>' + ((p.dateHistory || []).length ? '<ul class="pub-hist">' + p.dateHistory.slice().reverse().map(h => '<li>' + escapeHtml(new Date(h.at).toLocaleDateString(uiLocale()) + ' — ' + (kindTxt[h.kind] || h.kind) + (h.from && h.to && h.from !== h.to ? ' : ' + relFmtDate(h.from) + ' → ' + relFmtDate(h.to) : h.to ? ' : ' + relFmtDate(h.to) : '') + ' (source : ' + relSourceLabel(h.source) + ')') + '</li>').join('') + '</ul>' : '<p class="rel-note">Aucun changement enregistré.</p>') +
+      '<h3 class="rel-group">Sources et identifiants</h3><p class="pub-line">' + (p.sources || []).map(s => escapeHtml(relSourceLabel(s.source) + ' (' + new Date(s.at).toLocaleDateString(uiLocale()) + ')')).join(' · ') +
         (ext.length ? '<br>' + ext.map(([k, v]) => escapeHtml(k + ' : ' + v)).join(' · ') : '') + (p.url ? '<br><a href="' + escapeHtml(p.url) + '" target="_blank" rel="noopener noreferrer">Fiche source</a>' : '') +
         (p.cover ? '<br>Couverture : ' + escapeHtml(relSourceLabel(p.cover.source)) : '') + '</p>' +
       '<details class="pub-prov"><summary>Provenance des champs' + (relConflictList().some(c => c.status === 'open' && c.pubId === p.id) ? ' · <b class="da-warn">conflit à régler</b>' : '') + '</summary>' + relProvTableHtml(p) +
@@ -18737,7 +19490,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!exView.q || String(exView.q).trim().length < 2) return '';
     if (!cvAvailable()) return '<section class="ex-online is-off"><h4>Base mondiale des comics</h4><p class="ex-note">La recherche dans la base Comic Vine (plus de 900 000 numéros, personnages et créateurs) passe par le relais de Panel : ouvrez Panel avec « Lancer Panel.cmd ». Les résultats ci-dessous viennent des données déjà présentes dans Panel.</p></section>';
     const l = exOnlineFiltered();
-    const head = '<div class="ex-online-head"><h4>Base mondiale <small>Comic Vine' + (exOnline.status === 'done' ? ' · ' + exOnline.total.toLocaleString('fr-FR') + ' résultat' + (exOnline.total > 1 ? 's' : '') : '') + '</small></h4></div>';
+    const head = '<div class="ex-online-head"><h4>Base mondiale <small>Comic Vine' + (exOnline.status === 'done' ? ' · ' + exOnline.total.toLocaleString(uiLocale()) + ' résultat' + (exOnline.total > 1 ? 's' : '') : '') + '</small></h4></div>';
     if (exOnline.status === 'loading' && !exOnline.results.length) return '<section class="ex-online">' + head + '<div class="ex-cv-grid is-loading">' + Array.from({ length: 8 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></section>';
     if (exOnline.status === 'error') return '<section class="ex-online">' + head + '<p class="ex-note">' + h(exOnline.error) + ' <button class="btn secondary rel-mini" data-ex-cv-retry>Réessayer</button></p></section>';
     if (!l.length) return exOnline.status === 'done' ? '<section class="ex-online">' + head + '<p class="ex-note">Aucun résultat' + (exFilt.pub || exFilt.from || exFilt.to ? ' avec ces filtres' : '') + '.</p></section>' : '';
@@ -18803,7 +19556,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const y = new Date().getFullYear();
       const firstDate = exCvDetail.issues && exCvDetail.issues[0] && exCvDetail.issues[0].date ? exCvDetail.issues[0].date : from ? from + '-01-01' : '';
       if (firstDate && from >= y - 3) {
-        const at = n => { const x = new Date(firstDate.slice(0, 10) + 'T12:00:00'); x.setMonth(x.getMonth() + n); return x.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }); };
+        const at = n => { const x = new Date(firstDate.slice(0, 10) + 'T12:00:00'); x.setMonth(x.getMonth() + n); return x.toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' }); };
         html = '<p class="ex-vf-est"><b>Aucune édition française trouvée.</b> Estimation indicative, pas une annonce : les recueils français de séries américaines paraissent souvent entre 6 et 18 mois après leur premier numéro, soit ici entre <b>' + h(at(6)) + '</b> et <b>' + h(at(18)) + '</b>.</p>';
       } else html = '<p class="ex-note">Aucune édition française trouvée' + (relayStatus && relayStatus.bnf ? ' dans le catalogue de la BnF' : ' (catalogue de la BnF disponible avec le relais local)') + '.</p>';
     }
@@ -19070,7 +19823,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     '<strong>' + h(a.title) + '</strong>' + (a.excerpt ? '<small>' + h(a.excerpt) + '</small>' : '') +
     (why ? '<em>Parce que vous suivez ou possédez : ' + h(why) + '</em>' : extra ? '<em class="is-learn">' + h(extra) + '</em>' : '') + '</span></a>';
   const NEWS_LANGS = [['fr', 'Français'], ['en', 'English'], ['all', 'Toutes les langues']];
-  const exNewsDay = iso => { const d = new Date(iso), t = new Date(); const k = x => x.getFullYear() * 400 + x.getMonth() * 32 + x.getDate(); const diff = Math.round((new Date(t.toDateString()) - new Date(d.toDateString())) / 86400000); return diff <= 0 ? 'Aujourd\'hui' : diff === 1 ? 'Hier' : diff < 7 ? d.toLocaleDateString('fr-FR', { weekday: 'long' }).replace(/^./, c => c.toUpperCase()) : diff < 14 ? 'La semaine dernière' : 'Plus ancien'; };
+  const exNewsDay = iso => { const d = new Date(iso), t = new Date(); const k = x => x.getFullYear() * 400 + x.getMonth() * 32 + x.getDate(); const diff = Math.round((new Date(t.toDateString()) - new Date(d.toDateString())) / 86400000); return diff <= 0 ? 'Aujourd\'hui' : diff === 1 ? 'Hier' : diff < 7 ? d.toLocaleDateString(uiLocale(), { weekday: 'long' }).replace(/^./, c => c.toUpperCase()) : diff < 14 ? 'La semaine dernière' : 'Plus ancien'; };
   const exNewsBoxHtml = () => {
     if (!exNews.test && (!relayStatus || !relayStatus.news)) return '<p class="ex-note">Les actualités passent par le relais local de Panel (<b>Lancer Panel.cmd</b>). Panel n\'affiche jamais d\'actualité inventée.</p>';
     const st = exNews, NC = window.PanelDomains.newsCore;
@@ -19213,13 +19966,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (wd && wd.inception) facts.push(['Création', wd.inception.slice(0, 4)]);
     if (d.country) facts.push(['Pays', d.country]);
     if (d.birth) facts.push(['Naissance', d.birth]);
-    if (d.count) facts.push([t === 'volume' ? 'Numéros' : 'Apparitions', d.count.toLocaleString('fr-FR')]);
+    if (d.count) facts.push([t === 'volume' ? 'Numéros' : 'Apparitions', d.count.toLocaleString(uiLocale())]);
     if (app && app.latest && app.latest[0]) facts.push(['Dernière apparition', (app.latest[0].volume ? app.latest[0].volume.name : '') + ' #' + app.latest[0].issue_number + ' (' + exShortDate(app.latest[0].date) + ')']);
     const owned = t === 'issue' ? exOwnedIssue(d.volume && d.volume.name, d.issue_number) : t === 'volume' ? exOwnedSeries(d.name) : 0;
     const followable = ['character', 'team', 'person', 'volume'].includes(t), followed = followable && !!exFollows()[ref];
     const follow = followable ? '<div class="ex-row"><button class="btn' + (followed ? ' secondary' : '') + '" data-ex-follow aria-pressed="' + followed + '">' + (followed ? '✓ Suivi' : '+ Suivre') + '</button></div>' : '';
     const recentApp = app === null || (exCvDetail.extra && !app) ? '<div class="ex-cvd-block"><h4>Apparitions récentes</h4><div class="ex-cv-grid is-issues is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></div>' :
-      app && app.latest.length ? '<div class="ex-cvd-block"><h4>Apparitions récentes <small>' + app.latest.length + ' sur ' + app.total.toLocaleString('fr-FR') + '</small></h4><div class="ex-cv-grid is-issues">' + app.latest.map(x => '<button class="ex-cv" data-ex-cv="issue:' + x.id + '"><span class="ex-cv-media">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' : '<img src="' + h(exArt((x.volume ? x.volume.name : '') + ' ' + x.issue_number, '')) + '" alt="" aria-hidden="true">') + '</span><b>' + h((x.volume ? x.volume.name : '') + ' #' + x.issue_number) + '</b><small>' + h(exShortDate(x.date)) + '</small></button>').join('') + '</div></div>' : '';
+      app && app.latest.length ? '<div class="ex-cvd-block"><h4>Apparitions récentes <small>' + app.latest.length + ' sur ' + app.total.toLocaleString(uiLocale()) + '</small></h4><div class="ex-cv-grid is-issues">' + app.latest.map(x => '<button class="ex-cv" data-ex-cv="issue:' + x.id + '"><span class="ex-cv-media">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' : '<img src="' + h(exArt((x.volume ? x.volume.name : '') + ' ' + x.issue_number, '')) + '" alt="" aria-hidden="true">') + '</span><b>' + h((x.volume ? x.volume.name : '') + ' #' + x.issue_number) + '</b><small>' + h(exShortDate(x.date)) + '</small></button>').join('') + '</div></div>' : '';
     const bio = wd && wd.summary ? '<div class="ex-cvd-block ex-cvd-bio"><h4>Biographie <small>' + (wd.summaryLang === 'en' ? 'Wikipédia, en anglais' : 'Wikipédia') + '</small></h4><p>' + h(wd.summary) + '</p><a class="ex-link" href="' + h(wd.summaryUrl) + '" target="_blank" rel="noopener noreferrer">Lire l\'article complet</a></div>' : '';
     const vf = t === 'volume' ? exVfHtml(d, xt) : '';
     const members = wd && wd.memberOf.length ? '<div class="ex-cvd-block"><h4>Affiliations</h4><div class="ex-chips">' + wd.memberOf.map(m => '<span class="ex-chip is-static">' + h(m) + '</span>').join('') + '</div></div>' : '';
@@ -19696,7 +20449,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       return `<div class="top-item rd-row is-${escapeHtml(st.status || 'none')}" data-work="${escapeHtml(st.workKey)}">
         <span class="rd-row-cov" aria-hidden="true">${cov ? `<img src="${escapeHtml(cov)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">` : ''}<i>${escapeHtml(String(st.series || '?').trim().slice(0, 1).toUpperCase())}</i></span>
         <span class="rd-row-b"><b>${escapeHtml(st.series || '—')} ${escapeHtml(st.issue || '')}</b>
-        <span class="stat-sub" style="display:block">${RD_LABEL[st.status] || '—'}${st.readCount > 1 ? ' · lu ' + st.readCount + ' fois' : ''}${st.lastReadAt ? ' · ' + new Date(st.lastReadAt).toLocaleDateString('fr-FR') : ''}${owned ? '' : ' · non possédé'}${prog && prog.known ? ' · série ' + prog.read + '/' + prog.known + (prog.next ? ', prochain ' + escapeHtml(prog.next) : '') : ''}</span></span>
+        <span class="stat-sub" style="display:block">${RD_LABEL[st.status] || '—'}${st.readCount > 1 ? ' · lu ' + st.readCount + ' fois' : ''}${st.lastReadAt ? ' · ' + new Date(st.lastReadAt).toLocaleDateString(uiLocale()) : ''}${owned ? '' : ' · non possédé'}${prog && prog.known ? ' · série ' + prog.read + '/' + prog.known + (prog.next ? ', prochain ' + escapeHtml(prog.next) : '') : ''}</span></span>
         <span class="rd-row-act">${acts}</span></div>`;
     };
     let list;
@@ -19735,12 +20488,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Lectures par mois et totaux de l'année (RDG-06) : domains/reading/reading-stats.js, calculé sur le journal
     const rs = window.PanelDomains.readingStats.readingStats(d.log);
     const rsMax = Math.max(...rs.months.map(m => m.n), 1);
-    const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString('fr-FR', { month: 'short' }).replace('.', '');
+    const rsMonth = m => new Date(m + '-15T12:00:00').toLocaleDateString(uiLocale(), { month: 'short' }).replace('.', '');
     const readingStatsCard = `<div class="stats-card" id="readingStatsCard"><h3>Lectures sur 12 mois</h3><div class="month-chart">${rs.months.map(m => `<div class="month-col" title="${m.n} lecture(s)"><b style="font-size:12px;color:var(--ink-dim)">${m.n || ''}</b><div style="height:${(m.n / rsMax) * 85}%"></div><span>${rsMonth(m.month)}</span></div>`).join('')}</div><p class="stat-sub" style="margin-top:8px">En ${rs.year} : <b>${rs.yearFirst}</b> première(s) lecture(s) · <b>${rs.yearRereads}</b> relecture(s). Calculé sur le journal de lecture.</p></div>`;
     host.innerHTML = (pendingImport ? `<div class="rd-import"><p><b>${pendingImport} numéro(s) marqué(s) « lu »</b> (import ou fiches) ne sont pas encore dans votre journal de lecture : intégrez-les pour les voir ici, dans vos stats et vos trophées.</p><button class="btn" id="readingImportNow">Les intégrer</button><button class="btn secondary" id="readingImportDetail">Voir le détail</button></div>` : '') + upHtml + kpiHtml + sipHtml + `
     <nav class="filter-tabs-bar" id="readingFilterTabs" style="margin:6px 0 10px">${pill('reading', 'En cours', s.reading)}${pill('to_read', 'À lire', s.toRead)}${pill('read', 'Lus', s.read)}${pill('abandoned', 'Abandonnés', s.abandoned)}${pill('all', 'Tout', s.works)}${pill('journal', 'Journal', d.log.length)}</nav>
     <div id="readingList">${list === null
-      ? (d.log.length ? d.log.slice(-50).reverse().map(l => { const st = d.states[l.workKey] || {}; return `<div class="top-item"><span class="stat-sub">${new Date(l.at).toLocaleString('fr-FR')}</span> <b>${escapeHtml(st.series || l.workKey)} ${escapeHtml(st.issue || '')}</b> · ${escapeHtml(({ finished: 'terminé', reread: 'relu', started: 'commencé', abandoned: 'abandonné', rating: 'note', status: 'statut', migrated: 'migré' })[l.event] || l.event)}</div>`; }).join('') : '<div class="notice-box">Le journal se remplit à chaque lecture.</div>')
+      ? (d.log.length ? d.log.slice(-50).reverse().map(l => { const st = d.states[l.workKey] || {}; return `<div class="top-item"><span class="stat-sub">${new Date(l.at).toLocaleString(uiLocale())}</span> <b>${escapeHtml(st.series || l.workKey)} ${escapeHtml(st.issue || '')}</b> · ${escapeHtml(({ finished: 'terminé', reread: 'relu', started: 'commencé', abandoned: 'abandonné', rating: 'note', status: 'statut', migrated: 'migré' })[l.event] || l.event)}</div>`; }).join('') : '<div class="notice-box">Le journal se remplit à chaque lecture.</div>')
       : (list.length ? list.slice(0, 200).map(row).join('') : `<div class="notice-box">${s.works ? 'Aucune œuvre dans cette catégorie.' : 'Aucune lecture enregistrée. Cochez « Lu » sur une fiche, ou regroupez vos anciennes lectures avec « Lecture par œuvre… ».'}</div>`)}</div>
     <div class="stats-grid rd-stats">
       <div class="stats-card"><h3>Prochain numéro</h3>${nextBySeries.length ? nextBySeries.map(p => `<div class="hbar-row"><span title="${escapeHtml(p.series)}">${escapeHtml(p.series)}</span><div class="hbar"><div style="width:${p.pct}%"></div></div><span class="hbar-val">${escapeHtml(p.next)}</span></div>`).join('') : (sip.length ? '<p class="stat-sub">Aucun numéro possédé à lire dans vos séries commencées : voir « Séries en cours » ci-dessus pour les suivants à trouver.</p>' : '<p class="stat-sub">Commencez une série (un numéro lu) pour voir ici le suivant à lire.</p>')}</div>
@@ -19832,7 +20585,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     months.push(...LD.localMonthsBack(new Date(), 12));
     const spend = {};
     all.forEach(x => { const m = String(x.purchaseDate || '').slice(0, 7), c = costOf(x); if (c === null || !months.includes(m)) return; const k = purchaseCurOf(x) || 'none'; (spend[k] = spend[k] || {})[m] = ((spend[k][m] || 0) * 100 + toCents(c)) / 100; });
-    const spendHtml = Object.keys(spend).length ? Object.keys(spend).sort().map(c => { const max = Math.max(...Object.values(spend[c]), 1); return `<p class="stat-sub" style="margin:6px 0 2px"><b>${escapeHtml(curLabel(c))}</b></p>` + months.map(m => `<div class="hbar-row"><span>${new Date(m + '-15').toLocaleDateString('fr-FR', { month: 'short', year: '2-digit' })}</span><div class="hbar"><div style="width:${((spend[c][m] || 0) / max) * 100}%"></div></div><span class="hbar-val">${spend[c][m] ? fmtCur(spend[c][m], c) : '—'}</span></div>`).join(''); }).join('') : '<p class="stat-sub">Aucun achat daté avec un prix sur les 12 derniers mois.</p>';
+    const spendHtml = Object.keys(spend).length ? Object.keys(spend).sort().map(c => { const max = Math.max(...Object.values(spend[c]), 1); return `<p class="stat-sub" style="margin:6px 0 2px"><b>${escapeHtml(curLabel(c))}</b></p>` + months.map(m => `<div class="hbar-row"><span>${new Date(m + '-15').toLocaleDateString(uiLocale(), { month: 'short', year: '2-digit' })}</span><div class="hbar"><div style="width:${((spend[c][m] || 0) / max) * 100}%"></div></div><span class="hbar-val">${spend[c][m] ? fmtCur(spend[c][m], c) : '—'}</span></div>`).join(''); }).join('') : '<p class="stat-sub">Aucun achat daté avec un prix sur les 12 derniers mois.</p>';
     const disposed = all.filter(disposedOf).sort((a, b) => String(b.disposal.date || '').localeCompare(String(a.disposal.date || '')));
     const KIND = { sold: 'vendu', given: 'donné', lost: 'perdu', traded: 'échangé' };
     const lots = acqList();
@@ -19969,7 +20722,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="pf-rank-badge"><small>Rang</small><b>' + rk.rank.rank + '</b><span>/ ' + rk.total + '</span></div>' +
       '<div class="pf-rank-main"><small>' + escapeHtml(rk.rank.tierLabel) + '</small><b>' + escapeHtml(rk.rank.name) + '</b>' +
         '<span class="tr-bar pf-xp"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' +
-        '<small>' + rk.xp.toLocaleString('fr-FR') + ' XP' + (rk.next ? ' · encore ' + rk.toNext.toLocaleString('fr-FR') + ' XP pour devenir <b>' + escapeHtml(rk.next.name) + '</b>' + rankPortraitHtml(rk.next, 'pf-next-pt') : ' · sommet atteint') + ' · ' + tr.unlocked + ' / ' + tr.total + ' trophées</small></div>' +
+        '<small>' + rk.xp.toLocaleString(uiLocale()) + ' XP' + (rk.next ? ' · encore ' + rk.toNext.toLocaleString(uiLocale()) + ' XP pour devenir <b>' + escapeHtml(rk.next.name) + '</b>' + rankPortraitHtml(rk.next, 'pf-next-pt') : ' · sommet atteint') + ' · ' + tr.unlocked + ' / ' + tr.total + ' trophées</small></div>' +
       '<div class="pf-tiers">' + window.PanelDomains.trophiesCore.TIERS.map(t => '<span class="pf-tier is-' + t.id + '"><i></i>' + tr.byTier[t.id] + ' ' + escapeHtml(t.label) + '</span>').join('') + '</div></div>';
   // Suggestions du top 3 : personnages et séries les plus présents dans la collection
   const pfSuggest = () => {
@@ -19989,8 +20742,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const R = window.PanelDomains.ranksCore;
     const groups = R.TIER_IDS.map(t => ({ t, list: R.RANKS.filter(x => x.tier === t) }));
     return '<details class="pf-ladder"><summary>Échelle des ' + R.RANKS.length + ' rangs, de Civil à The One Above All <small>et comment gagner des points</small></summary>' +
-      '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : ' is-locked') + '" data-rank-no="' + x.rank + '"><span class="rk-medal">' + (() => { const c = rankPts[RANK_CV[x.name] || x.name]; return c && c.url ? '<img src="' + escapeHtml(c.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : rankEmblem(x); })() + '</span><i>' + x.rank + '</i><b>' + escapeHtml(x.name) + '</b><small>' + x.xp.toLocaleString('fr-FR') + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
-      '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString('fr-FR') + ' → ' + b.xp.toLocaleString('fr-FR') + ' XP</em>') + '</span>').join('') + '</div>' +
+      '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : ' is-locked') + '" data-rank-no="' + x.rank + '"><span class="rk-medal">' + (() => { const c = rankPts[RANK_CV[x.name] || x.name]; return c && c.url ? '<img src="' + escapeHtml(c.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : rankEmblem(x); })() + '</span><i>' + x.rank + '</i><b>' + escapeHtml(x.name) + '</b><small>' + x.xp.toLocaleString(uiLocale()) + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
+      '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString(uiLocale()) + ' → ' + b.xp.toLocaleString(uiLocale()) + ' XP</em>') + '</span>').join('') + '</div>' +
       '<p class="stat-sub">Portraits : Comic Vine (nom exact du personnage), chargés au fil de l\'ouverture ; sinon emblème Panel. L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
   };
   // Image de chaque trophée (D-71) : une couverture de votre collection qui l'illustre (un n° 1 pour « Chasseur de #1 »,
@@ -20045,13 +20798,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const drafts = commLoad().drafts.slice().sort((a, b) => (pinned.has('p:' + b.id) - pinned.has('p:' + a.id)) || String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
     const saved = igFeed('saved').posts;
     const read = owned.filter(rdReadOfCopy).length;
-    const n = (v, l) => '<div class="ig-stat"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
+    const n = (v, l) => '<div class="ig-stat"><b>' + v.toLocaleString(uiLocale()) + '</b><small>' + l + '</small></div>';
     // À la une : stories regroupées par habillage (Marvel, DC, Image, indé, noir), comme des « highlights »
     const groups = Object.keys(STORY_STYLES).map(k => ({ k, list: stories.filter(st => (st.style || storyStyleKey(st)) === k) })).filter(g => g.list.length);
     const hl = groups.length ? '<div class="ig-hl" role="group" aria-label="À la une">' + groups.map(g => '<button class="ig-hl-item" data-st-open="' + escapeHtml(g.list[0].id) + '"><span class="ig-hl-ring st-' + g.k + '">' + coverImgTag(g.list[0]) + '</span><small>' + escapeHtml(STORY_STYLES[g.k].label || g.k) + ' · ' + g.list.length + '</small></button>').join('') + '</div>' : '';
-    const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString('fr-FR') + '</b></span></button>';
+    const tile = st => '<button class="ig-tile" data-st-open="' + escapeHtml(st.id) + '" aria-label="' + escapeHtml((st.series || '') + ' ' + (st.issue || '') + ', ' + (Number(st.rating) || 0) + ' sur 5') + '">' + coverImgTag(st) + '<span class="ig-tile-meta"><b>★ ' + (Number(st.rating) || 0).toLocaleString(uiLocale()) + '</b></span></button>';
     const ptile = d => '<button class="ig-tile is-planche" data-pf-planche="' + escapeHtml(d.id) + '" aria-label="Planche : ' + escapeHtml(PLANCHE_KINDS[d.kind] || 'planche') + (pinned.has('p:' + d.id) ? ', épinglée' : '') + '">' + (pinned.has('p:' + d.id) ? '<span class="ig-tile-pin" aria-hidden="true"><svg class=ic><use href=#ic-bookmark /></svg></span>' : '') + '<span class="ig-mosaic ig-m' + Math.min((d.items || []).length, 4) + '">' + (d.items || []).slice(0, 4).map(plancheFace).join('') + '</span><span class="ig-tile-meta"><b>' + escapeHtml(PLANCHE_KINDS[d.kind] || 'Planche') + '</b></span></button>';
-    const rtile = e => '<button class="ig-tile" data-pf-copy="' + escapeHtml(e.x.id) + '" aria-label="' + escapeHtml((e.x.series || '') + ' ' + (e.x.issue || '')) + (e.at ? ', lu le ' + escapeHtml(new Date(e.at).toLocaleDateString('fr-FR')) : '') + '">' + coverImgTag(e.x) + '<span class="ig-tile-meta"><b>' + escapeHtml(String(e.x.series || '').slice(0, 22)) + ' #' + escapeHtml(String(e.x.issue || '?')) + '</b></span></button>';
+    const rtile = e => '<button class="ig-tile" data-pf-copy="' + escapeHtml(e.x.id) + '" aria-label="' + escapeHtml((e.x.series || '') + ' ' + (e.x.issue || '')) + (e.at ? ', lu le ' + escapeHtml(new Date(e.at).toLocaleDateString(uiLocale())) : '') + '">' + coverImgTag(e.x) + '<span class="ig-tile-meta"><b>' + escapeHtml(String(e.x.series || '').slice(0, 22)) + ' #' + escapeHtml(String(e.x.issue || '?')) + '</b></span></button>';
     const stile = p => p.type === 'story' ? tile(storyLoad().stories.find(x => 's:' + x.id === p.id) || {}) : ptile(commLoad().drafts.find(x => 'p:' + x.id === p.id) || { id: p.ref, items: [] });
     const grid = pfGramTab === 'saved'
       ? (saved.length ? '<div class="ig-grid">' + saved.map(stile).join('') + '</div>' : '<div class="ig-empty"><b>Rien d’enregistré.</b><span>Touchez le signet d’une publication du Fil pour la retrouver ici. Seul vous voyez vos enregistrements.</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>')
@@ -20067,7 +20820,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // D-101 : compteurs du profil en tête (comme un réseau social) ; chacun ouvre ce qu'il compte
   const pfStatsHtml = owned => {
     const read = owned.filter(rdReadOfCopy).length, nStories = storyLoad().stories.length, nPl = commLoad().drafts.length;
-    const st = (v, l, attr, aria) => '<button type="button" class="ig-stat" ' + attr + ' aria-label="' + escapeHtml(v.toLocaleString('fr-FR') + ' ' + l + ' : ' + aria) + '"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></button>';
+    const st = (v, l, attr, aria) => '<button type="button" class="ig-stat" ' + attr + ' aria-label="' + escapeHtml(v.toLocaleString(uiLocale()) + ' ' + l + ' : ' + aria) + '"><b>' + v.toLocaleString(uiLocale()) + '</b><small>' + l + '</small></button>';
     return '<div class="ig-stats pf-stats" role="group" aria-label="Mes chiffres">' + st(owned.length, owned.length > 1 ? 'numéros' : 'numéro', 'data-pfc-go="collection"', 'ouvrir ma collection') + st(read, read > 1 ? 'lus' : 'lu', 'data-pf-gtab="lus"', 'voir mes lectures') +
       st(nStories, nStories > 1 ? 'stories' : 'story', 'data-pf-gtab="stories"', 'voir mes stories') + st(nPl, nPl > 1 ? 'planches' : 'planche', 'data-pf-gtab="planches"', 'voir mes planches') +
       '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>';
@@ -20109,7 +20862,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const art = trophyArtHtml(t, owned, r.runs || []);
       return '<div class="tr-card ' + tierCls(t) + (art ? ' has-art' : '') + '" title="' + escapeHtml(t.desc + ' : ' + t.value + (t.next !== null ? ' / ' + t.next + ' pour le palier suivant' : ' (palier maximal)')) + '">' +
       (art ? '<span class="tr-art">' + art + medal + '</span>' : medal) +
-      '<span class="tr-info"><b>' + escapeHtml(t.name) + '</b><small>' + (t.tierLabel ? escapeHtml(t.tierLabel) : 'À débloquer') + ' · ' + t.value.toLocaleString('fr-FR') + ' ' + escapeHtml(t.value > 1 ? (t.plural || t.unit + 's') : t.unit) + '</small>' +
+      '<span class="tr-info"><b>' + escapeHtml(t.name) + '</b><small>' + (t.tierLabel ? escapeHtml(t.tierLabel) : 'À débloquer') + ' · ' + t.value.toLocaleString(uiLocale()) + ' ' + escapeHtml(t.value > 1 ? (t.plural || t.unit + 's') : t.unit) + '</small>' +
       '<span class="tr-bar"><i style="width:' + Math.round(t.progress * 100) + '%"></i></span></span></div>';
     };
     const families = [...new Set(r.trophies.map(t => t.family))];
@@ -20190,7 +20943,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const prof = profileLoad();
     const who = prof ? '@' + prof.handle : 'Mon journal';
     const d = s.readAt ? new Date(s.readAt + 'T12:00:00') : null;
-    const when = d && !isNaN(d) ? d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) : '';
+    const when = d && !isNaN(d) ? d.toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short', year: d.getFullYear() === new Date().getFullYear() ? undefined : 'numeric' }) : '';
     const ago = storyAgo(s.createdAt || (s.readAt ? s.readAt + 'T12:00:00' : ''));
     const n = storyIssue(s), r = Number(s.rating) || 0;
     const face = s.coverUrl ? coverImgTag(s) : '<span class="sx-face" style="--c:' + cboxHue(s) + '"><b>' + escapeHtml(cboxInitials(s.series || '?')) + '</b>' + (n ? '<em>#' + escapeHtml(n) + '</em>' : '') + '</span>';
@@ -20569,10 +21322,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const rankEmblem = x => '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 L42 10 V24 Q42 38 24 45 Q6 38 6 24 V10 Z" fill="currentColor"/><path d="M24 3 L42 10 V24 Q42 38 24 45 Z" fill="#000" fill-opacity=".18"/><path d="M24 9 L36 14 V24 Q36 34 24 39 Q12 34 12 24 V14 Z" fill="none" stroke="#fff" stroke-opacity=".45" stroke-width="1.4"/><text x="24" y="29" text-anchor="middle" font-size="13" font-weight="800" fill="#fff">' + escapeHtml(String(x.name).replace(/^(L'|Le |La |Les )/i, '').split(/[\s-]+/).filter(w => w.length > 2 || /^[A-Z]/.test(w)).slice(0, 2).map(w => w[0].toUpperCase()).join('')) + '</text></svg>';
   const rankPortraitHtml = (rank, cls) => { const pt = rankPortrait(rank); return pt ? '<span class="' + cls + '" title="' + escapeHtml(pt.name + ' — portrait Comic Vine') + '"><img src="' + escapeHtml(pt.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer"></span>' : ''; };
   const artefactsHtml = ar => '<h3 class="pf-section">Artefacts <span class="stat-sub">' + ar.unlocked + ' / ' + ar.total + ' débloqués · ' + ar.gems + ' / 6 gemmes</span></h3>' +
-    (ar.next ? '<p class="stat-sub af-next">Prochain : <b>' + escapeHtml(ar.next.name) + '</b> — ' + escapeHtml(ar.next.lore) + ' (' + Math.floor(ar.next.have).toLocaleString('fr-FR') + ' / ' + ar.next.goal.toLocaleString('fr-FR') + ')</p>' : '') +
+    (ar.next ? '<p class="stat-sub af-next">Prochain : <b>' + escapeHtml(ar.next.name) + '</b> — ' + escapeHtml(ar.next.lore) + ' (' + Math.floor(ar.next.have).toLocaleString(uiLocale()) + ' / ' + ar.next.goal.toLocaleString(uiLocale()) + ')</p>' : '') +
     '<div class="af-grid">' + ar.list.map(a => '<div class="af-card is-' + a.rarity + (a.unlocked ? ' is-on' : '') + (a.gem ? ' is-gem' : '') + '" style="--h:' + a.hue + '" title="' + escapeHtml(a.lore) + '">' +
       '<span class="af-medal' + (AF_ART[a.id] ? ' has-art' : '') + (a.img ? ' has-photo' : '') + '">' + afArt(a) + '</span><b>' + escapeHtml(a.name) + '</b><small>' + escapeHtml(a.rarityLabel) + ' · ' + (a.universe === 'dc' ? 'DC' : 'Marvel') + '</small>' +
-      '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString('fr-FR') + ' / ' + a.goal.toLocaleString('fr-FR')) + '</em></div>').join('') + '</div>' +
+      '<span class="tr-bar"><i style="width:' + Math.round(a.progress * 100) + '%"></i></span><em>' + (a.unlocked ? 'Débloqué' : Math.floor(a.have).toLocaleString(uiLocale()) + ' / ' + a.goal.toLocaleString(uiLocale())) + '</em></div>').join('') + '</div>' +
     '<p class="stat-sub" style="margin:8px 2px 18px">Objets des univers Marvel et DC (marques de leurs ayants droit). Images des objets Marvel : Marvel Database (Fandom), via l\'atlas Marvel Primestone, © Marvel ; les autres sont dessinés par Panel. Objectifs pensés pour des années de lecture : chaque artefact débloqué rapporte 50 XP.</p>';
 
   // ── Communauté : en-tête commun (profil compact, stories, onglets) ; un seul endroit pour naviguer (D-63)
@@ -20692,6 +21445,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>');
     if (tab === 'display') return '<h3>Affichage</h3>' +
       row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Primestone'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
+      row('Langue', 'Dates et nombres suivent la langue choisie.', '<select class="field-input" data-set-lang data-no-i18n aria-label="Langue">' + Object.keys(I18N.LOCALES).map(k => '<option value="' + k + '"' + (k === uiLang ? ' selected' : '') + '>' + I18N.LOCALES[k] + '</option>').join('') + '</select>') +
       row('Vue de la collection', 'Cartes, liste, boîtes', btn('Cartes / liste', 'data-set-click="singlesViewModeBtn"') + ' ' + btn('Boîtes', 'data-set-click="singlesBoxesBtn"')) +
       row('Calendrier', 'Manga et éditeurs manga masqués par défaut (comics uniquement)', '<span class="set-pill is-ok">Comics</span>');
     if (tab === 'collection') return '<h3>Collection & finances</h3>' +
@@ -20801,6 +21555,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       dyn.querySelectorAll('[data-set-view]').forEach(b => { b.onclick = () => { close(); goSinglesView(b.dataset.setView); }; });
       dyn.querySelectorAll('[data-set-story]').forEach(b => { b.onclick = () => { close(); openStoryPicker(); }; });
       dyn.querySelectorAll('[data-set-accent]').forEach(b => { b.onclick = () => { const t = boxEl.querySelector('[data-set-pane="sources"] [data-theme="' + b.dataset.setAccent + '"]'); if (t) t.click(); }; });
+      const ls = dyn.querySelector('[data-set-lang]'); if (ls) ls.onchange = e => { try { localStorage.setItem(I18N_KEY, e.target.value); } catch (_) {} location.reload(); };
       const cs = dyn.querySelector('[data-set-cur]'); if (cs) cs.onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };
       const mg = dyn.querySelector('[data-set-rdmig]'); if (mg) mg.onclick = () => { const r = rdMigrate(); renderSinglesCollection(); render(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
     };
@@ -20971,7 +21726,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const v = pfPublicView(), pr = v.profile;
     const box = bunModal('profilePreview');
     const ini = pr ? (pr.displayName || pr.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?';
-    const stat = (n, l) => '<div class="ig-stat"><b>' + Number(n).toLocaleString('fr-FR') + '</b><small>' + l + '</small></div>';
+    const stat = (n, l) => '<div class="ig-stat"><b>' + Number(n).toLocaleString(uiLocale()) + '</b><small>' + l + '</small></div>';
     box.innerHTML = '<div class="modal-box pfv" role="dialog" aria-modal="true" aria-labelledby="pfvTitle">' +
       '<div class="pub-head"><h3 id="pfvTitle">Aperçu visiteur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
       '<p class="pfv-banner">' + igIcon('ic-info') + ' Ce profil n\'est pas en ligne : voici ce qu\'un visiteur verrait avec vos réglages actuels.</p>' +
@@ -21040,11 +21795,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       m.facts.forEach((f, i) => {
         const fx = 72 + i * (fw + 18);
         g.fillStyle = 'rgba(255,255,255,.08)'; g.beginPath(); g.roundRect ? g.roundRect(fx, fy, fw, 120, 20) : g.rect(fx, fy, fw, 120); g.fill();
-        g.fillStyle = '#fff'; g.font = '900 52px ' + F; g.fillText(ccFit(g, f.n.toLocaleString('fr-FR'), fw - 40), fx + 22, fy + 66);
+        g.fillStyle = '#fff'; g.font = '900 52px ' + F; g.fillText(ccFit(g, f.n.toLocaleString(uiLocale()), fw - 40), fx + 22, fy + 66);
         g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '600 26px ' + F; g.fillText(f.label, fx + 22, fy + 102);
       });
     }
-    g.fillStyle = 'rgba(255,255,255,.55)'; g.font = '600 24px ' + F; g.fillText('Ma collection sur Panel · ' + new Date().toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' }), 72, H - 40);
+    g.fillStyle = 'rgba(255,255,255,.55)'; g.font = '600 24px ' + F; g.fillText('Ma collection sur Panel · ' + new Date().toLocaleDateString(uiLocale(), { month: 'long', year: 'numeric' }), 72, H - 40);
     cv.dataset.drawn = String(Date.now());
     cv.setAttribute('aria-label', 'Carte de collectionneur : ' + m.name + (m.rank ? ', rang ' + m.rank.rank + ' ' + m.rank.name : '') + (m.facts.length ? ', ' + m.facts.map(f => f.n + ' ' + f.label).join(', ') : '') + (fav ? ', numéro préféré ' + [fav.series, fav.issue].filter(Boolean).join(' ') : '') + '.');
     return !!img;
@@ -21133,7 +21888,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const pfCollectionHtml = () => {
     const owned = physicalSingles.filter(isOwned), wish = physicalSingles.filter(s => s.isWishlist).length;
     const nSeries = new Set(owned.map(s => s.series).filter(Boolean)).size;
-    const go = (k, icon, label, n) => '<button type="button" class="pfc-go" data-pfc-go="' + k + '">' + igIcon(icon) + '<span>' + label + '</span>' + (n != null ? '<b>' + n.toLocaleString('fr-FR') + '</b>' : '') + '</button>';
+    const go = (k, icon, label, n) => '<button type="button" class="pfc-go" data-pfc-go="' + k + '">' + igIcon(icon) + '<span>' + label + '</span>' + (n != null ? '<b>' + n.toLocaleString(uiLocale()) + '</b>' : '') + '</button>';
     return '<section class="pfc" id="profileCollection" aria-labelledby="pfcTitle"><div class="pfc-head"><h3 class="pf-section" id="pfcTitle">Ma collection</h3><button type="button" class="btn secondary rel-mini" data-pfc-go="collection">Tout voir</button></div>' +
       (owned.length ? sh3Html(window.PanelDomains.profilePublic.shelfOrder(owned), true) +
           '<div class="sh3-bar" id="sh3Bar" hidden><b id="sh3Title"></b><span class="sh3-acts"><button type="button" class="btn rel-mini" data-sh3-3d>' + igIcon('ic-box') + ' Voir en 3D</button><button type="button" class="btn secondary rel-mini" data-sh3-open>Ouvrir la fiche</button></span></div>' +
@@ -21253,7 +22008,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return out;
   };
   const wedWeek = () => window.PanelDomains.rituals.releaseWeek({ items: wedItems(), today: (wedTest && wedTest.today) || relToday() });
-  const wedDate = (d, opt) => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', opt || { weekday: 'long', day: 'numeric', month: 'long' });
+  const wedDate = (d, opt) => new Date(d + 'T12:00:00').toLocaleDateString(uiLocale(), opt || { weekday: 'long', day: 'numeric', month: 'long' });
   const wedList = w => w.pulled.length ? w.pulled : w.others;
   const wedBannerHtml = w => {
     const list = wedList(w), n = list.length;
@@ -21521,7 +22276,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div class="igp-track"' + (car ? ' aria-roledescription="carrousel"' : '') + '>' + (duel ? p.media.slice(0, 2) : p.media).map(slide).join('') + '</div>' +
         (duel ? '<span class="igp-vs" aria-hidden="true">VS</span>' : '') + (hunt ? '<span class="igp-hunt">' + igIcon('ic-search') + ' On cherche</span>' : '') +
         (car ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
-        (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString('fr-FR') + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
+        (p.type === 'story' && p.rating ? '<span class="igp-rating" aria-label="' + p.rating.toLocaleString(uiLocale()) + ' sur 5">' + igStars(p.rating) + '</span>' : '') +
         '<span class="igp-burst" aria-hidden="true">' + likeArt(likeKey()) + '</span></div>' +
       (car ? '<div class="igp-dots" aria-hidden="true">' + p.media.map((_, i) => '<i' + (i ? '' : ' class="on"') + '></i>').join('') + '</div>' : '') +
       (duel ? duelBarHtml(p) : '') + (hunt ? huntLineHtml(p) : '') +
@@ -21537,7 +22292,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (long ? '<button class="igp-plus" data-igp-plus>plus</button>' : '') + '</div>' +
       (p.tags.length ? '<p class="igp-tags">' + p.tags.map(t => '<button data-ig-tag="' + escapeHtml(t) + '">#' + escapeHtml(t) + '</button>').join('') + '</p>' : '') +
       (p.type === 'planche' && p.text.trim() ? '<p class="igp-items">' + igIcon('ic-books') + ' ' + escapeHtml(p.media.map(m => [m.series, m.issue].filter(Boolean).join(' ')).join(' · ')) + '</p>' : '') +
-      (p.type === 'story' && p.readAt ? '<p class="igp-date">Lu le ' + escapeHtml(new Date(p.readAt + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })) + (p.reread ? ' · relecture' : '') + '</p>' : '') +
+      (p.type === 'story' && p.readAt ? '<p class="igp-date">Lu le ' + escapeHtml(new Date(p.readAt + 'T12:00:00').toLocaleDateString(uiLocale(), { day: 'numeric', month: 'long', year: 'numeric' })) + (p.reread ? ' · relecture' : '') + '</p>' : '') +
     '</article>';
   };
   const igFeedHtml = () => {
@@ -21767,7 +22522,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const c = lvCopy(im.ref), u = c && c.coverUrl && isSafeImageUrl(c.coverUrl) ? c.coverUrl : '';
     return u ? '<img src="' + escapeHtml(u) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-onerr="remove">' : '';
   };
-  const lvWhen = iso => iso ? new Date(iso).toLocaleString('fr-FR', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sans date';
+  const lvWhen = iso => iso ? new Date(iso).toLocaleString(uiLocale(), { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : 'Sans date';
   const lvLocalInput = iso => { if (!iso) return ''; const d = new Date(iso), p = n => String(n).padStart(2, '0'); return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + 'T' + p(d.getHours()) + ':' + p(d.getMinutes()); };
   const lvHtml = () => {
     const st = lvLoad(), F = LV().FORMATS, rooms = LV().ordered(st, lvNow());
@@ -21794,7 +22549,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const mtHtml = () => {
     const list = MT().upcoming(mtLoad(), mtCity());
     const opt = (o, cur) => Object.entries(o).map(([k, l]) => '<option value="' + k + '"' + (k === cur ? ' selected' : '') + '>' + escapeHtml(l) + '</option>').join('');
-    const card = m => '<article class="mt-card"><div class="mt-date"><b>' + escapeHtml(new Date(m.when).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })) + '</b><small>' + escapeHtml(new Date(m.when).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })) + '</small></div>' +
+    const card = m => '<article class="mt-card"><div class="mt-date"><b>' + escapeHtml(new Date(m.when).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' })) + '</b><small>' + escapeHtml(new Date(m.when).toLocaleTimeString(uiLocale(), { hour: '2-digit', minute: '2-digit' })) + '</small></div>' +
       '<div class="mt-b"><span class="mt-theme">' + escapeHtml(MT().THEMES[m.theme]) + '</span><b>' + escapeHtml(m.title) + '</b><small>' + escapeHtml(m.city) + ' · ' + escapeHtml(m.venue) + ' · ' + m.capacity + ' places</small>' +
       '<div class="mt-act"><button type="button" class="rd-act" data-mt-copy="' + escapeHtml(m.id) + '">Copier l\'invitation</button><button type="button" class="rd-act" data-mt-del="' + escapeHtml(m.id) + '">Supprimer</button></div></div></article>';
     return '<section class="mt" aria-labelledby="mtTitle"><div class="mt-head"><div><h3 class="pf-section" id="mtTitle">Se retrouver en vrai</h3><p class="stat-sub">Des rencontres de collectionneurs près de chez vous : mercredi des sorties en boutique, troc, club de lecture. Toujours dans un lieu public, entre adultes.</p></div>' +
@@ -22214,7 +22969,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const months = [];
     for (let i = 11; i >= 0; i--) {
       const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString('fr-FR', { month: 'short' }).replace('.', ''), n: 0, spent: 0, unknown: 0 });
+      months.push({ key: d.getFullYear() + '-' + d.getMonth(), label: d.toLocaleDateString(uiLocale(), { month: 'short' }).replace('.', ''), n: 0, spent: 0, unknown: 0 });
     }
     owned.forEach(s => {
       const d = new Date(s.purchaseDate || s.addedAt || 0);
@@ -22255,7 +23010,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const topItem = (s, i, right) => `<div class="top-item" data-id="${escapeHtml(s.id)}"><span class="rank">${i + 1}</span>${coverImgTag(s)}<span style="min-width:0"><b style="display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(s.series)} ${escapeHtml(s.issue)}</b><small style="color:var(--muted)">${escapeHtml(s.condition || '')}</small></span>${right}</div>`;
 
     const snaps = getValueSnapshots().slice(-120);
-    const frDate = d => new Date(d + 'T12:00:00').toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+    const frDate = d => new Date(d + 'T12:00:00').toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' });
     let evo;
     if (snaps.length < 2) {
       evo = '<p class="stat-sub" style="line-height:1.5">La courbe se construit jour après jour : Panel enregistre la valeur totale de la collection à chaque visite.' +
@@ -23602,7 +24357,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if (!bar) return;
     const c = coverCounts();
     const pct = c.total ? Math.round((c.withCover / c.total) * 100) : 100;
-    const time = t => new Date(t).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+    const time = t => new Date(t).toLocaleTimeString(uiLocale(), { hour: '2-digit', minute: '2-digit' });
     const etaH = Math.max(1, Math.ceil(new Set(physicalSingles.filter(coverJobPending).map(s => seriesGroupKey(s.series))).size / (CV_HOURLY_LIMIT / 1.3)));
     if (!c.pending && !coverJob.running && coverJob.phase !== 'quota' && !c.notfound) { bar.hidden = true; return; }
     bar.hidden = false;
@@ -23851,7 +24606,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       box.className = 'modal-backdrop';
       document.body.appendChild(box);
     }
-    const when = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
+    const when = payload.exportedAt ? new Date(payload.exportedAt).toLocaleString(uiLocale(), { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="restoreDialogTitle">' +
       '<h2 id="restoreDialogTitle">Restaurer une sauvegarde</h2>' +
       '<p><b>' + escapeHtml(fileName || 'Sauvegarde') + '</b> · ' + escapeHtml(when) + '<br>' + payload.items.length + ' exemplaire(s) lisible(s)' +
@@ -24578,7 +25333,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (!host) return;
       const snaps = await listSnapshots();
       host.innerHTML = snaps.length
-        ? snaps.map(x => '<div class="snapshot-row"><span><b>' + escapeHtml(new Date(x.at).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })) + '</b> · ' + escapeHtml(x.reason) + ' · ' + x.count + ' comic(s)</span><button type="button" class="btn-link" data-snap="' + escapeHtml(x.id) + '">Restaurer</button></div>').join('')
+        ? snaps.map(x => '<div class="snapshot-row"><span><b>' + escapeHtml(new Date(x.at).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' })) + '</b> · ' + escapeHtml(x.reason) + ' · ' + x.count + ' comic(s)</span><button type="button" class="btn-link" data-snap="' + escapeHtml(x.id) + '">Restaurer</button></div>').join('')
         : '<div class="snapshot-row"><span>Aucune sauvegarde automatique pour l\'instant.</span></div>';
       host.querySelectorAll('[data-snap]').forEach(b => {
         b.onclick = async () => {
@@ -25348,7 +26103,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         plain.map(a => dated.map(b => '<button type="button" class="btn-link" data-pub-merge="' + escapeHtml(a.id) + '" data-into="' + escapeHtml(b.id) + '">Fusionner « ' + escapeHtml(a.title) + ' » sans année dans « ' + escapeHtml(pubSeriesLabel(b)) + ' »</button>').join(' · ')).join(' · ') + '</li>';
     }).join('') + '</ul>' : '<p class="stat-sub" data-pub-dup-empty>Aucune série en double possible.</p>';
     const hist = s.history.slice(-10).reverse();
-    const histHtml = hist.length ? '<ul style="padding-left:18px">' + hist.map(hh => '<li><small>' + escapeHtml((PUB_OPS[hh.op] || hh.op) + ' · ' + (hh.from ? pubSeriesLabel(s.series[hh.into]) || hh.into : hh.ref || '') + (hh.at ? ' · ' + new Date(hh.at).toLocaleString('fr-FR') : '')) + '</small></li>').join('') + '</ul>' : '<p class="stat-sub">Aucune opération.</p>';
+    const histHtml = hist.length ? '<ul style="padding-left:18px">' + hist.map(hh => '<li><small>' + escapeHtml((PUB_OPS[hh.op] || hh.op) + ' · ' + (hh.from ? pubSeriesLabel(s.series[hh.into]) || hh.into : hh.ref || '') + (hh.at ? ' · ' + new Date(hh.at).toLocaleString(uiLocale()) : '')) + '</small></li>').join('') + '</ul>' : '<p class="stat-sub">Aucune opération.</p>';
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="pubCatalogTitle" style="max-height:85vh;overflow:auto">' +
       '<h2 id="pubCatalogTitle">Catalogue commun</h2>' +
       '<p class="stat-sub">Une même publication est partagée par Collection, Sorties et Explorer. Rien n\'est fusionné automatiquement, et vos fiches ne sont jamais modifiées : seul le rattachement change, et il est annulable.</p>' +
@@ -25796,7 +26551,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   };
   const openBundleRestoreDialog = (v, fileName) => {
     const box = bunModal('bundleRestoreDialog');
-    const when = v.createdAt ? new Date(v.createdAt).toLocaleString('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
+    const when = v.createdAt ? new Date(v.createdAt).toLocaleString(uiLocale(), { dateStyle: 'medium', timeStyle: 'short' }) : 'date inconnue';
     const ids = BUNDLE_RESTORE_ORDER.filter(id => v.sections[id]);
     const countTxt = c => c ? Object.entries(c).map(([k, n]) => n + ' ' + ({ singles: 'exemplaire(s)', seriesMeta: 'série(s) suivie(s)', locations: 'emplacement(s)', pulls: 'pull(s)', progress: 'progression(s)', guides: 'guide(s)', publications: 'publication(s)', prefs: 'préférence(s)' })[k]).join(', ') : '';
     box.innerHTML = '<div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="bundleRestoreTitle">' +
@@ -26322,6 +27077,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       lastCall: () => modState.lastCall ? JSON.parse(JSON.stringify(modState.lastCall)) : null,
       state: () => ({ sel: modState.sel, help: modState.help, rows: modState.rows.length })
     }),
+    i18nForTest: { lang: () => uiLang, locale: () => uiLocale(), active: () => i18nRuntime.active, applied: () => i18nRuntime.count() },
     setSinglesInMemoryForTest: list => { physicalSingles = list; singlesMemoryOnly = true; },
     setPhysicalSingles: list => {
       singlesMemoryOnly = false; // collection réelle de nouveau : la récupération des couvertures redevient possible
