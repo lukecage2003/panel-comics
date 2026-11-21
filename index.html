@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-FYhu3RNCk0b9Z6cnVbbdseBqv2euxKOOmRIQ7VwZlwI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-PjUbQPWn3XPhFn9OOUteHliTh8WeLGo3s8PRTMw10Z0=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3442,20 +3442,60 @@
     /* Lot S5 (D-93) : étagère 3D, réglages publics, aperçu visiteur */
     .sh3 { --wood: #6b4a2b; --wood2: #3e2a17; display: flex; flex-wrap: wrap; align-items: flex-end; column-gap: 3px; row-gap: 20px; padding: 8px 12px 12px; margin-top: 10px; perspective: 900px;
       background: repeating-linear-gradient(to bottom, transparent 0 136px, var(--wood) 136px 140px, var(--wood2) 140px 148px); border-radius: 6px; }
-    .sh3-book { position: relative; flex: 0 0 auto; width: var(--w, 26px); height: 128px; padding: 0; border: 0; background: none; color: #fff; cursor: pointer; transform-style: preserve-3d; transition: width .35s cubic-bezier(.2,.7,.2,1), transform .25s; font: inherit; }
+    .sh3-book { position: relative; flex: 0 0 auto; width: var(--w, 26px); height: 128px; padding: 0; border: 0; background: none; color: #fff; cursor: pointer; transform-style: preserve-3d; font: inherit; }
     .sh3-book:nth-child(7n+3) { height: 120px; } .sh3-book:nth-child(5n+2) { height: 124px; }
     .sh3-spine { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: space-between; padding: 7px 0 6px; overflow: hidden; border-radius: 2px 2px 1px 1px;
-      background: linear-gradient(90deg, rgba(0,0,0,.4), transparent 22%, rgba(255,255,255,.16) 48%, transparent 72%, rgba(0,0,0,.45)), color-mix(in srgb, var(--c, #7C5CFF) 72%, #000); box-shadow: inset 0 3px 0 color-mix(in srgb, var(--c, #7C5CFF) 60%, #fff), inset 0 -3px 0 rgba(0,0,0,.35); transition: opacity .2s; }
+      background: linear-gradient(90deg, rgba(0,0,0,.4), transparent 22%, rgba(255,255,255,.16) 48%, transparent 72%, rgba(0,0,0,.45)), color-mix(in srgb, var(--c, #7C5CFF) 72%, #000); box-shadow: inset 0 3px 0 color-mix(in srgb, var(--c, #7C5CFF) 60%, #fff), inset 0 -3px 0 rgba(0,0,0,.35); }
     .sh3-spine b { writing-mode: vertical-rl; transform: rotate(180deg); font-size: 10.5px; font-weight: 800; letter-spacing: .02em; line-height: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-height: 92px; text-shadow: 0 1px 1px rgba(0,0,0,.6); }
     .sh3-spine em { font-style: normal; font-size: 9.5px; font-weight: 800; background: rgba(0,0,0,.35); border-radius: 3px; padding: 1px 2px; }
-    .sh3-cover { position: absolute; inset: 0; width: 85px; opacity: 0; transform-origin: left center; transform: rotateY(85deg); transition: transform .4s cubic-bezier(.2,.7,.2,1), opacity .2s; border-radius: 2px; overflow: hidden; box-shadow: 0 10px 22px rgba(0,0,0,.5); pointer-events: none; }
+    .sh3-cover { position: absolute; inset: 0; width: 85px; opacity: 0; transform-origin: left center; transform: rotateY(85deg); border-radius: 2px; overflow: hidden; box-shadow: 0 10px 22px rgba(0,0,0,.5); pointer-events: none; }
     .sh3-cover img, .sh3-cover .pl-face { width: 100%; height: 100%; object-fit: cover; display: flex; }
-    @media (hover: hover) { button.sh3-book:hover { transform: translateY(-8px); } }
-    button.sh3-book:focus-visible { transform: translateY(-8px); }
+    button.sh3-book:focus-visible { transform: translateY(-8px); outline: 2px solid var(--key, #FFD400); outline-offset: 2px; }
     .sh3-book.is-out { width: 85px; transform: translateY(-10px) translateZ(24px); z-index: 2; }
     .sh3-book.is-out .sh3-spine { opacity: 0; }
     .sh3-book.is-out .sh3-cover { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce) { .sh3-book, .sh3-cover, .sh3-spine { transition: none; } }
+    /* D-99 : collection épurée (barre compacte, filtres repliés, actions dans « ••• ») */
+    .coll-bar { margin-bottom: 10px; }
+    .coll-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 10px; }
+    .coll-search { flex: 1 1 220px; min-width: 0; display: flex; align-items: center; gap: 8px; padding: 0 12px; min-height: 40px; background: var(--bg-surface); border: 1px solid var(--border); border-radius: 999px; color: var(--muted); }
+    .coll-search:focus-within { border-color: var(--key); }
+    .coll-search .ic { width: 16px; height: 16px; flex: 0 0 16px; }
+    .coll-search input { flex: 1; min-width: 0; width: auto; border: 0 !important; background: transparent !important; box-shadow: none !important; color: var(--ink); font: inherit; font-size: 14px; outline: none; padding: 8px 0 !important; }
+    .coll-view { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; }
+    .coll-view .btn { border: 0 !important; border-radius: 0 !important; min-height: 38px; box-shadow: none !important; }
+    .coll-view .btn + .btn { border-left: 1px solid var(--border) !important; }
+    .coll-view .btn.is-on { background: var(--ink) !important; color: var(--bg) !important; }
+    .coll-fbtn[aria-expanded="true"] { border-color: var(--key) !important; }
+    .coll-fcount { display: inline-grid; place-items: center; min-width: 18px; height: 18px; padding: 0 5px; margin-left: 4px; border-radius: 99px; background: var(--key); color: #111; font-size: 11px; font-weight: 800; }
+    .coll-fcount[hidden] { display: none; }
+    .coll-more > summary::after { display: none; }
+    .coll-more > summary { min-width: 44px; justify-content: center; letter-spacing: 1px; }
+    #singlesFilterTabs { margin-bottom: 0; }
+    .coll-bar:not(.is-filtering) #singlesFilterTabs .is-extra:not(.active) { display: none; }
+    .coll-filters { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: flex-end; margin-top: 10px; padding: 12px 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-card); }
+    .coll-filters[hidden] { display: none; }
+    .coll-f { display: grid; gap: 4px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); }
+    .coll-f select { min-height: 38px; font-size: 13px; text-transform: none; letter-spacing: 0; }
+    .coll-f-acts { display: flex; gap: 6px; flex-wrap: wrap; margin-left: auto; }
+    .coll-summary { margin: 0 2px 12px; font-size: 12px; color: var(--muted); }
+    @media (max-width: 640px) { .coll-add-t { display: none; } .coll-f { flex: 1 1 140px; } .coll-f select { width: 100%; } .coll-f-acts { margin-left: 0; } }
+    /* D-99 : étagère animée sur ordinateur seulement (souris, grand écran, mouvement non réduit) ; rien sur téléphone */
+    @media (hover: hover) and (pointer: fine) and (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+      .sh3 { transform: rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s cubic-bezier(.2,.7,.2,1); transform-style: preserve-3d; }
+      .sh3-book { transition: width .42s cubic-bezier(.2,.8,.25,1.15), transform .32s cubic-bezier(.2,.8,.25,1.2); animation: sh3In .5s cubic-bezier(.2,.8,.25,1) backwards; animation-delay: calc(var(--i, 0) * 22ms); }
+      .sh3-spine { transition: opacity .2s, filter .25s; }
+      .sh3-spine::after { content: ''; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,.32) 48%, transparent 66%) no-repeat; background-size: 100% 300%; background-position: 0 120%; transition: background-position .6s ease; pointer-events: none; }
+      .sh3-cover { transition: transform .5s cubic-bezier(.2,.8,.25,1.15), opacity .22s; }
+      button.sh3-book:hover { transform: translateY(-12px) rotateY(-16deg) translateZ(10px); z-index: 1; }
+      button.sh3-book:hover .sh3-spine { filter: brightness(1.12) saturate(1.1); }
+      button.sh3-book:hover .sh3-spine::after { background-position: 0 -20%; }
+      button.sh3-book:hover + .sh3-book:not(.is-out) { transform: rotate(3deg); transform-origin: bottom left; }
+      .sh3-book:not(.is-out):has(+ button.sh3-book:hover) { transform: rotate(-3deg); transform-origin: bottom right; }
+      .sh3-book.is-out, button.sh3-book.is-out:hover { transform: translateY(-12px) translateZ(30px) rotateY(-6deg); }
+      .sh3-book.is-out .sh3-cover { box-shadow: 0 18px 30px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08); }
+    }
+    @keyframes sh3In { from { opacity: 0; transform: translateY(18px) rotateX(-20deg); } }
     .sh3-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line, #333); border-radius: 12px; background: var(--bg-card, transparent); }
     .sh3-bar b { font-size: 14px; } .sh3-acts { display: flex; gap: 6px; flex-wrap: wrap; }
     .sh3-hint { font-size: 12.5px; color: var(--ink-dim, inherit); margin: 6px 2px 0; }
@@ -4019,55 +4059,32 @@
         <button class="btn" id="instantAddBtn" style="font-size: 12px;padding:5px 12px"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg> Ajouter à la collection</button>
       </div>
 
-      <!-- BARRE D'ACTIONS SINGLES -->
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;gap:12px;flex-wrap:wrap">
-        <div class="filter-tabs-bar chips-scroll" id="singlesFilterTabs" style="margin-bottom:0">
-          <button class="tab-btn active" data-sfilter="all">Tous</button>
-          <button class="tab-btn" data-sfilter="Marvel">Marvel</button>
-          <button class="tab-btn" data-sfilter="DC Comics">DC</button>
-          <button class="tab-btn" data-sfilter="Image Comics">Image</button>
-          <button class="tab-btn" data-sfilter="Dark Horse">Dark Horse</button>
-          <button class="tab-btn" data-sfilter="Indé">Indés</button>
-          <button class="tab-btn" data-sfilter="key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Key Issues</button>
-          <button class="tab-btn" data-sfilter="disposed" title="Exemplaires vendus, donnés, perdus ou échangés (fiches conservées)">Sorties</button>
-          <button class="tab-btn" data-sfilter="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
-        </div>
-
-        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-          <input id="singlesSearchInput" aria-label="Filtrer la collection" placeholder=" Filtrer ou Entrée pour Comic Vine..." style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 12px;font-size:12px;color:var(--ink);width:175px">
-          <select id="singlesSortSelect" aria-label="Trier la collection" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 10px;font-size:12px;color:var(--ink)">
-            <option value="recent">Plus récents</option>
-            <option value="title">Titre (A-Z)</option>
-            <option value="issue">Numéro (#)</option>
-            <option value="value_desc">Valeur ($ max)</option>
-            <option value="grade">État</option>
-            <option value="rating">Ma note (★)</option>
-            <option value="gain">Plus-value</option>
-          </select>
-          <select id="singlesReadFilter" class="field-input" aria-label="Filtrer par lecture">
-            <option value="all">Lus & non lus</option>
-            <option value="unread">Non lus</option>
-            <option value="read">Lus</option>
-          </select>
-          <button class="btn secondary" id="singlesViewModeBtn" title="Basculer grille / liste" aria-label="Basculer grille / liste"><svg class=ic aria-hidden=true><use href=#ic-list /></svg> Liste</button>
-          <button class="btn secondary" id="singlesBoxesBtn" title="Voir la collection rangée en boîtes de comics" aria-pressed="false">Boîtes</button>
+      <!-- BARRE D'ACTIONS SINGLES (D-99 : épurée — recherche, affichage, filtres repliés, actions dans « ••• ») -->
+      <div class="coll-bar" id="collBar">
+        <div class="coll-row">
+          <label class="coll-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="singlesSearchInput" type="search" autocomplete="off" aria-label="Filtrer la collection" placeholder="Filtrer, ou Entrée pour Comic Vine"></label>
+          <div class="coll-view" role="group" aria-label="Affichage de la collection">
+            <button class="btn secondary" id="singlesViewModeBtn" title="Basculer grille / liste" aria-label="Basculer grille / liste"><svg class=ic aria-hidden=true><use href=#ic-list /></svg> Liste</button>
+            <button class="btn secondary" id="singlesBoxesBtn" title="Voir la collection rangée en boîtes de comics" aria-pressed="false">Boîtes</button>
+          </div>
           <select id="singlesBoxBy" class="field-input" aria-label="Ranger les boîtes" hidden>
             <option value="run">Par run</option>
             <option value="character">Par personnage</option>
             <option value="publisher">Par éditeur</option>
             <option value="location">Par boîte physique</option>
           </select>
+          <button type="button" class="btn secondary coll-fbtn" id="collFiltersBtn" aria-expanded="false" aria-controls="collFilters"><svg class=ic aria-hidden=true><use href=#ic-layers /></svg> Filtres<span class="coll-fcount" id="collFiltersCount" hidden></span></button>
           <button class="btn accent-scan" id="quickScanBtn" hidden>
             <span><svg class=ic aria-hidden=true><use href=#ic-barcode /></svg></span> Scanner code-barres
           </button>
           <button class="btn secondary" id="quickCoverScanBtn" hidden style="border-color:var(--cyan-line);color:var(--lime)" title="Scanner la couverture avant du comic">
             <span><svg class=ic aria-hidden=true><use href=#ic-camera /></svg></span> Scanner couverture
           </button>
-          <button class="btn" id="addSingleModalOpenBtn">
-            <span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Ajouter un single
+          <button class="btn" id="addSingleModalOpenBtn" aria-label="Ajouter un single">
+            <span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> <span class="coll-add-t">Ajouter</span>
           </button>
-          <details class="menu-pop menu-right" id="singlesToolsMenu">
-            <summary class="btn secondary">Outils</summary>
+          <details class="menu-pop menu-right coll-more" id="singlesToolsMenu">
+            <summary class="btn secondary" aria-label="Plus d'actions : Comic Vine, cotation, exports et imports" title="Plus d'actions"><span aria-hidden="true">•••</span></summary>
             <div class="menu-list">
           <button class="btn secondary" id="openComicVineSearchModalBtn" style="border-color:var(--cyan-fill);color:var(--lime);font-weight:600" title="Rechercher des comics en direct sur Comic Vine (Base Mondiale)">
             <span><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span> Chercher Comic Vine
@@ -4091,17 +4108,39 @@
           </details>
           <input type="file" id="singlesJsonFileInput" accept=".json" style="display:none">
         </div>
+        <div class="filter-tabs-bar chips-scroll" id="singlesFilterTabs">
+          <button class="tab-btn active" data-sfilter="all">Tous</button>
+          <button class="tab-btn" data-sfilter="key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> Key Issues</button>
+          <button class="tab-btn" data-sfilter="wishlist"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
+          <button class="tab-btn is-extra" data-sfilter="Marvel">Marvel</button>
+          <button class="tab-btn is-extra" data-sfilter="DC Comics">DC</button>
+          <button class="tab-btn is-extra" data-sfilter="Image Comics">Image</button>
+          <button class="tab-btn is-extra" data-sfilter="Dark Horse">Dark Horse</button>
+          <button class="tab-btn is-extra" data-sfilter="Indé">Indés</button>
+          <button class="tab-btn is-extra" data-sfilter="disposed" title="Exemplaires vendus, donnés, perdus ou échangés (fiches conservées)">Sorties</button>
+        </div>
+        <div class="coll-filters" id="collFilters" role="group" aria-label="Filtres de la collection" hidden>
+          <label class="coll-f"><span>Trier</span><select id="singlesSortSelect" class="field-input" aria-label="Trier la collection">
+            <option value="recent">Plus récents</option>
+            <option value="title">Titre (A-Z)</option>
+            <option value="issue">Numéro (#)</option>
+            <option value="value_desc">Valeur ($ max)</option>
+            <option value="grade">État</option>
+            <option value="rating">Ma note (★)</option>
+            <option value="gain">Plus-value</option>
+          </select></label>
+          <label class="coll-f"><span>Lecture</span><select id="singlesReadFilter" class="field-input" aria-label="Filtrer par lecture">
+            <option value="all">Lus & non lus</option>
+            <option value="unread">Non lus</option>
+            <option value="read">Lus</option>
+          </select></label>
+          <label class="coll-f"><span>Rangement</span><select id="boxFilterSelect" class="field-input" aria-label="Filtrer par boîte">
+            <option value="all">Toutes les boîtes (short et long boxes)</option>
+          </select></label>
+          <span class="coll-f-acts"><button type="button" class="btn secondary rel-mini" id="manageLocationsBtn">Gérer les emplacements</button><button type="button" class="btn secondary rel-mini" id="collFiltersReset">Tout réinitialiser</button></span>
+        </div>
       </div>
-
-      <!-- FILTRE PAR BOÎTE PHYSIQUE & RANGEMENT (HIÉRARCHIE COLLECTION SECTION 8) -->
-      <div class="box-filter-bar" id="singlesBoxFilterBar">
-        <span style="font-size: 12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Rangement :</span>
-        <select id="boxFilterSelect" aria-label="Filtrer par boîte" style="background:var(--bg-surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:5px 12px;font-size: 12px;color:var(--ink)">
-          <option value="all">Toutes les boîtes (short et long boxes)</option>
-        </select>
-        <button type="button" class="btn secondary" id="manageLocationsBtn" style="font-size:12px;padding:5px 10px">Gérer les emplacements</button>
-        <span id="boxCountSummary" style="font-size: 12px;color:var(--muted);margin-left:auto">0 comics</span>
-      </div>
+      <p class="coll-summary" id="singlesBoxFilterBar"><span id="boxCountSummary">0 comics</span></p>
 
       <!-- GRILLE DES SINGLES US -->
       <div class="comics-grid" id="singlesGrid"></div>
@@ -14853,8 +14892,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return wrap;
   };
 
+  // D-99 : filtres repliés — compteur des filtres actifs cachés, éditeurs et « Sorties » visibles seulement panneau ouvert
+  const COLL_QUICK = ['all', 'key', 'wishlist'];
+  const collFiltersSync = () => {
+    const btn = $('collFiltersBtn'), cnt = $('collFiltersCount'), panel = $('collFilters'), bar = $('collBar');
+    if (!btn || !cnt || !panel || !bar) return;
+    const box = $('boxFilterSelect');
+    const n = (COLL_QUICK.includes(activeSingleFilter) ? 0 : 1) + (singlesReadFilter !== 'all' ? 1 : 0) + (box && box.value && box.value !== 'all' ? 1 : 0);
+    cnt.hidden = !n; cnt.textContent = n ? String(n) : '';
+    const open = !panel.hidden;
+    btn.setAttribute('aria-expanded', String(open)); bar.classList.toggle('is-filtering', open);
+    btn.setAttribute('aria-label', 'Filtres' + (n ? ' (' + n + ' actif' + (n > 1 ? 's' : '') + ')' : '') + (open ? ', ouverts' : ''));
+  };
   const renderSinglesCollection = () => {
     updateSinglesStats();
+    collFiltersSync();
     if ($('collSegSeriesBadge') && $('badgeSeriesIncomplete')) { const n = $('badgeSeriesIncomplete').textContent.trim(); $('collSegSeriesBadge').textContent = n && n !== '0' ? n : ''; }
     renderCoverJobBar();
     updateBoxesList();
@@ -20564,15 +20616,31 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     let h = 0; for (const ch of ser + iss) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
     return { w: 24 + (h % 9), title: ser.length > 22 ? ser.slice(0, 21) + '…' : ser, iss: iss === '#' ? '' : iss };
   };
-  const sh3Html = (list, interactive) => '<div class="sh3' + (interactive ? '' : ' is-static') + '"' + (interactive ? ' role="group" aria-label="Étagère : ' + list.length + ' numéro' + (list.length > 1 ? 's' : '') + '"' : ' aria-hidden="true"') + '>' + list.map(s => {
+  const sh3Html = (list, interactive) => '<div class="sh3' + (interactive ? '' : ' is-static') + '"' + (interactive ? ' role="group" aria-label="Étagère : ' + list.length + ' numéro' + (list.length > 1 ? 's' : '') + '"' : ' aria-hidden="true"') + '>' + list.map((s, i) => {
     const sp = sh3Spine(s), tag = interactive ? 'button' : 'span';
-    return '<' + tag + (interactive ? ' type="button" aria-pressed="false" data-sh3="' + escapeHtml(s.id || '') + '" aria-label="' + escapeHtml([s.series, s.issue].filter(Boolean).join(' ')) + '"' : '') + ' class="sh3-book" style="--c:' + cboxHue(s) + ';--w:' + sp.w + 'px">' +
+    return '<' + tag + (interactive ? ' type="button" aria-pressed="false" data-sh3="' + escapeHtml(s.id || '') + '" aria-label="' + escapeHtml([s.series, s.issue].filter(Boolean).join(' ')) + '"' : '') + ' class="sh3-book" style="--c:' + cboxHue(s) + ';--w:' + sp.w + 'px;--i:' + Math.min(i, 30) + '">' +
       '<span class="sh3-spine"><b>' + escapeHtml(sp.title) + '</b>' + (sp.iss ? '<em>' + escapeHtml(sp.iss) + '</em>' : '') + '</span>' +
       (interactive ? '<span class="sh3-cover">' + plancheFace(s) + '</span>' : '') + '</' + tag + '>';
   }).join('') + '</div>';
+  // D-99 : l'étagère s'anime seulement sur ordinateur (souris, grand écran, mouvement non réduit)
+  const SH3_DESK = '(hover: hover) and (pointer: fine) and (min-width: 900px) and (prefers-reduced-motion: no-preference)';
+  const sh3Desk = () => { try { return matchMedia(SH3_DESK).matches; } catch (_) { return false; } };
+  const sh3Tilt = shelf => {
+    if (!shelf || shelf.dataset.tilt) return;
+    shelf.dataset.tilt = '1';
+    // Deux variables CSS par mouvement : le navigateur regroupe déjà le recalcul par image
+    shelf.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse' || !sh3Desk()) return;
+      const r = shelf.getBoundingClientRect();
+      const px = Math.max(-1, Math.min(1, ((e.clientX - r.left) / (r.width || 1)) * 2 - 1)), py = Math.max(-1, Math.min(1, ((e.clientY - r.top) / (r.height || 1)) * 2 - 1));
+      shelf.style.setProperty('--ry', (px * 4).toFixed(2) + 'deg'); shelf.style.setProperty('--rx', (-py * 3).toFixed(2) + 'deg');
+    });
+    shelf.addEventListener('pointerleave', () => { shelf.style.removeProperty('--rx'); shelf.style.removeProperty('--ry'); });
+  };
   const sh3Wire = root => {
     const bar = root.querySelector('#sh3Bar'), title = root.querySelector('#sh3Title');
     if (!bar) return;
+    sh3Tilt(root.querySelector('.sh3:not(.is-static)'));
     let cur = null;
     const books = [...root.querySelectorAll('[data-sh3]')];
     const set = b => {
@@ -24100,6 +24168,13 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       renderSinglesCollection();
     };
     $('singlesReadFilter').onchange = e => { singlesReadFilter = e.target.value; renderSinglesCollection(); };
+    if ($('collFiltersBtn')) $('collFiltersBtn').onclick = () => { const p = $('collFilters'); p.hidden = !p.hidden; collFiltersSync(); if (!p.hidden) { const f = p.querySelector('select'); if (f) f.focus(); } };
+    if ($('collFiltersReset')) $('collFiltersReset').onclick = () => {
+      setSinglesFilterTab('all'); singlesReadFilter = 'all'; $('singlesReadFilter').value = 'all';
+      if ($('boxFilterSelect')) $('boxFilterSelect').value = 'all';
+      singlesSortOrder = 'recent'; $('singlesSortSelect').value = 'recent';
+      renderSinglesCollection(); showToast('Filtres réinitialisés.');
+    };
 
     $('seriesTrackSearch').oninput = renderSeriesTracker;
     $('seriesTrackSort').onchange = renderSeriesTracker;

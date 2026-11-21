@@ -91,8 +91,8 @@ Avant un lancement commercial, prévoir une relecture par un juriste en proprié
 
 ## 4. Suite proposée (par ordre de valeur)
 
-1. **Étagère de collection** : animations sur ordinateur seulement (survol, inclinaison des tranches, sortie du numéro) ; rien sur téléphone ni avec le mouvement réduit.
-2. **Collection épurée** : moins de boutons visibles, filtres repliés, actions dans un menu « ••• ».
+1. ~~**Étagère de collection**~~ : fait (D-99), animations sur ordinateur seulement.
+2. ~~**Collection épurée**~~ : fait (D-99), filtres repliés et actions dans « ••• ».
 3. **Découvrir** : personnages suivis (à partir des favoris et des numéros possédés) en tête.
 4. **Ouverture des comptes (S8)** :
    - brancher `online-core` sur les migrations 14 et 15 déjà en préproduction ;

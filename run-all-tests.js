@@ -5850,6 +5850,57 @@ const waitForCdp = async () => {
       console.log('Résultat Test 77:', JSON.stringify(t77));
       testResults.push({ test: 'Test 77 : J\'aime dessinés, goûts appris, rencontres par ville, co-animation (D-98)',
         ok: !!t77 && !t77.error && ['splashGone', 'picker', 'families', 'noTrademark', 'heroLike', 'learned', 'tastePanel', 'forget', 'meetRefused', 'meetSaved', 'inviteNoVenue', 'meetDeleted', 'cohosts', 'dataUntouched'].every(k => t77[k] === true) });
+
+      // ==========================================
+      // TEST 78 : Collection épurée (filtres repliés, « ••• ») et étagère animée sur ordinateur seulement (D-99)
+      // ==========================================
+      console.log('\n[TEST 78] Collection épurée, étagère animée sur ordinateur...');
+      const t78 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, $ = id => document.getElementById(id);
+        const fp0 = await P.backup.fingerprint('collection');
+        const vis = el => !!el && el.getClientRects().length > 0;
+        try {
+          $('navAllSingles').click(); await wait(300);
+          // Barre épurée : recherche et Ajouter visibles, filtres secondaires repliés, actions dans « ••• »
+          r.bar = vis($('singlesSearchInput')) && vis($('addSingleModalOpenBtn')) && $('collFilters').hidden && !vis($('singlesSortSelect')) && !vis($('boxFilterSelect')) &&
+            /Plus d'actions/.test($('singlesToolsMenu').querySelector('summary').getAttribute('aria-label')) && !$('singlesToolsMenu').open;
+          r.quickChips = vis(document.querySelector('[data-sfilter="all"]')) && vis(document.querySelector('[data-sfilter="key"]')) && vis(document.querySelector('[data-sfilter="wishlist"]')) && !vis(document.querySelector('[data-sfilter="Marvel"]'));
+          $('collFiltersBtn').click(); await wait(100);
+          r.open = !$('collFilters').hidden && $('collFiltersBtn').getAttribute('aria-expanded') === 'true' && vis($('singlesSortSelect')) && vis(document.querySelector('[data-sfilter="Marvel"]'));
+          const rf = $('singlesReadFilter'); rf.value = 'unread'; rf.dispatchEvent(new Event('change', { bubbles: true })); await wait(100);
+          document.querySelector('[data-sfilter="Marvel"]').click(); await wait(100);
+          r.count = $('collFiltersCount').textContent === '2' && !$('collFiltersCount').hidden;
+          $('collFiltersBtn').click(); await wait(100);
+          r.activeShown = $('collFilters').hidden && vis(document.querySelector('[data-sfilter="Marvel"]')) && !vis(document.querySelector('[data-sfilter="Image Comics"]')) && /2 actifs/.test($('collFiltersBtn').getAttribute('aria-label'));
+          $('collFiltersBtn').click(); await wait(80);
+          $('collFiltersReset').click(); await wait(150);
+          r.reset = $('collFiltersCount').hidden && $('singlesReadFilter').value === 'all' && document.querySelector('[data-sfilter="all"]').classList.contains('active');
+          $('collFiltersBtn').click(); await wait(80);
+          // Étagère : aucune transition de base (téléphone, mouvement réduit) ; animations seulement sous la requête « ordinateur »
+          const rules = [...document.styleSheets].flatMap(s => { try { return [...s.cssRules]; } catch (_) { return []; } });
+          const base = rules.find(x => x.selectorText === '.sh3-book');
+          const desk = rules.find(x => x.media && /pointer: fine/.test(x.media.mediaText) && /min-width: 900px/.test(x.media.mediaText) && /prefers-reduced-motion: no-preference/.test(x.media.mediaText) && [...x.cssRules].some(y => y.selectorText === '.sh3-book' && y.style.transition));
+          r.motionGated = !!base && !base.style.transition && !base.style.animation && !!desk;
+          // Inclinaison au pointeur : seulement si l'appareil correspond à la requête « ordinateur »
+          const isDesk = matchMedia('(hover: hover) and (pointer: fine) and (min-width: 900px) and (prefers-reduced-motion: no-preference)').matches;
+          $('navProfile').click(); await wait(300);
+          const shelf = document.querySelector('.sh3:not(.is-static)');
+          if (shelf) {
+            shelf.dispatchEvent(new PointerEvent('pointermove', { pointerType: 'mouse', clientX: shelf.getBoundingClientRect().left + 2, clientY: shelf.getBoundingClientRect().top + 2, bubbles: true }));
+            await wait(80);
+            const tilted = !!shelf.style.getPropertyValue('--ry');
+            shelf.dispatchEvent(new PointerEvent('pointerleave', { pointerType: 'mouse' })); await wait(30);
+            if (tilted !== isDesk) r.tiltInfo = { tilted, isDesk };
+            r.tilt = tilted === isDesk && !shelf.style.getPropertyValue('--ry') && /--i:\\d/.test(shelf.querySelector('.sh3-book').getAttribute('style'));
+          } else r.tilt = true;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { document.getElementById('navAllSingles').click(); await wait(150); }
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      console.log('Résultat Test 78:', JSON.stringify(t78));
+      testResults.push({ test: 'Test 78 : Collection épurée et étagère animée sur ordinateur seulement (D-99)',
+        ok: !!t78 && !t78.error && ['bar', 'quickChips', 'open', 'count', 'activeShown', 'reset', 'motionGated', 'tilt', 'dataUntouched'].every(k => t78[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
