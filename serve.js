@@ -410,20 +410,24 @@ let wdGet = async (url, accept) => {
   return r.json();
 };
 const WD_PROPS = { res: 'P551', univ: 'P1080', creator: 'P170', pob: 'P19', sex: 'P21', member: 'P463', first: 'P4584', occupation: 'P106', citizen: 'P27' };
-const wdQuery = cv => 'SELECT ?item ?itemLabel ?inception ?frwiki ?enwiki ' + Object.keys(WD_PROPS).map(k => '?' + k + 'Label').join(' ') +
+// Langue de la fiche (D-104) : celle de l'interface de Panel ; libellés et résumé dans cette langue, sinon en anglais
+const WD_LANGS = ['fr', 'en', 'es', 'pt'];
+const wdQuery = (cv, lang) => 'SELECT ?item ?itemLabel ?inception ?frwiki ?enwiki ' + Object.keys(WD_PROPS).map(k => '?' + k + 'Label').join(' ') +
   ' WHERE { ?item wdt:P5905 "' + cv + '". OPTIONAL{?item wdt:P571 ?inception} ' + Object.entries(WD_PROPS).map(([k, pr]) => 'OPTIONAL{?item wdt:' + pr + ' ?' + k + '} ').join('') +
-  'OPTIONAL{?frwiki schema:about ?item; schema:isPartOf <https://fr.wikipedia.org/>} OPTIONAL{?enwiki schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>} ' +
-  'SERVICE wikibase:label { bd:serviceParam wikibase:language "fr,en". } } LIMIT 200';
+  'OPTIONAL{?frwiki schema:about ?item; schema:isPartOf <https://' + lang + '.wikipedia.org/>} OPTIONAL{?enwiki schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>} ' +
+  'SERVICE wikibase:label { bd:serviceParam wikibase:language "' + lang + ',en". } } LIMIT 200';
 const handleWd = async (u, res) => {
   if (u.pathname !== '/api/wd/entity') return sendJson(res, 404, { error: 'introuvable' });
   const cv = String(u.searchParams.get('cv') || '');
   if (!/^40(05|40|60|45|10)-\d{1,9}$/.test(cv)) return sendJson(res, 400, { error: 'paramètres invalides' });
-  const hit = wdCache[cv];
+  const lang = WD_LANGS.includes(u.searchParams.get('lang')) ? u.searchParams.get('lang') : 'fr';
+  const ck = lang === 'fr' ? cv : cv + '|' + lang;
+  const hit = wdCache[ck];
   if (hit && Date.now() - hit.at < GCD_CACHE_TTL) return sendJson(res, 200, Object.assign({ cached: true }, hit.data));
   if (wdBudget() < 2) return sendJson(res, 429, { error: 'quota Wikidata atteint, réessayez dans une heure' });
   try {
     wdCalls.push(Date.now());
-    const d = await wdGet('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(wdQuery(cv)), 'application/sparql-results+json');
+    const d = await wdGet('https://query.wikidata.org/sparql?format=json&query=' + encodeURIComponent(wdQuery(cv, lang)), 'application/sparql-results+json');
     const rows = (d && d.results && d.results.bindings) || [];
     const val = (r, k) => r[k] && typeof r[k].value === 'string' ? r[k].value.slice(0, 200) : '';
     const uniq = k => [...new Set(rows.map(r => val(r, k + 'Label')).filter(v => v && !/^Q\d+$/.test(v) && !/^https?:/.test(v)))].slice(0, 12);
@@ -431,16 +435,17 @@ const handleWd = async (u, res) => {
     const data = { found: !!rows.length, qid: (val(first, 'item').match(/Q\d+$/) || [''])[0], label: val(first, 'itemLabel'), inception: val(first, 'inception').slice(0, 10),
       residence: uniq('res'), universe: uniq('univ'), creators: uniq('creator'), birthplace: uniq('pob'), sex: uniq('sex'), memberOf: uniq('member'), firstAppearance: uniq('first'),
       occupation: uniq('occupation'), citizenship: uniq('citizen'), frwiki: val(first, 'frwiki'), enwiki: val(first, 'enwiki'), summary: '', summaryLang: '', summaryUrl: '' };
-    // Résumé Wikipédia (français d'abord), extrait court avec lien vers l'article
+    // Résumé Wikipédia (langue de l'interface d'abord, sinon anglais), extrait court avec lien vers l'article
+    data.lang = lang;
     const wiki = data.frwiki || data.enwiki;
-    if (wiki && /^https:\/\/(fr|en)\.wikipedia\.org\/wiki\/[^\s?#]+$/.test(wiki)) {
+    if (wiki && /^https:\/\/(fr|en|es|pt)\.wikipedia\.org\/wiki\/[^\s?#]+$/.test(wiki)) {
       wdCalls.push(Date.now());
       const lang = wiki.slice(8, 10), title = wiki.split('/wiki/')[1];
       const sm = await wdGet('https://' + lang + '.wikipedia.org/api/rest_v1/page/summary/' + title).catch(() => null);
       if (sm && typeof sm.extract === 'string') { data.summary = sm.extract.slice(0, 1200); data.summaryLang = lang; data.summaryUrl = wiki; }
     }
     data.source = 'Wikidata (CC0)' + (data.summary ? ' · Wikipédia (CC BY-SA 4.0)' : '');
-    wdCache[cv] = { at: Date.now(), data };
+    wdCache[ck] = { at: Date.now(), data };
     saveWdCache();
     return sendJson(res, 200, data);
   } catch (e) {

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-hEU4f2/rKsnLlAsc+vYaPjfoL46j3UgHLgfzAo9dHNI=' 'sha256-yUGBfD/7ZMmCVJIREMSnpobwenKg2nQXz4iTcl67Q4o=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-4Nv8NzZLduaunucZlQ43xdxwLsaAx4ovg1oQZe+7c3g=' 'sha256-eqXjFVLTwdNVn1Cm0L2EpO5aTHbSyTvqfD7dozIcPVM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -963,6 +963,8 @@
       .app-layout { display: block; }
       aside { display: none; }
       .mobile-dock { display: flex; }
+      /* D-104 : sur téléphone, la barre du bas suffit ; les vues de la collection s'ouvrent depuis le profil (« Ma collection ») */
+      #singlesSubnav { display: none !important; }
       main { padding: 16px 12px 86px; }
       .singles-stats-bar { grid-template-columns: repeat(2, 1fr); }
       .comics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
@@ -2300,6 +2302,12 @@
     .set-nav button.is-on { background: var(--accent, #FFD400); color: #111; }
     .set-main h3 { margin: 0 0 10px; }
     .set-row { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--line, #333); }
+    .set-legal-note { color: var(--muted); font-size: .86rem; margin: 0 0 10px; }
+    .set-legal { border-bottom: 1px solid var(--line, #333); }
+    .set-legal > summary { cursor: pointer; padding: 13px 0; font-weight: 700; list-style-position: inside; }
+    .set-legal-b { padding: 0 0 12px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
+    .set-legal-b p { margin: 0 0 8px; }
+    .set-legal-b b { color: var(--text); }
     .set-row b { display: block; font-size: 14px; }
     .set-row small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
     .set-ctrl { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; flex: 0 0 auto; }
@@ -3089,6 +3097,42 @@
     @media (prefers-reduced-motion: reduce) { .ex-more > summary .ic { transition: none; } }
     .ex-filt-wrap { margin-top: 8px; } .ex-filt-wrap > summary { cursor: pointer; width: fit-content; font: 600 13px var(--font-display); color: var(--muted); list-style: none; padding: 4px 0; }
     .ex-filt-wrap > summary::-webkit-details-marker { display: none; } .ex-filt-wrap > summary::after { content: ' ▾'; } .ex-filt-wrap[open] > summary::after { content: ' ▴'; }
+    /* Découvrir repensé (D-104) : barre de recherche, onglets thématiques, tuiles « Explorer » */
+    .ex-top.ex-hero.is-compact { padding: 14px 16px; }
+    .ex-top.ex-hero::after { width: 90px; right: -50px; opacity: .85; }
+    .ex-top .ex-hist { display: none; }
+    .ex-top:focus-within .ex-hist { display: flex; }
+    .ex-qtools[hidden] { display: none; }
+    .ex-topics { position: sticky; top: 0; z-index: 6; display: flex; gap: 8px; overflow-x: auto; padding: 10px 2px; margin: -14px 0 0; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: saturate(160%) blur(16px); backdrop-filter: saturate(160%) blur(16px); scrollbar-width: none; scroll-snap-type: x proximity; }
+    .ex-topics::-webkit-scrollbar { display: none; }
+    .ex-topic { flex: 0 0 auto; scroll-snap-align: start; border: 1.5px solid var(--line); background: var(--bg-card); color: var(--ink); font: 700 14px/1 var(--font-ui); padding: 10px 16px; min-height: 40px; border-radius: 999px; cursor: pointer; transition: background .15s, color .15s, border-color .15s; }
+    .ex-topic.is-on { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+    .ex-topic:focus-visible { outline: 3px solid #FFD400; outline-offset: 2px; }
+    .ex-pane { display: flex; flex-direction: column; gap: 26px; padding-top: 8px; }
+    .ex-pane[hidden] { display: none; }
+    .ex-subh { margin: 4px 0 -2px; font: 700 12px/1.2 var(--font-ui); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+    .ex-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .ex-tile { position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 4px; min-height: 112px; padding: 14px; border: 0; border-radius: 16px; text-align: left; cursor: pointer; color: #fff; font-family: var(--font-ui); background: #1b1b1b; isolation: isolate; transition: transform .18s ease; }
+    .ex-tile::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: radial-gradient(circle, rgba(255,255,255,.16) 1.2px, transparent 1.5px); background-size: 8px 8px; opacity: .55; }
+    .ex-tile b { font: 800 18px/1.05 var(--font-display); text-transform: uppercase; letter-spacing: .01em; }
+    .ex-tile small { font-size: 12px; opacity: .85; }
+    .ex-tile.is-guides { background: linear-gradient(135deg, #E23636, #8C1B1B); }
+    .ex-tile.is-chars { background: linear-gradient(135deg, #1F6FEB, #0B2E6B); }
+    .ex-tile.is-news { background: linear-gradient(135deg, #FFB000, #B35C00); color: #111; }
+    .ex-tile.is-cosmos { background: linear-gradient(135deg, #6D28D9, #160B33); }
+    .ex-tile.is-uni { background: linear-gradient(135deg, #0F9D73, #064D39); }
+    .ex-tile.is-shops { background: linear-gradient(135deg, #FF52AE, #7A1250); }
+    .ex-tile:focus-visible { outline: 3px solid #FFD400; outline-offset: 2px; }
+    @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) { .ex-tile:hover { transform: translateY(-2px); } }
+    .ex-personal-foot { border-top: 1px solid var(--line); padding-top: 14px; }
+    .ex-personal-foot .da-switch { color: var(--ink); }
+    @media (max-width: 600px) {
+      .ex-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+      .ex-tile { min-height: 96px; padding: 12px; border-radius: 14px; }
+      .ex-tile b { font-size: 16px; }
+      .ex-topics { margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px; }
+      .ex-pane { gap: 22px; }
+    }
     .ex-toc-b { flex: 0 0 auto; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font: 600 13px/1 var(--font-display); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: border-color .15s, background .15s; }
     @media (hover: hover) { .ex-toc-b:hover { border-color: var(--line-strong); } }
     .ex-duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
@@ -3454,6 +3498,7 @@
     .ig .ig-tabs { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
     .ig .ig-tabs button { min-width: 0; white-space: nowrap; }
     @media (max-width: 420px) { .ig .ig-tabs button { padding-left: 6px; padding-right: 6px; font-size: 11px; } }
+    body.view-discover #singlesSubnav, body.view-discover #importModalOpenBtn, body.view-discover #openScannerBtn, body.view-discover .top-actions .search-box { display: none !important; }
     body.view-social #singlesSubnav, body.view-social #importModalOpenBtn, body.view-social #openScannerBtn, body.view-social .cm-me { display: none !important; }
     .hm-seg { position: sticky; top: 0; z-index: 3; display: flex; justify-content: center; gap: 28px; margin: 0 0 12px; padding: 4px 0 0; background: var(--bg, transparent); border-bottom: 1px solid var(--line, #333); }
     .hm-seg button { border: 0; background: none; color: var(--ink-dim, inherit); font: inherit; font-weight: 800; font-size: 15px; padding: 10px 2px; min-height: 44px; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; }
@@ -3852,7 +3897,7 @@
     <!-- TOPBAR -->
     <header class="topbar">
       <div class="topbar-title">
-        <h1 id="mainTitleHeading">Ma Collection de Singles US</h1><span class="offline-pill" id="offlinePill" hidden title="Votre collection reste disponible ; Comic Vine et les couvertures reviendront avec la connexion">● Hors ligne</span>
+        <h1 id="mainTitleHeading">Ma Collection de Singles US</h1><span class="offline-pill" id="offlinePill" hidden title="Votre collection reste disponible ; la recherche en ligne et les couvertures reviendront avec la connexion">● Hors ligne</span>
         <span id="mainTitleSub">Gestionnaire d’inventaire physique avec scan de codes-barres UPC</span>
       </div>
 
@@ -4022,7 +4067,7 @@
           <select class="field-input rel-sel" id="relFormat" aria-label="Type de publication"></select>
           <select class="field-input rel-sel" id="relStatus" aria-label="Statut"></select>
           <span class="rel-filters-actions">
-            <button class="btn secondary rel-mini" id="relSyncBtn">Actualiser (Comic Vine)</button>
+            <button class="btn secondary rel-mini" id="relSyncBtn">Actualiser</button>
             <button class="btn secondary rel-mini" id="relRemindBtn" title="Notification locale sur cet appareil quand un numéro de votre pull list sort dans les 7 jours ; aucun compte, aucun serveur">Rappels : désactivés</button>
             <button class="btn secondary rel-mini" id="relAddPubBtn">+ Publication</button>
             <button class="btn secondary rel-mini" id="relImportBtn">Importer un calendrier</button>
@@ -4106,7 +4151,7 @@
       <!-- BARRE D'ACTIONS SINGLES (D-99 : épurée — recherche, affichage, filtres repliés, actions dans « ••• ») -->
       <div class="coll-bar" id="collBar">
         <div class="coll-row">
-          <label class="coll-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="singlesSearchInput" type="search" autocomplete="off" aria-label="Filtrer la collection" placeholder="Filtrer, ou Entrée pour Comic Vine"></label>
+          <label class="coll-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="singlesSearchInput" type="search" autocomplete="off" aria-label="Filtrer la collection" placeholder="Filtrer, ou Entrée pour chercher en ligne"></label>
           <div class="coll-view" role="group" aria-label="Affichage de la collection">
             <button class="btn secondary" id="singlesViewModeBtn" title="Basculer grille / liste" aria-label="Basculer grille / liste"><svg class=ic aria-hidden=true><use href=#ic-list /></svg> Liste</button>
             <button class="btn secondary" id="singlesBoxesBtn" title="Voir la collection rangée en boîtes de comics" aria-pressed="false">Boîtes</button>
@@ -4128,10 +4173,10 @@
             <span><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> <span class="coll-add-t">Ajouter</span>
           </button>
           <details class="menu-pop menu-right coll-more" id="singlesToolsMenu">
-            <summary class="btn secondary" aria-label="Plus d'actions : Comic Vine, cotation, exports et imports" title="Plus d'actions"><span aria-hidden="true">•••</span></summary>
+            <summary class="btn secondary" aria-label="Plus d'actions : recherche en ligne, cotation, exports et imports" title="Plus d'actions"><span aria-hidden="true">•••</span></summary>
             <div class="menu-list">
-          <button class="btn secondary" id="openComicVineSearchModalBtn" style="border-color:var(--cyan-fill);color:var(--lime);font-weight:600" title="Rechercher des comics en direct sur Comic Vine (Base Mondiale)">
-            <span><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span> Chercher Comic Vine
+          <button class="btn secondary" id="openComicVineSearchModalBtn" style="border-color:var(--cyan-fill);color:var(--lime);font-weight:600" title="Rechercher des comics en ligne">
+            <span><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span> Chercher en ligne
           </button>
           <button class="btn secondary" id="revalueCollectionBtn" title="Coter automatiquement la collection" style="border-color:var(--cyan-line);color:var(--lime)">
             <span><svg class=ic aria-hidden=true><use href=#ic-bolt /></svg></span> Coter
@@ -4382,7 +4427,7 @@
     <!-- RECHERCHE DIRECTE COMIC VINE DE COUVERTURES -->
     <div class="form-row" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px">
       <div style="display:flex;gap:6px">
-        <input id="quickCoverSearchInput" placeholder="Rechercher sur Comic Vine (ex: Spawn 300, Batman 135, House of X 1...)" style="flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:12.5px;color:var(--ink)">
+        <input id="quickCoverSearchInput" placeholder="Rechercher en ligne (ex: Spawn 300, Batman 135, House of X 1...)" style="flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:12.5px;color:var(--ink)">
         <button class="btn accent-scan" id="quickCoverSearchBtn" style="padding:8px 14px;font-size:12px">Rechercher</button>
       </div>
       <div id="coverSearchStatus" style="font-size: 12px;color:var(--lime);margin-top:6px"></div>
@@ -4922,7 +4967,7 @@
       <div style="display:flex;align-items:center;gap:8px">
         <span style="font-size:22px"><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span>
         <div>
-          <h2 style="font-size:16px;margin:0">Recherche Comic Vine en Direct</h2>
+          <h2 style="font-size:16px;margin:0">Recherche en ligne</h2>
           <small style="color:var(--muted);font-size: 12px">Base de données officielle (League of Comic Geeks / CLZ)</small>
         </div>
       </div>
@@ -4999,7 +5044,7 @@
     <p id="revalueSummary" style="font-size:12px;color:var(--ink-dim);line-height:1.55;margin-bottom:10px"></p>
     <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-bottom:8px;cursor:pointer">
       <input type="checkbox" id="revalueFetchYears" checked style="accent-color:var(--lime);margin-top:2px">
-      <span>Compléter les années de parution manquantes via Comic Vine <span class="stat-sub">(≈ 1 s par comic, 40 max par passage — l'époque change fortement la cote)</span></span>
+      <span>Compléter les années de parution manquantes en ligne <span class="stat-sub">(≈ 1 s par comic, 40 max par passage — l'époque change fortement la cote)</span></span>
     </label>
     <label style="display:flex;gap:8px;align-items:flex-start;font-size:12px;margin-bottom:12px;cursor:pointer">
       <input type="checkbox" id="revalueIncludeManual" style="accent-color:var(--orange);margin-top:2px">
@@ -10267,7 +10312,7 @@ const phrases = {
   'Tout voir': 'See all', 'Tout': 'All', 'Tous': 'All', 'Tout afficher ({n})': 'Show all ({n})', 'Parcourir': 'Browse', 'Filtres': 'Filters',
   'Filtres et outils': 'Filters and tools', 'Filtres et tri': 'Filters and sorting', 'Tri': 'Sort', 'Liste': 'List', 'Cartes / liste': 'Cards / list',
   'Cartes, liste, boîtes': 'Cards, list, boxes', 'Boîtes': 'Boxes', 'Plus d\'actions': 'More actions', 'Basculer grille / liste': 'Toggle grid / list',
-  'Plus d\'actions : Comic Vine, cotation, exports et imports': 'More actions: Comic Vine, pricing, exports and imports',
+  'Plus d\'actions : recherche en ligne, cotation, exports et imports': 'More actions: online search, pricing, exports and imports',
   'Afficher les raccourcis': 'Show shortcuts', 'Raccourcis clavier': 'Keyboard shortcuts', 'Bientôt': 'Soon', 'Disponible': 'Available', 'Indisponible': 'Unavailable',
   'Actif': 'Active', 'Appliquée': 'Applied', 'Appliquée à toute l’interface': 'Applied to the whole interface', 'À jour': 'Up to date', 'Aujourd\'hui': 'Today',
   'Cette semaine': 'This week', 'Semaine prochaine': 'Next week', 'Prochaines semaines': 'Coming weeks', 'Période': 'Period', 'Période précédente': 'Previous period',
@@ -10528,7 +10573,61 @@ const phrases = {
   'Sécurité d\'un mineur, Automutilation ou détresse': 'Child safety, Self-harm or distress', 'Harcèlement, Haine, Violence, Contenu sexuel': 'Harassment, Hate, Violence, Sexual content',
   'Droit d\'auteur, Spam, Autre': 'Copyright, Spam, Other', 'La file se remplira à l\'ouverture des comptes : seuls les modérateurs et administrateurs la verront. Rien n\'est simulé ici.': 'The queue will fill up when accounts open: only moderators and administrators will see it. Nothing is simulated here.',
   'Une seule touche, sans Ctrl ni Alt ; inactifs pendant la saisie du motif. Retirer et suspendre demandent une confirmation.': 'One key, without Ctrl or Alt; inactive while typing the reason. Remove and suspend ask for confirmation.',
-  '{n} mot · brouillon sur cet appareil, envoyé à la base à l\'ouverture des comptes (migration {n} préparée, non appliquée)': '{n} word · draft on this device, sent to the database when accounts open (migration {n} prepared, not applied)'
+  '{n} mot · brouillon sur cet appareil, envoyé à la base à l\'ouverture des comptes (migration {n} préparée, non appliquée)': '{n} word · draft on this device, sent to the database when accounts open (migration {n} prepared, not applied)',
+  // D-104 : Découvrir repensé, recherche sans nom de fournisseur, Légal & sécurité
+  'Vos personnages': 'Your characters',
+  'Suivis': 'Followed',
+  'Dans votre collection': 'In your collection',
+  'Séries suivies': 'Followed series',
+  'Créateurs et équipes suivis': 'Followed creators and teams',
+  'Mes suivis': 'Following',
+  'Personnages, séries, guides et actualités': 'Characters, series, guides and news',
+  'Personnage, série, numéro, créateur…': 'Character, series, issue, creator…',
+  'Héros, équipes, ennemis': 'Heroes, teams, villains',
+  'Événements, sagas, parcours': 'Events, sagas, paths',
+  'Comics, BD, films et séries': 'Comics, films and shows',
+  'Les cartes illustrées': 'Illustrated maps',
+  'Boutiques': 'Shops',
+  'Près de chez vous': 'Near you',
+  'Éditeurs et créateurs': 'Publishers and creators',
+  'Pour vous': 'For you',
+  'Les séries de votre collection, puis celles que Panel connaît.': 'Series from your collection, then the ones Panel knows.',
+  'Les séries que Panel connaît.': 'The series Panel knows.',
+  'Touchez un nom pour ouvrir ses comics et ses guides.': 'Tap a name to open its comics and guides.',
+  'Événements, crossovers, sagas et parcours': 'Events, crossovers, sagas and paths',
+  'Résultats': 'Results',
+  'Actualiser': 'Refresh',
+  'Chercher en ligne': 'Search online',
+  'Filtrer, ou Entrée pour chercher en ligne': 'Filter, or press Enter to search online',
+  'Hors ligne : dernières données enregistrées.': 'Offline: latest saved data.',
+  'Lire la suite sur Wikipédia': 'Read more on Wikipedia',
+  'Présentation d\'origine (en anglais)': 'Original description (in English)',
+  'Résumé d\'origine (en anglais)': 'Original summary (in English)',
+  'Légal & sécurité': 'Legal & security',
+  'Mentions légales': 'Legal notice',
+  'Confidentialité et données personnelles': 'Privacy and personal data',
+  'Règles de la communauté': 'Community rules',
+  'Âge': 'Age',
+  'Droits d\'auteur et marques': 'Copyright and trademarks',
+  'Sécurité': 'Security',
+  'Éditeur de Panel :': 'Publisher of Panel:',
+  'à compléter (nom ou raison sociale, adresse, contact, directeur de la publication)': 'to be completed (name or company, address, contact, publication director)',
+  'Hébergement :': 'Hosting:',
+  'à compléter à la mise en ligne': 'to be completed at launch',
+  '. Aujourd\'hui, Panel fonctionne sur votre appareil.': '. Today, Panel runs on your device.',
+  'Votre collection, vos finances, vos notes et votre lecture restent sur cet appareil. Panel ne les envoie à personne et ne les vend jamais.': 'Your collection, finances, notes and reading stay on this device. Panel never sends them to anyone and never sells them.',
+  'Aucun cookie publicitaire, aucun traceur, aucune mesure d\'audience. Le stockage local sert uniquement au fonctionnement de l\'application.': 'No advertising cookies, no trackers, no audience measurement. Local storage is only used to run the app.',
+  'Quand vous cherchez en ligne (fiches, couvertures, biographies), seule la recherche est transmise aux sources de données, sans information sur vous.': 'When you search online (entries, covers, biographies), only the search is sent to the data sources, with no information about you.',
+  'À l\'ouverture des comptes : seuls votre pseudo, votre profil public et ce que vous choisissez de publier seront partagés. Prix, valeur, emplacement et notes privées ne le sont jamais. Vous pourrez exporter ou supprimer votre compte à tout moment (RGPD : accès, rectification, effacement, portabilité, opposition). Réclamation possible auprès de la CNIL.': 'When accounts open: only your username, your public profile and what you choose to post will be shared. Prices, value, location and private notes never are. You will be able to export or delete your account at any time (GDPR: access, rectification, erasure, portability, objection). Complaints can be filed with the CNIL.',
+  'Respect des autres membres : pas de harcèlement, de haine, de contenu sexuel ou violent, d\'arnaque ni de spam.': 'Respect other members: no harassment, hate, sexual or violent content, scams or spam.',
+  'Pas de scans complets ni de fichiers piratés : seules les photos de vos propres exemplaires et de courts extraits sont permis.': 'No full scans or pirated files: only photos of your own copies and short excerpts are allowed.',
+  'Les contenus signalés sont examinés par l\'équipe de modération, qui peut les masquer ou suspendre un compte, avec un motif.': 'Reported content is reviewed by the moderation team, which can hide it or suspend an account, with a reason.',
+  'Les comptes en ligne seront réservés aux personnes de 15 ans et plus (majorité numérique en France). En dessous, l\'accord d\'un parent sera nécessaire.': 'Online accounts will be for people aged 15 and over (digital age of consent in France). Below that, a parent\'s consent will be required.',
+  'Les personnages, titres, couvertures et logos appartiennent à leurs ayants droit (Marvel, DC, Image et les autres éditeurs). Panel n\'est affilié à aucun éditeur.': 'Characters, titles, covers and logos belong to their rights holders (Marvel, DC, Image and other publishers). Panel is not affiliated with any publisher.',
+  'Fiches et images : Comic Vine, Wikipédia et Wikidata (licences CC BY-SA et CC0), avec un lien vers chaque source. Les couvertures sont affichées pour identifier les numéros.': 'Entries and images: Comic Vine, Wikipedia and Wikidata (CC BY-SA and CC0 licences), with a link to each source. Covers are shown to identify issues.',
+  'Aucune clé d\'accès n\'est écrite dans l\'application : les sources en ligne passent par le serveur de Panel.': 'No access key is written in the app: online sources go through Panel\'s server.',
+  'L\'équipe (administration et modération) devra se connecter avec une double authentification. Sans elle, elle n\'a aucun pouvoir. Elle n\'a jamais accès à votre collection ni à vos finances.': 'The team (administration and moderation) will have to sign in with two-factor authentication. Without it, they have no powers. They never have access to your collection or finances.',
+  'Sauvegardez régulièrement votre collection (Données & sauvegardes) : elle n\'existe que sur cet appareil.': 'Back up your collection regularly (Data & backups): it only exists on this device.',
 };
 
 const same = [
@@ -10696,7 +10795,13 @@ const phrases = {
   "oct": "oct",
   "nov": "nov",
   "déc": "dic",
-  "Dates et nombres suivent la langue choisie.": "Las fechas y los números siguen el idioma elegido."
+  "Dates et nombres suivent la langue choisie.": "Las fechas y los números siguen el idioma elegido.",
+  // D-104 : Découvrir repensé, recherche sans nom de fournisseur, Légal & sécurité
+  "Univers": "Universos",
+  "Légal & sécurité": "Legal y seguridad",
+  "Actualiser": "Actualizar",
+  "Chercher en ligne": "Buscar en línea",
+  "Mentions légales": "Aviso legal",
 };
 
 module.exports = { locale: 'es', phrases, same: [] };
@@ -10850,7 +10955,13 @@ const phrases = {
   "oct": "out",
   "nov": "nov",
   "déc": "dez",
-  "Dates et nombres suivent la langue choisie.": "Datas e números seguem o idioma escolhido."
+  "Dates et nombres suivent la langue choisie.": "Datas e números seguem o idioma escolhido.",
+  // D-104 : Découvrir repensé, recherche sans nom de fournisseur, Légal & sécurité
+  "Univers": "Universos",
+  "Légal & sécurité": "Legal e segurança",
+  "Actualiser": "Atualizar",
+  "Chercher en ligne": "Pesquisar online",
+  "Mentions légales": "Aviso legal",
 };
 
 module.exports = { locale: 'pt', phrases, same: [] };
@@ -11164,12 +11275,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     el.querySelector('button').onclick = () => { el.remove(); try { sessionStorage.setItem('panel_limited_dismissed', '1'); } catch (_) {} };
     main.prepend(el);
   };
-  if (location.protocol === 'file:') setTimeout(() => showLimitedModeBanner(['ouvert comme fichier, le navigateur bloque la caméra (scanners), le mode hors ligne et les relais Comic Vine, GCD et Metron (recherche, couvertures, identification des variantes)']), 0);
+  // D-104 : les noms des sources et la configuration du serveur ne s'affichent qu'en mode développeur
+  const limitedDev = () => { try { return localStorage.getItem('panel_dev_mode') === '1'; } catch (_) { return false; } };
+  if (location.protocol === 'file:') setTimeout(() => showLimitedModeBanner([limitedDev() ? 'ouvert comme fichier, le navigateur bloque la caméra (scanners), le mode hors ligne et les relais Comic Vine, GCD et Metron (recherche, couvertures, identification des variantes)' : 'ouvert comme fichier : caméra, mode hors ligne et recherche en ligne indisponibles']), 0);
   probeRelays().then(st => {
     if (!st) return;
     const missing = [];
-    if (!st.cv && !getCvKey()) missing.push('Comic Vine non configuré (recherche, couvertures, sorties et cotes indisponibles) : ajoutez la clé dans .secrets/comicvine.json ou dans Paramètres');
-    if (!st.metron) missing.push('Metron non configuré (identification exacte des variantes au scan) : node serve.js --metron');
+    if (!st.cv && !getCvKey()) missing.push(limitedDev() ? 'Comic Vine non configuré (recherche, couvertures, sorties et cotes indisponibles) : ajoutez la clé dans .secrets/comicvine.json ou dans Paramètres' : 'recherche en ligne indisponible pour le moment (couvertures, sorties et cotes aussi)');
+    if (!st.metron && limitedDev()) missing.push('Metron non configuré (identification exacte des variantes au scan) : node serve.js --metron');
     showLimitedModeBanner(missing.length && !st.cv && !getCvKey() ? missing : []);
     if (!st.cv && !getCvKey()) { try { renderSinglesCollection(); } catch (_) {} }
   });
@@ -12356,7 +12469,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const sourceHash = computeCanvasDHash(coverCapturedCanvas);
       const sourceProf = computeCanvasColorProfile(coverCapturedCanvas);
 
-      statusText.textContent = 'Interrogation du catalogue officiel Comic Vine...';
+      statusText.textContent = 'Recherche dans le catalogue en ligne…';
 
       let queryPrompt = $('quickCoverSearchInput') ? $('quickCoverSearchInput').value.trim() : '';
       if (!queryPrompt) queryPrompt = 'Spawn 300';
@@ -15643,7 +15756,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     live: ['Directs', 'Préparez et lancez vos directs autour de vos numéros'],
     profile: ['Profil', 'Votre identité de collectionneur et votre collection'],
     finances: ['Finances', "Coût d'acquisition, valeur, plus-values latentes et réalisées, par devise"],
-    explorer: ['Découvrir', 'Recherche, univers, guides de lecture, sorties, personnages et créateurs']
+    explorer: ['Découvrir', 'Personnages, séries, guides et actualités']
   };
   const syncSinglesNav = () => {
     const view = activeSinglesView;
@@ -15665,7 +15778,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     activeSinglesView = view;
     const map = { collection: 'singlesCollectionView', series: 'singlesSeriesView', releases: 'singlesReleasesView', stats: 'singlesStatsView', explorer: 'singlesExplorerView', reading: 'singlesReadingView', finances: 'singlesFinanceView', community: 'singlesCommunityView' };
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('is-explorer', view === 'explorer');
-    document.body.classList.toggle('view-social', view === 'community'); // lot S1 : Accueil, Directs et Profil épurés
+    document.body.classList.toggle('view-social', view === 'community');
+    document.body.classList.toggle('view-discover', view === 'explorer'); // D-104 : Découvrir a sa propre recherche, sans outils de collection // lot S1 : Accueil, Directs et Profil épurés
     // Les chiffres de la collection ne s'affichent que sur la page Collection
     if ($('singlesViewSection')) $('singlesViewSection').classList.toggle('hide-coll-stats', view !== 'collection');
     // Collection et Séries sont deux regards sur la même collection : un sélecteur commun les relie
@@ -15902,8 +16016,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (instantBanner) {
       if (singlesSearchQuery && singlesSearchQuery.length >= 2) {
         instantBanner.style.display = 'flex';
-        $('instantAddPromptText').innerHTML = 'Introuvable dans votre collection ? Rechercher <strong>« ' + escapeHtml(singlesSearchQuery) + ' »</strong> sur Comic Vine';
-        $('instantAddBtn').innerHTML = '<span><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span> Rechercher sur Comic Vine';
+        $('instantAddPromptText').innerHTML = 'Introuvable dans votre collection ? Rechercher <strong>« ' + escapeHtml(singlesSearchQuery) + ' »</strong> en ligne';
+        $('instantAddBtn').innerHTML = '<span><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></span> Rechercher en ligne';
         $('instantAddBtn').onclick = () => openCvSearch(singlesSearchQuery);
       } else {
         instantBanner.style.display = 'none';
@@ -17712,6 +17826,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const relSyncInfoText = () => {
     const s = (relMeta.sync || {}).comicvine;
     const parts = [];
+    // Mentions techniques (source, date d'actualisation) : mode développeur seulement (D-104)
+    if (!document.documentElement.classList.contains('is-dev')) return navigator.onLine ? '' : 'Hors ligne : dernières données enregistrées.';
     if (!cvAvailable()) parts.push('Comic Vine non configuré : le calendrier affiche uniquement les publications importées ou saisies.');
     else parts.push(s && s.lastOkAt ? 'Comic Vine actualisé le ' + new Date(s.lastOkAt).toLocaleString(uiLocale(), { dateStyle: 'short', timeStyle: 'short' }) + (s.lastStatus !== 'ok' ? ' (dernier essai : ' + (s.lastError || s.lastStatus) + ')' : '') : 'Comic Vine : jamais actualisé.');
     parts.push('Actualisation manuelle ou à l\'ouverture de la semaine ; aucune mise à jour automatique en arrière-plan.');
@@ -17777,7 +17893,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const gridEl = $('releasesGrid');
     if (!gridEl) return;
     renderReleasesWeekLabel();
-    if ($('relSyncInfo')) $('relSyncInfo').textContent = relView.syncing ? 'Actualisation Comic Vine en cours…' : relSyncInfoText();
+    if ($('relSyncInfo')) $('relSyncInfo').textContent = relView.syncing ? 'Actualisation en cours…' : relSyncInfoText();
     // Comics US et francophones uniquement : les éditeurs manga, manhwa ou BD (hors périmètre) ne sont jamais proposés, les fiches restent conservées
     const pubsAll = [...relPubs.values()].filter(p => !relOutOfScopeReason(p));
     const markets = Object.keys(REL_MARKETS);
@@ -17788,7 +17904,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     relFillSelect('relStatus', [['', 'Tous les statuts']].concat(Object.entries(REL_STATUS)), relView.status);
     if ($('relMode')) $('relMode').value = relView.mode;
     if ($('relPeriod')) $('relPeriod').value = relView.period;
-    if ($('relSyncBtn')) { $('relSyncBtn').disabled = !cvAvailable() || relView.syncing; $('relSyncBtn').title = cvAvailable() ? 'Récupérer les sorties américaines de la période (Comic Vine)' : 'Clé Comic Vine absente (Paramètres)'; }
+    if ($('relSyncBtn')) { $('relSyncBtn').disabled = !cvAvailable() || relView.syncing; $('relSyncBtn').title = cvAvailable() ? 'Récupérer les sorties de la période' : 'Actualisation indisponible pour le moment'; }
     relHostedPanels.forEach(fn => { try { fn(); } catch (_) {} });
     const range = relRange();
     const relViews = window.PanelDomains.releaseViews; // Nouveaux #1, FOC, variantes : domains/releases/release-views.js
@@ -17912,7 +18028,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     renderReleasesGrid();
     const r = await syncReleases('comicvine', range[0], range[1]);
     relView.syncing = false;
-    if (!quiet || r.status !== 'ok') showToast(r.status === 'ok' ? `Comic Vine : ${r.fetched} sortie(s), ${r.added} nouvelle(s), ${r.changed} modifiée(s).` : 'Actualisation impossible : ' + (r.errors[0] || r.status));
+    if (!quiet || r.status !== 'ok') showToast(r.status === 'ok' ? `${r.fetched} sortie(s) à jour, ${r.added} nouvelle(s), ${r.changed} modifiée(s).` : 'Actualisation impossible pour le moment. Réessayez plus tard.');
     renderReleasesGrid();
     return r;
   };
@@ -19157,48 +19273,61 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return chips + pubSel + '<div class="ex-res-groups">' + cats.map(c => '<section class="ex-res-group"><h4>' + EX_CATS[c] + ' <small>' + res[c].total + '</small></h4>' + res[c].items.map(x => card(c, x)).join('') +
       (!exView.cat && res[c].total > res[c].items.length ? '<button class="ex-more" data-ex-cat="' + c + '">Voir les ' + res[c].total + ' résultats</button>' : '') + '</section>').join('') + '</div>';
   };
+  // Découvrir repensé (D-104), à la manière des pages « Explorer » des réseaux sociaux : une recherche, puis des onglets
+  // thématiques (un seul affiché à la fois). Pas de calendrier ici : les sorties restent dans « Sorties & calendrier ».
+  // Personnages, séries et créateurs suivis ont chacun leur rangée ; les membres suivis auront la leur avec les comptes.
+  const EX_TOPICS = [['foryou', 'Pour toi'], ['characters', 'Personnages'], ['series', 'Séries'], ['guides', 'Guides'], ['news', 'Actualités'], ['universes', 'Univers']];
   const exHomeHtml = () => {
     const guides = exGuides();
-    const featured = guides.filter(g => g.featured);
-    const today = relToday(), soon = isoDate(new Date(Date.now() + 30 * 86400000)), past = isoDate(new Date(Date.now() - 14 * 86400000));
-    const upcoming = m => relQuery({ range: [today, soon], market: m, publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(0, 6);
-    const recent = relQuery({ range: [past, isoDate(new Date(Date.now() - 86400000))], market: '', publisher: '', format: '', status: '', q: '', pullOnly: false }).filter(p => relStatusOf(p) !== 'cancelled').slice(-6).reverse();
+    const featured = guides.filter(g => g.featured && !exIsEvent(g));
     const recos = exRecos();
     const facets = exFacets(), personal = !!facets;
     const pubs = exPublishers(facets).filter(p => p.known || p.owned || p.pubs || p.guides);
     const main = ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'];
-    const tiles = pubs.filter(p => main.includes(p.name)).concat(pubs.filter(p => !main.includes(p.name) && (p.owned || p.pubs || p.guides)).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 9));
+    const tiles = pubs.filter(p => main.includes(p.name)).concat(pubs.filter(p => !main.includes(p.name) && (p.owned || p.guides)).sort((a, b) => b.owned - a.owned).slice(0, 9));
     const chars = exCharacters(), creators = exCreators(facets).slice(0, 24);
-    const series = exSeriesList(facets).filter(x => x.owned || x.pubs).sort((a, b) => (b.owned + b.pubs) - (a.owned + a.pubs)).slice(0, 12);
+    const series = exSeriesList(facets).filter(x => x.owned || x.pubs).sort((a, b) => (b.owned - a.owned) || (b.pubs - a.pubs)).slice(0, 18);
     const gCats = Object.keys(GD_CATEGORIES).filter(c => guides.some(g => g.category === c));
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return exMyCharsHtml() + exFollowsHtml() +
-      '<nav class="ex-toc" aria-label="Sommaire d\'Explorer">' + [['exSecTrends', 'Tendances'], ['exSecLive', 'Directs'], ['exSecGuides', 'Guides'], ['exSecReleases', 'Sorties'], ['exSecNews', 'Actualités'], ['exSecMore', 'Parcourir']].map(([id, t]) => '<button class="ex-toc-b" data-ex-toc="' + id + '">' + t + '</button>').join('') + '</nav>' +
-      (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
-      exTrendsHtml() + exLiveRowHtml() +
-      sec('exSecFeatured', 'À la une', '', featured.filter(g => !exIsEvent(g)).length ? '<div class="ex-featured">' + featured.filter(g => !exIsEvent(g)).slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>' : '<p class="ex-note">Aucun guide mis en avant pour le moment. Cherchez une série, un personnage ou un événement ci-dessus.</p>') +
-      sec('exSecNews', 'Actualités', 'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.',
-        (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
-        '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
-      sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>') +
-      sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
-        (gCats.length > 1 ? '<div class="ex-chips"><button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
-        '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
-        '<div class="ex-row dev-only"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>') +
-      sec('exSecReleases', 'Sorties et nouveautés', 'D\'après le calendrier international de Panel.', '<div class="ex-rel-cols">' +
-        [['US', 'États-Unis · 30 prochains jours'], ['FR', 'Francophone · 30 prochains jours']].map(([m, t]) => { const l = upcoming(m); return '<div><h4>' + t + '</h4>' + (l.length ? l.map(exPubMini).join('') : '<p class="ex-note">Aucune sortie enregistrée. Actualisez le calendrier ou importez un planning.</p>') + '</div>'; }).join('') +
-        '<div><h4>Récemment disponibles · 14 jours</h4>' + (recent.length ? recent.map(exPubMini).join('') : '<p class="ex-note">Aucune publication récente enregistrée.</p>') + '</div></div><div class="ex-row"><button class="btn secondary rel-mini" data-ex-calendar>Ouvrir le calendrier</button></div>') +
-      '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
-      '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section>' + '</div>' +
-      '<details class="ex-more" id="exSecMore"><summary><span><b>Parcourir</b><small>Éditeurs, personnages, créateurs et séries</small></span>' + igIcon('ic-arrow-right') + '</summary>' +
-      sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection (comptes d\'après votre collection).' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small><span>' + (personal ? p.owned + ' possédé(s) · ' : '') + p.pubs + ' au calendrier' + (p.guides ? ' · ' + p.guides + ' guide(s)' : '') + '</span></button>').join('') + '</div>') +
-      '<div class="ex-index" id="exSecIndex">' + exBrowseHtml() +
-      sec('exSecCharacters', 'Personnages', 'Personnages cités dans les guides, avec leur statut de vérification.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') +
-      sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') +
-      sec('exSecSeries', 'Séries', personal ? 'Vos séries (d\'après votre collection) et celles du calendrier.' : 'Séries du calendrier.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + ' <small>' + (x.owned ? x.owned + ' poss.' : x.pubs + ' au cal.') + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') +
-      '</div></details>';
+    const topic = EX_TOPICS.some(([k]) => k === exView.topic) ? exView.topic : 'foryou';
+    const pane = (k, body) => '<div class="ex-pane" data-ex-pane="' + k + '" role="tabpanel" id="exPane-' + k + '" aria-labelledby="exTopic-' + k + '"' + (k === topic ? '' : ' hidden') + '>' + body + '</div>';
+    const tile = (cls, attrs, title, sub) => '<button class="ex-tile ' + cls + '" ' + attrs + '><b>' + title + '</b><small>' + sub + '</small></button>';
+    return '<nav class="ex-topics" role="tablist" aria-label="Thèmes de Découvrir">' + EX_TOPICS.map(([k, l]) => '<button role="tab" id="exTopic-' + k + '" aria-controls="exPane-' + k + '" aria-selected="' + (k === topic) + '" tabindex="' + (k === topic ? 0 : -1) + '" class="ex-topic' + (k === topic ? ' is-on' : '') + '" data-ex-topic="' + k + '">' + l + '</button>').join('') + '</nav>' +
+      pane('foryou',
+        exMyCharsHtml() + exFollowSeriesHtml() + exFollowsHtml() +
+        (recos.length ? sec('exSecReco', 'Pour vous', 'D\'après votre collection, votre progression et votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
+        exTrendsHtml() +
+        (featured.length ? sec('exSecFeatured', 'À la une', '', '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>') : '<section class="ex-sec" id="exSecFeatured" hidden></section>') +
+        sec('exSecTiles', 'Explorer', '', '<div class="ex-tiles">' +
+          tile('is-guides', 'data-ex-topic-go="guides"', 'Guides de lecture', 'Événements, sagas, parcours') +
+          tile('is-chars', 'data-ex-topic-go="characters"', 'Personnages', 'Héros, équipes, ennemis') +
+          tile('is-news', 'data-ex-topic-go="news"', 'Actualités', 'Comics, BD, films et séries') +
+          tile('is-cosmos', 'data-ex-go="cosmos"', 'Cosmos et multivers', 'Les cartes illustrées') +
+          tile('is-uni', 'data-ex-topic-go="universes"', 'Univers', 'Éditeurs et créateurs') +
+          tile('is-shops', 'data-ex-go="shops"', 'Boutiques', 'Près de chez vous') + '</div>') +
+        '<div class="ex-personal-foot">' + exPersonalizeHtml() + '</div>') +
+      pane('characters', '<div class="ex-index">' +
+        sec('exSecCharacters', 'Personnages', 'Touchez un nom pour ouvrir ses comics et ses guides.', chars.length ? '<div class="ex-chips">' + chars.map(c => '<button class="ex-chip" data-ex-go="character" data-ex-id="' + h(c.key) + '">' + h(c.name) + (c.verified ? '' : ' <small>non vérifié</small>') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucun personnage renseigné.</p>') + '</div>') +
+      pane('series', '<div class="ex-index">' +
+        sec('exSecSeries', 'Séries', personal ? 'Les séries de votre collection, puis celles que Panel connaît.' : 'Les séries que Panel connaît.', series.length ? '<div class="ex-chips">' + series.map(x => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(x.key) + '">' + h(x.name) + (x.owned ? ' <small>' + x.owned + ' poss.</small>' : '') + '</button>').join('') + '</div>' : '<p class="ex-note">Aucune série enregistrée.</p>') + '</div>') +
+      pane('guides',
+        sec('exSecGuides', 'Guides de lecture', 'Événements, crossovers, sagas et parcours' + (personal ? ', avec vos possessions et votre progression.' : '.'),
+          (gCats.length > 1 ? '<div class="ex-chips">' + '<button class="ex-chip' + (!exView.guideCat ? ' active' : '') + '" data-ex-gcat="">Tous</button>' + gCats.map(c => '<button class="ex-chip' + (exView.guideCat === c ? ' active' : '') + '" data-ex-gcat="' + c + '">' + GD_CATEGORIES[c] + '</button>').join('') + '</div>' : '') +
+          '<div class="ex-ggrid">' + shown.map(g => exGuideCard(g)).join('') + '<button class="ex-gcard ex-gnew" data-ex-newguide><span class="ex-gcard-body"><b>+ Créer un guide</b><span class="ex-meta">Événement, saga ou parcours, avec ses sources</span></span></button></div>' +
+          '<div class="ex-row dev-only"><button class="btn secondary rel-mini" data-ex-import>Importer des guides (JSON)</button><button class="btn secondary rel-mini" data-ex-export>Exporter les guides</button><button class="btn secondary rel-mini" data-ex-go="visuals">Visuels à compléter</button></div>')) +
+      pane('news',
+        sec('exSecNews', 'Actualités', 'Les dernières nouvelles des comics, de la BD et de leurs adaptations. Les articles s\'ouvrent sur leur site.',
+          (exEditorial.size && [...exEditorial.values()].some(x => x.kind === 'news') ? [...exEditorial.values()].filter(x => x.kind === 'news').map(n => '<article class="ex-news"><b>' + h(n.title) + '</b><p>' + h(n.synopsis) + '</p></article>').join('') : '') +
+          '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
+        sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>')) +
+      pane('universes',
+        sec('exSecUniverses', 'Explorer les univers', personal ? 'Éditeurs connus de Panel et ceux de votre collection.' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small>' + (p.owned || p.guides ? '<span>' + [personal && p.owned ? p.owned + ' possédé(s)' : '', p.guides ? p.guides + ' guide(s)' : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</button>').join('') + '</div>') +
+        '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
+        '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section></div>' +
+        '<div class="ex-index">' + exBrowseHtml() +
+        sec('exSecCreators', 'Créateurs', 'Créateurs cités dans les guides' + (personal ? ' et artistes de couverture d\'après votre collection.' : '.'), creators.length ? '<div class="ex-chips">' + creators.map(c => '<button class="ex-chip" data-ex-go="creator" data-ex-id="' + h(c.key) + '">' + h(c.name) + ' <small>' + h(c.roles.map(r => GD_ROLES[r] || r).join(', ')) + '</small></button>').join('') + '</div>' : '<p class="ex-note">Aucun créateur renseigné.</p>') + '</div>');
   };
   const exLinkTitle = l => l.guideId && exEditorial.get(l.guideId) ? '<button class="ex-link" data-ex-guide="' + h(l.guideId) + '">' + h(exEditorial.get(l.guideId).title) + '</button>' : h(l.title);
   const exSrcLabel = (g, id) => { const s = (g.sources || []).find(x => x.id === id); return s ? s.label : ''; };
@@ -19458,7 +19587,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       Object.assign(exOnline, { status: 'done', total: data.total, results: page > 1 ? exOnline.results.concat(data.results) : data.results });
     } catch (e) {
       if (exOnline.key !== key) return;
-      Object.assign(exOnline, { status: 'error', error: e instanceof CvRateLimit ? 'Quota Comic Vine atteint pour l\'heure : réessayez plus tard.' : String(e && e.message || e).slice(0, 160) });
+      Object.assign(exOnline, { status: 'error', error: e instanceof CvRateLimit ? 'Beaucoup de recherches en ce moment : réessayez dans quelques minutes.' : String(e && e.message || e).slice(0, 160) });
     }
     exPaintOnline();
   };
@@ -19488,9 +19617,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   const exOnlineHtml = () => {
     if (!exView.q || String(exView.q).trim().length < 2) return '';
-    if (!cvAvailable()) return '<section class="ex-online is-off"><h4>Base mondiale des comics</h4><p class="ex-note">La recherche dans la base Comic Vine (plus de 900 000 numéros, personnages et créateurs) passe par le relais de Panel : ouvrez Panel avec « Lancer Panel.cmd ». Les résultats ci-dessous viennent des données déjà présentes dans Panel.</p></section>';
+    if (!cvAvailable()) return '<section class="ex-online is-off"><p class="ex-note">La recherche en ligne est indisponible pour le moment : les résultats viennent des données déjà présentes dans Panel.</p></section>';
     const l = exOnlineFiltered();
-    const head = '<div class="ex-online-head"><h4>Base mondiale <small>Comic Vine' + (exOnline.status === 'done' ? ' · ' + exOnline.total.toLocaleString(uiLocale()) + ' résultat' + (exOnline.total > 1 ? 's' : '') : '') + '</small></h4></div>';
+    const head = '<div class="ex-online-head"><h4>Résultats' + (exOnline.status === 'done' ? ' <small>' + exOnline.total.toLocaleString(uiLocale()) + '</small>' : '') + '</h4></div>';
     if (exOnline.status === 'loading' && !exOnline.results.length) return '<section class="ex-online">' + head + '<div class="ex-cv-grid is-loading">' + Array.from({ length: 8 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></section>';
     if (exOnline.status === 'error') return '<section class="ex-online">' + head + '<p class="ex-note">' + h(exOnline.error) + ' <button class="btn secondary rel-mini" data-ex-cv-retry>Réessayer</button></p></section>';
     if (!l.length) return exOnline.status === 'done' ? '<section class="ex-online">' + head + '<p class="ex-note">Aucun résultat' + (exFilt.pub || exFilt.from || exFilt.to ? ' avec ces filtres' : '') + '.</p></section>' : '';
@@ -19534,7 +19663,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!['character', 'team', 'person'].includes(t) || !relayStatus) return;
     const ex = exCvDetail.extra = { appearances: null, wd: null };
     const wdPrefix = { character: '4005', person: '4040', team: '4060' }[t];
-    const [app, wd] = await Promise.all([relayStatus.cv ? get('/api/cv-appearances?ref=' + t + ':' + id) : null, relayStatus.wd ? get('/api/wd/entity?cv=' + wdPrefix + '-' + id) : null]);
+    const [app, wd] = await Promise.all([relayStatus.cv ? get('/api/cv-appearances?ref=' + t + ':' + id) : null, relayStatus.wd ? get('/api/wd/entity?cv=' + wdPrefix + '-' + id + '&lang=' + uiLang) : null]);
     if (exCvDetail.key !== ref || exCvDetail.extra !== ex) return;
     ex.appearances = app && Array.isArray(app.latest) ? app : { total: 0, latest: [] };
     ex.wd = wd && wd.found ? wd : null;
@@ -19591,12 +19720,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       (tr.length ? '<div class="ex-trend-row">' + tr.map((x, i) => '<button class="ex-trend" data-ex-tag="' + h(x.tag) + '"><small>' + (i + 1) + '</small><b>#' + h(x.tag) + '</b></button>').join('') + '</div>'
         : '<button class="btn secondary rel-mini" data-ex-write>' + igIcon('ic-pen') + ' Écrire une pensée</button>') + '</section>';
   };
-  const exLiveRowHtml = () => {
-    const rooms = lvLoad().rooms.slice().sort((a, b) => String(a.when || '9').localeCompare(String(b.when || '9'))).slice(0, 8), F = window.PanelDomains.liveCore.FORMATS;
-    return '<section class="ex-sec ex-liverow" id="exSecLive"><div class="ex-sec-head"><h3>Directs</h3><p>Voix seule, pages de comics au tableau, chat et duels. Les directs des autres membres arriveront avec les comptes.</p></div>' +
-      '<div class="ex-live-row">' + rooms.map(r => '<button class="ex-live-card" data-ex-live><span class="live-dot is-studio">' + h(F[r.format] || 'Direct') + '</span><b>' + h(r.title) + '</b><small>' + h(r.duel ? r.duel.sides.join(' vs ') : lvWhen(r.when)) + '</small></button>').join('') +
-        '<button class="ex-live-card is-new" data-ex-live>' + igIcon('ic-plus') + '<b>Préparer un direct</b><small>Débat, pages commentées, duel</small></button></div></section>';
-  };
   // Vos personnages (D-100) : suivis, personnage préféré du profil et personnages des numéros possédés, en tête de Découvrir.
   // Tout est calculé sur l'appareil à partir des vraies données ; aucun portrait n'est inventé (initiale si la fiche n'a pas d'image).
   const exMyChars = () => {
@@ -19608,34 +19731,33 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (prof && prof.favorite) { const x = get(prof.favorite); if (x) x.fav = true; }
     const cc = exLensCall('collectionCharacters', 12);
     if (cc) cc.characters.forEach(c => { const x = get(c.name); if (x) { x.owned = c.owned; x.read = c.read; } });
-    const today = relToday(), soon = isoDate(new Date(Date.now() + 45 * 86400000));
-    const list = [...m.values()].sort((a, b) => (b.isNew - a.isNew) || (b.fav - a.fav) || (b.followed - a.followed) || (b.owned - a.owned) || a.name.localeCompare(b.name, 'fr')).slice(0, 12);
-    if (list.length && relPubs.size) {
-      const up = [...relPubs.values()].filter(p => !p.cancelled && relDay(p) >= today && relDay(p) <= soon).sort((a, b) => relDay(a).localeCompare(relDay(b)));
-      list.forEach(x => { const n = x.key; const hit = n.length >= 3 && up.find(p => (' ' + catNorm(p.series + ' ' + (p.title || '')) + ' ').includes(' ' + n + ' ')); if (hit) x.next = { id: hit.id, label: relLabel(hit), date: relDay(hit) }; });
-    }
-    return list;
+    return [...m.values()].sort((a, b) => (b.isNew - a.isNew) || (b.fav - a.fav) || (b.followed - a.followed) || (b.owned - a.owned) || a.name.localeCompare(b.name, 'fr')).slice(0, 16);
   };
   const exMyCharsHtml = () => {
     const list = exMyChars();
     if (!list.length) return '';
     const hue = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
-    return '<section class="ex-sec ex-mychars" id="exSecMyChars"><div class="ex-sec-head"><h3>Vos personnages</h3><p>Ceux que vous suivez, votre préféré et ceux de vos numéros, avec leur prochaine sortie au calendrier.</p></div><div class="ex-mychars-row">' +
-      list.map(x => {
+    const card = x => {
         const tags = [x.fav ? '<i class="is-fav">Préféré</i>' : '', x.followed ? '<i>Suivi</i>' : '', x.owned ? '<i>' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + '</i>' : ''].join('');
-        const sub = x.isNew && x.lastLabel ? 'Nouvelle apparition : ' + h(x.lastLabel) : x.next ? 'Sort le ' + h(relFmtDate(x.next.date)) + ' : ' + h(x.next.label) : x.lastLabel ? 'Dernière apparition : ' + h(x.lastLabel) : '';
+        const sub = x.isNew && x.lastLabel ? 'Nouvelle apparition : ' + h(x.lastLabel) : x.lastLabel ? 'Dernière apparition : ' + h(x.lastLabel) : '';
         const act = x.ref ? ' data-ex-cv="' + h(x.ref) + '"' : ' data-ex-browse="character" data-ex-q="' + h(x.name) + '"';
         const label = x.name + (x.fav ? ', préféré' : '') + (x.followed ? ', suivi' : '') + (x.owned ? ', ' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + ' possédé' + (x.owned > 1 ? 's' : '') : '') + (x.ref ? ' : ouvrir la fiche' : ' : chercher ses comics');
         return '<button class="ex-mychar' + (x.isNew ? ' is-new' : '') + '"' + act + ' aria-label="' + h(label) + '"><span class="ex-mychar-pt" style="--h:' + hue(x.key) + '" aria-hidden="true">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : h(x.name.trim().charAt(0).toUpperCase())) + '</span><b>' + h(x.name) + '</b>' +
-          (tags ? '<span class="ex-mychar-tags">' + tags + '</span>' : '') + (sub ? '<small class="' + (x.next && !x.isNew ? 'ex-mychar-next' : '') + '">' + sub + '</small>' : '') + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>';
-      }).join('') + '</div></section>';
+          (tags ? '<span class="ex-mychar-tags">' + tags + '</span>' : '') + (sub ? '<small>' + sub + '</small>' : '') + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>';
+    };
+    const mine = list.filter(x => x.followed || x.fav), coll = list.filter(x => !x.followed && !x.fav);
+    const row = (title, l) => l.length ? '<h4 class="ex-subh">' + title + '</h4><div class="ex-mychars-row">' + l.map(card).join('') + '</div>' : '';
+    return '<section class="ex-sec ex-mychars" id="exSecMyChars"><div class="ex-sec-head"><h3>Vos personnages</h3></div>' +
+      row('Suivis', mine) + row('Dans votre collection', coll) + '</section>';
   };
-  const exFollowsHtml = () => {
-    const f = exFollows(), keys = Object.keys(f).filter(k => k.split(':')[0] !== 'character');
+  const exFollowRow = (id, title, keys) => {
+    const f = exFollows();
     if (!keys.length) return '';
-    return '<section class="ex-sec" id="exSecFollows"><div class="ex-sec-head"><h3>Mes suivis</h3><p>Équipes, créateurs et séries suivis : leur dernière apparition connue. Les notifications sur téléphone arriveront avec les comptes en ligne.</p></div><div class="ex-follows">' +
+    return '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3></div><div class="ex-follows">' +
       keys.map(k => { const x = f[k], kind = k.split(':')[0]; return '<button class="ex-follow' + (x.isNew ? ' is-new' : '') + '" data-ex-cv="' + h(k) + '"><span class="ex-follow-pt">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') + '</span><b>' + h(x.name) + '</b><small>' + h(EX_KIND_LABEL[kind] || '') + (x.lastLabel ? ' · ' + h(x.lastLabel) : '') + '</small>' + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>'; }).join('') + '</div></section>';
   };
+  const exFollowSeriesHtml = () => exFollowRow('exSecFollowSeries', 'Séries suivies', Object.keys(exFollows()).filter(k => k.split(':')[0] === 'volume'));
+  const exFollowsHtml = () => exFollowRow('exSecFollows', 'Créateurs et équipes suivis', Object.keys(exFollows()).filter(k => !['character', 'volume'].includes(k.split(':')[0])));
   // ==========================================================================
   // Centre de notifications (D-68) : calculé sur l'appareil à partir des données réelles de Panel
   // (pull list, wishlist, suivis). Rien n'est envoyé : téléphone et e-mail arriveront avec les comptes (étape 4).
@@ -19898,7 +20020,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try {
       let data = exCvCacheGet('d2|' + ref);
       if (!data) {
-        if (!cvAvailable()) throw new Error('Relais Comic Vine indisponible : ouvrez Panel avec « Lancer Panel.cmd ».');
+        if (!cvAvailable()) throw new Error('Fiche indisponible pour le moment.');
         const d = await cvCall(t, EX_CV_PATH[t] + id, { format: 'jsonp', field_list: EX_CV_DETAIL_FIELDS[t] });
         const r = d.results || {};
         const list = (a, n) => (Array.isArray(a) ? a : []).slice(0, n || 60).map(x => ({ id: x.id, name: gdStr(x.name || '', 120), role: gdStr(x.role || '', 80), issue_number: x.issue_number || '' }));
@@ -19929,7 +20051,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       }
     } catch (e) {
       if (exCvDetail.key !== ref) return;
-      Object.assign(exCvDetail, { status: 'error', error: e instanceof CvRateLimit ? 'Quota Comic Vine atteint pour l\'heure.' : String(e && e.message || e).slice(0, 160) });
+      Object.assign(exCvDetail, { status: 'error', error: e instanceof CvRateLimit ? 'Beaucoup de recherches en ce moment : réessayez dans quelques minutes.' : String(e && e.message || e).slice(0, 160) });
     }
     if (exView.page === 'cv' && exView.id === ref) renderExplorer();
   };
@@ -19973,7 +20095,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const follow = followable ? '<div class="ex-row"><button class="btn' + (followed ? ' secondary' : '') + '" data-ex-follow aria-pressed="' + followed + '">' + (followed ? '✓ Suivi' : '+ Suivre') + '</button></div>' : '';
     const recentApp = app === null || (exCvDetail.extra && !app) ? '<div class="ex-cvd-block"><h4>Apparitions récentes</h4><div class="ex-cv-grid is-issues is-loading">' + Array.from({ length: 6 }, () => '<span class="ex-cv-skel"></span>').join('') + '</div></div>' :
       app && app.latest.length ? '<div class="ex-cvd-block"><h4>Apparitions récentes <small>' + app.latest.length + ' sur ' + app.total.toLocaleString(uiLocale()) + '</small></h4><div class="ex-cv-grid is-issues">' + app.latest.map(x => '<button class="ex-cv" data-ex-cv="issue:' + x.id + '"><span class="ex-cv-media">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">' : '<img src="' + h(exArt((x.volume ? x.volume.name : '') + ' ' + x.issue_number, '')) + '" alt="" aria-hidden="true">') + '</span><b>' + h((x.volume ? x.volume.name : '') + ' #' + x.issue_number) + '</b><small>' + h(exShortDate(x.date)) + '</small></button>').join('') + '</div></div>' : '';
-    const bio = wd && wd.summary ? '<div class="ex-cvd-block ex-cvd-bio"><h4>Biographie <small>' + (wd.summaryLang === 'en' ? 'Wikipédia, en anglais' : 'Wikipédia') + '</small></h4><p>' + h(wd.summary) + '</p><a class="ex-link" href="' + h(wd.summaryUrl) + '" target="_blank" rel="noopener noreferrer">Lire l\'article complet</a></div>' : '';
+    // D-104 : la biographie suit la langue de Panel (Wikipédia dans cette langue) ; le texte d'origine, en anglais, reste disponible replié
+    const localBio = !!(wd && wd.summary && wd.summaryLang === uiLang);
+    const bio = wd && wd.summary && !localBio ? '<div class="ex-cvd-block ex-cvd-bio"><h4>Biographie <small>' + (wd.summaryLang === 'en' && uiLang !== 'en' ? 'Wikipédia, en anglais' : 'Wikipédia') + '</small></h4><p>' + h(wd.summary) + '</p><a class="ex-link" href="' + h(wd.summaryUrl) + '" target="_blank" rel="noopener noreferrer">Lire l\'article complet</a></div>' : '';
     const vf = t === 'volume' ? exVfHtml(d, xt) : '';
     const members = wd && wd.memberOf.length ? '<div class="ex-cvd-block"><h4>Affiliations</h4><div class="ex-chips">' + wd.memberOf.map(m => '<span class="ex-chip is-static">' + h(m) + '</span>').join('') + '</div></div>' : '';
     const actions = t === 'issue' ? '<div class="ex-row"><button class="btn" data-ex-cv-add="own">' + (owned ? 'Ajouter un autre exemplaire' : 'Ajouter à ma collection') + '</button><button class="btn secondary" data-ex-cv-add="wish">Wishlist</button>' + (d.volume ? '<button class="btn secondary" data-ex-cv="volume:' + d.volume.id + '">Toute la série</button>' : '') + '</div>' : '';
@@ -19987,9 +20111,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return back + '<article class="ex-cvd ex-cvd-' + h(t) + '"><div class="ex-cvd-media">' + (d.image ? '<img src="' + h(d.image) + '" alt="' + h(title) + '" referrerpolicy="no-referrer">' : '<img src="' + h(exArt(title, d.publisher ? d.publisher.name : '')) + '" alt="" aria-hidden="true">') + '</div>' +
       '<div class="ex-cvd-body"><span class="ex-kicker">' + h(EX_KIND_LABEL[t] || '') + (d.publisher ? ' · ' + h(d.publisher.name) : '') + '</span><h2>' + h(title) + '</h2>' +
       (owned ? '<span class="ex-b is-owned">Dans ma collection' + (owned > 1 ? ' ×' + owned : '') + '</span>' : '') +
-      (d.deck ? '<p class="ex-cvd-deck">' + h(d.deck) + '</p>' : '') +
+      (localBio ? '<p class="ex-cvd-deck ex-cvd-localbio" lang="' + h(uiLang) + '">' + h(wd.summary) + '</p><a class="ex-link ex-cvd-wiki" href="' + h(wd.summaryUrl) + '" target="_blank" rel="noopener noreferrer">Lire la suite sur Wikipédia</a>' :
+        d.deck ? '<p class="ex-cvd-deck" lang="en">' + h(d.deck) + (uiLang !== 'en' ? ' <small class="ex-lang-note">(en anglais : aucune biographie en ' + h(I18N.LOCALES[uiLang].toLowerCase()) + ' trouvée)</small>' : '') + '</p>' : '') +
       (facts.length ? '<dl class="ex-cvd-facts">' + facts.map(([k, v]) => '<div><dt>' + h(k) + '</dt><dd>' + h(String(v)) + '</dd></div>').join('') + '</dl>' : '') + actions + follow +
-      (d.text ? '<details class="ex-cvd-text"' + (d.deck ? '' : ' open') + '><summary>' + (t === 'issue' ? 'Résumé' : 'Présentation') + '</summary><p>' + h(d.text) + (d.text.length >= 1400 ? '…' : '') + '</p></details>' : '') +
+      (d.text ? '<details class="ex-cvd-text"' + (d.deck || localBio || uiLang !== 'en' ? '' : ' open') + '><summary>' + (t === 'issue' ? 'Résumé' : 'Présentation') + (uiLang !== 'en' ? ' d\'origine (en anglais)' : '') + '</summary><p lang="en">' + h(d.text) + (d.text.length >= 1400 ? '…' : '') + '</p></details>' : '') +
       '</div></article>' + recentApp + vf + vIssues + arcIssues + first + bio + members +
       exCvChips(d.persons, 'person', 'Créateurs') + exCvChips(d.characters, 'character', t === 'team' ? 'Membres' : 'Personnages') + exCvChips(d.teams, 'team', 'Équipes') + exCvChips(d.arcs, 'story_arc', 'Arcs') +
       exCvChips(d.creators, 'person', 'Créé par') + exCvChips(d.created, 'character', 'Personnages créés') + exCvChips(d.friends, 'character', 'Alliés') + exCvChips(d.enemies, 'character', 'Ennemis') +
@@ -20054,10 +20179,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!root) return;
     if (exView.page === 'home') {
       const hist = exHistory();
-      root.innerHTML = '<section class="ex-hero is-compact"><div class="ex-hero-in"><span class="ex-kicker">Panel · Explorer</span><h2>Toute la BD, numéro par numéro.</h2><p class="ex-hero-sub">Numéros, séries, personnages, créateurs, arcs et équipes : la base mondiale et vos données Panel, dans une seule recherche.</p>' +
-        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" aria-label="Rechercher dans Explorer" type="search" autocomplete="off" placeholder="« Absolute Batman 1 », Miles Morales, Tom King, Krakoa…" value="' + h(exView.q) + '"></div>' +
+      root.innerHTML = '<section class="ex-hero is-compact ex-top"><div class="ex-hero-in">' +
+        '<div class="ex-search"><svg class=ic aria-hidden=true><use href=#ic-search /></svg><input id="exSearch" aria-label="Rechercher dans Explorer" type="search" autocomplete="off" placeholder="Personnage, série, numéro, créateur…" value="' + h(exView.q) + '"></div>' +
         (hist.length && !exView.q ? '<div class="ex-chips ex-hist">' + hist.map(q => '<button class="ex-chip" data-ex-q="' + h(q) + '">' + h(q) + '</button>').join('') + '</div>' : '') +
-        exScopeChips() + (exScope === 'comics' ? exFiltersHtml() : '') + exPersonalizeHtml() + '</div></section>' +
+        '<div class="ex-qtools" id="exQTools"' + (exView.q || exScope !== 'comics' ? '' : ' hidden') + '>' + exScopeChips() + (exScope === 'comics' ? exFiltersHtml() : '') + '</div></div></section>' +
         '<div id="exResults">' + (exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '') + '</div><div id="exHome"' + (exView.q || exScope !== 'comics' ? ' hidden' : '') + '>' + exHomeHtml() + '</div>';
       root.querySelectorAll('[data-ex-scope]').forEach(b => { b.onclick = () => { exScope = b.dataset.exScope; renderExplorer(); }; });
       wireExSocial(root); exWireFilters(root); exWireOnline(root);
@@ -20081,7 +20206,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
   // D-78 : sommaire de l'accueil et listes longues repliées (personnages, créateurs, séries)
   const exWireHome = root => {
-    root.querySelectorAll('[data-ex-toc]').forEach(b => { b.onclick = () => { const t = document.getElementById(b.dataset.exToc); if (t) t.scrollIntoView({ behavior: smoothScroll(), block: 'start' }); }; });
+    const tabs = [...root.querySelectorAll('[data-ex-topic]')];
+    const show = (k, focus) => {
+      exView.topic = k;
+      tabs.forEach(b => { const on = b.dataset.exTopic === k; b.classList.toggle('is-on', on); b.setAttribute('aria-selected', String(on)); b.tabIndex = on ? 0 : -1; if (on && focus) b.focus(); });
+      root.querySelectorAll('[data-ex-pane]').forEach(p => { p.hidden = p.dataset.exPane !== k; });
+      const on = tabs.find(b => b.dataset.exTopic === k); if (on && on.scrollIntoView) on.scrollIntoView({ block: 'nearest', inline: 'center', behavior: smoothScroll() });
+    };
+    tabs.forEach((b, i) => {
+      b.onclick = () => show(b.dataset.exTopic);
+      b.onkeydown = e => { const d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0; if (!d) return; e.preventDefault(); show(tabs[(i + d + tabs.length) % tabs.length].dataset.exTopic, true); };
+    });
+    root.querySelectorAll('[data-ex-topic-go]').forEach(b => { b.onclick = () => { show(b.dataset.exTopicGo); const n = root.querySelector('.ex-topics'); if (n) n.scrollIntoView({ block: 'start', behavior: smoothScroll() }); }; });
     root.querySelectorAll('.ex-index > .ex-sec').forEach(sec => {
       const c = sec.querySelector('.ex-chips');
       if (!c || c.children.length <= 14) { sec.classList.add('is-open'); return; }
@@ -20096,6 +20232,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!r) return renderExplorer();
     r.innerHTML = exScope !== 'comics' ? exSocialResultsHtml(exView.q) : exView.q ? exResultsAllHtml() : '';
     if (home) home.hidden = !!exView.q || exScope !== 'comics';
+    const qt = $('exQTools'); if (qt) qt.hidden = !exView.q && exScope === 'comics';
     wireExSocial(r); exWireOnline(r);
     clearTimeout(exRefreshResults.tm);
     if (exScope === 'comics' && String(exView.q || '').trim().length >= 3) exRefreshResults.tm = setTimeout(() => exOnlineSearch(exView.q), 650);
@@ -20744,7 +20881,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return '<details class="pf-ladder"><summary>Échelle des ' + R.RANKS.length + ' rangs, de Civil à The One Above All <small>et comment gagner des points</small></summary>' +
       '<div class="pf-ladder-grid">' + groups.map(g => '<div class="pf-lad-tier ' + PF_TIER_CLASS[g.t] + '"><h5>' + escapeHtml(g.list[0].tierLabel) + '</h5>' + g.list.map(x => '<span class="pf-lad-rank' + (x.rank === rk.rank.rank ? ' is-current' : x.rank < rk.rank.rank ? ' is-done' : ' is-locked') + '" data-rank-no="' + x.rank + '"><span class="rk-medal">' + (() => { const c = rankPts[RANK_CV[x.name] || x.name]; return c && c.url ? '<img src="' + escapeHtml(c.url) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : rankEmblem(x); })() + '</span><i>' + x.rank + '</i><b>' + escapeHtml(x.name) + '</b><small>' + x.xp.toLocaleString(uiLocale()) + ' XP</small></span>').join('') + '</div>').join('') + '</div>' +
       '<h5 class="pf-xp-title">Gagner des points</h5><div class="pf-xp-rules">' + rk.breakdown.map(b => '<span class="' + (b.pending ? 'is-pending' : '') + '"><b>+' + b.unit + '</b> ' + escapeHtml(b.label) + (b.pending ? ' <em>avec les comptes</em>' : ' <em>' + b.count.toLocaleString(uiLocale()) + ' → ' + b.xp.toLocaleString(uiLocale()) + ' XP</em>') + '</span>').join('') + '</div>' +
-      '<p class="stat-sub">Portraits : Comic Vine (nom exact du personnage), chargés au fil de l\'ouverture ; sinon emblème Panel. L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
+      '<p class="stat-sub">Portraits chargés au fil de l\'ouverture (sinon emblème Panel). L\'échelle terrestre mêle espèces Marvel et DC ; le palier « multivers DC » suit un ordre propre à Panel. Rangs cosmiques inspirés de la hiérarchie présentée par House of Ideal (d\'après les vidéos de Maki, classement de fans, non officiel). Abonnés, réactions, commentaires, planches publiées et débats compteront dès l\'ouverture des comptes en ligne.</p></details>';
   };
   // Image de chaque trophée (D-71) : une couverture de votre collection qui l'illustre (un n° 1 pour « Chasseur de #1 »,
   // le premier numéro d'un run pour « Complétiste », un numéro de l'ère pour les Ères…), ou le portrait Comic Vine
@@ -21148,8 +21285,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const fetchCredits = async (max = 40) => {
     if (creditsJob) return;
     const ids = creditsPending().slice(0, max);
-    if (!ids.length) { showToast(physicalSingles.some(x => isOwned(x) && x.comicVineId) ? 'Tous les crédits connus sont déjà récupérés.' : 'Récupérez d\'abord les couvertures : elles identifient chaque numéro sur Comic Vine.'); return; }
-    if (!cvAvailable()) { showToast('Comic Vine n\'est pas disponible : lancez Panel avec « Lancer Panel.cmd ».'); return; }
+    if (!ids.length) { showToast(physicalSingles.some(x => isOwned(x) && x.comicVineId) ? 'Tous les crédits connus sont déjà récupérés.' : 'Récupérez d\'abord les couvertures : elles identifient chaque numéro.'); return; }
+    if (!cvAvailable()) { showToast('La recherche en ligne est indisponible pour le moment.'); return; }
     creditsJob = { done: 0, total: ids.length };
     renderStatsDashboard();
     const CI = window.PanelDomains.collectionInsights;
@@ -21162,9 +21299,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         saveJson(CREDITS_KEY, creditsCache);
         if (creditsJob.done % 5 === 0) renderStatsDashboard();
       }
-      showToast(creditsJob.done + ' fiche(s) de crédits récupérée(s) sur Comic Vine.');
+      showToast(creditsJob.done + ' fiche(s) de crédits récupérée(s).');
     } catch (e) {
-      showToast((e && e.name === 'CvRateLimit' ? 'Limite horaire Comic Vine atteinte' : 'Comic Vine indisponible') + ' : ' + creditsJob.done + ' fiche(s) récupérée(s), reprise possible plus tard.');
+      showToast((e && e.name === 'CvRateLimit' ? 'Limite horaire atteinte' : 'Recherche en ligne indisponible') + ' : ' + creditsJob.done + ' fiche(s) récupérée(s), reprise possible plus tard.');
     } finally { creditsJob = null; renderStatsDashboard(); }
   };
   let statsCreatorMode = 'read';
@@ -21368,7 +21505,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ── Réglages (D-63) : un vrai panneau de réglages par rubriques, autour des paramètres existants (clés API, application)
-  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['moderation', 'Modération', 'ic-shield'], ['sources', 'Sources & avancé', 'ic-key']];
+  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['moderation', 'Modération', 'ic-shield'], ['legal', 'Légal & sécurité', 'ic-file'], ['sources', 'Sources & avancé', 'ic-key']];
   // ==========================================================================
   // Modération plus rapide (D-102) : console clavier pour l'équipe, prête pour l'ouverture des comptes (S8).
   // Aucun signalement n'est simulé : la file vient de api.mod_queue (migration 13) ; tant que les comptes sont fermés, elle est vide.
@@ -21451,7 +21588,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (tab === 'collection') return '<h3>Collection & finances</h3>' +
       row('Devise par défaut', 'Pour les nouvelles fiches ; aucune conversion automatique', '<select class="field-input" data-set-cur>' + FIN_CURRENCIES.map(c => '<option' + (c === finDefaultCurrency() ? ' selected' : '') + '>' + c + '</option>').join('') + '</select>') +
       row('Prix payé', 'Prérempli avec le prix de couverture pour un achat neuf ; « Seconde main » libère le prix', '<span class="set-pill is-ok">Actif</span>') +
-      row('Couvertures', 'Récupération Fandom puis Comic Vine, en arrière-plan', btn('Ouvrir la collection', 'data-set-view="collection"')) +
+      row('Couvertures', 'Récupérées automatiquement, en arrière-plan', btn('Ouvrir la collection', 'data-set-view="collection"')) +
       row('Catalogue commun', 'Doublons possibles à trancher', btn('Ouvrir', 'data-set-click="pubCatalogBtn"'));
     if (tab === 'reading') { const n = rdMigrationPlan().length; return '<h3>Lecture</h3>' +
       row('Lectures importées', n ? n + ' numéro(s) marqué(s) lu(s) pas encore dans votre journal' : 'Tout est déjà dans Lecture', n ? btn('Intégrer maintenant', 'data-set-rdmig', true) : '<span class="set-pill is-ok">À jour</span>') +
@@ -21465,6 +21602,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Corbeille', (($('trashCount') || {}).textContent || '0') + ' fiche(s) retirée(s), restaurables', btn('Ouvrir', 'data-set-click="trashBtn"')) +
       row('Conflits', (($('conflictCount') || {}).textContent || '0') + ' à trancher (notes, sources du calendrier, synchronisation)', btn('Ouvrir', 'data-set-click="conflictsBtn"')) +
       ($('exportDigitalArchiveBtn') && !$('exportDigitalArchiveBtn').hidden ? row('Anciens fichiers numériques', 'Archive ZIP des PDF/CBZ et de leurs données ; rien n\'est supprimé', btn('Télécharger', 'data-set-click="exportDigitalArchiveBtn"')) : '');
+    if (tab === 'legal') {
+      // D-104 : mentions légales, confidentialité, règles et sécurité. Texte de travail : à faire relire par un juriste avant l'ouverture publique.
+      const sec = (title, body) => '<details class="set-legal"><summary>' + title + '</summary><div class="set-legal-b">' + body + '</div></details>';
+      return '<h3>Légal & sécurité</h3>' +
+        '<p class="set-legal-note">Version de travail du ' + new Date(2026, 10, 21).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'long', year: 'numeric' }) + '. Ces textes seront relus par un juriste avant l\'ouverture des comptes en ligne.</p>' +
+        sec('Mentions légales', '<p>Éditeur de Panel : <i>à compléter (nom ou raison sociale, adresse, contact, directeur de la publication)</i>.</p><p>Hébergement : <i>à compléter à la mise en ligne</i>. Aujourd\'hui, Panel fonctionne sur votre appareil.</p>') +
+        sec('Confidentialité et données personnelles', '<p>Votre collection, vos finances, vos notes et votre lecture restent sur cet appareil. Panel ne les envoie à personne et ne les vend jamais.</p>' +
+          '<p>Aucun cookie publicitaire, aucun traceur, aucune mesure d\'audience. Le stockage local sert uniquement au fonctionnement de l\'application.</p>' +
+          '<p>Quand vous cherchez en ligne (fiches, couvertures, biographies), seule la recherche est transmise aux sources de données, sans information sur vous.</p>' +
+          '<p>À l\'ouverture des comptes : seuls votre pseudo, votre profil public et ce que vous choisissez de publier seront partagés. Prix, valeur, emplacement et notes privées ne le sont jamais. Vous pourrez exporter ou supprimer votre compte à tout moment (RGPD : accès, rectification, effacement, portabilité, opposition). Réclamation possible auprès de la CNIL.</p>') +
+        sec('Règles de la communauté', '<p>Respect des autres membres : pas de harcèlement, de haine, de contenu sexuel ou violent, d\'arnaque ni de spam.</p><p>Pas de scans complets ni de fichiers piratés : seules les photos de vos propres exemplaires et de courts extraits sont permis.</p><p>Les contenus signalés sont examinés par l\'équipe de modération, qui peut les masquer ou suspendre un compte, avec un motif.</p>') +
+        sec('Âge', '<p>Les comptes en ligne seront réservés aux personnes de 15 ans et plus (majorité numérique en France). En dessous, l\'accord d\'un parent sera nécessaire.</p>') +
+        sec('Droits d\'auteur et marques', '<p>Les personnages, titres, couvertures et logos appartiennent à leurs ayants droit (Marvel, DC, Image et les autres éditeurs). Panel n\'est affilié à aucun éditeur.</p><p>Fiches et images : Comic Vine, Wikipédia et Wikidata (licences CC BY-SA et CC0), avec un lien vers chaque source. Les couvertures sont affichées pour identifier les numéros.</p>') +
+        sec('Sécurité', '<p>Aucune clé d\'accès n\'est écrite dans l\'application : les sources en ligne passent par le serveur de Panel.</p><p>L\'équipe (administration et modération) devra se connecter avec une double authentification. Sans elle, elle n\'a aucun pouvoir. Elle n\'a jamais accès à votre collection ni à vos finances.</p><p>Sauvegardez régulièrement votre collection (Données & sauvegardes) : elle n\'existe que sur cet appareil.</p>');
+    }
     return '';
   };
   // D-67 — Couvertures en relief : inclinaison qui suit le pointeur, reflet. Souris uniquement, jamais avec « réduire les animations ».
@@ -24366,16 +24518,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       msg = `<b>Récupération des couvertures…</b> ${c.withCover} / ${c.total} · ${escapeHtml(coverJob.current || '')}`;
       actions = '<button class="btn secondary" data-cover="pause">Pause</button>';
     } else if (coverJob.phase === 'quota' && coverJob.resumeAt) {
-      msg = `<b>Pause automatique</b> : quota ${coverJob.quotaSource || 'Comic Vine'} de l'heure atteint. Reprise vers <b>${time(coverJob.resumeAt)}</b> — gardez Panel ouvert. ${c.withCover} / ${c.total} couvertures.`;
+      msg = `<b>Pause automatique</b> : limite horaire de la recherche atteinte. Reprise vers <b>${time(coverJob.resumeAt)}</b> — gardez Panel ouvert. ${c.withCover} / ${c.total} couvertures.`;
       actions = '<button class="btn secondary" data-cover="pause">Arrêter</button>';
     } else if (coverJob.phase === 'error') {
-      msg = `<b>Comic Vine injoignable</b> (${escapeHtml(coverJob.error)}). Nouvel essai ${coverJob.resumeAt ? 'vers ' + time(coverJob.resumeAt) : 'plus tard'}.`;
+      msg = `<b>Recherche des couvertures momentanément indisponible</b>. Nouvel essai ${coverJob.resumeAt ? 'vers ' + time(coverJob.resumeAt) : 'plus tard'}.`;
       actions = '<button class="btn secondary" data-cover="start">Réessayer maintenant</button>';
     } else if (c.pending) {
-      msg = `<b>${c.pending} couverture(s) à récupérer ou à préciser</b> (Fandom puis Comic Vine)${c.withCover ? ` · ${c.withCover} / ${c.total} déjà affichées` : ''} · ≈ ${etaH} h en arrière-plan (quota Comic Vine), reprise automatique à la prochaine ouverture.`;
+      msg = `<b>${c.pending} couverture(s) à récupérer ou à préciser</b>${c.withCover ? ` · ${c.withCover} / ${c.total} déjà affichées` : ''} · ≈ ${etaH} h en arrière-plan, reprise automatique à la prochaine ouverture.`;
       actions = `<button class="btn" data-cover="start"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> Récupérer les couvertures</button>`;
     } else {
-      msg = `<b>${c.withCover} / ${c.total} couvertures</b> · ${c.src_fandom || 0} Fandom · ${c.src_comicvine || 0} Comic Vine · ${c.src_manual || 0} manuelle(s)${c.approx ? ` · ${c.approx} approchée(s)` : ''} · ${c.notfound} introuvable(s)${c.skipped ? ` · ${c.skipped} recueil(s) ignoré(s)` : ''}${c.regular ? ` · ${c.regular} variante(s) avec la couverture standard (variante introuvable : photographiez votre exemplaire dans la fiche)` : ''}.`;
+      msg = `<b>${c.withCover} / ${c.total} couvertures</b>${document.documentElement.classList.contains('is-dev') ? ` · ${c.src_fandom || 0} Fandom · ${c.src_comicvine || 0} Comic Vine` : ''} · ${c.src_manual || 0} manuelle(s)${c.approx ? ` · ${c.approx} approchée(s)` : ''} · ${c.notfound} introuvable(s)${c.skipped ? ` · ${c.skipped} recueil(s) ignoré(s)` : ''}${c.regular ? ` · ${c.regular} variante(s) avec la couverture standard (variante introuvable : photographiez votre exemplaire dans la fiche)` : ''}.`;
       actions = (c.notfound ? '<button class="btn secondary" data-cover="retry">Réessayer les introuvables</button>' : '') + (lastCoverBatch() ? '<button class="btn secondary" data-cover="undo">Annuler le dernier lot</button>' : '');
     }
     bar.innerHTML = `<div class="cover-job-text"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> ${msg}</div><div class="cover-job-actions">${actions}</div>` +
@@ -24869,7 +25021,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('singleIssueInput').value = '#' + issue;
 
       const statusEl = $('coverSearchStatus');
-      if (statusEl) statusEl.textContent = 'Recherche Comic Vine des couvertures officielles...';
+      if (statusEl) statusEl.textContent = 'Recherche des couvertures officielles…';
       const pub = $('singlePublisherInput').value;
       const vars = await fetchComicCoversAndDetails(q, issue, pub, { variant: $('singleVariantNameInput').value.trim(), year: parseInt(($('singleYearInput') && $('singleYearInput').value) || '', 10) || null });
       renderCoverVariantsSelector(vars);
@@ -24937,7 +25089,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       cvRow.innerHTML = 
         '<div class="search-row-icon" style="background:var(--bg-card);display:flex;align-items:center;justify-content:center;font-size:16px;border-radius:4px"><svg class=ic aria-hidden=true><use href=#ic-globe /></svg></div>' +
         '<div style="flex:1;min-width:0">' +
-          '<div style="font-weight:700;font-size:12px;color:var(--lime)">Rechercher « ' + escapeHtml(q) + ' » sur Comic Vine</div>' +
+          '<div style="font-weight:700;font-size:12px;color:var(--lime)">Rechercher « ' + escapeHtml(q) + ' » en ligne</div>' +
           '<div style="font-size: 12px;color:var(--muted)">Base officielle complète (éditeurs, variantes, fiches)</div>' +
         '</div>' +
         '<span style="font-size: 12px;color:var(--muted);background:var(--bg-card);padding:2px 6px;border-radius:4px">Entrée ↵</span>';
@@ -24980,7 +25132,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (matchSingles.length === 0) {
         const hint = document.createElement('div');
         hint.style.cssText = 'padding:8px 10px;font-size: 12px;color:var(--muted);text-align:center';
-        hint.innerHTML = 'Aucun comics local trouvé.<br><span style="color:var(--lime)">Appuyez sur Entrée pour rechercher « ' + escapeHtml(q) + ' » sur Comic Vine</span>';
+        hint.innerHTML = 'Aucun comics local trouvé.<br><span style="color:var(--lime)">Appuyez sur Entrée pour rechercher « ' + escapeHtml(q) + ' » en ligne</span>';
         menu.appendChild(hint);
       }
     };
@@ -25008,7 +25160,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const openComicVineSearchModal = openComicVineSearchModalRef = initialQuery => {
       $('cvSearchInput').value = initialQuery || '';
       $('cvSearchResultsList').innerHTML = '';
-      $('cvSearchStatus').textContent = initialQuery ? 'Recherche en cours sur Comic Vine...' : 'Tapez un titre de comic et appuyez sur Entrée ou Rechercher.';
+      $('cvSearchStatus').textContent = initialQuery ? 'Recherche en ligne en cours…' : 'Tapez un titre de comic et appuyez sur Entrée ou Rechercher.';
       $('comicVineSearchModal').classList.add('open');
       setTimeout(() => $('cvSearchInput').focus(), 150);
       if (initialQuery) {
@@ -25020,7 +25172,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (!query || !query.trim()) return;
       const statusEl = $('cvSearchStatus');
       const listEl = $('cvSearchResultsList');
-      statusEl.textContent = 'Recherche dans Comic Vine et Metron pour « ' + query + ' »...';
+      statusEl.textContent = 'Recherche en ligne de « ' + query + ' »…';
       listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:25px;color:var(--muted)">Interrogation des bases de données en cours...</div>';
 
       try {
@@ -25032,7 +25184,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const hits = cvHits.concat(mtHits.filter(x => !seen.has(catNorm(volNoYear(x.volume)) + '#' + String(x.issue).trim())));
         const srcLabel = [cvHits.length ? cvHits.length + ' Comic Vine' : '', mtHits.length ? mtHits.length + ' Metron' : ''].filter(Boolean).join(' · ');
         if (!hits || hits.length === 0) {
-          statusEl.textContent = 'Aucun comic trouvé pour « ' + query + ' »' + (relayStatus && !relayStatus.cv && !relayStatus.metron ? ' : aucune base n\'est configurée sur le serveur local (clé Comic Vine ou compte Metron).' : '.');
+          statusEl.textContent = 'Aucun comic trouvé pour « ' + query + ' »' + (relayStatus && !relayStatus.cv && !relayStatus.metron ? ' : la recherche en ligne est indisponible pour le moment.' : '.');
           listEl.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:25px;color:var(--muted)">Aucun résultat. Essayez avec un autre titre (ex: Spawn 300, Batman 135, Spider-Man).</div>';
           return;
         }
@@ -25062,7 +25214,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           listEl.appendChild(card);
         });
       } catch(err) {
-        statusEl.textContent = 'Erreur lors de la recherche Comic Vine : ' + (err.message || 'Erreur');
+        statusEl.textContent = 'La recherche en ligne n\'a pas abouti. Réessayez dans un instant.';
         listEl.innerHTML = '';
       }
     };
@@ -25304,7 +25456,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       $('startRevalueBtn').disabled = false;
       if (!res) { $('revalueStatus').textContent = 'Une cote est déjà en cours.'; return; }
       const d = res.after - res.before;
-      $('revalueStatus').textContent = res.count + ' exemplaire(s) coté(s)' + (res.yearsFound ? ', ' + res.yearsFound + ' année(s) trouvée(s) sur Comic Vine' : '') +
+      $('revalueStatus').textContent = res.count + ' exemplaire(s) coté(s)' + (res.yearsFound ? ', ' + res.yearsFound + ' année(s) trouvée(s) en ligne' : '') +
         '. Valeur de la collection : ' + money(res.before) + ' → ' + money(res.after) + ' (' + (d >= 0 ? '+' : '-') + money(Math.abs(d)) + ').';
       showToast('Cote terminée : ' + money(res.after));
     };

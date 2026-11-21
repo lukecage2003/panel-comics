@@ -44,8 +44,10 @@ async function freshDb({ migrations = true, seed = false, upTo = Infinity } = {}
 async function asAdmin(db) {
   await db.exec(`reset role; select set_config('request.jwt.claim.sub', '', false);`);
 }
-async function asUser(db, uid) {
-  await db.exec(`reset role; select set_config('request.jwt.claim.sub', '${uid.replace(/'/g, '')}', false); set role authenticated;`);
+// aal : niveau d'assurance de la session (« aal2 » = double authentification). Par défaut aal2 ; les tests de la
+// migration 17 vérifient explicitement qu'une session « aal1 » n'a aucun pouvoir d'équipe.
+async function asUser(db, uid, aal = 'aal2') {
+  await db.exec(`reset role; select set_config('request.jwt.claim.sub', '${uid.replace(/'/g, '')}', false); select set_config('request.jwt.claim.aal', '${String(aal).replace(/[^a-z0-9]/g, '')}', false); set role authenticated;`);
 }
 async function asAnon(db) {
   await db.exec(`reset role; select set_config('request.jwt.claim.sub', '', false); set role anon;`);

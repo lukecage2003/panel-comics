@@ -145,7 +145,13 @@ const phrases = {
   "oct": "oct",
   "nov": "nov",
   "déc": "dic",
-  "Dates et nombres suivent la langue choisie.": "Las fechas y los números siguen el idioma elegido."
+  "Dates et nombres suivent la langue choisie.": "Las fechas y los números siguen el idioma elegido.",
+  // D-104 : Découvrir repensé, recherche sans nom de fournisseur, Légal & sécurité
+  "Univers": "Universos",
+  "Légal & sécurité": "Legal y seguridad",
+  "Actualiser": "Actualizar",
+  "Chercher en ligne": "Buscar en línea",
+  "Mentions légales": "Aviso legal",
 };
 
 module.exports = { locale: 'es', phrases, same: [] };

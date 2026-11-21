@@ -325,7 +325,8 @@ const waitForCdp = async () => {
         input.value = 'Batman';
         input.dispatchEvent(new Event('input', { bubbles: true }));
         const menuVisible = !menu.hidden;
-        const menuHasComicVine = menu.innerHTML.includes('Comic Vine');
+        // D-104 : recherche en ligne, sans nom de fournisseur
+        const menuHasComicVine = /en ligne/.test(menu.textContent) && !/Comic Vine/.test(menu.textContent);
 
         // Test Enter ouvre Comic Vine Modal
         const keyEvent = new KeyboardEvent('keydown', { key: 'Enter', bubbles: true });
@@ -968,7 +969,7 @@ const waitForCdp = async () => {
         P.fillFandomQuotaForTest();
         const before = calls.fandom;
         await P.runCoverJob();
-        res.quota = P.getCoverJob().phase === 'quota' && calls.fandom === before && /quota Fandom/.test(document.getElementById('coverJobBar').innerText);
+        res.quota = P.getCoverJob().phase === 'quota' && calls.fandom === before && /limite horaire/.test(document.getElementById('coverJobBar').innerText);
         if (!res.quota) res.quotaDiag = { phase: P.getCoverJob().phase, running: P.getCoverJob().running, fandomDelta: calls.fandom - before, bar: (document.getElementById('coverJobBar').innerText || '').slice(0, 80) };
         P.pauseCoverJob();
         // Fiche : Fandom + Comic Vine fusionnés, meilleure variante marquée, sources indiquées
@@ -1308,6 +1309,9 @@ const waitForCdp = async () => {
         const wdBad = await jget('/api/wd/entity?cv=9999-1');
         t20.wikidata = wd1.status === 200 && wd1.body.qid === 'Q1131424' && wd1.body.residence.join() === 'Dakota' && wd1.body.creators.length === 2 && wd1.body.summaryLang === 'fr'
           && /super-héros/.test(wd1.body.summary) && /P5905/.test(decodeURIComponent(wdUrls[0])) && wd2.body.cached === true && wdUrls.length === 2 && wdBad.status === 400;
+        // D-104 : la fiche suit la langue de Panel (libellés et article Wikipédia dans cette langue), cache séparé par langue
+        const wd3 = await jget('/api/wd/entity?cv=4005-26578&lang=es');
+        t20.wikidataLang = wd3.status === 200 && wd3.body.lang === 'es' && !wd3.body.cached && /es\.wikipedia\.org/.test(decodeURIComponent(wdUrls[2] || '')) && /"es,en"/.test(decodeURIComponent(wdUrls[2] || ''));
         const bnfUrls = [];
         const rec = (t, pub, date, lang, isbn) => '<srw:record><dc:title>' + t + ' / scénario X</dc:title><dc:publisher>' + pub + '</dc:publisher><dc:date>' + date + '</dc:date><dc:language>' + lang + '</dc:language><dc:identifier>ISBN ' + isbn + '</dc:identifier><dc:identifier>http://catalogue.bnf.fr/ark:/12148/cb1</dc:identifier><dc:description>Collection : DC Black Label</dc:description></srw:record>';
         srv.setBnfGetForTest(async url => { bnfUrls.push(url); return '<x>' + rec('Absolute Batman. 1, Le zoo', 'Urban comics (Paris)', '2025', 'fre', '979-10-268-2338-4') + rec('Batman', 'Penguin', '2024', 'eng', '9780000000001') + rec('Recettes &amp; cuisine', 'Hachette', '2025', 'fre', '9780000000002') + '</x>'; });
@@ -1388,7 +1392,7 @@ const waitForCdp = async () => {
       console.log('Résultat Test 20:', JSON.stringify(t20));
       testResults.push({
         test: 'Relais GCD local : édition exacte par code-barres, fiches lues au besoin, cache, quota 25/h, paramètres validés',
-        ok: !!t20 && !t20.error && ['atlasData', 'exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronVariants', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
+        ok: !!t20 && !t20.error && ['atlasData', 'exact', 'lazyDetails', 'cached', 'mainCached', 'badParams', 'quotaStops', 'over429', 'license', 'metronExact', 'metronCached', 'metronIssue', 'metronSeries', 'metronBadParams', 'metronVariants', 'metronAuth', 'metronNotConfigured', 'cvRelay', 'cvAppearances', 'wikidata', 'wikidataLang', 'bnf', 'shops', 'news', 'hardening', 'hardening2', 'noKeyInClient'].every(k => t20[k] === true)
       });
 
       // ==========================================
@@ -2152,7 +2156,7 @@ const waitForCdp = async () => {
         R.openSheet(hero.id);
         r.uiHistory = sheet.textContent.includes('reportée');
         document.getElementById('pubModal').classList.remove('open');
-        r.uiPullPanel = document.querySelectorAll('#pullPanelBody .pull-row').length >= 4 && document.getElementById('relSyncInfo').textContent.length > 20;
+        r.uiPullPanel = document.querySelectorAll('#pullPanelBody .pull-row').length >= 4 && !/Comic Vine/.test(document.getElementById('relSyncInfo').textContent); // D-104 : aucune mention technique hors mode développeur
         document.getElementById('releasesSearch').value = '';
         P.showSinglesView('collection');
         P.openSingleInspector(wa.item);
@@ -2535,7 +2539,7 @@ const waitForCdp = async () => {
         await X.open();
         const root = document.getElementById('explorerRoot');
         const vis = el => !!el && el.getClientRects().length > 0;
-        r.uiHome = vis(document.getElementById('singlesExplorerView')) && ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
+        r.uiHome = vis(document.getElementById('singlesExplorerView')) && ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
           getComputedStyle(document.querySelector('.singles-stats-bar')).display === 'none' && document.getElementById('navExplorer').classList.contains('active') &&
           ['Marvel', 'DC Comics', 'Image Comics', 'Dark Horse', 'IDW Publishing', 'BOOM! Studios', 'Dynamite'].every(n => [...root.querySelectorAll('.ex-unitile b')].some(b => b.textContent === n)) &&
           /Les actualités passent par le relais local/.test(document.getElementById('exSecNews').textContent) &&
@@ -3222,7 +3226,7 @@ const waitForCdp = async () => {
         // 3. Fournisseur absent : Explorer complet en version éditoriale, sans badge, sans action personnelle, sans réglage
         X.setPersonalProviderForTest(null);
         await X.open('home');
-        r.absentHome = ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecReleases', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
+        r.absentHome = ['exSecFeatured', 'exSecGuides', 'exSecUniverses', 'exSecCharacters', 'exSecCreators', 'exSecSeries', 'exSecNews'].every(id => !!document.getElementById(id)) &&
           !document.getElementById('exSecReco') && !document.getElementById('exPersonalize') && ![...root.querySelectorAll('.ex-unitile span')].some(s => /possédé/.test(s.textContent));
         await X.open('guide', 'gd_king_in_black');
         r.absentGuide = root.querySelectorAll('.ex-entry').length === 60 && !has(personalSel) && !has('[data-ex-wish]') && !!root.querySelector('[data-ex-moreentries]') && X.stats('gd_king_in_black').personal === false;
@@ -5922,9 +5926,9 @@ const waitForCdp = async () => {
           $('navExplorer').click(); await wait(500);
           const sec = $('exSecMyChars'), cards = sec ? [...sec.querySelectorAll('.ex-mychar')] : [];
           const byName = n => cards.find(c => c.querySelector('b').textContent === n);
-          // En tête de Découvrir : avant les suivis et le sommaire
-          const home = sec && sec.parentElement, order = home ? [...home.children].map(x => x.id || x.className) : [];
-          r.first = !!sec && order.indexOf('exSecMyChars') < order.indexOf('ex-toc') && order.indexOf('exSecMyChars') < (order.indexOf('exSecFollows') < 0 ? 1e9 : order.indexOf('exSecFollows'));
+          // En tête de « Pour toi » (D-104) : avant les séries et créateurs suivis
+          const home = sec && sec.closest('[data-ex-pane="foryou"]'), order = home ? [...home.children].map(x => x.id || x.className) : [];
+          r.first = !!sec && order.indexOf('exSecMyChars') === 0 && order.indexOf('exSecMyChars') < (order.indexOf('exSecFollows') < 0 ? 1e9 : order.indexOf('exSecFollows'));
           // Nouvelle apparition d'abord ; suivi et possédé fusionnés en une carte, qui ouvre la fiche
           r.newFirst = !!cards[0] && cards[0].querySelector('b').textContent === 'Fixture Héroïne' && cards[0].classList.contains('is-new') && /Nouvelle apparition : Fixture Vol #7/.test(cards[0].textContent);
           const sp = byName('Spider-Man');
@@ -6126,6 +6130,68 @@ const waitForCdp = async () => {
       console.log('Résultat Test 82:', JSON.stringify(t82));
       testResults.push({ test: 'Test 82 : Langues de l interface, anglais à l affichage, dates Intl (D-103)',
         ok: !t82.error && ['frDefault', 'active', 'nav', 'title', 'selector', 'settingsEn', 'dynamic', 'dates', 'backToFr', 'dataUntouched'].every(k => t82[k] === true) });
+      // ==========================================
+      // TEST 83 : Découvrir par thèmes, sans calendrier ni nom de fournisseur ; barre du haut masquée sur téléphone ; Légal & sécurité (D-104)
+      // ==========================================
+      console.log('\n[TEST 83] Découvrir par thèmes, téléphone, légal...');
+      const t83 = {};
+      try {
+        Object.assign(t83, await evalExpr(`(async () => {
+          const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id);
+          r.fp0 = await window.Panel.backup.fingerprint('collection');
+          const devPrev = localStorage.getItem('panel_dev_mode');
+          localStorage.removeItem('panel_dev_mode'); document.documentElement.classList.remove('is-dev');
+          $('navExplorer').click(); await wait(500);
+          const root = $('explorerRoot');
+          const tabs = [...root.querySelectorAll('.ex-topics [data-ex-topic]')];
+          r.tabs = tabs.map(b => b.dataset.exTopic).join(',') === 'foryou,characters,series,guides,news,universes' && tabs[0].getAttribute('aria-selected') === 'true';
+          const panes = [...root.querySelectorAll('[data-ex-pane]')];
+          r.onePane = panes.filter(x => !x.hidden).length === 1 && !root.querySelector('[data-ex-pane="foryou"]').hidden;
+          // Plus de calendrier ni de sommaire sur Découvrir
+          r.noCalendar = !$('exSecReleases') && !root.querySelector('.ex-toc') && !root.querySelector('[data-ex-calendar]') && !/au calendrier/.test(root.textContent);
+          // Les personnages, les séries et les personnes suivies ne sont pas mélangés
+          r.separated = !!root.querySelector('[data-ex-pane="characters"] #exSecCharacters') && !!root.querySelector('[data-ex-pane="series"] #exSecSeries') &&
+            !root.querySelector('[data-ex-pane="foryou"] #exSecCharacters') && !root.querySelector('[data-ex-pane="foryou"] #exSecSeries');
+          tabs[3].click(); await wait(250);
+          const panes2 = [...root.querySelectorAll('[data-ex-pane]')];
+          r.switch = !panes2.find(x => x.dataset.exPane === 'guides').hidden && panes2.filter(x => !x.hidden).length === 1 && root.querySelector('[data-ex-topic="guides"]').getAttribute('aria-selected') === 'true';
+          root.querySelector('[data-ex-topic="foryou"]').click(); await wait(200);
+          // Aucun nom de fournisseur visible hors mode développeur (les crédits légaux restent)
+          const vis = el => !!el && el.getClientRects().length > 0;
+          const shown = [...document.querySelectorAll('button, label, h3, h4, p, small, span')].filter(el => vis(el) && !el.closest('.credits, .ex-credit, footer, .dev-only') && el.children.length === 0);
+          r.noProvider = !shown.some(el => /Comic Vine|Metron|Fandom|quota/i.test(el.textContent)) && !/Comic Vine/.test($('exSearch').placeholder || '');
+          // Réglages : onglet Légal & sécurité
+          $('openSettingsBtnTop').click(); await wait(400);
+          const lt = document.querySelector('#settingsModal [data-set-tab="legal"]');
+          if (lt) { lt.click(); await wait(200); }
+          const dyn = document.querySelector('#settingsModal [data-set-pane="dyn"]');
+          const sums = dyn ? [...dyn.querySelectorAll('details.set-legal > summary')].map(s => s.textContent) : [];
+          r.legal = !!lt && sums.join('|') === 'Mentions légales|Confidentialité et données personnelles|Règles de la communauté|Âge|Droits d\\'auteur et marques|Sécurité' &&
+            /RGPD/.test(dyn.textContent) && /15 ans/.test(dyn.textContent) && /juriste/.test(dyn.textContent) && /à compléter/.test(dyn.textContent);
+          document.querySelector('#settingsModal [data-set-tab="account"]').click(); await wait(100);
+          $('settingsModal').classList.remove('open');
+          if (devPrev !== null) { localStorage.setItem('panel_dev_mode', devPrev); document.documentElement.classList.add('is-dev'); }
+          return r;
+        })()`));
+        // Téléphone : seule la barre du bas reste, la barre des vues de la collection disparaît
+        await send('Emulation.setDeviceMetricsOverride', { width: 375, height: 812, deviceScaleFactor: 2, mobile: true });
+        await new Promise(r => setTimeout(r, 500));
+        Object.assign(t83, await evalExpr(`(async () => {
+          const wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id);
+          window.Panel.explorer.open('home'); await wait(300);
+          const sub = $('singlesSubnav'), dock = document.querySelector('.mobile-dock');
+          const noTop = !!sub && getComputedStyle(sub).display === 'none' && !!dock && getComputedStyle(dock).display !== 'none';
+          const noHScroll = document.documentElement.scrollWidth <= window.innerWidth + 1;
+          return { mobileTop: noTop, mobileNoScroll: noHScroll };
+        })()`));
+      } catch (e) { t83.error = String(e && e.message || e); }
+      finally { try { await send('Emulation.clearDeviceMetricsOverride', {}); } catch (_) {} await new Promise(r => setTimeout(r, 400)); }
+      const t83fp = await evalExpr(`window.Panel.backup.fingerprint('collection')`);
+      t83.dataUntouched = !!t83.fp0 && t83fp === t83.fp0;
+      delete t83.fp0;
+      console.log('Résultat Test 83:', JSON.stringify(t83));
+      testResults.push({ test: 'Test 83 : Découvrir par thèmes, sans calendrier ni fournisseur, téléphone épuré, Légal & sécurité (D-104)',
+        ok: !t83.error && ['tabs', 'onePane', 'noCalendar', 'separated', 'switch', 'noProvider', 'legal', 'mobileTop', 'mobileNoScroll', 'dataUntouched'].every(k => t83[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
