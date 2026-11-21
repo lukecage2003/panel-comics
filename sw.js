@@ -8,7 +8,7 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-21-cartes-interactives';
+const VERSION = 'panel-2026-11-21-decouvrir-vivant';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 // D-108 : cartes interactives de l'atlas (cartes/), gardées une fois ouvertes pour être relues hors ligne
@@ -76,7 +76,7 @@ self.addEventListener('fetch', event => {
     event.respondWith((async () => {
       const cache = await caches.open(CARTES_CACHE);
       try {
-        const res = await fetch(req);
+        const res = await fetch(req, /\.html$/.test(url.pathname) ? { cache: 'no-cache' } : undefined);
         if (res && res.ok) cache.put(req, res.clone());
         return res;
       } catch (_) {

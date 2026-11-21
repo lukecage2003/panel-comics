@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-F0HtQHG1TDvo7hs/IkP91TPFKzJ7XRGY2KENnulhklQ=' 'sha256-CLJHVFUCFxebuoqQPxkcwr/KLuhg+k4PrNcpwSOTCiQ=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-FaYNo3lGXGnfzH2I5YKUV9YDBcVeSbnxRAqTF7XTnY4=' 'sha256-pH8LALHgEY63CVRlkR3Vl0b1dMF2usNU6BTBZLV/KuA=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3211,6 +3211,51 @@
       .ex-topics { margin-left: -12px; margin-right: -12px; padding-left: 12px; padding-right: 12px; }
       .ex-pane { gap: 22px; }
     }
+    /* D-109 : cases illustrées, personnage du jour, défis et club de lecture */
+    .ex-tile { min-height: 140px; }
+    .ex-tile-art { position: absolute; inset: 0; z-index: -2; }
+    .ex-tile-art img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.04); transition: transform .5s ease; }
+    .ex-tile.has-art::after { content: ''; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.82)), linear-gradient(135deg, var(--tile-tint, rgba(0,0,0,.2)), transparent 70%); }
+    .ex-tile.has-art::before { opacity: .25; }
+    .ex-tile.is-chars { --tile-tint: rgba(31,111,235,.55); } .ex-tile.is-cosmos { --tile-tint: rgba(109,40,217,.55); } .ex-tile.is-uni { --tile-tint: rgba(15,157,115,.5); } .ex-tile.is-maps { --tile-tint: rgba(14,116,144,.55); }
+    .ex-tile-ico { position: absolute; top: 10px; right: 10px; width: 46px; height: 46px; opacity: .95; filter: drop-shadow(0 4px 10px rgba(0,0,0,.25)); transition: transform .4s ease; }
+    .ex-tile-ico svg { width: 100%; height: 100%; display: block; }
+    .ex-tile.is-news { color: #fff; } .ex-tile.is-news small { opacity: .95; }
+    .ex-tile b, .ex-tile small { text-shadow: 0 1px 8px rgba(0,0,0,.45); }
+    @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) { .ex-tile:hover .ex-tile-art img { transform: scale(1.1); } .ex-tile:hover .ex-tile-ico { transform: rotate(-6deg) scale(1.06); } }
+    .ex-daily-card { display: grid; grid-template-columns: minmax(120px, 220px) 1fr; gap: 16px; align-items: center; border-radius: 18px; padding: 14px; background: radial-gradient(120% 140% at 0% 0%, color-mix(in srgb, var(--cz) 35%, transparent), transparent 60%), var(--surface, #15151b); border: 1px solid var(--line); }
+    .ex-daily-img { margin: 0; aspect-ratio: 1; border-radius: 14px; overflow: hidden; background: #0b0b10; }
+    .ex-daily-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .ex-daily-b h3 { margin: 2px 0 4px; font: 800 24px/1.05 var(--font-display); text-transform: uppercase; }
+    .ex-daily-b p { margin: 0 0 10px; font-size: 14px; line-height: 1.45; }
+    .ex-kicker { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--cz, #FFD400); }
+    .ex-daily .ex-row, .ex-ch .ex-row, .ex-club .ex-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+    .ex-ch-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; }
+    .ex-ch-card, .ex-club-card { display: grid; grid-template-columns: 64px 1fr; gap: 12px; align-items: start; padding: 12px; border-radius: 14px; background: var(--surface, #15151b); border: 1px solid var(--line); }
+    .ex-ch-card b, .ex-club-card b { display: block; font-size: 15px; line-height: 1.25; margin-bottom: 4px; }
+    .ex-ch-card small { color: var(--muted); font-size: 12px; }
+    .ex-ch-img { width: 64px; height: 86px; border-radius: 8px; object-fit: cover; background: #222; display: block; }
+    .ex-ch-bar { display: block; height: 6px; border-radius: 99px; background: rgba(127,127,127,.25); overflow: hidden; margin: 6px 0 4px; }
+    .ex-ch-bar i { display: block; height: 100%; background: linear-gradient(90deg, #FFD400, #FF8A00); border-radius: inherit; }
+    .ex-ch-medal { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; background: linear-gradient(135deg, #FFD400, #FF8A00); color: #111; font-weight: 800; font-size: 12px; }
+    .ex-ch-medal::before { content: '★'; }
+    .ex-ch-card.is-sugg { border-style: dashed; }
+    .ex-club-pick { display: flex; flex-wrap: wrap; gap: 8px; } .ex-club-pick select { flex: 1 1 220px; min-width: 0; }
+    .ex-club-list { margin: 6px 0 0; padding-left: 20px; display: grid; gap: 2px; max-height: 260px; overflow: auto; font-size: 13.5px; }
+    .ex-club-list li { display: flex; justify-content: space-between; gap: 8px; align-items: center; } .ex-club-list li.is-read span { text-decoration: line-through; opacity: .6; }
+    .mp-start { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+    .mp-fix { margin-top: 18px; } .mp-fixes { padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; }
+    .mp-fix-st { display: inline-block; padding: 1px 8px; border-radius: 999px; background: rgba(255,176,0,.18); color: #FFB000; font-weight: 700; font-size: 11.5px; }
+    .pf-chb-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 2px 18px; }
+    .pf-chb { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; background: linear-gradient(135deg, #FFD400, #FF8A00); color: #111; font-weight: 800; font-size: 13px; }
+    .scan-burst { display: block; margin-top: 2px; opacity: .85; }
+    .mp-own { flex: none; padding: 4px 10px; border-radius: 999px; background: #FFD400; color: #111; font-weight: 800; font-size: 12px; white-space: nowrap; }
+    @media (max-width: 600px) {
+      .ex-tile { min-height: 116px; } .ex-tile-ico { width: 44px; height: 44px; }
+      .ex-daily-card { grid-template-columns: 96px 1fr; gap: 12px; padding: 12px; } .ex-daily-b h3 { font-size: 19px; } .ex-daily-b p { font-size: 13px; }
+      .ex-ch-list { grid-template-columns: 1fr; } .mp-own { font-size: 11px; padding: 3px 8px; }
+    }
+    @media (max-width: 360px) { .ex-daily-card { grid-template-columns: 1fr; } .ex-daily-img { max-width: 160px; } }
     .ex-toc-b { flex: 0 0 auto; border: 1px solid var(--line); background: var(--bg-card); color: var(--ink); font: 600 13px/1 var(--font-display); padding: 8px 14px; border-radius: 999px; cursor: pointer; transition: border-color .15s, background .15s; }
     @media (hover: hover) { .ex-toc-b:hover { border-color: var(--line-strong); } }
     .ex-duo { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; align-items: stretch; }
@@ -3830,6 +3875,10 @@
     .igp-huntline.is-found { color: var(--ok, #3ecf8e); }
     .pfp-btns { display: flex; gap: 8px; flex-wrap: wrap; }
     .modal-box.cc { display: block; width: min(440px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; }
+    .cc-fmt { display: flex; gap: 6px; margin: 0 0 8px; }
+    .cc-fmt button { border: 1px solid var(--line); background: none; color: inherit; border-radius: 999px; padding: 7px 14px; font: 600 13px var(--font-ui); cursor: pointer; min-height: 36px; }
+    .cc-fmt button[aria-pressed="true"] { background: #FFD400; color: #111; border-color: #FFD400; }
+    .cc-canvas.is-story { aspect-ratio: 9 / 16; width: auto; max-width: 100%; height: min(62vh, 640px); margin: 4px auto 12px; }
     .cc-canvas { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: 14px; background: #121218; margin: 4px 0 12px; }
     .cc-fav { display: grid; gap: 6px; font-size: 13px; margin-bottom: 10px; }
     .cc-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
@@ -11144,6 +11193,54 @@ const phrases = {
   'Atlas': 'Atlas',
   'Jaune': 'Yellow',
   'Panel — Collect. Discover. Connect.': 'Panel — Collect. Discover. Connect.',
+  'Personnage du jour': 'Character of the day',
+  'Lire sa fiche': 'Read the entry',
+  'Voir sur la carte': 'See it on the map',
+  'Un comic pour commencer': 'A comic to start with',
+  'Défis de lecture': 'Reading challenges',
+  'Terminez un guide pour gagner son badge, visible sur votre profil.': 'Finish a guide to earn its badge, shown on your profile.',
+  'Défi relevé': 'Challenge complete',
+  'Ouvrir le guide': 'Open the guide',
+  'Abandonner': 'Give up',
+  '{n} numéros à lire': '{n} issues to read',
+  'Relever le défi': 'Take the challenge',
+  '{n} / {n} lus': '{n} / {n} read',
+  'Activez la personnalisation pour suivre votre progression.': 'Turn on personalisation to track your progress.',
+  'Défi accepté : bonne lecture !': 'Challenge accepted: happy reading!',
+  'Défi relevé ! Le badge est sur votre profil.': 'Challenge complete! The badge is on your profile.',
+  'Club de lecture': 'Reading club',
+  'Un arc par mois, un numéro à la fois. Chaque discussion porte le mot-dièse du club et un voile anti-spoiler.': 'One arc a month, one issue at a time. Each discussion carries the club hashtag and a spoiler cover.',
+  'Lancer le club': 'Start the club',
+  'Arc du club': 'Club arc',
+  'Discuter': 'Discuss',
+  'Voir les discussions': 'See the discussions',
+  'Changer d\'arc': 'Change arc',
+  'Débat préparé dans Directs : invitez, votez, lancez-le quand vous voulez.': 'Debate ready in Live: invite, vote, start it whenever you like.',
+  'Décrivez la correction en quelques mots ({n} caractères au moins).': 'Describe the correction in a few words ({n} characters at least).',
+  'Indiquez la source : un lien https complet (wiki, éditeur, numéro).': 'Give the source: a full https link (wiki, publisher, issue).',
+  'Proposer une correction ou une source': 'Suggest a correction or a source',
+  'Ce qui est à corriger ou à ajouter': 'What to correct or add',
+  'Source (lien https : numéro, éditeur, wiki)': 'Source (https link: issue, publisher, wiki)',
+  'Gardée sur cet appareil avec le statut « à vérifier » : rien n\'est publié ni modifié sur la fiche tant qu\'elle n\'a pas été relue.': 'Kept on this device with the “to verify” status: nothing is published or changed on the entry until it has been reviewed.',
+  'Garder ma proposition': 'Keep my suggestion',
+  'Vos propositions': 'Your suggestions',
+  'Vérifié': 'Verified',
+  'source': 'source',
+  'Proposition gardée, à vérifier.': 'Suggestion kept, to verify.',
+  'Vous avez {n} numéro de ses séries.': 'You have {n} issue from its series.',
+  'Vous avez {n} numéros de ses séries.': 'You have {n} issues from its series.',
+  'Par où commencer': 'Where to start',
+  'Sa première apparition :': 'First appearance:',
+  'Lancer un débat': 'Start a debate',
+  '★ {n} dans votre collection': '★ {n} in your collection',
+  'Entités de cette carte dont vous possédez des séries': 'Entities on this map whose series you own',
+  'Carte {n}:{n}': 'Card {n}:{n}',
+  'Story {n}:{n}': 'Story {n}:{n}',
+  'Format de l\'image': 'Image format',
+  'Vous l\'aviez déjà': 'You already had it',
+  'Cote estimée': 'Estimated value',
+  'Rafale : {n} numéros': 'Burst: {n} issues',
+  'Défis de lecture relevés': 'Reading challenges completed',
 };
 
 const same = [
@@ -12696,17 +12793,23 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (b) { b.dataset.tone = 'ok'; b.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> <strong>' + escapeHtml(added.series + ' ' + added.issue) + '</strong> (' + escapeHtml(added.variant) + ') identifié par Metron et ajouté.'; }
     }).catch(() => {});
     logScan({ method: 'caméra (continu)', code: r.code, digits: r.code.length, readMs, frames, ident: res.added ? 'édition confirmée' : 'à confirmer', series: res.added ? res.added.series : '', issue: res.added ? res.added.issue : '', variant: res.added ? res.added.variant : '', outcome: res.added ? 'ajouté automatiquement' : 'mis en file' });
+    // D-109 : rafale (numéros ajoutés et cote estimée cumulée, remise à zéro après 10 minutes sans scan)
+    const ev = res.added ? numOrNull(res.added.estValue) : null;
+    if (res.added) { const t = Date.now(); if (t - scanBurst.at > 6e5) scanBurst = { n: 0, v: 0, at: t }; scanBurst.n++; scanBurst.at = t; if (ev) scanBurst.v += ev; }
     const banner = $('continuousScanBanner');
     if (banner) {
       banner.style.display = 'block';
-      banner.dataset.tone = res.added ? 'ok' : 'warn';
+      banner.dataset.tone = res.added && res.copies <= 1 ? 'ok' : 'warn';
       banner.innerHTML = res.added
-        ? '<svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> <strong>' + escapeHtml(res.added.series + ' ' + res.added.issue) + '</strong> (' + escapeHtml(res.added.variant) + ') ajouté' + (res.copies > 1 ? ' · ' + res.copies + 'e exemplaire' : '') + '.'
+        ? '<svg class=ic aria-hidden=true><use href=#ic-bolt /></svg> <strong>' + escapeHtml(res.added.series + ' ' + res.added.issue) + '</strong> (' + escapeHtml(res.added.variant) + ') ajouté' + (res.copies > 1 ? ' · <b>Vous l\'aviez déjà</b> · ' + res.copies + 'e exemplaire' : '') + '.' +
+          (ev ? ' <span>Cote estimée</span> <b data-no-i18n>' + money(ev) + '</b>' : '') +
+          (scanBurst.n > 1 ? ' <small class="scan-burst">' + (scanBurst.v ? '<span>Rafale : ' + scanBurst.n + ' numéros</span> · <b data-no-i18n>' + money(scanBurst.v) + '</b>' : '<span>Rafale : ' + scanBurst.n + ' numéros</span>') + '</small>' : '')
         : '<strong>' + escapeHtml(r.code) + '</strong> mis de côté : ' + escapeHtml(res.parsed.seriesGuess ? 'édition à confirmer' : 'titre inconnu') + ' (rien n\'a été ajouté).';
     }
     setScanHint('');
   };
 
+  let scanBurst = { n: 0, v: 0, at: 0 };
   const onFrameResult = r => {
     const now = Date.now();
     scanSession.lastAnyAt = now;
@@ -19883,13 +19986,18 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
     const topic = EX_TOPICS.some(([k]) => k === exView.topic) ? exView.topic : 'foryou';
     const pane = (k, body) => '<div class="ex-pane" data-ex-pane="' + k + '" role="tabpanel" id="exPane-' + k + '" aria-labelledby="exTopic-' + k + '"' + (k === topic ? '' : ' hidden') + '>' + body + '</div>';
-    const tile = (cls, attrs, title, sub) => '<button class="ex-tile ' + cls + '" ' + attrs + '><b>' + title + '</b><small>' + sub + '</small></button>';
+    // D-109 : chaque case a son image (portraits et vignettes des cartes livrés avec Panel) ou son pictogramme dessiné pour Panel
+    const TILE_IMG = { 'chars': 'cartes/img/eternity.webp', 'cosmos': 'cartes/img/c3.webp', 'uni': 'maps/dc-01-thumb.webp', 'maps': 'maps/marvel-01-thumb.webp' }, TILE_SVG = { 'guides': '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="10" width="30" height="42" rx="3" fill="rgba(255,255,255,.18)" stroke="#fff" stroke-width="2.5"/><rect x="24" y="14" width="30" height="42" rx="3" fill="rgba(0,0,0,.25)" stroke="#fff" stroke-width="2.5"/><path d="M29 24h20M29 31h20M29 38h13" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>', 'news': '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="12" width="40" height="40" rx="4" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5"/><path d="M48 22h6v26a4 4 0 0 1-8 0" fill="none" stroke="#fff" stroke-width="2.5"/><rect x="14" y="19" width="14" height="12" rx="2" fill="#fff"/><path d="M32 21h10M32 28h10M14 37h28M14 44h22" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>', 'shops': '<svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 24l5-12h34l5 12" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5" stroke-linejoin="round"/><path d="M10 24c0 4 3 6 6.5 6S23 28 23 24c0 4 3 6 6.5 6S36 28 36 24c0 4 3 6 6.5 6S49 28 49 24c0 4 2 6 5 6" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M14 32v20h36V32" fill="none" stroke="#fff" stroke-width="2.5"/><rect x="27" y="38" width="10" height="14" fill="#fff"/></svg>', 'random': '<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="10" width="44" height="44" rx="10" fill="rgba(255,255,255,.2)" stroke="#fff" stroke-width="2.5" transform="rotate(-10 32 32)"/><g fill="#fff"><circle cx="22" cy="24" r="4"/><circle cx="32" cy="32" r="4"/><circle cx="42" cy="40" r="4"/><circle cx="42" cy="22" r="4"/><circle cx="22" cy="42" r="4"/></g></svg>' };
+    const tile = (cls, attrs, title, sub) => { const k = cls.replace('is-', '');
+      const art = TILE_IMG[k] ? '<span class="ex-tile-art" aria-hidden="true"><img src="' + TILE_IMG[k] + '" alt="" loading="lazy" decoding="async"></span>' : TILE_SVG[k] ? '<span class="ex-tile-ico">' + TILE_SVG[k] + '</span>' : '';
+      return '<button class="ex-tile ' + cls + (TILE_IMG[k] ? ' has-art' : '') + '" ' + attrs + '>' + art + '<b>' + title + '</b><small>' + sub + '</small></button>'; };
     return '<nav class="ex-topics" role="tablist" aria-label="Thèmes de Découvrir">' + EX_TOPICS.map(([k, l]) => '<button role="tab" id="exTopic-' + k + '" aria-controls="exPane-' + k + '" aria-selected="' + (k === topic) + '" tabindex="' + (k === topic ? 0 : -1) + '" class="ex-topic' + (k === topic ? ' is-on' : '') + '" data-ex-topic="' + k + '">' + l + '</button>').join('') + '</nav>' +
       pane('foryou',
-        exMyCharsHtml() + exCharGuidesHtml() + exFollowSeriesHtml() + exFollowsHtml() +
+        exMyCharsHtml() + '<div id="exDaily"></div>' + exCharGuidesHtml() + exFollowSeriesHtml() + exFollowsHtml() +
         (recos.length ? sec('exSecReco', 'Pour vous', 'D\'après votre collection, votre progression et votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
         exTrendsHtml() +
         (featured.length ? sec('exSecFeatured', 'À la une', '', '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>') : '<section class="ex-sec" id="exSecFeatured" hidden></section>') +
+        exChallengesHtml() + exClubHtml() +
         sec('exSecTiles', 'Explorer', '', '<div class="ex-tiles">' +
           tile('is-guides', 'data-ex-topic-go="guides"', 'Guides de lecture', 'Événements, sagas, parcours') +
           tile('is-chars', 'data-ex-topic-go="characters"', 'Personnages', 'Héros, équipes, ennemis') +
@@ -20814,6 +20922,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       exCzLoad();
     } else if (exView.page === 'map-e') {
       root.innerHTML = exMpEntityHtml(exView.id);
+      exMpWireEntity(root, exView.id);
       exCzLoad();
     } else if (exView.page === 'maps') {
       root.innerHTML = exMpHtml();
@@ -20873,7 +20982,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     exMpDrop();
     const ov = document.createElement('div');
     ov.className = 'mp-view'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', 'Atlas des cosmologies');
-    ov.innerHTML = '<div class="mp-bar"><b class="mp-title"></b><button class="mp-b mp-x" data-mp-close aria-label="Fermer la carte">✕</button></div>' +
+    ov.innerHTML = '<div class="mp-bar"><b class="mp-title"></b><span class="mp-own" hidden title="Entités de cette carte dont vous possédez des séries"></span><button class="mp-b mp-x" data-mp-close aria-label="Fermer la carte">✕</button></div>' +
       '<div class="mp-body"><iframe class="mp-frame" title="Atlas des cosmologies, explorateur interactif" allow="fullscreen"></iframe><span class="mp-load" role="status">Chargement de la carte…</span></div>';
     const frame = ov.querySelector('.mp-frame'), title = ov.querySelector('.mp-title');
     title.textContent = meta.title;
@@ -20910,11 +21019,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         }, 0);
       });
     };
+    // D-109 : les entités dont vous possédez des séries s'allument sur la carte (rapprochement par le nom, calculé ici)
+    let ownIds = null, ownTick = 0;
+    const mark = d => {
+      const w = d.defaultView; if (typeof w.panelCartesMark !== 'function' || typeof w.panelCartesIndex !== 'function') return;
+      if (ownIds === null) { const ix = w.panelCartesIndex(), own = exOwnedList(); ownIds = [];
+        if (ix && own.length) for (const [k, r] of Object.entries(ix)) if (r && exOwnedSeriesFor([r.en, r.fr, r.t], own).length) ownIds.push(k); }
+      if (!ownIds.length) return;
+      const n = w.panelCartesMark(ownIds), chip = ov.querySelector('.mp-own');
+      if (chip) { chip.hidden = !n; chip.textContent = '★ ' + n + ' dans votre collection'; }
+    };
     let tries = 0;
     poll = setInterval(() => {
       if (!ov.isConnected) { clearInterval(poll); return; }
       const d = doc();
-      if (d && d.readyState !== 'loading') { hideLoad(); if (hooked !== d) { hooked = d; hook(d); } }
+      if (d && d.readyState !== 'loading') { hideLoad(); if (hooked !== d) { hooked = d; hook(d); ownTick = 0; } if (ownTick++ % 7 === 0) { try { mark(d); } catch (_) {} } }
       else if (++tries > 150) hideLoad();
     }, 150);
     frame.onload = hideLoad;
@@ -21002,13 +21121,169 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<header class="cz-e-head"><figure class="cz-e-port">' + (pic || '<span class="cz-card-ini">' + h(String(e.n || '?').slice(0, 1)) + '</span>') + '</figure><div>' +
         '<span class="cz-e-cat"><span>' + h(cat[0] || 'Atlas') + '</span> · <span data-no-i18n>' + (uni === 'dc' ? 'DC' : 'Marvel') + '</span></span><h2>' + h(e.n) + '</h2>' + (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') +
         (e.s || nd.k ? '<p class="cz-e-lead">' + h(e.s || nd.k) + '</p>' : '') +
-        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button></p></div></header>' +
+        '<p class="cz-e-act"><button class="btn rel-mini" data-ex-q="' + h(q) + '">Chercher ses comics</button><button class="btn secondary rel-mini" data-mp-debate>Lancer un débat</button></p></div></header>' +
       '<div class="cz-e-prose">' + (e.d ? '<p class="cz-e-big">' + h(e.d) + '</p>' : '<p class="ex-note">L\'atlas ne décrit pas encore cette entité.</p>') + (e.x ? '<p>' + h(e.x) + '</p>' : '') +
         (nd.tags.length ? '<div class="ex-chips">' + nd.tags.map(t => '<span class="ex-chip is-static">' + h(t) + '</span>').join('') + '</div>' : '') +
         (nd.map ? '<p class="ex-note"><span>Sur la carte :</span> <b>' + h(nd.map) + '</b>' + (nd.k && nd.k !== e.s && nd.k !== (e.s || nd.k) && catNorm(nd.k) !== catNorm(nd.map) ? ' · <span>' + h(nd.k) + '</span>' : '') + '</p>' : '') +
         (e.f ? '<h3>Première apparition</h3><p>' + (first ? '<button class="ex-link" data-ex-q="' + h(first) + '">' + h(e.f) + '</button>' : h(e.f)) + '</p>' : '') +
-        (rel.length ? '<h3>Sur la carte avec</h3><div class="ex-chips">' + rel.map(k => '<button class="ex-chip"' + go(k) + '>' + h(E[k].n) + '</button>').join('') + '</div>' : '') + '</div>' +
+        (rel.length ? '<h3>Sur la carte avec</h3><div class="ex-chips">' + rel.map(k => '<button class="ex-chip"' + go(k) + '>' + h(E[k].n) + '</button>').join('') + '</div>' : '') +
+        exMpMineHtml(e, first) + exMpFixHtml(ref) + '</div>' +
       '<p class="ex-credit">' + (uni === 'dc' ? 'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © DC.' : 'Fiche tirée des cartes de l\'atlas des cosmologies Marvel et DC, un atlas de fans non officiel. Personnages © Marvel.') + '</p></article>';
+  };
+  // D-109 : sur la fiche d'une entité des cartes — vos séries, par où commencer
+  const exMpMineHtml = (e, first) => {
+    const own = exOwnedSeriesFor([e.en, e.n]), n = own.reduce((a, s) => a + s.owned, 0), names = [e.n, e.en].filter(Boolean).map(catNorm);
+    const ch = exCharacters().find(c => names.includes(c.key)), guides = ch ? ch.guides.map(id => exEditorial.get(id)).filter(Boolean).slice(0, 2) : [];
+    return (own.length ? '<h3>Dans votre collection</h3><p>' + (n === 1 ? 'Vous avez 1 numéro de ses séries.' : 'Vous avez ' + n + ' numéros de ses séries.') + '</p><div class="ex-chips">' +
+        own.slice(0, 12).map(s => '<button class="ex-chip" data-ex-go="series" data-ex-id="' + h(s.key) + '">' + h(s.name) + ' <small>' + s.owned + '</small></button>').join('') + '</div>' : '') +
+      (guides.length || first ? '<h3>Par où commencer</h3>' + (first ? '<p><span>Sa première apparition :</span> <button class="ex-link" data-ex-q="' + h(first) + '">' + h(first) + '</button></p>' : '') +
+        (guides.length ? '<div class="mp-start">' + guides.map(g => exGuideCard(g)).join('') + '</div>' : '') : '');
+  };
+  // D-109 : proposer une correction ou une source ; gardée sur l'appareil « à vérifier », rien n'est publié sans relecture
+  const exMpFixHtml = ref => {
+    const mine = exFixList(ref);
+    return '<details class="ex-uadd mp-fix"><summary>Proposer une correction ou une source</summary><div class="ex-uadd-f">' +
+      '<label class="ex-uadd-l"><span>Ce qui est à corriger ou à ajouter</span><textarea class="field-input" data-fix-t rows="3" maxlength="600"></textarea></label>' +
+      '<label class="ex-uadd-l"><span>Source (lien https : numéro, éditeur, wiki)</span><input class="field-input" data-fix-s type="url" inputmode="url" maxlength="300" placeholder="https://"></label>' +
+      '<p class="ex-uadd-err" data-fix-err role="alert" hidden></p><p class="ex-note">Gardée sur cet appareil avec le statut « à vérifier » : rien n\'est publié ni modifié sur la fiche tant qu\'elle n\'a pas été relue.</p>' +
+      '<div><button class="btn rel-mini" data-fix-go>Garder ma proposition</button></div></div></details>' +
+      (mine.length ? '<h3>Vos propositions</h3><ul class="mp-fixes">' + mine.slice(-10).reverse().map(x => '<li><span class="mp-fix-st">' + (x.status === 'ok' ? 'Vérifié' : 'À vérifier') + '</span> ' + h(x.text) +
+        ' <a href="' + h(x.source) + '" target="_blank" rel="noopener noreferrer">source</a></li>').join('') + '</ul>' : '');
+  };
+  const exMpWireEntity = (root, ref) => {
+    const i = String(ref).indexOf(':'), uni = String(ref).slice(0, i), id = String(ref).slice(i + 1), E = exMpEnt[uni], e = E && E[id];
+    if (!e) return;
+    const deb = root.querySelector('[data-mp-debate]');
+    if (deb) deb.onclick = () => { const r = e.r.find(k => E[k] && k !== id); exMpDebate(e, r ? E[r].n : ''); };
+    const go = root.querySelector('[data-fix-go]');
+    if (go) go.onclick = () => {
+      const err = root.querySelector('[data-fix-err]'), msg = exFixSave(ref, root.querySelector('[data-fix-t]').value, root.querySelector('[data-fix-s]').value.trim());
+      if (msg) { err.textContent = msg; err.hidden = false; return; }
+      showToast('Proposition gardée, à vérifier.'); renderExplorer();
+    };
+  };
+  // ---------- D-109 : Découvrir vivant — personnage du jour, défis de lecture, club de lecture, cartes reliées à la collection
+  const exLsGet = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v && typeof v === 'object' ? v : d; } catch (_) { return d; } };
+  const exLsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { showToast('Enregistrement impossible sur cet appareil.'); return false; } };
+  // Séries possédées dont le titre commence par le nom de l'entité (« Thor », « Thor: God of Thunder ») : rapprochement par le nom seul, jamais deviné
+  const exOwnedList = () => { const f = exFacets(); return f ? exSeriesList(f).filter(s => s.owned > 0).map(s => Object.assign({ t: catNorm(s.name).replace(/^the /, '') }, s)) : []; };
+  const exOwnedSeriesFor = (names, list) => {
+    const own = list || exOwnedList(); if (!own.length) return [];
+    const keys = [...new Set((names || []).map(n => catNorm(n).replace(/^the /, '')).filter(n => n.length >= 3))];
+    if (!keys.length) return [];
+    return own.filter(s => keys.some(k => s.t === k || s.t.startsWith(k + ' ')));
+  };
+  // Personnage du jour : une entité illustrée de l'encyclopédie cosmique, la même pour tous ce jour-là (date locale)
+  const exDailyPick = () => {
+    if (!cz.data) return null;
+    const ids = Object.keys(cz.data.E).filter(k => { const e = cz.data.E[k]; return e && e.img && e.d && ['per', 'abs', 'cel', 'dark'].includes(e.k) && !/\(\d{4}\)/.test(e.n); }).sort();
+    if (!ids.length) return null;
+    const day = Math.floor(new Date(todayLocal() + 'T12:00:00Z').getTime() / 864e5);
+    return ids[day % ids.length];
+  };
+  const exDailyHtml = () => {
+    const id = exDailyPick(); if (!id) return '';
+    const e = cz.data.E[id], names = [e.en, e.n].filter(Boolean).map(catNorm);
+    const map = (exMpState.list || []).find(m => m.uni === 'marvel' && m.names.some(x => x.some(s => names.includes(catNorm(s)))));
+    const first = (e.src || [])[0] ? String(e.src[0]).replace(/\s*[—–(].*$/, '').replace(/[«»]/g, '').trim().slice(0, 80) : '';
+    return '<section class="ex-sec ex-daily" aria-labelledby="exDailyT"><div class="ex-daily-card" style="--cz:' + (CZ_CATS[e.k] || ['', '#FFD400'])[1] + '">' +
+      '<figure class="ex-daily-img">' + exCzImg(e) + '</figure><div class="ex-daily-b"><span class="ex-kicker">Personnage du jour</span><h3 id="exDailyT">' + h(e.n) + '</h3>' +
+      (e.en && e.en !== e.n ? '<p class="cz-e-en">' + h(e.en) + '</p>' : '') + '<p>' + h(e.d.length > 220 ? e.d.slice(0, 217).replace(/\s+\S*$/, '') + '…' : e.d) + '</p>' +
+      '<div class="ex-row"><button class="btn rel-mini" data-ex-go="cosmos-e" data-ex-id="' + h(id) + '">Lire sa fiche</button>' +
+      (map ? '<button class="btn secondary rel-mini" data-mp-open="' + h(map.key) + '">Voir sur la carte</button>' : '') +
+      (first ? '<button class="btn secondary rel-mini" data-ex-q="' + h(first) + '">Un comic pour commencer</button>' : '') + '</div></div></div></section>';
+  };
+  // Remplit l'encart du jour une fois l'encyclopédie et le catalogue des cartes chargés (sans redessiner l'accueil)
+  const exDailyMount = async root => {
+    const slot = root.querySelector('#exDaily'); if (!slot) return;
+    await exCzLoad(); if (exMpState.list === null) await exMpLoad();
+    if (!slot.isConnected) return;
+    slot.innerHTML = exDailyHtml();
+    slot.querySelectorAll('[data-mp-open]').forEach(b => { b.onclick = () => exMpOpen(b.dataset.mpOpen, b); });
+  };
+  // Défis de lecture : terminer un guide (tous ses numéros lus). Progression lue par S1 ; seuls les défis acceptés sont gardés sur l'appareil.
+  const EX_CH_KEY = 'panel_ex_challenges';
+  const exChLoad = () => { const v = exLsGet(EX_CH_KEY, {}); return { accepted: v.accepted && typeof v.accepted === 'object' ? v.accepted : {}, done: v.done && typeof v.done === 'object' ? v.done : {} }; };
+  const exChProgress = g => {
+    const entries = ((g.orders || [])[0] || { entries: [] }).entries.filter(e => e && e.id).slice(0, 400);
+    if (!entries.length) return null;
+    const gp = exLensCall('guideProgress', g.id, entries.map(e => e.id));
+    return gp ? { read: gp.items.filter(x => x && x.status === 'read').length, total: entries.length } : null;
+  };
+  const exChallengesHtml = () => {
+    const st = exChLoad(), guides = exGuides().filter(g => ((g.orders || [])[0] || { entries: [] }).entries.length >= 2);
+    if (!guides.length) return '';
+    let fresh = '';
+    const mine = Object.keys(st.accepted).map(id => exEditorial.get(id)).filter(Boolean).map(g => {
+      const p = exChProgress(g);
+      if (p && p.read >= p.total && !st.done[g.id]) { st.done[g.id] = { at: new Date().toISOString(), title: gdStr(g.title, 120) }; fresh = g.title; }
+      return { g, p };
+    });
+    if (fresh) { exLsSet(EX_CH_KEY, st); setTimeout(() => showToast('Défi relevé ! Le badge est sur votre profil.'), 300); }
+    const sugg = guides.filter(g => !st.accepted[g.id]).sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0)).slice(0, mine.length ? 2 : 3);
+    const bar = p => p ? '<span class="ex-ch-bar" role="progressbar" aria-valuemin="0" aria-valuemax="' + p.total + '" aria-valuenow="' + p.read + '"><i style="width:' + Math.round(100 * p.read / p.total) + '%"></i></span><small>' + p.read + ' / ' + p.total + ' lus</small>'
+      : '<small>Activez la personnalisation pour suivre votre progression.</small>';
+    return '<section class="ex-sec ex-ch"><div class="ex-sec-head"><h3>Défis de lecture</h3><p>Terminez un guide pour gagner son badge, visible sur votre profil.</p></div><div class="ex-ch-list">' +
+      mine.map(({ g, p }) => '<div class="ex-ch-card' + (st.done[g.id] ? ' is-done' : '') + '">' + exMediaImg('guide', g, 'ex-ch-img') + '<div><b>' + h(g.title) + '</b>' + (st.done[g.id] ? '<span class="ex-ch-medal">Défi relevé</span>' : bar(p)) +
+        '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-guide="' + h(g.id) + '">Ouvrir le guide</button>' + (st.done[g.id] ? '' : '<button class="btn-link" data-ex-chdrop="' + h(g.id) + '">Abandonner</button>') + '</div></div></div>').join('') +
+      sugg.map(g => '<div class="ex-ch-card is-sugg">' + exMediaImg('guide', g, 'ex-ch-img') + '<div><b>' + h(g.title) + '</b><small>' + ((g.orders || [])[0] || { entries: [] }).entries.length + ' numéros à lire</small>' +
+        '<div class="ex-row"><button class="btn rel-mini" data-ex-chtake="' + h(g.id) + '">Relever le défi</button></div></div></div>').join('') + '</div></section>';
+  };
+  // Club de lecture : un arc par mois, une discussion par numéro (#ClubArc, voile anti-spoiler), partagée par celles et ceux qui publient avec ce mot-dièse
+  const EX_CLUB_KEY = 'panel_ex_club';
+  const exClubTag = g => 'Club' + String(g.title || '').normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+(.)?/g, (m, c) => c ? c.toUpperCase() : '').replace(/^./, c => c.toUpperCase()).slice(0, 30);
+  const exClubHtml = () => {
+    const club = exLsGet(EX_CLUB_KEY, {}), g = club.guideId ? exEditorial.get(club.guideId) : null;
+    const guides = exGuides().filter(x => ((x.orders || [])[0] || { entries: [] }).entries.length >= 2);
+    if (!guides.length) return '';
+    const head = '<div class="ex-sec-head"><h3>Club de lecture</h3><p>Un arc par mois, un numéro à la fois. Chaque discussion porte le mot-dièse du club et un voile anti-spoiler.</p></div>';
+    if (!g) return '<section class="ex-sec ex-club">' + head + '<div class="ex-club-pick"><select class="field-input" data-ex-clubsel aria-label="Arc du club">' +
+      guides.slice(0, 80).map(x => '<option value="' + h(x.id) + '">' + h(x.title) + '</option>').join('') + '</select><button class="btn rel-mini" data-ex-clubgo>Lancer le club</button></div></section>';
+    const entries = ((g.orders || [])[0] || { entries: [] }).entries.slice(0, 24), tag = exClubTag(g);
+    const gp = exLensCall('guideProgress', g.id, entries.filter(e => e && e.id).map(e => e.id));
+    return '<section class="ex-sec ex-club">' + head + '<div class="ex-club-card">' + exMediaImg('guide', g, 'ex-ch-img') + '<div><span class="ex-kicker"><span>Arc du club</span> · <span data-no-i18n>#' + h(tag) + '</span></span><b>' + h(g.title) + '</b>' +
+      '<ol class="ex-club-list">' + entries.map((e, i) => { const r = gp && gp.items[i] && gp.items[i].status === 'read';
+        return '<li' + (r ? ' class="is-read"' : '') + '><span>' + h([e.series, e.issue ? '#' + String(e.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ')) + '</span><button class="btn-link" data-ex-clubtalk="' + (i + 1) + '">Discuter</button></li>'; }).join('') + '</ol>' +
+      '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-tag="' + h(tag) + '">Voir les discussions</button><button class="btn-link" data-ex-clubend>Changer d\'arc</button></div></div></div></section>';
+  };
+  const exWireLive = root => {
+    root.querySelectorAll('[data-ex-chtake]').forEach(b => { b.onclick = () => { const st = exChLoad(); st.accepted[b.dataset.exChtake] = new Date().toISOString(); if (exLsSet(EX_CH_KEY, st)) { showToast('Défi accepté : bonne lecture !'); renderExplorer(); } }; });
+    root.querySelectorAll('[data-ex-chdrop]').forEach(b => { b.onclick = () => { const st = exChLoad(); delete st.accepted[b.dataset.exChdrop]; if (exLsSet(EX_CH_KEY, st)) renderExplorer(); }; });
+    const sel = root.querySelector('[data-ex-clubsel]'), go = root.querySelector('[data-ex-clubgo]');
+    if (sel && go) go.onclick = () => { if (exLsSet(EX_CLUB_KEY, { guideId: sel.value, since: todayLocal() })) renderExplorer(); };
+    const end = root.querySelector('[data-ex-clubend]'); if (end) end.onclick = () => { if (exLsSet(EX_CLUB_KEY, {})) renderExplorer(); };
+    root.querySelectorAll('[data-ex-clubtalk]').forEach(b => { b.onclick = () => {
+      const g = exEditorial.get(exLsGet(EX_CLUB_KEY, {}).guideId || ''); if (!g) return;
+      const e = ((g.orders || [])[0] || { entries: [] }).entries[Number(b.dataset.exClubtalk) - 1] || {};
+      ntDraft = Object.assign(ntFresh(), { text: '#' + exClubTag(g) + ' ' + [e.series, e.issue ? '#' + String(e.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ') + ' : ', spoiler: true });
+      ntFocus();
+    }; });
+    exDailyMount(root);
+  };
+  // Débat en direct autour d'une entité des cartes : un direct préparé dans Directs (sujet et ordre du jour), à lancer quand vous voulez
+  const exMpDebate = (e, rel) => {
+    const title = 'Débat : ' + e.n;
+    if (!lvLoad().rooms.some(r => r.title === title)) {
+      const topics = [rel ? 'Qui est le plus puissant : ' + e.n + ' ou ' + rel + ' ?' : 'Quelle est la vraie puissance de ' + e.n + ' ?', 'Son meilleur arc', 'Par quel comic commencer ?'];
+      const r = LV().saveRoom(lvLoad(), { title, topics: topics.join('\n'), images: [] }, lvNow(), lvId('lv'));
+      if (r.errors.length) { showToast(r.errors[0]); return; }
+      if (!lvStore(r.state)) return;
+    }
+    const back = document.querySelector('.mp-return'); if (back) back.remove();
+    if (exMpLive) exMpLive.close();
+    if ($('navLive')) $('navLive').click();
+    showToast('Débat préparé dans Directs : invitez, votez, lancez-le quand vous voulez.');
+  };
+  // Fiches enrichies : propositions de correction ou de source, gardées « à vérifier » jusqu'à relecture
+  const EX_FIX_KEY = 'panel_ex_fixes';
+  const exFixList = ref => (exLsGet(EX_FIX_KEY, { list: [] }).list || []).filter(x => x && x.ref === ref);
+  const exFixSave = (ref, text, source) => {
+    const t = gdStr(text, 600), s = gdStr(source, 300);
+    if (t.length < 10) return 'Décrivez la correction en quelques mots (10 caractères au moins).';
+    if (!/^https:\/\/[^\s]+\.[^\s]+/.test(s)) return 'Indiquez la source : un lien https complet (wiki, éditeur, numéro).';
+    const v = exLsGet(EX_FIX_KEY, { list: [] }), list = Array.isArray(v.list) ? v.list : [];
+    list.push({ ref, text: t, source: s, at: new Date().toISOString(), status: 'pending' });
+    return exLsSet(EX_FIX_KEY, { list: list.slice(-300) }) ? '' : 'Enregistrement impossible.';
   };
   // D-78 : sommaire de l'accueil et listes longues repliées (personnages, créateurs, séries)
   const EX_UADD_ERR = { name: 'Le nom : 2 caractères au moins.', from: 'La première année : entre 1890 et cette année.', to: 'La dernière année : après la première, ou vide si l\'univers continue.', source: 'La source : un lien https complet.' };
@@ -21029,7 +21304,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     });
   };
   const exWireHome = root => {
-    exWireUniAdd(root);
+    exWireUniAdd(root); exWireLive(root);
     const tabs = [...root.querySelectorAll('[data-ex-topic]')];
     const show = (k, focus) => {
       exView.topic = k;
@@ -21841,7 +22116,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p></details>' +
-      pfPublicHtml() + pfLikeHtml();
+      pfChallengesHtml() + pfPublicHtml() + pfLikeHtml();
     const f = host.querySelector('#profileForm');
     if (f) f.onsubmit = ev => {
       ev.preventDefault();
@@ -22696,6 +22971,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="pfp-list">' + PP.FIELDS.map(f => '<label class="pfp-row"><span>' + escapeHtml(f.label) + '</span><input type="checkbox" role="switch" class="pfp-switch" data-pfp="' + f.key + '"' + (pr[f.key] ? ' checked' : '') + '></label>').join('') + '</div>' +
       '<p class="pfp-never">' + igIcon('ic-shield') + ' <span><b>Jamais publié :</b> ' + PP.NEVER.map(escapeHtml).join(', ').toLowerCase().replace(/^./, c => c.toUpperCase()) + '. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n\'est en ligne avant l\'arrivée des comptes.</span></p></section>';
   };
+  // D-109 : badges des défis de lecture relevés dans Découvrir (gardés sur l'appareil)
+  const pfChallengesHtml = () => {
+    let done = {}; try { const v = JSON.parse(localStorage.getItem('panel_ex_challenges') || 'null'); done = v && v.done && typeof v.done === 'object' ? v.done : {}; } catch (_) {}
+    const l = Object.values(done).filter(x => x && x.title).slice(0, 24);
+    return l.length ? '<h3 class="pf-section">Défis de lecture relevés</h3><div class="pf-chb-list">' + l.map(x => '<span class="pf-chb"><span aria-hidden="true">★</span> ' + escapeHtml(String(x.title).slice(0, 120)) + '</span>').join('') + '</div>' : '';
+  };
   const pfPublicView = () => {
     const TC = window.PanelDomains.trophiesCore, owned = physicalSingles.filter(isOwned);
     let rank = null, unlocked = 0;
@@ -22785,6 +23066,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     cv.setAttribute('aria-label', 'Carte de collectionneur : ' + m.name + (m.rank ? ', rang ' + m.rank.rank + ' ' + m.rank.name : '') + (m.facts.length ? ', ' + m.facts.map(f => f.n + ' ' + f.label).join(', ') : '') + (fav ? ', numéro préféré ' + [fav.series, fav.issue].filter(Boolean).join(' ') : '') + '.');
     return !!img;
   };
+  // D-109 : format story 9:16 (1080 × 1920) : la carte au centre, le pseudo dessous, prête pour les stories
+  let ccFmt = 'card';
+  const ccStory = async (cv, m) => {
+    const off = document.createElement('canvas'), ok = await ccDraw(off, m);
+    const W = 1080, H = 1920, g = cv.getContext('2d'), F = 'system-ui, "Segoe UI", Roboto, sans-serif';
+    cv.width = W; cv.height = H;
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, m.color); bg.addColorStop(.5, '#121218'); bg.addColorStop(1, '#050507');
+    g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = 'rgba(255,255,255,.07)'; for (let y = 0; y < H; y += 24) for (let x = (y / 24) % 2 ? 12 : 0; x < W; x += 24) { g.beginPath(); g.arc(x, y, 2.2, 0, 7); g.fill(); }
+    g.textAlign = 'center'; g.fillStyle = '#FFD400'; g.font = '900 72px ' + F; g.fillText('PANEL', W / 2, 170);
+    const cw = 920, ch = 1150, x0 = (W - cw) / 2, y0 = 250;
+    g.save(); g.shadowColor = 'rgba(0,0,0,.55)'; g.shadowBlur = 60; g.shadowOffsetY = 24; g.fillStyle = '#000'; g.fillRect(x0, y0, cw, ch); g.restore();
+    g.save(); g.beginPath(); if (g.roundRect) g.roundRect(x0, y0, cw, ch, 36); else g.rect(x0, y0, cw, ch); g.clip(); g.drawImage(off, x0, y0, cw, ch); g.restore();
+    g.fillStyle = '#fff'; g.font = '800 64px ' + F; g.fillText(ccFit(g, m.handle ? '@' + m.handle : m.name, W - 160), W / 2, 1560);
+    g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '600 34px ' + F; g.fillText('Collect. Discover. Connect.', W / 2, 1630);
+    g.textAlign = 'start';
+    cv.dataset.drawn = String(Date.now()); cv.setAttribute('aria-label', (off.getAttribute('aria-label') || 'Carte de collectionneur') + ' Format story.');
+    return ok;
+  };
   const ccBlob = cv => new Promise(res => { try { cv.toBlob(b => res(b), 'image/png'); } catch (_) { res(null); } });
   const openCollectorCard = () => {
     const box = bunModal('collectorCard');
@@ -22793,24 +23093,27 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try { canFiles = !!(navigator.canShare && navigator.canShare({ files: [new File([''], 'carte.png', { type: 'image/png' })] })); } catch (_) {}
     box.innerHTML = '<div class="modal-box cc" role="dialog" aria-modal="true" aria-labelledby="ccTitle">' +
       '<div class="pub-head"><h3 id="ccTitle">Carte de collectionneur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
-      '<canvas class="cc-canvas" width="1080" height="1350" role="img" aria-label="Carte de collectionneur"></canvas>' +
+      '<div class="cc-fmt" role="group" aria-label="Format de l\'image"><button type="button" data-cc-fmt="card" aria-pressed="' + (ccFmt === 'card') + '">Carte 4:5</button><button type="button" data-cc-fmt="story" aria-pressed="' + (ccFmt === 'story') + '">Story 9:16</button></div>' +
+      '<canvas class="cc-canvas' + (ccFmt === 'story' ? ' is-story' : '') + '" width="1080" height="1350" role="img" aria-label="Carte de collectionneur"></canvas>' +
       (st.shelf.length ? '<label class="cc-fav">Numéro préféré<select class="field-input" data-cc-fav>' + st.shelf.map((x, i) => '<option value="' + i + '"' + (i === ccFav ? ' selected' : '') + '>' + escapeHtml(plTitle(x) + (x.variant && !/^cover a$/i.test(x.variant) ? ' · ' + x.variant : '')) + '</option>').join('') + '</select></label>'
         : '<p class="stat-sub">Étagère masquée ou vide : la carte s\'affiche sans numéro préféré (réglage dans « Ce que les autres verront »).</p>') +
       '<p class="pfp-never">' + igIcon('ic-shield') + ' <span>La carte ne reprend que ce que vos réglages rendent public. Jamais de prix, de valeur ni d\'emplacement.</span></p>' +
       '<div class="cc-actions"><button type="button" class="btn" data-cc-save>' + igIcon('ic-download') + ' Enregistrer l\'image</button>' + (canFiles ? '<button type="button" class="btn secondary" data-cc-share>' + igIcon('ic-external') + ' Partager</button>' : '') + '</div></div>';
     const cv = box.querySelector('canvas');
-    const draw = () => ccDraw(cv, ccState().model).catch(() => false);
+    const draw = () => (ccFmt === 'story' ? ccStory : ccDraw)(cv, ccState().model).catch(() => false);
+    const fname = () => 'panel-carte-collectionneur' + (ccFmt === 'story' ? '-story' : '') + '.png';
+    box.querySelectorAll('[data-cc-fmt]').forEach(b => { b.onclick = () => { ccFmt = b.dataset.ccFmt; box.querySelectorAll('[data-cc-fmt]').forEach(x => x.setAttribute('aria-pressed', String(x === b))); cv.classList.toggle('is-story', ccFmt === 'story'); draw(); }; });
     const close = () => box.classList.remove('open');
     box.onclick = e => { if (e.target === box) close(); };
     box.querySelectorAll('[data-close]').forEach(b => { b.onclick = close; });
     const sel = box.querySelector('[data-cc-fav]'); if (sel) sel.onchange = () => { ccFav = Number(sel.value) || 0; draw(); };
     box.querySelector('[data-cc-save]').onclick = async () => {
       const b = await ccBlob(cv); if (!b) { showToast('Image impossible à créer sur cet appareil.'); return; }
-      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'panel-carte-collectionneur.png'; document.body.appendChild(a); a.click(); a.remove();
+      const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = fname(); document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 5000);
     };
     const sh = box.querySelector('[data-cc-share]');
-    if (sh) sh.onclick = async () => { const b = await ccBlob(cv); if (!b) return; try { await navigator.share({ files: [new File([b], 'panel-carte-collectionneur.png', { type: 'image/png' })], text: 'Ma collection sur Panel' }); } catch (_) {} };
+    if (sh) sh.onclick = async () => { const b = await ccBlob(cv); if (!b) return; try { await navigator.share({ files: [new File([b], fname(), { type: 'image/png' })], text: 'Ma collection sur Panel' }); } catch (_) {} };
     box.classList.add('open');
     draw();
     return box;

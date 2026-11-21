@@ -76,6 +76,8 @@ const PANEL_CSS = `/* Panel (D-108) : seules les cartes de l'atlas sont affiché
 /* Une carte, seule : ni barre du haut (onglets des autres cartes), ni barre du bas (tour, versions, formats, vidéo, téléchargements) */
 header, footer, #card, #cap, #bars, #wm, #vbadge, #offplate, #toast, #codex, #quiz, #dl, #panel, #safe { display: none !important; }
 #app { grid-template-rows: minmax(0, 1fr) !important; }
+/* D-109 : entités dont l'utilisateur possède des séries, allumées par Panel */
+.n.panel-own { filter: drop-shadow(0 0 5px #FFD400) drop-shadow(0 0 14px rgba(255, 212, 0, .65)); }
 `;
 // Raccourcis de l'explorateur coupés (changer de carte, tour, formats, film, Codex, recherche) ; Échap reste pour désélectionner
 // Index des entités de toutes les cartes de l'univers ouvert, lu par Panel pour écrire la fiche d'une entité touchée
@@ -89,10 +91,19 @@ window.panelCartesNode = function (id) {
   for (var i = 0; i < l.length; i++) if (l[i] && l[i].id === id) { n = l[i]; break; }
   return n ? { k: String(n.k || ''), tags: Array.isArray(n.tags) ? n.tags.map(String) : [] } : null;
 };
+/* D-109 : Panel allume les entités de la carte liées à la collection (calcul fait par Panel, rien n'est envoyé) ; renvoie le nombre allumé */
+window.panelCartesMark = function (ids) {
+  var set = {}, l = typeof C !== 'undefined' && C && C.nodes || [], els = document.querySelectorAll('.n[data-i]'), on = 0;
+  (ids || []).forEach(function (k) { set[String(k)] = 1; });
+  for (var i = 0; i < els.length; i++) { var n = l[Number(els[i].getAttribute('data-i'))], hit = !!(n && set[n.id]); els[i].classList.toggle('panel-own', hit); if (hit) on++; }
+  return on;
+};
 `;
 const withPanelCss = html => {
   if (!/<\/head>/i.test(html)) throw new Error('explorer.html : balise </head> introuvable');
-  return html.replace(/<\/head>/i, '<link rel="stylesheet" href="panel-cartes.css">\n<script src="panel-cartes.js"></script>\n</head>');
+  // D-109 : adresse versionnée par le contenu, pour qu'une carte déjà ouverte reprenne tout de suite les retouches de Panel
+  const v = require('crypto').createHash('sha256').update(PANEL_CSS + PANEL_JS).digest('hex').slice(0, 10);
+  return html.replace(/<\/head>/i, '<link rel="stylesheet" href="panel-cartes.css?v=' + v + '">\n<script src="panel-cartes.js?v=' + v + '"></script>\n</head>');
 };
 
 if (require.main === module) {

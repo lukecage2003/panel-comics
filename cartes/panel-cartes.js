@@ -8,3 +8,10 @@ window.panelCartesNode = function (id) {
   for (var i = 0; i < l.length; i++) if (l[i] && l[i].id === id) { n = l[i]; break; }
   return n ? { k: String(n.k || ''), tags: Array.isArray(n.tags) ? n.tags.map(String) : [] } : null;
 };
+/* D-109 : Panel allume les entités de la carte liées à la collection (calcul fait par Panel, rien n'est envoyé) ; renvoie le nombre allumé */
+window.panelCartesMark = function (ids) {
+  var set = {}, l = typeof C !== 'undefined' && C && C.nodes || [], els = document.querySelectorAll('.n[data-i]'), on = 0;
+  (ids || []).forEach(function (k) { set[String(k)] = 1; });
+  for (var i = 0; i < els.length; i++) { var n = l[Number(els[i].getAttribute('data-i'))], hit = !!(n && set[n.id]); els[i].classList.toggle('panel-own', hit); if (hit) on++; }
+  return on;
+};

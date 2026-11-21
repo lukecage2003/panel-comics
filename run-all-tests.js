@@ -6336,6 +6336,11 @@ const waitForCdp = async () => {
           r.info = !!d && d.location.hash === '#dc_dream' && ov.hidden && !!document.querySelector('.mp-return') && !$('exSearch') &&
             (!!art ? art.querySelector('h2').textContent === 'Dream' && art.querySelector('.cz-e-big').textContent.includes('Morphée') && art.querySelectorAll('.ex-chip[data-ex-go]').length >= 3
               : !!$('explorerRoot').querySelector('.ex-cvd-block'));
+          // D-109 : fiche tirée de la carte — débat à lancer, correction gardée « à vérifier » (refusée sans source https), lueur des entités possédées
+          if (art) { const rt = $('explorerRoot'), ta = rt.querySelector('[data-fix-t]'), so = rt.querySelector('[data-fix-s]');
+            if (ta && so) { ta.value = 'Première apparition à préciser'; so.value = 'http://x'; rt.querySelector('[data-fix-go]').click(); } }
+          r.live = !art || (!!$('explorerRoot').querySelector('[data-mp-debate]') && /https/.test(($('explorerRoot').querySelector('[data-fix-err]') || {}).textContent || '') &&
+            localStorage.getItem('panel_ex_fixes') === null && typeof frame.contentWindow.panelCartesMark === 'function');
           // « ← Revenir à la carte » : la même carte, telle qu'on l'avait laissée
           document.querySelector('[data-mp-back]').click(); await wait(150);
           r.next = !ov.hidden && document.body.classList.contains('mp-open') && !document.querySelector('.mp-return') && fdoc() === d && d.location.hash === '#dc_dream';
@@ -6353,7 +6358,7 @@ const waitForCdp = async () => {
       })()`);
       console.log('Résultat Test 85:', JSON.stringify(t85));
       testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, atlas interactif (D-106, D-107, D-108)',
-        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'next', 'escape', 'dataUntouched'].every(k => t85[k] === true) });
+        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'live', 'next', 'escape', 'dataUntouched'].every(k => t85[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

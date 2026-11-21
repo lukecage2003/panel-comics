@@ -5,3 +5,5 @@
 /* Une carte, seule : ni barre du haut (onglets des autres cartes), ni barre du bas (tour, versions, formats, vidéo, téléchargements) */
 header, footer, #card, #cap, #bars, #wm, #vbadge, #offplate, #toast, #codex, #quiz, #dl, #panel, #safe { display: none !important; }
 #app { grid-template-rows: minmax(0, 1fr) !important; }
+/* D-109 : entités dont l'utilisateur possède des séries, allumées par Panel */
+.n.panel-own { filter: drop-shadow(0 0 5px #FFD400) drop-shadow(0 0 14px rgba(255, 212, 0, .65)); }
