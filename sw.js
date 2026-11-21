@@ -8,7 +8,7 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-21-cartes';
+const VERSION = 'panel-2026-11-21-atlas';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 const SHELL = [
@@ -24,7 +24,27 @@ const SHELL = [
   './fonts/barlow-condensed-700-latin.woff2',
   './fonts/barlow-condensed-800-latin.woff2',
   './vendor/jszip-3.10.1.min.js',
-  './data/cosmos-marvel.json'
+  './data/cosmos-marvel.json',
+  './data/atlas-maps.json',
+  // D-107 : vignettes des cartes (572 Ko) pour parcourir l'atlas hors ligne ; les cartes en haute définition restent chargées à la demande
+  './maps/marvel-01-thumb.webp',
+  './maps/marvel-02-thumb.webp',
+  './maps/marvel-03-thumb.webp',
+  './maps/marvel-04-thumb.webp',
+  './maps/marvel-05-thumb.webp',
+  './maps/marvel-06-thumb.webp',
+  './maps/marvel-07-thumb.webp',
+  './maps/marvel-08-thumb.webp',
+  './maps/marvel-09-thumb.webp',
+  './maps/dc-01-thumb.webp',
+  './maps/dc-02-thumb.webp',
+  './maps/dc-03-thumb.webp',
+  './maps/dc-04-thumb.webp',
+  './maps/dc-05-thumb.webp',
+  './maps/dc-06-thumb.webp',
+  './maps/dc-07-thumb.webp',
+  './maps/dc-08-thumb.webp',
+  './maps/dc-09-thumb.webp'
 ];
 const LIB_HOSTS = ['cdnjs.cloudflare.com', 'cdn.jsdelivr.net', 'fonts.googleapis.com', 'fonts.gstatic.com'];
 

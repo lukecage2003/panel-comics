@@ -31,6 +31,7 @@ const TYPES = {
   '.webmanifest': 'application/manifest+json; charset=utf-8',
   '.json': 'application/json; charset=utf-8',
   '.png': 'image/png',
+  '.webp': 'image/webp',
   '.wasm': 'application/wasm',
   '.svg': 'image/svg+xml',
   '.ico': 'image/x-icon',
@@ -38,7 +39,7 @@ const TYPES = {
   '.woff2': 'font/woff2'
 };
 // Seuls les fichiers de l'application sont servis (pas les sauvegardes, profils de test, etc.)
-const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
+const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|maps\/(?:marvel|dc)-\d{2}(?:-thumb)?\.webp|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
 
 // ---------- Relais GCD : quota, cache, aucune donnée personnelle transmise
 const GCD_HOURLY_MAX = 25;

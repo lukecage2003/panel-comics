@@ -55,6 +55,8 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   // Bibliothèque de connexion (D-84) : versionnée dans vendor/, chargée seulement si un projet en ligne est configuré
   fs.readdirSync(path.join(ROOT, 'vendor')).filter(f => /^supabase-js-[0-9.]+\.js$/.test(f)).forEach(f => fs.copyFileSync(path.join(ROOT, 'vendor', f), path.join(WWW, 'vendor', f)));
   fs.cpSync(path.join(ROOT, 'data'), path.join(WWW, 'data'), { recursive: true });
+  // Cartes des univers (D-107) : images de l'atlas Primestone, consultables hors ligne dans l'APK
+  fs.cpSync(path.join(ROOT, 'maps'), path.join(WWW, 'maps'), { recursive: true });
   const size = fs.readdirSync(WWW, { recursive: true }).length;
   console.log(`www/ prêt : ${size} fichiers, bibliothèques locales vérifiées (${VENDOR.length}).`);
 })().catch(e => { console.error('✗ ' + e.message); process.exit(1); });

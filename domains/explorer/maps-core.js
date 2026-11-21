@@ -1,47 +1,52 @@
 'use strict';
-// Mes cartes (D-106) : cartes d'univers importées par l'utilisateur (cosmos, multivers, planètes, villes, chronologies…).
-// Module pur : métadonnées, filtres et calcul du zoom de la visionneuse. Les images restent sur l'appareil (IndexedDB côté
-// interface) ; rien n'est envoyé ni partagé. Aucun format exécutable (SVG refusé).
+// Cartes des univers (D-107) : catalogue des cartes de l'atlas Primestone « Cosmologies Marvel & DC », fournies par Panel
+// (data/atlas-maps.json et images dans maps/). Personne n'ajoute de carte personnelle.
+// Module pur : validation du catalogue, classement, recherche (titres et entités) et calcul du zoom de la visionneuse.
 
-const KINDS = Object.freeze({ cosmic: 'Cosmique', multiverse: 'Multivers', world: 'Planètes et géographie', city: 'Villes et lieux', timeline: 'Chronologie', other: 'Autre' });
-const TYPES = Object.freeze(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif']);
-const MAX_BYTES = 60 * 1024 * 1024;
-const MAX_MAPS = 500;
+const UNIS = Object.freeze({ marvel: 'Marvel', dc: 'DC' });
+const THEMES = Object.freeze({ cosmology: 'Structure du cosmos', beings: 'Entités et familles', realms: 'Lieux et royaumes', powers: 'Magie et forces', timeline: 'Chronologies' });
+// Niveaux de fiabilité de l'atlas (repris tels quels)
+const REL = Object.freeze({ c: 'Canon', o: 'Source officielle', d: 'Interprétation', t: 'Théorie', x: 'Contesté', u: 'À vérifier' });
+const BASIS = Object.freeze({ publications: 'D\'après', data: 'Construite à partir des fiches de l\'atlas.', plan: 'Plan Primestone, sans schéma officiel.' });
 
 const clean = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
-const cleanText = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u0009\u000b-\u001f]/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, n);
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`]/g, ' ').replace(/\s+/g, ' ').trim();
 
-// Fichier accepté : type d'image courant, taille bornée
-const acceptFile = f => {
-  if (!f) return { ok: false, error: 'missing' };
-  if (!TYPES.includes(String(f.type || '').toLowerCase())) return { ok: false, error: 'type' };
-  if (!(f.size > 0) || f.size > MAX_BYTES) return { ok: false, error: 'size' };
-  return { ok: true };
+// Catalogue validé : clé « marvel-01 » ou « dc-01 », chemins d'images déduits de la clé (jamais lus dans les données)
+const validate = raw => {
+  const list = raw && Array.isArray(raw.maps) ? raw.maps : [];
+  const seen = new Set(), out = [];
+  for (const m of list) {
+    const key = String(m && m.key || '');
+    const k = key.match(/^(marvel|dc)-(\d{2})$/);
+    if (!k || seen.has(key) || m.uni !== k[1] || !THEMES[m.theme]) continue;
+    const title = clean(m.title, 80); if (!title) continue;
+    const w = Number(m.w), h = Number(m.h); if (!(w > 0 && h > 0)) continue;
+    const basis = m.basis && BASIS[m.basis.type] ? { type: m.basis.type, text: m.basis.type === 'publications' ? clean(m.basis.text, 200) : '' } : { type: 'plan', text: '' };
+    const rel = {}; Object.keys(REL).forEach(c => { const n = Number(m.rel && m.rel[c]); if (n > 0) rel[c] = Math.floor(n); });
+    const names = (Array.isArray(m.names) ? m.names : []).map(x => (Array.isArray(x) ? x : [x]).map(s => clean(s, 80)).filter(Boolean).slice(0, 2)).filter(x => x.length).slice(0, 400);
+    seen.add(key);
+    out.push({ key, uni: k[1], n: Number(k[2]), theme: m.theme, title, sub: clean(m.sub, 140), about: clean(m.about, 400), basis, w, h, rel, names,
+      img: 'maps/' + key + '.webp', thumb: 'maps/' + key + '-thumb.webp' });
+  }
+  return out.sort((a, b) => (a.uni === b.uni ? a.n - b.n : a.uni === 'marvel' ? -1 : 1));
 };
-// Titre lisible tiré du nom de fichier : « carte_cosmos-marvel_v2.jpg » -> « Carte cosmos marvel v2 »
-const titleFromFile = name => { const t = clean(String(name || '').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_\-.]+/g, ' '), 120); return t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Carte sans titre'; };
-// Métadonnées nettoyées ; source facultative mais en https si renseignée
-const sanitizeMeta = raw => {
-  const r = raw || {};
-  const source = clean(r.source, 400);
-  return {
-    title: clean(r.title, 120) || 'Carte sans titre',
-    universe: clean(r.universe, 60),
-    kind: KINDS[r.kind] ? r.kind : 'other',
-    note: cleanText(r.note, 2000),
-    source: /^https:\/\/\S+$/.test(source) ? source : ''
-  };
-};
-const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-// Filtre (type, univers, texte) puis tri : les plus récentes d'abord
-const filter = (list, opts = {}) => (list || []).filter(m => (!opts.kind || opts.kind === 'all' || m.kind === opts.kind) &&
-  (!opts.universe || norm(m.universe) === norm(opts.universe)) &&
-  (!opts.q || norm([m.title, m.universe, m.note].join(' ')).includes(norm(opts.q).trim())))
-  .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-// Univers présents, pour les filtres (ordre alphabétique, sans doublon)
-const universes = list => [...new Set((list || []).map(m => clean(m.universe, 60)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
-// Comptes par type
-const counts = list => (list || []).reduce((o, m) => { o[m.kind] = (o[m.kind] || 0) + 1; return o; }, {});
+
+// Entités de la carte qui correspondent à la recherche (nom anglais ou français)
+const hits = (m, q) => { const t = norm(q); if (t.length < 2) return []; return m.names.filter(x => x.some(s => norm(s).includes(t))).map(x => x[0]); };
+// Filtre par univers, thème et texte (titre, sous-titre, présentation, entités) ; l'ordre du catalogue est conservé
+const filter = (list, opts = {}) => (list || []).filter(m => (!opts.uni || opts.uni === 'all' || m.uni === opts.uni) &&
+  (!opts.theme || opts.theme === 'all' || m.theme === opts.theme) &&
+  (!opts.q || norm([m.title, m.sub, m.about].join(' ')).includes(norm(opts.q)) || hits(m, opts.q).length > 0));
+// Comptes par univers et par thème (pour les filtres)
+const counts = list => (list || []).reduce((o, m) => { o[m.uni] = (o[m.uni] || 0) + 1; o[m.theme] = (o[m.theme] || 0) + 1; return o; }, {});
+// Niveaux de fiabilité présents sur la carte, dans l'ordre de l'atlas : [['t', 13], ['u', 8]]
+const relSummary = m => Object.keys(REL).filter(c => m.rel[c]).map(c => [c, m.rel[c]]);
+// Libellé compté et accordé : « 13 théories », « 1 interprétation », « 8 à vérifier »
+const REL_COUNT = Object.freeze({ c: ['entrée canon', 'entrées canon'], o: ['source officielle', 'sources officielles'], d: ['interprétation', 'interprétations'], t: ['théorie', 'théories'], x: ['entrée contestée', 'entrées contestées'], u: ['à vérifier', 'à vérifier'] });
+const relLabel = (c, n) => REL_COUNT[c] ? n + ' ' + REL_COUNT[c][n > 1 ? 1 : 0] : '';
+// Cartes où figure une entité (nom exact, anglais ou français)
+const ofEntity = (list, name) => { const t = norm(name); if (t.length < 3) return []; return (list || []).filter(m => m.names.some(x => x.some(s => norm(s) === t))); };
 
 // ── Visionneuse : zoom autour d'un point, déplacement borné ─────────────────────
 const ZMIN = 1, ZMAX = 10;
@@ -62,4 +67,4 @@ const zoomAt = (st, factor, px, py, vw, vh, fw, fh) => {
 };
 const initial = (vw, vh, fw, fh) => clampPan({ z: 1, x: 0, y: 0 }, vw, vh, fw, fh);
 
-module.exports = { KINDS, TYPES, MAX_BYTES, MAX_MAPS, ZMIN, ZMAX, acceptFile, titleFromFile, sanitizeMeta, filter, universes, counts, clampZ, fit, clampPan, zoomAt, initial };
+module.exports = { UNIS, THEMES, REL, BASIS, validate, hits, filter, counts, relSummary, relLabel, ofEntity, ZMIN, ZMAX, clampZ, fit, clampPan, zoomAt, initial };

@@ -164,6 +164,8 @@ const phrases = {
   "Terminé": "Terminado",
   "+ Ajouter un univers": "+ Añadir un universo",
   "+ Importer des cartes": "+ Importar mapas",
+  "Cartes des univers": "Mapas de los universos",
+  "Marvel et DC en grand": "Marvel y DC en grande",
 };
 
 module.exports = { locale: 'es', phrases, same: [] };

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-DiwQKOFob8wFNCMv3MbuFl3rClcztw4NoMfUejwzf6Y=' 'sha256-WRToCwexR2P3IsXQqbvCfDZRBqREamHhdSNqsmoIAb4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-SGBzBye70cqxzpMVNFc+DfBfWTMrHjuhqvzWhOmL6tQ=' 'sha256-h+pw0m30Lk1zmhXxaYbLgaLkaQnPZJqxn0xV9V2eclI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3149,20 +3149,30 @@
     @media (min-width: 900px) { .ex-tiles { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     .mp-promo-art { background: radial-gradient(circle at 30% 30%, #67E8F9, #0E7490 55%, #082F49) !important; }
     .mp-hero { background: radial-gradient(80% 120% at 90% 0%, rgba(103,232,249,.28), transparent 60%), linear-gradient(135deg, #0B3B4F, #08131F) !important; }
-    .mp-actions { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
-    .mp-import { cursor: pointer; }
-    .mp-busy { font-size: 13px; opacity: .85; }
     .mp-tools { display: grid; gap: 10px; margin: 14px 0; border-radius: 14px; }
-    .mp-tools.is-over, .mp-drop.is-over { outline: 2px dashed var(--accent, #FFD400); outline-offset: 4px; }
-    .mp-row { display: flex; gap: 10px; flex-wrap: wrap; }
-    .mp-row .field-input { flex: 1 1 200px; max-width: 360px; }
-    .mp-drop { display: grid; gap: 6px; place-items: center; text-align: center; padding: 48px 20px; margin: 16px 0; border: 2px dashed var(--line); border-radius: 18px; color: var(--muted); }
-    .mp-drop b { color: var(--ink, var(--text)); font-size: 17px; }
     .mp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; }
     .mp-card { display: flex; flex-direction: column; gap: 4px; text-align: left; border: 0; background: none; color: inherit; font: inherit; padding: 0; cursor: pointer; }
     .mp-thumb { display: block; aspect-ratio: 4 / 3; border-radius: 12px; overflow: hidden; background: var(--bg-soft, #222); box-shadow: 0 8px 20px -14px rgba(0,0,0,.6); }
-    .mp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .mp-card b { font-size: 14px; } .mp-card small { color: var(--muted); font-size: 12px; }
+    .mp-thumb img { width: 100%; height: 100%; object-fit: contain; display: block; background: #07080A; }
+    .mp-card b { font-size: 15px; line-height: 1.25; } .mp-card small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .mp-kick { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
+    .mp-card.is-marvel .mp-kick > span:first-child { color: #F87171; } .mp-card.is-dc .mp-kick > span:first-child { color: #60A5FA; }
+    .mp-n, .mp-hit { font-size: 12px; color: var(--muted); } .mp-hit em { font-style: normal; color: var(--ink, var(--text)); font-weight: 600; }
+    .mp-group { margin: 18px 0 10px; font-size: 18px; } .mp-group small { color: var(--muted); font-weight: 500; font-size: 13px; }
+    .mp-tools > .field-input { max-width: 460px; }
+    .mp-credit { margin-top: 22px; }
+    .mp-load { position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%); background: rgba(0,0,0,.65); color: #fff; font-size: 12px; padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+    .mp-info h3 { margin: 0; font-size: 20px; } .mp-info h4 { margin: 6px 0 0; font-size: 14px; } .mp-info h4 small { opacity: .6; font-weight: 500; }
+    .mp-info p { margin: 0; font-size: 14px; line-height: 1.5; } .mp-info .mp-sub { opacity: .75; } .mp-info .mp-kick { margin: 0; color: rgba(255,255,255,.6); }
+    .mp-info a { color: #FDE68A; }
+    .mp-basis { font-style: italic; opacity: .85; }
+    .mp-rels { display: flex; flex-wrap: wrap; gap: 6px; }
+    .mp-rel { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 999px; background: rgba(255,255,255,.1); }
+    .mp-rel.is-t { background: rgba(167,139,250,.22); color: #DDD6FE; } .mp-rel.is-d { background: rgba(96,165,250,.2); color: #BFDBFE; } .mp-rel.is-u { background: rgba(250,204,21,.16); color: #FEF08A; } .mp-rel.is-c { background: rgba(74,222,128,.2); color: #BBF7D0; }
+    .mp-names { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; max-height: 40vh; min-height: 120px; overflow: auto; font-size: 13px; }
+    @media (max-width: 720px) { .mp-names { max-height: none; min-height: 0; overflow: visible; } }
+    .mp-names li { display: flex; flex-wrap: wrap; gap: 2px 8px; align-items: baseline; padding: 3px 0; border-bottom: 1px solid rgba(255,255,255,.06); } .mp-names small { opacity: .55; }
+    .mp-nav { justify-content: space-between; }
     .mp-card:focus-visible .mp-thumb { outline: 2px solid var(--accent, #FFD400); outline-offset: 3px; }
     body.mp-open { overflow: hidden; }
     .mp-view { position: fixed; inset: 0; z-index: 9000; display: grid; grid-template-rows: auto 1fr; grid-template-columns: 1fr; background: #07080A; color: #fff; }
@@ -3175,7 +3185,8 @@
     .mp-stage { position: relative; overflow: hidden; touch-action: none; cursor: grab; outline: none; }
     .mp-stage.is-drag { cursor: grabbing; }
     .mp-img { position: absolute; left: 0; top: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; max-width: none; }
-    .mp-info { overflow: auto; padding: 14px; display: grid; gap: 10px; align-content: start; background: #111317; color: #fff; }
+    .mp-info { overflow: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; background: #111317; color: #fff; }
+    .mp-info > * { flex-shrink: 0; }
     .mp-info label { display: grid; gap: 4px; font-size: 13px; } .mp-info label > span { opacity: .7; font-weight: 600; }
     .mp-meta { font-size: 12px; opacity: .65; margin: 0; }
     @media (max-width: 720px) { .mp-view.has-info { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; } .mp-info { max-height: 46vh; } .mp-zoom { display: none; } .mp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
@@ -10412,49 +10423,54 @@ module.exports = { FAMILIES, UNIVERSES, CUSTOM_MAX, periodLabel, isActive, valid
   /* domains/explorer/maps-core.js */
   out.mapsCore = (() => { const module = { exports: {} };
 'use strict';
-// Mes cartes (D-106) : cartes d'univers importées par l'utilisateur (cosmos, multivers, planètes, villes, chronologies…).
-// Module pur : métadonnées, filtres et calcul du zoom de la visionneuse. Les images restent sur l'appareil (IndexedDB côté
-// interface) ; rien n'est envoyé ni partagé. Aucun format exécutable (SVG refusé).
+// Cartes des univers (D-107) : catalogue des cartes de l'atlas Primestone « Cosmologies Marvel & DC », fournies par Panel
+// (data/atlas-maps.json et images dans maps/). Personne n'ajoute de carte personnelle.
+// Module pur : validation du catalogue, classement, recherche (titres et entités) et calcul du zoom de la visionneuse.
 
-const KINDS = Object.freeze({ cosmic: 'Cosmique', multiverse: 'Multivers', world: 'Planètes et géographie', city: 'Villes et lieux', timeline: 'Chronologie', other: 'Autre' });
-const TYPES = Object.freeze(['image/png', 'image/jpeg', 'image/webp', 'image/gif', 'image/avif']);
-const MAX_BYTES = 60 * 1024 * 1024;
-const MAX_MAPS = 500;
+const UNIS = Object.freeze({ marvel: 'Marvel', dc: 'DC' });
+const THEMES = Object.freeze({ cosmology: 'Structure du cosmos', beings: 'Entités et familles', realms: 'Lieux et royaumes', powers: 'Magie et forces', timeline: 'Chronologies' });
+// Niveaux de fiabilité de l'atlas (repris tels quels)
+const REL = Object.freeze({ c: 'Canon', o: 'Source officielle', d: 'Interprétation', t: 'Théorie', x: 'Contesté', u: 'À vérifier' });
+const BASIS = Object.freeze({ publications: 'D\'après', data: 'Construite à partir des fiches de l\'atlas.', plan: 'Plan Primestone, sans schéma officiel.' });
 
 const clean = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u001f]/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n);
-const cleanText = (s, n) => String(s == null ? '' : s).replace(/[\u0000-\u0009\u000b-\u001f]/g, ' ').replace(/\n{3,}/g, '\n\n').trim().slice(0, n);
+const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[’'`]/g, ' ').replace(/\s+/g, ' ').trim();
 
-// Fichier accepté : type d'image courant, taille bornée
-const acceptFile = f => {
-  if (!f) return { ok: false, error: 'missing' };
-  if (!TYPES.includes(String(f.type || '').toLowerCase())) return { ok: false, error: 'type' };
-  if (!(f.size > 0) || f.size > MAX_BYTES) return { ok: false, error: 'size' };
-  return { ok: true };
+// Catalogue validé : clé « marvel-01 » ou « dc-01 », chemins d'images déduits de la clé (jamais lus dans les données)
+const validate = raw => {
+  const list = raw && Array.isArray(raw.maps) ? raw.maps : [];
+  const seen = new Set(), out = [];
+  for (const m of list) {
+    const key = String(m && m.key || '');
+    const k = key.match(/^(marvel|dc)-(\d{2})$/);
+    if (!k || seen.has(key) || m.uni !== k[1] || !THEMES[m.theme]) continue;
+    const title = clean(m.title, 80); if (!title) continue;
+    const w = Number(m.w), h = Number(m.h); if (!(w > 0 && h > 0)) continue;
+    const basis = m.basis && BASIS[m.basis.type] ? { type: m.basis.type, text: m.basis.type === 'publications' ? clean(m.basis.text, 200) : '' } : { type: 'plan', text: '' };
+    const rel = {}; Object.keys(REL).forEach(c => { const n = Number(m.rel && m.rel[c]); if (n > 0) rel[c] = Math.floor(n); });
+    const names = (Array.isArray(m.names) ? m.names : []).map(x => (Array.isArray(x) ? x : [x]).map(s => clean(s, 80)).filter(Boolean).slice(0, 2)).filter(x => x.length).slice(0, 400);
+    seen.add(key);
+    out.push({ key, uni: k[1], n: Number(k[2]), theme: m.theme, title, sub: clean(m.sub, 140), about: clean(m.about, 400), basis, w, h, rel, names,
+      img: 'maps/' + key + '.webp', thumb: 'maps/' + key + '-thumb.webp' });
+  }
+  return out.sort((a, b) => (a.uni === b.uni ? a.n - b.n : a.uni === 'marvel' ? -1 : 1));
 };
-// Titre lisible tiré du nom de fichier : « carte_cosmos-marvel_v2.jpg » -> « Carte cosmos marvel v2 »
-const titleFromFile = name => { const t = clean(String(name || '').replace(/\.[a-z0-9]{2,5}$/i, '').replace(/[_\-.]+/g, ' '), 120); return t ? t.charAt(0).toUpperCase() + t.slice(1) : 'Carte sans titre'; };
-// Métadonnées nettoyées ; source facultative mais en https si renseignée
-const sanitizeMeta = raw => {
-  const r = raw || {};
-  const source = clean(r.source, 400);
-  return {
-    title: clean(r.title, 120) || 'Carte sans titre',
-    universe: clean(r.universe, 60),
-    kind: KINDS[r.kind] ? r.kind : 'other',
-    note: cleanText(r.note, 2000),
-    source: /^https:\/\/\S+$/.test(source) ? source : ''
-  };
-};
-const norm = s => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
-// Filtre (type, univers, texte) puis tri : les plus récentes d'abord
-const filter = (list, opts = {}) => (list || []).filter(m => (!opts.kind || opts.kind === 'all' || m.kind === opts.kind) &&
-  (!opts.universe || norm(m.universe) === norm(opts.universe)) &&
-  (!opts.q || norm([m.title, m.universe, m.note].join(' ')).includes(norm(opts.q).trim())))
-  .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')));
-// Univers présents, pour les filtres (ordre alphabétique, sans doublon)
-const universes = list => [...new Set((list || []).map(m => clean(m.universe, 60)).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr'));
-// Comptes par type
-const counts = list => (list || []).reduce((o, m) => { o[m.kind] = (o[m.kind] || 0) + 1; return o; }, {});
+
+// Entités de la carte qui correspondent à la recherche (nom anglais ou français)
+const hits = (m, q) => { const t = norm(q); if (t.length < 2) return []; return m.names.filter(x => x.some(s => norm(s).includes(t))).map(x => x[0]); };
+// Filtre par univers, thème et texte (titre, sous-titre, présentation, entités) ; l'ordre du catalogue est conservé
+const filter = (list, opts = {}) => (list || []).filter(m => (!opts.uni || opts.uni === 'all' || m.uni === opts.uni) &&
+  (!opts.theme || opts.theme === 'all' || m.theme === opts.theme) &&
+  (!opts.q || norm([m.title, m.sub, m.about].join(' ')).includes(norm(opts.q)) || hits(m, opts.q).length > 0));
+// Comptes par univers et par thème (pour les filtres)
+const counts = list => (list || []).reduce((o, m) => { o[m.uni] = (o[m.uni] || 0) + 1; o[m.theme] = (o[m.theme] || 0) + 1; return o; }, {});
+// Niveaux de fiabilité présents sur la carte, dans l'ordre de l'atlas : [['t', 13], ['u', 8]]
+const relSummary = m => Object.keys(REL).filter(c => m.rel[c]).map(c => [c, m.rel[c]]);
+// Libellé compté et accordé : « 13 théories », « 1 interprétation », « 8 à vérifier »
+const REL_COUNT = Object.freeze({ c: ['entrée canon', 'entrées canon'], o: ['source officielle', 'sources officielles'], d: ['interprétation', 'interprétations'], t: ['théorie', 'théories'], x: ['entrée contestée', 'entrées contestées'], u: ['à vérifier', 'à vérifier'] });
+const relLabel = (c, n) => REL_COUNT[c] ? n + ' ' + REL_COUNT[c][n > 1 ? 1 : 0] : '';
+// Cartes où figure une entité (nom exact, anglais ou français)
+const ofEntity = (list, name) => { const t = norm(name); if (t.length < 3) return []; return (list || []).filter(m => m.names.some(x => x.some(s => norm(s) === t))); };
 
 // ── Visionneuse : zoom autour d'un point, déplacement borné ─────────────────────
 const ZMIN = 1, ZMAX = 10;
@@ -10475,7 +10491,7 @@ const zoomAt = (st, factor, px, py, vw, vh, fw, fh) => {
 };
 const initial = (vw, vh, fw, fh) => clampPan({ z: 1, x: 0, y: 0 }, vw, vh, fw, fh);
 
-module.exports = { KINDS, TYPES, MAX_BYTES, MAX_MAPS, ZMIN, ZMAX, acceptFile, titleFromFile, sanitizeMeta, filter, universes, counts, clampZ, fit, clampPan, zoomAt, initial };
+module.exports = { UNIS, THEMES, REL, BASIS, validate, hits, filter, counts, relSummary, relLabel, ofEntity, ZMIN, ZMAX, clampZ, fit, clampPan, zoomAt, initial };
   return Object.freeze(module.exports); })();
   /* domains/i18n/i18n-core.js */
   out.i18n = (() => { const module = { exports: {} };
@@ -11037,6 +11053,111 @@ const phrases = {
   'Riverdale et sa bande, apparus dans Pep Comics #{n} en décembre {n}.': 'Riverdale and its gang, introduced in Pep Comics #{n} in December {n}.',
   'Univers': 'Universes',
   'Univers d\'origine': 'Home universe',
+  // D-107 : Cartes des univers (atlas Primestone)
+  'Cartes des univers': 'Universe maps',
+  'Marvel et DC en grand': 'Marvel and DC, up close',
+  '{n} grandes cartes de l’atlas Primestone : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC, à explorer en détail.': '{n} large maps from the Primestone atlas: Marvel and DC cosmologies, families, realms, magic and timelines, to explore in detail.',
+  'Découvrir · Atlas Primestone': 'Discover · Primestone atlas',
+  'Les cosmologies de Marvel et de DC en grandes cartes : structure du cosmos, entités et familles, royaumes, magie et chronologies. Ouvrez une carte pour l\'explorer en détail, zoom compris.': 'Marvel and DC cosmologies as large maps: structure of the cosmos, beings and families, realms, magic and timelines. Open a map to explore it in detail, with zoom.',
+  'Chargement des cartes…': 'Loading maps…',
+  'Les cartes ne sont pas disponibles pour le moment. Vérifiez la connexion, puis réessayez.': 'Maps are not available right now. Check your connection, then try again.',
+  'Catalogue des cartes vide.': 'The map catalogue is empty.',
+  'Tous les thèmes': 'All themes',
+  'Thèmes': 'Themes',
+  'Structure du cosmos': 'Structure of the cosmos',
+  'Entités et familles': 'Beings and families',
+  'Lieux et royaumes': 'Places and realms',
+  'Magie et forces': 'Magic and forces',
+  'Chronologies': 'Timelines',
+  'Chercher une carte ou une entité (Galactus, Dream…)': 'Search a map or a being (Galactus, Dream…)',
+  'Chercher une carte ou une entité': 'Search a map or a being',
+  'Sur la carte :': 'On the map:',
+  'Sur la carte': 'On the map',
+  '{n} entités': '{n} beings',
+  '{n} cartes': '{n} maps',
+  'Tout afficher': 'Show all',
+  'Cartes de l\'atlas': 'Maps from the',
+  'Primestone « Cosmologies Marvel & DC »': 'Primestone “Marvel & DC Cosmologies” atlas',
+  ', un atlas de fans non officiel. Personnages et portraits © Marvel et © DC. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.': ', an unofficial fan atlas. Characters and portraits © Marvel and © DC. “Theory” entries are fan constructions; “to verify”: taken from a wiki, not yet checked against the comics.',
+  'Chargement de la carte en haute définition…': 'Loading the high-resolution map…',
+  'Image haute définition indisponible : aperçu affiché.': 'High-resolution image unavailable: preview shown.',
+  'D\'après': 'Based on',
+  'Construite à partir des fiches de l\'atlas.': 'Built from the atlas entries.',
+  'Plan Primestone, sans schéma officiel.': 'Primestone plan, with no official diagram.',
+  '{n} théories': '{n} theories',
+  '{n} théorie': '{n} theory',
+  '{n} interprétations': '{n} interpretations',
+  '{n} interprétation': '{n} interpretation',
+  '{n} à vérifier': '{n} to verify',
+  '{n} entrées canon': '{n} canon entries',
+  '{n} entrée canon': '{n} canon entry',
+  '{n} sources officielles': '{n} official sources',
+  '{n} source officielle': '{n} official source',
+  '{n} entrées contestées': '{n} contested entries',
+  '{n} entrée contestée': '{n} contested entry',
+  'Interprétation': 'Interpretation',
+  'Théorie': 'Theory',
+  'Contesté': 'Contested',
+  'Canon': 'Canon',
+  'Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © Marvel.': 'Primestone plan, a fan layout: not an official page. Characters and portraits © Marvel.',
+  'Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © DC.': 'Primestone plan, a fan layout: not an official page. Characters and portraits © DC.',
+  'Version interactive': 'Interactive version',
+  '‹ Carte précédente': '‹ Previous map',
+  'Carte suivante ›': 'Next map ›',
+  'Les Cosmos': 'The Cosmoses',
+  'Du Premier au Huitième Cosmos': 'From the First to the Eighth Cosmos',
+  'Les huit Cosmos successifs de la réalité Marvel, du Premier au Huitième, et Battleworld.': 'The eight successive Cosmoses of Marvel reality, from the First to the Eighth, and Battleworld.',
+  'L’Arbre': 'The Tree',
+  'Le Mystère & la Qlippoth': 'The Mystery & the Qlippoth',
+  'Le Mystère, l\'arbre de la réalité Marvel, et son revers, la Qlippoth. La Qlippoth est une construction de fans.': 'The Mystery, the tree of Marvel reality, and its reverse side, the Qlippoth. The Qlippoth is a fan construction.',
+  'Les Axes': 'The Axes',
+  'Les huit Ur-Diviseurs': 'The eight Ur-Dividers',
+  'Les huit Ur-Diviseurs, les grandes entités abstraites qui se partagent la réalité : Eternity, Master Order, Lord Chaos, le Tribunal Vivant…': 'The eight Ur-Dividers, the great abstract beings who share reality: Eternity, Master Order, Lord Chaos, the Living Tribunal…',
+  'Les Firmaments': 'The Firmaments',
+  'Neuf firmaments, un seul récit': 'Nine firmaments, one story',
+  'Les firmaments successifs, chacun rattaché à son Cosmos, racontés comme une seule histoire.': 'The successive firmaments, each tied to its Cosmos, told as a single story.',
+  'L’Omnivers': 'The Omniverse',
+  'Coupe de la réalité Marvel': 'A cross-section of Marvel reality',
+  'Une coupe de la réalité Marvel, du Vide extérieur au Multivers : Exo-Space, Superflow, Overspace, Hyperspace…': 'A cross-section of Marvel reality, from the Outer Void to the Multiverse: Exo-Space, Superflow, Overspace, Hyperspace…',
+  'Les Familles': 'The Families',
+  'Parents, enfants et fratries du cosmos': 'Parents, children and siblings of the cosmos',
+  'Les liens de parenté des entités cosmiques de Marvel : parents, enfants et fratries.': 'Family ties between Marvel\'s cosmic beings: parents, children and siblings.',
+  'Les Royaumes': 'The Realms',
+  'Yggdrasil, la galaxie et les dimensions': 'Yggdrasil, the galaxy and the dimensions',
+  'Yggdrasil et les Dix Royaumes, la galaxie et les dimensions de Marvel.': 'Yggdrasil and the Ten Realms, the galaxy and Marvel\'s dimensions.',
+  'La Chronologie': 'The Timeline',
+  'Soixante ans de cosmos': 'Sixty years of cosmos',
+  'Soixante ans de cosmos Marvel : jalons éditoriaux et grands événements, depuis Fantastic Four #{n}.': 'Sixty years of Marvel cosmos: publishing milestones and major events, since Fantastic Four #{n}.',
+  'La Magie': 'Magic',
+  'Dieux anciens, Vishanti, seigneurs des dimensions et démons': 'Elder gods, the Vishanti, dimensional lords and demons',
+  'Dieux anciens, Vishanti, seigneurs des dimensions et démons : la magie de Marvel, de Chthon à Doctor Strange.': 'Elder gods, the Vishanti, dimensional lords and demons: Marvel magic, from Chthon to Doctor Strange.',
+  'L’Orrerie des mondes': 'The Orrery of Worlds',
+  'La carte du Multivers (The Multiversity)': 'The map of the Multiverse (The Multiversity)',
+  'Les {n} Terres du Multivers DC et ce qui les entoure, d\'après la structure de « The Map of the Multiverse ».': 'The {n} Earths of the DC Multiverse and what surrounds them, based on the structure of “The Map of the Multiverse”.',
+  'La Création': 'Creation',
+  'Du Survide à la Terre': 'From the Overvoid to Earth',
+  'Du Survide à la Terre : la Présence, la Source, les Mains et la naissance du Multivers DC.': 'From the Overvoid to Earth: the Presence, the Source, the Hands and the birth of the DC Multiverse.',
+  'Le Spectre émotionnel': 'The Emotional Spectrum',
+  'Neuf lumières, leurs entités et leurs Corps': 'Nine lights, their entities and their Corps',
+  'Les neuf lumières du spectre émotionnel, leurs entités, leurs Corps et leurs porteurs.': 'The nine lights of the emotional spectrum, their entities, their Corps and their bearers.',
+  'Les Endless': 'The Endless',
+  'Night, Time, leurs sept enfants et le Rêve': 'Night, Time, their seven children and the Dreaming',
+  'Night et Time, leurs sept enfants (Destiny, Death, Dream, Destruction, Desire, Despair, Delirium) et le Rêve.': 'Night and Time, their seven children (Destiny, Death, Dream, Destruction, Desire, Despair, Delirium) and the Dreaming.',
+  'Le Quatrième Monde': 'The Fourth World',
+  'New Genesis, Apokolips et leurs familles': 'New Genesis, Apokolips and their families',
+  'New Genesis et Apokolips, leurs familles et les deux fils échangés, Orion et Mister Miracle.': 'New Genesis and Apokolips, their families and the two exchanged sons, Orion and Mister Miracle.',
+  'L’Ordre et le Chaos, les colères divines, les magiciens': 'Order and Chaos, the divine wraths, the magicians',
+  'L\'Ordre et le Chaos, les colères divines et les magiciens de DC.': 'Order and Chaos, the divine wraths and DC\'s magicians.',
+  'Les Crises': 'The Crises',
+  'Quarante ans de crises et leurs acteurs': 'Forty years of crises and their players',
+  'Quarante ans de Crises dans l\'univers DC et leurs acteurs, dans l\'ordre.': 'Forty years of Crises in the DC universe and their players, in order.',
+  'Les Forces': 'The Forces',
+  'La Speed Force, le Vert, le Rouge et la Pourriture, les dimensions': 'The Speed Force, the Green, the Red and the Rot, the dimensions',
+  'La Speed Force et ses sœurs, le Vert, le Rouge et la Pourriture, et les dimensions.': 'The Speed Force and its sister forces, the Green, the Red and the Rot, and the dimensions.',
+  'Le Ciel et l’Enfer': 'Heaven and Hell',
+  'La Présence, ses anges, Lucifer et Elaine Belloc': 'The Presence, its angels, Lucifer and Elaine Belloc',
+  'La Présence, la Cité d\'Argent et ses anges, Lucifer et Elaine Belloc.': 'The Presence, the Silver City and its angels, Lucifer and Elaine Belloc.',
+  'Source officielle': 'Official source',
 };
 
 const same = [
@@ -11223,6 +11344,8 @@ const phrases = {
   "Terminé": "Terminado",
   "+ Ajouter un univers": "+ Añadir un universo",
   "+ Importer des cartes": "+ Importar mapas",
+  "Cartes des univers": "Mapas de los universos",
+  "Marvel et DC en grand": "Marvel y DC en grande",
 };
 
 module.exports = { locale: 'es', phrases, same: [] };
@@ -11395,6 +11518,8 @@ const phrases = {
   "Terminé": "Encerrado",
   "+ Ajouter un univers": "+ Adicionar um universo",
   "+ Importer des cartes": "+ Importar mapas",
+  "Cartes des univers": "Mapas dos universos",
+  "Marvel et DC en grand": "Marvel e DC em grande",
 };
 
 module.exports = { locale: 'pt', phrases, same: [] };
@@ -19786,7 +19911,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           tile('is-cosmos', 'data-ex-go="cosmos"', 'Cosmos et multivers', 'Les cartes illustrées') +
           tile('is-uni', 'data-ex-topic-go="universes"', 'Univers', 'Éditeurs et créateurs') +
           tile('is-shops', 'data-ex-go="shops"', 'Boutiques', 'Près de chez vous') +
-          tile('is-maps', 'data-ex-go="maps"', 'Mes cartes', 'Vos cartes d’univers') +
+          tile('is-maps', 'data-ex-go="maps"', 'Cartes des univers', 'Marvel et DC en grand') +
           (guides.length ? tile('is-random', 'data-ex-rnd="1"', 'Surprends-moi', 'Un guide au hasard') : '') + '</div>') +
         '<div class="ex-personal-foot">' + exPersonalizeHtml() + '</div>') +
       pane('characters', '<div class="ex-index">' +
@@ -19805,7 +19930,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           '<div id="exNewsBox">' + exNewsBoxHtml() + '</div>') +
         sec('exSecWatch', 'Avant de voir', 'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.', '<div id="exWatchBox">' + exWatchHtml() + '</div>')) +
       pane('universes', exUniversesHtml() +
-        '<section class="ex-sec"><button class="ex-cz-promo mp-promo" data-ex-go="maps"><span class="ex-cz-promo-art mp-promo-art" aria-hidden="true"></span><span><b>Mes cartes</b><small>Rangez vos cartes de Cosmos, de multivers, de planètes ou de villes et explorez-les en détail, zoom compris.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
+        '<section class="ex-sec"><button class="ex-cz-promo mp-promo" data-ex-go="maps"><span class="ex-cz-promo-art mp-promo-art" aria-hidden="true"></span><span><b>Cartes des univers</b><small>18 grandes cartes de l’atlas Primestone : cosmologies, familles, royaumes, magie et chronologies de Marvel et DC, à explorer en détail.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button></section>' +
         sec('exSecUniverses', 'Éditeurs', personal ? 'Éditeurs connus de Panel et ceux de votre collection.' : 'Éditeurs connus de Panel.', '<div class="ex-uni">' + tiles.map(p => '<button class="ex-unitile" data-ex-go="publisher" data-ex-id="' + h(p.key) + '"><b>' + h(p.name) + '</b><small>' + h((REL_MARKETS[p.market] || {}).label || 'Autre') + '</small>' + (p.owned || p.guides ? '<span>' + [personal && p.owned ? p.owned + ' possédé(s)' : '', p.guides ? p.guides + ' guide(s)' : ''].filter(Boolean).join(' · ') + '</span>' : '') + '</button>').join('') + '</div>') +
         '<div class="ex-duo">' + sec('exSecCosmos', 'Cosmos et multivers', '', '<button class="ex-cz-promo" data-ex-go="cosmos"><span class="ex-cz-promo-art" aria-hidden="true"></span><span><b>Les cartes des Cosmos et du multivers</b><small>Les huit Cosmos Marvel et les dimensions du multivers, en cartes illustrées.</small></span><span aria-hidden="true" class="ex-cz-promo-go">›</span></button>') +
         '<section class="ex-sec ex-shop-promo"><button class="ex-shop-cta" data-ex-go="shops"><span class="ex-shop-cta-ic" aria-hidden="true">⌖</span><span><b>Boutiques près de chez vous</b><small>Comics VO, BD et librairies spécialisées autour de vous, sur une carte.</small></span><span aria-hidden="true">→</span></button></section></div>' +
@@ -20712,110 +20837,74 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       root.innerHTML = g ? exGuideHtml(g) : exBack() + '<div class="ex-empty">Guide introuvable.</div>';
     } else root.innerHTML = exEntityHtml();
   };
-  // ---------- D-106 : Mes cartes — images importées par l'utilisateur, gardées sur l'appareil (IndexedDB « panel_maps »), jamais envoyées
+  // ---------- D-107 : Cartes des univers — catalogue de l'atlas Primestone (data/atlas-maps.json, images dans maps/), fourni par Panel.
+  // Personne n'ajoute de carte. Les cartes importées sur un appareil avant D-107 (base IndexedDB « panel_maps ») ne sont ni lues ni effacées.
   const MP = window.PanelDomains.mapsCore;
-  const exMpDb = (() => { let pr = null; return () => pr || (pr = new Promise((res, rej) => {
-    if (!window.indexedDB) { pr = null; rej(new Error('Stockage indisponible sur cet appareil.')); return; }
-    const rq = indexedDB.open('panel_maps', 1);
-    rq.onupgradeneeded = () => { const db = rq.result; if (!db.objectStoreNames.contains('meta')) db.createObjectStore('meta', { keyPath: 'id' }); if (!db.objectStoreNames.contains('blobs')) db.createObjectStore('blobs'); };
-    rq.onsuccess = () => res(rq.result); rq.onerror = () => { pr = null; rej(rq.error || new Error('Stockage indisponible.')); };
-  })); })();
-  const exMpReq = async (stores, mode, op) => { const db = await exMpDb(); return new Promise((res, rej) => { const tx = db.transaction(stores, mode); let v; const r = op(tx); if (r && 'onsuccess' in r) r.onsuccess = () => { v = r.result; }; tx.oncomplete = () => res(v); tx.onerror = tx.onabort = () => rej(tx.error || new Error('Écriture impossible.')); }); };
-  const exMpState = { list: null, kind: 'all', universe: '', q: '', err: '', busy: 0, urls: new Map() };
-  const exMpThumbUrl = m => { if (!m.thumb) return ''; let u = exMpState.urls.get(m.id); if (!u) { u = URL.createObjectURL(m.thumb); exMpState.urls.set(m.id, u); } return u; };
-  const exMpForget = id => { const u = exMpState.urls.get(id); if (u) { URL.revokeObjectURL(u); exMpState.urls.delete(id); } };
+  const EX_MP_URL = 'data/atlas-maps.json', EX_MP_SITE = 'https://lukecage2003.github.io/marvel-primeston/';
+  const exMpState = { list: null, err: '', uni: 'all', theme: 'all', q: '' };
   const exMpLoad = async () => {
-    try { exMpState.list = (await exMpReq(['meta'], 'readonly', tx => tx.objectStore('meta').getAll())) || []; exMpState.err = ''; }
-    catch (e) { exMpState.list = []; exMpState.err = String(e && e.message || e); }
+    try { const r = await fetch(EX_MP_URL, { cache: 'no-cache' }); if (!r.ok) throw new Error('HTTP ' + r.status); exMpState.list = MP.validate(await r.json()); exMpState.err = exMpState.list.length ? '' : 'Catalogue des cartes vide.'; }
+    catch (_) { exMpState.list = []; exMpState.err = 'Les cartes ne sont pas disponibles pour le moment. Vérifiez la connexion, puis réessayez.'; }
     if (exView.page === 'maps') renderExplorer();
   };
-  // Vignette légère (520 px) pour la grille ; l'image d'origine n'est lue qu'à l'ouverture
-  const exMpThumb = async file => {
-    const bmp = await createImageBitmap(file);
-    const s = Math.min(1, 520 / Math.max(bmp.width, bmp.height)), c = document.createElement('canvas');
-    c.width = Math.max(1, Math.round(bmp.width * s)); c.height = Math.max(1, Math.round(bmp.height * s));
-    c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
-    const w = bmp.width, hh = bmp.height; if (bmp.close) bmp.close();
-    const blob = await new Promise(r => c.toBlob(b => r(b), 'image/webp', 0.82)) || await new Promise(r => c.toBlob(b => r(b), 'image/jpeg', 0.82));
-    return { thumb: blob, w, h: hh };
-  };
-  const exMpImport = async files => {
-    const list = [...(files || [])];
-    if (!list.length) return;
-    let added = 0; const refused = [];
-    exMpState.busy += list.length; renderExplorer();
-    for (const f of list) {
-      try {
-        const ok = MP.acceptFile(f);
-        if (!ok.ok) { refused.push(f.name + (ok.error === 'type' ? ' (format non pris en charge)' : ' (fichier vide ou trop lourd)')); continue; }
-        if ((exMpState.list || []).length + added >= MP.MAX_MAPS) { refused.push(f.name + ' (limite de ' + MP.MAX_MAPS + ' cartes)'); continue; }
-        const th = await exMpThumb(f);
-        const id = 'map_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
-        const meta = Object.assign({ id, createdAt: new Date().toISOString(), type: f.type, size: f.size, w: th.w, h: th.h, thumb: th.thumb },
-          MP.sanitizeMeta({ title: MP.titleFromFile(f.name), universe: exMpState.universe, kind: exMpState.kind !== 'all' ? exMpState.kind : 'other' }));
-        await exMpReq(['meta', 'blobs'], 'readwrite', tx => { tx.objectStore('blobs').put(f, id); return tx.objectStore('meta').put(meta); });
-        (exMpState.list = exMpState.list || []).push(meta); added++;
-      } catch (_) { refused.push(f.name + ' (image illisible)'); }
-      finally { exMpState.busy--; }
-    }
-    if (exView.page === 'maps') renderExplorer();
-    showToast((added ? added + ' carte' + (added > 1 ? 's ajoutées' : ' ajoutée') : 'Aucune carte ajoutée') + (refused.length ? '. Non importé : ' + refused.slice(0, 3).join(', ') + (refused.length > 3 ? '…' : '') : '.'));
-  };
+  const exMpRelHtml = m => MP.relSummary(m).map(([c, n]) => '<span class="mp-rel is-' + c + '" title="' + h(MP.REL[c]) + '">' + h(MP.relLabel(c, n)) + '</span>').join('');
+  // « D'après » et la liste des publications dans deux nœuds distincts : la phrase reste traduisible, les titres ne sont jamais traduits
+  const exMpBasisHtml = m => m.basis.type === 'publications' ? '<span>' + h(MP.BASIS.publications) + '</span> <span data-no-i18n>' + h(m.basis.text) + '</span>.' : '<span>' + h(MP.BASIS[m.basis.type]) + '</span>';
   const exMpHtml = () => {
     const list = exMpState.list;
-    const head = exBack() + '<section class="cz-hero mp-hero"><span class="ex-kicker">Découvrir · Vos cartes</span><h2>Mes cartes</h2><p>Cosmos, multivers, planètes, villes, chronologies : rangez ici vos cartes d\'univers et explorez-les en détail. Elles restent sur cet appareil et ne sont jamais partagées.</p>' +
-      '<div class="mp-actions"><label class="btn mp-import"><input type="file" accept="' + MP.TYPES.join(',') + '" multiple data-mp-file hidden>+ Importer des cartes</label>' + (exMpState.busy ? '<span class="mp-busy" role="status">Import en cours…</span>' : '') + '</div></section>';
-    if (list === null) return head + '<div class="ex-empty">Chargement de vos cartes…</div>';
-    if (exMpState.err) return head + '<div class="ex-empty">' + h(exMpState.err) + '</div>';
-    if (!list.length) return head + '<div class="mp-drop" data-mp-drop><b>Déposez vos cartes ici</b><span>ou utilisez « Importer des cartes ». PNG, JPEG, WebP, GIF ou AVIF, jusqu\'à 60 Mo chacune.</span></div>';
-    const c = MP.counts(list), unis = MP.universes(list);
-    const shown = MP.filter(list, { kind: exMpState.kind, universe: exMpState.universe, q: exMpState.q });
-    return head + '<div class="mp-tools" data-mp-drop>' +
-      '<div class="ex-chips" role="group" aria-label="Types de cartes"><button class="ex-chip' + (exMpState.kind === 'all' ? ' active' : '') + '" data-mp-kind="all" aria-pressed="' + (exMpState.kind === 'all') + '">Toutes <small>' + list.length + '</small></button>' +
-        Object.entries(MP.KINDS).filter(([k]) => c[k]).map(([k, l]) => '<button class="ex-chip' + (exMpState.kind === k ? ' active' : '') + '" data-mp-kind="' + k + '" aria-pressed="' + (exMpState.kind === k) + '">' + h(l) + ' <small>' + c[k] + '</small></button>').join('') + '</div>' +
-      '<div class="mp-row">' + (unis.length > 1 ? '<select class="field-input" data-mp-uni aria-label="Univers"><option value="">Tous les univers</option>' + unis.map(u => '<option' + (u === exMpState.universe ? ' selected' : '') + '>' + h(u) + '</option>').join('') + '</select>' : '') +
-        '<input class="field-input" type="search" data-mp-q placeholder="Chercher une carte" aria-label="Chercher une carte" value="' + h(exMpState.q) + '"></div></div>' +
-      (shown.length ? '<div class="mp-grid">' + shown.map(m => '<button class="mp-card" data-mp-open="' + h(m.id) + '"><span class="mp-thumb">' + (m.thumb ? '<img src="' + h(exMpThumbUrl(m)) + '" alt="" loading="lazy">' : '') + '</span><b data-no-i18n>' + h(m.title) + '</b><small>' + (m.universe ? '<span data-no-i18n>' + h(m.universe) + '</span>' + (MP.KINDS[m.kind] ? ' · ' : '') : '') + '<span>' + h(MP.KINDS[m.kind] || '') + '</span></small></button>').join('') + '</div>' : '<div class="ex-empty">Aucune carte ne correspond.</div>');
+    const head = exBack() + '<section class="cz-hero mp-hero"><span class="ex-kicker">Découvrir · Atlas Primestone</span><h2>Cartes des univers</h2><p>Les cosmologies de Marvel et de DC en grandes cartes : structure du cosmos, entités et familles, royaumes, magie et chronologies. Ouvrez une carte pour l\'explorer en détail, zoom compris.</p></section>';
+    if (list === null) return head + '<div class="ex-empty" role="status">Chargement des cartes…</div>';
+    if (exMpState.err) return head + '<div class="ex-empty">' + h(exMpState.err) + ' <button class="btn secondary rel-mini" data-mp-retry>Réessayer</button></div>';
+    const c = MP.counts(list), q = exMpState.q.trim();
+    const shown = MP.filter(list, { uni: exMpState.uni, theme: exMpState.theme, q });
+    const chip = (attr, k, label, n) => '<button class="ex-chip' + (exMpState[attr] === k ? ' active' : '') + '" data-mp-' + attr + '="' + k + '" aria-pressed="' + (exMpState[attr] === k) + '">' + h(label) + (n != null ? ' <small>' + n + '</small>' : '') + '</button>';
+    const card = m => { const hit = q ? MP.hits(m, q).slice(0, 3) : [];
+      return '<button class="mp-card is-' + m.uni + '" data-mp-open="' + h(m.key) + '"><span class="mp-thumb"><img src="' + h(m.thumb) + '" alt="" loading="lazy" decoding="async" width="720" height="' + Math.round(720 * m.h / m.w) + '"></span>' +
+        '<span class="mp-kick"><span>' + h(MP.UNIS[m.uni]) + '</span> · <span>' + h(MP.THEMES[m.theme]) + '</span></span><b>' + h(m.title) + '</b><small>' + h(m.sub) + '</small>' +
+        (hit.length ? '<span class="mp-hit"><span>Sur la carte :</span> ' + hit.map(x => '<em data-no-i18n>' + h(x) + '</em>').join(', ') + '</span>' : '<span class="mp-n">' + m.names.length + ' entités</span>') + '</button>'; };
+    const groups = exMpState.uni === 'all' && exMpState.theme === 'all' && !q ? ['marvel', 'dc'].map(u => [u, shown.filter(m => m.uni === u)]) : [['', shown]];
+    return head + '<div class="mp-tools">' +
+      '<div class="ex-chips" role="group" aria-label="Univers">' + chip('uni', 'all', 'Tous', list.length) + Object.entries(MP.UNIS).map(([k, l]) => chip('uni', k, l, c[k] || 0)).join('') + '</div>' +
+      '<div class="ex-chips" role="group" aria-label="Thèmes">' + chip('theme', 'all', 'Tous les thèmes') + Object.entries(MP.THEMES).map(([k, l]) => chip('theme', k, l)).join('') + '</div>' +
+      '<input class="field-input" type="search" data-mp-q placeholder="Chercher une carte ou une entité (Galactus, Dream…)" aria-label="Chercher une carte ou une entité" value="' + h(exMpState.q) + '"></div>' +
+      (shown.length ? groups.map(([u, l]) => (u ? '<h3 class="mp-group">' + h(MP.UNIS[u]) + ' <small>' + l.length + ' cartes</small></h3>' : '') + '<div class="mp-grid">' + l.map(card).join('') + '</div>').join('')
+        : '<div class="ex-empty">Aucune carte ne correspond. <button class="btn secondary rel-mini" data-mp-reset>Tout afficher</button></div>') +
+      '<p class="ex-note mp-credit">Cartes de l\'atlas <a href="' + EX_MP_SITE + '" target="_blank" rel="noopener noreferrer">Primestone « Cosmologies Marvel &amp; DC »</a>, un atlas de fans non officiel. Personnages et portraits © Marvel et © DC. Les entrées « théorie » sont des constructions de fans ; « à vérifier » : relevé sur un wiki, pas encore confronté aux comics.</p>';
   };
   const exMpWire = root => {
-    const inp = root.querySelector('[data-mp-file]'); if (inp) inp.onchange = () => { exMpImport(inp.files); inp.value = ''; };
-    root.querySelectorAll('[data-mp-kind]').forEach(b => { b.onclick = () => { exMpState.kind = b.dataset.mpKind; renderExplorer(); }; });
-    const sel = root.querySelector('[data-mp-uni]'); if (sel) sel.onchange = () => { exMpState.universe = sel.value; renderExplorer(); };
+    root.querySelectorAll('[data-mp-uni]').forEach(b => { b.onclick = () => { exMpState.uni = b.dataset.mpUni; renderExplorer(); }; });
+    root.querySelectorAll('[data-mp-theme]').forEach(b => { b.onclick = () => { exMpState.theme = b.dataset.mpTheme; renderExplorer(); }; });
+    const rs = root.querySelector('[data-mp-reset]'); if (rs) rs.onclick = () => { Object.assign(exMpState, { uni: 'all', theme: 'all', q: '' }); renderExplorer(); };
+    const rt = root.querySelector('[data-mp-retry]'); if (rt) rt.onclick = () => { exMpState.list = null; exMpState.err = ''; renderExplorer(); };
     const q = root.querySelector('[data-mp-q]'); if (q) q.oninput = () => { exMpState.q = q.value; const pos = q.selectionStart; renderExplorer(); const q2 = $('explorerRoot').querySelector('[data-mp-q]'); if (q2) { q2.focus(); try { q2.setSelectionRange(pos, pos); } catch (_) {} } };
     root.querySelectorAll('[data-mp-open]').forEach(b => { b.onclick = () => exMpOpen(b.dataset.mpOpen, b); });
-    root.querySelectorAll('[data-mp-drop]').forEach(z => {
-      z.ondragover = e => { if (e.dataTransfer && [...e.dataTransfer.types].includes('Files')) { e.preventDefault(); z.classList.add('is-over'); } };
-      z.ondragleave = () => z.classList.remove('is-over');
-      z.ondrop = e => { e.preventDefault(); z.classList.remove('is-over'); exMpImport(e.dataTransfer && e.dataTransfer.files); };
-    });
   };
   // Visionneuse plein écran : molette ou pincement pour zoomer, glisser pour se déplacer, double clic pour zoomer, clavier
-  const exMpOpen = async (id, opener) => {
-    const meta = (exMpState.list || []).find(m => m.id === id); if (!meta) return;
-    let blob = null; try { blob = await exMpReq(['blobs'], 'readonly', tx => tx.objectStore('blobs').get(id)); } catch (_) {}
-    if (!blob) { showToast('Image introuvable sur cet appareil.'); return; }
-    const url = URL.createObjectURL(blob);
+  const exMpOpen = (key, opener) => {
+    const list = exMpState.list || [], at = list.findIndex(m => m.key === key), meta = list[at]; if (!meta) return;
     const ov = document.createElement('div');
     ov.className = 'mp-view'; ov.setAttribute('role', 'dialog'); ov.setAttribute('aria-modal', 'true'); ov.setAttribute('aria-label', meta.title);
-    ov.innerHTML = '<div class="mp-bar"><b class="mp-title" data-no-i18n></b><span class="mp-zoom" aria-live="polite">100 %</span><button class="mp-b" data-mp-z="out" aria-label="Dézoomer">−</button><button class="mp-b" data-mp-z="in" aria-label="Zoomer">+</button><button class="mp-b" data-mp-z="fit">Ajuster</button><button class="mp-b" data-mp-info aria-expanded="false">Infos</button><button class="mp-b mp-x" data-mp-close aria-label="Fermer">✕</button></div>' +
-      '<div class="mp-stage" tabindex="0" aria-label="Carte : glissez pour vous déplacer, molette ou pincement pour zoomer"><img class="mp-img" alt="" draggable="false"></div>' +
-      '<form class="mp-info" hidden><label><span>Titre</span><input class="field-input" name="title" maxlength="120"></label><label><span>Univers</span><input class="field-input" name="universe" maxlength="60" list="mpUniList"></label>' +
-      '<label><span>Type</span><select class="field-input" name="kind">' + Object.entries(MP.KINDS).map(([k, l]) => '<option value="' + k + '">' + h(l) + '</option>').join('') + '</select></label>' +
-      '<label><span>Notes</span><textarea class="field-input" name="note" rows="4" maxlength="2000"></textarea></label><label><span>Source (lien https, facultatif)</span><input class="field-input" name="source" type="url" placeholder="https://…"></label>' +
-      '<datalist id="mpUniList">' + UNI.all(exUniUser()).map(u => '<option value="' + h(u.name) + '">').join('') + '</datalist>' +
-      '<p class="mp-meta"></p><div class="ex-row"><button class="btn" type="submit">Enregistrer</button><button class="btn secondary" type="button" data-mp-del>Supprimer la carte</button></div></form>';
+    const names = meta.names.map(x => '<li><span data-no-i18n>' + h(x[0]) + '</span>' + (x[1] ? '<small data-no-i18n>' + h(x[1]) + '</small>' : '') + '</li>').join('');
+    ov.innerHTML = '<div class="mp-bar"><b class="mp-title"></b><span class="mp-zoom" aria-live="polite">100 %</span><button class="mp-b" data-mp-z="out" aria-label="Dézoomer">−</button><button class="mp-b" data-mp-z="in" aria-label="Zoomer">+</button><button class="mp-b" data-mp-z="fit">Ajuster</button><button class="mp-b" data-mp-info aria-expanded="false">Infos</button><button class="mp-b mp-x" data-mp-close aria-label="Fermer">✕</button></div>' +
+      '<div class="mp-stage" tabindex="0" aria-label="Carte : glissez pour vous déplacer, molette ou pincement pour zoomer"><img class="mp-img" alt="" draggable="false" decoding="async"><span class="mp-load" role="status">Chargement de la carte en haute définition…</span></div>' +
+      '<aside class="mp-info" hidden><p class="mp-kick"><span>' + h(MP.UNIS[meta.uni]) + '</span> · <span>' + h(MP.THEMES[meta.theme]) + '</span></p><h3>' + h(meta.title) + '</h3><p class="mp-sub">' + h(meta.sub) + '</p><p>' + h(meta.about) + '</p>' +
+      '<p class="mp-basis">' + exMpBasisHtml(meta) + '</p><div class="mp-rels">' + exMpRelHtml(meta) + '</div>' +
+      '<h4>Sur la carte <small>' + meta.names.length + '</small></h4><ul class="mp-names">' + names + '</ul>' +
+      '<p class="mp-meta">Plan Primestone, mise en forme de fan : ce n\'est pas une planche officielle. Personnages et portraits © ' + (meta.uni === 'dc' ? 'DC' : 'Marvel') + '. <a href="' + EX_MP_SITE + 'explorer.html' + (meta.uni === 'dc' ? '?u=dc' : '') + '" target="_blank" rel="noopener noreferrer">Version interactive</a></p>' +
+      '<div class="ex-row mp-nav"><button class="btn secondary rel-mini" data-mp-step="-1"' + (at > 0 ? '' : ' disabled') + '>‹ Carte précédente</button><button class="btn secondary rel-mini" data-mp-step="1"' + (at < list.length - 1 ? '' : ' disabled') + '>Carte suivante ›</button></div></aside>';
     ov.querySelector('.mp-title').textContent = meta.title;
-    const f = ov.querySelector('.mp-info');
-    ['title', 'universe', 'kind', 'note', 'source'].forEach(k => { f.elements[k].value = meta[k] || ''; });
-    ov.querySelector('.mp-meta').innerHTML = (meta.w && meta.h ? '<span>' + meta.w + ' × ' + meta.h + ' px</span> · ' : '') + (meta.size ? '<span>' + (meta.size / 1048576).toLocaleString(uiLocale(), { maximumFractionDigits: 1, minimumFractionDigits: 1 }) + ' Mo</span> · ' : '') +
-      '<span>Ajoutée le</span> <span>' + h(new Date(meta.createdAt).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'long', year: 'numeric' })) + '</span>';
     document.body.appendChild(ov); document.body.classList.add('mp-open');
-    const stage = ov.querySelector('.mp-stage'), img = ov.querySelector('.mp-img'), zl = ov.querySelector('.mp-zoom');
+    const stage = ov.querySelector('.mp-stage'), img = ov.querySelector('.mp-img'), zl = ov.querySelector('.mp-zoom'), info = ov.querySelector('.mp-info');
     let st = { z: 1, x: 0, y: 0 }, fw = 0, fh = 0;
     const vw = () => stage.clientWidth, vh = () => stage.clientHeight;
     const paint = () => { img.style.width = fw + 'px'; img.style.height = fh + 'px'; img.style.transform = 'translate(' + st.x + 'px,' + st.y + 'px) scale(' + st.z + ')'; zl.textContent = Math.round(st.z * 100) + ' %'; };
-    const layout = () => { const f2 = MP.fit(vw(), vh(), img.naturalWidth, img.naturalHeight); const keep = fw ? st.z : 1; fw = f2.w; fh = f2.h; st = keep === 1 ? MP.initial(vw(), vh(), fw, fh) : MP.clampPan(Object.assign({}, st, { z: keep }), vw(), vh(), fw, fh); paint(); };
-    img.onload = layout; img.src = url;
+    // Mise en page avec les dimensions du catalogue : la vignette s'affiche tout de suite, l'image haute définition la remplace
+    const layout = () => { const f2 = MP.fit(vw(), vh(), meta.w, meta.h); const keep = fw ? st.z : 1; fw = f2.w; fh = f2.h; st = keep === 1 ? MP.initial(vw(), vh(), fw, fh) : MP.clampPan(Object.assign({}, st, { z: keep }), vw(), vh(), fw, fh); paint(); };
+    img.src = meta.thumb;
+    const full = new Image(); full.decoding = 'async';
+    full.onload = () => { img.src = meta.img; stage.classList.add('is-hd'); const l = ov.querySelector('.mp-load'); if (l) l.remove(); };
+    full.onerror = () => { const l = ov.querySelector('.mp-load'); if (l) l.textContent = 'Image haute définition indisponible : aperçu affiché.'; };
+    full.src = meta.img;
     const zoom = (factor, px, py) => { st = MP.zoomAt(st, factor, px == null ? vw() / 2 : px, py == null ? vh() / 2 : py, vw(), vh(), fw, fh); paint(); };
     const pt = e => { const r = stage.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
     stage.addEventListener('wheel', e => { e.preventDefault(); const [x, y] = pt(e); zoom(Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.0018)), x, y); }, { passive: false });
@@ -20829,33 +20918,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     stage.onpointerup = stage.onpointercancel = e => { ptrs.delete(e.pointerId); if (ptrs.size < 2) pinch = 0; if (!ptrs.size) stage.classList.remove('is-drag'); };
     stage.ondblclick = e => { const [x, y] = pt(e); zoom(st.z > 1.5 ? 1 / st.z : 2.5, x, y); };
-    const ro = window.ResizeObserver ? new ResizeObserver(layout) : null; if (ro) ro.observe(stage);
-    const close = () => { if (ro) ro.disconnect(); document.removeEventListener('keydown', onKey, true); ov.remove(); document.body.classList.remove('mp-open'); URL.revokeObjectURL(url); if (opener && opener.isConnected) opener.focus(); };
+    const ro = window.ResizeObserver ? new ResizeObserver(layout) : null; if (ro) ro.observe(stage); else layout();
+    const close = (refocus = true) => { if (ro) ro.disconnect(); document.removeEventListener('keydown', onKey, true); full.onload = full.onerror = null; ov.remove(); document.body.classList.remove('mp-open'); if (refocus && opener && opener.isConnected) opener.focus(); };
+    const step = d => { const next = list[at + d]; if (!next) return; const wasInfo = !info.hidden; close(false); exMpOpen(next.key, opener); if (wasInfo) { const ib2 = document.querySelector('.mp-view [data-mp-info]'); if (ib2) ib2.click(); } };
     const onKey = e => {
       if (e.key === 'Escape') { e.preventDefault(); close(); return; }
       if (e.target && /^(INPUT|TEXTAREA|SELECT)$/.test(e.target.tagName)) return;
       if (e.key === '+' || e.key === '=') { e.preventDefault(); zoom(1.25); } else if (e.key === '-') { e.preventDefault(); zoom(0.8); } else if (e.key === '0') { e.preventDefault(); st = MP.initial(vw(), vh(), fw, fh); paint(); }
+      else if ((e.key === 'PageDown' || e.key === 'PageUp')) { e.preventDefault(); step(e.key === 'PageDown' ? 1 : -1); }
       else if (/^Arrow/.test(e.key)) { e.preventDefault(); const s = 60; st = MP.clampPan({ z: st.z, x: st.x + (e.key === 'ArrowLeft' ? s : e.key === 'ArrowRight' ? -s : 0), y: st.y + (e.key === 'ArrowUp' ? s : e.key === 'ArrowDown' ? -s : 0) }, vw(), vh(), fw, fh); paint(); }
     };
     document.addEventListener('keydown', onKey, true);
-    ov.querySelector('[data-mp-close]').onclick = close;
+    ov.querySelector('[data-mp-close]').onclick = () => close();
     ov.querySelectorAll('[data-mp-z]').forEach(b => { b.onclick = () => { const k = b.dataset.mpZ; if (k === 'fit') { st = MP.initial(vw(), vh(), fw, fh); paint(); } else zoom(k === 'in' ? 1.4 : 1 / 1.4); }; });
-    const ib = ov.querySelector('[data-mp-info]'); ib.onclick = () => { f.hidden = !f.hidden; ib.setAttribute('aria-expanded', String(!f.hidden)); ov.classList.toggle('has-info', !f.hidden); if (!f.hidden) f.elements.title.focus(); };
-    f.onsubmit = async e => {
-      e.preventDefault();
-      const next = Object.assign({}, meta, MP.sanitizeMeta({ title: f.elements.title.value, universe: f.elements.universe.value, kind: f.elements.kind.value, note: f.elements.note.value, source: f.elements.source.value }));
-      if (f.elements.source.value.trim() && !next.source) { showToast('La source doit être un lien https.'); f.elements.source.focus(); return; }
-      try { await exMpReq(['meta'], 'readwrite', tx => tx.objectStore('meta').put(next)); Object.assign(meta, next); ov.querySelector('.mp-title').textContent = meta.title; ov.setAttribute('aria-label', meta.title); showToast('Carte enregistrée.'); if (exView.page === 'maps') renderExplorer(); }
-      catch (_) { showToast('Enregistrement impossible.'); }
-    };
-    ov.querySelector('[data-mp-del]').onclick = async () => {
-      if (!window.confirm('Supprimer la carte « ' + meta.title + ' » de cet appareil ?')) return;
-      try {
-        await exMpReq(['meta', 'blobs'], 'readwrite', tx => { tx.objectStore('blobs').delete(id); return tx.objectStore('meta').delete(id); });
-        exMpState.list = (exMpState.list || []).filter(m => m.id !== id); exMpForget(id); close(); if (exView.page === 'maps') renderExplorer();
-        showToastAction('Carte supprimée.', 'Annuler', async () => { try { await exMpReq(['meta', 'blobs'], 'readwrite', tx => { tx.objectStore('blobs').put(blob, id); return tx.objectStore('meta').put(meta); }); exMpState.list.push(meta); if (exView.page === 'maps') renderExplorer(); } catch (_) { showToast('Restauration impossible.'); } });
-      } catch (_) { showToast('Suppression impossible.'); }
-    };
+    ov.querySelectorAll('[data-mp-step]').forEach(b => { b.onclick = () => step(Number(b.dataset.mpStep)); });
+    const ib = ov.querySelector('[data-mp-info]'); ib.onclick = () => { info.hidden = !info.hidden; ib.setAttribute('aria-expanded', String(!info.hidden)); ov.classList.toggle('has-info', !info.hidden); };
     setTimeout(() => ov.querySelector('[data-mp-close]').focus(), 0);
   };
   // D-78 : sommaire de l'accueil et listes longues repliées (personnages, créateurs, séries)
