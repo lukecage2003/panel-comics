@@ -155,6 +155,15 @@ const phrases = {
   // D-105
   "Univers des comics": "Universos dos quadrinhos",
   "Système": "Sistema",
+  // D-106
+  "Mes cartes": "Meus mapas",
+  "Surprends-moi": "Surpreenda-me",
+  "Univers associés": "Universos relacionados",
+  "← Découvrir": "← Descobrir",
+  "Figures clés": "Figuras-chave",
+  "Terminé": "Encerrado",
+  "+ Ajouter un univers": "+ Adicionar um universo",
+  "+ Importer des cartes": "+ Importar mapas",
 };
 
 module.exports = { locale: 'pt', phrases, same: [] };

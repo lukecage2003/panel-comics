@@ -43,6 +43,7 @@ const MODULES = [
   ['newsCore', 'domains/explorer/news-core.js'],
   ['watchGuides', 'domains/explorer/watch-guides.js'],
   ['universes', 'domains/explorer/universes-core.js'],
+  ['mapsCore', 'domains/explorer/maps-core.js'],
   ['i18n', 'domains/i18n/i18n-core.js'],
   ['i18nEn', 'domains/i18n/i18n-en.js'],
   ['i18nEs', 'domains/i18n/i18n-es.js'],

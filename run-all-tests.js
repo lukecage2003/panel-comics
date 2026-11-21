@@ -6246,6 +6246,87 @@ const waitForCdp = async () => {
       console.log('Résultat Test 84:', JSON.stringify(t84));
       testResults.push({ test: 'Test 84 : Univers des comics, apparence dans Affichage, raccourci « / », guide au hasard (D-105)',
         ok: !!t84 && !t84.error && ['catalog', 'family', 'iconSearch', 'slash', 'random', 'mode', 'modeBack', 'dataUntouched'].every(k => t84[k] === true) });
+      // ==========================================
+      // TEST 85 : Univers datés et sourcés, univers ajoutés par l'utilisateur, Mes cartes (D-106)
+      // ==========================================
+      console.log('\n[TEST 85] Univers datés, univers ajoutés, Mes cartes...');
+      const t85 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id);
+        const fp0 = await window.Panel.backup.fingerprint('collection');
+        const UKEY = 'panel_universes_user_v1', ustored = localStorage.getItem(UKEY);
+        const confirm0 = window.confirm;
+        const mapsCount = async () => { const db = await new Promise((res, rej) => { const q = indexedDB.open('panel_maps', 1); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); q.onupgradeneeded = () => { const d = q.result; if (!d.objectStoreNames.contains('meta')) d.createObjectStore('meta', { keyPath: 'id' }); if (!d.objectStoreNames.contains('blobs')) d.createObjectStore('blobs'); }; });
+          const n = await new Promise(res => { const tx = db.transaction(['meta', 'blobs']); const a = tx.objectStore('meta').count(), b = tx.objectStore('blobs').count(); tx.oncomplete = () => res(a.result + ':' + b.result); }); db.close(); return n; };
+        try {
+          $('navExplorer').click(); await wait(400);
+          window.Panel.explorer.open('home'); await wait(300);
+          let root = $('explorerRoot');
+          root.querySelector('[data-ex-topic="universes"]').click(); await wait(250);
+          const card = name => [...$('exSecUniverseCat').querySelectorAll('.ex-ucard')].find(c => c.querySelector('b').textContent === name);
+          // Les deux univers Ultimate, distincts et datés ; un univers terminé porte « Terminé »
+          const u1 = card('Ultimate Marvel'), u2 = card('Ultimate Universe (2023)');
+          r.ultimates = !!u1 && !!u2 && u1.querySelector('small').textContent.includes('2000-2015') && u2.querySelector('small').textContent.includes('2023-2026') &&
+            u1.querySelector('.ex-ucard-badge').textContent === 'Terminé' && !card('Marvel').querySelector('.ex-ucard-badge');
+          const ms = card('Milestone');
+          r.milestone = !!ms && ms.querySelectorAll('.ex-ucard-who button').length === 5 && ms.querySelector('small').textContent.includes('1993-1997, depuis 2021');
+          r.sources = [...$('exSecUniverseCat').querySelectorAll('.ex-ucard-src')].every(a => a.href.indexOf('https://') === 0 && a.rel.includes('noopener'));
+          r.creatorModule = window.PanelDomains.universes.ofCreator('Dwayne McDuffie').map(u => u.key).join() === 'milestone';
+          // Ajouter un univers : une source https est exigée ; retrait avec annulation possible
+          localStorage.removeItem(UKEY); window.Panel.explorer.open('home'); await wait(250);
+          root = $('explorerRoot'); root.querySelector('[data-ex-topic="universes"]').click(); await wait(200);
+          const form = () => $('explorerRoot').querySelector('[data-ex-uadd]');
+          $('exUAdd').open = true;
+          const fill = src => { const f = form(); f.elements.name.value = 'Univers essai Panel'; f.elements.from.value = '2019'; f.elements.source.value = src; f.elements.icons.value = 'Héros essai'; f.requestSubmit(); };
+          fill('http://exemple.test/univers'); await wait(200);
+          const err = form().querySelector('.ex-uadd-err');
+          r.sourceRequired = !err.hidden && err.textContent.includes('https') && !localStorage.getItem(UKEY);
+          fill('https://exemple.test/univers'); await wait(300);
+          const saved = JSON.parse(localStorage.getItem(UKEY) || '[]');
+          const mine = [...$('explorerRoot').querySelectorAll('.ex-ucard.is-user')];
+          r.added = saved.length === 1 && mine.length === 1 && mine[0].querySelector('.ex-ucard-badge').textContent === 'Ajouté par vous' &&
+            $('explorerRoot').querySelector('[data-ex-ufam="user"]').getAttribute('aria-pressed') === 'true';
+          mine[0].querySelector('[data-ex-urm]').click(); await wait(250);
+          r.removed = JSON.parse(localStorage.getItem(UKEY) || '[]').length === 0 && !$('explorerRoot').querySelector('.ex-ucard.is-user');
+          // Mes cartes : tuile, import d'une image générée, visionneuse, suppression ; SVG refusé
+          window.Panel.explorer.open('home'); await wait(300);
+          const tile = $('explorerRoot').querySelector('[data-ex-go="maps"]');
+          r.tile = !!tile && !!$('explorerRoot').querySelector('.is-random');
+          const n0 = await mapsCount();
+          tile.click(); await wait(400);
+          r.page = !!$('explorerRoot').querySelector('.mp-hero') && $('explorerRoot').querySelector('.mp-hero h2').textContent === 'Mes cartes';
+          const cv = document.createElement('canvas'); cv.width = 1600; cv.height = 900;
+          const g = cv.getContext('2d'); g.fillStyle = '#123'; g.fillRect(0, 0, 1600, 900); g.fillStyle = '#fc0'; g.fillRect(700, 400, 200, 100);
+          const png = await new Promise(res => cv.toBlob(res, 'image/png'));
+          const put = async files => { const dt = new DataTransfer(); files.forEach(f => dt.items.add(f)); const inp = $('explorerRoot').querySelector('[data-mp-file]'); inp.files = dt.files; inp.onchange(); await wait(1200); };
+          await put([new File(['<svg xmlns="http://www.w3.org/2000/svg"></svg>'], 'essai.svg', { type: 'image/svg+xml' })]);
+          r.svgRefused = (await mapsCount()) === n0;
+          await put([new File([png], 'carte_essai-panel.png', { type: 'image/png' })]);
+          const mc = [...$('explorerRoot').querySelectorAll('.mp-card')].find(b => b.querySelector('b').textContent === 'Carte essai panel');
+          r.imported = !!mc && (await mapsCount()) !== n0;
+          mc.click(); await wait(600);
+          const ov = document.querySelector('.mp-view');
+          const stage = ov && ov.querySelector('.mp-stage');
+          if (stage) { const b = stage.getBoundingClientRect(); stage.dispatchEvent(new WheelEvent('wheel', { deltaY: -400, clientX: b.left + b.width / 2, clientY: b.top + b.height / 2, bubbles: true, cancelable: true })); await wait(100); }
+          r.viewer = !!ov && ov.getAttribute('role') === 'dialog' && ov.querySelector('.mp-zoom').textContent !== '100 %' && ov.querySelector('.mp-meta').textContent.includes('1600 × 900 px');
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(150);
+          r.escape = !document.querySelector('.mp-view');
+          [...$('explorerRoot').querySelectorAll('.mp-card')].find(b => b.querySelector('b').textContent === 'Carte essai panel').click(); await wait(500);
+          window.confirm = () => true;
+          document.querySelector('.mp-view [data-mp-del]').click(); await wait(500);
+          r.deleted = (await mapsCount()) === n0 && !document.querySelector('.mp-view') && ![...$('explorerRoot').querySelectorAll('.mp-card b')].some(b => b.textContent === 'Carte essai panel');
+          window.Panel.explorer.open('home'); await wait(200);
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          window.confirm = confirm0;
+          if (ustored === null) localStorage.removeItem(UKEY); else localStorage.setItem(UKEY, ustored);
+          const v = document.querySelector('.mp-view'); if (v) v.remove(); document.body.classList.remove('mp-open');
+        }
+        r.dataUntouched = fp0 === await window.Panel.backup.fingerprint('collection');
+        return r;
+      })()`);
+      console.log('Résultat Test 85:', JSON.stringify(t85));
+      testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, Mes cartes (D-106)',
+        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'svgRefused', 'imported', 'viewer', 'escape', 'deleted', 'dataUntouched'].every(k => t85[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
