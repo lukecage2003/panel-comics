@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-PjUbQPWn3XPhFn9OOUteHliTh8WeLGo3s8PRTMw10Z0=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-ce+UoIkusrLTfHf9ICKofZXZ+eM/5sJ0Uh5Wi+px5qU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2464,7 +2464,19 @@
     .ex-follow-pt img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
     .ex-follow b { font-size: 13px; line-height: 1.2; }
     .ex-follow small { font-size: 11px; color: var(--muted); line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-    .ex-follow em { position: absolute; top: 6px; right: 6px; font-style: normal; font-size: 10px; font-weight: 800; background: #FFD400; color: #111; padding: 1px 6px; border-radius: 99px; }
+    .ex-mychars-row { display: flex; gap: 12px; overflow-x: auto; padding: 4px 2px 10px; scrollbar-width: thin; scroll-snap-type: x proximity; }
+    .ex-mychar { position: relative; flex: 0 0 auto; width: 150px; scroll-snap-align: start; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 5px; padding: 12px 10px 10px; border-radius: 16px; border: 1px solid var(--hair, rgba(255,255,255,.12)); background: var(--bg-card); color: inherit; cursor: pointer; font: inherit; }
+    .ex-mychar:focus-visible { outline: 2px solid var(--accent, #FFD400); outline-offset: 2px; }
+    .ex-mychar-pt { width: 72px; height: 72px; border-radius: 50%; overflow: hidden; display: grid; place-items: center; background: hsl(var(--h, 220) 45% 32%); color: #fff; font-family: var(--font-display); font-size: 30px; font-weight: 800; box-shadow: 0 0 0 2px var(--hair, #444); }
+    .ex-mychar.is-new .ex-mychar-pt { box-shadow: 0 0 0 3px #FFD400; }
+    .ex-mychar-pt img { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+    .ex-mychar b { font-size: 14px; line-height: 1.2; }
+    .ex-mychar small { font-size: 11px; color: var(--muted); line-height: 1.3; }
+    .ex-mychar .ex-mychar-tags { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; }
+    .ex-mychar .ex-mychar-tags i { font-style: normal; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 99px; background: var(--bg-soft, rgba(255,255,255,.08)); color: var(--muted); }
+    .ex-mychar .ex-mychar-tags i.is-fav { background: rgba(255,212,0,.16); color: var(--text, inherit); }
+    .ex-mychar .ex-mychar-next { color: var(--text, inherit); font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .ex-mychar em, .ex-follow em { position: absolute; top: 6px; right: 6px; font-style: normal; font-size: 10px; font-weight: 800; background: #FFD400; color: #111; padding: 1px 6px; border-radius: 99px; }
     /* D-67 — VO / VF */
     .ex-vf-h { margin: 10px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
     .ex-vf-h small { color: var(--muted); text-transform: none; letter-spacing: 0; font-weight: 500; margin-left: 6px; }
@@ -18234,7 +18246,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     // Les événements Marvel et DC ont leur propre section : les guides n'y sont pas répétés
     const shown = guides.filter(g => !exIsEvent(g) && (!exView.guideCat || g.category === exView.guideCat));
     const sec = (id, title, sub, body) => '<section class="ex-sec" id="' + id + '"><div class="ex-sec-head"><h3>' + title + '</h3>' + (sub ? '<p>' + sub + '</p>' : '') + '</div>' + body + '</section>';
-    return exFollowsHtml() +
+    return exMyCharsHtml() + exFollowsHtml() +
       '<nav class="ex-toc" aria-label="Sommaire d\'Explorer">' + [['exSecTrends', 'Tendances'], ['exSecLive', 'Directs'], ['exSecGuides', 'Guides'], ['exSecReleases', 'Sorties'], ['exSecNews', 'Actualités'], ['exSecMore', 'Parcourir']].map(([id, t]) => '<button class="ex-toc-b" data-ex-toc="' + id + '">' + t + '</button>').join('') + '</nav>' +
       (recos.length ? sec('exSecReco', 'Pour vous', 'Suggestions calculées à partir de votre collection, de votre progression et de votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
       exTrendsHtml() + exLiveRowHtml() +
@@ -18657,10 +18669,43 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="ex-live-row">' + rooms.map(r => '<button class="ex-live-card" data-ex-live><span class="live-dot is-studio">' + h(F[r.format] || 'Direct') + '</span><b>' + h(r.title) + '</b><small>' + h(r.duel ? r.duel.sides.join(' vs ') : lvWhen(r.when)) + '</small></button>').join('') +
         '<button class="ex-live-card is-new" data-ex-live>' + igIcon('ic-plus') + '<b>Préparer un direct</b><small>Débat, pages commentées, duel</small></button></div></section>';
   };
+  // Vos personnages (D-100) : suivis, personnage préféré du profil et personnages des numéros possédés, en tête de Découvrir.
+  // Tout est calculé sur l'appareil à partir des vraies données ; aucun portrait n'est inventé (initiale si la fiche n'a pas d'image).
+  const exMyChars = () => {
+    const m = new Map();
+    const get = name => { const k = catNorm(name); if (!k) return null; if (!m.has(k)) m.set(k, { key: k, name: gdStr(name, 80), ref: '', image: '', followed: false, isNew: false, lastLabel: '', fav: false, owned: 0, read: 0 }); return m.get(k); };
+    const f = exFollows();
+    Object.keys(f).filter(k => k.split(':')[0] === 'character').forEach(k => { const x = get(f[k].name); if (!x) return; Object.assign(x, { ref: k, image: f[k].image && isSafeImageUrl(f[k].image) ? f[k].image : '', followed: true, isNew: !!f[k].isNew, lastLabel: f[k].lastLabel || '' }); });
+    let prof = null; try { prof = profileLoad(); } catch (_) {}
+    if (prof && prof.favorite) { const x = get(prof.favorite); if (x) x.fav = true; }
+    const cc = exLensCall('collectionCharacters', 12);
+    if (cc) cc.characters.forEach(c => { const x = get(c.name); if (x) { x.owned = c.owned; x.read = c.read; } });
+    const today = relToday(), soon = isoDate(new Date(Date.now() + 45 * 86400000));
+    const list = [...m.values()].sort((a, b) => (b.isNew - a.isNew) || (b.fav - a.fav) || (b.followed - a.followed) || (b.owned - a.owned) || a.name.localeCompare(b.name, 'fr')).slice(0, 12);
+    if (list.length && relPubs.size) {
+      const up = [...relPubs.values()].filter(p => !p.cancelled && relDay(p) >= today && relDay(p) <= soon).sort((a, b) => relDay(a).localeCompare(relDay(b)));
+      list.forEach(x => { const n = x.key; const hit = n.length >= 3 && up.find(p => (' ' + catNorm(p.series + ' ' + (p.title || '')) + ' ').includes(' ' + n + ' ')); if (hit) x.next = { id: hit.id, label: relLabel(hit), date: relDay(hit) }; });
+    }
+    return list;
+  };
+  const exMyCharsHtml = () => {
+    const list = exMyChars();
+    if (!list.length) return '';
+    const hue = s => [...s].reduce((a, c) => (a * 31 + c.charCodeAt(0)) % 360, 7);
+    return '<section class="ex-sec ex-mychars" id="exSecMyChars"><div class="ex-sec-head"><h3>Vos personnages</h3><p>Ceux que vous suivez, votre préféré et ceux de vos numéros, avec leur prochaine sortie au calendrier.</p></div><div class="ex-mychars-row">' +
+      list.map(x => {
+        const tags = [x.fav ? '<i class="is-fav">Préféré</i>' : '', x.followed ? '<i>Suivi</i>' : '', x.owned ? '<i>' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + '</i>' : ''].join('');
+        const sub = x.isNew && x.lastLabel ? 'Nouvelle apparition : ' + h(x.lastLabel) : x.next ? 'Sort le ' + h(relFmtDate(x.next.date)) + ' : ' + h(x.next.label) : x.lastLabel ? 'Dernière apparition : ' + h(x.lastLabel) : '';
+        const act = x.ref ? ' data-ex-cv="' + h(x.ref) + '"' : ' data-ex-browse="character" data-ex-q="' + h(x.name) + '"';
+        const label = x.name + (x.fav ? ', préféré' : '') + (x.followed ? ', suivi' : '') + (x.owned ? ', ' + x.owned + ' numéro' + (x.owned > 1 ? 's' : '') + ' possédé' + (x.owned > 1 ? 's' : '') : '') + (x.ref ? ' : ouvrir la fiche' : ' : chercher ses comics');
+        return '<button class="ex-mychar' + (x.isNew ? ' is-new' : '') + '"' + act + ' aria-label="' + h(label) + '"><span class="ex-mychar-pt" style="--h:' + hue(x.key) + '" aria-hidden="true">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : h(x.name.trim().charAt(0).toUpperCase())) + '</span><b>' + h(x.name) + '</b>' +
+          (tags ? '<span class="ex-mychar-tags">' + tags + '</span>' : '') + (sub ? '<small class="' + (x.next && !x.isNew ? 'ex-mychar-next' : '') + '">' + sub + '</small>' : '') + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>';
+      }).join('') + '</div></section>';
+  };
   const exFollowsHtml = () => {
-    const f = exFollows(), keys = Object.keys(f);
+    const f = exFollows(), keys = Object.keys(f).filter(k => k.split(':')[0] !== 'character');
     if (!keys.length) return '';
-    return '<section class="ex-sec" id="exSecFollows"><div class="ex-sec-head"><h3>Mes suivis</h3><p>Personnages, équipes et créateurs suivis : leur dernière apparition connue. Les notifications sur téléphone arriveront avec les comptes en ligne.</p></div><div class="ex-follows">' +
+    return '<section class="ex-sec" id="exSecFollows"><div class="ex-sec-head"><h3>Mes suivis</h3><p>Équipes, créateurs et séries suivis : leur dernière apparition connue. Les notifications sur téléphone arriveront avec les comptes en ligne.</p></div><div class="ex-follows">' +
       keys.map(k => { const x = f[k], kind = k.split(':')[0]; return '<button class="ex-follow' + (x.isNew ? ' is-new' : '') + '" data-ex-cv="' + h(k) + '"><span class="ex-follow-pt">' + (x.image ? '<img src="' + h(x.image) + '" alt="" loading="lazy" referrerpolicy="no-referrer">' : '') + '</span><b>' + h(x.name) + '</b><small>' + h(EX_KIND_LABEL[kind] || '') + (x.lastLabel ? ' · ' + h(x.lastLabel) : '') + '</small>' + (x.isNew ? '<em>Nouveau</em>' : '') + '</button>'; }).join('') + '</div></section>';
   };
   // ==========================================================================
@@ -25623,6 +25668,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       publishers: [...publishers.entries()].map(([name, owned]) => ({ name, owned })),
       coverArtists: [...artists.entries()].map(([name, covers]) => ({ name, covers })) };
   };
+  // D-100 : personnages les plus présents dans les numéros possédés (crédits Comic Vine en cache, sinon déduits du titre).
+  // Agrégat seulement (nom, nombre d'œuvres, lues) ; soumis au réglage « Personnaliser ».
+  const lensCollectionCharacters = (limit = 12) => {
+    if (!personalizeEnabled()) return s1Err('disabled');
+    if (!s1Available()) return s1Err('unavailable');
+    const owned = physicalSingles.filter(s => s && isOwned(s));
+    if (!owned.length) return { ok: true, characters: [] };
+    const r = window.PanelDomains.collectionInsights.creatorInsights(owned, { creditsOf: creditsOfCopy, isRead: rdReadOfCopy, characterOf: window.PanelDomains.collectionBoxes.characterOf, limit: Math.max(1, Math.min(40, Number(limit) || 12)) });
+    return { ok: true, characters: r.characters.owned.map(c => ({ name: c.name, owned: c.n, read: c.read })) };
+  };
   // E3 (3.1b-5) : « ces publications sont-elles référencées par la collection ? » (exemplaire lié ou numéro de la Pull List, quel que soit son état).
   // Réponse agrégée oui/non par identifiant de publication ; question d'intégrité, indépendante du réglage « Personnaliser ».
   const lensReferencedPubs = pubIds => {
@@ -25776,7 +25831,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   };
   const PERSONAL_CONTRACTS_V1 = Object.freeze({
     version: 1,
-    lens: Object.freeze({ isEnabled: personalizeEnabled, ownedCount: lensOwnedCount, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets, referencedPubs: lensReferencedPubs }),
+    lens: Object.freeze({ isEnabled: personalizeEnabled, ownedCount: lensOwnedCount, statusFor: lensStatusFor, guideProgress: lensGuideProgress, collectionFacets: lensCollectionFacets, collectionCharacters: lensCollectionCharacters, referencedPubs: lensReferencedPubs }),
     commands: Object.freeze({ gesture: s2Gesture, addCatalogIssue: cmdAddCatalogIssue, addToWishlist: cmdAddToWishlist, addToCollection: cmdAddToCollection, addToPullList: cmdAddToPullList, followSeries: cmdFollowSeries, setGuideProgress: cmdSetGuideProgress, markRead: cmdMarkRead, openItem: cmdOpenItem, undo: cmdUndo }),
     settings: Object.freeze({ personalize: personalizeEnabled, setPersonalize })
   });

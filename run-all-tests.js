@@ -5901,6 +5901,61 @@ const waitForCdp = async () => {
       console.log('Résultat Test 78:', JSON.stringify(t78));
       testResults.push({ test: 'Test 78 : Collection épurée et étagère animée sur ordinateur seulement (D-99)',
         ok: !!t78 && !t78.error && ['bar', 'quickChips', 'open', 'count', 'activeShown', 'reset', 'motionGated', 'tilt', 'dataUntouched'].every(k => t78[k] === true) });
+
+      // ==========================================
+      // TEST 79 : Découvrir, « Vos personnages » en tête (suivis, préféré, numéros possédés) (D-100)
+      // ==========================================
+      console.log('\n[TEST 79] Découvrir : vos personnages en tête...');
+      const t79 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, $ = id => document.getElementById(id);
+        const fp0 = await P.backup.fingerprint('collection');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const fol0 = localStorage.getItem('panel_follows_v1');
+        const mk = (s, i) => ({ id: 'ch79' + s.length + i, series: s, issue: String(i), publisher: 'Fictif', isWishlist: false, coverUrl: '' });
+        try {
+          localStorage.setItem('panel_follows_v1', JSON.stringify({
+            'character:990001': { name: 'Spider-Man', image: '', at: '2026-01-01T00:00:00Z', lastId: 5, lastLabel: 'Fixture Toile #5', lastDate: '2026-11-01', isNew: false },
+            'character:990002': { name: 'Fixture Héroïne', image: '', at: '2026-01-01T00:00:00Z', lastId: 7, lastLabel: 'Fixture Vol #7', lastDate: '2026-11-10', isNew: true },
+            'team:990003': { name: 'Fixture Équipe', image: '', at: '2026-01-01T00:00:00Z', lastId: null, lastLabel: '', lastDate: '', isNew: false }
+          }));
+          P.setSinglesInMemoryForTest([1, 2, 3, 4].map(i => mk('Amazing Spider-Man', i)).concat([1, 2].map(i => mk('Batman', i))));
+          $('navExplorer').click(); await wait(500);
+          const sec = $('exSecMyChars'), cards = sec ? [...sec.querySelectorAll('.ex-mychar')] : [];
+          const byName = n => cards.find(c => c.querySelector('b').textContent === n);
+          // En tête de Découvrir : avant les suivis et le sommaire
+          const home = sec && sec.parentElement, order = home ? [...home.children].map(x => x.id || x.className) : [];
+          r.first = !!sec && order.indexOf('exSecMyChars') < order.indexOf('ex-toc') && order.indexOf('exSecMyChars') < (order.indexOf('exSecFollows') < 0 ? 1e9 : order.indexOf('exSecFollows'));
+          // Nouvelle apparition d'abord ; suivi et possédé fusionnés en une carte, qui ouvre la fiche
+          r.newFirst = !!cards[0] && cards[0].querySelector('b').textContent === 'Fixture Héroïne' && cards[0].classList.contains('is-new') && /Nouvelle apparition : Fixture Vol #7/.test(cards[0].textContent);
+          const sp = byName('Spider-Man');
+          r.merged = !!sp && cards.filter(c => c.querySelector('b').textContent === 'Spider-Man').length === 1 && /Suivi/.test(sp.textContent) && /4 numéros/.test(sp.textContent) && sp.dataset.exCv === 'character:990001';
+          // Personnage seulement possédé : recherche dans les personnages ; initiale, pas d'image inventée
+          const bt = byName('Batman');
+          r.ownedOnly = !!bt && /2 numéros/.test(bt.textContent) && !/Suivi/.test(bt.textContent) && bt.dataset.exQ === 'Batman' && bt.dataset.exBrowse === 'character' && !bt.querySelector('img') && bt.querySelector('.ex-mychar-pt').textContent === 'B';
+          r.a11y = cards.every(c => c.tagName === 'BUTTON' && /numéro|suivi|préféré/.test(c.getAttribute('aria-label') || ''));
+          // Les équipes restent dans « Mes suivis », les personnages n'y sont plus répétés
+          const fs = $('exSecFollows');
+          r.followsSplit = !!fs && /Fixture Équipe/.test(fs.textContent) && !/Spider-Man|Fixture Héroïne/.test(fs.textContent) && !/Fixture Équipe/.test(sec.textContent);
+          bt.click(); await wait(400);
+          r.search = $('exSearch') && $('exSearch').value === 'Batman';
+          // Sans suivi ni numéro : la section disparaît
+          localStorage.removeItem('panel_follows_v1'); P.setSinglesInMemoryForTest([]);
+          window.Panel.explorer.open('home'); await wait(400);
+          // (un préféré déjà enregistré dans le profil garde sa seule carte)
+          const prof = (() => { try { return JSON.parse(localStorage.getItem('panel_profile') || 'null'); } catch (_) { return null; } })();
+          r.emptyHidden = prof && prof.favorite ? !!$('exSecMyChars') && $('exSecMyChars').querySelectorAll('.ex-mychar').length === 1 && /Préféré/.test($('exSecMyChars').textContent) : !$('exSecMyChars');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (fol0 === null) localStorage.removeItem('panel_follows_v1'); else localStorage.setItem('panel_follows_v1', fol0);
+          P.setSinglesInMemoryForTest(prev);
+        }
+        r.followsRestored = localStorage.getItem('panel_follows_v1') === fol0;
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      console.log('Résultat Test 79:', JSON.stringify(t79));
+      testResults.push({ test: 'Test 79 : Découvrir, vos personnages en tête (D-100)',
+        ok: !!t79 && !t79.error && ['first', 'newFirst', 'merged', 'ownedOnly', 'a11y', 'followsSplit', 'search', 'emptyHidden', 'followsRestored', 'dataUntouched'].every(k => t79[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

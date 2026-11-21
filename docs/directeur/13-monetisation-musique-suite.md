@@ -93,7 +93,7 @@ Avant un lancement commercial, prévoir une relecture par un juriste en proprié
 
 1. ~~**Étagère de collection**~~ : fait (D-99), animations sur ordinateur seulement.
 2. ~~**Collection épurée**~~ : fait (D-99), filtres repliés et actions dans « ••• ».
-3. **Découvrir** : personnages suivis (à partir des favoris et des numéros possédés) en tête.
+3. ~~**Découvrir** : personnages suivis (à partir des favoris et des numéros possédés) en tête.~~ : fait (D-100), section « Vos personnages ».
 4. **Ouverture des comptes (S8)** :
    - brancher `online-core` sur les migrations 14 et 15 déjà en préproduction ;
    - envoyer les invitations de co-animation et publier les rencontres ;
