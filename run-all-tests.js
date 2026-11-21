@@ -5956,6 +5956,56 @@ const waitForCdp = async () => {
       console.log('Résultat Test 79:', JSON.stringify(t79));
       testResults.push({ test: 'Test 79 : Découvrir, vos personnages en tête (D-100)',
         ok: !!t79 && !t79.error && ['first', 'newFirst', 'merged', 'ownedOnly', 'a11y', 'followsSplit', 'search', 'emptyHidden', 'followsRestored', 'dataUntouched'].every(k => t79[k] === true) });
+
+      // ==========================================
+      // TEST 80 : Profil retouché (identité d'abord, compteurs cliquables, carte de rang en zones) (D-101)
+      // ==========================================
+      console.log('\n[TEST 80] Profil retouché...');
+      const t80 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, $ = id => document.getElementById(id);
+        const fp0 = await P.backup.fingerprint('collection');
+        const prev = JSON.parse(JSON.stringify(P.getPhysicalSingles()));
+        const prof0 = localStorage.getItem('panel_profile'), rev0 = localStorage.getItem('panel_singles_rev'), ls0 = localStorage.getItem('panel_physical_singles');
+        const mk = (s, i) => ({ id: 'pf80' + s.length + i, series: s, issue: String(i), publisher: 'Fictif', isWishlist: false, coverUrl: '' });
+        try {
+          localStorage.setItem('panel_profile', JSON.stringify({ handle: 'fixture_80', displayName: 'Fixture Quatre-vingts', favorite: 'Fixture', color: '#7c5cff', bio: 'Profil fictif du test 80.' }));
+          P.setSinglesInMemoryForTest([1, 2, 3].map(i => mk('Fixture Série', i)));
+          // La récupération des couvertures ne démarre pas sur une collection de test en mémoire (elle l'enregistrerait)
+          await P.runCoverJob(); await wait(50);
+          r.coverJobBlocked = localStorage.getItem('panel_singles_rev') === rev0 && localStorage.getItem('panel_physical_singles') === ls0;
+          $('navProfile').click(); await wait(500);
+          const prof = $('communityProfile'), hero = prof && prof.querySelector('.pf-hero');
+          // Identité d'abord : ni barre de stories ni règles de partage au-dessus
+          const rules = document.querySelector('#singlesCommunityView .cm-share-rules');
+          r.identityFirst = !!hero && !$('communityHead').querySelector('.st-bar') && !!rules && !!rules.closest('.section-head').hidden && prof.firstElementChild === hero;
+          // Compteurs dans l'en-tête, boutons nommés ; plus de doublon dans la grille
+          const stats = hero && hero.querySelector('.pf-stats');
+          const btns = stats ? [...stats.querySelectorAll('button.ig-stat')] : [];
+          r.stats = btns.length === 4 && btns[0].dataset.pfcGo === 'collection' && /^3 numéros/.test(btns[0].getAttribute('aria-label')) && btns.every(b => /:/.test(b.getAttribute('aria-label'))) && !prof.querySelector('.ig .ig-stats') && /abonnés/.test(stats.textContent);
+          r.storyBtn = !!hero.querySelector('[data-pf-newstory]') && !!hero.querySelector('[data-pf-edit]');
+          // Un compteur ouvre l'onglet correspondant de « Mes publications »
+          btns.find(b => b.dataset.pfGtab === 'lus').click(); await wait(300);
+          const tab = $('communityProfile').querySelector('.ig [role="tab"][data-pf-gtab="lus"]');
+          r.statOpensTab = !!tab && tab.getAttribute('aria-selected') === 'true' && document.activeElement === tab;
+          // Carte de rang en zones nommées (portrait, texte, badge)
+          const rk = $('communityProfile').querySelector('.pf-rank'), areas = rk ? getComputedStyle(rk).gridTemplateAreas : '';
+          r.rankAreas = /pt/.test(areas) && /badge/.test(areas) && /main/.test(areas) && /tiers/.test(areas);
+          // Le Fil garde la barre de stories et les règles de partage
+          const feedTab = $('communityHead').querySelector('[data-cm-tab="feed"]');
+          if (feedTab) { feedTab.click(); await wait(300); r.feedKeeps = !!$('communityHead').querySelector('.st-bar') && !rules.closest('.section-head').hidden; } else r.feedKeeps = true;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (prof0 === null) localStorage.removeItem('panel_profile'); else localStorage.setItem('panel_profile', prof0);
+          P.setSinglesInMemoryForTest(prev);
+          $('navAllSingles').click(); await wait(150);
+        }
+        r.restored = localStorage.getItem('panel_profile') === prof0 && localStorage.getItem('panel_physical_singles') === ls0;
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      console.log('Résultat Test 80:', JSON.stringify(t80));
+      testResults.push({ test: 'Test 80 : Profil retouché, identité d abord et compteurs cliquables (D-101)',
+        ok: !!t80 && !t80.error && ['coverJobBlocked', 'identityFirst', 'stats', 'storyBtn', 'statOpensTab', 'rankAreas', 'feedKeeps', 'restored', 'dataUntouched'].every(k => t80[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

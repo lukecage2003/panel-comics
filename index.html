@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-ce+UoIkusrLTfHf9ICKofZXZ+eM/5sJ0Uh5Wi+px5qU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-PUkcsxlTKuazZx85VzhtPagZJMIyaogsKILhbibF/E0=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2135,6 +2135,15 @@
     .pf-rank-main > b { font: 800 26px/1.1 var(--font-title); letter-spacing: -0.03em; }
     .pf-rank-main > small:last-child { font-size: 12px; opacity: .85; }
     .pf-rank .pf-tiers { grid-column: 1 / -1; }
+    .pf-rank { grid-template-columns: auto 1fr auto; grid-template-areas: "pt main badge" "tiers tiers tiers"; }
+    .pf-rank > .pf-rank-pt { grid-area: pt; } .pf-rank > .pf-rank-badge { grid-area: badge; } .pf-rank > .pf-rank-main { grid-area: main; } .pf-rank > .pf-tiers { grid-area: tiers; }
+    .pf-id-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .pf-stats { margin: 14px 0 0; padding: 10px 0 0; border-top: 1px solid var(--hair, rgba(255,255,255,.12)); }
+    button.ig-stat { font: inherit; color: inherit; background: none; border: 0; border-radius: 12px; padding: 6px 2px; cursor: pointer; }
+    button.ig-stat:focus-visible { outline: 2px solid var(--accent, #FFD400); outline-offset: 1px; }
+    @media (hover: hover) { button.ig-stat:hover { background: rgba(255,255,255,.06); } }
+    .ig-title { margin: 4px 2px 10px; }
+    @media (max-width: 520px) { .ig-stats.pf-stats { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; } .pf-stats .ig-stat b { font-size: 17px; } .pf-stats .ig-stat small { font-size: 11px; } }
     .pf-top3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; margin: 16px 0; }
     .pf-podium { padding: 14px; border-radius: 18px; background: var(--card, var(--bg-secondary)); border: 1px solid var(--hair); }
     .pf-podium h4 { margin: 0 0 10px; font: 700 14px var(--font-title); }
@@ -2165,7 +2174,7 @@
     .pf-xp-rules span { padding: 5px 9px; border-radius: 999px; font-size: 12px; background: color-mix(in srgb, var(--vibranium) 14%, transparent); }
     .pf-xp-rules span b { color: var(--vibranium); } .pf-xp-rules em { font-style: normal; color: var(--muted); font-size: 11px; }
     .pf-xp-rules span.is-pending { background: transparent; border: 1px dashed var(--hair); }
-    @media (max-width: 600px) { .pf-rank { grid-template-columns: 1fr; text-align: left; } .pf-rank-badge { width: 64px; height: 64px; } .pf-rank-main > b { font-size: 21px; } .pf-form .pf-top3 { grid-template-columns: 1fr; } }
+    @media (max-width: 600px) { .pf-rank { grid-template-columns: auto 1fr; grid-template-areas: "pt badge" "main main" "tiers tiers"; text-align: left; } .pf-rank > .pf-rank-badge { justify-self: end; } .pf-hero { padding: 18px; } .pf-rank-badge { width: 64px; height: 64px; } .pf-rank-main > b { font-size: 21px; } .pf-form .pf-top3 { grid-template-columns: 1fr; } }
     /* Communauté : annonce des débats en direct */
     .live-dot { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ff375f; background: color-mix(in srgb, #ff375f 14%, transparent); }
     .live-dot::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #ff375f; animation: livePulse 1.6s ease-in-out infinite; }
@@ -19886,11 +19895,20 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ? (stories.length ? '<div class="ig-grid">' + stories.map(tile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune story pour l’instant.</b><span>Marquez un numéro « Lu », notez-le : la story apparaît ici.</span><button class="btn rel-mini" data-pf-newstory>Créer une story</button></div>')
       : (drafts.length ? '<div class="ig-grid">' + drafts.map(ptile).join('') + '</div>' : '<div class="ig-empty"><b>Aucune planche.</b><span>Composez une planche depuis le Fil (pull de la semaine, pépite, boîte…).</span><button class="btn rel-mini" data-pf-feed>Ouvrir le Fil</button></div>');
     return '<section class="ig">' +
-      '<div class="ig-stats">' + n(stories.length, 'stories') + n(drafts.length, 'planches') + n(read, 'lus') + n(owned.length, 'en collection') + '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>' + hl +
+      '<h3 class="pf-section ig-title" id="pfGramTitle">Mes publications</h3>' + hl +
       '<nav class="ig-tabs" role="tablist"><button role="tab" aria-selected="' + (pfGramTab === 'stories') + '" data-pf-gtab="stories"><svg class=ic aria-hidden=true><use href=#ic-star /></svg> Stories</button><button role="tab" aria-selected="' + (pfGramTab === 'planches') + '" data-pf-gtab="planches"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Planches</button><button role="tab" aria-selected="' + (pfGramTab === 'lus') + '" data-pf-gtab="lus"><svg class=ic aria-hidden=true><use href=#ic-book /></svg> Lus</button><button role="tab" aria-selected="' + (pfGramTab === 'saved') + '" data-pf-gtab="saved" title="Visible par vous seul"><svg class=ic aria-hidden=true><use href=#ic-bookmark /></svg> Enregistrés</button></nav>' + grid + '</section>';
   };
+  // D-101 : compteurs du profil en tête (comme un réseau social) ; chacun ouvre ce qu'il compte
+  const pfStatsHtml = owned => {
+    const read = owned.filter(rdReadOfCopy).length, nStories = storyLoad().stories.length, nPl = commLoad().drafts.length;
+    const st = (v, l, attr, aria) => '<button type="button" class="ig-stat" ' + attr + ' aria-label="' + escapeHtml(v.toLocaleString('fr-FR') + ' ' + l + ' : ' + aria) + '"><b>' + v.toLocaleString('fr-FR') + '</b><small>' + l + '</small></button>';
+    return '<div class="ig-stats pf-stats" role="group" aria-label="Mes chiffres">' + st(owned.length, owned.length > 1 ? 'numéros' : 'numéro', 'data-pfc-go="collection"', 'ouvrir ma collection') + st(read, read > 1 ? 'lus' : 'lu', 'data-pf-gtab="lus"', 'voir mes lectures') +
+      st(nStories, nStories > 1 ? 'stories' : 'story', 'data-pf-gtab="stories"', 'voir mes stories') + st(nPl, nPl > 1 ? 'planches' : 'planche', 'data-pf-gtab="planches"', 'voir mes planches') +
+      '<div class="ig-stat is-soon" title="Avec les comptes en ligne"><b>—</b><small>abonnés</small></div></div>';
+  };
   const pfGramWire = host => {
-    host.querySelectorAll('[data-pf-gtab]').forEach(b => { b.onclick = () => { pfGramTab = b.dataset.pfGtab; renderCommunityProfile(); }; });
+    host.querySelectorAll('[data-pf-gtab]').forEach(b => { b.onclick = () => { const fromStats = !!b.closest('.pf-stats'); pfGramTab = b.dataset.pfGtab; renderCommunityProfile(); if (fromStats) { const g = $('communityProfile') && $('communityProfile').querySelector('.ig'); if (g) { if (g.scrollIntoView) g.scrollIntoView({ block: 'start', behavior: smoothScroll() }); const tab = g.querySelector('[data-pf-gtab="' + pfGramTab + '"]'); if (tab) tab.focus({ preventScroll: true }); } } }; });
+    host.querySelectorAll('.pf-stats [data-pfc-go]').forEach(b => { b.onclick = () => { const id = PFC_GO[b.dataset.pfcGo]; if ($(id)) $(id).click(); }; });
     host.querySelectorAll('.ig [data-st-open]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.stOpen); });
     host.querySelectorAll('[data-pf-newstory]').forEach(b => { b.onclick = () => openStoryPicker(); });
     host.querySelectorAll('[data-pf-copy]').forEach(b => { b.onclick = () => { const it = physicalSingles.find(x => x.id === b.dataset.pfCopy); if (it) openSingleInspector(it); }; });
@@ -19932,7 +19950,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.innerHTML =
       '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
         (p && !profileEditing
-          ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><button class="btn secondary pf-edit" data-pf-edit>Modifier</button></div>'
+          ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><span class="pf-id-btns"><button class="btn secondary pf-edit" data-pf-edit>Modifier</button><button class="btn secondary pf-edit" data-pf-newstory aria-label="Nouvelle story">' + igIcon('ic-plus') + ' Story</button></span></div>' + pfStatsHtml(owned)
           : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
       '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfRunsHtml(r.runs || []) + '<details class="pf-more"><summary><span>Rangs, artefacts et trophées</span><small>' + r.trophies.filter(t => t.tier).length + ' trophée' + (r.trophies.filter(t => t.tier).length > 1 ? 's' : '') + ' · ' + ar.unlocked + ' artefact' + (ar.unlocked > 1 ? 's' : '') + '</small></summary>' +
@@ -20400,7 +20418,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); rk = pfRank(owned, tr); } catch (_) {}
     const tabs = [['feed', 'Fil'], ['profile', 'Mon profil'], ['live', 'Directs']];
     return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
-      '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + storiesBarHtml();
+      '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + (commTab === 'profile' ? '' : storiesBarHtml());
   };
 
   // ── Explorer : chercher aussi des membres, des planches et des directs (D-63). Les comptes en ligne ne sont pas
@@ -21886,6 +21904,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       headEl.querySelectorAll('[data-cm-tab]').forEach(b => { b.onclick = () => { commTab = b.dataset.cmTab; renderCommunityView(); }; });
     }
     if ($('communityProfile')) $('communityProfile').hidden = commTab !== 'profile';
+    const rules = document.querySelector('#singlesCommunityView .cm-share-rules'); if (rules) rules.closest('.section-head').hidden = commTab === 'profile';
     const host = $('communityDashboard');
     if (!host) return;
     host.hidden = commTab === 'profile';
@@ -23223,7 +23242,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     return false;
   };
 
+  let singlesMemoryOnly = false;
   const runCoverJob = async () => {
+    if (singlesMemoryOnly) return;
     if (coverJob.running) return;
     // Nouveau lot sauf reprise après une pause de quota / une erreur réseau
     if (!/^(quota|error)$/.test(coverJob.phase || '')) coverJob.batchId = null;
@@ -26062,8 +26083,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     editSingleIssue,
     openComicVineSearchModal: q => openCvSearch(q),
     // Test uniquement : remplace la liste en mémoire sans rien enregistrer (simule un démarrage)
-    setSinglesInMemoryForTest: list => { physicalSingles = list; },
+    // Collection de test en mémoire : la récupération des couvertures ne démarre plus (elle enregistrerait ces numéros fictifs)
+    setSinglesInMemoryForTest: list => { physicalSingles = list; singlesMemoryOnly = true; },
     setPhysicalSingles: list => {
+      singlesMemoryOnly = false; // collection réelle de nouveau : la récupération des couvertures redevient possible
       physicalSingles = list;
       persistSingles();
       renderSinglesCollection();
