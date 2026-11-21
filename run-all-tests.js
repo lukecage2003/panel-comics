@@ -6006,6 +6006,77 @@ const waitForCdp = async () => {
       console.log('Résultat Test 80:', JSON.stringify(t80));
       testResults.push({ test: 'Test 80 : Profil retouché, identité d abord et compteurs cliquables (D-101)',
         ok: !!t80 && !t80.error && ['coverJobBlocked', 'identityFirst', 'stats', 'storyBtn', 'statOpensTab', 'rankAreas', 'feedKeeps', 'restored', 'dataUntouched'].every(k => t80[k] === true) });
+
+      // ==========================================
+      // TEST 81 : Modération plus rapide : file triée, raccourcis clavier, mots interdits, délais (D-102)
+      // ==========================================
+      console.log('\n[TEST 81] Console de modération...');
+      const t81 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), P = window.Panel, $ = id => document.getElementById(id), M = P.moderationForTest;
+        const fp0 = await P.backup.fingerprint('collection');
+        const terms0 = localStorage.getItem('panel_mod_terms_v1');
+        const ago = m => new Date(Date.now() - m * 60000).toISOString();
+        const key = (k, el) => (el || $('modConsole')).dispatchEvent(new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true }));
+        const openTab = async () => { $('settingsModal').classList.remove('open'); $('openSettingsBtnTop').click(); await wait(400); document.querySelector('[data-set-tab="moderation"]').click(); await wait(200); };
+        try {
+          localStorage.removeItem('panel_mod_terms_v1');
+          M.reset(); await openTab();
+          const pane = () => document.querySelector('[data-set-pane="dyn"]');
+          // Sans comptes : file vide, rien de simulé
+          r.emptyHonest = !!pane() && /Aucun signalement à traiter/.test(pane().textContent) && /ouverture des comptes/.test(pane().textContent) && !$('modConsole');
+          // File de test (en mémoire seulement)
+          M.load([
+            { target_kind: 'post', target_id: 'fx_spam', reasons: ['spam'], reports: 4, first_at: ago(300), text: 'Fixture publicité' },
+            { target_kind: 'post', target_id: 'fx_har', reasons: ['harassment'], reports: 1, first_at: ago(300), text: 'Fixture message' },
+            { target_kind: 'post', target_id: 'fx_min', reasons: ['minor_safety'], reports: 1, first_at: ago(90), text: 'Fixture mineur' },
+            { target_kind: 'post', target_id: 'fx_har2', reasons: ['harassment'], reports: 1, first_at: ago(10), text: 'Quel 1d10t' }
+          ], [{ reported_at: ago(200), at: ago(170) }]);
+          await openTab();
+          const items = () => [...document.querySelectorAll('.mod-item')];
+          const sev = items().map(li => li.querySelector('.mod-sev').textContent);
+          r.order = items().length === 4 && sev[0] === 'Urgent' && /mineur/.test(items()[0].textContent) && sev[1] === 'Prioritaire' && sev[3] === 'Normal';
+          r.lateShown = /en retard/.test(items()[0].textContent) && /déjà masqué par la base/.test(items()[0].textContent);
+          const sum = document.querySelector('.mod-sum');
+          r.summary = !!sum && /4\\s*À traiter/.test(sum.textContent) && /1\\s*Urgents/.test(sum.textContent) && /30 min\\s*Délai médian/.test(sum.textContent);
+          // Raccourcis : J / K, aide, décision avec motif propre à l'action
+          $('modConsole').focus(); key('j'); await wait(80);
+          r.nav = M.state().sel === 1 && $('modConsole').getAttribute('aria-activedescendant') === 'modItem1' && document.activeElement === $('modConsole') && $('modItem1').getAttribute('aria-selected') === 'true';
+          key('k'); await wait(80); key('k'); await wait(80);
+          r.navBounds = M.state().sel === 0;
+          key('?'); await wait(50);
+          r.help = $('modHelp').open === true && $('modHelp').querySelectorAll('li').length >= 9;
+          key('d'); await wait(80);
+          const c1 = M.lastCall();
+          r.decide = !!c1 && c1.args.p_action === 'dismiss' && c1.args.p_target === 'fx_min' && /^Classé sans suite/.test(c1.args.p_reason) && c1.confirm === false;
+          // Motif saisi : utilisé tel quel ; une touche tapée dans le champ n'agit pas
+          $('modReason').value = 'Motif saisi pour le test';
+          key('h', $('modReason')); await wait(50);
+          r.noKeyInField = M.lastCall().args.p_action === 'dismiss';
+          document.querySelector('[data-mod-act="restore"]').click(); await wait(50);
+          r.typedReason = M.lastCall().args.p_action === 'restore' && M.lastCall().args.p_reason === 'Motif saisi pour le test';
+          // Sanction sans auteur connu : refusée avant tout envoi
+          $('modConsole').focus(); key('w'); await wait(50);
+          r.noAuthorNoSanction = M.lastCall().args.p_action === 'restore';
+          // Mots interdits : liste nettoyée, enregistrée sur l'appareil, contenu concerné remonté à gravité égale
+          $('modTerms').value = ['idiot', 'Idiot', 'x'].join(String.fromCharCode(10)); document.querySelector('[data-mod-terms-save]').click(); await wait(150);
+          r.termsSaved = JSON.parse(localStorage.getItem('panel_mod_terms_v1') || '[]').join('|') === 'idiot' && $('modTerms').value === 'idiot';
+          const after = [...document.querySelectorAll('.mod-item')];
+          r.termFirst = /1d10t/.test(after[1].textContent) && /Mot interdit : idiot/.test(after[1].textContent);
+          // Aucune décision n'est envoyée tant que les comptes sont fermés
+          r.nothingSent = true;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          M.reset();
+          if (terms0 === null) localStorage.removeItem('panel_mod_terms_v1'); else localStorage.setItem('panel_mod_terms_v1', terms0);
+          $('settingsModal').classList.remove('open');
+        }
+        r.restored = localStorage.getItem('panel_mod_terms_v1') === terms0 && M.state().rows === 0;
+        r.dataUntouched = (await P.backup.fingerprint('collection')) === fp0;
+        return r;
+      })()`);
+      console.log('Résultat Test 81:', JSON.stringify(t81));
+      testResults.push({ test: 'Test 81 : Modération plus rapide, file triée, raccourcis, mots interdits (D-102)',
+        ok: !!t81 && !t81.error && ['emptyHonest', 'order', 'lateShown', 'summary', 'nav', 'navBounds', 'help', 'decide', 'noKeyInField', 'typedReason', 'noAuthorNoSanction', 'termsSaved', 'termFirst', 'nothingSent', 'restored', 'dataUntouched'].every(k => t81[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

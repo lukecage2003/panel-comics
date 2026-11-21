@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-018AScgyQz7x7zcCYCN16FXsmnOSUsrm0NspaZCEzSc=' 'sha256-PUkcsxlTKuazZx85VzhtPagZJMIyaogsKILhbibF/E0=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ccLSmAS+dWJiYS7+nLpRuRWiDH2JOdO6UFxV8vwUINs=' 'sha256-5II3VpJqk9O6mnSe4YuEAPtDbc5cw0ExDgJCPhvGLNU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2485,6 +2485,29 @@
     .ex-mychar .ex-mychar-tags i { font-style: normal; font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 99px; background: var(--bg-soft, rgba(255,255,255,.08)); color: var(--muted); }
     .ex-mychar .ex-mychar-tags i.is-fav { background: rgba(255,212,0,.16); color: var(--text, inherit); }
     .ex-mychar .ex-mychar-next { color: var(--text, inherit); font-weight: 600; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .mod-sum { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; margin: 6px 0 10px; text-align: center; }
+    .mod-sum span { padding: 8px 4px; border-radius: 12px; background: var(--bg-soft, rgba(255,255,255,.06)); }
+    .mod-sum b { display: block; font-size: 18px; } .mod-sum small { font-size: 11px; color: var(--muted); }
+    .mod-console { max-height: 360px; overflow: auto; border-radius: 14px; border: 1px solid var(--hair, rgba(255,255,255,.12)); }
+    .mod-console:focus-visible { outline: 2px solid var(--accent, #FFD400); outline-offset: 2px; }
+    .mod-list { list-style: none; margin: 0; padding: 4px; }
+    .mod-item { display: flex; gap: 10px; align-items: flex-start; padding: 10px; border-radius: 10px; cursor: pointer; border-left: 4px solid transparent; }
+    .mod-item.is-sel { background: var(--bg-soft, rgba(255,255,255,.08)); border-left-color: var(--accent, #FFD400); }
+    .mod-sev { flex: 0 0 auto; font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 99px; background: rgba(255,255,255,.1); }
+    .mod-item.sev-4 .mod-sev { background: #b91c1c; color: #fff; } .mod-item.sev-3 .mod-sev { background: #c2410c; color: #fff; } .mod-item.sev-2 .mod-sev { background: #a16207; color: #fff; }
+    .mod-body { min-width: 0; } .mod-body b { display: block; } .mod-body small { color: var(--muted); }
+    .mod-late { font-style: normal; color: #f87171; font-weight: 700; }
+    .mod-text { margin: 6px 0 0; font-size: 13px; overflow-wrap: anywhere; } .mod-terms { margin: 4px 0 0; font-size: 12px; font-weight: 700; color: #f59e0b; }
+    .mod-actions { margin-top: 10px; display: grid; gap: 8px; } .mod-why { display: grid; gap: 4px; font-size: 12px; color: var(--muted); }
+    .mod-btns { display: flex; flex-wrap: wrap; gap: 6px; } .mod-btns kbd, .mod-help kbd { font: 700 10px/1 var(--font-mono, monospace); padding: 2px 5px; border-radius: 4px; border: 1px solid currentColor; opacity: .7; }
+    .mod-empty { display: grid; gap: 4px; padding: 18px; border-radius: 14px; border: 1px dashed var(--hair, rgba(255,255,255,.2)); text-align: center; } .mod-empty span { color: var(--muted); font-size: 13px; }
+    .mod-help { margin: 10px 0 4px; font-size: 13px; } .mod-help summary { cursor: pointer; width: fit-content; } .mod-help ul { list-style: none; padding: 0; margin: 8px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 6px; } .mod-help small { color: var(--muted); }
+    .mod-intro { margin: 0 0 8px; }
+    .mod-terms-f textarea { width: 100%; font-family: inherit; }
+    .mod-terms-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin: 6px 0 14px; } .mod-terms-bar small { color: var(--muted); }
+    .mod-targets { width: 100%; border-collapse: collapse; font-size: 13px; } .mod-targets caption { text-align: left; font-weight: 700; margin-bottom: 6px; }
+    .mod-targets th, .mod-targets td { text-align: left; padding: 6px 4px; border-top: 1px solid var(--hair, rgba(255,255,255,.1)); vertical-align: top; } .mod-targets td:last-child { white-space: nowrap; font-weight: 700; }
+    @media (max-width: 520px) { .mod-sum { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     .ex-mychar em, .ex-follow em { position: absolute; top: 6px; right: 6px; font-style: normal; font-size: 10px; font-weight: 800; background: #FFD400; color: #111; padding: 1px 6px; border-radius: 99px; }
     /* D-67 — VO / VF */
     .ex-vf-h { margin: 10px 0 8px; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; }
@@ -8548,6 +8571,149 @@ const inviteText = m => {
 };
 
 module.exports = { VERSION, VENUES, THEMES, LIMITS, SAFETY, cityKey, sanitize, validate, emptyState, sanitizeState, save, remove, upcoming, publicView, inviteText };
+  return Object.freeze(module.exports); })();
+  /* domains/community/moderation-core.js */
+  out.moderation = (() => { const module = { exports: {} };
+'use strict';
+// Modération plus rapide (D-102) : module pur, sans réseau ni stockage.
+// Il range la file renvoyée par api.mod_queue (migration 13), calcule le délai d'attente de chaque signalement,
+// repère les mots interdits réglés par l'équipe et décrit les raccourcis clavier de la console.
+// Règles fixes :
+//   la sécurité des mineurs et l'automutilation passent avant tout, puis le harcèlement, la haine, la violence et le contenu sexuel ;
+//   à gravité égale, le contenu le plus signalé, puis le plus ancien ;
+//   le masquage automatique (troisième signalement, ou sécurité des mineurs dès le premier) est fait par la base, jamais ici ;
+//   un mot interdit ne retire rien tout seul : il met le contenu en avant dans la file pour qu'une personne décide.
+
+const REASONS = Object.freeze({
+  minor_safety: { label: 'Sécurité d\'un mineur', severity: 4 },
+  self_harm: { label: 'Automutilation ou détresse', severity: 4 },
+  harassment: { label: 'Harcèlement', severity: 3 },
+  hate: { label: 'Haine', severity: 3 },
+  violence: { label: 'Violence', severity: 3 },
+  sexual: { label: 'Contenu sexuel', severity: 3 },
+  impersonation: { label: 'Usurpation d\'identité', severity: 2 },
+  copyright: { label: 'Droit d\'auteur', severity: 1 },
+  spam: { label: 'Spam', severity: 1 },
+  other: { label: 'Autre', severity: 1 },
+  spoiler: { label: 'Spoiler non signalé', severity: 0 }
+});
+// Délai de réponse visé, par gravité (en minutes)
+const TARGET_MIN = Object.freeze({ 4: 60, 3: 240, 2: 720, 1: 1440, 0: 2880 });
+const SEVERITY_LABEL = Object.freeze({ 4: 'Urgent', 3: 'Prioritaire', 2: 'Important', 1: 'Normal', 0: 'Faible' });
+const AUTO_HIDE_AT = 3;
+const LIMITS = Object.freeze({ terms: 300, termMin: 2, termMax: 40 });
+// Raccourcis de la console (une touche, sans modificateur ; inactifs dans un champ de saisie)
+const SHORTCUTS = Object.freeze([
+  { key: 'j', action: 'next', label: 'Signalement suivant' },
+  { key: 'k', action: 'prev', label: 'Signalement précédent' },
+  { key: 'h', action: 'hide', label: 'Masquer le contenu' },
+  { key: 'r', action: 'restore', label: 'Rétablir (signalement infondé)' },
+  { key: 'x', action: 'remove', label: 'Retirer le contenu' },
+  { key: 'w', action: 'warn', label: 'Avertir l\'auteur' },
+  { key: 's', action: 'suspend', label: 'Suspendre l\'auteur 7 jours' },
+  { key: 'd', action: 'dismiss', label: 'Classer sans suite' },
+  { key: '?', action: 'help', label: 'Afficher les raccourcis' }
+]);
+// Action de console -> action de api.mod_act (cible : « post » pour un contenu, « member » pour son auteur)
+const ACTIONS = Object.freeze({
+  hide: { kind: 'post', action: 'hide' }, restore: { kind: 'post', action: 'restore' }, remove: { kind: 'post', action: 'remove' },
+  dismiss: { kind: 'post', action: 'dismiss' }, warn: { kind: 'member', action: 'warn' }, suspend: { kind: 'member', action: 'suspend', days: 7 }
+});
+const DESTRUCTIVE = Object.freeze(['remove', 'suspend']);
+
+const severityOf = reasons => (Array.isArray(reasons) ? reasons : [reasons]).reduce((m, r) => Math.max(m, REASONS[r] ? REASONS[r].severity : 1), 0);
+const ms = v => { const t = Date.parse(v); return Number.isFinite(t) ? t : NaN; };
+
+// Délai lisible : « 12 min », « 3 h », « 2 j »
+const waitLabel = minutes => {
+  const m = Math.max(0, Math.floor(Number(minutes) || 0));
+  if (m < 60) return m + ' min';
+  if (m < 48 * 60) return Math.floor(m / 60) + ' h';
+  return Math.floor(m / 1440) + ' j';
+};
+
+// Mots interdits : un par ligne (ou séparés par des virgules), sans doublon, 2 à 40 caractères
+const fold = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
+  .replace(/[@4]/g, 'a').replace(/3/g, 'e').replace(/[1!|]/g, 'i').replace(/0/g, 'o').replace(/[$5]/g, 's').replace(/7/g, 't');
+const normalizeTerms = input => {
+  const raw = Array.isArray(input) ? input : String(input || '').split(/[\n,;]/);
+  const out = [], seen = new Set();
+  raw.forEach(t => {
+    const v = String(t || '').replace(/\s+/g, ' ').trim().slice(0, LIMITS.termMax);
+    const k = fold(v);
+    if (v.length < LIMITS.termMin || seen.has(k) || out.length >= LIMITS.terms) return;
+    seen.add(k); out.push(v);
+  });
+  return out;
+};
+// Mots trouvés dans un texte (mot entier, sans tenir compte des accents, de la casse ni des chiffres déguisés)
+const matchTerms = (text, terms) => {
+  const t = ' ' + fold(text).replace(/[^\p{L}\p{N}]+/gu, ' ') + ' ';
+  return normalizeTerms(terms).filter(term => { const k = fold(term).replace(/[^\p{L}\p{N}]+/gu, ' ').trim(); return k && t.includes(' ' + k + ' '); });
+};
+
+// File de modération : lignes de api.mod_queue { target_kind, target_id, reports, reasons, first_at, text? }
+const rankQueue = (rows, opts = {}) => {
+  const now = ms(opts.now || new Date().toISOString());
+  const terms = opts.terms || [];
+  return (Array.isArray(rows) ? rows : []).filter(r => r && r.target_id).map(r => {
+    const reasons = (Array.isArray(r.reasons) ? r.reasons : [r.reasons]).filter(x => REASONS[x]);
+    const severity = severityOf(reasons.length ? reasons : ['other']);
+    const reports = Math.max(1, Number(r.reports) || 1);
+    const first = ms(r.first_at), waitMin = Number.isFinite(first) && Number.isFinite(now) ? Math.max(0, Math.round((now - first) / 60000)) : 0;
+    const termHits = r.text ? matchTerms(r.text, terms) : [];
+    const late = waitMin > TARGET_MIN[severity];
+    return {
+      kind: r.target_kind === 'member' ? 'member' : 'post', id: String(r.target_id), reports, reasons,
+      reasonLabels: reasons.map(x => REASONS[x].label), severity, severityLabel: SEVERITY_LABEL[severity],
+      firstAt: r.first_at || '', waitMin, wait: waitLabel(waitMin), targetMin: TARGET_MIN[severity], late,
+      autoHidden: reports >= AUTO_HIDE_AT || reasons.includes('minor_safety'), termHits, text: r.text ? String(r.text).slice(0, 500) : ''
+    };
+  }).sort((a, b) => (b.severity - a.severity) || ((b.termHits.length > 0) - (a.termHits.length > 0)) || (b.reports - a.reports) || (b.waitMin - a.waitMin) || a.id.localeCompare(b.id));
+};
+
+// Résumé de la file : combien en retard, attente la plus longue, délai médian des décisions récentes
+const queueSummary = (ranked, log = []) => {
+  const list = Array.isArray(ranked) ? ranked : [];
+  const done = (Array.isArray(log) ? log : []).map(e => { const a = ms(e.reported_at || e.reportedAt), b = ms(e.at || e.created_at); return Number.isFinite(a) && Number.isFinite(b) && b >= a ? Math.round((b - a) / 60000) : null; }).filter(v => v !== null).sort((a, b) => a - b);
+  const median = done.length ? (done.length % 2 ? done[(done.length - 1) / 2] : Math.round((done[done.length / 2 - 1] + done[done.length / 2]) / 2)) : null;
+  return {
+    open: list.length, urgent: list.filter(x => x.severity >= 4).length, late: list.filter(x => x.late).length,
+    oldest: list.length ? waitLabel(Math.max(...list.map(x => x.waitMin))) : '', medianResponse: median === null ? '' : waitLabel(median)
+  };
+};
+
+// Touche -> action (null si la touche n'est pas un raccourci, si un modificateur est pressé ou si l'on écrit dans un champ)
+const keyAction = (e = {}) => {
+  if (e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return null;
+  const tag = String(e.targetTag || '').toUpperCase();
+  if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.editable) return null;
+  const k = String(e.key || '');
+  const s = SHORTCUTS.find(x => x.key === (k.length === 1 ? k.toLowerCase() : k));
+  return s ? s.action : null;
+};
+
+// Appel api.mod_act pour une action de console ; le motif est obligatoire (5 caractères au moins), comme côté base
+const actCall = (item, action, reason) => {
+  const a = ACTIONS[action];
+  if (!a || !item) return { ok: false, error: 'invalid_action' };
+  const why = String(reason || '').replace(/\s+/g, ' ').trim().slice(0, 500);
+  if (why.length < 5) return { ok: false, error: 'reason_required' };
+  if (a.kind === 'member' && !item.authorId) return { ok: false, error: 'author_unknown' };
+  const args = { p_target_kind: a.kind, p_target: a.kind === 'member' ? String(item.authorId) : item.id, p_action: a.action, p_reason: why };
+  if (a.days) args.p_days = a.days;
+  return { ok: true, fn: 'mod_act', args, confirm: DESTRUCTIVE.includes(action) };
+};
+
+// Motif proposé par défaut (modifiable) : le modérateur garde la main sur le texte
+const defaultReason = (item, action) => {
+  if (!item) return '';
+  const why = item.reasonLabels && item.reasonLabels.length ? item.reasonLabels.join(', ').toLowerCase() : 'signalement';
+  const base = { hide: 'Masqué en attendant l\'examen', restore: 'Rétabli : signalement infondé', remove: 'Retiré', dismiss: 'Classé sans suite', warn: 'Avertissement', suspend: 'Suspension de 7 jours' }[action] || '';
+  return base ? base + ' (' + why + ')' + (item.termHits && item.termHits.length && action !== 'restore' && action !== 'dismiss' ? ' ; mot interdit : ' + item.termHits.join(', ') : '') : '';
+};
+
+module.exports = { REASONS, TARGET_MIN, SEVERITY_LABEL, AUTO_HIDE_AT, LIMITS, SHORTCUTS, ACTIONS, DESTRUCTIVE, severityOf, waitLabel, normalizeTerms, matchTerms, rankQueue, queueSummary, keyAction, actCall, defaultReason };
   return Object.freeze(module.exports); })();
   /* domains/community/ranking-core.js */
   out.rankingCore = (() => { const module = { exports: {} };
@@ -20449,7 +20615,72 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   // ── Réglages (D-63) : un vrai panneau de réglages par rubriques, autour des paramètres existants (clés API, application)
-  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['sources', 'Sources & avancé', 'ic-key']];
+  const SETTINGS_TABS = [['account', 'Compte & profil', 'ic-star'], ['display', 'Affichage', 'ic-eye'], ['collection', 'Collection & finances', 'ic-box'], ['reading', 'Lecture', 'ic-book'], ['data', 'Données & sauvegardes', 'ic-folder'], ['moderation', 'Modération', 'ic-shield'], ['sources', 'Sources & avancé', 'ic-key']];
+  // ==========================================================================
+  // Modération plus rapide (D-102) : console clavier pour l'équipe, prête pour l'ouverture des comptes (S8).
+  // Aucun signalement n'est simulé : la file vient de api.mod_queue (migration 13) ; tant que les comptes sont fermés, elle est vide.
+  // Les mots interdits sont réglés ici (brouillon sur cet appareil) et partiront vers la base avec la migration 16 préparée.
+  // ==========================================================================
+  const MOD_TERMS_KEY = 'panel_mod_terms_v1';
+  const modTermsLoad = () => { try { const v = JSON.parse(localStorage.getItem(MOD_TERMS_KEY) || '[]'); return window.PanelDomains.moderation.normalizeTerms(Array.isArray(v) ? v : []); } catch (_) { return []; } };
+  const modTermsSave = list => { try { localStorage.setItem(MOD_TERMS_KEY, JSON.stringify(window.PanelDomains.moderation.normalizeTerms(list))); } catch (_) {} };
+  const modState = { rows: [], log: [], sel: 0, help: false, lastCall: null, source: 'closed' };
+  const modRanked = () => window.PanelDomains.moderation.rankQueue(modState.rows, { now: new Date().toISOString(), terms: modTermsLoad() });
+  const modPaneHtml = () => {
+    const MC = window.PanelDomains.moderation, q = modRanked(), s = MC.queueSummary(q, modState.log), terms = modTermsLoad();
+    if (modState.sel >= q.length) modState.sel = Math.max(0, q.length - 1);
+    const kbd = k => '<kbd>' + escapeHtml(k.toUpperCase()) + '</kbd>';
+    const keyOf = a => (MC.SHORTCUTS.find(x => x.action === a) || {}).key || '';
+    const btn = (a, label, cls) => '<button type="button" class="btn ' + (cls || 'secondary') + ' rel-mini" data-mod-act="' + a + '" aria-keyshortcuts="' + escapeHtml(keyOf(a).toUpperCase()) + '">' + label + ' ' + kbd(keyOf(a)) + '</button>';
+    const item = (x, i) => '<li class="mod-item sev-' + x.severity + (i === modState.sel ? ' is-sel' : '') + '" data-mod-i="' + i + '" role="option" aria-selected="' + (i === modState.sel) + '" id="modItem' + i + '">' +
+      '<span class="mod-sev">' + escapeHtml(x.severityLabel) + '</span><div class="mod-body"><b>' + escapeHtml(x.reasonLabels.join(' · ') || 'Signalement') + '</b>' +
+      '<small>' + x.reports + ' signalement' + (x.reports > 1 ? 's' : '') + ' · en attente depuis ' + escapeHtml(x.wait) + (x.late ? ' · <em class="mod-late">en retard (visé : ' + escapeHtml(MC.waitLabel(x.targetMin)) + ')</em>' : '') + (x.autoHidden ? ' · déjà masqué par la base' : '') + '</small>' +
+      (x.text ? '<p class="mod-text">' + escapeHtml(x.text) + '</p>' : '') + (x.termHits.length ? '<p class="mod-terms">Mot interdit : ' + x.termHits.map(escapeHtml).join(', ') + '</p>' : '') + '</div></li>';
+    const cur = q[modState.sel];
+    const consoleHtml = q.length
+      ? '<div class="mod-sum" role="status">' + [['À traiter', s.open], ['Urgents', s.urgent], ['En retard', s.late], ['Plus longue attente', s.oldest || '—'], ['Délai médian', s.medianResponse || '—']].map(([l, v]) => '<span><b>' + escapeHtml(String(v)) + '</b><small>' + l + '</small></span>').join('') + '</div>' +
+        '<div class="mod-console" id="modConsole" tabindex="0" role="listbox" aria-label="File de modération, triée par gravité. J et K pour naviguer, point d\'interrogation pour les raccourcis." aria-activedescendant="modItem' + modState.sel + '"><ol class="mod-list">' + q.map(item).join('') + '</ol></div>' +
+        (cur ? '<div class="mod-actions"><label class="mod-why">Motif de la décision (obligatoire, visible dans le journal)<input class="field-input" id="modReason" maxlength="500" value="' + escapeHtml(MC.defaultReason(cur, 'hide')) + '" data-auto="' + escapeHtml(MC.defaultReason(cur, 'hide')) + '"></label><div class="mod-btns">' +
+          btn('hide', 'Masquer') + btn('restore', 'Rétablir') + btn('dismiss', 'Classer') + btn('warn', 'Avertir') + btn('remove', 'Retirer', 'danger') + btn('suspend', 'Suspendre 7 j', 'danger') + '</div></div>' : '')
+      : '<div class="mod-empty"><b>Aucun signalement à traiter.</b><span>' + (modState.source === 'closed' ? 'La file se remplira à l\'ouverture des comptes : seuls les modérateurs et administrateurs la verront. Rien n\'est simulé ici.' : 'Tout est traité.') + '</span></div>';
+    const help = '<details class="mod-help"' + (modState.help ? ' open' : '') + ' id="modHelp"><summary>Raccourcis clavier</summary><ul>' + MC.SHORTCUTS.map(x => '<li>' + kbd(x.key) + ' ' + escapeHtml(x.label) + '</li>').join('') + '</ul><small>Une seule touche, sans Ctrl ni Alt ; inactifs pendant la saisie du motif. Retirer et suspendre demandent une confirmation.</small></details>';
+    const targets = '<table class="mod-targets"><caption>Délais de réponse visés</caption><tbody>' + [4, 3, 2, 1, 0].map(k => '<tr><th scope="row">' + escapeHtml(MC.SEVERITY_LABEL[k]) + '</th><td>' + escapeHtml(Object.values(MC.REASONS).filter(r => r.severity === k).map(r => r.label).join(', ')) + '</td><td>' + escapeHtml(MC.waitLabel(MC.TARGET_MIN[k])) + '</td></tr>').join('') + '</tbody></table>';
+    return '<h3>Modération</h3><p class="stat-sub mod-intro">Les signalements arrivent triés par gravité : la sécurité des mineurs et la détresse d\'abord, puis le harcèlement, la haine, la violence et le contenu sexuel. La base masque d\'elle-même un contenu au ' + MC.AUTO_HIDE_AT + 'e signalement distinct, ou dès le premier pour la sécurité d\'un mineur. Chaque décision est motivée, journalisée et peut être contestée.</p>' +
+      '<h3 class="set-h-sub">File de l\'équipe</h3>' + consoleHtml + help +
+      '<h3 class="set-h-sub">Mots interdits</h3><p class="stat-sub mod-intro">Un mot par ligne. Un contenu qui en contient passe en tête de la file à gravité égale : il n\'est jamais retiré automatiquement, une personne décide. Accents, majuscules et chiffres déguisés (« 1d10t ») sont reconnus.</p>' +
+      '<label class="mod-terms-f"><textarea class="field-input" id="modTerms" aria-label="Mots interdits, un par ligne" rows="5" maxlength="12000" placeholder="un mot ou une expression par ligne">' + escapeHtml(terms.join('\n')) + '</textarea></label>' +
+      '<div class="mod-terms-bar"><small>' + terms.length + ' mot' + (terms.length > 1 ? 's' : '') + ' · brouillon sur cet appareil, envoyé à la base à l\'ouverture des comptes (migration 16 préparée, non appliquée)</small><button type="button" class="btn rel-mini" data-mod-terms-save>Enregistrer la liste</button></div>' +
+      targets;
+  };
+  const modWire = (dyn, rerender) => {
+    const MC = window.PanelDomains.moderation;
+    const con = dyn.querySelector('#modConsole');
+    const sel = i => { const q = modRanked(); if (!q.length) return; modState.sel = Math.max(0, Math.min(q.length - 1, i)); rerender(); const c = $('modConsole'); if (c) { c.focus(); const it = $('modItem' + modState.sel); if (it && it.scrollIntoView) it.scrollIntoView({ block: 'nearest' }); } };
+    const act = a => {
+      const q = modRanked(), cur = q[modState.sel]; if (!cur) return;
+      // Motif saisi par le modérateur, sinon le motif propre à l'action (le texte prérempli n'est pas réutilisé tel quel)
+      const inp = $('modReason'), typed = inp ? inp.value.trim() : '';
+      const why = typed && typed !== (inp.dataset.auto || '').trim() ? typed : MC.defaultReason(cur, a);
+      const c = MC.actCall(cur, a, why);
+      if (!c.ok) { showToast(c.error === 'author_unknown' ? 'Auteur inconnu : impossible de le sanctionner depuis ce signalement.' : c.error === 'reason_required' ? 'Écrivez un motif (5 caractères au moins).' : 'Action inconnue.'); return; }
+      if (c.confirm && !window.confirm((a === 'suspend' ? 'Suspendre cet auteur 7 jours' : 'Retirer ce contenu') + ' ?\nMotif : ' + c.args.p_reason)) return;
+      modState.lastCall = c;
+      if (modState.source === 'closed') { showToast('Les comptes ne sont pas ouverts : aucune décision n\'est envoyée.'); return; }
+    };
+    dyn.querySelectorAll('[data-mod-i]').forEach(li => { li.onclick = () => sel(Number(li.dataset.modI)); });
+    dyn.querySelectorAll('[data-mod-act]').forEach(b => { b.onclick = () => act(b.dataset.modAct); });
+    const onKey = e => {
+      const a = MC.keyAction({ key: e.key, ctrlKey: e.ctrlKey, metaKey: e.metaKey, altKey: e.altKey, isComposing: e.isComposing, targetTag: e.target && e.target.tagName, editable: !!(e.target && e.target.isContentEditable) });
+      if (!a) return;
+      e.preventDefault(); e.stopPropagation();
+      if (a === 'next') sel(modState.sel + 1); else if (a === 'prev') sel(modState.sel - 1);
+      else if (a === 'help') { modState.help = !modState.help; const h = $('modHelp'); if (h) h.open = modState.help; }
+      else act(a);
+    };
+    if (con) con.addEventListener('keydown', onKey);
+    const ta = dyn.querySelector('#modTerms'), sv = dyn.querySelector('[data-mod-terms-save]');
+    if (ta && sv) sv.onclick = () => { const list = MC.normalizeTerms(ta.value); modTermsSave(list); rerender(); showToast(list.length + ' mot' + (list.length > 1 ? 's' : '') + ' interdit' + (list.length > 1 ? 's' : '') + ' enregistré' + (list.length > 1 ? 's' : '') + ' sur cet appareil.'); };
+  };
   let settingsTab = 'account';
   const settingsPaneHtml = tab => {
     const prof = profileLoad();
@@ -20561,7 +20792,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       }
       // Encadré « Compte en ligne » (D-82) : déplacé dans l'onglet Compte, remis à sa place avant chaque rendu (jamais détruit)
       const acctEl = $('acctBox'); if (acctEl && acctEl.parentNode !== keys) keys.insertBefore(acctEl, srcHead.nextSibling);
-      dyn.innerHTML = settingsTab === 'sources' ? '' : settingsPaneHtml(settingsTab);
+      dyn.innerHTML = settingsTab === 'sources' ? '' : settingsTab === 'moderation' ? modPaneHtml() : settingsPaneHtml(settingsTab);
+      if (settingsTab === 'moderation') modWire(dyn, render);
       const acctSlot = dyn.querySelector('[data-acct-slot]'); if (acctSlot && acctEl) { acctSlot.appendChild(acctEl); renderAccountBox(); }
       const close = () => modal.classList.remove('open');
       dyn.querySelectorAll('[data-set-click]').forEach(b => { b.onclick = () => { const t = $(b.dataset.setClick); close(); if (t) setTimeout(() => t.click(), 60); }; });
@@ -26084,6 +26316,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     openComicVineSearchModal: q => openCvSearch(q),
     // Test uniquement : remplace la liste en mémoire sans rien enregistrer (simule un démarrage)
     // Collection de test en mémoire : la récupération des couvertures ne démarre plus (elle enregistrerait ces numéros fictifs)
+    moderationForTest: Object.freeze({
+      load: (rows, log) => { modState.rows = Array.isArray(rows) ? rows : []; modState.log = Array.isArray(log) ? log : []; modState.sel = 0; },
+      reset: () => { modState.rows = []; modState.log = []; modState.sel = 0; modState.help = false; modState.lastCall = null; },
+      lastCall: () => modState.lastCall ? JSON.parse(JSON.stringify(modState.lastCall)) : null,
+      state: () => ({ sel: modState.sel, help: modState.help, rows: modState.rows.length })
+    }),
     setSinglesInMemoryForTest: list => { physicalSingles = list; singlesMemoryOnly = true; },
     setPhysicalSingles: list => {
       singlesMemoryOnly = false; // collection réelle de nouveau : la récupération des couvertures redevient possible

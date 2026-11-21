@@ -98,7 +98,7 @@ Avant un lancement commercial, prévoir une relecture par un juriste en proprié
    - brancher `online-core` sur les migrations 14 et 15 déjà en préproduction ;
    - envoyer les invitations de co-animation et publier les rencontres ;
    - ouvrir les inscriptions aux rencontres, le lieu exact n'étant donné qu'aux inscrits.
-5. **Modération plus rapide** :
+5. ~~**Modération plus rapide**~~ : préparée (D-102) ; console, module et migration 16 prêts, actifs à l'ouverture des comptes :
    - file triée par gravité (harcèlement et mineurs d'abord) ;
    - masquage automatique au troisième signalement, déjà en base ;
    - raccourcis clavier pour les modérateurs ;

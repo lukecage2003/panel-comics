@@ -27,6 +27,7 @@ const MODULES = [
   ['online', 'domains/community/online-core.js'],
   ['affinity', 'domains/community/affinity-core.js'],
   ['meetups', 'domains/community/meetups-core.js'],
+  ['moderation', 'domains/community/moderation-core.js'],
   ['rankingCore', 'domains/community/ranking-core.js'],
   ['profilePublic', 'domains/community/profile-public.js'],
   ['sourceClaims', 'domains/source/claims-core.js'],
