@@ -39,7 +39,8 @@ test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
     '20261121000015_live_cohosts.sql',
     '20261121000016_moderation_terms.sql',
     '20261121000017_owner_admin_mfa.sql',
-    '20261122000018_panel_guardian.sql'
+    '20261122000018_panel_guardian.sql',
+    '20261122000019_pros_market_forum_messages.sql'
   ]);
 });
 

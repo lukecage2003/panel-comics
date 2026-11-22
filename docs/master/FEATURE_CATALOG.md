@@ -74,7 +74,30 @@ Décisions possibles : Conservée · Améliorée · Étendue · Créée · Repor
 - **Décision** : Abandonnée (hors périmètre : Panel est comics seulement).
 
 ## 11. Monétisation (Panel+, boutiques, affiliation, publicité)
-- **Actuel** : PLANNED. **Priorité** : P2. **Décision** : Reportée jusqu'à l'étape E de la [MASTER_ROADMAP](MASTER_ROADMAP.md).
+- **Actuel** : PREPARED (D-113) : écran « Offres » (Panel, Panel+, Créateur, Éditeur, Boutique), tous les prix à « Tarif à venir » ; `plans-core` ; tables `billing.*` (migration 19, écriture réservée au service).
+- **Priorité** : P2. **Décision** : Étendue ; vente reportée jusqu'à l'étape E de la [MASTER_ROADMAP](MASTER_ROADMAP.md).
 
 ## 12. Musique dans les stories
 - **Décision** : Reportée (DEFERRED) tant qu'aucune licence écrite n'existe ([directeur/13 §2](../directeur/13-monetisation-musique-suite.md)).
+
+## 13. Le Comptoir (forum, D-113)
+- **Description** : cercles (Débats, Théories, Par où commencer, Sorties du mercredi, Collection & cotes, Comics en VF, Coin des créateurs, Indés & webcomics), sujets avec étiquette, débats à deux camps, votes uniques, réponses en fil (6 niveaux), tris Tendance, Nouveaux, Meilleurs, Débattus.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (local, `forum-core`, migration 19) → en ligne avec S8.
+- **Risques** : brigades de votes → un vote par compte, limites de débit ; contenu adulte → caché aux mineurs.
+- **Priorité** : P1. **Décision** : Nouvelle.
+
+## 14. Le Marché (D-113)
+- **Description** : vente entre collectionneurs depuis la collection (doublons proposés en premier), photos de son exemplaire, état, point relais, colis suivi ou main propre avec code, frais de service en pourcentage.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (brouillons locaux, `market-core`, migration 19 fermée par défaut) → ouverture après choix d'un prestataire agréé et avis d'avocat.
+- **Revenu** : frais de service `[À DÉCIDER]`. **Risques** : R11, R14.
+- **Priorité** : P1. **Décision** : Nouvelle.
+
+## 15. Messages privés chiffrés (D-113)
+- **Description** : chiffrement de bout en bout sur l'appareil, empreinte de sécurité, demande avant échange, préférences (tout le monde, profils Encré, personne), blocage, signalement avec messages choisis.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (clé de l'appareil et vérification locale, `dm-core`, migration 19) → en ligne pour les adultes.
+- **Risques** : R2, R13. **Priorité** : P1. **Décision** : Nouvelle (remplace « pas de messages privés »).
+
+## 16. Pros, sceau Encré et L'Atelier (D-113)
+- **Description** : profils officiels Créateur, Éditeur, Boutique, Studio ; bibliographie ; liste de preuves ; sceau **Encré** (tampon d'encre jaune et noir, dessiné pour Panel) posé à la main ; L'Atelier pour trouver un coloriste, un lettreur, un scénariste, sans coordonnées affichées.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (local, `pro-core`, migration 19) → demandes examinées par l'équipe à l'ouverture.
+- **Risques** : R12. **Priorité** : P1. **Décision** : Nouvelle (étend l'écosystème pro du §7).

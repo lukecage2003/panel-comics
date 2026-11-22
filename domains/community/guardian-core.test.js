@@ -34,7 +34,7 @@ test('réglages du parent, contestation et vérification d\'action', () => {
   assert.equal(G.reviewCall('18+', 'court').skip, 'reason_required');
   assert.equal(G.reviewCall('12', 'une raison assez longue').skip, 'invalid_band');
   assert.equal(G.reviewCall('15-17', 'Je me suis trompé d\'année').fn, 'age_review_request');
-  assert.equal(G.canCall('dm').skip, 'invalid', 'pas de messages privés dans Panel');
+  assert.equal(G.canCall('dm').skip, 'invalid', 'les messages privés passent par leur propre module (dm-core, D-113), pas par Guardian');
 });
 
 test('décisions et erreurs du serveur en français, sans détail technique', () => {

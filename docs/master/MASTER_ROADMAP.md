@@ -59,7 +59,7 @@ Décision : **Conservée**.
 1. Identité légale de l'éditeur, adresse, numéro d'entreprise BCE `[À COMPLÉTER]`.
 2. CGU, politique de confidentialité et règles de la communauté validées par un avocat.
 3. Analyse d'impact (AIPD) sur le traitement des données de mineurs, avec avocat ou DPO.
-4. Application des migrations 13 à 18 en préproduction, puis tests réels.
+4. Application des migrations 13 à 19 en préproduction, puis tests réels.
    - Aucun service distant n'est validé tant que ce n'est pas fait.
 5. Équipe de modération humaine, en double authentification, avec délais de réponse écrits.
 6. Point de contact DSA et procédure de signalement et de recours publiés.
@@ -78,7 +78,10 @@ Décision : **Conservée**.
 - Panel+ (confort seulement).
 - Fiches « Boutique vérifiée ».
 - Affiliation clairement marquée.
-- Écosystème pro : auteurs, boutiques et conventions, avec badge vérifié par l'équipe.
+- Écosystème pro : créateurs, éditeurs, boutiques et studios, avec le sceau Encré posé par l'équipe (D-113).
+- Le Marché : ouverture après choix d'un prestataire de paiement agréé, avis d'avocat (DSA, Omnibus, DAC7, DSP2) et fixation du pourcentage.
+- Messages privés chiffrés pour les adultes, après AIPD.
+- Le Comptoir en ligne.
 
 ### Étape F — Plus tard
 

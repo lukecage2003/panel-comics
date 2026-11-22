@@ -14,6 +14,10 @@ Ordre des lots techniques. L'historique est dans [ROADMAP.md](../ROADMAP.md) et 
 | T8 | Règles d'âge par pays (`guardian.country_rules`) | P2 | Ouverture hors de Belgique | PLANNED |
 | T9 | Preuve d'âge par prestataire (statut `verified_*`, rôle service) | RESEARCH | AIPD, choix du prestataire | — |
 | T10 | Serveur média des directs | DEFERRED | Revenus, modération temps réel | — |
+| T11 | Migration 19 (pros, marché, forum, messages, offres) + 8 tests PGlite | P1 | Migrations 13, 15, 17, 18 | **Fait (local, D-113)** |
+| T12 | Écrans Le Comptoir, Marché, Messages, Pros & Atelier, Offres (mode local) | P1 | T11 | **Fait (D-113)** |
+| T13 | Prestataire de paiement agréé (séquestre, versements, DAC7) | P1 | Avis d'avocat, identité légale | `[À CHOISIR]` |
+| T14 | Double cliquet pour les messages (confidentialité persistante) | RESEARCH | T11 | — |
 
 ## Règles de chaque lot
 

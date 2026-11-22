@@ -6376,6 +6376,70 @@ const waitForCdp = async () => {
       console.log('Résultat Test 85:', JSON.stringify(t85));
       testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, atlas interactif (D-106, D-107, D-108)',
         ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'live', 'next', 'escape', 'quiz', 'workshop', 'dataUntouched'].every(k => t85[k] === true) });
+      // ==========================================
+      // TEST 86 : Le Comptoir, Marché, Messages chiffrés, Pros et sceau Encré, Offres (D-113)
+      // ==========================================
+      console.log('\n[TEST 86] Le Comptoir, Marché, Messages, Pros, Offres...');
+      const t86 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id), q = s => document.querySelector(s);
+        const fp0 = await window.Panel.backup.fingerprint('collection');
+        const HKEY = 'panel.hub.v1', hstored = localStorage.getItem(HKEY);
+        const dbs0 = indexedDB.databases ? (await indexedDB.databases()).map(d => d.name) : [];
+        try {
+          localStorage.removeItem(HKEY);
+          $('navSinglesCommunity').click(); await wait(500);
+          const chips = [...document.querySelectorAll('.hb-chip')].map(b => b.dataset.cmTab).join(',');
+          r.strip = chips === 'feed,forum,market,dm,pros,plans';
+          q('.hb-chip[data-cm-tab="forum"]').click(); await wait(300);
+          r.forumEmpty = !!q('.hb-view .hb-empty') && q('.hb-circles').children.length === 9;
+          const f = q('[data-hb-form="thread"]');
+          f.elements.title.value = 'Hulk contre la Chose : qui gagne ?'; f.elements.sideA.value = 'Hulk'; f.elements.sideB.value = 'La Chose';
+          f.requestSubmit(); await wait(250);
+          q('[data-hb-side][data-s="b"]').click(); await wait(150);
+          q('[data-hb-vote][data-dir="1"]').click(); await wait(150);
+          q('[data-hb-vote][data-dir="1"]').click(); await wait(150);
+          r.vote = q('.hb-thread .hb-vote b').textContent === '0';
+          q('[data-hb-vote][data-dir="1"]').click(); await wait(150);
+          r.side = /0 %/.test(q('.hb-side.a').textContent) && /100 %/.test(q('.hb-side.b').textContent) && q('.hb-thread .hb-vote b').textContent === '1';
+          q('.hb-title').click(); await wait(250);
+          const c = q('[data-hb-form="comment"]'); c.elements.body.value = 'La Chose tient la distance.'; c.requestSubmit(); await wait(250);
+          q('[data-hb-reply]').click(); await wait(150);
+          const c2 = q('.hb-cm [data-hb-form="comment"]'); c2.elements.body.value = 'Pas face au Hulk gris.'; c2.requestSubmit(); await wait(250);
+          r.thread = /2 réponses/.test(q('.hb-sub').textContent) && document.querySelectorAll('.hb-cm .hb-cm').length === 1;
+          const st = JSON.parse(localStorage.getItem(HKEY));
+          r.stored = st.threads.length === 1 && st.comments.length === 2 && st.comments[1].parent === st.comments[0].id;
+          q('.hb-chip[data-cm-tab="market"]').click(); await wait(300);
+          const p = q('[data-hb-price]'); p.value = '24,50'; p.dispatchEvent(new Event('input', { bubbles: true })); await wait(50);
+          r.fee = /22,78/.test(q('[data-hb-fee]').textContent) && /taux réel à fixer/.test(q('[data-hb-fee]').textContent);
+          const lf = q('[data-hb-form="listing"]'); lf.elements.title.value = 'Absolute Batman'; lf.elements.body.value = 'Paiement par virement svp'; lf.requestSubmit(); await wait(200);
+          r.listingRefused = !JSON.parse(localStorage.getItem(HKEY)).listings.length;
+          r.safety = document.querySelectorAll('.hb-safety li').length === 4 && /adultes/.test(q('.hb-safety').textContent);
+          q('.hb-chip[data-cm-tab="dm"]').click(); await wait(300);
+          r.dmRules = /mineur/.test(q('.hb-view').textContent) && /ECDH-P256/.test(q('.hb-view').textContent);
+          const D = window.PanelDomains.dm, A = await D.createIdentity(), B = await D.createIdentity(), meta = { conversationId: 'c', senderId: 'a', seq: 1 };
+          const box = await D.seal(await D.conversationKey(A.privateKey, B.publicJwk, 'c'), 'Salut', meta);
+          r.e2e = (await D.open(await D.conversationKey(B.privateKey, A.publicJwk, 'c'), box, meta)) === 'Salut' && !/Salut/.test(JSON.stringify(box));
+          q('.hb-chip[data-cm-tab="pros"]').click(); await wait(300);
+          r.sealPreview = document.querySelectorAll('.hb-seals svg').length === 4 && !q('.hb-badge');
+          const pf = q('[data-hb-form="pro"]'); pf.elements.name.value = 'Alex Encre'; pf.querySelector('input[value="writer"]').checked = true; pf.requestSubmit(); await wait(250);
+          r.proDraft = !q('.hb-badge') && /Brouillon/.test(q('.hb-proof').textContent) && JSON.parse(localStorage.getItem(HKEY)).pro.status === 'draft';
+          q('.hb-chip[data-cm-tab="plans"]').click(); await wait(300);
+          const plans = [...document.querySelectorAll('.hb-plan')];
+          r.plans = plans.length === 5 && plans.every(x => /Gratuit|Tarif à venir/.test(x.querySelector('.hb-tarif').textContent)) && [...document.querySelectorAll('.hb-plan .btn')].every(b => b.disabled);
+          r.never = document.querySelectorAll('.hb-never li').length === 5;
+          q('.hb-chip[data-cm-tab="feed"]').click(); await wait(300);
+          r.backToFeed = !q('.hb-view');
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (hstored === null) localStorage.removeItem(HKEY); else localStorage.setItem(HKEY, hstored);
+        }
+        r.dmDbUntouched = indexedDB.databases ? (await indexedDB.databases()).map(d => d.name).includes('panel-dm') === dbs0.includes('panel-dm') : true;
+        r.dataUntouched = fp0 === await window.Panel.backup.fingerprint('collection');
+        return r;
+      })()`);
+      console.log('Résultat Test 86:', JSON.stringify(t86));
+      testResults.push({ test: 'Test 86 : Le Comptoir, Marché, Messages chiffrés, Pros et sceau Encré, Offres (D-113)',
+        ok: !!t86 && !t86.error && ['strip', 'forumEmpty', 'vote', 'side', 'thread', 'stored', 'fee', 'listingRefused', 'safety', 'dmRules', 'e2e', 'sealPreview', 'proDraft', 'plans', 'never', 'backToFeed', 'dmDbUntouched', 'dataUntouched'].every(k => t86[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

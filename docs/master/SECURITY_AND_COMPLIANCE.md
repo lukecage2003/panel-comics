@@ -155,3 +155,34 @@ Légende :
 - Limitation de débit (`community.rate_check`).
 - CSP par empreintes (`sync-domains`).
 - `check:secrets` sur chaque commit : aucun secret dans le dépôt, `.secrets/` et `.cache/` jamais versionnés.
+
+## 5. Marché, messages privés, profils pros, forum (D-113)
+
+> Même avertissement : rien ici n'est un avis juridique. Chaque ligne est à faire valider (⚖ / €) avant d'ouvrir ces espaces.
+
+| Sujet | Texte | Nature | Ce que Panel prépare | À faire |
+|---|---|---|---|---|
+| Traçabilité des vendeurs professionnels | DSA art. 30 (places de marché) | Conditionnel (taille, art. 29) ; bonne pratique sinon | Statut « professionnel » prévu ; aucune donnée d'identité stockée dans la migration 19 | Collecte et vérification des informations du vendeur pro ⚖ |
+| Information sur le statut du vendeur | Directive (UE) 2019/2161 (« Omnibus ») modifiant la directive 2011/83/UE | Certain pour une place de marché | Mention « vendeur particulier / professionnel » prévue sur l'annonce | Textes d'information ⚖ |
+| Droits du consommateur (achat à un professionnel) | Directive 2011/83/UE ; Code de droit économique, livre VI | Certain si le vendeur est professionnel | — | Droit de rétractation, garanties ⚖ |
+| Déclaration des revenus des vendeurs | DAC7 (directive (UE) 2021/514) | Certain pour un opérateur de plateforme, sous les seuils prévus | — | Procédure de collecte et de déclaration € ⚖ |
+| Détention des fonds des acheteurs | DSP2 (directive (UE) 2015/2366) | Certain si Panel encaissait pour autrui | Panel ne détient jamais l'argent : tout passe par un prestataire agréé (choix `[À FAIRE]`) | Contrat du prestataire ⚖ € |
+| Abonnements | Directive 2011/83/UE ; Code de droit économique | Certain dès la vente | Aucun prix affiché (« Tarif à venir ») ; résiliation en un clic prévue | Conditions de vente ⚖ |
+| Confidentialité des messages | RGPD ; directive 2002/58/CE (vie privée et communications électroniques) | Certain | Chiffrement de bout en bout (ECDH P-256, HKDF, AES-GCM 256) : le serveur ne garde que du texte chiffré, l'heure et les identifiants ; clé privée non exportable | AIPD sur les messages ⚖ |
+| Signalement d'un message | DSA (signalement et recours) | Bonne pratique | Seuls les messages choisis par la personne qui signale sont transmis, en clair, à l'équipe (`messaging.reports`) | Délais de traitement écrits |
+| Mineurs et messages | DSA art. 28 ; RGPD art. 8 | Bonne pratique appliquée strictement | Aucun message entre mineur et adulte (refusé côté serveur, `messaging.can`) ; messages privés réservés aux adultes à l'ouverture | — |
+| Vérification des pros (sceau Encré) | RGPD (minimisation) | Certain | Aucun justificatif stocké ; seule la décision motivée reste au journal | Procédure d'examen ⚖ |
+| Forum (Le Comptoir) | DSA (modération, motivation des décisions) | Conditionnel | Contenu adulte caché aux mineurs ; signalements (`forum.reports`) ; Guardian couvre aussi sujets et réponses | — |
+
+### 5.1 Limites connues, écrites
+
+- Les messages n'ont pas encore de **confidentialité persistante** à chaque message (protocole à double cliquet) : RESEARCH.
+- L'empreinte de sécurité (12 groupes de 5 chiffres) se compare de vive voix ; Panel ne la vérifie pas à la place des personnes.
+- Le marché reste **fermé** tant que `market.settings.fee_rate` est vide et qu'aucun prestataire n'est choisi.
+
+### 5.2 Tests (PGlite, `backend/tests/pros-market.test.js`, 8 tests verts)
+
+- Profil pro refusé aux mineurs ; sceau seulement après décision d'un membre de l'équipe en double authentification ; retrait du sceau.
+- Annonce refusée si le marché est fermé, si le vendeur est mineur, ou si elle contient des coordonnées ou un paiement hors de Panel.
+- Étapes de vente : chaque action par la bonne personne ; remise en main propre par code.
+- Messages : demande avant échange, refus entre mineur et adulte, texte en clair refusé par le serveur, chiffrement réel avec `dm-core`.

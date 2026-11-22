@@ -70,8 +70,11 @@ Scripts de contrôle : `check:motion`, `check:secrets`, `check-dead-code`, `chec
 | Espace parental | PARTIALLY_IMPLEMENTED | Migration 18 (lien par code, réglages, révocation) ; module client `domains/community/guardian-core.js` (D-112) ; encadré dans Compte & profil (code contrôlé sur l'appareil, rien n'est envoyé) | Écrans branchés sur le serveur au moment de S8 |
 | Synchronisation, export, effacement de compte | PARTIALLY_IMPLEMENTED | Migrations 8, 9 et 12 | Non branché |
 | Langues (fr, en, es…) | OPERATIONAL | `domains/i18n` | Le français reste la langue source |
-| Monétisation | PLANNED | [directeur/13](../directeur/13-monetisation-musique-suite.md) | Aucun paiement branché (voulu) |
-| Écosystème pro (auteurs, boutiques, conventions vérifiés) | PLANNED | [BUSINESS_MODEL](BUSINESS_MODEL.md) | — |
+| Monétisation (écran Offres) | PARTIALLY_IMPLEMENTED | `plans-core`, migration 19 (`billing.*`), D-113 | Aucun prix, aucun paiement branché (voulu) |
+| Pros, sceau Encré, L'Atelier | PARTIALLY_IMPLEMENTED | `pro-core`, migration 19 (`pro.*`), D-113 | Local ; aucune demande examinée ; aucun pro inscrit |
+| Le Comptoir (forum) | PARTIALLY_IMPLEMENTED | `forum-core`, migration 19 (`forum.*`), D-113 | Local seulement |
+| Le Marché | PARTIALLY_IMPLEMENTED | `market-core`, migration 19 (`market.*`), D-113 | Brouillons locaux ; marché fermé ; prestataire de paiement à choisir |
+| Messages privés chiffrés | PARTIALLY_IMPLEMENTED | `dm-core`, migration 19 (`messaging.*`), D-113 | Clé de l'appareil et vérification locale ; pas encore de double cliquet |
 | Identité légale de l'éditeur | MISSING | — | `[À COMPLÉTER]` avant toute ouverture |
 | CGU, confidentialité, règles validées | MISSING (squelettes prêts) | [SECURITY_AND_COMPLIANCE](SECURITY_AND_COMPLIANCE.md) | Avocat belge |
 | AIPD sur les mineurs | MISSING | — | Avant l'ouverture aux mineurs |
