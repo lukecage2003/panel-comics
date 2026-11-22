@@ -30,7 +30,7 @@ Ce document met à jour l'[audit du 14/11](../panel-2/PANEL_2_REPOSITORY_AUDIT.m
   - fonctionne hors ligne.
 
 ### Serveur préparé
-- Supabase (Postgres) avec 18 migrations dans `backend/supabase/migrations`.
+- Supabase (Postgres) avec 21 migrations dans `backend/supabase/migrations`, toutes appliquées en préproduction (Paris) le 22/11/2026 (D-116).
 - Elles sont testées en local avec PGlite.
 - Le projet de préproduction existe, mais **l'ouverture des comptes (S8) reste fermée**.
 - Les migrations 13 à 18 ne sont pas branchées sur l'application.
@@ -65,8 +65,8 @@ Scripts de contrôle : `check:motion`, `check:secrets`, `check-dead-code`, `chec
 | Débats (« Debate Hub ») | PARTIALLY_IMPLEMENTED | Duel, `exMpDebate`, verdicts des théories, [LIVE-DEBATS](../LIVE-DEBATS.md) | Pas d'espace de débat en ligne distinct ; s'appuie sur les directs et les pensées existants (pas de doublon) |
 | Rencontres et boutiques | PARTIALLY_IMPLEMENTED | `meetups-core` | Aucune boutique partenaire |
 | Modération (signalements, masquage, appels, journal) | PARTIALLY_IMPLEMENTED | Migrations 13, 16 et 17, `moderation-core` | Équipe humaine à constituer |
-| Rôles d'équipe et double authentification | PARTIALLY_IMPLEMENTED | Migration 17 | Non appliquée en ligne |
-| Âge et mineurs | PARTIALLY_IMPLEMENTED | Migration 13 (tranches, refus sous 13 ans, profils mineurs privés) + **migration 18 Guardian** | Non appliquée ; preuve d'âge externe : RESEARCH |
+| Rôles d'équipe et double authentification | PARTIALLY_IMPLEMENTED | Migration 17 | Appliquée en préproduction ; comptes fermés |
+| Âge et mineurs | PARTIALLY_IMPLEMENTED | Migration 13 (tranches, refus sous 13 ans, profils mineurs privés) + **migration 18 Guardian** | Appliquée en préproduction, comptes fermés ; preuve d'âge externe : RESEARCH |
 | Espace parental | PARTIALLY_IMPLEMENTED | Migration 18 (lien par code, réglages, révocation) ; module client `domains/community/guardian-core.js` (D-112) ; encadré dans Compte & profil (code contrôlé sur l'appareil, rien n'est envoyé) | Écrans branchés sur le serveur au moment de S8 |
 | Synchronisation, export, effacement de compte | PARTIALLY_IMPLEMENTED | Migrations 8, 9 et 12 | Non branché |
 | Langues (fr, en, es…) | OPERATIONAL | `domains/i18n` | Le français reste la langue source |

@@ -42,7 +42,7 @@ Décisions possibles : Conservée · Améliorée · Étendue · Créée · Repor
 
 ## 5. Panel Guardian (protection des mineurs)
 - **Description** : aucun compte sous 13 ans ; 13-14 et 15-17 supervisés ; statut d'âge contestable (`unverified`, `verified_13_15`, `verified_16_17`, `verified_adult`, `under_13_blocked`, `review_required`) ; lien parental par code ; réglages du parent (heures calmes, directs, abonnements) ; restrictions de compte ; politique centrale côté serveur.
-- **Actuel → cible** : PARTIALLY_IMPLEMENTED (migration 18 testée, non appliquée ; module client `guardian-core` et encadré dans Compte & profil, D-112) → appliquée avec S8, écrans branchés.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (migration 18 testée et appliquée en préproduction le 22/11/2026 ; module client `guardian-core` et encadré dans Compte & profil, D-112) → appliquée avec S8, écrans branchés.
 - **Dépendances** : migrations 13, 15, 17 ; AIPD ; avocat. **Complexité** : élevée. **Coût** : faible technique, élevé humain (revue des contestations). **Revenu** : aucun (jamais de publicité aux mineurs).
 - **Risques** : faux âge déclaré → statut jamais présenté comme vérifié ; preuve d'âge externe en RESEARCH, sans biométrie imposée.
 - **Priorité** : **P0**. **Décision** : Créée (sur l'existant).

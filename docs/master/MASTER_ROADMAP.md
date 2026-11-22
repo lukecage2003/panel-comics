@@ -43,7 +43,7 @@ Décision : **Conservée**.
 
 ### Étape B — Gouvernance et Guardian (P0, préparé le 22/11/2026, D-111)
 
-1. **Migration 18 `panel_guardian`** — faite et testée localement, **non appliquée** :
+1. **Migration 18 `panel_guardian`** — faite, testée localement, **appliquée en préproduction le 22/11/2026** (D-116), comptes toujours fermés :
    - statut d'âge contestable ;
    - lien parental par code à usage unique ;
    - réglages du parent ;

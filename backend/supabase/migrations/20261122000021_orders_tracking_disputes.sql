@@ -1,8 +1,10 @@
 -- D-115 : suivi des ventes du Marché (numéro de suivi, retard d'expédition, litige motivé), baisses de prix des favoris.
 -- Migration additive : colonnes facultatives, nouvelles fonctions, une fonction remplacée à signature identique
--- (api.favorites_mine). Aucune donnée existante n'est modifiée ni supprimée. Testée localement (PGlite), non appliquée.
+-- (api.favorites_mine). Aucune donnée existante n'est modifiée ni supprimée. Testée localement (PGlite) ;
+-- APPLIQUÉE EN PRÉPRODUCTION le 22/11/2026 (D-116), comptes en ligne (S8) toujours fermés.
+-- Ajoute aussi la limite « guardian_code » (10 essais par heure), absente jusque-là : sans ligne, rate_check ne limitait rien.
 
-insert into community.limits (action, max_count, per_seconds) values ('dispute', 5, 86400) on conflict do nothing;
+insert into community.limits (action, max_count, per_seconds) values ('dispute', 5, 86400), ('guardian_code', 10, 3600) on conflict do nothing;
 
 alter table market.orders
   add column if not exists tracking text check (tracking is null or tracking ~ '^[A-Z0-9]{8,40}$'),

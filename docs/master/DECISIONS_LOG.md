@@ -84,3 +84,12 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
   - colonnes `tracking`, `dispute_*` et `saved_price_cents` ;
   - fonctions `api.order_ship`, `api.order_cancel_late`, `api.order_dispute`, `api.orders_mine` ;
   - `api.favorites_mine` remplacée à signature identique.
+
+## Décisions de D-116
+
+- **Migrations 16 à 21 appliquées en préproduction** (projet Supabase de Paris), sur accord de l'utilisateur (« Oui, 16 à 21 ») : `moderation_terms`, `owner_admin_mfa`, `panel_guardian`, `pros_market_forum_messages`, `signal_verify_offers_plus`, `orders_tracking_disputes`. Les 21 migrations figurent dans l'historique distant.
+- **Limite ajoutée avant application** : `guardian_code`, 10 essais par heure. `api.guardian_link_accept` l'appelait sans ligne de limite, donc sans plafond contre l'essai de codes à la chaîne.
+- **Conseils Supabase après application** : seulement des informations.
+  - Sécurité : RLS active sans règle sur 37 tables. C'est voulu : l'accès direct est révoqué et tout passe par les fonctions `api.*`.
+  - Performances : 32 clés étrangères sans index, une table sans clé primaire (`community.rate_events`), index encore inutilisés (base vide).
+- **Ce qui ne change pas** : l'ouverture des comptes (S8) reste fermée, rien n'est déployé, le Marché reste fermé (aucun taux de commission en base).

@@ -1,5 +1,5 @@
 -- Migration 19 — Pros et sceau « Encré », marché entre membres, forum « Le Comptoir », messages privés chiffrés, offres (D-113).
--- PRÉPARÉE ET TESTÉE LOCALEMENT (PGlite) ; non appliquée tant que les comptes en ligne (S8) restent fermés. Additive.
+-- TESTÉE LOCALEMENT (PGlite) ; APPLIQUÉE EN PRÉPRODUCTION le 22/11/2026 (D-116), comptes en ligne (S8) toujours fermés. Additive.
 -- Principes :
 --   * aucun pro n'est « Encré » sans décision d'un membre de l'équipe en double authentification ; les pièces ne sont pas stockées ;
 --   * marché réservé aux adultes ; Panel ne détient jamais l'argent : « payé » et « livré » sont posés par le rôle service

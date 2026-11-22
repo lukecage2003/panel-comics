@@ -1,6 +1,6 @@
 -- Migration 18 — Panel Guardian (D-111) : statut d'âge contestable, supervision parentale, restrictions de compte,
--- politique centrale côté serveur. PRÉPARÉE ET TESTÉE LOCALEMENT (PGlite) ; non appliquée tant que les comptes en ligne
--- (S8) restent fermés.
+-- politique centrale côté serveur. TESTÉE LOCALEMENT (PGlite) ;
+-- APPLIQUÉE EN PRÉPRODUCTION le 22/11/2026 (D-116), comptes en ligne (S8) toujours fermés.
 --
 -- Principes (décisions produit) :
 --   * aucun compte de moins de 13 ans, même avec accord parental (déjà refusé par api.community_join, migration 13) ;

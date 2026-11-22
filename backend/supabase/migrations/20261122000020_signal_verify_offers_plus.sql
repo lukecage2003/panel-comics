@@ -1,6 +1,6 @@
 -- Migration 20 — Messages façon Signal (préclés, double cliquet, messages éphémères), dossiers de vérification par type de compte,
 -- offres, favoris et avis du marché, droit d'accès aux statistiques Panel+ (D-114).
--- PRÉPARÉE ET TESTÉE LOCALEMENT (PGlite) ; non appliquée tant que les comptes en ligne (S8) restent fermés. Additive :
+-- TESTÉE LOCALEMENT (PGlite) ; APPLIQUÉE EN PRÉPRODUCTION le 22/11/2026 (D-116), comptes en ligne (S8) toujours fermés. Additive :
 -- aucune table n'est supprimée, aucune donnée n'est effacée ; les fonctions remplacées gardent leur signature.
 -- Principes :
 --   * messages : le serveur distribue des clés publiques (identité, préclé signée, préclés à usage unique) et stocke du chiffré ;

@@ -75,7 +75,7 @@ Légende :
 | Révocation | `révocation : par le parent …` |
 | Suppression de compte | `suppression du compte : liens, réglages, statut et journal Guardian partent avec lui` |
 
-**Non validé à distance** : la migration 18 n'est pas appliquée sur Supabase. Aucun service distant n'a été utilisé pour ces tests.
+**Appliquée en préproduction** le 22/11/2026 (D-116), avec les migrations 16 à 21. Les tests ci-dessus tournent en local (PGlite) ; aucun parcours n'a encore été essayé avec de vrais comptes, l'ouverture des comptes (S8) restant fermée.
 
 ## 3. Squelettes juridiques
 
