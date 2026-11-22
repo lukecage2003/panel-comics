@@ -435,7 +435,7 @@ const handleNews = async (u, res) => {
 
 
 // ---------- Garde du relais hébergé : origines autorisées, lecture seule, adresses bornées, débit par adresse IP
-const ORIGINS = /^(https:\/\/lukecage2003\.github\.io|http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?)$/;
+const ORIGINS = /^(https:\/\/lukecage2003\.github\.io|https?:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?)$/;
 const SEC = { 'X-Content-Type-Options': 'nosniff', 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer', 'Cross-Origin-Resource-Policy': 'cross-origin' };
 const PER_MIN = 90;
 let hits = new Map();

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-FaGP5KX4+VsJUiDb5LTMfcS+uuKy/pMaJOGL7TKMMho=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-N6Db/Lm/AhlYz3tb7he2tzwY0d6PzlBf1meZ9GhreM4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-FaGP5KX4+VsJUiDb5LTMfcS+uuKy/pMaJOGL7TKMMho=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-25D1KUmpeoFWNfNEuuU9v+qXmd8QM+roNDf8lKVEbrE=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -13968,7 +13968,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // D-120 : relais de Panel. En local, serve.js (/api) ; en ligne, la même chose hébergée sur Supabase (panel-relay),
   // générée depuis serve.js par scripts/build-relay.js. Les clés restent côté serveur, jamais dans le navigateur.
   const HOSTED_RELAY = 'https://rxqusnkvlybkgxzhsnpk.supabase.co/functions/v1/panel-relay';
-  const isLocalHost = () => /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  // D-122 : l'application Android (Capacitor, https://localhost) passe aussi par le relais hébergé
+  const isLocalHost = () => !IS_NATIVE_APP && /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
   const apiBase = () => isLocalHost() ? location.origin + '/api' : (location.protocol === 'https:' ? HOSTED_RELAY : '');
   // Relais vérifiés une fois au démarrage ; null = pas encore vérifié
   let relayStatus = null;
@@ -13985,7 +13986,6 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const cvRelayBase = () => {
     const custom = (localStorage.getItem('panel_cv_proxy') || '').trim();
     if (custom) return custom.replace(/\/$/, '');
-    if (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) return '';
     if (relayStatus && !relayStatus.cv) return ''; // relais absent ou sans clé : outils Comic Vine signalés indisponibles au lieu d'échouer
     return apiBase() ? apiBase() + '/cv' : '';
   };
