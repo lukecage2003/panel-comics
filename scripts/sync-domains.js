@@ -34,6 +34,7 @@ const MODULES = [
   ['dmRatchet', 'domains/community/dm-ratchet.js'],
   ['verify', 'domains/community/verify-core.js'],
   ['statsPlus', 'domains/collection/stats-plus-core.js'],
+  ['orders', 'domains/community/order-core.js'],
   ['affinity', 'domains/community/affinity-core.js'],
   ['meetups', 'domains/community/meetups-core.js'],
   ['moderation', 'domains/community/moderation-core.js'],

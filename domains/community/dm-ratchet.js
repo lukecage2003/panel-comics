@@ -156,3 +156,35 @@ const TIMER_LABEL = Object.freeze({ 0: 'Désactivés', 300: '5 minutes', 3600: '
 const expired = (sentAtMs, timerSec, nowMs) => timerSec > 0 && nowMs - sentAtMs >= timerSec * 1000;
 
 module.exports = { ALG, MAX_SKIP, TIMERS, TIMER_LABEL, createIdentity, createPrekeys, verifyBundle, x3dhInitiate, x3dhRespond, initSender, initReceiver, encrypt, decrypt, expired, pad, unpad };
+
+// ── D-115 : pièces jointes chiffrées et confiance dans les clés ─────────────────────────────────
+// Pièce jointe (photo d'un exemplaire, page de contrat…) : comme Signal, elle est chiffrée avec une clé aléatoire à usage
+// unique (AES-GCM 256). Le serveur ne garde que le chiffré ; la clé et l'empreinte voyagent DANS le message chiffré.
+const MAX_ATTACHMENT = 15 * 1048576;
+const hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');
+const sealAttachment = async bytes => {
+  const data = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes || []);
+  if (!data.length || data.length > MAX_ATTACHMENT) throw new Error('too_large');
+  const raw = globalThis.crypto.getRandomValues(new Uint8Array(32)), iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const k = await subtle().importKey('raw', raw, 'AES-GCM', false, ['encrypt']);
+  const ct = new Uint8Array(await subtle().encrypt({ name: 'AES-GCM', iv }, k, data));
+  const digest = hex(await subtle().digest('SHA-256', ct));
+  return { blob: ct, ref: { key: b64(raw), iv: b64(iv), digest, size: data.length } };
+};
+const openAttachment = async (blob, ref) => {
+  const ct = blob instanceof Uint8Array ? blob : new Uint8Array(blob || []);
+  if (!ref || hex(await subtle().digest('SHA-256', ct)) !== ref.digest) throw new Error('tampered');
+  try {
+    const k = await subtle().importKey('raw', unb64(ref.key), 'AES-GCM', false, ['decrypt']);
+    return new Uint8Array(await subtle().decrypt({ name: 'AES-GCM', iv: unb64(ref.iv) }, k, ct));
+  } catch (_) { throw new Error('tampered'); }
+};
+// Clé d'identité d'un contact : la première vue est retenue (TOFU) ; un changement bloque l'envoi jusqu'à confirmation
+const trust = (pinned, current) => !current ? 'unknown' : !pinned ? 'new' : pinned === current ? 'same' : 'changed';
+const TRUST_LABEL = Object.freeze({
+  unknown: 'Clé introuvable : impossible d’écrire pour l’instant.',
+  new: 'Première conversation : comparez le numéro de sécurité quand vous vous verrez.',
+  same: 'Clé inchangée depuis votre dernier échange.',
+  changed: 'Le numéro de sécurité a changé (nouvel appareil ou réinstallation). Vérifiez-le avant d’envoyer quoi que ce soit de sensible.'
+});
+Object.assign(module.exports, { MAX_ATTACHMENT, sealAttachment, openAttachment, trust, TRUST_LABEL });

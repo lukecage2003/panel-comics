@@ -57,3 +57,19 @@ test('longueur masquée par rembourrage, trop de messages sautés refusés', asy
   await assert.rejects(R.decrypt(B, { ...m, header: { ...m.header, n: R.MAX_SKIP + 10 } }), /too_many_skipped|tampered/);
   assert.equal(R.expired(0, 300, 300000), true); assert.equal(R.expired(0, 0, 9e12), false);
 });
+
+test('pièces jointes : clé à usage unique, chiffré différent, empreinte contrôlée ; confiance dans la clé du contact', async () => {
+  const img = new Uint8Array(4096).map((_, i) => i % 251);
+  const a = await R.sealAttachment(img), b = await R.sealAttachment(img);
+  assert.notEqual(a.ref.key, b.ref.key);
+  assert.notDeepEqual(a.blob, b.blob);
+  assert.deepEqual(await R.openAttachment(a.blob, a.ref), img);
+  const bad = a.blob.slice(); bad[10] ^= 1;
+  await assert.rejects(R.openAttachment(bad, a.ref), /tampered/);
+  await assert.rejects(R.openAttachment(a.blob, { ...a.ref, key: b.ref.key }), /tampered/);
+  await assert.rejects(R.sealAttachment(new Uint8Array(0)), /too_large/);
+  assert.equal(R.trust(null, 'k1'), 'new');
+  assert.equal(R.trust('k1', 'k1'), 'same');
+  assert.equal(R.trust('k1', 'k2'), 'changed');
+  assert.equal(R.trust('k1', ''), 'unknown');
+});

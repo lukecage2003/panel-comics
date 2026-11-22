@@ -62,3 +62,25 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
 - **Connexion** : Apple, Google (OAuth, flux PKCE, aucun mot de passe ne passe par Panel) et e-mail (lien de connexion ou mot de passe de 12 caractères au moins) ; double authentification par application (TOTP) proposée dès la connexion. Fournisseurs désactivés dans `config.toml` tant que les comptes sont fermés ; aucun identifiant ajouté au dépôt.
 - **Marché enrichi** : recherche sans accents, filtres (état, remise, prix max), tri ; offres (60 % du prix au moins, 48 h, trois en attente au plus) ; remises de lot choisies par le vendeur (paliers 2, 3, 5 ; 50 % au plus) ; favoris ; avis après vente terminée avec moyenne bayésienne (a priori 4/5, poids 5) et badge « Vendeur fiable » à 4,5 sur trois ventes au moins.
 - **Panel+ payant pour les statistiques avancées** : concentration de la valeur, rendement par éditeur, Key Issues, gradés et variantes, rythme d'achat, durée de détention. Les statistiques de base restent gratuites. Calcul sur l'appareil ; aperçu flouté tant que l'offre n'est pas en vente ; aucune prévision de prix.
+
+## Décisions de D-115
+
+- **Suivi des ventes** : module `order-core`. Frise par mode de remise (envoi en 5 étapes, main propre en 3). Prochaine action et échéance pour l'acheteur comme pour le vendeur. Règles de Panel, pas des délais légaux, à reprendre dans les conditions du Marché :
+  - paiement sous 24 h ;
+  - expédition sous 5 jours, sinon l'acheteur peut annuler et être remboursé ;
+  - litige possible pendant le transport ou dans les 3 jours après la livraison.
+- **Litiges motivés** : cinq motifs. Une photo est exigée pour un exemplaire non conforme, abîmé ou contrefait. La description fait 20 caractères au moins ; 5 litiges par jour au plus.
+- **Numéro de suivi** : lettres et chiffres, 8 à 40 caractères, normalisé.
+- **Favoris** : le prix au moment de l'ajout est gardé et la baisse est affichée en pourcentage.
+- **Relecture par l'équipe** : checklist par type de compte, avec des points automatiques (numéro d'entreprise, domaine, ISBN) et trois points humains (nom, lien avec la BD, pièces lisibles).
+  - Valider exige tous les points justes et cochés.
+  - Refuser exige un motif, montré à la personne.
+  - Demander un complément exige une précision.
+  - Échéance : 7 jours ouvrables ; les dossiers en retard passent en tête de file.
+  - L'aperçu dans Compte pro utilise le dossier de la personne et n'enregistre rien.
+- **Pièces jointes chiffrées** : clé AES-GCM 256 aléatoire par pièce, transmise dans le message chiffré. Le serveur garde le chiffré et son empreinte SHA-256 ; une seule modification d'octet fait refuser la pièce.
+- **Confiance dans les clés** : première clé retenue (TOFU) ; un changement de clé est signalé avant l'envoi.
+- **Migration 21** (additive, testée en local, non appliquée) :
+  - colonnes `tracking`, `dispute_*` et `saved_price_cents` ;
+  - fonctions `api.order_ship`, `api.order_cancel_late`, `api.order_dispute`, `api.orders_mine` ;
+  - `api.favorites_mine` remplacée à signature identique.

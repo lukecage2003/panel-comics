@@ -41,3 +41,23 @@ test('pastille : seulement après décision de l\'équipe, distincte par type, e
   assert.equal(V.step('refused', 'appeal', 'owner').state, 'submitted');
   assert.equal(V.step('verified', 'approve', 'staff').error, 'invalid_transition');
 });
+
+test('relecture : échéance en jours ouvrables, file triée, points automatiques et humains, décision motivée', () => {
+  const V = require('./verify-core');
+  const fri = Date.parse('2026-11-20T09:00:00Z');
+  assert.equal(new Date(V.reviewDue(fri)).toISOString().slice(0, 10), '2026-12-01', '7 jours ouvrables après un vendredi');
+  const q = V.queueOrder([{ id: 'b', submitted_at: '2026-11-19T09:00:00Z' }, { id: 'c' }, { id: 'a', submitted_at: '2026-11-01T09:00:00Z' }], Date.parse('2026-11-22T00:00:00Z'));
+  assert.deepEqual(q.map(x => x.id), ['a', 'b', 'c']);
+  assert.equal(q[0].overdue, true);
+  const base = '04123456', bce = base + String(97 - (Number(base) % 97)).padStart(2, '0');
+  const items = V.checklist('publisher', { country: 'BE', company: bce, website: 'https://maison.example', domain_email: 'presse@maison.example', isbn: '9782070612758', docs: { mandate: 'x', identity: 'y' } });
+  assert.ok(items.filter(i => i.auto).every(i => i.ok === true));
+  assert.equal(V.decide('approve', items, []).ok, false, 'les points humains doivent être cochés');
+  assert.equal(V.decide('approve', items, items.filter(i => i.ok === null).map(i => i.key)).ok, true);
+  const bad = V.checklist('publisher', { company: '123' });
+  assert.equal(V.decide('approve', bad, bad.map(i => i.key)).ok, false, 'un numéro faux bloque la validation');
+  assert.equal(V.decide('refuse', items, [], 'nope').ok, false);
+  assert.equal(V.decide('refuse', items, [], 'mismatch').state, 'refused');
+  assert.equal(V.decide('ask', items, [], '', 'court').ok, false);
+  assert.equal(V.decide('ask', items, [], '', 'Merci d’envoyer un extrait Kbis de moins de 3 mois.').state, 'needs_more');
+});

@@ -6459,7 +6459,7 @@ const waitForCdp = async () => {
           r.dmNextToBell = top.indexOf('dmBtn') >= 0 && top.indexOf('dmBtn') + 1 === top.indexOf('notifBtn');
           $('dmBtn').click(); await wait(300);
           r.dmNav = document.title === 'Messages · Panel' && $('navMessages').classList.contains('active') && $('dmBtn').getAttribute('aria-current') === 'page' && !q('.mobile-dock [aria-current="page"]');
-          r.inbox = !!q('.dm-inbox [data-dm-search]') && document.querySelectorAll('.dm-proto li').length === 5 && document.querySelectorAll('[data-hb-timer] option').length === 5;
+          r.inbox = !!q('.dm-inbox [data-dm-search]') && document.querySelectorAll('.dm-proto li').length === 6 && document.querySelectorAll('[data-hb-timer] option').length === 5;
           // Protocole : X3DH + double cliquet, désordre, rejeu refusé, chiffré différent à chaque message
           const R = window.PanelDomains.dmRatchet, al = await R.createIdentity(), bo = await R.createIdentity(), pre = await R.createPrekeys(bo, 1, 1);
           const x = await R.x3dhInitiate(al, pre.bundle, pre.bundle.opk[0]);
@@ -6473,7 +6473,7 @@ const waitForCdp = async () => {
           // Marché : dans le dock (téléphone) et la barre latérale ; quatre onglets ; calculateur d'offre
           $('navMarket').click(); await wait(300);
           q('[data-hb-mk="buy"]').click(); await wait(250);
-          r.marketNav = document.title === 'Marché · Panel' && [...document.querySelectorAll('[data-hb-mk]')].map(b => b.dataset.hbMk).join() === 'buy,sell,offers,favs' && !!q('[data-hb-mk-search]');
+          r.marketNav = document.title === 'Marché · Panel' && [...document.querySelectorAll('[data-hb-mk]')].map(b => b.dataset.hbMk).join() === 'buy,sell,offers,orders,favs' && !!q('[data-hb-mk-search]');
           q('[data-hb-mk="offers"]').click(); await wait(250);
           const op = q('[data-hb-offer-price]'), oa = q('[data-hb-offer-amount]');
           op.value = '40'; oa.value = '20'; oa.dispatchEvent(new Event('input', { bubbles: true }));
@@ -6514,6 +6514,55 @@ const waitForCdp = async () => {
       console.log('Résultat Test 87:', JSON.stringify(t87));
       testResults.push({ test: 'Test 87 : Messages en haut, Marché dans le dock, Signal, vérification, Panel+ (D-114)',
         ok: !!t87 && !t87.error && ['dmNextToBell', 'dmNav', 'inbox', 'signal', 'marketNav', 'offer', 'badges', 'wizard', 'bce', 'signup', 'plus', 'home', 'dmDbUntouched', 'dataUntouched'].every(k => t87[k] === true) });
+
+      // ==========================================
+      // TEST 88 : suivi des ventes, litiges, relecture par l'équipe, pièces jointes chiffrées (D-115)
+      // ==========================================
+      console.log('\n[TEST 88] Ventes, litiges, relecture, pièces jointes...');
+      const t88 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id), q = s => document.querySelector(s);
+        const fp0 = await window.Panel.backup.fingerprint('collection');
+        const HKEY = 'panel.hub.v1', hstored = localStorage.getItem(HKEY);
+        try {
+          localStorage.removeItem(HKEY);
+          // Marché > Ventes : deux frises (envoi en 5 étapes, main propre en 3), numéro de suivi contrôlé, motifs de litige
+          $('navMarket').click(); await wait(300);
+          q('[data-hb-mk="orders"]').click(); await wait(300);
+          const paths = [...document.querySelectorAll('.od-path')].map(p => p.querySelectorAll('li').length).join();
+          const tr = q('[data-hb-track]');
+          tr.value = '<b>x</b>'; tr.dispatchEvent(new Event('input', { bubbles: true }));
+          const refused = /refusé/.test(q('[data-hb-track-out]').textContent);
+          tr.value = '1z 999-aa1 0123456784'; tr.dispatchEvent(new Event('input', { bubbles: true }));
+          r.orders = paths === '5,3' && refused && /1Z999AA10123456784/.test(q('[data-hb-track-out]').textContent) && document.querySelectorAll('.od-reasons li').length === 5;
+          // Module de suivi : retard d'expédition, fenêtre de litige
+          const O = window.PanelDomains.orders, T0 = Date.parse('2026-11-02T10:00:00Z'), D = 864e5, ev = (to, ms) => ({ to, at: new Date(ms).toISOString() });
+          r.rules = O.lateCancel({ state: 'paid', delivery: 'relay' }, [ev('paid', T0)], T0 + 6 * D) && !O.lateCancel({ state: 'paid', delivery: 'relay' }, [ev('paid', T0)], T0 + D) &&
+            !O.canDispute({ state: 'delivered' }, [ev('delivered', T0)], T0 + 4 * D) && !O.validateDispute('damaged', 'Le coin supérieur est plié et taché.', []).ok;
+          // Compte pro : aperçu de la relecture ; valider exige les points cochés, refuser exige un motif
+          $('navProfile').click(); await wait(300);
+          q('.hb-chip[data-cm-tab="pros"]').click(); await wait(300);
+          q('[data-hb-vtype="creator"]').click(); await wait(300);
+          const items = document.querySelectorAll('.rv-list li').length;
+          q('[data-hb-rv="approve"]').click(); await wait(80);
+          const blocked = /Points non vérifiés/.test(q('[data-hb-rv-out]').textContent);
+          q('[data-hb-rv="refuse"]').click(); await wait(80);
+          const needReason = /motif/.test(q('[data-hb-rv-out]').textContent);
+          const sel = q('[data-hb-rv-reason]'); sel.value = 'impersonation';
+          q('[data-hb-rv="refuse"]').click(); await wait(80);
+          r.review = items === 6 && blocked && needReason && /Usurpation/.test(q('[data-hb-rv-out]').textContent) && !/rv/.test(JSON.stringify(JSON.parse(localStorage.getItem(HKEY)).verify));
+          // Messages : pièce jointe chiffrée puis rouverte, refusée si modifiée
+          $('dmBtn').click(); await wait(300);
+          const R = window.PanelDomains.dmRatchet, pic = new Uint8Array(1024).map((_, i) => i % 200), a = await R.sealAttachment(pic), back = await R.openAttachment(a.blob, a.ref);
+          const bent = a.blob.slice(); bent[3] ^= 1; let bad = false; try { await R.openAttachment(bent, a.ref); } catch (_) { bad = true; }
+          r.attach = back.every((x, i) => x === pic[i]) && bad && R.trust('k1', 'k2') === 'changed' && document.querySelectorAll('.dm-proto li').length === 6;
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally { if (hstored === null) localStorage.removeItem(HKEY); else localStorage.setItem(HKEY, hstored); }
+        r.dataUntouched = fp0 === await window.Panel.backup.fingerprint('collection');
+        return r;
+      })()`);
+      console.log('Résultat Test 88:', JSON.stringify(t88));
+      testResults.push({ test: 'Test 88 : ventes, litiges, relecture par l’équipe, pièces jointes chiffrées (D-115)',
+        ok: !!t88 && !t88.error && ['orders', 'rules', 'review', 'attach', 'dataUntouched'].every(k => t88[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

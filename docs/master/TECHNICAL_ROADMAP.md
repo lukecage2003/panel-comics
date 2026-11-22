@@ -19,7 +19,8 @@ Ordre des lots techniques. L'historique est dans [ROADMAP.md](../ROADMAP.md) et 
 | T13 | Prestataire de paiement agréé (séquestre, versements, DAC7) | P1 | Avis d'avocat, identité légale | `[À CHOISIR]` |
 | T14 | Double cliquet pour les messages (confidentialité persistante) | FAIT EN LOCAL (D-114 : X3DH + double cliquet, migration 20 testée) | T11 | — |
 | T15 | Expéditeur scellé (masquer l'expéditeur au serveur) | RESEARCH | T14 | — |
-| T16 | Envoi chiffré des pièces de vérification et file d'examen de l'équipe | PLANNED | migration 20, S8 | — |
+| T16 | Envoi chiffré des pièces de vérification et file d'examen de l'équipe | EN PARTIE (D-115 : checklist, file triée, décision motivée, pièces jointes chiffrées côté appareil ; stockage à brancher) | migration 20, S8 | — |
+| T17 | Suivi des ventes : expédition, retard, litige, frise | FAIT EN LOCAL (D-115 : `order-core`, migration 21 testée) | T12 | — |
 
 ## Règles de chaque lot
 

@@ -117,3 +117,22 @@ Cinq types, cinq pastilles distinctes (plus Équipe Panel), inscription avec App
 ## 20. Marché enrichi et Panel+ (D-114)
 
 Marché : Acheter (recherche, filtres, tri), Vendre (annonce, remises de lot, réputation), Offres (règles et calculateur), Favoris. Panel+ : six statistiques avancées calculées sur l'appareil, aperçu flouté tant que l'offre n'est pas en vente. Statut : FAIT (local).
+
+## 21. Suivi des ventes et litiges (D-115)
+
+Onglet Ventes du Marché :
+- frises « envoi » et « main propre » ;
+- échéances ;
+- vérification du numéro de suivi ;
+- motifs de litige.
+
+Côté serveur : expédition avec suivi, annulation pour retard, litige motivé, liste de mes ventes et achats, baisses de prix des favoris.
+
+Statut : FAIT (local).
+
+## 22. Relecture par l'équipe et pièces jointes chiffrées (D-115)
+
+- Aperçu de la relecture dans Compte pro : points automatiques et humains, échéance, valider, demander un complément ou refuser avec motif. Rien n'est enregistré.
+- Pièces jointes chiffrées dans Messages.
+
+Statut : FAIT (local) ; envoi réel des pièces avec les comptes (T16).

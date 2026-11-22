@@ -99,3 +99,45 @@ const badge = (type, state, verifiedAtMs, nowMs) => {
 
 module.exports = { TYPES, TYPE_INFO, BADGES, DOCS, STATES, STATE_LABEL, REFUSAL, REVIEW_DAYS, RENEW_DAYS, DOC_RETENTION_DAYS, MAX_FILE_MB,
   checkBCE, checkSIREN, checkISBN13, companyCheck, domainMatches, proofCode, fileOk, progress, step, badge };
+
+// ── D-115 : relecture par l'équipe ─────────────────────────────────────────────────────────────
+// Échéance : REVIEW_DAYS jours ouvrables (samedi et dimanche exclus, en UTC) après l'envoi
+const addBusinessDays = (ms, n) => { let t = ms, left = n; while (left > 0) { t += 864e5; const d = new Date(t).getUTCDay(); if (d !== 0 && d !== 6) left -= 1; } return t; };
+const reviewDue = submittedMs => addBusinessDays(submittedMs, REVIEW_DAYS);
+// File de l'équipe : les dossiers en retard d'abord, puis par échéance
+const queueOrder = (apps, nowMs) => (Array.isArray(apps) ? apps : []).map(a => {
+  const sub = Date.parse(a && a.submitted_at), due = Number.isFinite(sub) ? reviewDue(sub) : null;
+  return { ...a, due, overdue: due !== null && nowMs > due };
+}).sort((a, b) => (Number(b.overdue) - Number(a.overdue)) || (Number(a.due === null) - Number(b.due === null)) || ((a.due || 0) - (b.due || 0)));
+// Points examinés : automatiques (clé de contrôle, domaine, ISBN) et humains (cochés par la personne de l'équipe)
+const MANUAL = Object.freeze({
+  name_match: 'Le nom sur les pièces correspond au nom public du compte',
+  comics: 'L’activité est bien liée à la bande dessinée',
+  docs_valid: 'Les pièces sont lisibles, récentes et non modifiées'
+});
+const checklist = (type, file) => {
+  const f = file || {}, docs = DOCS[type] || [], items = [];
+  docs.filter(d => d.required).forEach(d => {
+    const a = d.accept;
+    if (a.includes('number')) items.push({ key: d.key, label: 'Numéro d’entreprise', auto: true, ok: companyCheck(f.country || 'BE', f.company) });
+    else if (a.includes('email')) items.push({ key: d.key, label: 'Adresse sur le domaine officiel', auto: true, ok: domainMatches(f.domain_email, f.website) });
+    else if (a.includes('isbn') && !a.includes('pdf')) items.push({ key: d.key, label: 'ISBN du catalogue', auto: true, ok: checkISBN13(f.isbn) });
+    else if (a.includes('link')) items.push({ key: d.key, label: 'Code Panel visible sur le lien public', auto: false, ok: /^https:\/\/\S+$/.test(f.proof_link || '') ? null : false });
+    else items.push({ key: d.key, label: d.label.split(' : ')[0].split(' (')[0], auto: false, ok: (f.docs && f.docs[d.key]) || String(f[d.key] || '').trim().length >= 3 ? null : false });
+  });
+  Object.keys(MANUAL).forEach(k => items.push({ key: k, label: MANUAL[k], auto: false, ok: null }));
+  return items;
+};
+// Décision : valider exige tous les points automatiques justes et tous les points humains cochés ; refuser exige un motif
+const decide = (action, items, ticked, reason, note) => {
+  const n = String(note || '').trim(), t = new Set(ticked || []), list = Array.isArray(items) ? items : [];
+  if (n.length > 500) return { ok: false, error: '500 caractères au plus.' };
+  if (action === 'approve') {
+    const bad = list.filter(i => i.ok === false || (i.ok === null && !t.has(i.key)));
+    return bad.length ? { ok: false, error: 'Points non vérifiés : ' + bad.map(i => i.label).join(' ; ') + '.' } : { ok: true, state: 'verified' };
+  }
+  if (action === 'refuse') return REFUSAL[reason] ? { ok: true, state: 'refused', reason } : { ok: false, error: 'Choisissez un motif de refus : il est montré à la personne.' };
+  if (action === 'ask') return n.length >= 10 ? { ok: true, state: 'needs_more', note: n } : { ok: false, error: 'Précisez la pièce à compléter (10 caractères au moins).' };
+  return { ok: false, error: 'invalid_action' };
+};
+Object.assign(module.exports, { MANUAL, addBusinessDays, reviewDue, queueOrder, checklist, decide });
