@@ -5,7 +5,7 @@
 do $$
 declare
   n int;
-  expected text[] := array['copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','service_limits','staff_role_log','staff_roles','sync_conflicts','sync_ops','user_settings','user_sync_state'];
+  expected text[] := array['collection_backups','copies','devices','locations','profiles','pulls','reading_progress','reading_states','series_follows','service_limits','staff_role_log','staff_roles','sync_conflicts','sync_ops','user_settings','user_sync_state'];
   got text[];
 begin
   select array_agg(relname::text order by relname) into got from pg_class where relnamespace = 'app'::regnamespace and relkind = 'r';

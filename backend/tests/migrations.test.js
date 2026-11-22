@@ -43,7 +43,8 @@ test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
     '20261122000019_pros_market_forum_messages.sql',
     '20261122000020_signal_verify_offers_plus.sql',
     '20261122000021_orders_tracking_disputes.sql',
-    '20261122000022_foreign_key_indexes.sql'
+    '20261122000022_foreign_key_indexes.sql',
+    '20261122000023_collection_backups.sql'
   ]);
 });
 
@@ -73,7 +74,7 @@ test('chaque migration s\'applique séparément dans l\'ordre (sans la suivante)
     assert.ok(n >= 0, f);
   }
   const n = (await db.query("select count(*)::int n from information_schema.tables where table_schema = 'app'")).rows[0].n;
-  assert.equal(n, 15);
+  assert.equal(n, 16); // D-120 : + collection_backups
   await db.close();
 });
 

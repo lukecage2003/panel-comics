@@ -26,7 +26,7 @@ const EXPECTED_COLUMNS = {
 
 test('le schéma app contient exactement les 15 tables prévues (12 personnelles + rôles serveur du lot 3.3 + réglages du service, lot 3.6)', async () => {
   const r = await db.query("select table_name from information_schema.tables where table_schema = 'app' order by 1");
-  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log', 'service_limits'].sort());
+  assert.deepEqual(r.rows.map(x => x.table_name), [...H.APP_TABLES, 'staff_roles', 'staff_role_log', 'service_limits', 'collection_backups'].sort());
 });
 
 test('aucun schéma réservé (catalog, editorial, media, signals) n\'est créé ; community existe depuis D-73', async () => {
@@ -76,7 +76,7 @@ test('index (user_id, rev) et index des politiques présents', async () => {
 test('toutes les clés étrangères vers auth.users sont en cascade', async () => {
   const r = await db.query(`select conrelid::regclass::text as tbl, confdeltype from pg_constraint
     where contype = 'f' and connamespace = 'app'::regnamespace`);
-  assert.equal(r.rows.length, 13); // 12 tables personnelles + staff_roles (lot 3.3)
+  assert.equal(r.rows.length, 14); // 12 tables personnelles + staff_roles (lot 3.3) + collection_backups (D-120)
   for (const x of r.rows) assert.equal(x.confdeltype, 'c', x.tbl);
 });
 

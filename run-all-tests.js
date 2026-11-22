@@ -5159,11 +5159,11 @@ const waitForCdp = async () => {
       // ==========================================
       console.log('\n[TEST 65] Compte en ligne (préparation)...');
       const t65 = await evalExpr(`(async () => {
-        const wait = ms => new Promise(res => setTimeout(res, ms)), r = {}, saved = localStorage.getItem('panel_cloud_config');
+        const wait = ms => new Promise(res => setTimeout(res, ms)), r = {}, saved = localStorage.getItem('panel_cloud_config'), off0 = localStorage.getItem('panel_cloud_off');
         const open = async () => { document.getElementById('settingsModal').classList.remove('open'); document.getElementById('openSettingsBtnSide').click(); await wait(300); const t = document.querySelector('#settingsModal [data-set-tab="account"]'); if (t) { t.click(); await wait(150); } };
         const body = () => document.getElementById('acctBody'), state = () => document.getElementById('acctState').textContent;
         try {
-          localStorage.removeItem('panel_cloud_config');
+          localStorage.removeItem('panel_cloud_config'); localStorage.setItem('panel_cloud_off', '1');
           await open();
           r.inAccountTab = !!document.querySelector('#settingsModal [data-acct-slot] #acctBox');
           r.localState = state() === 'Mode local' && !!body().querySelector('[data-acct-cfg]');
@@ -5201,6 +5201,7 @@ const waitForCdp = async () => {
           delete window.supabase;
           if (saved === null) localStorage.removeItem('panel_cloud_config'); else localStorage.setItem('panel_cloud_config', saved);
           localStorage.removeItem('panel_cloud_auth');
+          if (off0 === null) localStorage.removeItem('panel_cloud_off'); else localStorage.setItem('panel_cloud_off', off0);
           document.getElementById('settingsModal').classList.remove('open');
         }
         return r;

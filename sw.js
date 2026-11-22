@@ -8,11 +8,12 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-21-decouvrir-vivant';
+const VERSION = 'panel-2026-11-22-relais-heberge';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 // D-108 : cartes interactives de l'atlas (cartes/), gardées une fois ouvertes pour être relues hors ligne
 const CARTES_CACHE = 'panel-cartes-v1';
+const IMG_CACHE = 'panel-images-v1';
 const SHELL = [
   './',
   './index.html',
@@ -138,5 +139,23 @@ self.addEventListener('fetch', event => {
       return hit || refresh;
     })());
   }
-  // Tout le reste (Comic Vine, couvertures, OpenLibrary…) : comportement réseau normal
+  // D-120 : couvertures et images (autres sites) : réseau d'abord, copie gardée pour la consultation hors ligne (400 images au plus)
+  if (req.destination === 'image' && url.protocol === 'https:') {
+    event.respondWith((async () => {
+      const cache = await caches.open(IMG_CACHE);
+      try {
+        const res = await fetch(req);
+        if (res && (res.ok || res.type === 'opaque')) {
+          cache.put(req, res.clone()).then(async () => { const keys = await cache.keys(); for (let i = 0; i < keys.length - 400; i++) await cache.delete(keys[i]); }).catch(() => {});
+        }
+        return res;
+      } catch (e) {
+        const hit = await cache.match(req, { ignoreVary: true });
+        if (hit) return hit;
+        throw e;
+      }
+    })());
+    return;
+  }
+  // Tout le reste (Comic Vine, OpenLibrary…) : comportement réseau normal
 });

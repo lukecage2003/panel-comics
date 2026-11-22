@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-QZj8RXmYXoQ+7HN0TeF90GMYWIjl5dRdr69UGQiHsHQ=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-WXAJPooPOBBd/1P6FliHFDo7Fi0ZYMpBl+xiORCZiJ8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
+  <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#141413" />
   <script>
@@ -1057,6 +1058,8 @@
     .acct-box form, .acct-body { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
     .acct-box input { width: 100%; box-sizing: border-box; }
     .acct-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .acct-backup { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; margin: 10px 0; }
+    .acct-check { display: flex; align-items: center; gap: 8px; font-size: 14px; min-height: 44px; }
     .acct-msg { min-height: 1em; color: var(--ink); overflow-wrap: anywhere; }
     .acct-note { font-size: 12px; color: var(--muted); }
     .pwa-settings { background: var(--bg-card); border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 10px 12px; font-size: 12px; color: var(--ink-dim); line-height: 1.5; display: flex; flex-direction: column; gap: 6px; }
@@ -3906,8 +3909,20 @@
     .ex-unitile, .ex-reco, .ex-pub { border-radius: 16px !important; border-color: var(--hair) !important; }
     .ex-ev-pub { font-size: 13px !important; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin: 18px 2px 10px !important; }
     .limited-banner { display: flex; align-items: center; gap: 14px; margin: 0 0 16px; padding: 14px 18px; border-radius: 18px; border: 1px solid color-mix(in srgb, var(--orange, #f59e0b) 45%, transparent); background: color-mix(in srgb, var(--orange, #f59e0b) 12%, var(--bg-card)); font-size: 14px; line-height: 1.5; }
+    /* D-120 : mode une main. Sur téléphone, les boutons du haut passent en bas, au-dessus du dock, à portée du pouce. */
+    @media (max-width: 600px) {
+      body.one-hand .top-actions { position: fixed; z-index: 120; right: 12px; left: auto; top: auto; bottom: calc(80px + env(safe-area-inset-bottom)); display: flex; gap: 6px; padding: 6px; border-radius: 999px; background: color-mix(in srgb, var(--bg-card) 88%, transparent); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 10px 30px -12px rgba(0,0,0,.6); }
+      body.one-hand .top-actions .notif-btn { min-width: 44px; min-height: 44px; }
+    }
     .limited-banner > .ic { width: 22px; height: 22px; color: var(--orange, #f59e0b); flex: 0 0 auto; }
-    .limited-banner > div { flex: 1; }
+    .limited-banner > details { flex: 1; min-width: 0; }
+    .limited-banner summary { list-style: none; cursor: pointer; display: flex; gap: 8px; align-items: baseline; min-height: 28px; }
+    .limited-banner summary::-webkit-details-marker { display: none; }
+    .limited-banner .lb-short { color: var(--muted); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+    .limited-banner details[open] .lb-short { display: none; }
+    .limited-banner details p { margin: 6px 0 4px; font-size: 13px; }
+    .limited-banner details > span { font-size: 12px; color: var(--muted); }
+    @media (max-width: 600px) { .limited-banner { padding: 8px 12px; gap: 10px; border-radius: 14px; margin-bottom: 10px; } .limited-banner > .btn { padding: 6px 10px; font-size: 12px; } }
     .limited-banner span { color: var(--ink-dim); }
     /* Collection ⇄ Séries : un seul espace, deux regards */
     .coll-seg-wrap { display: none; align-items: center; gap: 14px; flex-wrap: wrap; margin: 4px 0 14px; }
@@ -4249,6 +4264,48 @@
     @keyframes splashWord { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
     @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
     @media (prefers-reduced-motion: reduce) { .splash { display: none; } }
+    /* ===== D-120 : finition visuelle (icônes, dock, boutons, Messages, Marché, Directs) ===== */
+    .ic { stroke-width: 1.85; }
+    .mobile-dock-btn { transition: color .15s ease, transform .12s ease; -webkit-tap-highlight-color: transparent; }
+    .mobile-dock-btn:active { transform: scale(.9); }
+    .mobile-dock-btn.active .ic { fill: color-mix(in srgb, currentColor 24%, transparent); stroke-width: 2.25; }
+    .mobile-dock-btn.active::after { content: ''; display: block; width: 4px; height: 4px; margin: 2px auto 0; border-radius: 50%; background: currentColor; }
+    .btn { transition: transform .12s ease, background-color .15s ease, box-shadow .15s ease, border-color .15s ease; -webkit-tap-highlight-color: transparent; }
+    .btn:active:not(:disabled) { transform: scale(.97); }
+    :focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+    .mk-filters, .mk-tabs, .dm-tabs { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 28px), transparent); padding-right: 28px; }
+    /* Messages : recherche en pastille pleine, onglet actif à la couleur de Panel, état vide illustré */
+    .dm-search { background: color-mix(in srgb, var(--ink) 7%, var(--bg-card)); border-color: transparent; border-radius: 999px; }
+    .dm-search:focus-within { border-color: var(--lime); }
+    .dm-tabs { border-bottom-color: color-mix(in srgb, var(--ink) 12%, transparent); }
+    .dm-tabs button.is-on { border-bottom-color: var(--lime); }
+    .dm-inbox .hb-empty, .lv-empty { border: 0; background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--lime) 12%, transparent), transparent 70%), color-mix(in srgb, var(--ink) 4%, var(--bg-card)); border-radius: 22px; padding: 34px 22px; }
+    .dm-inbox .hb-empty .ic { width: 30px; height: 30px; padding: 16px; box-sizing: content-box; border-radius: 50%; border: 2px solid currentColor; }
+    .dm-start { justify-self: center; margin-top: 8px; }
+    /* Marché : cartes d'annonce nettes, prix à la couleur de Panel, onglet actif plein */
+    .mk-tabs button.is-on { background: var(--lime); color: #0b0b0c; border-color: var(--lime); }
+    .mk-card { padding: 6px 6px 10px; border-radius: 16px; background: var(--bg-card); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); transition: transform .15s ease, border-color .15s ease; }
+    @media (hover: hover) { .mk-card:hover { border-color: color-mix(in srgb, var(--lime) 55%, transparent); } }
+    .mk-card img, .mk-card .hb-ph { border-radius: 12px; }
+    .mk-card > :not(img):not(.hb-ph) { padding: 0 4px; }
+    .mk-price { font-weight: 900; color: var(--lime); letter-spacing: -.01em; }
+    @media (max-width: 600px) { .mk-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } }
+    /* Directs : en-tête en affiche, deux grandes actions, explications repliées */
+    .lv-hero { position: relative; overflow: hidden; display: grid; gap: 10px; padding: 20px 18px; border-radius: 24px; color: #fff;
+      background: radial-gradient(90% 120% at 100% 0%, rgba(255, 64, 64, .55), transparent 60%), radial-gradient(80% 100% at 0% 100%, color-mix(in srgb, var(--lime) 45%, transparent), transparent 65%), #121214; }
+    .lv-hero h3 { margin: 0; font: 900 clamp(24px, 6vw, 32px)/1.05 var(--font-display); letter-spacing: -.02em; color: #fff; }
+    .lv-hero > p { margin: 0; color: rgba(255,255,255,.82); font-size: 14px; max-width: 520px; }
+    .lv-onair { display: inline-flex; align-items: center; gap: 6px; justify-self: start; padding: 4px 10px; border-radius: 999px; background: #e11d2e; font: 900 11px/1 inherit; letter-spacing: .08em; text-transform: uppercase; }
+    .lv-onair::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #fff; animation: lvPulse 1.4s ease-in-out infinite; }
+    @keyframes lvPulse { 50% { opacity: .25; } }
+    @media (prefers-reduced-motion: reduce) { .lv-onair::before { animation: none; } }
+    .lv-hero .lv-head-b { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .lv-hero .lv-head-b .btn { justify-content: center; min-height: 48px; }
+    .lv-hero .lv-head-b .btn.secondary { background: rgba(255,255,255,.12); color: #fff; border-color: rgba(255,255,255,.22); }
+    .lv-how summary { cursor: pointer; font-size: 13px; color: rgba(255,255,255,.75); list-style: none; }
+    .lv-how summary::-webkit-details-marker { display: none; }
+    .lv-how p { margin: 6px 0 0; font-size: 13px; color: rgba(255,255,255,.78); line-height: 1.45; }
+    @media (prefers-reduced-motion: reduce) { .btn, .mobile-dock-btn, .mk-card { transition: none; } .btn:active:not(:disabled), .mobile-dock-btn:active { transform: none; } }
 </style>
 </head>
 <body>
@@ -5383,6 +5440,10 @@
       <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
         <input type="checkbox" id="settingHapticFeedback" checked style="accent-color:var(--lime);width:15px;height:15px">
         <span style="font-size:12px;font-weight:600">Retour haptique (vibration mobile)</span>
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+        <input type="checkbox" id="settingOneHand" style="accent-color:var(--lime);width:15px;height:15px">
+        <span style="font-size:12px;font-weight:600">Mode une main (boutons du haut ramenés en bas, sur téléphone)</span>
       </label>
     </div>
 
@@ -13858,17 +13919,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Aucune clé n'est livrée avec l'application : clé personnelle saisie dans les Paramètres (gardée sur l'appareil),
   // sinon le relais serveur (serve.js) ajoute la clé côté serveur. Les appareils qui avaient déjà une clé la gardent.
   const getCvKey = () => (localStorage.getItem('panel_comicvine_key') || '').trim();
-  // Relais locaux (serve.js) : vérifiés une fois au démarrage ; null = pas encore vérifié
+  // D-120 : relais de Panel. En local, serve.js (/api) ; en ligne, la même chose hébergée sur Supabase (panel-relay),
+  // générée depuis serve.js par scripts/build-relay.js. Les clés restent côté serveur, jamais dans le navigateur.
+  const HOSTED_RELAY = 'https://rxqusnkvlybkgxzhsnpk.supabase.co/functions/v1/panel-relay';
+  const isLocalHost = () => /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+  const apiBase = () => isLocalHost() ? location.origin + '/api' : (location.protocol === 'https:' ? HOSTED_RELAY : '');
+  // Relais vérifiés une fois au démarrage ; null = pas encore vérifié
   let relayStatus = null;
   const probeRelays = async () => {
     if (!/^https?:$/.test(location.protocol) || navigator.webdriver) return null;
-    // Version de test en ligne (GitHub Pages) : pas de relais, on le sait sans appeler /api
-    if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return (relayStatus = { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false });
+    if (!apiBase()) return (relayStatus = { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false });
     try {
-      const r = await fetch(location.origin + '/api/status', { cache: 'no-store' });
+      const r = await fetch(apiBase() + '/status', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(8000) });
       const j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
       relayStatus = j && j.ok ? { cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd, wd: !!j.wd, bnf: !!j.bnf, shops: !!j.shops, news: !!j.news } : { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false };
-    } catch (_) { relayStatus = { cv: false, metron: false, gcd: false }; }
+    } catch (_) { relayStatus = { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false }; }
     return relayStatus;
   };
   const cvRelayBase = () => {
@@ -13876,7 +13941,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (custom) return custom.replace(/\/$/, '');
     if (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) return '';
     if (relayStatus && !relayStatus.cv) return ''; // relais absent ou sans clé : outils Comic Vine signalés indisponibles au lieu d'échouer
-    return /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ? location.origin + '/api/cv' : '';
+    return apiBase() ? apiBase() + '/cv' : '';
   };
   const cvAvailable = () => !!(getCvKey() || cvRelayBase());
   // Mode limité : ouvert comme fichier, ou serveur sans relais. On l'explique au lieu de laisser les outils échouer.
@@ -13887,10 +13952,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!main || $('limitedModeBanner')) return;
     const el = document.createElement('div');
     el.id = 'limitedModeBanner'; el.className = 'limited-banner'; el.setAttribute('role', 'status');
-    el.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-alert /></svg><div><b>Mode limité</b> : ' + reasons.map(escapeHtml).join(' ; ') +
-      '.<br><span>' + (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:'
+    el.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-alert /></svg><details><summary><b>Mode limité</b><span class="lb-short">' + escapeHtml(reasons[0].split(/[(:]/)[0].trim()) + '</span></summary><p>' + reasons.map(escapeHtml).join(' ; ') +
+      '.</p><span>' + (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:'
       ? 'Pour tout activer, double-cliquez <b>Lancer Panel.cmd</b> dans le dossier de Panel (ou lancez <code>node serve.js</code>), puis ouvrez <b>http://localhost:8080</b>.'
-      : 'Version de test en ligne : ces outils passent par le relais de Panel, qui ne tourne que sur l’ordinateur de l’équipe. Votre collection reste dans ce navigateur.') + '</span></div><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
+      : 'Le service de recherche de Panel ne répond pas pour le moment : réessayez dans quelques minutes. Votre collection reste dans ce navigateur.') + '</span></details><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
     el.querySelector('button').onclick = () => { el.remove(); try { sessionStorage.setItem('panel_limited_dismissed', '1'); } catch (_) {} };
     main.prepend(el);
   };
@@ -14672,11 +14737,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (localStorage.getItem('panel_sound_effects') !== 'false') {
       try {
         const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        osc.frequency.value = 940;
-        osc.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.12);
+        const osc = ctx.createOscillator(), gain = ctx.createGain(), t0 = ctx.currentTime;
+        osc.type = 'sine'; osc.frequency.setValueAtTime(1320, t0); osc.frequency.exponentialRampToValueAtTime(1760, t0 + 0.08);
+        gain.gain.setValueAtTime(0.0001, t0); gain.gain.exponentialRampToValueAtTime(0.22, t0 + 0.012); gain.gain.exponentialRampToValueAtTime(0.0001, t0 + 0.16);
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(t0); osc.stop(t0 + 0.17); osc.onended = () => { try { ctx.close(); } catch (_) {} };
       } catch (e) {}
     }
     if (localStorage.getItem('panel_haptic_feedback') !== 'false' && navigator.vibrate) navigator.vibrate([60, 40, 60]);
@@ -15443,7 +15508,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const custom = (localStorage.getItem('panel_gcd_proxy') || '').trim();
     if (custom) return custom.replace(/\/$/, '');
     if (IS_NATIVE_APP) return 'app:/gcd';
-    return /^https?:$/.test(location.protocol) && /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) ? location.origin + '/api/gcd' : '';
+    return apiBase() ? apiBase() + '/gcd' : '';
   };
   const identifyEditionByBarcode = async (parsed, series, yearHint) => {
     if (!parsed || !parsed.hasAddon || !series) return null;
@@ -15727,7 +15792,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // ---------- Visuels (D-40) : une référence garde sa provenance { url, source, sourceUrl, attribution, refId, rights, verified, manual }.
   // Aucune image n'est inventée ni associée par défaut : sans visuel connu, un remplacement typographique annonce « visuel à compléter ».
   // Une URL en échec est mémorisée 7 jours (500 au plus) : elle n'est plus redemandée, le remplacement s'affiche directement.
-  const MEDIA_FAIL_KEY = 'panel_media_failed_v1', MEDIA_REFS_KEY = 'panel_media_refs_v1', MEDIA_FAIL_TTL = 7 * 86400000;
+  const MEDIA_FAIL_KEY = 'panel_media_failed_v1', MEDIA_REFS_KEY = 'panel_media_refs_v1', MEDIA_FAIL_TTL = 86400000;
   const MEDIA_KINDS = { event: 'Événement', saga: 'Saga', series: 'Série', run: 'Run', issue: 'Numéro', character: 'Personnage', team: 'Équipe', creator: 'Créateur', publisher: 'Éditeur', guide: 'Guide de lecture', edition: 'Édition', publication: 'Publication' };
   let mediaFailCache = null;
   const mediaFailLoad = () => {
@@ -15737,9 +15802,30 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     mediaFailCache = new Map(Object.entries(d).filter(([u, ts]) => typeof ts === 'number' && now - ts < MEDIA_FAIL_TTL));
     return mediaFailCache;
   };
+  // D-120 : glisser depuis le bord gauche de l'écran = retour (même chemin que le bouton retour du téléphone)
+  (() => {
+    if (!('ontouchstart' in window)) return;
+    let sx = 0, sy = 0, on = false;
+    document.addEventListener('touchstart', e => { const t = e.touches[0]; on = e.touches.length === 1 && t.clientX < 24; sx = t.clientX; sy = t.clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      if (!on) return; on = false;
+      const t = e.changedTouches[0], dx = t.clientX - sx, dy = Math.abs(t.clientY - sy);
+      if (dx > 80 && dy < 60 && history.length > 1) history.back();
+    }, { passive: true });
+  })();
+  // D-120 : mode une main (réglage), gardé sur cet appareil
+  (() => {
+    const K = 'panel_one_hand', apply = on => document.body.classList.toggle('one-hand', on);
+    let on = false; try { on = localStorage.getItem(K) === '1'; } catch (_) {}
+    apply(on);
+    const box = $('settingOneHand');
+    if (box) { box.checked = on; box.onchange = () => { apply(box.checked); try { localStorage.setItem(K, box.checked ? '1' : '0'); } catch (_) {} }; }
+  })();
+  // D-120 : au retour du réseau, les couvertures en échec sont retentées
+  window.addEventListener('online', () => { mediaFailCache = new Map(); try { localStorage.removeItem(MEDIA_FAIL_KEY); } catch (_) {} });
   const mediaFailed = url => !!url && !/^data:/i.test(String(url)) && mediaFailLoad().has(String(url));
   const mediaMarkFailed = url => {
-    if (!url || /^data:/i.test(String(url))) return;
+    if (!url || /^data:/i.test(String(url)) || navigator.onLine === false) return; // D-120 : hors ligne, l'échec n'est pas celui de l'image
     const m = mediaFailLoad(); m.set(String(url), Date.now());
     while (m.size > 500) m.delete(m.keys().next().value);
     try { localStorage.setItem(MEDIA_FAIL_KEY, JSON.stringify(Object.fromEntries(m))); } catch (_) {}
@@ -22375,7 +22461,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // D-67 — Compléments d'une fiche personnage, équipe ou créateur : apparitions récentes (relais Comic Vine) et Wikidata/Wikipédia
   const exCvExtraLoad = async ref => {
     const [t, id] = String(ref).split(':');
-    const get = async url => { try { const r = await fetch(location.origin + url, { cache: 'no-store' }); return r.ok ? await r.json() : null; } catch (_) { return null; } };
+    const get = async url => { try { const r = await fetch(apiBase() + url.replace(/^\/api/, ''), { cache: 'no-store', credentials: 'omit' }); return r.ok ? await r.json() : null; } catch (_) { return null; } };
     if (t === 'volume' && relayStatus && relayStatus.bnf && exCvDetail.data) {
       const ex = exCvDetail.extra = { bnf: null };
       const b = await get('/api/bnf/editions?' + new URLSearchParams({ title: exCvDetail.data.name }));
@@ -22564,7 +22650,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const fresh = [];
     for (const ref of due) {
       let j = null;
-      try { const r = await fetch(location.origin + '/api/cv-appearances?ref=' + encodeURIComponent(ref), { cache: 'no-store' }); j = r.ok ? await r.json() : null; } catch (_) {}
+      try { const r = await fetch(apiBase() + '/cv-appearances?ref=' + encodeURIComponent(ref), { cache: 'no-store' }); j = r.ok ? await r.json() : null; } catch (_) {}
       if (!j || !j.latest || !j.latest[0]) continue;
       const before = exFollows()[ref]; const wasNew = before && before.isNew;
       exFollowSeen(ref, j.latest[0]);
@@ -22594,7 +22680,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const shopsPref = () => { let v = null; try { v = JSON.parse(localStorage.getItem(SHOPS_PREF_KEY) || 'null'); } catch (_) {} v = v && typeof v === 'object' ? v : {}; return { r: [5, 10, 25, 50].includes(v.r) ? v.r : 10, q: typeof v.q === 'string' ? v.q.slice(0, 80) : '' }; };
   const shopsPrefSave = v => { try { localStorage.setItem(SHOPS_PREF_KEY, JSON.stringify({ r: v.r, q: v.q })); } catch (_) {} };
   const exShops = { status: 'idle', data: null, err: '', sel: '', kind: '', last: null, test: false };
-  let exShopsFetch = async params => { const r = await fetch(location.origin + '/api/shops?' + new URLSearchParams(params), { cache: 'no-store' }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Recherche impossible'); return j; };
+  let exShopsFetch = async params => { const r = await fetch(apiBase() + '/shops?' + new URLSearchParams(params), { cache: 'no-store', credentials: 'omit' }); const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || 'Recherche impossible'); return j; };
   const exShopsRun = async params => {
     const pref = shopsPref();
     exShops.last = params; Object.assign(exShops, { status: 'loading', err: '', sel: '' });
@@ -22661,7 +22747,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const exNews = { status: 'idle', data: null, err: '', at: 0, shown: 12, test: false, topic: '', lang: (() => { try { const v = JSON.parse(localStorage.getItem(NEWS_PREF_KEY) || '{}'); return ['fr', 'en', 'all'].includes(v.lang) ? v.lang : 'fr'; } catch (_) { return 'fr'; } })() };
   const NEWS_LEARN_KEY = 'panel_news_learn_v1';
   const exNewsLearn = () => { try { return window.PanelDomains.newsCore.sanitizeLearn(JSON.parse(localStorage.getItem(NEWS_LEARN_KEY) || 'null')); } catch (_) { return window.PanelDomains.newsCore.emptyLearn(); } };
-  let exNewsFetch = async () => { const r = await fetch(location.origin + '/api/news', { cache: 'no-store' }); if (!r.ok) throw new Error('Actualités indisponibles'); return r.json(); };
+  let exNewsFetch = async () => { const r = await fetch(apiBase() + '/news', { cache: 'no-store', credentials: 'omit' }); if (!r.ok) throw new Error('Actualités indisponibles'); return r.json(); };
   const exNewsInterests = () => {
     const out = new Map();
     Object.values(exFollows()).forEach(x => { const n = catNorm(x.name); if (n.length >= 4) out.set(n, x.name); });
@@ -26066,7 +26152,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="lv-card-act"><button class="btn" data-lv-start="' + escapeHtml(r.id) + '">' + igIcon('ic-play') + ' Répéter</button><button class="rd-act" data-lv-edit="' + escapeHtml(r.id) + '">Modifier</button><button class="rd-act" data-lv-del="' + escapeHtml(r.id) + '">Supprimer</button></div></article>';
     const hist = st.history.slice(0, 6).map(x => '<article class="lv-hist"><div><small>' + escapeHtml(lvWhen(x.endedAt)) + ' · ' + escapeHtml(LV().fmtDuration(x.durationSec)) + '</small><b>' + escapeHtml(x.title) + '</b><span>' + x.topics.length + ' sujet' + (x.topics.length > 1 ? 's' : '') + ' traité' + (x.topics.length > 1 ? 's' : '') + (x.shown.length ? ' · ' + x.shown.length + ' image' + (x.shown.length > 1 ? 's' : '') + ' montrée' + (x.shown.length > 1 ? 's' : '') : '') + '</span></div>' +
       '<button class="rd-act" data-lv-post="' + escapeHtml(x.id) + '">Planche de synthèse</button></article>').join('');
-    return '<section class="lv" id="liveStudio"><div class="lv-head"><div><p>Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n\'est simulé.</p></div><span class="lv-head-b"><button class="btn" data-lv-new>' + igIcon('ic-plus') + ' Préparer un direct</button><button class="btn secondary" data-lv-new="duel">' + igIcon('ic-arrows-h') + ' Duel en direct</button></span></div>' +
+    return '<section class="lv" id="liveStudio"><div class="lv-head lv-hero"><span class="lv-onair">Direct</span><h3>Parlez comics, en direct</h3><p>Votre voix, vos couvertures en plein écran.</p>' +
+      '<span class="lv-head-b"><button class="btn" data-lv-new>' + igIcon('ic-plus') + ' Préparer un direct</button><button class="btn secondary" data-lv-new="duel">' + igIcon('ic-arrows-h') + ' Duel en direct</button></span>' +
+      '<details class="lv-how"><summary>Comment ça marche ›</summary><p>Voix seule, jamais de caméra : vos couvertures et les pages de votre galerie au tableau, en plein écran vertical. Duel en direct : deux camps, des preuves, un vote. Répétez ici ; le direct avec auditeurs ouvrira avec les comptes, aucun participant n\'est simulé.</p></details></div>' +
       (rooms.length ? '<div class="lv-reel" aria-label="Mes directs">' + rooms.map(card).join('') + '</div>'
         : '<div class="lv-empty"><b>Aucun direct préparé</b><span>Formats proposés : ' + Object.values(F).slice(0, 4).map(escapeHtml).join(' · ') + '.</span></div>') +
       (hist ? '<h4 class="lv-h">Dernières répétitions</h4><div class="lv-hists">' + hist + '</div>' : '') + '</section>' + mtHtml();
@@ -26625,7 +26713,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     ];
     return '<div class="dm-inbox"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dm-search></label>' +
       '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" class="is-on" aria-current="page">Principal</button><button type="button" disabled title="Les demandes des personnes que vous ne suivez pas arrivent ici">Demandes</button></nav>' +
-      hbEmpty('ic-send', 'Aucune conversation pour l’instant', 'Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez. Les messages s’ouvrent avec les comptes en ligne, pour les adultes.') + '</div>' +
+      hbEmpty('ic-send', 'Vos messages', 'Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez.').replace('</div>', '<button type="button" class="btn dm-start" data-dm-market>Explorer le Marché</button></div>') + '</div>' +
       // D-119 : comme les grands réseaux, la vue Messages montre la boîte de réception ; réglages et explications sont rangés derrière « Réglages des messages »
       '<details class="dm-settings"><summary>' + igIcon('ic-settings') + 'Réglages des messages</summary>' +
       '<section class="hb-panel"><h4>' + igIcon('ic-user') + 'Qui peut m’écrire</h4><div class="hb-radios">' + HB().dm.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
@@ -26843,7 +26931,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const b = e.target.closest('button');
       if (!b || !v.contains(b)) return;
       const ds = b.dataset, st = hbLoad();
-      if (ds.hbCircle !== undefined) { hbCircle = ds.hbCircle; rerender(); }
+      if (ds.dmMarket !== undefined) { const m = $('mobMarket') || $('navMarket'); if (m) m.click(); }
+      else if (ds.hbCircle !== undefined) { hbCircle = ds.hbCircle; rerender(); }
       else if (ds.hbSort) { hbSort = ds.hbSort; rerender(); }
       else if (ds.hbOpen !== undefined) { hbOpen = ds.hbOpen; hbReplyTo = ''; rerender(); window.scrollTo({ top: 0, behavior: smoothScroll() }); }
       else if (ds.hbReply) { hbReplyTo = hbReplyTo === ds.hbReply ? '' : ds.hbReply; rerender(); }
@@ -28161,7 +28250,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (relayStatus.gcd && yr) {
         tried.push('GCD');
         try {
-          const r = await fetch(location.origin + '/api/gcd/cover?' + new URLSearchParams({ series, issue: num, year: String(yr) }), { cache: 'no-store' });
+          const r = await fetch(apiBase() + '/gcd/cover?' + new URLSearchParams({ series, issue: num, year: String(yr) }), { cache: 'no-store' });
           const j = r.ok ? await r.json() : null;
           if (j && j.cover && applyAutoCover(s, j.cover, { source: 'gcd', confidence: 'standard', batch: coverJob.batchId, caption: 'Grand Comics Database (CC BY-SA 4.0)' })) {
             setCoverStatus(s, 'found', { source: 'gcd' }); refreshCoverInDom(s); return true;
@@ -29722,13 +29811,19 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const standalone = isStandalone();
     const installable = !!pwa.deferredPrompt && !standalone;
     const iosHint = !standalone && isIos() && location.protocol === 'https:';
+    // D-120 : Android sans invite d'installation (Firefox, Samsung Internet…) : on explique le menu du navigateur
+    const androidHint = !standalone && !installable && /Android/i.test(navigator.userAgent) && location.protocol === 'https:';
     let dismissed = false;
     try { dismissed = localStorage.getItem('panel_pwa_banner_dismissed') === '1'; } catch (_) {}
     if ($('installAppBtn')) $('installAppBtn').hidden = !installable;
     if ($('pwaSettingsInstallBtn')) $('pwaSettingsInstallBtn').hidden = !installable;
     const banner = $('pwaInstallBanner');
     if (banner) {
-      banner.hidden = dismissed || !(installable || iosHint);
+      banner.hidden = dismissed || !(installable || iosHint || androidHint);
+      if (androidHint && !iosHint) {
+        $('pwaInstallText').innerHTML = '<b>Installer Panel</b> : ouvrez le menu du navigateur <b>⋮</b> puis <b>« Ajouter à l\'écran d\'accueil »</b> ou <b>« Installer l\'application »</b>.';
+        $('pwaInstallBannerBtn').hidden = true;
+      }
       if (iosHint && !installable) {
         $('pwaInstallText').innerHTML = '<b>Installer Panel sur l\'iPhone</b> : touchez <b>Partager</b> ︎ puis <b>« Sur l\'écran d\'accueil »</b>.';
         $('pwaInstallBannerBtn').hidden = true;
@@ -29867,9 +29962,17 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   const ACCT_CFG_KEY = 'panel_cloud_config';
   const acctCore = () => (window.PanelDomains && window.PanelDomains.accountAuth) || null;
   let acctClient = null, acctClientKey = '', acctClientLib = null;
+  // D-120 : le projet Panel (préproduction) est connu d'emblée ; sa clé est PUBLIQUE par conception (accès limité par RLS et fonctions api.*).
+  // « Oublier ce projet » le met de côté sur cet appareil ; un autre projet peut toujours être saisi en mode développeur.
+  const ACCT_DEFAULT = { url: 'https://rxqusnkvlybkgxzhsnpk.supabase.co', publishableKey: 'sb_publishable_Ppp9jxmmMaszKNLEDOO1rA_XMAeCTH1' };
+  const ACCT_OFF_KEY = 'panel_cloud_off';
   const acctConfig = () => {
     const A = acctCore(); if (!A) return null;
-    try { const r = A.parseConfig(JSON.parse(localStorage.getItem(ACCT_CFG_KEY) || 'null') || {}); return r.ok ? r.config : null; } catch (_) { return null; }
+    try {
+      const stored = JSON.parse(localStorage.getItem(ACCT_CFG_KEY) || 'null');
+      const r = A.parseConfig(stored || (localStorage.getItem(ACCT_OFF_KEY) === '1' ? {} : ACCT_DEFAULT));
+      return r.ok ? r.config : null;
+    } catch (_) { return null; }
   };
   const acctLib = () => (window.supabase && typeof window.supabase.createClient === 'function') ? window.supabase : null;
   // Bibliothèque supabase-js en version figée (D-84), servie par Panel lui-même (jamais par un CDN), chargée à la demande :
@@ -29898,6 +30001,62 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     return acctClient;
   };
   const acctRedirect = () => location.origin + location.pathname;
+  // ---------- D-120 : copie de la collection dans le compte (api.collection_backup_*), restaurée par fusion
+  const ACCT_AUTO_KEY = 'panel_cloud_autobackup', ACCT_LAST_KEY = 'panel_cloud_lastbackup';
+  const acctAutoOn = () => { try { return localStorage.getItem(ACCT_AUTO_KEY) === '1'; } catch (_) { return false; } };
+  const acctRpc = (client, fn, args) => client.schema('api').rpc(fn, args || {});
+  const acctBackupErr = e => {
+    const m = String((e && (e.message || e.code)) || e || '');
+    if (/rate_limited/.test(m)) return 'Une sauvegarde vient d’être faite : réessayez dans quelques secondes.';
+    if (/payload_too_large/.test(m)) return 'Collection trop lourde pour la copie en ligne (8 Mo au plus).';
+    if (/schema|PGRST10/.test(m)) return 'Le service de sauvegarde n’est pas encore ouvert sur le projet.';
+    return 'Sauvegarde indisponible pour le moment. Rien n’a été modifié.';
+  };
+  const acctBackupSave = async client => {
+    const b = await exportCollectionBundle();
+    const json = JSON.stringify(b);
+    if (json.length > 8000000) throw new Error('payload_too_large');
+    const r = await acctRpc(client, 'collection_backup_save', { p_payload: b, p_items: physicalSingles.length, p_version: 'web' });
+    if (r.error) throw r.error;
+    try { localStorage.setItem(ACCT_LAST_KEY, String(Date.now())); } catch (_) {}
+    return r.data;
+  };
+  const acctBackupWire = async (body, client, say) => {
+    const box = body.querySelector('[data-acct-bk]'); if (!box) return;
+    const state = box.querySelector('[data-acct-bk-state]');
+    const show = async () => {
+      const r = await acctRpc(client, 'collection_backup_get');
+      if (r.error) { state.textContent = acctBackupErr(r.error); return null; }
+      const row = Array.isArray(r.data) ? r.data[0] : null;
+      state.textContent = row ? 'Dernière copie : ' + new Date(row.updated_at).toLocaleString() + ' · ' + row.item_count + ' numéro' + (row.item_count > 1 ? 's' : '') : 'Aucune copie dans votre compte pour l’instant.';
+      return row;
+    };
+    show();
+    box.querySelector('[data-acct-bk-save]').onclick = async ev => {
+      ev.target.disabled = true;
+      try { await acctBackupSave(client); say('Collection sauvegardée dans votre compte.'); await show(); } catch (e) { say(acctBackupErr(e)); }
+      ev.target.disabled = false;
+    };
+    box.querySelector('[data-acct-bk-get]').onclick = async () => {
+      const row = await show();
+      if (!row) { say('Aucune copie à récupérer.'); return; }
+      try { const v = await bundleValidate(row.payload); openBundleRestoreDialog(v, 'Copie du compte'); } catch (e) { say('Copie illisible : ' + (e && e.message || e) + '. Rien n’a été modifié.'); }
+    };
+    box.querySelector('[data-acct-bk-auto]').onchange = ev => { try { localStorage.setItem(ACCT_AUTO_KEY, ev.target.checked ? '1' : '0'); } catch (_) {} };
+  };
+  // Sauvegarde automatique : au plus une fois par jour, seulement si l'utilisateur l'a cochée et qu'il est connecté
+  const acctAutoBackup = async () => {
+    if (!acctAutoOn() || navigator.onLine === false || navigator.webdriver) return;
+    let last = 0; try { last = Number(localStorage.getItem(ACCT_LAST_KEY) || 0); } catch (_) {}
+    if (Date.now() - last < 86400000 || !physicalSingles.length) return;
+    const cfg = acctConfig(); if (!cfg) return;
+    await acctLoadLib();
+    const client = acctGetClient(cfg); if (!client) return;
+    const A = acctCore(); const cur = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).session();
+    if (!cur.ok || !cur.session) return;
+    try { await acctBackupSave(client); } catch (_) {}
+  };
+  setTimeout(() => { acctAutoBackup().catch(() => {}); }, 20000);
   const renderAccountBox = async () => {
     const body = $('acctBody'), stateEl = $('acctState'), A = acctCore();
     if (!body || !stateEl || !A) return;
@@ -29908,12 +30067,15 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const say = t => { const m = body.querySelector('[data-acct-msg]'); if (m) m.textContent = t || ''; };
     if (!cfg) {
       stateEl.textContent = 'Mode local';
-      body.innerHTML = '<p>Panel fonctionne entièrement sur cet appareil. Le compte en ligne est en préparation : il servira à retrouver votre collection sur plusieurs appareils.</p>' +
+      body.innerHTML = '<p>Panel fonctionne entièrement sur cet appareil. Un compte permet de garder une copie de votre collection et de la retrouver sur un autre appareil.</p>' +
+        '<div class="acct-row"><button class="btn" type="button" data-acct-use>Utiliser le compte Panel</button></div>' +
         '<form data-acct-cfg><b>Projet en ligne (préproduction)</b>' +
         '<label>Adresse du projet<input class="field-input" data-acct="url" placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co" autocomplete="off" spellcheck="false"></label>' +
         '<label>Clé publique<input class="field-input" data-acct="key" placeholder="sb_publishable_…" autocomplete="off" spellcheck="false"></label>' +
         '<span class="acct-note">Seule la clé PUBLIQUE va ici. Une clé secrète est refusée. Rien n\'est envoyé avant que vous vous connectiez ou créiez un compte.</span>' +
         '<div class="acct-row"><button class="btn secondary" type="submit">Enregistrer le projet</button></div>' + msgHtml + '</form>';
+      body.querySelector('[data-acct-use]').onclick = () => { try { localStorage.removeItem(ACCT_OFF_KEY); } catch (_) {} renderAccountBox(); };
+      if (!limitedDev()) body.querySelector('[data-acct-cfg]').hidden = true;
       body.querySelector('[data-acct-cfg]').onsubmit = ev => {
         ev.preventDefault();
         const r = A.parseConfig({ url: body.querySelector('[data-acct="url"]').value, publishableKey: body.querySelector('[data-acct="key"]').value });
@@ -29925,7 +30087,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
     const forget = '<button class="btn ghost" type="button" data-acct-forget>Oublier ce projet</button>';
     const where = '<span class="acct-note">Projet : ' + escapeHtml(cfg.ref || cfg.url) + (cfg.local ? ' (local)' : ' (préproduction)') + '</span>';
-    const wireForget = () => { const b = body.querySelector('[data-acct-forget]'); if (b) b.onclick = () => { try { localStorage.removeItem(ACCT_CFG_KEY); } catch (_) {} acctClient = null; acctClientKey = ''; renderAccountBox(); }; };
+    const wireForget = () => { const b = body.querySelector('[data-acct-forget]'); if (b) b.onclick = () => { try { localStorage.removeItem(ACCT_CFG_KEY); localStorage.setItem(ACCT_OFF_KEY, '1'); } catch (_) {} acctClient = null; acctClientKey = ''; renderAccountBox(); }; };
     if (!client) {
       stateEl.textContent = 'Mode local · projet configuré';
       body.innerHTML = where + '<p>' + escapeHtml(A.MESSAGES.unavailable) + ' Réessayez une fois en ligne.</p><div class="acct-row">' + forget + '</div>';
@@ -29937,7 +30099,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const st = A.accountState(cur.ok ? cur.session : null, Date.now());
     stateEl.textContent = st.label;
     if (st.state === 'signedIn') {
-      body.innerHTML = where + '<p>Connecté : <b>' + escapeHtml(st.email) + '</b>. Vos données restent sur cet appareil ; la synchronisation n\'est pas encore activée.</p>' +
+      body.innerHTML = where + '<p>Connecté : <b>' + escapeHtml(st.email) + '</b>. Votre collection vit sur cet appareil ; gardez-en une copie dans votre compte pour la retrouver ailleurs.</p>' +
+        '<div class="acct-backup" data-acct-bk><b>Sauvegarde de la collection</b><span class="acct-note" data-acct-bk-state>Lecture…</span>' +
+        '<div class="acct-row"><button class="btn" type="button" data-acct-bk-save>Sauvegarder maintenant</button><button class="btn secondary" type="button" data-acct-bk-get>Récupérer sur cet appareil</button></div>' +
+        '<label class="acct-check"><input type="checkbox" data-acct-bk-auto' + (acctAutoOn() ? ' checked' : '') + '> Sauvegarde automatique, une fois par jour</label></div>' +
         '<div class="acct-mfa" data-acct-mfa><b>Double authentification</b><span class="acct-note">Lecture…</span></div>' +
         '<div class="acct-row"><button class="btn secondary" type="button" data-acct-out>Se déconnecter</button><button class="btn ghost" type="button" data-acct-out-all>Déconnecter tous les appareils</button>' + forget + '</div>' + msgHtml;
       // D-114 : double authentification par application (code à 6 chiffres), proposée dès la connexion
@@ -29956,6 +30121,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         };
       };
       mfaShow();
+      acctBackupWire(body, client, say);
       body.querySelector('[data-acct-out]').onclick = async () => { const r = await flow.signOut(false); r.ok ? renderAccountBox() : say(r.error.message); };
       body.querySelector('[data-acct-out-all]').onclick = async () => { const r = await flow.signOut(true); r.ok ? renderAccountBox() : say(r.error.message); };
       wireForget();
