@@ -121,6 +121,7 @@ const phrases = {
   'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.': 'The latest news on comics and their adaptations, sorted for you. Articles open on their own site.',
   'Les actualités passent par le relais local de Panel (': 'News goes through Panel\'s local relay (', '). Panel n\'affiche jamais d\'actualité inventée.': '). Panel never shows made-up news.',
   'dans le dossier de Panel (ou lancez': 'in the Panel folder (or run', '), puis ouvrez': '), then open', 'Lancer Panel.cmd': 'Launch Panel.cmd', 'Pour tout activer, double-cliquez': 'To turn everything on, double-click',
+  'Version de test en ligne : ces outils passent par le relais de Panel, qui ne tourne que sur l’ordinateur de l’équipe. Votre collection reste dans ce navigateur.': 'Online test version: these tools go through Panel\'s relay, which only runs on the team\'s computer. Your collection stays in this browser.',
   'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.': 'Big releases based on comics: films to rewatch and comics to read first.', 'Avant de voir': 'Before watching',
   'au cinéma le {n} décembre {n} (France, date annoncée)': 'in cinemas on {n} December {n} (France, announced date)', 'au cinéma en juin {n} (date annoncée)': 'in cinemas in June {n} (announced date)',
   'au cinéma en juillet {n} (date annoncée)': 'in cinemas in July {n} (announced date)', 'Jamais publié :': 'Never published:', 'En {n} :': 'In {n}:',

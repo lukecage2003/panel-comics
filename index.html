@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-dYFftpdcrsGnChqfV8PvAkHTjmB2+rbsevn6vewmc+k=' 'sha256-DwE+fXCY/V0nrR9Ge/GNgUfb+fBaUQ+D7tPq63WWeBY=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-vQbWPArFoJ66iP9n5VfCka4eRjbIsxuKh+cErZvv5TQ=' 'sha256-DpzT4fl9bPsh6J0z7rl/BFAFJqbhkRmF4+VAKbS9x2w=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -12182,6 +12182,7 @@ const phrases = {
   'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.': 'The latest news on comics and their adaptations, sorted for you. Articles open on their own site.',
   'Les actualités passent par le relais local de Panel (': 'News goes through Panel\'s local relay (', '). Panel n\'affiche jamais d\'actualité inventée.': '). Panel never shows made-up news.',
   'dans le dossier de Panel (ou lancez': 'in the Panel folder (or run', '), puis ouvrez': '), then open', 'Lancer Panel.cmd': 'Launch Panel.cmd', 'Pour tout activer, double-cliquez': 'To turn everything on, double-click',
+  'Version de test en ligne : ces outils passent par le relais de Panel, qui ne tourne que sur l’ordinateur de l’équipe. Votre collection reste dans ce navigateur.': 'Online test version: these tools go through Panel\'s relay, which only runs on the team\'s computer. Your collection stays in this browser.',
   'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.': 'Big releases based on comics: films to rewatch and comics to read first.', 'Avant de voir': 'Before watching',
   'au cinéma le {n} décembre {n} (France, date annoncée)': 'in cinemas on {n} December {n} (France, announced date)', 'au cinéma en juin {n} (date annoncée)': 'in cinemas in June {n} (announced date)',
   'au cinéma en juillet {n} (date annoncée)': 'in cinemas in July {n} (announced date)', 'Jamais publié :': 'Never published:', 'En {n} :': 'In {n}:',
@@ -13823,7 +13824,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Relais locaux (serve.js) : vérifiés une fois au démarrage ; null = pas encore vérifié
   let relayStatus = null;
   const probeRelays = async () => {
-    if (!/^https?:$/.test(location.protocol) || !/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || navigator.webdriver) return null;
+    if (!/^https?:$/.test(location.protocol) || navigator.webdriver) return null;
+    // Version de test en ligne (GitHub Pages) : pas de relais, on le sait sans appeler /api
+    if (!/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname)) return (relayStatus = { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false });
     try {
       const r = await fetch(location.origin + '/api/status', { cache: 'no-store' });
       const j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
@@ -13848,7 +13851,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const el = document.createElement('div');
     el.id = 'limitedModeBanner'; el.className = 'limited-banner'; el.setAttribute('role', 'status');
     el.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-alert /></svg><div><b>Mode limité</b> : ' + reasons.map(escapeHtml).join(' ; ') +
-      '.<br><span>Pour tout activer, double-cliquez <b>Lancer Panel.cmd</b> dans le dossier de Panel (ou lancez <code>node serve.js</code>), puis ouvrez <b>http://localhost:8080</b>.</span></div><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
+      '.<br><span>' + (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:'
+      ? 'Pour tout activer, double-cliquez <b>Lancer Panel.cmd</b> dans le dossier de Panel (ou lancez <code>node serve.js</code>), puis ouvrez <b>http://localhost:8080</b>.'
+      : 'Version de test en ligne : ces outils passent par le relais de Panel, qui ne tourne que sur l’ordinateur de l’équipe. Votre collection reste dans ce navigateur.') + '</span></div><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
     el.querySelector('button').onclick = () => { el.remove(); try { sessionStorage.setItem('panel_limited_dismissed', '1'); } catch (_) {} };
     main.prepend(el);
   };
