@@ -42,7 +42,8 @@ test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
     '20261122000018_panel_guardian.sql',
     '20261122000019_pros_market_forum_messages.sql',
     '20261122000020_signal_verify_offers_plus.sql',
-    '20261122000021_orders_tracking_disputes.sql'
+    '20261122000021_orders_tracking_disputes.sql',
+    '20261122000022_foreign_key_indexes.sql'
   ]);
 });
 

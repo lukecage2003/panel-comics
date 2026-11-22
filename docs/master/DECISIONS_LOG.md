@@ -93,3 +93,11 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
   - Sécurité : RLS active sans règle sur 37 tables. C'est voulu : l'accès direct est révoqué et tout passe par les fonctions `api.*`.
   - Performances : 32 clés étrangères sans index, une table sans clé primaire (`community.rate_events`), index encore inutilisés (base vide).
 - **Ce qui ne change pas** : l'ouverture des comptes (S8) reste fermée, rien n'est déployé, le Marché reste fermé (aucun taux de commission en base).
+
+## Décisions de D-117
+
+- **Migration 22 `foreign_key_indexes`** (additive, testée en local, non appliquée), sur accord de l'utilisateur (« Oui, ajoute-la ») : un index pour chacune des 32 clés étrangères signalées par le conseiller de performances Supabase.
+  - But : garder rapides les suppressions en cascade (compte supprimé) et les jointures quand la base se remplira.
+  - Elle ne touche à aucune donnée.
+- **Test** `fk-indexes` : il échoue si une future migration ajoute une clé étrangère sans index.
+- **Pas traité** : `community.rate_events` reste sans clé primaire. C'est un journal à durée courte, lu par son index existant.
