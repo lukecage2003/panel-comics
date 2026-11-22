@@ -12,7 +12,8 @@
 const LIMITS = Object.freeze({ email: 254, passwordMin: 10, passwordMax: 72, label: 60 });
 const NEUTRAL = Object.freeze({
   signUp: 'Si cette adresse peut être utilisée, un e-mail de confirmation vient d\'être envoyé. Ouvrez-le pour activer le compte.',
-  reset: 'Si un compte existe pour cette adresse, un lien de réinitialisation vient d\'être envoyé.'
+  reset: 'Si un compte existe pour cette adresse, un lien de réinitialisation vient d\'être envoyé.',
+  magic: 'Si cette adresse peut être utilisée, un lien de connexion vient d\'être envoyé. Il expire au bout d\'une heure.'
 });
 const MESSAGES = Object.freeze({
   invalid_credentials: 'Adresse ou mot de passe incorrect.',
@@ -25,7 +26,8 @@ const MESSAGES = Object.freeze({
   network: 'Pas de connexion au service. Panel continue en local.',
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
   unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
-  unknown: 'Action impossible pour le moment. Réessayez plus tard.'
+  unknown: 'Action impossible pour le moment. Réessayez plus tard.',
+  mfa_code: 'Code à 6 chiffres incorrect ou expiré.'
 });
 
 const str = v => (v === undefined || v === null ? '' : String(v)).trim();
@@ -129,6 +131,38 @@ function createAuthFlow(client, opts) {
       if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network') return { ok: false, error: m }; }
       return { ok: true, message: NEUTRAL.reset };
     }),
+    // D-114 : connexion avec Google ou Apple (OAuth, flux PKCE de supabase-js : aucun mot de passe ne transite par Panel)
+    oauth: provider => guard(async () => {
+      if (!OAUTH.includes(provider)) return { ok: false, error: { code: 'unknown', message: MESSAGES.unknown } };
+      const r = await A.signInWithOAuth({ provider, options: { redirectTo: o.redirectTo, scopes: provider === 'apple' ? 'name email' : 'openid email profile' } });
+      if (r && r.error) return fail(r.error);
+      return { ok: true, url: r && r.data ? r.data.url : '' };
+    }),
+    // Lien de connexion par e-mail, sans mot de passe ; même message que le compte existe ou non
+    magicLink: email => guard(async () => {
+      const em = validateEmail(email);
+      if (!em) return { ok: false, error: { code: 'invalid_email', message: MESSAGES.invalid_email } };
+      const r = await A.signInWithOtp({ email: em, options: { emailRedirectTo: o.redirectTo, shouldCreateUser: true } });
+      if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network') return { ok: false, error: m }; }
+      return { ok: true, message: NEUTRAL.magic };
+    }),
+    // Double authentification par application (TOTP) : inscription, vérification, liste des facteurs
+    mfaEnroll: () => guard(async () => {
+      const r = await A.mfa.enroll({ factorType: 'totp', friendlyName: 'Panel' });
+      if (r && r.error) return fail(r.error);
+      return { ok: true, factorId: r.data.id, qr: r.data.totp && r.data.totp.qr_code, uri: r.data.totp && r.data.totp.uri };
+    }),
+    mfaVerify: (factorId, code) => guard(async () => {
+      if (!/^\d{6}$/.test(str(code))) return { ok: false, error: { code: 'mfa_code', message: MESSAGES.mfa_code } };
+      const r = await A.mfa.challengeAndVerify({ factorId, code: str(code) });
+      if (r && r.error) return { ok: false, error: { code: 'mfa_code', message: MESSAGES.mfa_code } };
+      return { ok: true };
+    }),
+    mfaFactors: () => guard(async () => {
+      const r = await A.mfa.listFactors();
+      if (r && r.error) return fail(r.error);
+      return { ok: true, totp: ((r.data && r.data.totp) || []).filter(f => f.status === 'verified').map(f => ({ id: f.id, name: f.friendly_name || 'Application' })) };
+    }),
     session: () => guard(async () => {
       const r = await A.getSession();
       if (r && r.error) return fail(r.error);
@@ -137,4 +171,29 @@ function createAuthFlow(client, opts) {
   };
 }
 
-module.exports = { LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };
+// D-114 : moyens de connexion proposés et profil d'inscription
+const OAUTH = ['apple', 'google'];
+const PROVIDERS = Object.freeze([
+  { key: 'apple', label: 'Continuer avec Apple' },
+  { key: 'google', label: 'Continuer avec Google' },
+  { key: 'email', label: 'Continuer avec un e-mail' }
+]);
+const HANDLE = /^[a-z0-9](?:[a-z0-9._]{1,22}[a-z0-9])$/;
+// Pseudos réservés : l'équipe et les grandes maisons ne les obtiennent qu'après vérification (contre l'usurpation)
+const RESERVED = ['panel', 'admin', 'support', 'moderation', 'equipe', 'staff', 'official', 'officiel', 'marvel', 'dc', 'dccomics', 'urbancomics', 'imagecomics', 'darkhorse', 'idw', 'boom', 'glenat', 'dargaud', 'delcourt', 'casterman', 'panini'];
+// Profil d'inscription : pseudo, année de naissance (13 ans au moins, tranche calculée), type de compte, consentements
+function signupProfile(input, nowYear, types) {
+  const i = input || {}, e = [];
+  const handle = str(i.handle).toLowerCase().replace(/^@/, '');
+  if (!HANDLE.test(handle)) e.push('Pseudo : 3 à 24 caractères, lettres, chiffres, point ou tiret bas.');
+  else if (RESERVED.includes(handle.replace(/[._]/g, ''))) e.push('Ce pseudo est réservé : une maison ou une marque l\'obtient après vérification.');
+  const y = Number(i.birthYear), age = nowYear - y;
+  if (!Number.isInteger(y) || y < nowYear - 120 || y > nowYear) e.push('Année de naissance invalide.');
+  else if (age < 13) e.push('Panel n\'ouvre pas de compte avant 13 ans.');
+  const type = (types || ['collector']).includes(i.type) ? i.type : 'collector';
+  if (type !== 'collector' && Number.isInteger(y) && age < 18) e.push('Les comptes pros sont réservés aux adultes.');
+  if (!i.terms) e.push('Acceptez les conditions d\'utilisation et la politique de confidentialité.');
+  return e.length ? { ok: false, errors: e } : { ok: true, errors: [], profile: { handle, birthYear: y, band: age >= 18 ? '18+' : age >= 15 ? '15-17' : '13-14', type, needsVerification: type !== 'collector', marketing: !!i.marketing } };
+}
+
+module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };

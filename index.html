@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-HClMvxA9KPEb+psfKdsblVPQZvrSd4LWdlV0gwGl8Mo=' 'sha256-IjDqS82gx3YWH+nHimx6aJWUaui2ADY64x7QFiJ5V2Q=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-O6EaXW38GoDFHgwQK08CJYqYasM+wXgOjSKfJDlNcXc=' 'sha256-q4SmstaPHH/psmTONO2H+WK3nCd0WhO7l1AYNb06RnE=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2312,6 +2312,25 @@
     .hb-chip .ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
     @media (hover: hover) { .hb-chip:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--key); } }
     .hb-chip.is-on { background: var(--yellow-fill); color: #111; }
+    /* D-114 : onglets de l'Accueil et du Profil, soulignés comme sur TikTok et Instagram ; collés en haut sur téléphone */
+    .hb-strip { gap: 0; padding: 0; margin: 4px 0 10px; border-bottom: 1px solid var(--line, #333); }
+    .hb-strip .hb-chip { flex: 1 1 0; justify-content: center; border: 0; border-bottom: 3px solid transparent; border-radius: 0; box-shadow: none; background: none; color: var(--ink-dim, var(--muted)); min-height: 46px; padding: 10px 8px; }
+    .hb-strip .hb-chip.is-on { background: none; color: var(--ink); border-bottom-color: var(--key); }
+    @media (hover: hover) { .hb-strip .hb-chip:hover { transform: none; box-shadow: none; color: var(--ink); } }
+    @media (max-width: 760px) { .hb-strip { position: sticky; top: 0; z-index: 20; background: var(--bg); } }
+    #dmBtn.is-on { background: var(--yellow-fill); color: #111; }
+    .nav-btn.nav-plus .ic { stroke: var(--key); }
+    .nav-btn.nav-plus { margin-top: 6px; border-top: 1px dashed var(--line, #333); }
+    /* D-114 : en-tête compact sur téléphone dans les espaces sociaux (titre à gauche ; Messages, cloche et réglages à droite, comme Instagram) */
+    @media (max-width: 640px) {
+      body.view-social .topbar { display: flex !important; flex-direction: row !important; align-items: center !important; justify-content: space-between; gap: 8px; }
+      body.view-social #mainTitleSub, body.view-social .top-actions .search-box, body.view-social .top-actions > details { display: none !important; }
+      body.view-social .topbar-title h1 { font-size: 26px; margin: 0; }
+      body.view-social .top-actions { flex-wrap: nowrap !important; gap: 2px !important; margin-left: auto; }
+      body.view-social .top-actions > .btn { background: none !important; border-color: transparent !important; box-shadow: none !important; padding: 9px !important; }
+      body.view-social .top-actions > .btn .ic { width: 24px; height: 24px; }
+      body.view-social .top-actions > #dmBtn.is-on { background: var(--yellow-fill) !important; }
+    }
     .hb-view { display: grid; gap: 16px; padding-bottom: 24px; }
     .hb-view .ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; }
     .hb-hero { position: relative; overflow: hidden; border: 3px solid var(--key); border-radius: var(--radius-lg); padding: 22px 22px 20px; background: var(--bg-card); box-shadow: 5px 5px 0 var(--key); }
@@ -2410,6 +2429,82 @@
     .hb-cards p { margin: 0; color: var(--ink-dim); font-size: 13px; }
     .hb-fp { display: block; font: 700 15px/1.6 ui-monospace, Consolas, monospace; letter-spacing: .06em; padding: 10px 12px; background: #14110F; color: #FFD23F; border-radius: 6px; word-spacing: 6px; margin: 6px 0; overflow-wrap: anywhere; }
     .hb-panel .btn { display: inline-flex; align-items: center; gap: 6px; margin-top: 8px; }
+    .hb-vbadge { flex: 0 0 auto; vertical-align: middle; }
+    .vt-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; margin: 8px 0; }
+    .vt-card { display: grid; gap: 4px; justify-items: start; text-align: left; border: 2px solid var(--line, #333); background: var(--bg-card); color: var(--ink); border-radius: 14px; padding: 12px; cursor: pointer; font: inherit; }
+    .vt-card b { font-size: 15px; }
+    .vt-card small { font-size: 12px; color: var(--ink-dim, var(--muted)); line-height: 1.35; }
+    .vt-card em { font-style: normal; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .04em; color: var(--ink-dim, var(--muted)); }
+    .vt-card.is-on { border-color: var(--key); box-shadow: 3px 3px 0 var(--key); }
+    .vt-none .ic { width: 30px; height: 30px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .au-providers { display: grid; gap: 8px; margin: 8px 0 12px; }
+    .au-btn { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; border-radius: 12px; border: 1px solid var(--line, #333); font: 800 15px/1 inherit; cursor: pointer; }
+    .au-btn .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .au-apple { background: #000; color: #fff; border-color: #000; }
+    .au-google { background: #fff; color: #1f1f1f; border-color: #dadce0; }
+    .au-email { background: var(--bg-card); color: var(--ink); }
+    .vt-docs { list-style: none; padding: 0; margin: 10px 0; display: grid; gap: 10px; }
+    .vt-doc { display: grid; grid-template-columns: 22px 1fr; gap: 10px; align-items: start; padding: 10px; border: 1px solid var(--line, #333); border-radius: 12px; }
+    .vt-doc > .ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .vt-doc.is-ok { border-color: #18A957; }
+    .vt-doc.is-ok > .ic { stroke: #18A957; }
+    .vt-doc b { display: block; font-size: 14px; margin-bottom: 4px; }
+    .vt-doc label { margin-top: 6px; }
+    .vt-chk { display: block; font-size: 12px; color: var(--ink-dim, var(--muted)); }
+    .vt-file { display: flex !important; align-items: center; gap: 8px; border: 1px dashed var(--line, #333); border-radius: 10px; padding: 10px; cursor: pointer; font-size: 13px; }
+    .vt-file input { position: absolute; width: 1px; height: 1px; opacity: 0; }
+    .vt-file .ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .vt-code code { background: #14110F; color: #FFD23F; padding: 3px 8px; border-radius: 6px; font-weight: 800; letter-spacing: .06em; }
+    .vt-terms { font-size: 13px; margin: 8px 0 12px; }
+    .vt-terms ul { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 3px; }
+    .vt-wizard h4 { display: flex; align-items: center; gap: 8px; }
+    .vt-ready { border-color: #18A957; }
+    .sp-card h3 { display: flex; align-items: center; gap: 8px; }
+    .sp-card h3 .ic { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .sp-tag { font-size: 11px; font-weight: 900; padding: 3px 8px; border-radius: 99px; background: var(--yellow-fill); color: #111; }
+    .sp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; margin: 10px 0; }
+    .sp-grid article { display: grid; gap: 3px; padding: 10px; border: 1px solid var(--line, #333); border-radius: 12px; }
+    .sp-grid small { font-size: 12px; color: var(--ink-dim, var(--muted)); }
+    .sp-val { font-size: 20px; font-weight: 900; }
+    .sp-blur { filter: blur(7px); user-select: none; }
+    .acct-mfa { display: grid; gap: 6px; padding: 10px; border: 1px solid var(--line, #333); border-radius: 10px; margin: 8px 0; }
+    .acct-qr { width: 180px; height: 180px; background: #fff; padding: 8px; border-radius: 8px; }
+    .mk-tabs { display: flex; gap: 6px; margin: 0 0 12px; overflow-x: auto; scrollbar-width: none; }
+    .mk-tabs button { display: inline-flex; align-items: center; gap: 6px; flex: 1 0 auto; justify-content: center; border: 1px solid var(--line, #333); background: var(--bg-card); color: var(--ink); font: 800 13px/1 inherit; padding: 10px 12px; border-radius: 99px; cursor: pointer; min-height: 42px; }
+    .mk-tabs button .ic { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .mk-tabs button.is-on { background: var(--ink); color: var(--bg-card); border-color: var(--ink); }
+    .mk-search { display: grid; gap: 8px; margin-bottom: 12px; }
+    .mk-filters { display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+    .mk-filters select, .mk-filters input { flex: 0 0 auto; min-height: 40px; border-radius: 99px; padding: 0 12px; max-width: 170px; }
+    .mk-filters input { width: 130px; }
+    .mk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+    .mk-card { display: grid; gap: 3px; font-size: 13px; }
+    .mk-card img, .mk-card .hb-ph { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 10px; background: var(--bg-card); display: grid; place-items: center; }
+    .mk-price { font-size: 16px; }
+    .mk-title { font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .mk-you { font-size: 11px; color: var(--ink-dim, var(--muted)); }
+    .mk-out { display: flex; gap: 8px; align-items: flex-start; font-size: 14px; margin: 8px 0 0; }
+    .mk-out .ic { width: 18px; height: 18px; flex: 0 0 auto; fill: none; stroke: currentColor; stroke-width: 2.4; }
+    .mk-rules { margin: 6px 0 10px; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+    .mk-rep b { font-size: 16px; }
+    .dm-inbox { display: grid; gap: 10px; margin: 0 0 14px; }
+    .dm-search { display: flex; align-items: center; gap: 8px; background: var(--bg-card); border: 1px solid var(--line, #333); border-radius: 12px; padding: 0 12px; min-height: 44px; }
+    .dm-search input { flex: 1; border: 0; background: none; color: var(--ink); font: inherit; outline: none; min-height: 42px; }
+    .dm-search .ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; opacity: .7; }
+    .dm-tabs { display: flex; gap: 18px; border-bottom: 1px solid var(--line, #333); }
+    .dm-tabs button { border: 0; background: none; color: var(--ink-dim, var(--muted)); font: 800 14px/1 inherit; padding: 10px 0; border-bottom: 3px solid transparent; cursor: pointer; }
+    .dm-tabs button.is-on { color: var(--ink); border-bottom-color: var(--key); }
+    .dm-tabs button:disabled { cursor: default; opacity: .6; }
+    .dm-sec summary { list-style: none; cursor: pointer; }
+    .dm-sec summary::-webkit-details-marker { display: none; }
+    .dm-proto { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 10px; counter-reset: dm; }
+    .dm-proto li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; }
+    .dm-proto li > .ic { width: 34px; height: 34px; padding: 7px; border-radius: 10px; background: var(--yellow-fill); color: #111; fill: none; stroke: currentColor; stroke-width: 2; }
+    .dm-proto b { display: block; font-size: 14px; }
+    .dm-proto p { margin: 2px 0 0; font-size: 13px; color: var(--ink-dim, var(--muted)); }
+    .dm-alg code { overflow-wrap: anywhere; }
+    .dm-timer { display: grid; gap: 6px; font-size: 13px; }
+    .dm-timer select { min-height: 42px; }
     .hb-test { list-style: none; padding: 0; margin: 10px 0 0; display: grid; gap: 6px; font-size: 13px; }
     .hb-test li { display: grid; grid-template-columns: auto 1fr; gap: 6px; align-items: start; }
     .hb-test code { overflow-wrap: anywhere; }
@@ -4119,7 +4214,7 @@
 <body>
 <div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><span class="splash-rays"></span><span class="splash-mark">▰</span><b class="splash-word">panel</b></div></div>
 <script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}setTimeout(function(){if(s.parentNode)s.remove()},1500)})();</script>
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-send" viewBox="0 0 24 24"><path d="M21 3L3 10.4l7.2 3.1L13.6 21z"/><path d="M21 3L10.2 13.5"/></symbol><symbol id="ic-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.5H6.2z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol><symbol id="ic-verified" viewBox="0 0 24 24"><path d="M12 2.5l2.5 1.9 3.1-.3.9 3 2.6 1.7-1 3 1 2.9-2.6 1.8-.9 3-3.1-.3L12 21.1l-2.5-1.9-3.1.3-.9-3-2.6-1.8 1-2.9-1-3 2.6-1.7.9-3 3.1.3z"/><path d="M8.6 12l2.3 2.3 4.6-4.7"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
   <!-- SIDEBAR DESKTOP -->
@@ -4131,7 +4226,7 @@
 
     <!-- NAVIGATION COLLECTION PHYSIQUE SINGLES -->
     <div id="navSinglesBlock">
-      <!-- Virage réseau social, lot S1 (D-92) : cinq entrées (Accueil, Découvrir, Publier, Directs, Profil) ; la collection reste entière juste dessous et dans le Profil -->
+      <!-- D-114 : placements inspirés des grands réseaux — Accueil, Découvrir, Directs, Marché, Messages, Publier, Profil, puis Panel+ (comme X Premium) ; la collection reste entière juste dessous et dans le Profil -->
       <nav class="nav-list nav-social" aria-label="Panel">
         <button class="nav-btn active" id="navSinglesCommunity" aria-current="page" title="Votre fil : Pour toi et Abonnements">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-home /></svg></span> Accueil</div>
@@ -4140,14 +4235,24 @@
         <button class="nav-btn" id="navExplorer" title="Recherche, univers, personnages, créateurs et sorties">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-search /></svg></span> Découvrir</div>
         </button>
-        <button class="nav-btn nav-publish" id="navPublish" aria-haspopup="dialog" title="Planche, story, numéro en 3D, direct, ou ajout à la collection">
-          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Publier</div>
-        </button>
-        <button class="nav-btn" id="navLive">
+        <button class="nav-btn" id="navLive" title="Directs en cours et à venir">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-live /></svg></span> Directs</div>
+        </button>
+        <button class="nav-btn" id="navMarket" title="Acheter et vendre entre collectionneurs, paiement protégé">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-bag /></svg></span> Marché</div>
+        </button>
+        <button class="nav-btn" id="navMessages" title="Messages privés chiffrés de bout en bout">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-send /></svg></span> Messages</div>
+          <span class="nav-badge" id="badgeMessages" hidden>0</span>
+        </button>
+        <button class="nav-btn nav-publish" id="navPublish" aria-haspopup="dialog" title="Planche, story, numéro en 3D, direct, annonce, ou ajout à la collection">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span> Publier</div>
         </button>
         <button class="nav-btn" id="navProfile">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-user /></svg></span> Profil</div>
+        </button>
+        <button class="nav-btn nav-plus" id="navPlus" title="Statistiques avancées, outils pros, vérification">
+          <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-verified /></svg></span> Panel+</div>
         </button>
       </nav>
       <div class="nav-label" id="navCollectionLabel" style="margin-top:14px">Ma collection</div>
@@ -4266,6 +4371,9 @@
           <span><svg class=ic aria-hidden=true><use href=#ic-upload /></svg></span> Importer
         </button>
 
+        <button class="btn secondary notif-btn" id="dmBtn" title="Messages" aria-label="Messages privés" style="font-size:12px;padding:8px 11px">
+          <span><svg class=ic aria-hidden=true><use href=#ic-send /></svg></span><b class="notif-count" id="dmCount" hidden>0</b>
+        </button>
         <button class="btn secondary notif-btn" id="notifBtn" title="Notifications" aria-label="Notifications" aria-haspopup="dialog" aria-expanded="false" style="font-size:12px;padding:8px 11px">
           <span><svg class=ic aria-hidden=true><use href=#ic-bell /></svg></span><b class="notif-count" id="notifCount" hidden>0</b>
         </button>
@@ -4581,9 +4689,9 @@
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-plus /></svg></span>
     <span>Publier</span>
   </button>
-  <button class="mobile-dock-btn" id="mobLive">
-    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-live /></svg></span>
-    <span>Directs</span>
+  <button class="mobile-dock-btn" id="mobMarket">
+    <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-bag /></svg></span>
+    <span>Marché</span>
   </button>
   <button class="mobile-dock-btn" id="mobProfile">
     <span class="icon"><svg class=ic aria-hidden=true><use href=#ic-user /></svg></span>
@@ -9041,6 +9149,53 @@ const SAFETY = Object.freeze([
 
 module.exports = { SIM_RATE, CONDITIONS, CONDITION_LABEL, DELIVERY, DELIVERY_LABEL, STATES, FLOW, AUTO_CONFIRM_DAYS, SAFETY,
   cents, validateListing, listingFromCopy, fees, money, step, nextActions, handoverCode };
+
+// ---------- D-114 : offres, lots, avis, recherche (inspirés des places de marché entre particuliers) ----------
+const OFFER_MIN_RATIO = 0.6, OFFER_HOURS = 48, MAX_PENDING_OFFERS = 3;
+// Offre d'achat : au moins 60 % du prix, moins que le prix, trois offres en attente au plus par annonce et par acheteur
+const validateOffer = (listing, amountText, pendingByBuyer) => {
+  const a = cents(amountText);
+  if (!listing || !(listing.price > 0)) return { ok: false, error: 'Annonce introuvable.' };
+  if (!(a > 0)) return { ok: false, error: 'Indiquez un montant.' };
+  if (a >= listing.price) return { ok: false, error: 'Au prix demandé, achetez directement.' };
+  if (a < Math.ceil(listing.price * OFFER_MIN_RATIO)) return { ok: false, error: 'Offre trop basse : au moins ' + money(Math.ceil(listing.price * OFFER_MIN_RATIO), listing.currency) + '.' };
+  if ((pendingByBuyer || 0) >= MAX_PENDING_OFFERS) return { ok: false, error: 'Trois offres en attente au plus sur une annonce.' };
+  return { ok: true, amount: a, expiresInHours: OFFER_HOURS };
+};
+// Lot : le vendeur choisit une remise par palier (2, 3, 5 numéros et plus) ; frais calculés sur le total remisé
+const BUNDLE_TIERS = [2, 3, 5];
+const bundle = (prices, discounts) => {
+  const p = (prices || []).filter(x => x > 0), n = p.length, total = p.reduce((a, x) => a + x, 0);
+  const d = discounts || {}; let pct = 0;
+  for (const t of BUNDLE_TIERS) if (n >= t) pct = Math.max(0, Math.min(50, Number(d[t]) || 0));
+  const discounted = Math.round(total * (100 - pct) / 100);
+  return { count: n, total, pct, price: discounted, saved: total - discounted };
+};
+// Avis : 1 à 5 étoiles après une vente terminée ; moyenne bayésienne pour qu'un seul avis parfait ne pèse pas trop
+const PRIOR_MEAN = 4, PRIOR_WEIGHT = 5;
+const reputation = ratings => {
+  const r = (ratings || []).map(Number).filter(x => x >= 1 && x <= 5), n = r.length, sum = r.reduce((a, x) => a + x, 0);
+  const score = (PRIOR_MEAN * PRIOR_WEIGHT + sum) / (PRIOR_WEIGHT + n);
+  return { n, mean: n ? Math.round(sum / n * 10) / 10 : null, score: Math.round(score * 100) / 100, label: n < 3 ? 'Nouveau vendeur' : score >= 4.5 ? 'Vendeur fiable' : '' };
+};
+// Recherche et filtres
+const SORTS = ['recent', 'price_asc', 'price_desc'];
+const SORT_LABEL = Object.freeze({ recent: 'Plus récents', price_asc: 'Prix croissant', price_desc: 'Prix décroissant' });
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const search = (listings, f) => {
+  const o = f || {}, q = norm(o.q).split(/\s+/).filter(Boolean);
+  const out = (listings || []).filter(l => {
+    const hay = norm([l.title, l.issue ? '#' + l.issue : '', l.publisher].join(' '));
+    if (q.some(w => !hay.includes(w))) return false;
+    if (o.condition && l.condition !== o.condition) return false;
+    if (o.delivery && !(l.delivery || []).includes(o.delivery)) return false;
+    if (o.max && l.price > cents(o.max)) return false;
+    return true;
+  });
+  const s = SORTS.includes(o.sort) ? o.sort : 'recent';
+  return out.sort((a, b) => s === 'price_asc' ? a.price - b.price : s === 'price_desc' ? b.price - a.price : String(b.at || '').localeCompare(String(a.at || '')));
+};
+Object.assign(module.exports, { OFFER_MIN_RATIO, OFFER_HOURS, BUNDLE_TIERS, SORTS, SORT_LABEL, validateOffer, bundle, reputation, search });
   return Object.freeze(module.exports); })();
   /* domains/community/forum-core.js */
   out.forum = (() => { const module = { exports: {} };
@@ -9249,6 +9404,364 @@ const priceLabel = p => p && p.free ? 'Gratuit' : p && typeof p.price === 'numbe
 const REASON = Object.freeze({ invalid: 'Offre inconnue.', adult_only: 'Offre réservée aux adultes.', seal_required: 'Offre réservée aux profils Encré de ce type.', not_on_sale: 'Cette offre n\'est pas encore en vente.' });
 
 module.exports = { PLANS, ENTITLEMENTS, NEVER, REASON, plan, has, canSubscribe, priceLabel };
+  return Object.freeze(module.exports); })();
+  /* domains/community/dm-ratchet.js */
+  out.dmRatchet = (() => { const module = { exports: {} };
+'use strict';
+// Messages privés « comme Signal » (D-114) — module pur, sans réseau ni stockage : WebCrypto standard uniquement.
+// Protocole, d'après les spécifications publiques de Signal (X3DH et Double Ratchet), adapté aux courbes de WebCrypto :
+//  - X3DH : clé d'identité (ECDH P-256), clé de signature (ECDSA P-256), prépublication signée (ECDH) et prépublications
+//    à usage unique ; le secret partagé = HKDF(DH1 ‖ DH2 ‖ DH3 [‖ DH4]) ; la signature de la prépublication est vérifiée.
+//  - Double cliquet : cliquet Diffie-Hellman à chaque changement de sens + chaînes symétriques HMAC-SHA-256 ;
+//    une clé par message, effacée après usage (confidentialité persistante, rétablissement après compromission) ;
+//    messages hors d'ordre gardés au plus MAX_SKIP ; un rejeu est refusé (la clé n'existe plus).
+//  - Chaque message : AES-GCM 256, en-tête authentifié (données associées = identités + en-tête) ;
+//    texte rembourré par blocs de 64 octets pour masquer sa longueur exacte.
+// Les clés privées sont créées NON exportables ; l'état se range tel quel dans IndexedDB (clonage structuré).
+
+const subtle = () => { const s = globalThis.crypto && globalThis.crypto.subtle; if (!s) throw new Error('crypto_unavailable'); return s; };
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = u8 => { const u = new Uint8Array(u8); let s = ''; for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); };
+const unb64 = s => { const bin = atob(String(s || '')); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+const cat = (...arrs) => { const n = arrs.reduce((a, x) => a + x.length, 0), out = new Uint8Array(n); let o = 0; for (const x of arrs) { out.set(x, o); o += x.length; } return out; };
+const eq = (a, b) => a.length === b.length && a.every((v, i) => v === b[i]);
+
+const ALG = 'X3DH-P256/DoubleRatchet-HMAC-SHA256/AES-GCM-256';
+const MAX_SKIP = 1000;
+const PAD = 64;
+const INFO = enc.encode('Panel-X3DH-v1');
+const F = new Uint8Array(32).fill(0xff); // préfixe de séparation des domaines (spécification X3DH)
+const EC = { name: 'ECDH', namedCurve: 'P-256' }, SIG = { name: 'ECDSA', namedCurve: 'P-256' };
+
+const genDH = () => subtle().generateKey(EC, false, ['deriveBits']);
+const rawPub = async key => new Uint8Array(await subtle().exportKey('raw', key));
+const importDH = raw => subtle().importKey('raw', raw, EC, false, []);
+const dh = async (priv, pubRaw) => new Uint8Array(await subtle().deriveBits({ name: 'ECDH', public: await importDH(pubRaw) }, priv, 256));
+const hkdf = async (salt, ikm, info, len) => {
+  const k = await subtle().importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+  return new Uint8Array(await subtle().deriveBits({ name: 'HKDF', hash: 'SHA-256', salt, info }, k, len * 8));
+};
+const hmac = async (key, data) => { const k = await subtle().importKey('raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return new Uint8Array(await subtle().sign('HMAC', k, data)); };
+const kdfRK = async (rk, dhOut) => { const o = await hkdf(rk, dhOut, enc.encode('Panel-Ratchet-RK'), 64); return [o.slice(0, 32), o.slice(32)]; };
+const kdfCK = async ck => [await hmac(ck, new Uint8Array([2])), await hmac(ck, new Uint8Array([1]))]; // [chaîne suivante, clé de message]
+
+// Rembourrage ISO/IEC 7816-4 : 0x80 puis des zéros jusqu'au multiple de PAD
+const pad = u8 => { const n = Math.ceil((u8.length + 1) / PAD) * PAD, out = new Uint8Array(n); out.set(u8); out[u8.length] = 0x80; return out; };
+const unpad = u8 => { let i = u8.length - 1; while (i >= 0 && u8[i] === 0) i--; if (i < 0 || u8[i] !== 0x80) throw new Error('tampered'); return u8.slice(0, i); };
+
+// ---------- Identité et prépublications ----------
+const createIdentity = async () => {
+  const dhk = await genDH(), sk = await subtle().generateKey(SIG, false, ['sign', 'verify']);
+  return { dh: dhk, sign: sk, pub: { ik: b64(await rawPub(dhk.publicKey)), sik: b64(new Uint8Array(await subtle().exportKey('raw', sk.publicKey))) } };
+};
+// Prépublication signée + n prépublications à usage unique ; seule la partie publique part au serveur
+const createPrekeys = async (identity, n, firstId) => {
+  const spk = await genDH(), spkRaw = await rawPub(spk.publicKey);
+  const sig = new Uint8Array(await subtle().sign({ name: 'ECDSA', hash: 'SHA-256' }, identity.sign.privateKey, spkRaw));
+  const one = [];
+  for (let i = 0; i < (n || 0); i++) { const k = await genDH(); one.push({ id: (firstId || 1) + i, key: k, pub: b64(await rawPub(k.publicKey)) }); }
+  return {
+    secret: { spk, opk: one.map(o => ({ id: o.id, key: o.key })) },
+    bundle: { ik: identity.pub.ik, sik: identity.pub.sik, spk: b64(spkRaw), spkSig: b64(sig), opk: one.map(o => ({ id: o.id, pub: o.pub })) }
+  };
+};
+const verifyBundle = async bundle => {
+  try {
+    const sik = await subtle().importKey('raw', unb64(bundle.sik), SIG, false, ['verify']);
+    return await subtle().verify({ name: 'ECDSA', hash: 'SHA-256' }, sik, unb64(bundle.spkSig), unb64(bundle.spk));
+  } catch (_) { return false; }
+};
+
+// ---------- X3DH ----------
+// Alice (qui écrit la première) : à partir du paquet public de Bob et d'UNE prépublication à usage unique (si disponible)
+const x3dhInitiate = async (identity, bundle, opk) => {
+  if (!(await verifyBundle(bundle))) throw new Error('bad_signature');
+  const ek = await genDH(), spk = unb64(bundle.spk), ikB = unb64(bundle.ik);
+  const parts = [F, await dh(identity.dh.privateKey, spk), await dh(ek.privateKey, ikB), await dh(ek.privateKey, spk)];
+  if (opk) parts.push(await dh(ek.privateKey, unb64(opk.pub)));
+  const sk = await hkdf(new Uint8Array(32), cat(...parts), INFO, 32);
+  const ad = cat(unb64(identity.pub.ik), ikB);
+  return { sk, ad, init: { ik: identity.pub.ik, ek: b64(await rawPub(ek.publicKey)), opkId: opk ? opk.id : null } };
+};
+// Bob : retrouve le même secret à partir du message initial ; la prépublication à usage unique est consommée
+const x3dhRespond = async (identity, secret, init) => {
+  const ikA = unb64(init.ik), ekA = unb64(init.ek);
+  const parts = [F, await dh(secret.spk.privateKey, ikA), await dh(identity.dh.privateKey, ekA), await dh(secret.spk.privateKey, ekA)];
+  if (init.opkId !== null && init.opkId !== undefined) {
+    const o = secret.opk.find(x => x.id === init.opkId);
+    if (!o) throw new Error('prekey_used');
+    parts.push(await dh(o.key.privateKey, ekA));
+  }
+  const sk = await hkdf(new Uint8Array(32), cat(...parts), INFO, 32);
+  return { sk, ad: cat(ikA, unb64(identity.pub.ik)), usedOpk: init.opkId };
+};
+
+// ---------- Double cliquet ----------
+const initSender = async (sk, theirSpkB64, ad) => {
+  const s = await genDH(), dhr = unb64(theirSpkB64);
+  const [rk, cks] = await kdfRK(sk, await dh(s.privateKey, dhr));
+  return { DHs: s, DHsPub: await rawPub(s.publicKey), DHr: dhr, RK: rk, CKs: cks, CKr: null, Ns: 0, Nr: 0, PN: 0, skipped: new Map(), ad };
+};
+const initReceiver = async (sk, spkPair, ad) => ({ DHs: spkPair, DHsPub: await rawPub(spkPair.publicKey), DHr: null, RK: sk, CKs: null, CKr: null, Ns: 0, Nr: 0, PN: 0, skipped: new Map(), ad });
+const clone = st => ({ ...st, skipped: new Map(st.skipped) });
+const headerBytes = h => enc.encode(JSON.stringify([h.dh, h.pn, h.n]));
+const aesKey = async mk => { const o = await hkdf(new Uint8Array(32), mk, enc.encode('Panel-Ratchet-MK'), 32); return subtle().importKey('raw', o, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']); };
+
+// Chiffre : renvoie [nouvel état, message] ; l'état d'entrée n'est jamais modifié
+const encrypt = async (state, text) => {
+  const t = String(text || '');
+  if (!t.trim()) throw new Error('empty');
+  if (t.length > 4000) throw new Error('too_long');
+  if (!state.CKs) throw new Error('not_ready');
+  const st = clone(state);
+  const [ck, mk] = await kdfCK(st.CKs);
+  st.CKs = ck;
+  const header = { dh: b64(st.DHsPub), pn: st.PN, n: st.Ns };
+  st.Ns += 1;
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12));
+  const ct = await subtle().encrypt({ name: 'AES-GCM', iv, additionalData: cat(st.ad, headerBytes(header)) }, await aesKey(mk), pad(enc.encode(t)));
+  return [st, { v: 2, alg: ALG, header, iv: b64(iv), ct: b64(new Uint8Array(ct)) }];
+};
+const skipKeys = async (st, until) => {
+  if (st.CKr === null) return;
+  if (until - st.Nr > MAX_SKIP) throw new Error('too_many_skipped');
+  while (st.Nr < until) {
+    const [ck, mk] = await kdfCK(st.CKr);
+    st.CKr = ck; st.skipped.set(b64(st.DHr) + ':' + st.Nr, mk); st.Nr += 1;
+  }
+  while (st.skipped.size > MAX_SKIP) st.skipped.delete(st.skipped.keys().next().value);
+};
+const ratchetStep = async (st, theirDh) => {
+  st.PN = st.Ns; st.Ns = 0; st.Nr = 0; st.DHr = theirDh;
+  [st.RK, st.CKr] = await kdfRK(st.RK, await dh(st.DHs.privateKey, st.DHr));
+  st.DHs = await genDH(); st.DHsPub = await rawPub(st.DHs.publicKey);
+  [st.RK, st.CKs] = await kdfRK(st.RK, await dh(st.DHs.privateKey, st.DHr));
+};
+const open = async (st, msg, mk) => {
+  try {
+    const pt = await subtle().decrypt({ name: 'AES-GCM', iv: unb64(msg.iv), additionalData: cat(st.ad, headerBytes(msg.header)) }, await aesKey(mk), unb64(msg.ct));
+    return dec.decode(unpad(new Uint8Array(pt)));
+  } catch (_) { throw new Error('tampered'); }
+};
+// Déchiffre : renvoie [nouvel état, texte] ; en cas d'échec l'état d'entrée reste valable (rien n'est consommé)
+const decrypt = async (state, msg) => {
+  if (!msg || msg.v !== 2 || msg.alg !== ALG || !msg.header) throw new Error('unsupported');
+  const h = msg.header, st = clone(state), id = h.dh + ':' + h.n;
+  if (st.skipped.has(id)) { const mk = st.skipped.get(id); const text = await open(st, msg, mk); st.skipped.delete(id); return [st, text]; }
+  const theirDh = unb64(h.dh);
+  if (!Number.isInteger(h.n) || !Number.isInteger(h.pn) || h.n < 0 || h.pn < 0) throw new Error('tampered');
+  if (!st.DHr || !eq(theirDh, st.DHr)) { await skipKeys(st, h.pn); await ratchetStep(st, theirDh); }
+  if (h.n < st.Nr) throw new Error('replay');
+  await skipKeys(st, h.n);
+  const [ck, mk] = await kdfCK(st.CKr);
+  const text = await open(st, msg, mk);
+  st.CKr = ck; st.Nr += 1;
+  return [st, text];
+};
+
+// Messages éphémères : durée choisie par la conversation, appliquée des deux côtés
+const TIMERS = Object.freeze([0, 300, 3600, 86400, 604800]); // secondes : désactivé, 5 min, 1 h, 1 jour, 1 semaine
+const TIMER_LABEL = Object.freeze({ 0: 'Désactivés', 300: '5 minutes', 3600: '1 heure', 86400: '1 jour', 604800: '1 semaine' });
+const expired = (sentAtMs, timerSec, nowMs) => timerSec > 0 && nowMs - sentAtMs >= timerSec * 1000;
+
+module.exports = { ALG, MAX_SKIP, TIMERS, TIMER_LABEL, createIdentity, createPrekeys, verifyBundle, x3dhInitiate, x3dhRespond, initSender, initReceiver, encrypt, decrypt, expired, pad, unpad };
+  return Object.freeze(module.exports); })();
+  /* domains/community/verify-core.js */
+  out.verify = (() => { const module = { exports: {} };
+'use strict';
+// Types de comptes et vérification (D-114) — module pur.
+// À l'inscription, chacun choisit son type : Collectionneur (aucune vérification) ou un type pro (Créateur, Boutique,
+// Maison d'édition, Studio). Un type pro reste « en attente » tant qu'une personne de l'équipe n'a pas examiné les pièces :
+// aucune pastille n'apparaît avant. La vérification est gratuite, ne s'achète jamais et se renouvelle chaque année.
+// Pièces : envoyées chiffrées à l'ouverture des comptes, lues par l'équipe en double authentification, effacées 30 jours
+// après la décision ; seule la décision motivée reste au journal (minimisation, RGPD art. 5).
+
+const TYPES = Object.freeze(['collector', 'creator', 'shop', 'publisher', 'studio']);
+const TYPE_INFO = Object.freeze({
+  collector: { label: 'Collectionneur', about: 'Votre collection, le fil, Le Comptoir, le Marché. Aucune vérification.', verified: false },
+  creator: { label: 'Créateur', about: 'Scénariste, dessinateur, coloriste, encreur, lettreur, traducteur publié.', verified: true },
+  shop: { label: 'Boutique', about: 'Librairie ou comic shop avec une adresse physique ou en ligne.', verified: true },
+  publisher: { label: "Maison d'édition", about: 'Éditeur de comics, petit ou grand, avec un catalogue publié.', verified: true },
+  studio: { label: 'Studio', about: 'Collectif ou studio de création avec des publications.', verified: true }
+});
+// Pastilles : une forme et une couleur par type, pour les reconnaître d'un coup d'œil (comme les certifications des grands réseaux)
+const BADGES = Object.freeze({
+  creator: { label: 'Créateur vérifié', color: '#FFC21A', ink: '#14110F', glyph: 'nib' },
+  shop: { label: 'Boutique vérifiée', color: '#18A957', ink: '#FFFFFF', glyph: 'shop' },
+  publisher: { label: 'Éditeur vérifié', color: '#1D6CF2', ink: '#FFFFFF', glyph: 'book' },
+  studio: { label: 'Studio vérifié', color: '#8B3DFF', ink: '#FFFFFF', glyph: 'panels' },
+  staff: { label: 'Équipe Panel', color: '#E5243B', ink: '#FFFFFF', glyph: 'shield' }
+});
+// Pièces demandées : clé, libellé, obligatoire, formats acceptés
+const DOCS = Object.freeze({
+  creator: [
+    { key: 'identity', label: "Pièce d'identité (carte, passeport) : seuls le nom et la photo sont comparés", required: true, accept: ['pdf', 'jpg', 'png'] },
+    { key: 'credits', label: 'Une preuve de publication à votre nom : page de crédits, couverture, contrat ou ISBN', required: true, accept: ['pdf', 'jpg', 'png'] },
+    { key: 'proof_link', label: 'Le code Panel publié sur votre portfolio ou un réseau public à votre nom', required: true, accept: ['link'] },
+    { key: 'publisher_ref', label: 'Contact de votre éditeur pour confirmation (facultatif, accélère l’examen)', required: false, accept: ['text'] }
+  ],
+  shop: [
+    { key: 'company', label: "Numéro d'entreprise (BCE, SIREN ou équivalent) et raison sociale", required: true, accept: ['number'] },
+    { key: 'address', label: 'Justificatif d’adresse de la boutique de moins de 3 mois', required: true, accept: ['pdf', 'jpg', 'png'] },
+    { key: 'storefront', label: 'Photo de la vitrine ou du comptoir avec le code Panel bien visible', required: true, accept: ['jpg', 'png'] },
+    { key: 'identity', label: "Pièce d'identité du gérant ou de la gérante", required: true, accept: ['pdf', 'jpg', 'png'] }
+  ],
+  publisher: [
+    { key: 'company', label: "Numéro d'entreprise et extrait du registre (BCE, Kbis ou équivalent)", required: true, accept: ['number', 'pdf'] },
+    { key: 'domain_email', label: 'Une adresse sur le domaine officiel de la maison (un code y est envoyé)', required: true, accept: ['email'] },
+    { key: 'mandate', label: 'Lettre de mandat signée par un représentant légal, qui désigne les gestionnaires du compte', required: true, accept: ['pdf'] },
+    { key: 'identity', label: "Pièce d'identité de la personne mandatée", required: true, accept: ['pdf', 'jpg', 'png'] },
+    { key: 'catalogue', label: 'Un ISBN de votre catalogue (contrôlé automatiquement)', required: true, accept: ['isbn'] }
+  ],
+  studio: [
+    { key: 'company', label: "Numéro d'entreprise ou statuts de l'association", required: true, accept: ['number', 'pdf'] },
+    { key: 'members', label: 'Membres du studio et leurs rôles (chacun peut demander sa propre pastille Créateur)', required: true, accept: ['text'] },
+    { key: 'credits', label: 'Une publication du studio', required: true, accept: ['pdf', 'jpg', 'png', 'isbn'] }
+  ]
+});
+const STATES = Object.freeze(['none', 'draft', 'submitted', 'in_review', 'needs_more', 'verified', 'refused', 'expired', 'revoked']);
+const STATE_LABEL = Object.freeze({ none: 'Compte collectionneur', draft: 'Dossier en préparation', submitted: 'Dossier envoyé', in_review: 'En cours d’examen', needs_more: 'Pièce à compléter', verified: 'Vérifié', refused: 'Refusé (motif indiqué, recours possible)', expired: 'À renouveler', revoked: 'Pastille retirée' });
+const REFUSAL = Object.freeze({ unreadable: 'Pièce illisible', mismatch: 'Les noms ne correspondent pas', no_publication: 'Aucune publication vérifiable', not_comics: 'Activité sans lien avec la bande dessinée', impersonation: 'Usurpation d’identité', expired_doc: 'Pièce expirée' });
+const REVIEW_DAYS = 7, RENEW_DAYS = 365, DOC_RETENTION_DAYS = 30;
+const MAX_FILE_MB = 10;
+
+// Numéro d'entreprise belge (BCE) : 10 chiffres, les deux derniers = 97 − (8 premiers mod 97)
+const checkBCE = v => { const d = String(v || '').replace(/[^\d]/g, ''); if (!/^[01]\d{9}$/.test(d)) return false; return 97 - (Number(d.slice(0, 8)) % 97) === Number(d.slice(8)); };
+// SIREN français : 9 chiffres, clé de Luhn
+const luhn = s => { let sum = 0; for (let i = 0; i < s.length; i++) { let n = Number(s[s.length - 1 - i]); if (i % 2) { n *= 2; if (n > 9) n -= 9; } sum += n; } return sum % 10 === 0; };
+const checkSIREN = v => { const d = String(v || '').replace(/\s/g, ''); return /^\d{9}$/.test(d) && luhn(d); };
+// ISBN-13 : somme pondérée 1-3 modulo 10
+const checkISBN13 = v => { const d = String(v || '').replace(/[-\s]/g, ''); if (!/^97[89]\d{10}$/.test(d)) return false; let s = 0; for (let i = 0; i < 13; i++) s += Number(d[i]) * (i % 2 ? 3 : 1); return s % 10 === 0; };
+const companyCheck = (country, v) => country === 'BE' ? checkBCE(v) : country === 'FR' ? checkSIREN(v) : String(v || '').replace(/\W/g, '').length >= 6; // autres pays : contrôle humain
+// L'adresse e-mail est-elle sur le domaine du site officiel ? (sous-domaines acceptés)
+const domainMatches = (email, site) => {
+  const m = /@([a-z0-9.-]+)$/i.exec(String(email || '').trim()); let host = '';
+  try { host = new URL(String(site || '')).hostname.toLowerCase().replace(/^www\./, ''); } catch (_) { return false; }
+  if (!m || !host) return false;
+  const d = m[1].toLowerCase();
+  return d === host || d.endsWith('.' + host);
+};
+// Code à publier sur le portfolio, la vitrine, etc. (lettres sans ambiguïté)
+const proofCode = rnd => { const A = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789', b = (rnd || (n => globalThis.crypto.getRandomValues(new Uint8Array(n))))(8); let s = ''; for (let i = 0; i < 8; i++) s += A[b[i] % A.length]; return 'PANEL-' + s.slice(0, 4) + '-' + s.slice(4); };
+// Contrôle d'un fichier choisi (rien n'est lu ici : type, taille, extension)
+const fileOk = (doc, f) => {
+  const ext = String(f && f.name || '').split('.').pop().toLowerCase().replace('jpeg', 'jpg');
+  if (!doc || !f) return { ok: false, reason: 'Pièce inconnue.' };
+  if (!doc.accept.includes(ext)) return { ok: false, reason: 'Format accepté : ' + doc.accept.filter(a => /^(pdf|jpg|png)$/.test(a)).join(', ') + '.' };
+  if (!(f.size > 0) || f.size > MAX_FILE_MB * 1048576) return { ok: false, reason: 'Fichier vide ou de plus de ' + MAX_FILE_MB + ' Mo.' };
+  return { ok: true };
+};
+// Avancement du dossier : pièces obligatoires fournies
+const progress = (type, provided) => {
+  const docs = DOCS[type] || [], have = new Set(provided || []), req = docs.filter(d => d.required);
+  const missing = req.filter(d => !have.has(d.key)).map(d => d.key);
+  return { total: req.length, done: req.length - missing.length, missing, ready: !!docs.length && !missing.length };
+};
+// Transitions : qui peut faire quoi
+const FLOW = Object.freeze({ 'draft:submit': ['submitted', 'owner'], 'submitted:review': ['in_review', 'staff'], 'in_review:approve': ['verified', 'staff'], 'in_review:refuse': ['refused', 'staff'], 'in_review:ask': ['needs_more', 'staff'], 'needs_more:submit': ['submitted', 'owner'], 'refused:appeal': ['submitted', 'owner'], 'verified:expire': ['expired', 'system'], 'expired:submit': ['submitted', 'owner'], 'verified:revoke': ['revoked', 'staff'] });
+const step = (state, action, actor) => { const f = FLOW[state + ':' + action]; if (!f) return { ok: false, error: 'invalid_transition' }; if (f[1] !== actor) return { ok: false, error: 'forbidden' }; return { ok: true, state: f[0] }; };
+// Pastille affichée : seulement un compte pro vérifié et non expiré
+const badge = (type, state, verifiedAtMs, nowMs) => {
+  if (state !== 'verified' || !BADGES[type]) return null;
+  if (Number.isFinite(verifiedAtMs) && Number.isFinite(nowMs) && nowMs - verifiedAtMs > RENEW_DAYS * 864e5) return null;
+  return { type, ...BADGES[type] };
+};
+
+module.exports = { TYPES, TYPE_INFO, BADGES, DOCS, STATES, STATE_LABEL, REFUSAL, REVIEW_DAYS, RENEW_DAYS, DOC_RETENTION_DAYS, MAX_FILE_MB,
+  checkBCE, checkSIREN, checkISBN13, companyCheck, domainMatches, proofCode, fileOk, progress, step, badge };
+  return Object.freeze(module.exports); })();
+  /* domains/collection/stats-plus-core.js */
+  out.statsPlus = (() => { const module = { exports: {} };
+'use strict';
+// Statistiques avancées Panel+ (D-114) — module pur, calculé sur l'appareil à partir des exemplaires de la collection.
+// Les statistiques de base (valeur, décennies, créateurs, dépenses) restent gratuites ; ces analyses-ci sont réservées
+// à Panel+ et ne quittent jamais l'appareil. Aucune valeur n'est inventée : un exemplaire sans prix ni cote est compté
+// à part (« sans cote ») et n'entre pas dans les calculs de rendement. Aucune prévision de prix n'est faite.
+
+const num = v => { if (v === null || v === undefined || v === '') return null; const n = Number(String(v).replace(',', '.')); return Number.isFinite(n) && n >= 0 ? n : null; };
+const monthOf = d => { const m = String(d || '').match(/^(\d{4})-(\d{2})/); return m ? m[1] + '-' + m[2] : null; };
+const pubOf = c => String(c.publisher || '').trim() || 'Éditeur inconnu';
+const label = c => (String(c.series || '').trim() + (c.issue ? ' #' + String(c.issue).trim() : '')).trim();
+const GRADED = /\b(cgc|cbcs|pgx)\b|\b(10(\.0)?|[0-9]\.[0-9])\b/i;
+
+// Fonctions offertes et fonctions Panel+ (affichées telles quelles dans l'écran Statistiques)
+const FREE = Object.freeze(['Valeur estimée et prix payé', 'Répartition par décennie', 'Créateurs et personnages les plus présents', 'Dépenses des 12 derniers mois']);
+const PLUS = Object.freeze([
+  { key: 'concentration', label: 'Concentration de la valeur', about: 'Part de la valeur portée par vos 10 exemplaires les plus cotés, et dépendance à un éditeur.' },
+  { key: 'roi', label: 'Rendement par éditeur', about: 'Cote actuelle comparée au prix payé, éditeur par éditeur.' },
+  { key: 'keys', label: 'Key Issues', about: 'Nombre, valeur et rendement de vos Key Issues.' },
+  { key: 'grading', label: 'Gradés et variantes', about: 'Part des exemplaires gradés (CGC, CBCS, PGX) et des couvertures variantes.' },
+  { key: 'pace', label: 'Rythme d’achat', about: 'Achats par mois sur 12 mois, comparés aux 12 mois précédents.' },
+  { key: 'hold', label: 'Durée de détention', about: 'Depuis combien de temps vous gardez vos exemplaires, et les plus anciens.' }
+]);
+const gate = (entitled, key) => !!entitled || !PLUS.some(p => p.key === key);
+
+const rowsOf = copies => (copies || []).filter(Boolean).map(c => ({ c, paid: num(c.purchasePrice), value: num(c.estValue), date: c.purchaseDate || c.addedAt || '' }));
+
+// Concentration : part des 10 premiers exemplaires et indice de dépendance (Herfindahl, 0 à 1) par éditeur
+const concentration = copies => {
+  const r = rowsOf(copies).filter(x => x.value !== null && x.value > 0), total = r.reduce((a, x) => a + x.value, 0);
+  if (!total) return { n: 0, total: 0, top10Pct: null, hhi: null, topPublisher: null, top: [] };
+  const sorted = r.slice().sort((a, b) => b.value - a.value), top = sorted.slice(0, 10), topSum = top.reduce((a, x) => a + x.value, 0);
+  const pubs = new Map(); r.forEach(x => pubs.set(pubOf(x.c), (pubs.get(pubOf(x.c)) || 0) + x.value));
+  const shares = [...pubs.entries()].map(([name, v]) => ({ name, pct: v / total * 100 })).sort((a, b) => b.pct - a.pct);
+  const hhi = shares.reduce((a, s) => a + (s.pct / 100) ** 2, 0);
+  return { n: r.length, total, top10Pct: Math.round(topSum / total * 1000) / 10, hhi: Math.round(hhi * 100) / 100, topPublisher: shares[0], top: top.slice(0, 5).map(x => ({ label: label(x.c), value: x.value })) };
+};
+
+// Rendement par éditeur : seuls les exemplaires avec prix payé ET cote comptent
+const roiByPublisher = copies => {
+  const m = new Map();
+  rowsOf(copies).forEach(x => { if (x.paid === null || x.value === null) return; const k = pubOf(x.c), p = m.get(k) || { name: k, n: 0, paid: 0, value: 0 }; p.n++; p.paid += x.paid; p.value += x.value; m.set(k, p); });
+  return [...m.values()].map(p => ({ ...p, gain: p.value - p.paid, roi: p.paid ? Math.round((p.value - p.paid) / p.paid * 1000) / 10 : null })).sort((a, b) => (b.roi ?? -1e9) - (a.roi ?? -1e9));
+};
+
+// Key Issues : nombre, valeur, rendement
+const keys = copies => {
+  const all = rowsOf(copies), k = all.filter(x => String(x.c.keyType || '').trim());
+  const val = k.reduce((a, x) => a + (x.value || 0), 0), totalVal = all.reduce((a, x) => a + (x.value || 0), 0);
+  const both = k.filter(x => x.paid !== null && x.value !== null), paid = both.reduce((a, x) => a + x.paid, 0), bv = both.reduce((a, x) => a + x.value, 0);
+  return { n: k.length, sharePct: all.length ? Math.round(k.length / all.length * 1000) / 10 : 0, value: val, valuePct: totalVal ? Math.round(val / totalVal * 1000) / 10 : null, roi: paid ? Math.round((bv - paid) / paid * 1000) / 10 : null };
+};
+
+// Gradés et variantes
+const grading = copies => {
+  const all = rowsOf(copies), n = all.length || 1;
+  const g = all.filter(x => GRADED.test(String(x.c.condition || ''))), v = all.filter(x => String(x.c.variant || '').trim());
+  const avg = a => { const w = a.filter(x => x.value !== null); return w.length ? w.reduce((s, x) => s + x.value, 0) / w.length : null; };
+  return { graded: g.length, gradedPct: Math.round(g.length / n * 1000) / 10, variants: v.length, variantPct: Math.round(v.length / n * 1000) / 10, avgGraded: avg(g), avgRaw: avg(all.filter(x => !GRADED.test(String(x.c.condition || '')))) };
+};
+
+// Rythme d'achat sur 12 mois, comparé aux 12 mois précédents
+const pace = (copies, now) => {
+  const d0 = now instanceof Date ? now : new Date(now || Date.now()), months = [];
+  for (let i = 11; i >= 0; i--) { const d = new Date(d0.getFullYear(), d0.getMonth() - i, 1); months.push({ month: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0'), n: 0, spent: 0 }); }
+  const prevStart = new Date(d0.getFullYear(), d0.getMonth() - 23, 1), prevEnd = new Date(d0.getFullYear(), d0.getMonth() - 11, 1);
+  let prev = 0;
+  rowsOf(copies).forEach(x => {
+    const m = months.find(y => y.month === monthOf(x.date)); if (m) { m.n++; m.spent += x.paid || 0; return; }
+    const mo = monthOf(x.date); if (!mo) return; const t = new Date(Number(mo.slice(0, 4)), Number(mo.slice(5)) - 1, 1);
+    if (t >= prevStart && t < prevEnd) prev++;
+  });
+  const cur = months.reduce((a, m) => a + m.n, 0);
+  return { months, total: cur, perMonth: Math.round(cur / 12 * 10) / 10, previous: prev, trendPct: prev ? Math.round((cur - prev) / prev * 1000) / 10 : null, busiest: months.reduce((b, m) => (m.n > (b ? b.n : 0) ? m : b), null) };
+};
+
+// Durée de détention (en mois) à partir de la date d'achat, sinon d'ajout
+const hold = (copies, now) => {
+  const t0 = (now instanceof Date ? now : new Date(now || Date.now())).getTime();
+  const r = rowsOf(copies).map(x => ({ x, t: Date.parse(String(x.date).slice(0, 10)) })).filter(y => Number.isFinite(y.t) && y.t <= t0).map(y => ({ c: y.x.c, months: Math.floor((t0 - y.t) / (30.44 * 864e5)) }));
+  if (!r.length) return { n: 0, avgMonths: null, oldest: [] };
+  return { n: r.length, avgMonths: Math.round(r.reduce((a, y) => a + y.months, 0) / r.length), oldest: r.sort((a, b) => b.months - a.months).slice(0, 3).map(y => ({ label: label(y.c), months: y.months })) };
+};
+
+// Tout en une fois, avec le nombre d'exemplaires sans cote (transparence)
+const advanced = (copies, now) => {
+  const r = rowsOf(copies);
+  return { count: r.length, unvalued: r.filter(x => x.value === null).length, concentration: concentration(copies), roi: roiByPublisher(copies), keys: keys(copies), grading: grading(copies), pace: pace(copies, now), hold: hold(copies, now) };
+};
+
+module.exports = { FREE, PLUS, gate, concentration, roiByPublisher, keys, grading, pace, hold, advanced };
   return Object.freeze(module.exports); })();
   /* domains/community/affinity-core.js */
   out.affinity = (() => { const module = { exports: {} };
@@ -10126,7 +10639,8 @@ module.exports = { localDay, localMonth, localMonthsBack };
 const LIMITS = Object.freeze({ email: 254, passwordMin: 10, passwordMax: 72, label: 60 });
 const NEUTRAL = Object.freeze({
   signUp: 'Si cette adresse peut être utilisée, un e-mail de confirmation vient d\'être envoyé. Ouvrez-le pour activer le compte.',
-  reset: 'Si un compte existe pour cette adresse, un lien de réinitialisation vient d\'être envoyé.'
+  reset: 'Si un compte existe pour cette adresse, un lien de réinitialisation vient d\'être envoyé.',
+  magic: 'Si cette adresse peut être utilisée, un lien de connexion vient d\'être envoyé. Il expire au bout d\'une heure.'
 });
 const MESSAGES = Object.freeze({
   invalid_credentials: 'Adresse ou mot de passe incorrect.',
@@ -10139,7 +10653,8 @@ const MESSAGES = Object.freeze({
   network: 'Pas de connexion au service. Panel continue en local.',
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
   unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
-  unknown: 'Action impossible pour le moment. Réessayez plus tard.'
+  unknown: 'Action impossible pour le moment. Réessayez plus tard.',
+  mfa_code: 'Code à 6 chiffres incorrect ou expiré.'
 });
 
 const str = v => (v === undefined || v === null ? '' : String(v)).trim();
@@ -10243,6 +10758,38 @@ function createAuthFlow(client, opts) {
       if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network') return { ok: false, error: m }; }
       return { ok: true, message: NEUTRAL.reset };
     }),
+    // D-114 : connexion avec Google ou Apple (OAuth, flux PKCE de supabase-js : aucun mot de passe ne transite par Panel)
+    oauth: provider => guard(async () => {
+      if (!OAUTH.includes(provider)) return { ok: false, error: { code: 'unknown', message: MESSAGES.unknown } };
+      const r = await A.signInWithOAuth({ provider, options: { redirectTo: o.redirectTo, scopes: provider === 'apple' ? 'name email' : 'openid email profile' } });
+      if (r && r.error) return fail(r.error);
+      return { ok: true, url: r && r.data ? r.data.url : '' };
+    }),
+    // Lien de connexion par e-mail, sans mot de passe ; même message que le compte existe ou non
+    magicLink: email => guard(async () => {
+      const em = validateEmail(email);
+      if (!em) return { ok: false, error: { code: 'invalid_email', message: MESSAGES.invalid_email } };
+      const r = await A.signInWithOtp({ email: em, options: { emailRedirectTo: o.redirectTo, shouldCreateUser: true } });
+      if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network') return { ok: false, error: m }; }
+      return { ok: true, message: NEUTRAL.magic };
+    }),
+    // Double authentification par application (TOTP) : inscription, vérification, liste des facteurs
+    mfaEnroll: () => guard(async () => {
+      const r = await A.mfa.enroll({ factorType: 'totp', friendlyName: 'Panel' });
+      if (r && r.error) return fail(r.error);
+      return { ok: true, factorId: r.data.id, qr: r.data.totp && r.data.totp.qr_code, uri: r.data.totp && r.data.totp.uri };
+    }),
+    mfaVerify: (factorId, code) => guard(async () => {
+      if (!/^\d{6}$/.test(str(code))) return { ok: false, error: { code: 'mfa_code', message: MESSAGES.mfa_code } };
+      const r = await A.mfa.challengeAndVerify({ factorId, code: str(code) });
+      if (r && r.error) return { ok: false, error: { code: 'mfa_code', message: MESSAGES.mfa_code } };
+      return { ok: true };
+    }),
+    mfaFactors: () => guard(async () => {
+      const r = await A.mfa.listFactors();
+      if (r && r.error) return fail(r.error);
+      return { ok: true, totp: ((r.data && r.data.totp) || []).filter(f => f.status === 'verified').map(f => ({ id: f.id, name: f.friendly_name || 'Application' })) };
+    }),
     session: () => guard(async () => {
       const r = await A.getSession();
       if (r && r.error) return fail(r.error);
@@ -10251,7 +10798,32 @@ function createAuthFlow(client, opts) {
   };
 }
 
-module.exports = { LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };
+// D-114 : moyens de connexion proposés et profil d'inscription
+const OAUTH = ['apple', 'google'];
+const PROVIDERS = Object.freeze([
+  { key: 'apple', label: 'Continuer avec Apple' },
+  { key: 'google', label: 'Continuer avec Google' },
+  { key: 'email', label: 'Continuer avec un e-mail' }
+]);
+const HANDLE = /^[a-z0-9](?:[a-z0-9._]{1,22}[a-z0-9])$/;
+// Pseudos réservés : l'équipe et les grandes maisons ne les obtiennent qu'après vérification (contre l'usurpation)
+const RESERVED = ['panel', 'admin', 'support', 'moderation', 'equipe', 'staff', 'official', 'officiel', 'marvel', 'dc', 'dccomics', 'urbancomics', 'imagecomics', 'darkhorse', 'idw', 'boom', 'glenat', 'dargaud', 'delcourt', 'casterman', 'panini'];
+// Profil d'inscription : pseudo, année de naissance (13 ans au moins, tranche calculée), type de compte, consentements
+function signupProfile(input, nowYear, types) {
+  const i = input || {}, e = [];
+  const handle = str(i.handle).toLowerCase().replace(/^@/, '');
+  if (!HANDLE.test(handle)) e.push('Pseudo : 3 à 24 caractères, lettres, chiffres, point ou tiret bas.');
+  else if (RESERVED.includes(handle.replace(/[._]/g, ''))) e.push('Ce pseudo est réservé : une maison ou une marque l\'obtient après vérification.');
+  const y = Number(i.birthYear), age = nowYear - y;
+  if (!Number.isInteger(y) || y < nowYear - 120 || y > nowYear) e.push('Année de naissance invalide.');
+  else if (age < 13) e.push('Panel n\'ouvre pas de compte avant 13 ans.');
+  const type = (types || ['collector']).includes(i.type) ? i.type : 'collector';
+  if (type !== 'collector' && Number.isInteger(y) && age < 18) e.push('Les comptes pros sont réservés aux adultes.');
+  if (!i.terms) e.push('Acceptez les conditions d\'utilisation et la politique de confidentialité.');
+  return e.length ? { ok: false, errors: e } : { ok: true, errors: [], profile: { handle, birthYear: y, band: age >= 18 ? '18+' : age >= 15 ? '15-17' : '13-14', type, needsVerification: type !== 'collector', marketing: !!i.marketing } };
+}
+
+module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };
   return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
@@ -12292,6 +12864,98 @@ const phrases = {
   "Marché : on ne vend que ses propres exemplaires, avec ses propres photos, et on paie uniquement dans Panel. Les vendeurs réguliers sont identifiés comme professionnels.": "Market: you only sell your own copies, with your own photos, and you pay only in Panel. Regular sellers are identified as traders.",
   "Messages privés : chiffrés de bout en bout sur votre appareil, ils commencent par une demande. Un signalement ne transmet à l'équipe que les messages que vous choisissez.": "Private messages: end-to-end encrypted on your device, they start with a request. A report only sends the team the messages you choose.",
   "Le sceau Encré des créateurs, éditeurs et boutiques est posé par une personne de l'équipe après vérification. Il ne s'achète pas.": "The Encré seal for creators, publishers and shops is applied by a team member after verification. It cannot be bought.",
+  "Panel+": "Panel+",
+  "Compte pro": "Pro account",
+  "Mon profil": "My profile",
+  "Acheter": "Buy",
+  "Vendre": "Sell",
+  "Favoris": "Favorites",
+  "Principal": "Primary",
+  "Demandes": "Requests",
+  "Rechercher une conversation": "Search a conversation",
+  "Messages privés": "Private messages",
+  "Débats, théories et conseils de lecture entre fans": "Debates, theories and reading tips between fans",
+  "Achetez et vendez entre collectionneurs, paiement protégé": "Buy and sell between collectors, protected payment",
+  "Chiffrés de bout en bout, comme Signal : personne d’autre ne peut les lire": "End-to-end encrypted, like Signal: no one else can read them",
+  "Créateurs, boutiques, maisons d’édition et studios vérifiés": "Verified creators, shops, publishers and studios",
+  "Statistiques avancées, outils pros et soutien à Panel": "Advanced statistics, pro tools and support for Panel",
+  "Aucune conversation pour l’instant": "No conversations yet",
+  "Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez. Les messages s’ouvrent avec les comptes en ligne, pour les adultes.": "Write to a seller from the Market, to a creator from their profile, or to a member you follow. Messages open with online accounts, for adults.",
+  "Protégés comme sur Signal": "Protected like on Signal",
+  "Clés d’identité et préclés signées (X3DH)": "Identity keys and signed prekeys (X3DH)",
+  "Votre appareil publie seulement des clés publiques. Chaque préclé à usage unique n’est donnée qu’une fois, puis effacée du serveur.": "Your device only publishes public keys. Each one-time prekey is handed out once, then erased from the server.",
+  "Double cliquet": "Double Ratchet",
+  "Chaque message a sa propre clé, effacée après usage. Une clé volée ne déchiffre pas les anciens messages, ni les suivants après le prochain échange.": "Each message has its own key, erased after use. A stolen key decrypts neither past messages nor future ones after the next exchange.",
+  "En-tête authentifié, longueur masquée": "Authenticated header, hidden length",
+  "Les messages sont complétés par blocs de 64 octets. Un message rejoué ou modifié est refusé.": "Messages are padded to 64-byte blocks. A replayed or altered message is refused.",
+  "Numéro de sécurité": "Safety number",
+  "Comparez-le en personne ou en appel. S’il change, Panel vous prévient avant d’envoyer.": "Compare it in person or on a call. If it changes, Panel warns you before sending.",
+  "Messages éphémères": "Disappearing messages",
+  "De 5 minutes à 1 semaine, réglés par conversation. À l’échéance, ils ne sont plus servis et sont effacés du serveur.": "From 5 minutes to 1 week, set per conversation. When they expire, they are no longer served and are erased from the server.",
+  "Messages éphémères par défaut": "Default disappearing messages",
+  "Pour les nouvelles conversations": "For new conversations",
+  "Désactivés": "Off",
+  "5 minutes": "5 minutes",
+  "1 heure": "1 hour",
+  "1 jour": "1 day",
+  "1 semaine": "1 week",
+  "Comptes vérifiés seulement": "Verified accounts only",
+  "Pour les créateurs et éditeurs très sollicités.": "For highly solicited creators and publishers.",
+  "Aucune annonce de membre pour l’instant": "No member listings yet",
+  "Les annonces apparaîtront ici à l’ouverture des comptes. Rien n’est inventé en attendant.": "Listings will appear here when accounts open. Nothing is made up in the meantime.",
+  "Tous les états": "All conditions",
+  "Toutes les remises": "All delivery methods",
+  "Plus récents": "Newest",
+  "Prix croissant": "Price: low to high",
+  "Prix décroissant": "Price: high to low",
+  "Remises sur les lots": "Bundle discounts",
+  "Votre réputation de vendeur": "Your seller reputation",
+  "Nouveau vendeur": "New seller",
+  "Vendeur fiable": "Trusted seller",
+  "Faire une offre": "Make an offer",
+  "Aucune offre envoyée ni reçue": "No offers sent or received",
+  "Vos offres et celles des acheteurs apparaîtront ici, avec leur délai.": "Your offers and buyers' offers will appear here, with their deadline.",
+  "Aucun favori": "No favorites",
+  "Touchez le cœur d’une annonce pour la retrouver ici et être prévenu d’une baisse de prix.": "Tap the heart on a listing to find it here and be told when the price drops.",
+  "Quel compte êtes-vous ?": "What kind of account are you?",
+  "Maison d'édition": "Publisher",
+  "Créateur vérifié": "Verified creator",
+  "Boutique vérifiée": "Verified shop",
+  "Éditeur vérifié": "Verified publisher",
+  "Studio vérifié": "Verified studio",
+  "Équipe Panel": "Panel Team",
+  "Aucune vérification": "No verification",
+  "Créer votre compte Panel": "Create your Panel account",
+  "Continuer avec Apple": "Continue with Apple",
+  "Continuer avec Google": "Continue with Google",
+  "Continuer avec un e-mail": "Continue with email",
+  "Année de naissance": "Year of birth",
+  "J’accepte les conditions d’utilisation et la politique de confidentialité": "I accept the terms of use and the privacy policy",
+  "Recevoir les nouveautés de Panel (facultatif)": "Receive Panel news (optional)",
+  "Préparer mon inscription": "Prepare my sign-up",
+  "Profil d’inscription prêt": "Sign-up profile ready",
+  "Modalités": "Terms",
+  "Gratuit, jamais vendu, jamais lié à un abonnement.": "Free, never sold, never tied to a subscription.",
+  "Pastille valable un an, renouvelable. Refus motivé, avec recours possible.": "Badge valid for one year, renewable. Reasoned refusal, with appeal possible.",
+  "Usurpation d’identité : compte suspendu.": "Impersonation: account suspended.",
+  "Dossier prêt": "File ready",
+  "Compléter le dossier": "Complete the file",
+  "Statistiques avancées": "Advanced statistics",
+  "Concentration de la valeur": "Value concentration",
+  "Rendement par éditeur": "Return by publisher",
+  "Gradés et variantes": "Graded and variants",
+  "Rythme d’achat": "Buying pace",
+  "Durée de détention": "Holding time",
+  "Découvrir Panel+": "Discover Panel+",
+  "Double authentification": "Two-factor authentication",
+  "Double authentification activée": "Two-factor authentication enabled",
+  "Activer": "Enable",
+  "Confirmer": "Confirm",
+  "Recevoir un lien de connexion": "Get a sign-in link",
+  "Scannez ce code avec votre application": "Scan this code with your app",
+  "Code à 6 chiffres": "6-digit code",
+  "Créateurs, boutiques, éditeurs, studios": "Creators, shops, publishers, studios",
+  "Aperçu de la fiche": "Profile preview",
 };
 
 const same = [
@@ -17452,6 +18116,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     reading: ['Lecture', 'En cours, à lire, prochain numéro de vos séries et journal de lecture'],
     community: ['Accueil', 'Pour toi et Abonnements : planches, stories et numéros en 3D'],
     live: ['Directs', 'Préparez et lancez vos directs autour de vos numéros'],
+    forum: ['Le Comptoir', 'Débats, théories et conseils de lecture entre fans'],
+    market: ['Marché', 'Achetez et vendez entre collectionneurs, paiement protégé'],
+    dm: ['Messages', 'Chiffrés de bout en bout, comme Signal : personne d’autre ne peut les lire'],
+    pros: ['Compte pro', 'Créateurs, boutiques, maisons d’édition et studios vérifiés'],
+    plans: ['Panel+', 'Statistiques avancées, outils pros et soutien à Panel'],
     profile: ['Profil', 'Votre identité de collectionneur et votre collection'],
     finances: ['Finances', "Coût d'acquisition, valeur, plus-values latentes et réalisées, par devise"],
     explorer: ['Découvrir', 'Personnages, séries, guides et actualités']
@@ -17460,15 +18129,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const view = activeSinglesView;
     const navMap = { collection: 'navAllSingles', series: 'navSinglesSeries', releases: 'navSinglesReleases', stats: 'navSinglesStats', explorer: 'navExplorer', reading: 'navSinglesReading', finances: 'navSinglesFinances', community: 'navSinglesCommunity' };
     let ct = 'feed'; try { ct = commTab; } catch (_) {}
-    if (view === 'community') navMap.community = { live: 'navLive', profile: 'navProfile' }[ct] || 'navSinglesCommunity';
+    if (view === 'community') navMap.community = { live: 'navLive', profile: 'navProfile', pros: 'navProfile', market: 'navMarket', dm: 'navMessages', plans: 'navPlus' }[ct] || 'navSinglesCommunity';
     const navId = view === 'collection' && activeSingleFilter === 'wishlist' ? 'navSinglesWishlist' : view === 'releases' && $('releasesPullOnly') && $('releasesPullOnly').checked ? 'navSinglesPullList' : navMap[view];
-    // Barre du bas (lot S1) : Accueil, Découvrir (Explorer, sorties), Directs, Profil (profil et toute la collection)
-    const dockId = view === 'explorer' || (view === 'releases' && navId === 'navSinglesReleases') ? 'mobDiscover' : view === 'community' ? ({ live: 'mobLive', profile: 'mobProfile' }[ct] || 'mobHome') : 'mobProfile';
-    ['mobHome', 'mobDiscover', 'mobLive', 'mobProfile'].forEach(b => { if (!$(b)) return; $(b).classList.toggle('active', b === dockId); if (b === dockId) $(b).setAttribute('aria-current', 'page'); else $(b).removeAttribute('aria-current'); });
+    // Barre du bas (D-114) : Accueil (fil, Comptoir, directs), Découvrir, Marché, Profil (profil, compte pro, Panel+, toute la collection) ; Messages : en-tête
+    const dockId = view === 'explorer' || (view === 'releases' && navId === 'navSinglesReleases') ? 'mobDiscover' : view === 'community' ? ({ market: 'mobMarket', dm: '', profile: 'mobProfile', pros: 'mobProfile', plans: 'mobProfile' }[ct] ?? 'mobHome') : 'mobProfile';
+    if ($('dmBtn')) { $('dmBtn').classList.toggle('is-on', view === 'community' && ct === 'dm'); if (view === 'community' && ct === 'dm') $('dmBtn').setAttribute('aria-current', 'page'); else $('dmBtn').removeAttribute('aria-current'); }
+    ['mobHome', 'mobDiscover', 'mobMarket', 'mobProfile'].forEach(b => { if (!$(b)) return; $(b).classList.toggle('active', b === dockId); if (b === dockId) $(b).setAttribute('aria-current', 'page'); else $(b).removeAttribute('aria-current'); });
     $$('#navSinglesBlock .nav-btn').forEach(b => { const on = b.id === navId; b.classList.toggle('active', on); if (on) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
     const subKey = view === 'collection' && activeSingleFilter === 'wishlist' ? 'wishlist' : view;
     $$('#singlesSubnav .tab-btn').forEach(b => b.classList.toggle('active', b.dataset.sview === subKey));
-    const t = SINGLES_TITLES[navId === 'navSinglesWishlist' ? 'wishlist' : navId === 'navSinglesPullList' ? 'pull' : navId === 'navLive' ? 'live' : navId === 'navProfile' ? 'profile' : view];
+    const t = SINGLES_TITLES[navId === 'navSinglesWishlist' ? 'wishlist' : navId === 'navSinglesPullList' ? 'pull' : view === 'community' && SINGLES_TITLES[ct] ? ct : view];
     if (t && $('mainTitleHeading')) { $('mainTitleHeading').textContent = t[0]; $('mainTitleSub').textContent = t[1]; }
     if (t) document.title = t[0] + ' · Panel';
   };
@@ -23661,7 +24331,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); rk = pfRank(owned, tr); } catch (_) {}
     const tabs = [['feed', 'Fil'], ['profile', 'Mon profil'], ['live', 'Directs']];
     return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
-      '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + (commTab === 'profile' || commTab === 'live' ? '' : hbStripHtml()) + (commTab === 'profile' || HB_TABS.includes(commTab) ? '' : storiesBarHtml());
+      '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + hbStripHtml() + (commTab === 'profile' || HB_TABS.includes(commTab) ? '' : storiesBarHtml());
   };
 
   // ── Explorer : chercher aussi des membres, des planches et des directs (D-63). Les comptes en ligne ne sont pas
@@ -25438,37 +26108,42 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   // Mode local : tout reste sur cet appareil (clé panel.hub.v1 et base IndexedDB « panel-dm » séparée) ; rien n'est publié,
   // aucun vote ni membre n'est simulé. La publication, la vérification Encré et les paiements arrivent avec les comptes (migration 19).
   const HB_TABS = ['forum', 'market', 'dm', 'pros', 'plans'];
-  const HB_STRIP = [['feed', 'Fil', 'ic-home'], ['forum', 'Le Comptoir', 'ic-chat'], ['market', 'Marché', 'ic-tag'], ['dm', 'Messages', 'ic-key'], ['pros', 'Pros & Atelier', 'ic-pen'], ['plans', 'Offres', 'ic-star']];
+  // D-114 : deux familles d'onglets. Accueil : Fil, Le Comptoir, Directs. Profil : Mon profil, Compte pro, Panel+. Marché et Messages ont leur propre entrée.
+  const HB_STRIP_HOME = [['feed', 'Fil', 'ic-home'], ['forum', 'Le Comptoir', 'ic-chat'], ['live', 'Directs', 'ic-live']];
+  const HB_STRIP_ME = [['profile', 'Mon profil', 'ic-user'], ['pros', 'Compte pro', 'ic-verified'], ['plans', 'Panel+', 'ic-star']];
   const HB_KEY = 'panel.hub.v1';
   const HB = () => window.PanelDomains;
   let hbCircle = '', hbSort = 'hot', hbOpen = '', hbReplyTo = '', hbPhotos = [];
   const hbLoad = () => {
     const d = wsLs(HB_KEY, {}), arr = v => Array.isArray(v) ? v : [], obj = v => v && typeof v === 'object' && !Array.isArray(v) ? v : {};
     return { threads: arr(d.threads), comments: arr(d.comments), votes: obj(d.votes), sides: obj(d.sides), listings: arr(d.listings), pro: d.pro && typeof d.pro === 'object' ? d.pro : null,
-      ticked: arr(d.ticked), collabs: arr(d.collabs), dmPolicy: HB().dm.DM_POLICIES.includes(d.dmPolicy) ? d.dmPolicy : 'everyone' };
+      ticked: arr(d.ticked), collabs: arr(d.collabs), dmPolicy: HB().dm.DM_POLICIES.includes(d.dmPolicy) ? d.dmPolicy : 'everyone',
+      dmTimer: HB().dmRatchet.TIMERS.includes(d.dmTimer) ? d.dmTimer : 0, bundle: obj(d.bundle), verify: obj(d.verify) };
   };
   const hbSave = st => { try { localStorage.setItem(HB_KEY, JSON.stringify(st)); return true; } catch (_) { showToast("Stockage plein : rien n'a été enregistré."); return false; } };
   const hbDate = at => { try { return new Date(at).toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }); } catch (_) { return ''; } };
-  const hbStripHtml = () => '<nav class="hb-strip" aria-label="Espaces de la communauté">' + HB_STRIP.map(([k, l, i]) => '<button type="button" class="hb-chip' + (commTab === k ? ' is-on' : '') + '" data-cm-tab="' + k + '"' + (commTab === k ? ' aria-current="page"' : '') + '>' + igIcon(i) + '<span>' + l + '</span></button>').join('') + '</nav>';
+  const hbStripHtml = () => { const set = HB_STRIP_HOME.some(x => x[0] === commTab) ? HB_STRIP_HOME : HB_STRIP_ME.some(x => x[0] === commTab) ? HB_STRIP_ME : null; return !set ? '' : '<nav class="hb-strip" aria-label="' + (set === HB_STRIP_HOME ? 'Accueil' : 'Mon espace') + '">' + set.map(([k, l, i]) => '<button type="button" class="hb-chip' + (commTab === k ? ' is-on' : '') + '" data-cm-tab="' + k + '"' + (commTab === k ? ' aria-current="page"' : '') + '>' + igIcon(i) + '<span>' + l + '</span></button>').join('') + '</nav>'; };
   const hbHero = (kicker, title, text, tone) => '<header class="hb-hero hb-' + tone + '"><small>' + kicker + '</small><h2>' + title + '</h2><p>' + text + '</p></header>';
   const hbLocal = txt => '<p class="hb-local">' + igIcon('ic-info') + '<span>' + txt + '</span></p>';
   const hbEmpty = (icon, title, text) => '<div class="hb-empty">' + igIcon(icon) + '<b>' + title + '</b><span>' + text + '</span></div>';
   const hbOpt = (v, l, on) => '<option value="' + escapeHtml(v) + '"' + (on ? ' selected' : '') + '>' + escapeHtml(l) + '</option>';
 
-  // Le sceau Encré : un tampon d'encre dentelé, trame en demi-teinte, plume au centre ; jaune et noir, couleurs de la planche
-  const hbSealSvg = (kind, size) => {
-    const P = HB().pros, label = 'ENCRÉ · ' + (P.KIND_LABEL[kind] || '').toUpperCase(), id = 'hbs-' + kind + '-' + size;
-    let edge = '';
-    for (let i = 0; i <= 48; i++) { const a = i / 48 * Math.PI * 2, r = i % 2 ? 53 : 57; edge += (i ? 'L' : 'M') + (60 + r * Math.cos(a)).toFixed(1) + ' ' + (60 + r * Math.sin(a)).toFixed(1); }
-    return '<svg class="hb-seal" width="' + size + '" height="' + size + '" viewBox="0 0 120 120" role="img" aria-label="' + escapeHtml('Sceau ' + label.toLowerCase()) + '">' +
-      '<defs><pattern id="' + id + 'p" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(30)"><circle cx="2.5" cy="2.5" r="1.1" fill="#14110F"/></pattern><path id="' + id + 'c" d="M60 60m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs>' +
-      '<path d="' + edge + 'Z" fill="#FFD23F" stroke="#14110F" stroke-width="3" stroke-linejoin="round"/>' +
-      '<circle cx="60" cy="60" r="45" fill="url(#' + id + 'p)" opacity=".28"/><circle cx="60" cy="60" r="45" fill="none" stroke="#14110F" stroke-width="2"/><circle cx="60" cy="60" r="30" fill="#FFF7D6" stroke="#14110F" stroke-width="2.5"/>' +
-      '<text font-size="10" font-weight="900" letter-spacing="1.4" fill="#14110F"><textPath href="#' + id + 'c" startOffset="25%" text-anchor="middle">' + escapeHtml(label) + '</textPath></text>' +
-      '<path d="M60 37l11 17-11 26-11-26z" fill="#14110F"/><path d="M60 52v14" stroke="#FFD23F" stroke-width="2" stroke-linecap="round"/><circle cx="60" cy="52" r="2.6" fill="#FFD23F"/>' +
-      '<path d="M78 76c3 4 3 8 0 9s-5-3-3-6z" fill="#14110F"/></svg>';
+  // D-114 : pastilles vérifiées. Une rosette commune, une couleur et un symbole par type : Créateur (plume, or), Boutique (vitrine, vert),
+  // Éditeur (livre, bleu), Studio (cases, violet), Équipe Panel (bouclier, rouge). Elles n'apparaissent qu'après décision de l'équipe.
+  const HB_GLYPH = {
+    nib: '<path d="M12 6.5l3 4.5-3 6.5-3-6.5z" fill="currentColor"/><circle cx="12" cy="10.6" r="1" fill="var(--b)"/>',
+    shop: '<path d="M7.5 9.5h9l-.7-2.5H8.2zM8 9.5v6.5h8V9.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M11 16v-3h2v3" fill="currentColor"/>',
+    book: '<path d="M7 8h3.6c.8 0 1.4.6 1.4 1.4V16c0-.6-.5-1-1-1H7zM17 8h-3.6c-.8 0-1.4.6-1.4 1.4V16c0-.6.5-1 1-1h4z" fill="currentColor"/>',
+    panels: '<path d="M7 7.5h4.2v4.2H7zM12.8 7.5H17v4.2h-4.2zM7 13.3h10v3.2H7z" fill="currentColor"/>',
+    shield: '<path d="M12 6.5l4.5 1.7v3.4c0 2.8-2 4.6-4.5 5.4-2.5-.8-4.5-2.6-4.5-5.4V8.2z" fill="currentColor"/>'
   };
-  const hbSealBadge = (kind, status) => { const s = HB().pros.seal(kind, status); return s.show ? '<span class="hb-badge" title="' + escapeHtml(s.title) + '">' + hbSealSvg(kind, 22) + escapeHtml(s.label) + '</span>' : ''; };
+  const hbBadgeSvg = (type, size) => {
+    const b = HB().verify.BADGES[type];
+    if (!b) return '';
+    return '<svg class="hb-vbadge" width="' + size + '" height="' + size + '" viewBox="0 0 24 24" role="img" aria-label="' + escapeHtml(b.label) + '" style="--b:' + b.color + ';color:' + b.ink + '">' +
+      '<path d="M12 1.8l2.6 2 3.3-.3 1 3.2 2.8 1.8-1.1 3.1 1.1 3.1-2.8 1.9-1 3.1-3.3-.3-2.6 2-2.6-2-3.3.3-1-3.1-2.8-1.9 1.1-3.1-1.1-3.1 2.8-1.8 1-3.2 3.3.3z" fill="' + b.color + '"/>' + HB_GLYPH[b.glyph] + '</svg>';
+  };
+  const hbSealBadge = (kind, status) => { const s = HB().pros.seal(kind, status); return s.show ? '<span class="hb-badge" title="' + escapeHtml(s.title) + '">' + hbBadgeSvg(kind, 20) + escapeHtml(s.label) + '</span>' : ''; };
 
   // ---------- Le Comptoir ----------
   const hbVoteHtml = (key, n, mine) => '<div class="hb-vote"><button type="button" aria-label="Voter pour" aria-pressed="' + (mine > 0) + '" data-hb-vote="' + key + '" data-dir="1">▲</button><b>' + n + '</b><button type="button" aria-label="Voter contre" aria-pressed="' + (mine < 0) + '" data-hb-vote="' + key + '" data-dir="-1">▼</button></div>';
@@ -25531,12 +26206,42 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const M = HB().market, c = M.cents(priceText), f = c >= 100 ? M.fees(c, M.SIM_RATE) : null;
     return f ? '<b>Vous recevriez ' + M.money(f.seller) + '</b><span>Prix ' + M.money(f.price) + ' − frais de service ' + M.money(f.fee) + ' (simulation à ' + Math.round(M.SIM_RATE * 100) + ' %, taux réel à fixer). La livraison est payée par l’acheteur au prix du transporteur.</span>' : '<span>Indiquez un prix pour voir ce que vous recevriez.</span>';
   };
+  // D-114 : Marché en quatre onglets, comme les applications de seconde main (Acheter, Vendre, Offres, Favoris)
+  let hbMk = 'buy', hbMkTimer = 0;
+  const hbMq = { q: '', condition: '', delivery: '', max: '', sort: 'recent' };
+  const HB_MK = [['buy', 'Acheter', 'ic-search'], ['sell', 'Vendre', 'ic-tag'], ['offers', 'Offres', 'ic-chat'], ['favs', 'Favoris', 'ic-heart']];
+  const hbMkCard = (l, M) => '<article class="mk-card">' + (l.photos && l.photos[0] ? '<img alt="" src="' + l.photos[0] + '">' : '<span class="hb-ph">' + igIcon('ic-image') + '</span>') +
+    '<b class="mk-price">' + M.money(l.price, l.currency) + '</b><span class="mk-title">' + escapeHtml(l.title + (l.issue ? ' #' + l.issue : '')) + '</span><small>' + M.CONDITION_LABEL[l.condition] + '</small><span class="mk-you">Vous · brouillon</span></article>';
+  const hbOfferOut = (priceText, offerText) => {
+    const M = HB().market, price = M.cents(priceText);
+    if (!(price > 0)) return '<span class="hb-muted">Indiquez le prix de l’annonce et votre offre.</span>';
+    const r = M.validateOffer({ price, currency: 'EUR' }, offerText, 0);
+    return r.ok ? igIcon('ic-check') + '<span>Offre valable : ' + M.money(r.amount, 'EUR') + ', soit ' + Math.round(r.amount / price * 100) + ' % du prix. Le vendeur a ' + r.expiresInHours + ' h pour répondre.</span>' : igIcon('ic-x') + '<span>' + escapeHtml(r.error) + '</span>';
+  };
+  const hbBundleOut = st => {
+    const M = HB().market, prices = st.listings.map(l => l.price).filter(x => x > 0);
+    if (prices.length < 2) return '<span class="hb-muted">Avec deux brouillons ou plus, l’aperçu du lot s’affiche ici.</span>';
+    const b = M.bundle(prices, st.bundle);
+    return b.pct ? '<span>Un acheteur qui prend vos ' + b.count + ' brouillons paie <b>' + M.money(b.price, 'EUR') + '</b> au lieu de ' + M.money(b.total, 'EUR') + ' (−' + b.pct + ' %).</span>' : '<span>Vos ' + b.count + ' brouillons font ' + M.money(b.total, 'EUR') + ' ; aucune remise de lot choisie.</span>';
+  };
   const hbMarketHtml = () => {
     const M = HB().market, st = hbLoad(), dupes = hbDupes(), owned = physicalSingles.filter(isOwned);
     const name = s => [s.series, s.issue ? '#' + s.issue : '', s.variant ? '(' + s.variant + ')' : ''].filter(Boolean).join(' ');
     const steps = [['ic-tag', 'Annonce', 'Depuis votre collection : photos de votre exemplaire, état, prix.'], ['ic-shield', 'Paiement protégé', "L'acheteur paie dans Panel, l'argent est gardé par un prestataire agréé."], ['ic-box', 'Remise', 'Point relais, colis suivi, ou en main propre avec un code à 6 chiffres.'], ['ic-check-circle', 'Confirmation', "L'argent est libéré au vendeur, moins un petit pourcentage."]];
-    return hbHero('Marché', 'Le Marché', 'Vendez vos doublons et les numéros dont vous vous séparez, entre collectionneurs, sans quitter Panel.', 'market') +
-      '<ol class="hb-steps">' + steps.map(([i, t, d], k) => '<li><span class="hb-step-n">' + (k + 1) + '</span>' + igIcon(i) + '<b>' + t + '</b><small>' + d + '</small></li>').join('') + '</ol>' +
+    const tabs = '<nav class="mk-tabs" aria-label="Marché">' + HB_MK.map(([k, l, ic]) => '<button type="button" data-hb-mk="' + k + '" class="' + (hbMk === k ? 'is-on' : '') + '"' + (hbMk === k ? ' aria-current="page"' : '') + '>' + igIcon(ic) + '<span>' + l + '</span></button>').join('') + '</nav>';
+    const rep = M.reputation([]);
+    let body = '';
+    if (hbMk === 'buy') {
+      const found = M.search(st.listings, hbMq);
+      body = '<form class="mk-search" data-hb-mk-search><label class="dm-search">' + igIcon('ic-search') + '<input type="search" name="q" value="' + escapeHtml(hbMq.q) + '" placeholder="Titre, numéro, éditeur…" aria-label="Rechercher dans le Marché"></label>' +
+        '<div class="mk-filters"><select name="condition" aria-label="État"><option value="">Tous les états</option>' + M.CONDITIONS.map(c => hbOpt(c, M.CONDITION_LABEL[c], hbMq.condition === c)).join('') + '</select>' +
+        '<select name="delivery" aria-label="Remise"><option value="">Toutes les remises</option>' + M.DELIVERY.map(d => hbOpt(d, M.DELIVERY_LABEL[d], hbMq.delivery === d)).join('') + '</select>' +
+        '<input name="max" inputmode="decimal" placeholder="Prix max (€)" aria-label="Prix maximum" value="' + escapeHtml(hbMq.max) + '">' +
+        '<select name="sort" aria-label="Trier">' + M.SORTS.map(k => hbOpt(k, M.SORT_LABEL[k], hbMq.sort === k)).join('') + '</select></div></form>' +
+        hbEmpty('ic-bag', 'Aucune annonce de membre pour l’instant', 'Les annonces apparaîtront ici à l’ouverture des comptes. Rien n’est inventé en attendant.') +
+        (st.listings.length ? '<h4 class="hb-sub">Aperçu avec vos brouillons (' + found.length + ' sur ' + st.listings.length + ')</h4>' + (found.length ? '<div class="mk-grid">' + found.map(l => hbMkCard(l, M)).join('') + '</div>' : '<p class="hb-muted">Aucun brouillon ne correspond à ces filtres.</p>') : '');
+    } else if (hbMk === 'sell') {
+      body = '<ol class="hb-steps">' + steps.map(([i, t, d], k) => '<li><span class="hb-step-n">' + (k + 1) + '</span>' + igIcon(i) + '<b>' + t + '</b><small>' + d + '</small></li>').join('') + '</ol>' +
       '<details class="hb-compose" open><summary>' + igIcon('ic-plus') + 'Préparer une annonce</summary><form data-hb-form="listing" class="hb-form">' +
       '<label>Exemplaire de votre collection<select name="copy" data-hb-copy><option value="">— Choisir —</option>' +
       (dupes.length ? '<optgroup label="Vos doublons">' + dupes.map(s => hbOpt(s.id, name(s))).join('') + '</optgroup>' : '') +
@@ -25554,6 +26259,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<div><b>' + escapeHtml(l.title + (l.issue ? ' #' + l.issue : '')) + '</b><span class="hb-price">' + M.money(l.price, l.currency) + '</span><small>' + M.CONDITION_LABEL[l.condition] + ' · ' + l.delivery.map(d => M.DELIVERY_LABEL[d]).join(', ') + (l.city ? ' · ' + escapeHtml(l.city) : '') + '</small>' +
         '<span class="hb-state">Brouillon · publication à l’ouverture des comptes</span><button type="button" data-hb-del-listing="' + l.id + '">' + igIcon('ic-trash') + 'Retirer</button></div></article>').join('') + '</div>'
         : hbEmpty('ic-tag', 'Aucun brouillon', dupes.length ? dupes.length + ' doublon' + (dupes.length > 1 ? 's' : '') + ' dans votre collection : un bon point de départ.' : 'Choisissez un exemplaire de votre collection pour commencer.')) +
+        '<section class="hb-panel"><h4>' + igIcon('ic-layers') + 'Remises sur les lots</h4><p class="hb-muted">Les acheteurs aiment regrouper. Choisissez une remise par palier ; les frais sont calculés sur le prix remisé.</p><div class="hb-row">' +
+        M.BUNDLE_TIERS.map(t => '<label>' + t + ' numéros et plus<select data-hb-bundle="' + t + '">' + [0, 5, 10, 15, 20].map(v => hbOpt(String(v), v ? '−' + v + ' %' : 'Aucune', Number(st.bundle[t] || 0) === v)).join('') + '</select></label>').join('') + '</div><p class="mk-out" data-hb-bundle-out>' + hbBundleOut(st) + '</p></section>' +
+        '<section class="hb-panel mk-rep"><h4>' + igIcon('ic-star') + 'Votre réputation de vendeur</h4><b>' + rep.label + '</b><p class="hb-muted">Après chaque vente terminée, l’acheteur laisse une note de 1 à 5 et un avis. La note affichée est une moyenne prudente : un seul avis parfait ne fait pas un vendeur fiable. Le badge « Vendeur fiable » arrive à 4,5 sur au moins trois ventes.</p></section>';
+    } else if (hbMk === 'offers') {
+      body = '<section class="hb-panel"><h4>' + igIcon('ic-chat') + 'Faire une offre</h4><ul class="mk-rules"><li>Au moins ' + Math.round(M.OFFER_MIN_RATIO * 100) + ' % du prix demandé, toujours en dessous.</li><li>Le vendeur a ' + M.OFFER_HOURS + ' h pour accepter, refuser ou ignorer.</li><li>Trois offres en attente au plus par annonce.</li><li>Une offre acceptée réserve le numéro au prix proposé ; le paiement reste protégé.</li></ul>' +
+        '<div class="hb-row"><label>Prix de l’annonce (€)<input inputmode="decimal" data-hb-offer-price placeholder="40"></label><label>Votre offre (€)<input inputmode="decimal" data-hb-offer-amount placeholder="30"></label></div><p class="mk-out" data-hb-offer-out>' + hbOfferOut('', '') + '</p></section>' +
+        hbEmpty('ic-chat', 'Aucune offre envoyée ni reçue', 'Vos offres et celles des acheteurs apparaîtront ici, avec leur délai.');
+    } else {
+      body = hbEmpty('ic-heart', 'Aucun favori', 'Touchez le cœur d’une annonce pour la retrouver ici et être prévenu d’une baisse de prix.');
+    }
+    return tabs + body +
       '<section class="hb-safety"><h4>' + igIcon('ic-shield') + 'Acheter et vendre en sécurité</h4><ul>' + M.SAFETY.map(s => '<li>' + s + '</li>').join('') + '</ul><p>Réservé aux adultes. Les vendeurs réguliers sont identifiés comme professionnels, comme l’exige la loi européenne.</p></section>' +
       hbLocal("Mode local : rien n'est en vente et aucun paiement n'est possible. Le brouillon ne contient ni votre prix d'achat, ni votre cote, ni votre rangement.");
   };
@@ -25570,15 +26286,25 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const hbDmGet = async () => { if (indexedDB.databases && !(await indexedDB.databases()).some(d => d.name === 'panel-dm')) return null; const db = await hbDmDb(); return new Promise(res => { const q = db.transaction('identity').objectStore('identity').get('device'); q.onsuccess = () => { db.close(); res(q.result || null); }; q.onerror = () => { db.close(); res(null); }; }); };
   const hbDmPut = async v => { const db = await hbDmDb(); return new Promise((res, rej) => { const tx = db.transaction('identity', 'readwrite'); tx.objectStore('identity').put(v, 'device'); tx.oncomplete = () => { db.close(); res(true); }; tx.onerror = () => { db.close(); rej(tx.error); }; }); };
   const hbDmHtml = () => {
-    const D = HB().dm, st = hbLoad();
-    const pol = { everyone: ['Tout le monde', 'Les inconnus envoient une demande, que vous acceptez ou non.'], verified: ['Profils Encré seulement', 'Pour les créateurs et éditeurs sollicités.'], nobody: ['Personne', 'Vous ne recevez plus de demandes.'] };
-    const cards = [['ic-key', 'Chiffrés sur votre appareil', 'Chaque message est chiffré avant de partir (' + D.ALG + '). Le serveur ne garde que du texte illisible.'], ['ic-bell', 'Une demande avant tout', 'Un inconnu ne peut envoyer qu’une demande. Rien d’autre ne passe avant votre accord.'], ['ic-shield', 'Jamais entre mineur et adulte', 'Les messages privés sont réservés aux adultes. Un signalement ne transmet que les messages que vous choisissez.']];
-    return hbHero('Messages', 'Messages privés chiffrés', 'Pour négocier une vente, monter un projet ou parler de comics, sans que personne d’autre ne puisse lire, pas même Panel.', 'dm') +
-      '<div class="hb-cards">' + cards.map(([i, t, d]) => '<article>' + igIcon(i) + '<b>' + t + '</b><p>' + d + '</p></article>').join('') + '</div>' +
+    const R = HB().dmRatchet, st = hbLoad();
+    const pol = { everyone: ['Tout le monde', 'Les inconnus envoient une demande, que vous acceptez ou non.'], verified: ['Comptes vérifiés seulement', 'Pour les créateurs et éditeurs très sollicités.'], nobody: ['Personne', 'Vous ne recevez plus de demandes.'] };
+    const steps = [
+      ['ic-key', 'Clés d’identité et préclés signées (X3DH)', 'Votre appareil publie seulement des clés publiques. Chaque préclé à usage unique n’est donnée qu’une fois, puis effacée du serveur.'],
+      ['ic-refresh', 'Double cliquet', 'Chaque message a sa propre clé, effacée après usage. Une clé volée ne déchiffre pas les anciens messages, ni les suivants après le prochain échange.'],
+      ['ic-layers', 'En-tête authentifié, longueur masquée', 'Les messages sont complétés par blocs de 64 octets. Un message rejoué ou modifié est refusé.'],
+      ['ic-eye', 'Numéro de sécurité', 'Comparez-le en personne ou en appel. S’il change, Panel vous prévient avant d’envoyer.'],
+      ['ic-hourglass', 'Messages éphémères', 'De 5 minutes à 1 semaine, réglés par conversation. À l’échéance, ils ne sont plus servis et sont effacés du serveur.']
+    ];
+    return '<div class="dm-inbox"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dm-search></label>' +
+      '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" class="is-on" aria-current="page">Principal</button><button type="button" disabled title="Les demandes des personnes que vous ne suivez pas arrivent ici">Demandes</button></nav>' +
+      hbEmpty('ic-send', 'Aucune conversation pour l’instant', 'Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez. Les messages s’ouvrent avec les comptes en ligne, pour les adultes.') + '</div>' +
+      '<details class="hb-panel dm-sec" open><summary><h4>' + igIcon('ic-shield') + 'Protégés comme sur Signal</h4></summary>' +
+      '<ol class="dm-proto">' + steps.map(([i, t, d]) => '<li>' + igIcon(i) + '<div><b>' + t + '</b><p>' + d + '</p></div></li>').join('') + '</ol>' +
+      '<p class="hb-muted dm-alg">Protocole : <code>' + escapeHtml(R.ALG) + '</code>. Panel voit qui écrit à qui et quand, jamais le contenu. Jamais entre un mineur et un adulte. Un signalement ne transmet que les messages que vous choisissez.</p></details>' +
       '<section class="hb-panel"><h4>' + igIcon('ic-key') + 'Clé de cet appareil</h4><div data-hb-dm-key><p class="hb-muted">Lecture de la clé…</p></div></section>' +
-      '<section class="hb-panel"><h4>' + igIcon('ic-settings') + 'Qui peut m’écrire</h4><div class="hb-radios">' + D.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
-      hbEmpty('ic-chat', 'Aucune conversation', 'Les messages s’ouvriront avec les comptes en ligne, pour les adultes.') +
-      hbLocal('Limite connue et écrite : le chiffrement protège chaque conversation, mais pas encore chaque message séparément (« double cliquet » prévu). La clé privée ne peut pas être exportée, même par Panel.');
+      '<section class="hb-panel"><h4>' + igIcon('ic-hourglass') + 'Messages éphémères par défaut</h4><label class="dm-timer">Pour les nouvelles conversations<select data-hb-timer>' + R.TIMERS.map(t => hbOpt(String(t), R.TIMER_LABEL[t], st.dmTimer === t)).join('') + '</select></label></section>' +
+      '<section class="hb-panel"><h4>' + igIcon('ic-settings') + 'Qui peut m’écrire</h4><div class="hb-radios">' + HB().dm.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
+      hbLocal('La clé privée ne quitte jamais cet appareil et ne peut pas être exportée, même par Panel. Limite écrite : Panel voit les métadonnées (qui, quand), pas le contenu.');
   };
   const hbDmMount = async root => {
     const box = root.querySelector('[data-hb-dm-key]');
@@ -25591,25 +26317,105 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.innerHTML = '<p>Empreinte de cet appareil, à comparer de vive voix avec vos contacts :</p><code class="hb-fp">' + escapeHtml(fp) + '</code><small class="hb-muted">Créée le ' + hbDate(id.createdAt) + ' · clé privée non exportable</small>' +
       '<button class="btn secondary" type="button" data-hb-dm-test>' + igIcon('ic-check-circle') + 'Vérifier le chiffrement ici</button><div data-hb-dm-out></div>';
   };
-  // Vérification locale : un second appareil fictif est créé en mémoire, un message part et revient, une altération est refusée
+  // Vérification locale du protocole : deux appareils créés en mémoire sur ce téléphone (rien n'est enregistré ni envoyé)
   const hbDmSelfTest = async root => {
-    const D = HB().dm, out = root.querySelector('[data-hb-dm-out]'), id = await hbDmGet();
-    if (!out || !id) return;
-    const other = await D.createIdentity(), meta = { conversationId: 'essai-local', senderId: 'moi', seq: 1 };
-    const k1 = await D.conversationKey(id.privateKey, other.publicJwk, meta.conversationId), k2 = await D.conversationKey(other.privateKey, id.publicJwk, meta.conversationId);
-    const box = await D.seal(k1, 'Ton Absolute Batman #1 est toujours dispo ?', meta), back = await D.open(k2, box, meta);
-    let refused = false; try { await D.open(k2, box, { ...meta, senderId: 'intrus' }); } catch (_) { refused = true; }
-    out.innerHTML = '<ul class="hb-test"><li>' + igIcon('ic-check') + '<span>Ce que voit le serveur : <code>' + escapeHtml(box.ct.slice(0, 32)) + '…</code></span></li><li>' + igIcon(back ? 'ic-check' : 'ic-x') + '<span>Déchiffré par le destinataire : « ' + escapeHtml(back) + ' »</span></li><li>' + igIcon(refused ? 'ic-check' : 'ic-x') + '<span>' + (refused ? 'Message altéré : refusé' : 'Altération non détectée') + '</span></li></ul>';
+    const R = HB().dmRatchet, out = root.querySelector('[data-hb-dm-out]');
+    if (!out) return;
+    const alice = await R.createIdentity(), bob = await R.createIdentity(), pre = await R.createPrekeys(bob, 2, 1);
+    const x = await R.x3dhInitiate(alice, pre.bundle, pre.bundle.opk[0]);
+    let a = await R.initSender(x.sk, pre.bundle.spk, x.ad), m1, m2, m3;
+    [a, m1] = await R.encrypt(a, 'Ton Absolute Batman #1 est toujours dispo ?');
+    [a, m2] = await R.encrypt(a, 'Je peux venir le chercher samedi.');
+    [a, m3] = await R.encrypt(a, 'Ou par point relais.');
+    const resp = await R.x3dhRespond(bob, pre.secret, x.init);
+    let b = await R.initReceiver(resp.sk, pre.secret.spk, resp.ad), t1, t3, t2;
+    [b, t1] = await R.decrypt(b, m1); [b, t3] = await R.decrypt(b, m3); [b, t2] = await R.decrypt(b, m2);
+    let replay = false, tamper = false;
+    try { await R.decrypt(b, m2); } catch (_) { replay = true; }
+    try { await R.decrypt(b, { ...m3, header: { ...m3.header, n: m3.header.n + 7 } }); } catch (_) { tamper = true; }
+    const distinct = new Set([m1.ct, m2.ct, m3.ct]).size === 3, ok = (c, t) => '<li>' + igIcon(c ? 'ic-check' : 'ic-x') + '<span>' + t + '</span></li>';
+    out.innerHTML = '<ul class="hb-test">' + ok(true, 'Ce que voit le serveur : <code>' + escapeHtml(m1.ct.slice(0, 28)) + '…</code>') +
+      ok(t1 && t2 && t3, 'Trois messages déchiffrés, même arrivés dans le désordre') + ok(distinct, 'Une clé différente pour chaque message (double cliquet)') +
+      ok(replay, 'Message rejoué : refusé') + ok(tamper, 'En-tête modifié : refusé') + '</ul><small class="hb-muted">Deux appareils simulés en mémoire, effacés en quittant la page.</small>';
+  };
+
+  // ---------- Compte : type, inscription, vérification (D-114) ----------
+  const hbVType = st => HB().verify.TYPES.includes(st.verify.type) ? st.verify.type : 'collector';
+  const hbAccountTypeHtml = st => {
+    const V = HB().verify, cur = hbVType(st);
+    return '<section class="hb-panel"><h4>' + igIcon('ic-user') + 'Quel compte êtes-vous ?</h4><div class="vt-grid">' + V.TYPES.map(t => '<button type="button" class="vt-card' + (cur === t ? ' is-on' : '') + '" data-hb-vtype="' + t + '" aria-pressed="' + (cur === t) + '">' +
+      (V.BADGES[t] ? hbBadgeSvg(t, 30) : '<span class="vt-none">' + igIcon('ic-books') + '</span>') + '<b>' + V.TYPE_INFO[t].label + '</b><small>' + escapeHtml(V.TYPE_INFO[t].about) + '</small>' +
+      (V.BADGES[t] ? '<em>' + V.BADGES[t].label + '</em>' : '<em>Aucune vérification</em>') + '</button>').join('') + '</div>' +
+      '<p class="hb-muted">Pastille Équipe Panel : ' + hbBadgeSvg('staff', 16) + ' réservée aux membres de l’équipe. Un nom de maison ou de marque est réservé : il n’est attribué qu’après vérification.</p></section>';
+  };
+  const hbSignupHtml = st => {
+    const A = HB().accountAuth, su = st.verify.signup;
+    if (su) return '<section class="hb-panel vt-ready"><h4>' + igIcon('ic-check-circle') + 'Profil d’inscription prêt</h4><p><b>@' + escapeHtml(su.handle) + '</b> · ' + HB().verify.TYPE_INFO[su.type].label + ' · tranche ' + su.band + (su.needsVerification ? ' · vérification à faire' : '') + '</p><p class="hb-muted">Gardé sur cet appareil. Il servira à l’ouverture des comptes.</p><button type="button" class="btn ghost" data-hb-signup-reset>Modifier</button></section>';
+    return '<section class="hb-panel"><h4>' + igIcon('ic-key') + 'Créer votre compte Panel</h4><div class="au-providers">' +
+      A.PROVIDERS.map(p => '<button type="button" class="au-btn au-' + p.key + '" data-hb-auth="' + p.key + '">' + (p.key === 'apple' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.1 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></svg>' : p.key === 'google' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" stroke="none" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" stroke="none" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" stroke="none" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" stroke="none" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg>' : igIcon('ic-send')) + '<span>' + p.label + '</span></button>').join('') + '</div>' +
+      '<form data-hb-form="signup" class="hb-form"><div class="hb-row"><label>Pseudo<input name="handle" maxlength="25" placeholder="alex_encre" autocomplete="username" required></label><label>Année de naissance<input name="birthYear" inputmode="numeric" maxlength="4" placeholder="1995" required></label></div>' +
+      '<label class="hb-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label><label class="hb-check"><input type="checkbox" name="marketing"> Recevoir les nouveautés de Panel (facultatif)</label>' +
+      '<button class="btn" type="submit">' + igIcon('ic-check') + 'Préparer mon inscription</button></form>' +
+      '<p class="hb-muted">Apple et Google : aucun mot de passe ne passe par Panel. E-mail : un lien de connexion, ou un mot de passe d’au moins 12 caractères. Double authentification par application proposée dès la création. Comptes à partir de 13 ans ; comptes pros réservés aux adultes.</p></section>';
+  };
+  const hbVerifyHtml = st => {
+    const V = HB().verify, type = hbVType(st);
+    if (type === 'collector') return '';
+    const docs = V.DOCS[type], have = docs.filter(d => hbVHas(st, d)).map(d => d.key), pr = V.progress(type, have), f = st.verify.fields || {};
+    const row = d => {
+      const ok = have.includes(d.key), a = d.accept;
+      let ctl = '';
+      if (a.includes('number')) ctl = '<div class="hb-row"><label>Pays<select data-hb-vfield="country">' + [['BE', 'Belgique (BCE)'], ['FR', 'France (SIREN)'], ['XX', 'Autre pays']].map(([k, l]) => hbOpt(k, l, (f.country || 'BE') === k)).join('') + '</select></label><label>Numéro<input data-hb-vfield="company" value="' + escapeHtml(f.company || '') + '" inputmode="numeric" placeholder="0412.345.678"></label></div>';
+      else if (a.includes('email')) ctl = '<div class="hb-row"><label>Site officiel<input data-hb-vfield="website" value="' + escapeHtml(f.website || '') + '" placeholder="https://maison.example"></label><label>Adresse sur ce domaine<input data-hb-vfield="domain_email" value="' + escapeHtml(f.domain_email || '') + '" placeholder="presse@maison.example"></label></div>';
+      else if (a.includes('isbn') && !a.includes('pdf')) ctl = '<label>ISBN-13<input data-hb-vfield="isbn" value="' + escapeHtml(f.isbn || '') + '" inputmode="numeric" placeholder="978-2-…"></label>';
+      else if (a.includes('link')) ctl = '<p class="vt-code">Votre code : <code>' + escapeHtml(st.verify.code || '') + '</code></p><label>Lien public où il apparaît<input data-hb-vfield="proof_link" value="' + escapeHtml(f.proof_link || '') + '" placeholder="https://…"></label>';
+      else if (a.includes('text')) ctl = '<label>Précisez<textarea rows="2" maxlength="600" data-hb-vfield="' + d.key + '">' + escapeHtml(f[d.key] || '') + '</textarea></label>';
+      if (a.some(x => /^(pdf|jpg|png)$/.test(x))) ctl += '<label class="vt-file">' + igIcon('ic-upload') + '<span>' + (st.verify.docs && st.verify.docs[d.key] ? 'Fichier contrôlé · empreinte ' + st.verify.docs[d.key].sha256.slice(0, 10) + '…' : 'Choisir un fichier (' + a.filter(x => /^(pdf|jpg|png)$/.test(x)).join(', ') + ', ' + V.MAX_FILE_MB + ' Mo max)') + '</span><input type="file" accept="' + a.filter(x => /^(pdf|jpg|png)$/.test(x)).map(x => '.' + x).join(',') + '" data-hb-vdoc="' + d.key + '"></label>';
+      return '<li class="vt-doc' + (ok ? ' is-ok' : '') + '">' + igIcon(ok ? 'ic-check-circle' : d.required ? 'ic-file' : 'ic-info') + '<div><b>' + escapeHtml(d.label) + (d.required ? '' : ' <small>(facultatif)</small>') + '</b><span class="vt-chk" data-hb-vchk="' + d.key + '">' + hbVCheck(st, d) + '</span>' + ctl + '</div></li>';
+    };
+    return '<section class="hb-panel vt-wizard"><h4>' + hbBadgeSvg(type, 22) + 'Dossier ' + V.BADGES[type].label.toLowerCase() + '</h4>' +
+      '<div class="hb-meterline"><i style="width:' + Math.round(pr.done / pr.total * 100) + '%"></i></div><p class="hb-muted">' + pr.done + ' sur ' + pr.total + ' pièces obligatoires · ' + (pr.ready ? 'Dossier complet' : V.STATE_LABEL.draft) + '</p>' +
+      '<ol class="vt-docs hb-form">' + docs.map(row).join('') + '</ol>' +
+      '<div class="vt-terms"><b>Modalités</b><ul><li>Gratuit, jamais vendu, jamais lié à un abonnement.</li><li>Examen par une personne de l’équipe en double authentification, sous ' + V.REVIEW_DAYS + ' jours ouvrables.</li><li>Les fichiers ne restent pas sur l’appareil : seule leur empreinte est gardée ici. À l’ouverture, ils seront envoyés chiffrés puis effacés ' + V.DOC_RETENTION_DAYS + ' jours après la décision.</li><li>Pastille valable un an, renouvelable. Refus motivé, avec recours possible.</li><li>Usurpation d’identité : compte suspendu.</li></ul></div>' +
+      '<button class="btn" type="button" data-hb-vsubmit' + (pr.ready ? '' : ' disabled') + '>' + igIcon('ic-shield') + (pr.ready ? 'Dossier prêt' : 'Compléter le dossier') + '</button></section>';
+  };
+  // Une pièce est-elle fournie ? Fichier contrôlé, ou champ vérifié automatiquement
+  const hbVHas = (st, d) => {
+    const V = HB().verify, f = st.verify.fields || {}, file = !!(st.verify.docs && st.verify.docs[d.key]), a = d.accept;
+    if (a.includes('number')) return V.companyCheck(f.country || 'BE', f.company);
+    if (a.includes('email')) return V.domainMatches(f.domain_email, f.website);
+    if (a.includes('isbn') && !a.includes('pdf')) return V.checkISBN13(f.isbn);
+    if (a.includes('link')) return /^https:\/\/\S+$/.test(f.proof_link || '');
+    if (a.includes('text') && !a.some(x => /^(pdf|jpg|png)$/.test(x))) return String(f[d.key] || '').trim().length >= 3;
+    return file;
+  };
+  const hbVCheck = (st, d) => {
+    const f = st.verify.fields || {}, a = d.accept, ok = hbVHas(st, d);
+    if (a.includes('number')) return f.company ? (ok ? 'Numéro valide (clé de contrôle correcte)' : (f.country || 'BE') === 'XX' ? 'Au moins 6 caractères' : 'Numéro invalide : vérifiez la clé de contrôle') : '';
+    if (a.includes('email')) return f.domain_email ? (ok ? 'Adresse sur le domaine officiel : un code y sera envoyé' : 'L’adresse doit être sur le domaine du site officiel') : '';
+    if (a.includes('isbn') && !a.includes('pdf')) return f.isbn ? (ok ? 'ISBN-13 valide' : 'ISBN-13 invalide') : '';
+    return '';
+  };
+  // Empreinte SHA-256 calculée sur l'appareil ; le fichier lui-même n'est ni gardé ni envoyé
+  const hbVHash = async file => [...new Uint8Array(await crypto.subtle.digest('SHA-256', await file.arrayBuffer()))].map(b => b.toString(16).padStart(2, '0')).join('');
+  const hbAuthStart = async provider => {
+    const cfg = acctConfig();
+    if (!cfg) return showToast(provider === 'email' ? 'Remplissez le formulaire ci-dessous : l’e-mail servira à l’ouverture des comptes.' : 'La connexion avec ' + (provider === 'apple' ? 'Apple' : 'Google') + ' s’ouvrira avec les comptes en ligne.');
+    if (!acctLib()) await acctLoadLib();
+    const client = acctGetClient(cfg), A = acctCore();
+    if (!client || !A) return showToast('Connexion indisponible pour le moment.');
+    if (provider === 'email') { const b = $('acctBox'); if (b) { b.open = true; b.scrollIntoView({ block: 'center' }); } return; }
+    const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).oauth(provider);
+    if (r.ok && r.url) location.assign(r.url); else showToast(r.error ? r.error.message : 'Connexion impossible.');
   };
 
   // ---------- Pros & L'Atelier ----------
   const hbProsHtml = () => {
     const P = HB().pros, st = hbLoad(), pro = st.pro || { kind: 'creator', roles: [], links: [], works: [], open: true }, kind = pro.kind || 'creator';
-    const chk = P.applicationCheck(kind, st.ticked), mine = st.collabs.slice().sort((a, b) => P.collabMatch(b, pro) - P.collabMatch(a, pro));
+    const mine = st.collabs.slice().sort((a, b) => P.collabMatch(b, pro) - P.collabMatch(a, pro));
     const workLines = (pro.works || []).map(w => [w.title, w.publisher, w.year || ''].filter(Boolean).join(' ; ')).join('\n');
-    return hbHero('Pros', 'Pros & L’Atelier', 'Éditeurs, boutiques, scénaristes, dessinateurs, coloristes : des profils officiels vérifiés par une personne, et un atelier pour monter des projets ensemble.', 'pros') +
-      '<section class="hb-sealshow"><div class="hb-seals">' + P.KINDS.map(k => '<figure>' + hbSealSvg(k, 92) + '<figcaption>' + P.KIND_LABEL[k] + '</figcaption></figure>').join('') + '</div>' +
-      '<div><h3>Le sceau Encré</h3><p>Un tampon d’encre, comme sur une planche validée. Il est posé à la main par l’équipe après examen des preuves, et il peut être retiré. Il ne s’achète pas, aucun abonnement ne le donne.</p><small class="hb-muted">Aperçu du design : aucun profil n’est vérifié dans le mode local.</small></div></section>' +
+    return hbHero('Compte pro', 'Créateurs, boutiques, éditeurs, studios', 'Choisissez votre type de compte. Un compte pro reçoit sa pastille après vérification par une personne de l’équipe : elle ne s’achète pas.', 'pros') +
+      hbAccountTypeHtml(st) + hbSignupHtml(st) + hbVerifyHtml(st) +
       '<div class="hb-split"><form data-hb-form="pro" class="hb-form hb-panel"><h4>' + igIcon('ic-user') + 'Mon profil pro</h4>' +
       '<div class="hb-row"><label>Type<select name="kind" data-hb-kind>' + P.KINDS.map(k => hbOpt(k, P.KIND_LABEL[k], k === kind)).join('') + '</select></label><label>Nom public<input name="name" maxlength="80" value="' + escapeHtml(pro.name || '') + '" required></label></div>' +
       '<fieldset class="hb-roles"><legend>Métiers</legend>' + P.ROLES.map(r => '<label class="hb-tag"><input type="checkbox" name="roles" value="' + r + '"' + ((pro.roles || []).includes(r) ? ' checked' : '') + '>' + P.ROLE_LABEL[r] + '</label>').join('') + '</fieldset>' +
@@ -25618,10 +26424,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<label>Liens publics (https, un par ligne)<textarea name="links" rows="2">' + escapeHtml((pro.links || []).join('\n')) + '</textarea></label>' +
       '<div class="hb-row"><label>Ville<input name="city" maxlength="60" value="' + escapeHtml(pro.city || '') + '"></label><label class="hb-check"><input type="checkbox" name="open"' + (pro.open !== false ? ' checked' : '') + '> Ouvert aux collaborations</label></div>' +
       '<button class="btn" type="submit">' + igIcon('ic-save') + 'Enregistrer le profil</button></form>' +
-      '<div class="hb-panel hb-proof"><h4>' + igIcon('ic-shield') + 'Demande de sceau</h4><p class="hb-muted">' + P.statusLabel(st.pro ? st.pro.status : 'draft') + ' · ' + P.KIND_LABEL[kind] + '</p>' +
-      '<ul>' + P.EVIDENCE[kind].map(([k, l]) => '<li><label class="hb-check"><input type="checkbox" data-hb-tick="' + k + '"' + (st.ticked.includes(k) ? ' checked' : '') + '>' + l + '</label></li>').join('') + '</ul>' +
-      '<div class="hb-meterline"><i style="width:' + Math.round((P.EVIDENCE[kind].length - chk.missing.length) / P.EVIDENCE[kind].length * 100) + '%"></i></div>' +
-      '<p>' + (chk.ready ? 'Dossier prêt. Il partira à l’ouverture des comptes : une personne de l’équipe vérifie, puis efface les justificatifs.' : chk.missing.length + ' élément' + (chk.missing.length > 1 ? 's' : '') + ' à réunir avant la demande.') + '</p>' +
+      '<div class="hb-panel hb-proof"><h4>' + igIcon('ic-user') + 'Aperçu de la fiche</h4><p class="hb-muted">' + P.statusLabel(st.pro ? st.pro.status : 'draft') + ' · ' + P.KIND_LABEL[kind] + '</p>' +
       (st.pro && st.pro.name ? '<div class="hb-procard"><b>' + escapeHtml(st.pro.name) + '</b>' + hbSealBadge(st.pro.kind, st.pro.status) + '<small>' + (st.pro.roles || []).map(r => P.ROLE_LABEL[r]).join(' · ') + '</small>' + ((st.pro.works || []).length ? '<small>' + st.pro.works.length + ' titre' + (st.pro.works.length > 1 ? 's' : '') + ' en bibliographie</small>' : '') + '</div>' : '') + '</div></div>' +
       '<h3 class="hb-sub">L’Atelier</h3><p class="hb-muted">Cherchez un coloriste, proposez votre lettrage, montez un one-shot : les annonces passent par les messages chiffrés, jamais par un numéro affiché.</p>' +
       '<details class="hb-compose"><summary>' + igIcon('ic-plus') + 'Publier une annonce de collaboration</summary><form data-hb-form="collab" class="hb-form">' +
@@ -25640,7 +26443,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const never = { feed_boost: 'Une place plus haute dans le fil', forum_boost: 'Des votes ou une place au Comptoir', verified_seal: 'Le sceau Encré', ranking_priority: 'Un meilleur classement', member_data: 'Les données des membres' };
     return hbHero('Offres', 'Les offres Panel', 'Panel reste gratuit pour collectionner, lire, débattre et vendre. Les offres financent le service et ajoutent du confort, jamais de visibilité.', 'offers') +
       '<div class="hb-plans">' + O.PLANS.map(p => '<article class="hb-plan p-' + p.key + '"><small>' + escapeHtml(p.audience) + '</small><h3>' + escapeHtml(p.name) + '</h3><b class="hb-tarif">' + O.priceLabel(p) + '</b>' +
-        (p.requiresSeal ? '<span class="hb-req">' + hbSealSvg(p.requiresSeal, 20) + 'Réservée aux profils Encré</span>' : '') +
+        (p.requiresSeal ? '<span class="hb-req">' + hbBadgeSvg(p.requiresSeal, 18) + 'Réservée aux comptes vérifiés</span>' : '') +
         '<ul>' + p.features.map(f => '<li>' + igIcon('ic-check') + escapeHtml(f) + '</li>').join('') + '</ul>' +
         (p.free ? '<span class="hb-state">Votre offre actuelle</span>' : '<button class="btn secondary" type="button" disabled>' + O.REASON.not_on_sale.replace(/\.$/, '') + '</button>') + '</article>').join('') + '</div>' +
       '<section class="hb-never"><h4>' + igIcon('ic-shield') + 'Ce qu’un abonnement n’achète jamais</h4><ul>' + O.NEVER.map(k => '<li>' + igIcon('ic-x') + never[k] + '</li>').join('') + '</ul></section>' +
@@ -25667,6 +26470,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (st.listings.length >= 12) return showToast('Douze brouillons au plus sur cet appareil.');
       st.listings.unshift({ ...r.listing, id: lvId('ls'), at: now });
       hbPhotos = [];
+    } else if (kind === 'signup') {
+      const r = HB().accountAuth.signupProfile({ ...d, terms: !!d.terms, marketing: !!d.marketing, type: hbVType(st) }, new Date().getFullYear(), HB().verify.TYPES);
+      if (!r.ok) return showToast(r.errors[0]);
+      st.verify = { ...st.verify, signup: r.profile };
     } else if (kind === 'pro') {
       const works = String(d.works || '').split('\n').map(l => l.split(';').map(x => x.trim())).filter(x => x[0]).map(([title, publisher, year]) => ({ title, publisher, year }));
       const r = HB().pros.validateProfile({ ...d, roles: list(d.roles), links: String(d.links || '').split('\n').map(x => x.trim()).filter(Boolean), works, open: !!d.open });
@@ -25708,7 +26515,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       } else if (ds.hbDelThread) {
         st.threads = st.threads.filter(x => x.id !== ds.hbDelThread); st.comments = st.comments.filter(c => c.thread !== ds.hbDelThread);
         if (hbSave(st)) rerender();
-      } else if (ds.hbDelListing) { st.listings = st.listings.filter(x => x.id !== ds.hbDelListing); if (hbSave(st)) rerender(); }
+      } else if (ds.hbMk) { hbMk = ds.hbMk; rerender(); }
+      else if (ds.hbVtype) { st.verify = { ...st.verify, type: ds.hbVtype, code: st.verify.code || HB().verify.proofCode() }; if (hbSave(st)) rerender(); }
+      else if (ds.hbAuth) { hbAuthStart(ds.hbAuth).catch(() => showToast('Connexion impossible.')); }
+      else if (ds.hbSignupReset !== undefined) { const vv = { ...st.verify }; delete vv.signup; st.verify = vv; if (hbSave(st)) rerender(); }
+      else if (ds.hbVsubmit !== undefined) { showToast('Dossier prêt sur cet appareil. Il sera envoyé chiffré à l’ouverture des comptes ; rien n’est parti.'); }
+      else if (ds.hbDelListing) { st.listings = st.listings.filter(x => x.id !== ds.hbDelListing); if (hbSave(st)) rerender(); }
       else if (ds.hbDelCollab) { st.collabs = st.collabs.filter(x => x.id !== ds.hbDelCollab); if (hbSave(st)) rerender(); }
       else if (ds.hbDmCreate !== undefined) {
         try { const id = await HB().dm.createIdentity(); await hbDmPut({ privateKey: id.privateKey, publicJwk: id.publicJwk, createdAt: new Date().toISOString() }); showToast('Clé créée sur cet appareil.'); hbDmMount(v); }
@@ -25717,6 +26529,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     v.oninput = e => {
       if (e.target.matches('[data-hb-price]')) { const f = v.querySelector('[data-hb-fee]'); if (f) f.innerHTML = hbFeeHtml(e.target.value); }
+      else if (e.target.matches('[data-hb-vfield]')) { const st = hbLoad(), d = HB().verify.DOCS[hbVType(st)].find(x => x.accept.some(a => ({ company: 'number', country: 'number', website: 'email', domain_email: 'email', isbn: 'isbn' })[e.target.dataset.hbVfield] === a)); if (d) { st.verify = { ...st.verify, fields: { ...(st.verify.fields || {}), [e.target.dataset.hbVfield]: e.target.value.trim() } }; const o = v.querySelector('[data-hb-vchk="' + d.key + '"]'); if (o) o.textContent = hbVCheck(st, d); } }
+      else if (e.target.matches('[data-hb-offer-price], [data-hb-offer-amount]')) { const o = v.querySelector('[data-hb-offer-out]'); if (o) o.innerHTML = hbOfferOut(v.querySelector('[data-hb-offer-price]').value, v.querySelector('[data-hb-offer-amount]').value); }
+      else if (e.target.closest('[data-hb-mk-search]') && e.target.name === 'q') { hbMq.q = e.target.value; clearTimeout(hbMkTimer); hbMkTimer = setTimeout(() => { rerender(); const q = v.querySelector('[data-hb-mk-search] [name=q]'); if (q) { q.focus(); q.setSelectionRange(q.value.length, q.value.length); } }, 250); }
     };
     v.onchange = async e => {
       const t = e.target, st = hbLoad();
@@ -25734,6 +26549,17 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         if (hbSave(st)) rerender();
       } else if (t.matches('[data-hb-kind]')) { st.pro = { ...(st.pro || {}), kind: t.value, status: 'draft' }; st.ticked = []; if (hbSave(st)) rerender(); }
       else if (t.matches('[data-hb-policy]')) { st.dmPolicy = t.value; if (hbSave(st)) { showToast('Préférence enregistrée.'); rerender(); } }
+      else if (t.closest('[data-hb-mk-search]') && t.name && t.name !== 'q') { hbMq[t.name] = t.value; rerender(); }
+      else if (t.matches('[data-hb-bundle]')) { st.bundle = { ...st.bundle, [t.dataset.hbBundle]: Number(t.value) }; if (hbSave(st)) { const o = v.querySelector('[data-hb-bundle-out]'); if (o) o.innerHTML = hbBundleOut(st); } }
+      else if (t.matches('[data-hb-vdoc]')) {
+        const V = HB().verify, d = V.DOCS[hbVType(st)].find(x => x.key === t.dataset.hbVdoc), f = t.files[0], chk = V.fileOk(d, f);
+        if (!chk.ok) { t.value = ''; return showToast(chk.reason); }
+        const sha256 = await hbVHash(f); t.value = '';
+        st.verify = { ...st.verify, docs: { ...(st.verify.docs || {}), [d.key]: { sha256, bytes: f.size, ext: f.name.split('.').pop().toLowerCase().replace('jpeg', 'jpg') } } };
+        if (hbSave(st)) { showToast('Pièce contrôlée : seule son empreinte est gardée.'); rerender(); }
+      }
+      else if (t.matches('[data-hb-vfield]')) { st.verify = { ...st.verify, fields: { ...(st.verify.fields || {}), [t.dataset.hbVfield]: t.value.trim() } }; if (hbSave(st)) rerender(); }
+      else if (t.matches('[data-hb-timer]')) { st.dmTimer = Number(t.value); if (hbSave(st)) showToast(st.dmTimer ? 'Messages éphémères : ' + HB().dmRatchet.TIMER_LABEL[st.dmTimer] + '.' : 'Messages éphémères désactivés.'); }
     };
     if (commTab === 'dm') hbDmMount(v);
   };
@@ -25939,9 +26765,22 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ], r => r.v + ' ex.') +
       '<p class="stat-sub" style="margin-top:8px">Valeur moyenne (ex. cotés) : ' + (fin.valueKnown ? money(fin.value / fin.valueKnown) : '—') + (rated.length ? ' · note moyenne ' + avgRating.toFixed(1) + ' / 5 (' + rated.length + ' notés)' : '') + '</p></div>';
 
+    host.insertAdjacentHTML('beforeend', statsPlusCardHtml(owned));
+    const spGo = host.querySelector('[data-sp-go]'); if (spGo) spGo.onclick = () => { const b = $('navPlus'); if (b) b.click(); };
     host.querySelectorAll('.top-item').forEach(el => {
       el.onclick = () => { const s = physicalSingles.find(x => x.id === el.dataset.id); if (s) openSingleInspector(s); };
     });
+  };
+  // D-114 : statistiques avancées Panel+. Les statistiques ci-dessus restent gratuites ; ces analyses sont calculées ici, sur l'appareil,
+  // et réservées à Panel+ (aucune offre n'est en vente pour l'instant : l'aperçu est flouté, sans rien inventer).
+  const statsPlusCardHtml = owned => {
+    const S = window.PanelDomains.statsPlus, a = S.advanced(owned), unlocked = S.gate(false, 'concentration');
+    const val = { concentration: a.concentration.top10Pct === null ? '—' : a.concentration.top10Pct + ' %', roi: a.roi[0] ? (a.roi[0].roi === null ? '—' : (a.roi[0].roi > 0 ? '+' : '') + a.roi[0].roi + ' %') : '—', keys: a.keys.n + ' Key Issues',
+      grading: a.grading.gradedPct + ' % gradés', pace: a.pace.perMonth + ' / mois', hold: a.hold.avgMonths === null ? '—' : a.hold.avgMonths + ' mois' };
+    return '<div class="stats-card sp-card"><h3>' + igIcon('ic-verified') + 'Statistiques avancées <span class="sp-tag">Panel+</span></h3>' +
+      '<p class="stat-sub">Calculées sur cet appareil à partir de votre collection' + (a.unvalued ? ' ; ' + a.unvalued + ' exemplaire' + (a.unvalued > 1 ? 's' : '') + ' sans cote ne compte' + (a.unvalued > 1 ? 'nt' : '') + ' pas dans les rendements' : '') + '. Aucune prévision de prix.</p>' +
+      '<div class="sp-grid">' + S.PLUS.map(p => '<article><b>' + escapeHtml(p.label) + '</b><span class="sp-val' + (unlocked ? '' : ' sp-blur') + '"' + (unlocked ? '' : ' aria-hidden="true"') + '>' + escapeHtml(val[p.key]) + '</span><small>' + escapeHtml(p.about) + '</small></article>').join('') + '</div>' +
+      (unlocked ? '' : '<button class="btn" type="button" data-sp-go>' + igIcon('ic-star') + 'Découvrir Panel+</button><p class="stat-sub">Gratuit pour toujours : ' + S.FREE.join(', ').toLowerCase() + '.</p>') + '</div>';
   };
 
   // ==========================================================================
@@ -27581,11 +28420,12 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
 
     // Collection : retour à la collection (les Séries sont dans les onglets juste à côté)
-    // Barre du bas (lot S1, D-92) : Accueil, Découvrir, Publier, Directs, Profil ; la collection est dans le Profil
+    // Barre du bas (D-114) : Accueil, Découvrir, Publier, Marché, Profil ; Messages en haut à droite ; Directs en onglet de l'Accueil
     if ($('mobHome')) $('mobHome').onclick = () => $('navSinglesCommunity').click();
     if ($('mobDiscover')) $('mobDiscover').onclick = () => $('navExplorer').click();
     if ($('mobPublish')) $('mobPublish').onclick = () => openPublishSheet();
-    if ($('mobLive')) $('mobLive').onclick = () => $('navLive').click();
+    if ($('mobMarket')) $('mobMarket').onclick = () => $('navMarket').click();
+    if ($('dmBtn')) $('dmBtn').onclick = () => $('navMessages').click();
     if ($('mobProfile')) $('mobProfile').onclick = () => $('navProfile').click();
     // « Importer » : collection (CSV/Excel) ; la sauvegarde JSON reste dans Outils et Paramètres
     $('importModalOpenBtn').onclick = openCsvImportModal;
@@ -28047,6 +28887,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if ($('navSinglesCommunity')) $('navSinglesCommunity').onclick = () => goCommunity('feed');
     if ($('navLive')) $('navLive').onclick = () => goCommunity('live');
     if ($('navProfile')) $('navProfile').onclick = () => goCommunity('profile');
+    if ($('navMarket')) $('navMarket').onclick = () => goCommunity('market');
+    if ($('navMessages')) $('navMessages').onclick = () => goCommunity('dm');
+    if ($('navPlus')) $('navPlus').onclick = () => goCommunity('plans');
     if ($('navPublish')) $('navPublish').onclick = () => openPublishSheet();
     if ($('trashBtn')) $('trashBtn').onclick = () => openTrashDialog();
     if ($('conflictsBtn')) $('conflictsBtn').onclick = () => openConflictCenter();
@@ -28678,27 +29521,47 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     stateEl.textContent = st.label;
     if (st.state === 'signedIn') {
       body.innerHTML = where + '<p>Connecté : <b>' + escapeHtml(st.email) + '</b>. Vos données restent sur cet appareil ; la synchronisation n\'est pas encore activée.</p>' +
+        '<div class="acct-mfa" data-acct-mfa><b>Double authentification</b><span class="acct-note">Lecture…</span></div>' +
         '<div class="acct-row"><button class="btn secondary" type="button" data-acct-out>Se déconnecter</button><button class="btn ghost" type="button" data-acct-out-all>Déconnecter tous les appareils</button>' + forget + '</div>' + msgHtml;
+      // D-114 : double authentification par application (code à 6 chiffres), proposée dès la connexion
+      const mfaBox = body.querySelector('[data-acct-mfa]');
+      const mfaShow = async () => {
+        const f = await flow.mfaFactors();
+        if (!f.ok) { mfaBox.innerHTML = '<b>Double authentification</b><span class="acct-note">' + escapeHtml(f.error.message) + '</span>'; return; }
+        if (f.totp.length) { mfaBox.innerHTML = '<b>Double authentification activée</b><span class="acct-note">Application : ' + f.totp.map(x => escapeHtml(x.name)).join(', ') + '. Un code vous sera demandé sur un nouvel appareil.</span>'; return; }
+        mfaBox.innerHTML = '<b>Double authentification</b><span class="acct-note">Recommandée, obligatoire pour les comptes pros et l’équipe : un code d’une application (Aegis, 2FAS, Google Authenticator…) en plus du mot de passe.</span><button class="btn secondary" type="button" data-acct-mfa-start>Activer</button>';
+        mfaBox.querySelector('[data-acct-mfa-start]').onclick = async () => {
+          const e = await flow.mfaEnroll();
+          if (!e.ok) { say(e.error.message); return; }
+          mfaBox.innerHTML = '<b>Scannez ce code avec votre application</b>' + (e.qr && /^data:image\/svg\+xml/.test(e.qr) ? '<img class="acct-qr" alt="Code QR de double authentification" src="' + escapeHtml(e.qr) + '">' : '') +
+            '<label>Code à 6 chiffres<input class="field-input" inputmode="numeric" maxlength="6" autocomplete="one-time-code" data-acct-mfa-code></label><button class="btn" type="button" data-acct-mfa-ok>Confirmer</button>';
+          mfaBox.querySelector('[data-acct-mfa-ok]').onclick = async () => { const v = await flow.mfaVerify(e.factorId, mfaBox.querySelector('[data-acct-mfa-code]').value); if (!v.ok) say(v.error.message); else { say('Double authentification activée.'); mfaShow(); } };
+        };
+      };
+      mfaShow();
       body.querySelector('[data-acct-out]').onclick = async () => { const r = await flow.signOut(false); r.ok ? renderAccountBox() : say(r.error.message); };
       body.querySelector('[data-acct-out-all]').onclick = async () => { const r = await flow.signOut(true); r.ok ? renderAccountBox() : say(r.error.message); };
       wireForget();
       return;
     }
     body.innerHTML = where + (st.state === 'expired' ? '<p>' + escapeHtml(A.MESSAGES.session_expired) + '</p>' : '') +
+      '<div class="au-providers">' + A.PROVIDERS.filter(p => A.OAUTH.includes(p.key)).map(p => '<button type="button" class="au-btn au-' + p.key + '" data-acct-oauth="' + p.key + '">' + escapeHtml(p.label) + '</button>').join('') + '</div>' +
       '<form data-acct-auth><label>Adresse e-mail<input class="field-input" type="email" data-acct="email" autocomplete="email" maxlength="' + A.LIMITS.email + '"></label>' +
       '<label>Mot de passe<input class="field-input" type="password" data-acct="pw" autocomplete="current-password" maxlength="' + A.LIMITS.passwordMax + '"></label>' +
-      '<div class="acct-row"><button class="btn" type="submit" data-acct-do="in">Se connecter</button><button class="btn secondary" type="button" data-acct-do="up">Créer un compte</button><button class="btn ghost" type="button" data-acct-do="reset">Mot de passe oublié</button>' + forget + '</div>' +
+      '<div class="acct-row"><button class="btn" type="submit" data-acct-do="in">Se connecter</button><button class="btn secondary" type="button" data-acct-do="up">Créer un compte</button><button class="btn ghost" type="button" data-acct-do="magic">Recevoir un lien de connexion</button><button class="btn ghost" type="button" data-acct-do="reset">Mot de passe oublié</button>' + forget + '</div>' +
       '<span class="acct-note">Sans compte, rien n\'est créé en ligne. La connexion ne touche à aucune donnée de cet appareil.</span>' + msgHtml + '</form>';
     const em = () => body.querySelector('[data-acct="email"]').value, pw = () => body.querySelector('[data-acct="pw"]').value;
     const run = async kind => {
       say('…');
-      const r = kind === 'in' ? await flow.signIn(em(), pw()) : kind === 'up' ? await flow.signUp(em(), pw()) : await flow.resetPassword(em());
+      const r = kind === 'in' ? await flow.signIn(em(), pw()) : kind === 'up' ? await flow.signUp(em(), pw()) : kind === 'magic' ? await flow.magicLink(em()) : await flow.resetPassword(em());
       if (!r.ok) { say(r.error.message); return; }
       if (kind === 'in') { renderAccountBox(); return; }
       say(r.message);
     };
     body.querySelector('[data-acct-auth]').onsubmit = ev => { ev.preventDefault(); run('in'); };
     body.querySelectorAll('[data-acct-do]').forEach(b => { if (b.dataset.acctDo !== 'in') b.onclick = () => run(b.dataset.acctDo); });
+    // Apple et Google : redirection vers le fournisseur (flux PKCE), aucun mot de passe ne passe par Panel
+    body.querySelectorAll('[data-acct-oauth]').forEach(b => { b.onclick = async () => { say('…'); const r = await flow.oauth(b.dataset.acctOauth); if (r.ok && r.url) location.assign(r.url); else say(r.error ? r.error.message : ''); }; });
     wireForget();
   };
 

@@ -17,7 +17,9 @@ Ordre des lots techniques. L'historique est dans [ROADMAP.md](../ROADMAP.md) et 
 | T11 | Migration 19 (pros, marché, forum, messages, offres) + 8 tests PGlite | P1 | Migrations 13, 15, 17, 18 | **Fait (local, D-113)** |
 | T12 | Écrans Le Comptoir, Marché, Messages, Pros & Atelier, Offres (mode local) | P1 | T11 | **Fait (D-113)** |
 | T13 | Prestataire de paiement agréé (séquestre, versements, DAC7) | P1 | Avis d'avocat, identité légale | `[À CHOISIR]` |
-| T14 | Double cliquet pour les messages (confidentialité persistante) | RESEARCH | T11 | — |
+| T14 | Double cliquet pour les messages (confidentialité persistante) | FAIT EN LOCAL (D-114 : X3DH + double cliquet, migration 20 testée) | T11 | — |
+| T15 | Expéditeur scellé (masquer l'expéditeur au serveur) | RESEARCH | T14 | — |
+| T16 | Envoi chiffré des pièces de vérification et file d'examen de l'équipe | PLANNED | migration 20, S8 | — |
 
 ## Règles de chaque lot
 

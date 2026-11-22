@@ -4088,7 +4088,7 @@ const waitForCdp = async () => {
           // Navigation
           const social = [...document.querySelectorAll('#navSinglesBlock .nav-social .nav-btn')].map(b => b.id);
           const coll = [...document.querySelectorAll('#navSinglesBlock nav[aria-label="Ma collection"] .nav-btn')].map(b => b.id);
-          r.explorerSection = social.join() === 'navSinglesCommunity,navExplorer,navPublish,navLive,navProfile' && !!document.getElementById('navCollectionLabel') && coll.includes('navAllSingles') && coll.includes('navSinglesReleases') && coll.includes('navSinglesPullList');
+          r.explorerSection = social.join() === 'navSinglesCommunity,navExplorer,navLive,navMarket,navMessages,navPublish,navProfile,navPlus' && !!document.getElementById('navCollectionLabel') && coll.includes('navAllSingles') && coll.includes('navSinglesReleases') && coll.includes('navSinglesPullList');
           r.labels = /Découvrir/.test(document.getElementById('navExplorer').textContent) && /Sorties/.test(document.getElementById('navSinglesReleases').textContent) && /Pull list/.test(document.getElementById('navSinglesPullList').textContent);
           r.badgeOnPullList = !!document.querySelector('#navSinglesPullList #badgePullCount') && !document.querySelector('#navSinglesReleases .nav-badge');
           document.getElementById('navSinglesPullList').click(); await wait(150);
@@ -4098,7 +4098,7 @@ const waitForCdp = async () => {
           document.getElementById('navExplorer').click(); await wait(300);
           r.explorerView = !document.getElementById('singlesExplorerView').hidden && document.getElementById('navExplorer').classList.contains('active');
           const dock = [...document.querySelectorAll('.mobile-dock .mobile-dock-btn')].map(b => b.id);
-          r.dock = dock.join() === 'mobHome,mobDiscover,mobPublish,mobLive,mobProfile';
+          r.dock = dock.join() === 'mobHome,mobDiscover,mobPublish,mobMarket,mobProfile';
           r.dockActive = document.getElementById('mobDiscover').classList.contains('active');
           document.getElementById('navAllSingles').click(); await wait(150);
           r.backToCollection = !document.getElementById('singlesCollectionView').hidden && !document.getElementById('mobDiscover').classList.contains('active') && document.getElementById('mobProfile').classList.contains('active');
@@ -5469,7 +5469,7 @@ const waitForCdp = async () => {
           r.declutter = !document.querySelector('#communityDashboard .pl-studio') && getComputedStyle(document.querySelector('#communityHead .cm-tabs')).display === 'none' && getComputedStyle(document.getElementById('importModalOpenBtn')).display === 'none';
           // Directs
           document.getElementById('navLive').click(); await wait(250);
-          r.live = cur() === 'navLive' && dockOn() === 'mobLive' && document.title === 'Directs · Panel';
+          r.live = cur() === 'navLive' && dockOn() === 'mobHome' && document.title === 'Directs · Panel';
           // Profil : la collection reste entière, avec son étagère et l'accès à toutes ses vues
           document.getElementById('navProfile').click(); await wait(400);
           const pc = document.getElementById('profileCollection');
@@ -6389,7 +6389,7 @@ const waitForCdp = async () => {
           localStorage.removeItem(HKEY);
           $('navSinglesCommunity').click(); await wait(500);
           const chips = [...document.querySelectorAll('.hb-chip')].map(b => b.dataset.cmTab).join(',');
-          r.strip = chips === 'feed,forum,market,dm,pros,plans';
+          r.strip = chips === 'feed,forum,live';
           q('.hb-chip[data-cm-tab="forum"]').click(); await wait(300);
           r.forumEmpty = !!q('.hb-view .hb-empty') && q('.hb-circles').children.length === 9;
           const f = q('[data-hb-form="thread"]');
@@ -6408,26 +6408,28 @@ const waitForCdp = async () => {
           r.thread = /2 réponses/.test(q('.hb-sub').textContent) && document.querySelectorAll('.hb-cm .hb-cm').length === 1;
           const st = JSON.parse(localStorage.getItem(HKEY));
           r.stored = st.threads.length === 1 && st.comments.length === 2 && st.comments[1].parent === st.comments[0].id;
-          q('.hb-chip[data-cm-tab="market"]').click(); await wait(300);
+          $('navMarket').click(); await wait(300);
+          q('[data-hb-mk="sell"]').click(); await wait(250);
           const p = q('[data-hb-price]'); p.value = '24,50'; p.dispatchEvent(new Event('input', { bubbles: true })); await wait(50);
           r.fee = /22,78/.test(q('[data-hb-fee]').textContent) && /taux réel à fixer/.test(q('[data-hb-fee]').textContent);
           const lf = q('[data-hb-form="listing"]'); lf.elements.title.value = 'Absolute Batman'; lf.elements.body.value = 'Paiement par virement svp'; lf.requestSubmit(); await wait(200);
           r.listingRefused = !JSON.parse(localStorage.getItem(HKEY)).listings.length;
           r.safety = document.querySelectorAll('.hb-safety li').length === 4 && /adultes/.test(q('.hb-safety').textContent);
-          q('.hb-chip[data-cm-tab="dm"]').click(); await wait(300);
-          r.dmRules = /mineur/.test(q('.hb-view').textContent) && /ECDH-P256/.test(q('.hb-view').textContent);
+          $('dmBtn').click(); await wait(300);
+          r.dmRules = /mineur/.test(q('.hb-view').textContent) && /X3DH/.test(q('.hb-view').textContent);
           const D = window.PanelDomains.dm, A = await D.createIdentity(), B = await D.createIdentity(), meta = { conversationId: 'c', senderId: 'a', seq: 1 };
           const box = await D.seal(await D.conversationKey(A.privateKey, B.publicJwk, 'c'), 'Salut', meta);
           r.e2e = (await D.open(await D.conversationKey(B.privateKey, A.publicJwk, 'c'), box, meta)) === 'Salut' && !/Salut/.test(JSON.stringify(box));
+          $('navProfile').click(); await wait(300);
           q('.hb-chip[data-cm-tab="pros"]').click(); await wait(300);
-          r.sealPreview = document.querySelectorAll('.hb-seals svg').length === 4 && !q('.hb-badge');
+          r.sealPreview = document.querySelectorAll('.vt-card .hb-vbadge').length === 4 && !q('.hb-badge');
           const pf = q('[data-hb-form="pro"]'); pf.elements.name.value = 'Alex Encre'; pf.querySelector('input[value="writer"]').checked = true; pf.requestSubmit(); await wait(250);
           r.proDraft = !q('.hb-badge') && /Brouillon/.test(q('.hb-proof').textContent) && JSON.parse(localStorage.getItem(HKEY)).pro.status === 'draft';
           q('.hb-chip[data-cm-tab="plans"]').click(); await wait(300);
           const plans = [...document.querySelectorAll('.hb-plan')];
           r.plans = plans.length === 5 && plans.every(x => /Gratuit|Tarif à venir/.test(x.querySelector('.hb-tarif').textContent)) && [...document.querySelectorAll('.hb-plan .btn')].every(b => b.disabled);
           r.never = document.querySelectorAll('.hb-never li').length === 5;
-          q('.hb-chip[data-cm-tab="feed"]').click(); await wait(300);
+          $('navSinglesCommunity').click(); await wait(300);
           r.backToFeed = !q('.hb-view');
         } catch (e) { r.error = String(e && e.message || e); }
         finally {
@@ -6440,6 +6442,78 @@ const waitForCdp = async () => {
       console.log('Résultat Test 86:', JSON.stringify(t86));
       testResults.push({ test: 'Test 86 : Le Comptoir, Marché, Messages chiffrés, Pros et sceau Encré, Offres (D-113)',
         ok: !!t86 && !t86.error && ['strip', 'forumEmpty', 'vote', 'side', 'thread', 'stored', 'fee', 'listingRefused', 'safety', 'dmRules', 'e2e', 'sealPreview', 'proDraft', 'plans', 'never', 'backToFeed', 'dmDbUntouched', 'dataUntouched'].every(k => t86[k] === true) });
+
+      // ==========================================
+      // TEST 87 : placements façon grands réseaux, Messages façon Signal, vérification, Marché, Panel+ (D-114)
+      // ==========================================
+      console.log('\n[TEST 87] Navigation, Signal, vérification, Marché, Panel+...');
+      const t87 = await evalExpr(`(async () => {
+        const r = {}, wait = ms => new Promise(res => setTimeout(res, ms)), $ = id => document.getElementById(id), q = s => document.querySelector(s);
+        const fp0 = await window.Panel.backup.fingerprint('collection');
+        const HKEY = 'panel.hub.v1', hstored = localStorage.getItem(HKEY);
+        const dbs0 = indexedDB.databases ? (await indexedDB.databases()).map(d => d.name) : [];
+        try {
+          localStorage.removeItem(HKEY);
+          // Messages : en haut à droite, à côté de la cloche ; l'entrée latérale et le titre suivent
+          const top = [...document.querySelectorAll('.top-actions > .btn')].map(b => b.id);
+          r.dmNextToBell = top.indexOf('dmBtn') >= 0 && top.indexOf('dmBtn') + 1 === top.indexOf('notifBtn');
+          $('dmBtn').click(); await wait(300);
+          r.dmNav = document.title === 'Messages · Panel' && $('navMessages').classList.contains('active') && $('dmBtn').getAttribute('aria-current') === 'page' && !q('.mobile-dock [aria-current="page"]');
+          r.inbox = !!q('.dm-inbox [data-dm-search]') && document.querySelectorAll('.dm-proto li').length === 5 && document.querySelectorAll('[data-hb-timer] option').length === 5;
+          // Protocole : X3DH + double cliquet, désordre, rejeu refusé, chiffré différent à chaque message
+          const R = window.PanelDomains.dmRatchet, al = await R.createIdentity(), bo = await R.createIdentity(), pre = await R.createPrekeys(bo, 1, 1);
+          const x = await R.x3dhInitiate(al, pre.bundle, pre.bundle.opk[0]);
+          let a = await R.initSender(x.sk, pre.bundle.spk, x.ad), m1, m2;
+          [a, m1] = await R.encrypt(a, 'Bonjour'); [a, m2] = await R.encrypt(a, 'Bonjour');
+          const rs = await R.x3dhRespond(bo, pre.secret, x.init);
+          let b = await R.initReceiver(rs.sk, pre.secret.spk, rs.ad), t2, t1;
+          [b, t2] = await R.decrypt(b, m2); [b, t1] = await R.decrypt(b, m1);
+          let replay = false; try { await R.decrypt(b, m1); } catch (_) { replay = true; }
+          r.signal = t1 === 'Bonjour' && t2 === 'Bonjour' && m1.ct !== m2.ct && replay && !/Bonjour/.test(JSON.stringify([m1, m2]));
+          // Marché : dans le dock (téléphone) et la barre latérale ; quatre onglets ; calculateur d'offre
+          $('navMarket').click(); await wait(300);
+          q('[data-hb-mk="buy"]').click(); await wait(250);
+          r.marketNav = document.title === 'Marché · Panel' && [...document.querySelectorAll('[data-hb-mk]')].map(b => b.dataset.hbMk).join() === 'buy,sell,offers,favs' && !!q('[data-hb-mk-search]');
+          q('[data-hb-mk="offers"]').click(); await wait(250);
+          const op = q('[data-hb-offer-price]'), oa = q('[data-hb-offer-amount]');
+          op.value = '40'; oa.value = '20'; oa.dispatchEvent(new Event('input', { bubbles: true }));
+          const low = q('[data-hb-offer-out]').textContent;
+          oa.value = '30'; oa.dispatchEvent(new Event('input', { bubbles: true }));
+          r.offer = /trop basse/.test(low) && /75 %/.test(q('[data-hb-offer-out]').textContent);
+          // Compte pro : cinq types, pastilles distinctes, contrôle réel du numéro d'entreprise, inscription encadrée
+          $('navProfile').click(); await wait(300);
+          q('.hb-chip[data-cm-tab="pros"]').click(); await wait(300);
+          const colors = [...document.querySelectorAll('.vt-card .hb-vbadge path:first-child')].map(p => p.getAttribute('fill'));
+          r.badges = document.querySelectorAll('.vt-card').length === 5 && colors.length === 4 && new Set(colors).size === 4;
+          q('[data-hb-vtype="publisher"]').click(); await wait(300);
+          r.wizard = document.querySelectorAll('.vt-doc').length === 5 && /PANEL-/.test(JSON.parse(localStorage.getItem(HKEY)).verify.code);
+          const base = '04123456', bce = base + String(97 - (Number(base) % 97)).padStart(2, '0'), co = q('[data-hb-vfield="company"]');
+          co.value = bce.slice(0, 9) + ((Number(bce[9]) + 1) % 10); co.dispatchEvent(new Event('input', { bubbles: true }));
+          const bad = q('[data-hb-vchk="company"]').textContent;
+          co.value = bce; co.dispatchEvent(new Event('input', { bubbles: true }));
+          r.bce = /invalide/.test(bad) && /Numéro valide/.test(q('[data-hb-vchk="company"]').textContent) && q('[data-hb-vsubmit]').disabled;
+          const sf = q('[data-hb-form="signup"]');
+          sf.elements.handle.value = 'marvel'; sf.elements.birthYear.value = '1990'; sf.elements.terms.checked = true; sf.requestSubmit(); await wait(200);
+          const reserved = /réservé/.test(document.getElementById('toastPopup').textContent);
+          sf.elements.handle.value = 'maison_test'; sf.elements.birthYear.value = String(new Date().getFullYear() - 16); sf.requestSubmit(); await wait(200);
+          const minor = /adultes/.test(document.getElementById('toastPopup').textContent);
+          r.signup = reserved && minor && !JSON.parse(localStorage.getItem(HKEY)).verify.signup && document.querySelectorAll('[data-hb-auth]').length === 3;
+          // Panel+ : entrée latérale, onglet du Profil
+          $('navPlus').click(); await wait(300);
+          r.plus = document.title === 'Panel+ · Panel' && $('navPlus').classList.contains('active') && !!q('.hb-plan');
+          $('navSinglesCommunity').click(); await wait(300);
+          r.home = [...document.querySelectorAll('.hb-chip')].map(b => b.dataset.cmTab).join() === 'feed,forum,live';
+        } catch (e) { r.error = String(e && e.message || e); }
+        finally {
+          if (hstored === null) localStorage.removeItem(HKEY); else localStorage.setItem(HKEY, hstored);
+        }
+        r.dmDbUntouched = indexedDB.databases ? (await indexedDB.databases()).map(d => d.name).includes('panel-dm') === dbs0.includes('panel-dm') : true;
+        r.dataUntouched = fp0 === await window.Panel.backup.fingerprint('collection');
+        return r;
+      })()`);
+      console.log('Résultat Test 87:', JSON.stringify(t87));
+      testResults.push({ test: 'Test 87 : Messages en haut, Marché dans le dock, Signal, vérification, Panel+ (D-114)',
+        ok: !!t87 && !t87.error && ['dmNextToBell', 'dmNav', 'inbox', 'signal', 'marketNav', 'offer', 'badges', 'wizard', 'bce', 'signup', 'plus', 'home', 'dmDbUntouched', 'dataUntouched'].every(k => t87[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));

@@ -186,3 +186,27 @@ Légende :
 - Annonce refusée si le marché est fermé, si le vendeur est mineur, ou si elle contient des coordonnées ou un paiement hors de Panel.
 - Étapes de vente : chaque action par la bonne personne ; remise en main propre par code.
 - Messages : demande avant échange, refus entre mineur et adulte, texte en clair refusé par le serveur, chiffrement réel avec `dm-core`.
+
+## 6. Messages façon Signal, comptes et vérification (D-114)
+
+| Sujet | Règle | Où |
+|---|---|---|
+| Échange de clés | X3DH sur P-256 : clé d'identité, préclé signée (ECDSA SHA-256, vérifiée avant usage), préclé à usage unique retirée du serveur dès qu'elle est donnée | `domains/community/dm-ratchet.js`, `api.dm_bundle_publish`, `api.dm_bundle_get` |
+| Messages | Double cliquet : chaque message a sa clé ; en-tête `{dh, pn, n}` authentifié comme donnée associée ; remplissage ISO 7816-4 par 64 octets ; rejeu refusé ; 1 000 clés sautées au plus | `dm-ratchet.js`, `messaging.box2_ok` |
+| Éphémères | 0, 5 min, 1 h, 1 jour, 1 semaine par conversation ; message échu jamais servi ; purge par le rôle service | `api.dm_timer_set`, `api.dm_send2`, `messaging.purge_expired` |
+| Métadonnées | Panel voit qui écrit à qui et quand ; pas d'« expéditeur scellé » pour l'instant (écrit comme limite) | §5.1 |
+| Connexion | Apple et Google en OAuth (PKCE) ; lien de connexion par e-mail au message neutre (ne révèle pas si le compte existe) ; mot de passe de 12 caractères au moins ; TOTP | `domains/account/auth-core.js`, `backend/supabase/config.toml` |
+| Inscription | Pseudo 3 à 24 caractères ; noms d'équipe et de grandes maisons réservés jusqu'à vérification ; 13 ans au moins ; comptes pros réservés aux adultes ; consentement aux conditions obligatoire, nouveautés facultatives | `signupProfile` |
+| Vérification | Pièces par type ; contrôles BCE, SIREN, ISBN-13, domaine ; empreintes SHA-256 seulement (jamais les fichiers) ; examen en double authentification, jamais sur soi-même ; pièces effacées 30 jours après la décision ; pastille valable 365 jours | `domains/community/verify-core.js`, `api.verify_submit`, `api.verify_review`, `pro.verify_purge` |
+| Marché | Offres de 60 % au moins, 48 h ; avis seulement par l'acheteur d'une vente terminée, sans coordonnées ; réputation bayésienne | `api.offer_make`, `api.offer_respond`, `api.review_leave`, `api.seller_reputation` |
+| Panel+ | Droit lu dans les abonnements actifs, écrits par le rôle service seulement ; un abonnement n'achète jamais de visibilité ni de pastille | `api.my_entitlements` |
+
+### 6.1 À faire valider avant l'ouverture
+
+- Conservation des pièces d'identité (30 jours) et base légale : à valider avec un avocat (RGPD art. 6 et 9, minimisation).
+- Vérification des maisons d'édition hors Belgique et France : contrôle humain, registre à préciser pays par pays.
+- Connexion Apple : exigences de l'App Store (connexion Apple proposée dès qu'un autre fournisseur l'est) à vérifier pour l'application mobile.
+
+### 6.2 Tests (PGlite, `backend/tests/signal-verify.test.js`, 4 tests verts)
+
+Préclé à usage unique donnée une seule fois ; échange X3DH et double cliquet de bout en bout sans texte clair côté serveur ; enveloppe non conforme refusée ; minuteur et purge ; contrôles BCE, domaine, ISBN ; examen refusé sans double authentification ; pastille expirée après un an ; empreintes purgées ; offres trop basses, trop nombreuses ou au prix refusées ; acceptation qui réserve au prix de l'offre et refuse les autres ; avis unique sans coordonnées ; droits Panel+ selon l'abonnement.

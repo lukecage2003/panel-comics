@@ -83,3 +83,50 @@ const SAFETY = Object.freeze([
 
 module.exports = { SIM_RATE, CONDITIONS, CONDITION_LABEL, DELIVERY, DELIVERY_LABEL, STATES, FLOW, AUTO_CONFIRM_DAYS, SAFETY,
   cents, validateListing, listingFromCopy, fees, money, step, nextActions, handoverCode };
+
+// ---------- D-114 : offres, lots, avis, recherche (inspirés des places de marché entre particuliers) ----------
+const OFFER_MIN_RATIO = 0.6, OFFER_HOURS = 48, MAX_PENDING_OFFERS = 3;
+// Offre d'achat : au moins 60 % du prix, moins que le prix, trois offres en attente au plus par annonce et par acheteur
+const validateOffer = (listing, amountText, pendingByBuyer) => {
+  const a = cents(amountText);
+  if (!listing || !(listing.price > 0)) return { ok: false, error: 'Annonce introuvable.' };
+  if (!(a > 0)) return { ok: false, error: 'Indiquez un montant.' };
+  if (a >= listing.price) return { ok: false, error: 'Au prix demandé, achetez directement.' };
+  if (a < Math.ceil(listing.price * OFFER_MIN_RATIO)) return { ok: false, error: 'Offre trop basse : au moins ' + money(Math.ceil(listing.price * OFFER_MIN_RATIO), listing.currency) + '.' };
+  if ((pendingByBuyer || 0) >= MAX_PENDING_OFFERS) return { ok: false, error: 'Trois offres en attente au plus sur une annonce.' };
+  return { ok: true, amount: a, expiresInHours: OFFER_HOURS };
+};
+// Lot : le vendeur choisit une remise par palier (2, 3, 5 numéros et plus) ; frais calculés sur le total remisé
+const BUNDLE_TIERS = [2, 3, 5];
+const bundle = (prices, discounts) => {
+  const p = (prices || []).filter(x => x > 0), n = p.length, total = p.reduce((a, x) => a + x, 0);
+  const d = discounts || {}; let pct = 0;
+  for (const t of BUNDLE_TIERS) if (n >= t) pct = Math.max(0, Math.min(50, Number(d[t]) || 0));
+  const discounted = Math.round(total * (100 - pct) / 100);
+  return { count: n, total, pct, price: discounted, saved: total - discounted };
+};
+// Avis : 1 à 5 étoiles après une vente terminée ; moyenne bayésienne pour qu'un seul avis parfait ne pèse pas trop
+const PRIOR_MEAN = 4, PRIOR_WEIGHT = 5;
+const reputation = ratings => {
+  const r = (ratings || []).map(Number).filter(x => x >= 1 && x <= 5), n = r.length, sum = r.reduce((a, x) => a + x, 0);
+  const score = (PRIOR_MEAN * PRIOR_WEIGHT + sum) / (PRIOR_WEIGHT + n);
+  return { n, mean: n ? Math.round(sum / n * 10) / 10 : null, score: Math.round(score * 100) / 100, label: n < 3 ? 'Nouveau vendeur' : score >= 4.5 ? 'Vendeur fiable' : '' };
+};
+// Recherche et filtres
+const SORTS = ['recent', 'price_asc', 'price_desc'];
+const SORT_LABEL = Object.freeze({ recent: 'Plus récents', price_asc: 'Prix croissant', price_desc: 'Prix décroissant' });
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const search = (listings, f) => {
+  const o = f || {}, q = norm(o.q).split(/\s+/).filter(Boolean);
+  const out = (listings || []).filter(l => {
+    const hay = norm([l.title, l.issue ? '#' + l.issue : '', l.publisher].join(' '));
+    if (q.some(w => !hay.includes(w))) return false;
+    if (o.condition && l.condition !== o.condition) return false;
+    if (o.delivery && !(l.delivery || []).includes(o.delivery)) return false;
+    if (o.max && l.price > cents(o.max)) return false;
+    return true;
+  });
+  const s = SORTS.includes(o.sort) ? o.sort : 'recent';
+  return out.sort((a, b) => s === 'price_asc' ? a.price - b.price : s === 'price_desc' ? b.price - a.price : String(b.at || '').localeCompare(String(a.at || '')));
+};
+Object.assign(module.exports, { OFFER_MIN_RATIO, OFFER_HOURS, BUNDLE_TIERS, SORTS, SORT_LABEL, validateOffer, bundle, reputation, search });

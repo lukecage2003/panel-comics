@@ -16,6 +16,8 @@
 | R12 | Faux éditeur, fausse boutique ou faux créateur | Moyenne | Élevé | Sceau Encré posé à la main sur pièces ; retrait possible ; aucune page au nom d'une maison avant sa demande | Signalement d'usurpation |
 | R13 | Contenu illégal dans des messages chiffrés | Moyenne | Élevé | Demande avant échange, blocage, signalement avec messages choisis, aucun message entre mineur et adulte | AIPD, avis d'avocat |
 | R14 | Obligations fiscales et de paiement du Marché mal évaluées | Moyenne | Élevé | Marché fermé par défaut ; DAC7, DSP2 et droit de la consommation listés au §5 de la conformité | Avant l'ouverture du Marché |
+| R15 | Faux comptes pros ou usurpation d'une maison d'édition | Moyenne | Élevé | Noms réservés, contrôles automatiques, examen humain en double authentification, pastille annuelle, retrait motivé | Avant l'ouverture des comptes pros |
+| R16 | Pièces d'identité conservées trop longtemps ou exposées | Faible | Élevé | Empreintes seulement sur l'appareil ; à l'ouverture, envoi chiffré et effacement à 30 jours ; validation juridique (§6.1) | Avant l'ouverture des vérifications |
 
 ## Dépendances externes (aucune n'est activée)
 

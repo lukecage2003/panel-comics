@@ -97,7 +97,23 @@ Décisions possibles : Conservée · Améliorée · Étendue · Créée · Repor
 - **Actuel → cible** : PARTIALLY_IMPLEMENTED (clé de l'appareil et vérification locale, `dm-core`, migration 19) → en ligne pour les adultes.
 - **Risques** : R2, R13. **Priorité** : P1. **Décision** : Nouvelle (remplace « pas de messages privés »).
 
-## 16. Pros, sceau Encré et L'Atelier (D-113)
+## 16. Pros, sceau Encré et L'Atelier (D-113 ; pastilles remplacées en D-114, §19)
 - **Description** : profils officiels Créateur, Éditeur, Boutique, Studio ; bibliographie ; liste de preuves ; sceau **Encré** (tampon d'encre jaune et noir, dessiné pour Panel) posé à la main ; L'Atelier pour trouver un coloriste, un lettreur, un scénariste, sans coordonnées affichées.
 - **Actuel → cible** : PARTIALLY_IMPLEMENTED (local, `pro-core`, migration 19) → demandes examinées par l'équipe à l'ouverture.
 - **Risques** : R12. **Priorité** : P1. **Décision** : Nouvelle (étend l'écosystème pro du §7).
+
+## 17. Navigation (D-114)
+
+Barre latérale : Accueil, Découvrir, Directs, Marché, Messages, Publier, Profil, Panel+. Téléphone : dock Accueil, Découvrir, Publier, Marché, Profil ; Messages et notifications en haut à droite ; onglets Fil, Le Comptoir, Directs dans l'Accueil ; Mon profil, Compte pro, Panel+ dans le Profil. Statut : FAIT (local).
+
+## 18. Messages façon Signal (D-114)
+
+Boîte de réception (recherche, Principal, Demandes), explication du protocole, numéro de sécurité de l'appareil, vérification locale du protocole (désordre, rejeu, altération), minuteur par défaut, qui peut m'écrire. Statut : FAIT (local) ; conversations réelles à l'ouverture des comptes.
+
+## 19. Types de comptes, pastilles et vérification (D-114)
+
+Cinq types, cinq pastilles distinctes (plus Équipe Panel), inscription avec Apple, Google ou e-mail, dossier de vérification par type avec contrôles automatiques et modalités écrites. Statut : FAIT (local) ; envoi des dossiers à l'ouverture des comptes.
+
+## 20. Marché enrichi et Panel+ (D-114)
+
+Marché : Acheter (recherche, filtres, tri), Vendre (annonce, remises de lot, réputation), Offres (règles et calculateur), Favoris. Panel+ : six statistiques avancées calculées sur l'appareil, aperçu flouté tant que l'offre n'est pas en vente. Statut : FAIT (local).

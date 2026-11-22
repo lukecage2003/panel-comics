@@ -74,7 +74,10 @@ Scripts de contrôle : `check:motion`, `check:secrets`, `check-dead-code`, `chec
 | Pros, sceau Encré, L'Atelier | PARTIALLY_IMPLEMENTED | `pro-core`, migration 19 (`pro.*`), D-113 | Local ; aucune demande examinée ; aucun pro inscrit |
 | Le Comptoir (forum) | PARTIALLY_IMPLEMENTED | `forum-core`, migration 19 (`forum.*`), D-113 | Local seulement |
 | Le Marché | PARTIALLY_IMPLEMENTED | `market-core`, migration 19 (`market.*`), D-113 | Brouillons locaux ; marché fermé ; prestataire de paiement à choisir |
-| Messages privés chiffrés | PARTIALLY_IMPLEMENTED | `dm-core`, migration 19 (`messaging.*`), D-113 | Clé de l'appareil et vérification locale ; pas encore de double cliquet |
+| Messages privés chiffrés | PARTIALLY_IMPLEMENTED | `dm-core`, `dm-ratchet`, migrations 19 et 20 (`messaging.*`), D-113, D-114 | X3DH et double cliquet testés ; boîte de réception locale ; conversations réelles à l'ouverture des comptes |
+| Types de comptes, pastilles, vérification | PARTIALLY_IMPLEMENTED | `verify-core`, `auth-core`, migration 20 (`pro.applications` étendue), D-114 | Dossier local (empreintes seulement) ; aucun dossier envoyé ni examiné |
+| Connexion Apple, Google, e-mail, 2FA | PARTIALLY_IMPLEMENTED | `auth-core`, `config.toml`, D-114 | Fournisseurs désactivés tant que les comptes sont fermés |
+| Statistiques avancées Panel+ | PARTIALLY_IMPLEMENTED | `stats-plus-core`, `api.my_entitlements`, D-114 | Aperçu flouté ; offre pas en vente |
 | Identité légale de l'éditeur | MISSING | — | `[À COMPLÉTER]` avant toute ouverture |
 | CGU, confidentialité, règles validées | MISSING (squelettes prêts) | [SECURITY_AND_COMPLIANCE](SECURITY_AND_COMPLIANCE.md) | Avocat belge |
 | AIPD sur les mineurs | MISSING | — | Avant l'ouverture aux mineurs |

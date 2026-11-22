@@ -78,7 +78,9 @@ Décision : **Conservée**.
 - Panel+ (confort seulement).
 - Fiches « Boutique vérifiée ».
 - Affiliation clairement marquée.
-- Écosystème pro : créateurs, éditeurs, boutiques et studios, avec le sceau Encré posé par l'équipe (D-113).
+- Écosystème pro : créateurs, éditeurs, boutiques et studios, chacun avec sa pastille vérifiée posée par l'équipe après examen des pièces (D-113, D-114).
+- Messages protégés comme Signal (X3DH, double cliquet, éphémères), Messages en haut à droite et Marché dans le dock (D-114).
+- Connexion Apple, Google et e-mail, double authentification par application ; Panel+ pour les statistiques avancées (D-114).
 - Le Marché : ouverture après choix d'un prestataire de paiement agréé, avis d'avocat (DSA, Omnibus, DAC7, DSP2) et fixation du pourcentage.
 - Messages privés chiffrés pour les adultes, après AIPD.
 - Le Comptoir en ligne.

@@ -75,3 +75,30 @@ test('connexion, déconnexion locale par défaut, état du compte', async () => 
   assert.equal(A.accountState(session, Date.now()).state, 'signedIn');
   assert.equal(A.accountState({ user: {}, expires_at: 1 }, Date.now()).state, 'expired');
 });
+
+test('D-114 : Google et Apple par OAuth, lien magique neutre, double authentification, profil d\'inscription', async () => {
+  const f = fakeClient({ signInWithOAuth: () => ({ data: { url: 'https://abcdefghijklmnopqrst.supabase.co/auth/v1/authorize' }, error: null }) });
+  const flow = A.createAuthFlow(f.client, { redirectTo: 'http://localhost:8085/' });
+  assert.equal((await flow.oauth('google')).ok, true);
+  assert.equal((await flow.oauth('apple')).ok, true);
+  assert.equal((await flow.oauth('myspace')).ok, false);
+  assert.deepEqual(f.calls.map(c => c[1][0].provider), ['google', 'apple']);
+  assert.equal(f.calls[0][1][0].options.redirectTo, 'http://localhost:8085/');
+  const m1 = await flow.magicLink('fixture@example.invalid');
+  const m2 = await A.createAuthFlow(fakeClient({ signInWithOtp: () => ({ error: { code: 'otp_disabled' } }) }).client).magicLink('fixture@example.invalid');
+  assert.deepEqual(m1, m2); assert.equal(m1.message, A.NEUTRAL.magic);
+  const mfa = { enroll: async () => ({ data: { id: 'f1', totp: { qr_code: 'data:image/svg+xml;x', uri: 'otpauth://totp/Panel' } } }), challengeAndVerify: async ({ code }) => code === '123456' ? { data: {} } : { error: { code: 'mfa_verification_failed' } }, listFactors: async () => ({ data: { totp: [{ id: 'f1', status: 'verified' }, { id: 'f2', status: 'unverified' }] } }) };
+  const mf = A.createAuthFlow({ auth: { mfa } });
+  assert.equal((await mf.mfaEnroll()).factorId, 'f1');
+  assert.equal((await mf.mfaVerify('f1', '12345')).error.code, 'mfa_code');
+  assert.equal((await mf.mfaVerify('f1', '654321')).ok, false);
+  assert.equal((await mf.mfaVerify('f1', '123456')).ok, true);
+  assert.deepEqual((await mf.mfaFactors()).totp.map(x => x.id), ['f1']);
+  const T = ['collector', 'creator', 'publisher'];
+  assert.equal(A.signupProfile({ handle: '@Alex_Encre', birthYear: 1990, type: 'creator', terms: true }, 2026, T).profile.needsVerification, true);
+  assert.equal(A.signupProfile({ handle: 'ado.comics', birthYear: 2011, terms: true }, 2026, T).profile.band, '15-17');
+  assert.ok(A.signupProfile({ handle: 'urban_comics', birthYear: 1980, type: 'publisher', terms: true }, 2026, T).errors.some(e => /réservé/.test(e)));
+  assert.ok(A.signupProfile({ handle: 'petit', birthYear: 2015, terms: true }, 2026, T).errors.some(e => /13 ans/.test(e)));
+  assert.ok(A.signupProfile({ handle: 'pro.ado', birthYear: 2010, type: 'creator', terms: true }, 2026, T).errors.some(e => /adultes/.test(e)));
+  assert.ok(!A.signupProfile({ handle: 'sans.accord', birthYear: 1990 }, 2026, T).ok);
+});

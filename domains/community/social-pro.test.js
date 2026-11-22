@@ -108,3 +108,21 @@ test('offres : aucun prix inventé, jamais de visibilité achetée, offres pros 
   assert.equal(O.canSubscribe('plus', { minor: true }).reason, 'adult_only');
   assert.equal(O.canSubscribe('plus', {}).reason, 'not_on_sale');
 });
+
+test('D-114 marché : offres encadrées, lots remisés, réputation bayésienne, recherche sans accents', () => {
+  const l = { price: 2000, currency: 'EUR' };
+  assert.equal(M.validateOffer(l, '15').ok, true);
+  assert.match(M.validateOffer(l, '10').error, /trop basse/);
+  assert.match(M.validateOffer(l, '20').error, /directement/);
+  assert.equal(M.validateOffer(l, '15', 3).ok, false);
+  assert.deepEqual(M.bundle([1000, 1000, 1000], { 2: 5, 3: 10 }), { count: 3, total: 3000, pct: 10, price: 2700, saved: 300 });
+  assert.equal(M.bundle([1000], { 2: 5 }).pct, 0);
+  assert.equal(M.reputation([5]).label, 'Nouveau vendeur');
+  assert.ok(M.reputation([5]).score < M.reputation([5, 5, 5, 5, 5, 5, 5]).score);
+  assert.equal(M.reputation([5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5]).label, 'Vendeur fiable');
+  const L = [{ title: 'Absolute Batman', issue: '1', price: 3000, condition: 'nm', delivery: ['relay'], at: '2' }, { title: 'Daredevil', issue: '181', price: 9000, condition: 'vf', delivery: ['hand'], at: '1' }, { title: 'Les Éternels', price: 1500, condition: 'nm', delivery: ['relay'], at: '3' }];
+  assert.deepEqual(M.search(L, { q: 'eternels' }).map(x => x.title), ['Les Éternels']);
+  assert.deepEqual(M.search(L, { sort: 'price_asc' }).map(x => x.price), [1500, 3000, 9000]);
+  assert.deepEqual(M.search(L, { delivery: 'relay', max: '20' }).map(x => x.title), ['Les Éternels']);
+  assert.deepEqual(M.search(L, {}).map(x => x.at), ['3', '2', '1']);
+});

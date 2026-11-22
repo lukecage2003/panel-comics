@@ -21,6 +21,34 @@ enabled = true
 site_url = "http://localhost:5199"
 enable_signup = false
 
+# D-114 : moyens de connexion préparés, tous DÉSACTIVÉS tant que S8 est fermé.
+# Les identifiants OAuth viennent de variables d'environnement, jamais du dépôt.
+[auth.email]
+enable_signup = false
+double_confirm_changes = true
+enable_confirmations = true
+secure_password_change = true
+max_frequency = "60s"
+otp_expiry = 3600
+
+[auth.external.google]
+enabled = false
+client_id = "env(PANEL_GOOGLE_CLIENT_ID)"
+secret = "env(PANEL_GOOGLE_SECRET)"
+skip_nonce_check = false
+
+[auth.external.apple]
+enabled = false
+client_id = "env(PANEL_APPLE_CLIENT_ID)"
+secret = "env(PANEL_APPLE_SECRET)"
+
+[auth.mfa]
+max_enrolled_factors = 10
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
+
 [storage]
 enabled = false
 
