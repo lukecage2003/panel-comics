@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-m7A+L+ncfgYDx+FxyRQ9r5jkkETBCPEoiPst/7WoAog=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-uDr9qsLQzGxf7rFmoxinYYwFRj6TmHXKjXiIxVJ6SuM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4277,6 +4277,37 @@
     @keyframes splashPanel { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: none; } }
     @keyframes splashWord { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
     @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
+    /* D-127 : accueil « Créer un compte ou se connecter », premier écran tant qu'aucun compte n'est ouvert sur l'appareil */
+    .wg { position: fixed; inset: 0; z-index: 9000; overflow-y: auto; overscroll-behavior: contain; display: flex; justify-content: center; background: #0b0b0c; color: #f4f4f2; padding: calc(28px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom)); animation: wgIn .32s cubic-bezier(.2,.8,.2,1) both; }
+    .wg::before { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .07; background: radial-gradient(circle, #f4f4f2 1.2px, transparent 1.6px) 0 0 / 9px 9px; }
+    .wg-in { position: relative; width: 100%; max-width: 400px; margin: auto 0; display: flex; flex-direction: column; gap: 16px; }
+    .wg-brand { display: flex; align-items: center; gap: 10px; font: 800 22px/1 var(--font-display); letter-spacing: -.02em; }
+    .wg-brand svg { width: 38px; height: 38px; } .wg-brand .pm-bg { fill: #ffd400; } .wg-brand .pm-p { fill: #0b0b0c; }
+    .wg h1 { margin: 6px 0 0; font: 800 clamp(30px, 9vw, 40px)/1.02 var(--font-display); letter-spacing: -.03em; }
+    .wg-sub { margin: 0; color: #b9b9b4; font-size: 15px; line-height: 1.45; }
+    .wg-tabs { display: grid; grid-template-columns: 1fr 1fr; padding: 4px; border-radius: 12px; background: #1b1b1d; }
+    .wg-tabs button { min-height: 40px; border: 0; border-radius: 9px; background: none; color: #b9b9b4; font-family: inherit; font-size: 14px; font-weight: 700; cursor: pointer; }
+    .wg-tabs button[aria-selected="true"] { background: #ffd400; color: #0b0b0c; }
+    .wg form { display: flex; flex-direction: column; gap: 12px; }
+    .wg label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 600; color: #d8d8d3; }
+    .wg input:not([type=checkbox]) { min-height: 48px; padding: 0 14px; border-radius: 12px; border: 1px solid #333336; background: #151517; color: #f4f4f2; font-size: 16px; font-family: inherit; }
+    .wg input:not([type=checkbox]):focus { outline: none; border-color: #ffd400; box-shadow: 0 0 0 3px rgba(255,212,0,.22); }
+    .wg-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; } .wg-row > label { min-width: 0; } .wg input:not([type=checkbox]) { width: 100%; box-sizing: border-box; }
+    .wg .wg-check { flex-direction: row; align-items: flex-start; gap: 10px; font-weight: 500; line-height: 1.4; }
+    .wg .wg-check input { width: 20px; height: 20px; margin: 0; flex: none; accent-color: #ffd400; }
+    .wg-go { min-height: 50px; border: 0; border-radius: 12px; background: #ffd400; color: #0b0b0c; font-family: inherit; font-size: 16px; font-weight: 800; cursor: pointer; }
+    .wg-go:disabled { opacity: .6; }
+    .wg-link, .wg-later { align-self: center; border: 0; background: none; color: #b9b9b4; font-family: inherit; font-size: 14px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; padding: 8px; }
+    .wg-later { margin-top: 4px; color: #8a8a85; font-weight: 500; }
+    .wg-msg { margin: 0; min-height: 1.3em; font-size: 14px; line-height: 1.45; color: #ffd400; }
+    .wg-mail { padding: 18px; border-radius: 14px; background: #151517; border: 1px solid #2a2a2d; line-height: 1.5; }
+    .wg-mail b { color: #ffd400; }
+    .wg-oauth { display: flex; flex-direction: column; gap: 10px; } .wg-oauth[hidden], .wg-or[hidden] { display: none; }
+    .wg-oauth .au-btn { width: 100%; font-family: inherit; } .wg-oauth .au-apple { border-color: #3a3a3d; }
+    .wg-or { display: flex; align-items: center; gap: 12px; color: #8a8a85; font-size: 13px; } .wg-or::before, .wg-or::after { content: ""; flex: 1; height: 1px; background: #2a2a2d; }
+    html.wg-open, html.wg-open body { overflow: hidden; }
+    @keyframes wgIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (prefers-reduced-motion: reduce) { .wg { animation: none; } }
     @media (prefers-reduced-motion: reduce) { .splash { display: none; } }
     /* ===== D-123 : fluidité tactile ===== */
     html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; scroll-padding-bottom: 96px; }
@@ -27922,7 +27953,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const client = acctGetClient(cfg), A = acctCore();
     if (!client || !A) return showToast('Connexion indisponible pour le moment.');
     if (provider === 'email') { const b = $('acctBox'); if (b) { b.open = true; b.scrollIntoView({ block: 'center' }); } return; }
-    const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).oauth(provider);
+    const r = await A.createAuthFlow(client, { redirectTo: acctOauthRedirect() }).oauth(provider);
     if (r.ok && r.url) location.assign(r.url); else showToast(r.error ? r.error.message : 'Connexion impossible.');
   };
 
@@ -31106,6 +31137,16 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // D-125 : dans l'application Android, l'origine est https://localhost (injoignable depuis un e-mail) ;
   // le lien de confirmation renvoie donc vers la version en ligne, qui confirme l'adresse.
   const ACCT_PUBLIC_URL = 'https://lukecage2003.github.io/panel-comics/';
+  const ACCT_APP_RETURN = 'com.panelcomics.app://auth';
+  const acctOauthRedirect = () => (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) ? ACCT_APP_RETURN : acctRedirect();
+  // Fournisseurs réellement activés sur le projet (lecture publique de /auth/v1/settings), mémorisés pour la séance
+  let acctProvidersP = null;
+  const acctProviders = () => {
+    if (acctProvidersP) return acctProvidersP;
+    const cfg = acctConfig(); if (!cfg) return Promise.resolve([]);
+    acctProvidersP = fetch(cfg.url + '/auth/v1/settings', { headers: { apikey: cfg.publishableKey } }).then(r => r.ok ? r.json() : {}).then(j => ['google', 'apple'].filter(k => j && j.external && j.external[k] === true)).catch(() => { acctProvidersP = null; return []; });
+    return acctProvidersP;
+  };
   const acctRedirect = () => (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) || !/^https?:$/.test(location.protocol) ? ACCT_PUBLIC_URL : location.origin + location.pathname;
   // ---------- D-120 : copie de la collection dans le compte (api.collection_backup_*), restaurée par fusion
   const ACCT_AUTO_KEY = 'panel_cloud_autobackup', ACCT_LAST_KEY = 'panel_cloud_lastbackup';
@@ -31188,9 +31229,201 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       if (!ok) { const r = await client.auth.getSession(); ok = !!(r && r.data && r.data.session); }
     } catch (_) {}
     clean();
+    if (ok) { try { await wgAfterLogin(client); } catch (_) {} }
     showToast(ok ? (recovery ? 'Connecté : choisissez votre nouveau mot de passe dans Réglages, Compte.' : 'Adresse confirmée, vous êtes connecté à votre compte Panel.') : 'Adresse confirmée. Connectez-vous avec votre e-mail et votre mot de passe (Réglages, Compte).');
     try { renderAccountBox(); } catch (_) {}
   })();
+  // D-127 : premier écran « Créer un compte ou se connecter ». Montré à chaque ouverture tant qu'aucun compte n'est
+  // connecté sur l'appareil ; « Plus tard » le range jusqu'à la prochaine ouverture. La collection locale n'est jamais touchée.
+  // Le pseudo et l'année choisis à l'inscription sont gardés sur l'appareil, puis envoyés (api.community_join) à la première connexion.
+  const WG_LATER = 'panel_gate_later', WG_PENDING = 'panel_pending_join';
+  const wgPending = () => { try { return JSON.parse(localStorage.getItem(WG_PENDING) || 'null'); } catch (_) { return null; } };
+  const wgJoinErr = m => /handle_taken/.test(m) ? 'Ce pseudo est déjà pris : choisissez-en un autre.' : /invalid_handle/.test(m) ? 'Pseudo : 3 à 24 caractères, lettres, chiffres, point ou tiret bas.' : /too_young/.test(m) ? 'Panel n’ouvre pas de compte avant 13 ans.' : /parental_consent/.test(m) ? 'Entre 13 et 14 ans, l’accord d’un parent est nécessaire.' : 'Profil non créé pour le moment : réessayez plus tard.';
+  // Renvoie '' (rien à faire ou réussi) ou un message d'erreur ; le brouillon reste gardé tant que l'erreur n'est pas définitive
+  const wgJoin = async client => {
+    const p = wgPending(); if (!p || !client) return '';
+    let email = '';
+    try { const r = await client.auth.getUser(); email = String((r && r.data && r.data.user && r.data.user.email) || '').toLowerCase(); } catch (_) {}
+    if (!email || (p.email && p.email !== email)) return '';
+    const r = await acctRpc(client, 'community_join', { p_handle: p.handle, p_birth_year: Number(p.year), p_parental_consent: !!p.consent });
+    const m = r && r.error ? String(r.error.message || r.error.code || '') : '';
+    if (!m || /already_member/.test(m)) { try { localStorage.removeItem(WG_PENDING); } catch (_) {} return ''; }
+    return wgJoinErr(m);
+  };
+  const wgAfterLogin = async client => {
+    const err = await wgJoin(client);
+    if (err) { wgOpen('profile', err); return false; }
+    try { const r = await acctRpc(client, 'messaging_me'); if (r && !r.error && r.data && r.data.member === false) { wgOpen('profile', ''); return false; } } catch (_) {}
+    return true;
+  };
+  const wgShouldShow = () => {
+    if (navigator.webdriver || /Headless/.test(navigator.userAgent) || !acctConfig()) return false;
+    try {
+      if (localStorage.getItem('panel_cloud_auth') || sessionStorage.getItem(WG_LATER)) return false;
+      if (/[?&#](code|access_token|error_description)=/.test(location.href)) return false;
+    } catch (_) { return false; }
+    return true;
+  };
+  const wgOpen = (start, startMsg) => {
+    const prev = document.getElementById('welcomeGate'); if (prev) { if (start !== 'profile') return; prev.remove(); }
+    const A = acctCore(); if (!A) return;
+    const g = document.createElement('div');
+    g.className = 'wg'; g.id = 'welcomeGate'; g.setAttribute('role', 'dialog'); g.setAttribute('aria-modal', 'true'); g.setAttribute('aria-labelledby', 'wgTitle');
+    g.innerHTML = '<div class="wg-in"><div class="wg-brand"><svg viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p" x="266" y="268" width="122" height="120" rx="26"/></svg>Panel</div>' +
+      '<h1 id="wgTitle">Votre collection.<br>Votre communauté.</h1><p class="wg-sub">Créez votre compte pour garder une copie de votre collection, la retrouver sur tous vos appareils et échanger avec les autres collectionneurs.</p>' +
+      '<div class="wg-tabs" role="tablist"><button type="button" role="tab" data-wg-tab="up" aria-selected="true">Créer un compte</button><button type="button" role="tab" data-wg-tab="in" aria-selected="false">Se connecter</button></div>' +
+      '<div class="au-providers wg-oauth" data-wg-oauth hidden>' +
+        '<button type="button" class="au-btn au-google" data-wg-prov="google" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" stroke="none" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" stroke="none" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" stroke="none" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" stroke="none" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg><span>Continuer avec Google</span></button>' +
+        '<button type="button" class="au-btn au-apple" data-wg-prov="apple" hidden><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.1 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></svg><span>Continuer avec Apple</span></button></div>' +
+      '<div class="wg-or" data-wg-or hidden>ou avec un e-mail</div>' +
+      '<div data-wg-body></div><button type="button" class="wg-later" data-wg-later>Plus tard, continuer sur cet appareil</button></div>';
+    document.body.appendChild(g);
+    document.documentElement.classList.add('wg-open');
+    const body = g.querySelector('[data-wg-body]');
+    let mode = 'up', email = '';
+    const close = () => { g.remove(); document.documentElement.classList.remove('wg-open'); };
+    const say = t => { const m = g.querySelector('[data-wg-msg]'); if (m) m.textContent = t || ''; };
+    const getClient = async () => { const cfg = acctConfig(); if (!cfg) return null; await acctLoadLib(); return acctGetClient(cfg); };
+    // Pseudo pris ou refusé après la confirmation : on le redemande ici, sans refaire l'inscription
+    const renderProfile = msg => {
+      g.querySelector('.wg-tabs').hidden = true; g.querySelector('[data-wg-oauth]').hidden = true; g.querySelector('[data-wg-or]').hidden = true;
+      g.querySelector('#wgTitle').textContent = 'Votre profil Panel';
+      g.querySelector('.wg-sub').textContent = 'Dernière étape : choisissez le pseudo sous lequel les autres collectionneurs vous verront.';
+      const p = wgPending() || {}, full = !p.year;
+      body.innerHTML = '<form data-wg-form novalidate>' + (full ? '<div class="wg-row">' : '') + '<label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre" value="' + escapeHtml(p.handle || '') + '"></label>' +
+        (full ? '<label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div><label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
+          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label>' : '') +
+        '<button class="wg-go" type="submit">Valider mon profil</button><p class="wg-msg" role="status" data-wg-msg></p></form>';
+      say(msg);
+      const f = body.querySelector('form'), yr = f.querySelector('[name=year]');
+      if (yr) yr.oninput = () => { const a = new Date().getFullYear() - Number(yr.value) - 1; f.querySelector('[data-wg-consent]').hidden = !(yr.value.length === 4 && a >= 13 && a < 15); };
+      f.onsubmit = async ev => {
+        ev.preventDefault();
+        const d = Object.fromEntries(new FormData(f));
+        let next = { ...p, handle: String(d.handle || '').trim().toLowerCase().replace(/^@/, '') };
+        if (full) {
+          const prof = A.signupProfile({ handle: d.handle, birthYear: d.year, terms: !!d.terms, type: 'collector' }, new Date().getFullYear(), ['collector']);
+          if (!prof.ok) { say(prof.errors[0]); return; }
+          if (prof.profile.band === '13-14' && !d.consent) { say('Entre 13 et 14 ans, l’accord d’un parent est nécessaire.'); return; }
+          next = { handle: prof.profile.handle, year: prof.profile.birthYear, consent: !!d.consent };
+        }
+        try { localStorage.setItem(WG_PENDING, JSON.stringify(next)); } catch (_) {}
+        say('…');
+        const client = await getClient(); if (!client) { say(A.MESSAGES.unavailable); return; }
+        await done(client);
+      };
+    };
+    const done = async client => {
+      const err = await wgJoin(client);
+      if (err) { renderProfile(err); return; }
+      try { const r = await acctRpc(client, 'messaging_me'); if (r && !r.error && r.data && r.data.member === false) { renderProfile(''); return; } } catch (_) {}
+      close();
+      showToast('Connecté à votre compte Panel.');
+      try { renderAccountBox(); } catch (_) {}
+    };
+    const renderMail = () => {
+      body.innerHTML = '<div class="wg-mail">Un e-mail de confirmation part vers <b>' + escapeHtml(email) + '</b>. Ouvrez le lien qu’il contient, puis revenez ici pour vous connecter. Pensez à regarder dans les indésirables.</div>' +
+        '<button class="wg-go" type="button" data-wg-tologin>J’ai confirmé, je me connecte</button><p class="wg-msg" role="status" data-wg-msg></p>';
+      body.querySelector('[data-wg-tologin]').onclick = () => setMode('in');
+    };
+    const renderForm = () => {
+      const up = mode === 'up';
+      body.innerHTML = '<form data-wg-form novalidate>' +
+        '<label>Adresse e-mail<input type="email" name="email" autocomplete="email" inputmode="email" autocapitalize="none" spellcheck="false" maxlength="' + A.LIMITS.email + '" value="' + escapeHtml(email) + '"></label>' +
+        '<label>Mot de passe<input type="password" name="pw" autocomplete="' + (up ? 'new-password' : 'current-password') + '" maxlength="' + A.LIMITS.passwordMax + '"' + (up ? ' placeholder="10 caractères, lettres et chiffres"' : '') + '></label>' +
+        (up ? '<div class="wg-row"><label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre"></label><label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div>' +
+          '<label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
+          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label>' : '') +
+        '<button class="wg-go" type="submit">' + (up ? 'Créer mon compte' : 'Se connecter') + '</button>' +
+        (up ? '' : '<button type="button" class="wg-link" data-wg-forgot>Mot de passe oublié ?</button>') +
+        '<p class="wg-msg" role="status" data-wg-msg></p></form>';
+      const f = body.querySelector('form');
+      const yr = f.querySelector('[name=year]');
+      if (yr) yr.oninput = () => { const a = new Date().getFullYear() - Number(yr.value) - 1; f.querySelector('[data-wg-consent]').hidden = !(yr.value.length === 4 && a >= 13 && a < 15); };
+      const forgot = f.querySelector('[data-wg-forgot]');
+      if (forgot) forgot.onclick = async () => {
+        email = String(f.email.value || '').trim();
+        const client = await getClient(); if (!client) { say(A.MESSAGES.unavailable); return; }
+        const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).resetPassword(email);
+        say(r.ok ? r.message : r.error.message);
+      };
+      f.onsubmit = async ev => {
+        ev.preventDefault();
+        const d = Object.fromEntries(new FormData(f));
+        email = String(d.email || '').trim();
+        const btn = f.querySelector('.wg-go');
+        if (up) {
+          if (!A.validateEmail(email)) { say(A.MESSAGES.invalid_email); return; }
+          const bad = A.passwordIssues(d.pw); if (bad.length) { say('Mot de passe : ' + bad.join(', ') + '.'); return; }
+          const prof = A.signupProfile({ handle: d.handle, birthYear: d.year, terms: !!d.terms, type: 'collector' }, new Date().getFullYear(), ['collector']);
+          if (!prof.ok) { say(prof.errors[0]); return; }
+          if (prof.profile.band === '13-14' && !d.consent) { say('Entre 13 et 14 ans, l’accord d’un parent est nécessaire.'); return; }
+          btn.disabled = true; say('…');
+          const client = await getClient(); if (!client) { btn.disabled = false; say(A.MESSAGES.unavailable); return; }
+          const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).signUp(email, d.pw);
+          btn.disabled = false;
+          if (!r.ok) { say(r.error.message); return; }
+          try { localStorage.setItem(WG_PENDING, JSON.stringify({ email: A.validateEmail(email), handle: prof.profile.handle, year: prof.profile.birthYear, consent: !!d.consent })); } catch (_) {}
+          renderMail();
+          return;
+        }
+        btn.disabled = true; say('…');
+        const client = await getClient(); if (!client) { btn.disabled = false; say(A.MESSAGES.unavailable); return; }
+        const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).signIn(email, d.pw);
+        btn.disabled = false;
+        if (!r.ok) { say(r.error.message); return; }
+        await done(client);
+      };
+    };
+    const setMode = m => {
+      mode = m;
+      g.querySelectorAll('[data-wg-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.wgTab === m)));
+      renderForm();
+    };
+    g.querySelectorAll('[data-wg-tab]').forEach(b => { b.onclick = () => setMode(b.dataset.wgTab); });
+    g.querySelector('[data-wg-later]').onclick = () => { try { sessionStorage.setItem(WG_LATER, '1'); } catch (_) {} close(); };
+    // Google et Apple : boutons montrés seulement si le fournisseur est activé sur le projet
+    acctProviders().then(on => {
+      if (!on.length || !g.isConnected || start === 'profile') return;
+      g.querySelectorAll('[data-wg-prov]').forEach(b => { b.hidden = !on.includes(b.dataset.wgProv); });
+      g.querySelector('[data-wg-oauth]').hidden = false; g.querySelector('[data-wg-or]').hidden = false;
+    });
+    g.querySelectorAll('[data-wg-prov]').forEach(b => { b.onclick = async () => {
+      const client = await getClient(); if (!client) { say(A.MESSAGES.unavailable); return; }
+      const r = await A.createAuthFlow(client, { redirectTo: acctOauthRedirect() }).oauth(b.dataset.wgProv);
+      if (r.ok && r.url) location.assign(r.url); else say(r.error ? r.error.message : '');
+    }; });
+    if (start === 'profile') { renderProfile(startMsg || ''); return; }
+    // Inscription commencée sur cet appareil : on propose directement la connexion
+    const p = wgPending();
+    if (p && p.email) { email = p.email; setMode('in'); } else setMode('up');
+  };
+  // Application Android : la connexion Google ou Apple se termine dans le navigateur du téléphone, qui rouvre Panel
+  // par com.panelcomics.app://auth?code=… ; le code est échangé ici (le vérificateur PKCE est resté dans l'application).
+  if (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) {
+    try {
+      const AppP = window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+      if (AppP && AppP.addListener) AppP.addListener('appUrlOpen', async ev => {
+        const url = String((ev && ev.url) || '');
+        if (url.indexOf(ACCT_APP_RETURN) !== 0) return;
+        let u; try { u = new URL(url); } catch (_) { return; }
+        const hp = new URLSearchParams(String(u.hash || '').replace(/^#/, ''));
+        const err = u.searchParams.get('error_description') || hp.get('error_description');
+        if (err) { showToast('Connexion refusée : ' + err); return; }
+        const code = u.searchParams.get('code'); if (!code) return;
+        const cfg = acctConfig(); if (!cfg) return;
+        await acctLoadLib();
+        const client = acctGetClient(cfg); if (!client) return;
+        let ok = false;
+        try { const r = await client.auth.exchangeCodeForSession(code); ok = !r.error; } catch (_) {}
+        if (!ok) { showToast('Connexion non terminée : réessayez.'); return; }
+        const gate = document.getElementById('welcomeGate');
+        if (await wgAfterLogin(client)) { if (gate) { gate.remove(); document.documentElement.classList.remove('wg-open'); } showToast('Connecté à votre compte Panel.'); }
+        try { renderAccountBox(); } catch (_) {}
+      });
+    } catch (_) {}
+  }
+  if (wgShouldShow()) wgOpen();
   // D-121 : synchronisation automatique, la copie suit chaque changement (regroupés, 2 minutes au plus tôt)
   let acctSyncTimer = 0;
   window.Panel = window.Panel || {};
@@ -31286,13 +31519,14 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       say('…');
       const r = kind === 'in' ? await flow.signIn(em(), pw()) : kind === 'up' ? await flow.signUp(em(), pw()) : kind === 'magic' ? await flow.magicLink(em()) : await flow.resetPassword(em());
       if (!r.ok) { say(r.error.message); return; }
-      if (kind === 'in') { renderAccountBox(); return; }
+      if (kind === 'in') { try { await wgJoin(client); } catch (_) {} renderAccountBox(); return; }
       say(r.message);
     };
     body.querySelector('[data-acct-auth]').onsubmit = ev => { ev.preventDefault(); run('in'); };
     body.querySelectorAll('[data-acct-do]').forEach(b => { if (b.dataset.acctDo !== 'in') b.onclick = () => run(b.dataset.acctDo); });
     // Apple et Google : redirection vers le fournisseur (flux PKCE), aucun mot de passe ne passe par Panel
-    body.querySelectorAll('[data-acct-oauth]').forEach(b => { b.onclick = async () => { say('…'); const r = await flow.oauth(b.dataset.acctOauth); if (r.ok && r.url) location.assign(r.url); else say(r.error ? r.error.message : ''); }; });
+    acctProviders().then(on => body.querySelectorAll('[data-acct-oauth]').forEach(b => { b.hidden = !on.includes(b.dataset.acctOauth); }));
+    body.querySelectorAll('[data-acct-oauth]').forEach(b => { b.onclick = async () => { say('…'); const r = await A.createAuthFlow(client, { redirectTo: acctOauthRedirect() }).oauth(b.dataset.acctOauth); if (r.ok && r.url) location.assign(r.url); else say(r.error ? r.error.message : ''); }; });
     wireForget();
   };
 
