@@ -5,7 +5,7 @@
 
 const PLANS = Object.freeze([
   { key: 'free', name: 'Panel', audience: 'Tout le monde', price: null, free: true,
-    features: ['Collection illimitée, Wishlist, Pull list, Key Issues', 'Fil, Le Comptoir, directs, messages chiffrés', 'Vente entre membres (frais de service par vente)', 'Découvrir, cartes, quiz et défis'] },
+    features: ['Collection illimitée, Wishlist, Pull list, Key Issues', 'Fil, Le Comptoir, directs, messages privés', 'Vente entre membres (frais de service par vente)', 'Découvrir, cartes, quiz et défis'] },
   { key: 'plus', name: 'Panel+', audience: 'Collectionneurs', price: null, adultOnly: true,
     features: ['Statistiques avancées et privées de la collection', 'Exports CSV et PDF d\'assurance', 'Directs plus longs, rediffusion audio 30 jours', 'Thèmes d\'étagère et cadres de profil', 'Frais de vente réduits sur le marché', 'Pastille « Soutien »'] },
   { key: 'creator', name: 'Panel Créateur', audience: 'Scénaristes, dessinateurs, coloristes…', price: null, adultOnly: true, requiresSeal: 'creator',

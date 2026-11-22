@@ -6416,7 +6416,7 @@ const waitForCdp = async () => {
           r.listingRefused = !JSON.parse(localStorage.getItem(HKEY)).listings.length;
           r.safety = document.querySelectorAll('.hb-safety li').length === 4 && /adultes/.test(q('.hb-safety').textContent);
           $('dmBtn').click(); await wait(300);
-          r.dmRules = /mineur/.test(q('.hb-view').textContent) && /X3DH/.test(q('.hb-view').textContent);
+          r.dmRules = /mineur/.test(q('.hb-view').textContent) && !/X3DH|Signal/.test(q('.hb-view').textContent); // D-119 : plus de jargon dans Messages
           const D = window.PanelDomains.dm, A = await D.createIdentity(), B = await D.createIdentity(), meta = { conversationId: 'c', senderId: 'a', seq: 1 };
           const box = await D.seal(await D.conversationKey(A.privateKey, B.publicJwk, 'c'), 'Salut', meta);
           r.e2e = (await D.open(await D.conversationKey(B.privateKey, A.publicJwk, 'c'), box, meta)) === 'Salut' && !/Salut/.test(JSON.stringify(box));

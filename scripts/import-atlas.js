@@ -98,6 +98,17 @@ window.panelCartesMark = function (ids) {
   for (var i = 0; i < els.length; i++) { var n = l[Number(els[i].getAttribute('data-i'))], hit = !!(n && set[n.id]); els[i].classList.toggle('panel-own', hit); if (hit) on++; }
   return on;
 };
+/* D-119 : un toucher sur un personnage ou un lieu le sélectionne, au doigt comme à la souris. L'explorateur capture le pointeur
+   pour pouvoir déplacer la carte : le relâchement arrive alors sur le fond et rien n'était choisi. On retient le nœud touché. */
+(function () {
+  var down = null;
+  addEventListener('pointerdown', function (e) { var n = e.isPrimary && e.target && e.target.closest ? e.target.closest('.n[data-i]') : null; down = n ? { i: Number(n.getAttribute('data-i')), x: e.clientX, y: e.clientY } : null; }, true);
+  addEventListener('pointerup', function (e) {
+    var d = down; down = null;
+    if (!d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 8) return;
+    setTimeout(function () { if (typeof select === 'function' && typeof S !== 'undefined' && S && S.sel !== d.i && !S.tour) select(d.i); }, 0);
+  }, true);
+})();
 `;
 const withPanelCss = html => {
   if (!/<\/head>/i.test(html)) throw new Error('explorer.html : balise </head> introuvable');

@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-vQbWPArFoJ66iP9n5VfCka4eRjbIsxuKh+cErZvv5TQ=' 'sha256-DpzT4fl9bPsh6J0z7rl/BFAFJqbhkRmF4+VAKbS9x2w=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-QZj8RXmYXoQ+7HN0TeF90GMYWIjl5dRdr69UGQiHsHQ=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
-  <meta name="theme-color" content="#111111" />
+  <meta name="theme-color" content="#141413" />
   <script>
-    // Apparence (D-53) : clair, sombre ou selon le système ; préférence locale à l'appareil (non synchronisée)
+    // Apparence (D-53) : clair, sombre ou selon le système ; préférence locale à l'appareil (non synchronisée).
+    // D-119 : sombre par défaut, pour que Panel ait la même allure sur téléphone et sur ordinateur quel que soit le réglage du système
     (function () {
-      var pref = 'system'; try { pref = localStorage.getItem('panel_color_mode') || 'system'; } catch (e) {}
+      var pref = 'dark'; try { pref = localStorage.getItem('panel_color_mode') || 'dark'; } catch (e) {}
       var mq = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
       var apply = function (p) {
         var mode = p === 'dark' || (p === 'system' && mq && mq.matches) ? 'dark' : 'light';
         document.documentElement.dataset.mode = mode; document.documentElement.dataset.modePref = p;
-        var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', mode === 'dark' ? '#0C0C0B' : '#111111');
+        var m = document.querySelector('meta[name="theme-color"]'); if (m) m.setAttribute('content', mode === 'dark' ? '#141413' : '#E2DFD6');
       };
       apply(pref);
       if (mq && mq.addEventListener) mq.addEventListener('change', function () { if (document.documentElement.dataset.modePref === 'system') apply('system'); });
@@ -576,7 +577,8 @@
        ========================================================================== */
     .barcode-scanner-box {
       width: 100%;
-      min-height: 250px;
+      aspect-ratio: 4 / 3;
+      max-height: 52vh;
       border-radius: var(--radius-md);
       overflow: hidden;
       background: var(--bg);
@@ -584,26 +586,34 @@
       border: 2px solid var(--border-focus);
     }
     #barcodeInteractiveViewport {
-      width: 100%;
-      height: 100%;
-      min-height: 250px;
-      position: relative;
+      position: absolute;
+      inset: 0;
     }
-    .scanner-video { width: 100%; height: 100%; min-height: 250px; max-height: 52vh; object-fit: cover; display: block; background: var(--bg); }
-    .scan-roi { --roi: #ffffff; position: absolute; inset: 20% 5%; border-radius: 12px; box-shadow: 0 0 0 999px rgba(8, 8, 10, 0.5); pointer-events: none; transition: box-shadow .2s ease; }
+    .scanner-video { width: 100%; height: 100%; object-fit: cover; display: block; background: #000; }
+    .scan-roi { --roi: #ffffff; position: absolute; inset: 27% 6%; border-radius: 12px; box-shadow: 0 0 0 999px rgba(8, 8, 10, 0.5); pointer-events: none; transition: box-shadow .2s ease; }
     .scan-roi i { position: absolute; width: 26px; height: 26px; border: 4px solid var(--roi); transition: border-color .15s ease; }
     .scan-roi .c1 { left: -2px; top: -2px; border-right: 0; border-bottom: 0; border-top-left-radius: 12px; }
     .scan-roi .c2 { right: -2px; top: -2px; border-left: 0; border-bottom: 0; border-top-right-radius: 12px; }
     .scan-roi .c3 { left: -2px; bottom: -2px; border-right: 0; border-top: 0; border-bottom-left-radius: 12px; }
     .scan-roi .c4 { right: -2px; bottom: -2px; border-left: 0; border-top: 0; border-bottom-right-radius: 12px; }
     .scan-laser { position: absolute; left: 6%; right: 6%; top: 50%; height: 2px; background: linear-gradient(90deg, transparent, #ff3b3b 20%, #ff3b3b 80%, transparent); box-shadow: 0 0 10px #ff3b3b; animation: scanLaser 1.8s ease-in-out infinite alternate; }
-    .scan-roi-lab { position: absolute; left: 50%; bottom: -30px; transform: translateX(-50%); white-space: nowrap; font-size: 11.5px; font-weight: 700; color: #fff; background: rgba(0,0,0,.55); padding: 3px 10px; border-radius: 99px; }
+    .scan-roi-lab { position: absolute; left: 50%; bottom: -28px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; transform: translateX(-50%); white-space: nowrap; font-size: 11.5px; font-weight: 700; color: #fff; background: rgba(0,0,0,.55); padding: 3px 10px; border-radius: 99px; }
     .scan-roi.is-locking { --roi: #FFB020; }
     .scan-roi.is-ok { --roi: #2ECC71; box-shadow: 0 0 0 999px rgba(8, 8, 10, 0.5), inset 0 0 0 999px rgba(46, 204, 113, .18); }
     .scan-roi.is-ok .scan-laser { opacity: 0; }
+    /* D-119 : sur téléphone, le scanner prend tout l'écran (comme l'appareil photo), cadre carré et grand, sans texte superflu */
+    @media (max-width: 600px) {
+      #barcodeScannerModal { padding: 0; place-items: stretch; z-index: 200; }
+      #barcodeScannerModal > .modal-box { max-width: none !important; width: 100%; min-height: 100dvh; max-height: 100dvh; border-radius: 0; margin: 0; overflow-y: auto;
+        padding: calc(env(safe-area-inset-top) + 10px) 14px calc(env(safe-area-inset-bottom) + 14px); }
+      #barcodeScannerModal h2 { font-size: 20px; }
+      #barcodeScannerModal .modal-box > p, #scannerFormatTag { display: none; }
+      #barcodeScannerModal .barcode-scanner-box { aspect-ratio: 1 / 1; max-height: 58vh; }
+      #barcodeScannerModal .scan-roi { inset: 30% 5%; }
+    }
     @keyframes scanLaser { from { transform: translateY(-38px); } to { transform: translateY(38px); } }
     @media (prefers-reduced-motion: reduce) { .scan-laser { animation: none; } }
-    .scan-cam-error { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 250px; padding: 22px; text-align: center; color: var(--muted); gap: 6px; }
+    .scan-cam-error { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; overflow: auto; padding: 22px; text-align: center; color: var(--muted); gap: 6px; }
     .scan-cam-error span { font-size: 32px; }
     .scan-cam-error b { color: var(--ink); font-size: 13px; }
     .scan-cam-error small { font-size: 12px; max-width: 300px; line-height: 1.45; }
@@ -1506,6 +1516,11 @@
     .menu-list .btn, .menu-list .btn.secondary { justify-content: flex-start; width: 100%; background: transparent !important; border: 0 !important; color: var(--ink) !important; box-shadow: none !important; font-weight: 600; padding: 9px 10px !important; font-size: 13px !important; transform: none !important; }
     @media (hover: hover) { .menu-list .btn:hover { background: var(--tint-cyan) !important; } }
     .menu-list .btn[hidden] { display: none !important; }
+    /* D-119 : sur téléphone, les menus « Plus » s'ouvrent en panneau au-dessus de la barre du bas, toujours entiers à l'écran */
+    @media (max-width: 600px) {
+      details.menu-pop[open] > .menu-list { position: fixed; left: 10px; right: 10px; top: auto; bottom: calc(72px + env(safe-area-inset-bottom)); min-width: 0; max-height: 62vh; overflow-y: auto; z-index: 150; }
+      details.menu-pop[open] > .menu-list .btn { min-height: 44px; font-size: 15px; }
+    }
 
     /* Collection : moins d'outillage au-dessus des couvertures */
     .singles-stats-bar { display: grid !important; grid-template-columns: repeat(6, minmax(0, 1fr)); margin-bottom: 14px !important; }
@@ -2517,6 +2532,11 @@
     .dm-tabs button:disabled { cursor: default; opacity: .6; }
     .dm-sec summary { list-style: none; cursor: pointer; }
     .dm-sec summary::-webkit-details-marker { display: none; }
+    .dm-settings { margin-top: 14px; }
+    .dm-settings > summary { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 800; font-size: 14px; padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg-card); list-style: none; min-height: 44px; }
+    .dm-settings > summary::-webkit-details-marker { display: none; }
+    .dm-settings > summary .ic { width: 18px; height: 18px; }
+    .dm-settings[open] > summary { margin-bottom: 10px; }
     .dm-proto { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 10px; counter-reset: dm; }
     .dm-proto li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; }
     .dm-proto li > .ic { width: 34px; height: 34px; padding: 7px; border-radius: 10px; background: var(--yellow-fill); color: #111; fill: none; stroke: currentColor; stroke-width: 2; }
@@ -4261,7 +4281,7 @@
         <button class="nav-btn" id="navMarket" title="Acheter et vendre entre collectionneurs, paiement protégé">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-bag /></svg></span> Marché</div>
         </button>
-        <button class="nav-btn" id="navMessages" title="Messages privés chiffrés de bout en bout">
+        <button class="nav-btn" id="navMessages" title="Messages">
           <div class="nav-btn-content"><span class="icon"><svg class=ic aria-hidden=true><use href=#ic-send /></svg></span> Messages</div>
           <span class="nav-badge" id="badgeMessages" hidden>0</span>
         </button>
@@ -9389,7 +9409,7 @@ module.exports = { ALG, MAX_TEXT, DM_POLICIES, REASON, createIdentity, importPub
 
 const PLANS = Object.freeze([
   { key: 'free', name: 'Panel', audience: 'Tout le monde', price: null, free: true,
-    features: ['Collection illimitée, Wishlist, Pull list, Key Issues', 'Fil, Le Comptoir, directs, messages chiffrés', 'Vente entre membres (frais de service par vente)', 'Découvrir, cartes, quiz et défis'] },
+    features: ['Collection illimitée, Wishlist, Pull list, Key Issues', 'Fil, Le Comptoir, directs, messages privés', 'Vente entre membres (frais de service par vente)', 'Découvrir, cartes, quiz et défis'] },
   { key: 'plus', name: 'Panel+', audience: 'Collectionneurs', price: null, adultOnly: true,
     features: ['Statistiques avancées et privées de la collection', 'Exports CSV et PDF d\'assurance', 'Directs plus longs, rediffusion audio 30 jours', 'Thèmes d\'étagère et cadres de profil', 'Frais de vente réduits sur le marché', 'Pastille « Soutien »'] },
   { key: 'creator', name: 'Panel Créateur', audience: 'Scénaristes, dessinateurs, coloristes…', price: null, adultOnly: true, requiresSeal: 'creator',
@@ -12182,6 +12202,23 @@ const phrases = {
   'Les dernières nouvelles des comics, de la BD et de leurs adaptations, triées pour vous. Les articles s\'ouvrent sur leur site.': 'The latest news on comics and their adaptations, sorted for you. Articles open on their own site.',
   'Les actualités passent par le relais local de Panel (': 'News goes through Panel\'s local relay (', '). Panel n\'affiche jamais d\'actualité inventée.': '). Panel never shows made-up news.',
   'dans le dossier de Panel (ou lancez': 'in the Panel folder (or run', '), puis ouvrez': '), then open', 'Lancer Panel.cmd': 'Launch Panel.cmd', 'Pour tout activer, double-cliquez': 'To turn everything on, double-click',
+  "Vos conversations privées": "Your private conversations",
+  "Réglages des messages": "Message settings",
+  "Confidentialité des messages": "Message privacy",
+  "Les clés restent sur votre téléphone": "Keys stay on your phone",
+  "Seule la partie publique est partagée. Personne d’autre, pas même Panel, ne peut lire vos messages.": "Only the public part is shared. No one else, not even Panel, can read your messages.",
+  "Une clé par message": "One key per message",
+  "Chaque message a sa propre clé, effacée après usage. Une clé volée ne rouvre pas les autres messages.": "Each message has its own key, deleted after use. A stolen key does not open the other messages.",
+  "Messages scellés": "Sealed messages",
+  "Un message modifié ou renvoyé une seconde fois est refusé.": "A message that is altered or sent a second time is refused.",
+  "Comparez-le en personne. S’il change, Panel vous prévient avant d’envoyer.": "Compare it in person. If it changes, Panel warns you before sending.",
+  "De 5 minutes à 1 semaine, au choix pour chaque conversation.": "From 5 minutes to 1 week, set for each conversation.",
+  "Photos protégées": "Protected photos",
+  "Les photos envoyées sont protégées de la même façon que le texte.": "Photos you send are protected the same way as text.",
+  "Panel sait qui écrit à qui et quand, jamais ce qui est écrit. Pas de messages entre un mineur et un adulte. Un signalement ne transmet que les messages que vous choisissez.": "Panel knows who writes to whom and when, never what is written. No messages between a minor and an adult. A report only shares the messages you choose.",
+  "Numéro de sécurité de cet appareil, à comparer en personne avec vos contacts :": "This device's safety number, to compare in person with your contacts:",
+  "Vérifier la protection sur ce téléphone": "Check protection on this phone",
+  "Appuyez encore sur retour pour quitter Panel.": "Press back again to leave Panel.",
   'Version de test en ligne : ces outils passent par le relais de Panel, qui ne tourne que sur l’ordinateur de l’équipe. Votre collection reste dans ce navigateur.': 'Online test version: these tools go through Panel\'s relay, which only runs on the team\'s computer. Your collection stays in this browser.',
   'Les grandes sorties tirées des comics : les films à revoir et les comics à lire avant.': 'Big releases based on comics: films to rewatch and comics to read first.', 'Avant de voir': 'Before watching',
   'au cinéma le {n} décembre {n} (France, date annoncée)': 'in cinemas on {n} December {n} (France, announced date)', 'au cinéma en juin {n} (date annoncée)': 'in cinemas in June {n} (announced date)',
@@ -12975,7 +13012,7 @@ const phrases = {
   "Panel reste gratuit pour collectionner, lire, débattre et vendre. Les offres financent le service et ajoutent du confort, jamais de visibilité.": "Panel stays free to collect, read, debate and sell. Plans fund the service and add comfort, never visibility.",
   "Gratuit": "Free",
   "Collection illimitée, Wishlist, Pull list, Key Issues": "Unlimited collection, Wishlist, Pull list, Key Issues",
-  "Fil, Le Comptoir, directs, messages chiffrés": "Feed, The Counter, live sessions, encrypted messages",
+  "Fil, Le Comptoir, directs, messages privés": "Feed, The Counter, live sessions, private messages",
   "Vente entre membres (frais de service par vente)": "Selling between members (service fee per sale)",
   "Découvrir, cartes, quiz et défis": "Discover, maps, quizzes and challenges",
   "Votre offre actuelle": "Your current plan",
@@ -14590,6 +14627,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   };
 
   let scannerActiveDeviceId = null;
+  try { scannerActiveDeviceId = localStorage.getItem('panel_scan_cam') || null; } catch (_) {}
+  let scanLensChecked = false;
+  // D-119 : objectif arrière principal, sans rien demander. Android nomme ses objectifs « camera2 0, facing back »… (le plus petit
+  // numéro est le principal) ; iPhone « Back Camera », « Back Ultra Wide Camera »… On écarte ultra grand-angle, téléobjectif et profondeur.
+  const pickMainBack = (cams, curLabel) => {
+    const backs = cams.filter(c => /back|rear|environment|arri[eè]re/i.test(c.label || ''));
+    if (backs.length < 2) return null;
+    const odd = /ultra|grand[- ]?angle|tele|t[ée]l[ée]objectif|macro|depth|profondeur|infra|\bir\b/i;
+    const pool = backs.filter(c => !odd.test(c.label));
+    const num = c => { const m = /(\d+)\s*,\s*facing back/i.exec(c.label || ''); return m ? +m[1] : 99; };
+    if (pool.some(c => num(c) < 99)) return pool.slice().sort((a, b) => num(a) - num(b))[0];
+    return odd.test(curLabel || '') ? (pool[0] || null) : null;
+  };
   const scanSession = { active: false, token: null, stream: null, track: null, video: null, loop: null, frame: 0, startedAt: 0, lastAnyAt: 0, mainOnlyAt: 0, seen: new Map(), lastAccepted: {}, torchOn: false, zoomOn: false, caps: {} };
   const roiCanvas = document.createElement('canvas');
 
@@ -14653,9 +14703,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (cur) scannerActiveDeviceId = cur;
       if (sel) {
         sel.innerHTML = cams.map((c, i) => '<option value="' + escapeHtml(c.deviceId) + '"' + (c.deviceId === cur ? ' selected' : '') + '>' + escapeHtml(c.label || ('Caméra ' + (i + 1))) + '</option>').join('');
-        sel.style.display = cams.length > 1 ? 'block' : 'none';
+        sel.style.display = 'none';
       }
-      if ($('scannerSwitchCamBtn')) $('scannerSwitchCamBtn').style.display = cams.length > 1 ? '' : 'none';
+      if ($('scannerSwitchCamBtn')) $('scannerSwitchCamBtn').style.display = 'none';
       scanSession.cams = cams;
     } catch (_) {}
   };
@@ -14769,12 +14819,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const v = scanSession.video;
     if (v && v.readyState >= 2 && v.videoWidth) {
       const vw = v.videoWidth, vh = v.videoHeight;
-      const rw = Math.round(vw * 0.9), rh = Math.round(vh * 0.6);
+      let sx = Math.round(vw * 0.05), sy = Math.round(vh * 0.2), rw = Math.round(vw * 0.9), rh = Math.round(vh * 0.6);
+      const roi = $('scanRoi'), W = v.clientWidth, H = v.clientHeight;
+      if (roi && W && H) {
+        const sc = Math.max(W / vw, H / vh), ox = (W - vw * sc) / 2, oy = (H - vh * sc) / 2;
+        const vr = v.getBoundingClientRect(), rr = roi.getBoundingClientRect();
+        const mx = rr.width * 0.08, my = rr.height * 0.3;
+        const x0 = Math.max(0, (rr.left - vr.left - mx - ox) / sc), y0 = Math.max(0, (rr.top - vr.top - my - oy) / sc);
+        const x1 = Math.min(vw, (rr.right - vr.left + mx - ox) / sc), y1 = Math.min(vh, (rr.bottom - vr.top + my - oy) / sc);
+        if (x1 - x0 > 40 && y1 - y0 > 20) { sx = Math.round(x0); sy = Math.round(y0); rw = Math.round(x1 - x0); rh = Math.round(y1 - y0); }
+      }
       const k = Math.min(1, 1280 / rw);
       roiCanvas.width = Math.round(rw * k);
       roiCanvas.height = Math.round(rh * k);
       const g = roiCanvas.getContext('2d', { willReadFrequently: true });
-      g.drawImage(v, Math.round((vw - rw) / 2), Math.round((vh - rh) / 2), rw, rh, 0, 0, roiCanvas.width, roiCanvas.height);
+      g.drawImage(v, sx, sy, rw, rh, 0, 0, roiCanvas.width, roiCanvas.height);
       scanSession.frame++;
       try {
         // 3 images sur 4 exigent le supplément ; la 4e accepte le code seul (ISBN, comics sans supplément)
@@ -14806,8 +14865,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try { stream = await navigator.mediaDevices.getUserMedia(cameraConstraints(scannerActiveDeviceId)); }
     catch (e) {
       err = e;
-      if (scanSession.token === token && /Overconstrained|NotReadable|Abort/i.test(e.name || '')) {
-        try { stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true }); err = null; } catch (e2) { err = e2; }
+      if (scanSession.token === token && /Overconstrained|NotFound|NotReadable|Abort/i.test(e.name || '')) {
+        if (scannerActiveDeviceId) { scannerActiveDeviceId = null; try { localStorage.removeItem('panel_scan_cam'); } catch (_) {} }
+        try { stream = await navigator.mediaDevices.getUserMedia(cameraConstraints(null)); err = null; } catch (e2) {
+          try { stream = await navigator.mediaDevices.getUserMedia({ audio: false, video: true }); err = null; } catch (e3) { err = e3; }
+        }
       }
     }
     if (scanSession.token !== token || !scanSession.active) { if (stream) stream.getTracks().forEach(t => t.stop()); return; }
@@ -14819,6 +14881,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     video.srcObject = stream;
     try { await video.play(); } catch (_) {}
     await populateCameraList();
+    if (!scanLensChecked) {
+      scanLensChecked = true;
+      const best = pickMainBack(scanSession.cams || [], scanSession.track && scanSession.track.label);
+      const curId = scanSession.track && scanSession.track.getSettings ? scanSession.track.getSettings().deviceId : null;
+      if (best && best.deviceId && best.deviceId !== curId) {
+        scannerActiveDeviceId = best.deviceId;
+        try { localStorage.setItem('panel_scan_cam', best.deviceId); } catch (_) {}
+        return startBarcodeScanner();
+      }
+    }
     await setupCameraControls();
     const Z = await zx;
     if (scanSession.token !== token) return;
@@ -18344,7 +18416,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     live: ['Directs', 'Préparez et lancez vos directs autour de vos numéros'],
     forum: ['Le Comptoir', 'Débats, théories et conseils de lecture entre fans'],
     market: ['Marché', 'Achetez et vendez entre collectionneurs, paiement protégé'],
-    dm: ['Messages', 'Chiffrés de bout en bout, comme Signal : personne d’autre ne peut les lire'],
+    dm: ['Messages', 'Vos conversations privées'],
     pros: ['Compte pro', 'Créateurs, boutiques, maisons d’édition et studios vérifiés'],
     plans: ['Panel+', 'Statistiques avancées, outils pros et soutien à Panel'],
     profile: ['Profil', 'Votre identité de collectionneur et votre collection'],
@@ -22951,9 +23023,11 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       d.addEventListener('pointerup', e => {
         const k = down; down = null;
         if (!k || Math.hypot(e.clientX - k.x, e.clientY - k.y) > 6) return;
-        setTimeout(() => {
+        // D-119 : sur téléphone la sélection arrive un peu après le relâchement du doigt ; on l'attend jusqu'à 0,4 s
+        let wait = 0;
+        const look = () => {
           const id = decodeURIComponent(String(d.location.hash || '').slice(1));
-          if (!id || !k.n.classList.contains('on')) return;
+          if (!id || !k.n.classList.contains('on')) { if (wait++ < 10) setTimeout(look, 40); return; }
           // Fiches de l'univers ouvert : index de toutes ses cartes (exposé par cartes/panel-cartes.js), complété par la base d'entités
           const w = d.defaultView, dc = /[?&]u=dc\b/.test(d.location.search), E = (dc ? w.DBDC && w.DBDC.E : w.DB && w.DB.E) || {};
           const ix = typeof w.panelCartesIndex === 'function' ? w.panelCartesIndex() : null;
@@ -22963,7 +23037,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
           const img = /^https:\/\//.test(href) ? href : /^img\/[a-z0-9_.-]+\.webp$/i.test(href) ? 'cartes/' + href : '';
           const node = typeof w.panelCartesNode === 'function' ? w.panelCartesNode(id) : null;
           setTimeout(() => exMpFiche({ id, uni: dc ? 'dc' : 'marvel', E, ix, img, node, map: title.textContent }, title.textContent), 420);
-        }, 0);
+        };
+        setTimeout(look, 0);
       });
     };
     // D-109 : les entités dont vous possédez des séries s'allument sur la carte (rapprochement par le nom, calculé ici)
@@ -23051,6 +23126,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     back.querySelector('[data-mp-back]').onclick = () => { back.remove(); live.ov.hidden = false; document.body.classList.add('mp-open'); const f = live.ov.querySelector('.mp-frame'); if (f) f.focus(); };
     back.querySelector('[data-mp-drop]').onclick = () => live.close();
     document.body.appendChild(back);
+    // D-119 : la pastille ne suit pas l'utilisateur hors de Découvrir ; elle revient quand il y retourne
+    const exv = $('singlesExplorerView');
+    if (exv) {
+      let t = null;
+      const mo = new MutationObserver(() => { clearTimeout(t); t = setTimeout(() => {
+        if (!back.isConnected) { mo.disconnect(); return; }
+        back.hidden = !exv.getClientRects().length;
+      }, 120); });
+      mo.observe(document.body, { subtree: true, attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
+    }
     exGo(page, ref);
   };
   // Fiche de Panel d'une entité des cartes (page « map-e », référence « marvel:id » ou « dc:id »)
@@ -26531,23 +26616,24 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const R = HB().dmRatchet, st = hbLoad();
     const pol = { everyone: ['Tout le monde', 'Les inconnus envoient une demande, que vous acceptez ou non.'], verified: ['Comptes vérifiés seulement', 'Pour les créateurs et éditeurs très sollicités.'], nobody: ['Personne', 'Vous ne recevez plus de demandes.'] };
     const steps = [
-      ['ic-key', 'Clés d’identité et préclés signées (X3DH)', 'Votre appareil publie seulement des clés publiques. Chaque préclé à usage unique n’est donnée qu’une fois, puis effacée du serveur.'],
-      ['ic-refresh', 'Double cliquet', 'Chaque message a sa propre clé, effacée après usage. Une clé volée ne déchiffre pas les anciens messages, ni les suivants après le prochain échange.'],
-      ['ic-layers', 'En-tête authentifié, longueur masquée', 'Les messages sont complétés par blocs de 64 octets. Un message rejoué ou modifié est refusé.'],
-      ['ic-eye', 'Numéro de sécurité', 'Comparez-le en personne ou en appel. S’il change, Panel vous prévient avant d’envoyer.'],
-      ['ic-hourglass', 'Messages éphémères', 'De 5 minutes à 1 semaine, réglés par conversation. À l’échéance, ils ne sont plus servis et sont effacés du serveur.'],
-      ['ic-image', 'Pièces jointes chiffrées', 'Photos d’un exemplaire ou documents : chiffrés sur l’appareil avec une clé à usage unique, transmise dans le message. Le serveur ne garde qu’un bloc illisible et son empreinte.']
+      ['ic-key', 'Les clés restent sur votre téléphone', 'Seule la partie publique est partagée. Personne d’autre, pas même Panel, ne peut lire vos messages.'],
+      ['ic-refresh', 'Une clé par message', 'Chaque message a sa propre clé, effacée après usage. Une clé volée ne rouvre pas les autres messages.'],
+      ['ic-layers', 'Messages scellés', 'Un message modifié ou renvoyé une seconde fois est refusé.'],
+      ['ic-eye', 'Numéro de sécurité', 'Comparez-le en personne. S’il change, Panel vous prévient avant d’envoyer.'],
+      ['ic-hourglass', 'Messages éphémères', 'De 5 minutes à 1 semaine, au choix pour chaque conversation.'],
+      ['ic-image', 'Photos protégées', 'Les photos envoyées sont protégées de la même façon que le texte.']
     ];
     return '<div class="dm-inbox"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dm-search></label>' +
       '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" class="is-on" aria-current="page">Principal</button><button type="button" disabled title="Les demandes des personnes que vous ne suivez pas arrivent ici">Demandes</button></nav>' +
       hbEmpty('ic-send', 'Aucune conversation pour l’instant', 'Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez. Les messages s’ouvrent avec les comptes en ligne, pour les adultes.') + '</div>' +
-      '<details class="hb-panel dm-sec" open><summary><h4>' + igIcon('ic-shield') + 'Protégés comme sur Signal</h4></summary>' +
-      '<ol class="dm-proto">' + steps.map(([i, t, d]) => '<li>' + igIcon(i) + '<div><b>' + t + '</b><p>' + d + '</p></div></li>').join('') + '</ol>' +
-      '<p class="hb-muted dm-alg">Protocole : <code>' + escapeHtml(R.ALG) + '</code>. Panel voit qui écrit à qui et quand, jamais le contenu. Jamais entre un mineur et un adulte. Un signalement ne transmet que les messages que vous choisissez.</p></details>' +
-      '<section class="hb-panel"><h4>' + igIcon('ic-key') + 'Clé de cet appareil</h4><div data-hb-dm-key><p class="hb-muted">Lecture de la clé…</p></div></section>' +
+      // D-119 : comme les grands réseaux, la vue Messages montre la boîte de réception ; réglages et explications sont rangés derrière « Réglages des messages »
+      '<details class="dm-settings"><summary>' + igIcon('ic-settings') + 'Réglages des messages</summary>' +
+      '<section class="hb-panel"><h4>' + igIcon('ic-user') + 'Qui peut m’écrire</h4><div class="hb-radios">' + HB().dm.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
       '<section class="hb-panel"><h4>' + igIcon('ic-hourglass') + 'Messages éphémères par défaut</h4><label class="dm-timer">Pour les nouvelles conversations<select data-hb-timer>' + R.TIMERS.map(t => hbOpt(String(t), R.TIMER_LABEL[t], st.dmTimer === t)).join('') + '</select></label></section>' +
-      '<section class="hb-panel"><h4>' + igIcon('ic-settings') + 'Qui peut m’écrire</h4><div class="hb-radios">' + HB().dm.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
-      hbLocal('La clé privée ne quitte jamais cet appareil et ne peut pas être exportée, même par Panel. Limite écrite : Panel voit les métadonnées (qui, quand), pas le contenu.');
+      '<details class="hb-panel dm-sec"><summary><h4>' + igIcon('ic-shield') + 'Confidentialité des messages</h4></summary>' +
+      '<ol class="dm-proto">' + steps.map(([i, t, d]) => '<li>' + igIcon(i) + '<div><b>' + t + '</b><p>' + d + '</p></div></li>').join('') + '</ol>' +
+      '<p class="hb-muted dm-alg">Panel sait qui écrit à qui et quand, jamais ce qui est écrit. Pas de messages entre un mineur et un adulte. Un signalement ne transmet que les messages que vous choisissez.</p>' +
+      '<div data-hb-dm-key><p class="hb-muted">Lecture de la clé…</p></div></details></details>';
   };
   const hbDmMount = async root => {
     const box = root.querySelector('[data-hb-dm-key]');
@@ -26557,8 +26643,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try { id = await hbDmGet(); } catch (_) { box.innerHTML = '<p class="hb-muted">' + D.REASON.crypto_unavailable + '</p>'; return; }
     if (!id) { box.innerHTML = '<p>Aucune clé sur cet appareil. Elle se crée ici, et la partie secrète n’en sort jamais.</p><button class="btn" type="button" data-hb-dm-create>' + igIcon('ic-key') + 'Créer la clé de cet appareil</button>'; return; }
     const fp = await D.safetyNumber(id.publicJwk, id.publicJwk);
-    box.innerHTML = '<p>Empreinte de cet appareil, à comparer de vive voix avec vos contacts :</p><code class="hb-fp">' + escapeHtml(fp) + '</code><small class="hb-muted">Créée le ' + hbDate(id.createdAt) + ' · clé privée non exportable</small>' +
-      '<button class="btn secondary" type="button" data-hb-dm-test>' + igIcon('ic-check-circle') + 'Vérifier le chiffrement ici</button><div data-hb-dm-out></div>';
+    box.innerHTML = '<p>Numéro de sécurité de cet appareil, à comparer en personne avec vos contacts :</p><code class="hb-fp">' + escapeHtml(fp) + '</code><small class="hb-muted">Créée le ' + hbDate(id.createdAt) + ' · clé privée non exportable</small>' +
+      '<button class="btn secondary" type="button" data-hb-dm-test>' + igIcon('ic-check-circle') + 'Vérifier la protection sur ce téléphone</button><div data-hb-dm-out></div>';
   };
   // Vérification locale du protocole : deux appareils créés en mémoire sur ce téléphone (rien n'est enregistré ni envoyé)
   const hbDmSelfTest = async root => {
@@ -29164,6 +29250,67 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     if ($('trashBtn')) $('trashBtn').onclick = () => openTrashDialog();
     if ($('conflictsBtn')) $('conflictsBtn').onclick = () => openConflictCenter();
     if ($('navExplorer')) $('navExplorer').onclick = () => goSingles('explorer');
+    // D-119 : bouton retour du téléphone et du navigateur. Chaque fenêtre, fiche ou vue ouverte ajoute une étape à l'historique ;
+    // « retour » ferme la fenêtre du dessus, puis remonte d'une fiche, puis revient à la vue précédente. À l'accueil, un premier
+    // appui prévient, le second quitte Panel. Aucune donnée n'est écrite.
+    {
+      const BACK_SEL = '#seriesDetailCloseBtn, [data-mp-back], [data-box-back], .ex-back, .hb-back, [data-nav-back]';
+      const shown = el => !!el && el.isConnected && el.getClientRects().length > 0;
+      const overlays = () => {
+        const list = [...document.querySelectorAll('.modal-backdrop.open')];
+        document.querySelectorAll('[aria-modal="true"]').forEach(d => { if (!d.closest('.modal-backdrop') && shown(d)) list.push(d); });
+        if ($('notifPanel') && !$('notifPanel').hidden) list.push($('notifPanel'));
+        return list;
+      };
+      const backBtn = () => [...document.querySelectorAll(BACK_SEL)].filter(shown).pop() || null;
+      const depth = () => overlays().length + (backBtn() ? 1 : 0);
+      const snap = () => ({ mod: activeModule, view: activeSinglesView, ct: commTab, filter: activeSingleFilter, pull: !!($('releasesPullOnly') && $('releasesPullOnly').checked) });
+      const keyOf = s => [s.mod, s.view, s.view === 'community' ? s.ct : '', s.view === 'collection' ? s.filter : '', s.view === 'releases' ? s.pull : ''].join('|');
+      const views = [];
+      let cur = { snap: snap(), depth: depth() }, skip = 0, busyUntil = 0, warnedAt = 0, timer = null;
+      const sync = () => { cur = { snap: snap(), depth: depth() }; };
+      // Rien n'est compté avant le premier geste : l'ouverture de Panel (vue d'accueil, fenêtres de bienvenue) n'est pas une navigation
+      let armed = false;
+      const arm = () => { armed = true; };
+      document.addEventListener('pointerdown', arm, { capture: true, once: true });
+      document.addEventListener('keydown', arm, { capture: true, once: true });
+      const check = () => {
+        timer = null;
+        if (!armed || Date.now() < busyUntil) { sync(); return; }
+        const s = snap(), d = depth();
+        if (keyOf(s) !== keyOf(cur.snap)) { views.push(cur.snap); if (views.length > 40) views.shift(); cur = { snap: s, depth: d }; history.pushState({ panel: 'view' }, ''); return; }
+        if (d > cur.depth) { for (let i = cur.depth; i < d; i++) history.pushState({ panel: 'layer' }, ''); cur.depth = d; }
+        else if (d < cur.depth) { skip++; history.go(-(cur.depth - d)); cur.depth = d; }
+      };
+      const later = () => { if (!timer) timer = setTimeout(check, 160); };
+      new MutationObserver(later).observe(document.body, { subtree: true, childList: true, attributes: true, attributeFilter: ['class', 'hidden'] });
+      const closeTop = ov => {
+        const before = overlays().length;
+        document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }));
+        if (overlays().length < before) return;
+        const btn = ov.querySelector('button[id^="close"], button[id*="Close"], [data-cancel], [data-close], .modal-close-btn, button[aria-label="Fermer"]');
+        if (btn) btn.click(); else if (ov.classList.contains('modal-backdrop')) ov.classList.remove('open');
+      };
+      const restore = s => {
+        if (s.mod !== 'singles' && typeof switchModule === 'function') { switchModule(s.mod); return; }
+        if (s.view === 'community') { goCommunity(s.ct); return; }
+        if (s.view === 'releases') relSetPullOnly(s.pull);
+        goSingles(s.view, s.view === 'collection' ? s.filter : null);
+      };
+      const guard = () => { if (history.state && history.state.panel === 'root') history.pushState({ panel: 'home' }, ''); };
+      try { history.replaceState({ panel: 'root' }, ''); history.pushState({ panel: 'home' }, ''); } catch (_) {}
+      window.addEventListener('popstate', () => {
+        if (skip) { skip--; return; }
+        busyUntil = Date.now() + 450;
+        const ov = overlays();
+        if (ov.length) { closeTop(ov[ov.length - 1]); sync(); return; }
+        const b = backBtn();
+        if (b) { b.click(); sync(); return; }
+        if (views.length) { restore(views.pop()); sync(); return; }
+        // Accueil, rien d'ouvert : un premier appui prévient, un second (dans les 2,5 s) quitte Panel
+        if (Date.now() - warnedAt > 2500) { warnedAt = Date.now(); showToast('Appuyez encore sur retour pour quitter Panel.'); setTimeout(guard, 2500); }
+      });
+    }
     $('singlesSubnav').onclick = e => {
       const b = e.target.closest('[data-sview]');
       if (!b) return;
@@ -29431,7 +29578,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     };
 
     // Apparence (D-53)
-    const syncAppearance = () => { const p = document.documentElement.dataset.modePref || 'system'; document.querySelectorAll('#appearanceRow [data-mode-choice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modeChoice === p))); };
+    const syncAppearance = () => { const p = document.documentElement.dataset.modePref || 'dark'; document.querySelectorAll('#appearanceRow [data-mode-choice]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.modeChoice === p))); };
     $('appearanceRow').onclick = e => {
       const btn = e.target.closest('button[data-mode-choice]'); if (!btn || !window.panelSetColorMode) return;
       window.panelSetColorMode(btn.dataset.modeChoice); syncAppearance();

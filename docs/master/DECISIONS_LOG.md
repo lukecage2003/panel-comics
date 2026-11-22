@@ -111,3 +111,15 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
 - **Indisponible en ligne** : recherche Comic Vine, couvertures GCD, Metron, Wikidata, BnF, boutiques, actualités, car ils passent tous par le relais local.
 - **Vérifié en ligne** : page servie, aucune erreur dans la console, Accueil, Marché et Profil ouverts, service worker enregistré.
 - **Données** : chaque visiteur a sa collection dans son propre navigateur. La collection locale de l'utilisateur (origine localhost) n'est ni copiée ni touchée. Rien n'est envoyé à Supabase, les comptes (S8) restant fermés.
+
+## Décisions de D-119
+
+Passe téléphone demandée par l'utilisateur : « il faut que tout marche sur téléphone ».
+
+- **Scanner** : plein écran sur téléphone, vidéo qui remplit le cadre. La lecture se fait exactement dans la zone du cadre affiché (plus une marge), quel que soit le recadrage de la vidéo. L'objectif arrière principal est choisi tout seul : on écarte ultra grand-angle, téléobjectif, macro et profondeur. Le choix est mémorisé sur l'appareil (`panel_scan_cam`), et il n'y a plus de menu ni de bouton « Changer objectif ». Si l'appareil mémorisé disparaît, on revient à l'objectif par défaut.
+- **Couleur** : thème sombre par défaut partout. Avant, le téléphone suivait le thème clair du système, d'où la différence avec le PC. `theme-color` et le manifeste passent à `#141413`. Un choix déjà fait dans Réglages est gardé.
+- **Bouton retour du téléphone** : il ferme d'abord la fenêtre ou le panneau ouvert, puis revient à la vue précédente. À l'accueil, un premier appui affiche « Appuyez encore sur retour pour quitter Panel. ». Rien n'est enregistré avant le premier geste de l'utilisateur.
+- **Messages** : la vue montre la boîte de réception, comme les grands réseaux. Les réglages et les explications sont rangés derrière « Réglages des messages », puis « Confidentialité des messages ». Plus aucune mention de Signal, X3DH ni du nom du protocole dans l'interface ; Panel+ dit « messages privés ».
+- **Cartes** : un toucher sur un personnage ou un lieu ouvre sa fiche. Avant, la capture du pointeur de l'atlas empêchait la sélection. Le correctif est dans l'adaptateur de Panel (`scripts/import-atlas.js`), le contenu de l'atlas n'est pas modifié. La pastille « Revenir à la carte » se masque hors de Découvrir.
+- **Menus** : sur téléphone, le menu « Plus » s'ouvre en panneau en bas de l'écran. Avant, il débordait à gauche.
+- **Non vérifié** : la vraie caméra d'un téléphone, que le navigateur de test bloque. Les comptes en ligne (S8) restent fermés ; le profil local, le Compte pro et Panel+ s'affichent sans débordement.
