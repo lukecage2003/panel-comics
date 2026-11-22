@@ -39,7 +39,7 @@ const TYPES = {
   '.woff2': 'font/woff2'
 };
 // Seuls les fichiers de l'application sont servis (pas les sauvegardes, profils de test, etc.)
-const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.png|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|maps\/(?:marvel|dc)-\d{2}-thumb\.webp|cartes\/(?:img\/)?[a-z0-9_-][a-z0-9_.-]*\.(?:html|js|css|webp)|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
+const ALLOWED = /^\/(index\.html|manifest\.webmanifest|sw\.js|icons\/[a-z0-9-]+\.(?:png|svg)|fonts\/[a-z0-9-]+\.woff2|data\/[a-z0-9-]+\.json|maps\/(?:marvel|dc)-\d{2}-thumb\.webp|cartes\/(?:img\/)?[a-z0-9_-][a-z0-9_.-]*\.(?:html|js|css|webp)|vendor\/supabase-js-\d+\.\d+\.\d+\.js|vendor\/jszip-\d+\.\d+\.\d+\.min\.js|vendor\/zxing-wasm-\d+\.\d+\.\d+\/(?:iife\/reader\/index\.js|reader\/zxing_reader\.wasm))?$/i;
 
 // ---------- Relais GCD : quota, cache, aucune donnée personnelle transmise
 const GCD_HOURLY_MAX = 25;

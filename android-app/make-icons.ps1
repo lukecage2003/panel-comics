@@ -36,7 +36,7 @@ Get-ChildItem $res -Directory | Where-Object { $_.Name -like 'drawable*' } | For
   if (Test-Path $sp) {
     $old = [System.Drawing.Image]::FromFile($sp); $w = $old.Width; $h = $old.Height; $old.Dispose()
     $bmp = New-Object System.Drawing.Bitmap $w, $h
-    $g = [System.Drawing.Graphics]::FromImage($bmp); $g.Clear($bg); $g.InterpolationMode = 'HighQualityBicubic'
+    $g = [System.Drawing.Graphics]::FromImage($bmp); $g.Clear([System.Drawing.ColorTranslator]::FromHtml("#0B0B0C")); $g.InterpolationMode = 'HighQualityBicubic'
     $s = [int]([Math]::Min($w, $h) * 0.28); $g.DrawImage($icon, [int](($w - $s) / 2), [int](($h - $s) / 2), $s, $s)
     $g.Dispose(); $bmp.Save($sp, [System.Drawing.Imaging.ImageFormat]::Png); $bmp.Dispose()
   }

@@ -8,7 +8,7 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-22-relais-heberge';
+const VERSION = 'panel-2026-11-22-logo-jaune';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 // D-108 : cartes interactives de l'atlas (cartes/), gardées une fois ouvertes pour être relues hors ligne
@@ -23,6 +23,7 @@ const SHELL = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
+  './icons/panel-mark.svg',
   './fonts/barlow-condensed-600-latin.woff2',
   './fonts/barlow-condensed-700-latin.woff2',
   './fonts/barlow-condensed-800-latin.woff2',

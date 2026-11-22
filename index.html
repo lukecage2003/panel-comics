@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-312cIcMTUhnWcaXalu1IIOsRU5IAo+ot80HGUEhPhWI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-FaGP5KX4+VsJUiDb5LTMfcS+uuKy/pMaJOGL7TKMMho=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-N6Db/Lm/AhlYz3tb7he2tzwY0d6PzlBf1meZ9GhreM4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -35,6 +35,7 @@
   <meta name="apple-mobile-web-app-title" content="Panel" />
   <meta name="mobile-web-app-capable" content="yes" />
   <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" type="image/svg+xml" href="icons/panel-mark.svg" />
   <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <meta name="description" content="Panel — Collect. Discover. Connect. Le réseau social des fans de comics : montre ta collection en 3D, parle de tes lectures sans spoiler, découvre ce qui sort." />
@@ -1662,6 +1663,7 @@
     @media (max-width: 640px) { .da-cf-grid { grid-template-columns: 1fr; } .da-box { width: calc(100vw - 16px); } }
 
     /* ===== LOT 2.6 · EXPLORER & GUIDES DE LECTURE ===== */
+    #singlesViewSection.is-explorer .coll-share-row, #singlesViewSection.hide-coll-stats .coll-share-row,
     #singlesViewSection.is-explorer .singles-stats-bar, #singlesViewSection.hide-coll-stats .singles-stats-bar { display: none !important; }
     /* Bandeau des couvertures : seulement sur Ma collection (la récupération continue en arrière-plan ailleurs) */
     #singlesViewSection.is-explorer .cover-job-bar, #singlesViewSection.hide-coll-stats .cover-job-bar { display: none !important; }
@@ -4251,17 +4253,17 @@
     .pfc-go b { font-size: 12px; color: var(--ink-dim, inherit); }
     .pfc-go .ic { width: 18px; height: 18px; flex: 0 0 18px; }
       /* Animation d'ouverture (D-98) : 1,2 s, une fois par session ; le contenu reste utilisable dessous */
-    .splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #0b0b12; pointer-events: none; animation: splashOut .32s ease-in .95s forwards; }
-    .splash-in { position: relative; display: grid; justify-items: center; gap: 14px; }
-    .splash-rays { position: absolute; left: 50%; top: 42px; width: 340px; height: 340px; margin: -170px 0 0 -170px; border-radius: 50%;
-      background: repeating-conic-gradient(rgba(255,212,0,.16) 0 6deg, transparent 6deg 22.5deg); -webkit-mask: radial-gradient(circle, #000 30%, transparent 70%); mask: radial-gradient(circle, #000 30%, transparent 70%);
-      animation: splashRays 1.2s cubic-bezier(.2,.8,.2,1) both; }
-    .splash-mark { position: relative; width: 84px; height: 84px; border-radius: 22px; display: grid; place-items: center; background: #ffd400; color: #0b0b12; font: 800 46px/1 var(--font-display); box-shadow: 0 0 0 4px #0b0b12, 0 0 0 7px #ffd400, 0 18px 50px rgba(255,212,0,.35);
-      animation: splashPop .55s cubic-bezier(.2,.9,.3,1.35) both; }
-    .splash-word { position: relative; color: #fff; font: 800 34px var(--font-display); letter-spacing: -1px; animation: splashWord .4s ease-out .22s both; }
-    @keyframes splashPop { 0% { transform: scale(0) rotate(-18deg); } 70% { transform: scale(1.12) rotate(3deg); } 100% { transform: none; } }
-    @keyframes splashRays { 0% { transform: scale(.3) rotate(-20deg); opacity: 0; } 40% { opacity: 1; } 100% { transform: scale(1.05) rotate(8deg); opacity: .85; } }
-    @keyframes splashWord { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+    /* D-121 : intro épurée. Fond uni, logo qui se pose, trois cases l'une après l'autre, le nom, puis fondu (1,2 s en tout). */
+    .splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #0b0b0c; pointer-events: none; animation: splashOut .3s cubic-bezier(.4,0,.2,1) .9s forwards; }
+    .splash-in { display: grid; justify-items: center; gap: 16px; }
+    .splash .pm { width: 76px; height: 76px; animation: splashMark .5s cubic-bezier(.2,.8,.2,1) both; }
+    .splash .pm-bg { fill: #ffd400; }
+    .splash .pm-p { fill: #0b0b0c; transform-box: fill-box; transform-origin: center; animation: splashPanel .34s cubic-bezier(.2,.8,.2,1) both; }
+    .splash .pm-p1 { animation-delay: .16s; } .splash .pm-p2 { animation-delay: .24s; } .splash .pm-p3 { animation-delay: .32s; }
+    .splash-word { color: #f4f4f2; font: 800 26px/1 var(--font-display); letter-spacing: -.02em; animation: splashWord .4s ease-out .38s both; }
+    @keyframes splashMark { from { opacity: 0; transform: scale(.9); } to { opacity: 1; transform: none; } }
+    @keyframes splashPanel { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+    @keyframes splashWord { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
     @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
     @media (prefers-reduced-motion: reduce) { .splash { display: none; } }
     /* ===== D-120 : finition visuelle (icônes, dock, boutons, Messages, Marché, Directs) ===== */
@@ -4306,18 +4308,49 @@
     .lv-how summary::-webkit-details-marker { display: none; }
     .lv-how p { margin: 6px 0 0; font-size: 13px; color: rgba(255,255,255,.78); line-height: 1.45; }
     @media (prefers-reduced-motion: reduce) { .btn, .mobile-dock-btn, .mk-card { transition: none; } .btn:active:not(:disabled), .mobile-dock-btn:active { transform: none; } }
+    /* ===== D-121 : finitions (recherche en pastille, Découvrir, calendrier, carte, plein écran) ===== */
+    .search-bar { border-radius: 999px !important; background: color-mix(in srgb, var(--ink) 7%, var(--bg-card)) !important; border-color: transparent !important; }
+    .search-bar:focus-within { border-color: var(--lime) !important; }
+    .ex-hero.is-compact { background: none !important; padding-left: 0; padding-right: 0; }
+    .ex-search { border-radius: 999px !important; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent) !important; background: color-mix(in srgb, var(--ink) 6%, var(--bg-card)) !important; }
+    .ex-search:focus-within { border-color: var(--lime) !important; }
+    .week-nav .week-label { flex: 1; min-width: 0; text-align: center; font: 700 13px/1.3 var(--font-body, inherit); }
+    .rel-upcoming { color: var(--lime); font-weight: 800; }
+    .rel-fr { width: 100%; border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; font-size: 13px; }
+    .rel-fr summary { cursor: pointer; font-weight: 800; min-height: 28px; display: flex; align-items: center; }
+    .rel-fr p { margin: 8px 0; color: var(--ink-dim); line-height: 1.45; }
+    .rel-fr-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .rel-fr-links a { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border-radius: 999px; background: color-mix(in srgb, var(--ink) 8%, var(--bg-card)); color: var(--ink); text-decoration: none; font-weight: 700; }
+    .coll-share-row { display: flex; justify-content: flex-end; margin: -4px 0 10px; }
+    .igp-full { position: absolute; z-index: 3; top: 10px; right: 10px; width: 36px; height: 36px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgba(11,11,12,.55); color: #fff; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); cursor: pointer; }
+    .igp-full .ic { width: 18px; height: 18px; }
+    .pv { position: fixed; inset: 0; z-index: 10000; background: #000; display: grid; }
+    .pv-track { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; overscroll-behavior: contain; }
+    .pv-track::-webkit-scrollbar { display: none; }
+    .pv-page { flex: 0 0 100%; margin: 0; display: grid; place-items: center; scroll-snap-align: center; height: 100dvh; }
+    .pv-page img { max-width: 100%; max-height: 100dvh; object-fit: contain; touch-action: pinch-zoom; }
+    @media (orientation: landscape) and (min-width: 900px) { .pv-page { flex-basis: 50%; } }
+    .pv-x { position: fixed; z-index: 2; top: calc(12px + env(safe-area-inset-top)); right: 12px; width: 44px; height: 44px; border-radius: 50%; border: 0; display: grid; place-items: center; background: rgba(255,255,255,.14); color: #fff; cursor: pointer; }
+    .pv-count { position: fixed; bottom: calc(16px + env(safe-area-inset-bottom)); left: 50%; translate: -50% 0; padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.14); color: #fff; font: 700 13px/1 inherit; }
+    .pv-card { background: rgba(0,0,0,.92); place-items: center; align-content: center; gap: 16px; padding: 24px 16px; }
+    .pv-card-img { max-height: 72dvh; max-width: 100%; border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.6); }
+    .pv-card-act { display: flex; gap: 10px; justify-content: center; }
+    /* ===== D-121 : logo unique (application, site, intro) ===== */
+    .pm-bg { fill: #ffd400; } .pm-p { fill: #0b0b0c; }
+    .brandmark, aside .brandmark { background: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible; }
+    .brandmark .pm { width: 100%; height: 100%; display: block; }
 </style>
 </head>
 <body>
-<div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><span class="splash-rays"></span><span class="splash-mark">▰</span><b class="splash-word">panel</b></div></div>
-<script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}setTimeout(function(){if(s.parentNode)s.remove()},1500)})();</script>
+<div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p pm-p1" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p pm-p2" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p pm-p3" x="266" y="268" width="122" height="120" rx="26"/></svg><b class="splash-word">panel</b></div></div>
+<script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}setTimeout(function(){if(s.parentNode)s.remove()},1300)})();</script>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-send" viewBox="0 0 24 24"><path d="M21 3L3 10.4l7.2 3.1L13.6 21z"/><path d="M21 3L10.2 13.5"/></symbol><symbol id="ic-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.5H6.2z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol><symbol id="ic-verified" viewBox="0 0 24 24"><path d="M12 2.5l2.5 1.9 3.1-.3.9 3 2.6 1.7-1 3 1 2.9-2.6 1.8-.9 3-3.1-.3L12 21.1l-2.5-1.9-3.1.3-.9-3-2.6-1.8 1-2.9-1-3 2.6-1.7.9-3 3.1.3z"/><path d="M8.6 12l2.3 2.3 4.6-4.7"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
   <!-- SIDEBAR DESKTOP -->
   <aside>
     <div class="brand">
-      <div class="brandmark">▰</div>
+      <div class="brandmark"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p pm-p1" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p pm-p2" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p pm-p3" x="266" y="268" width="122" height="120" rx="26"/></svg></div>
       <span>panel</span>
     </div>
 
@@ -4537,6 +4570,7 @@
         </div>
       </div>
 
+      <div class="coll-share-row"><button type="button" class="btn secondary" id="collCardBtn"><svg class=ic aria-hidden=true><use href=#ic-send /></svg> Ma carte de collectionneur</button></div>
       <div class="coll-seg-wrap">
         <div class="coll-seg" role="tablist" aria-label="Regards sur la collection">
           <button role="tab" data-coll-seg="collection" class="is-on" aria-selected="true">Mes exemplaires</button>
@@ -4584,6 +4618,7 @@
               <span class="week-label" id="releasesWeekLabel">—</span>
               <button class="btn secondary" id="releasesNextWeekBtn" aria-label="Période suivante">→</button>
               <button class="btn ghost" id="releasesThisWeekBtn" style="font-size: 12px">Aujourd'hui</button>
+              <button class="btn ghost rel-upcoming" id="releasesUpcomingBtn" style="font-size: 12px" title="Les trois prochains mois">À venir</button>
             </div>
             <select class="field-input rel-sel" id="relPeriod" aria-label="Période"><option value="week">Semaine</option><option value="month">Mois</option><option value="quarter">3 mois</option><option value="all">Toutes les dates</option></select>
             <select class="field-input rel-sel" id="relMode" aria-label="Affichage"><option value="grid">Cartes</option><option value="firsts">Nouveaux #1</option><option value="month">Calendrier mensuel</option><option value="list">Liste chronologique</option><option value="publisher">Par éditeur</option><option value="series">Par série</option><option value="market">Par marché</option></select>
@@ -4592,6 +4627,17 @@
         <div class="rel-quick">
           <input class="field-input" id="releasesSearch" type="search" placeholder="Série ou titre…" style="width:170px" aria-label="Filtrer par série ou titre">
           <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer"><input type="checkbox" id="releasesPullOnly" style="accent-color:var(--gold)"> Ma pull list seulement</label>
+          <label class="toolbar-row" style="font-size:12px;color:var(--ink-dim);gap:6px;cursor:pointer"><input type="checkbox" id="releasesMineOnly" style="accent-color:var(--gold)"> Mes séries seulement</label>
+          <details class="rel-fr"><summary>Sorties francophones à venir</summary>
+            <p>Les éditeurs français ne publient pas leur planning sous une forme que Panel peut reprendre librement. Leurs pages officielles, toujours à jour :</p>
+            <div class="rel-fr-links">
+              <a href="https://www.urban-comics.com/a-paraitre/" target="_blank" rel="noopener noreferrer">Urban Comics</a>
+              <a href="https://www.panini.fr/shp_fra_fr/comics/checklist.html" target="_blank" rel="noopener noreferrer">Panini Comics</a>
+              <a href="https://www.editions-delcourt.fr/comics/a-paraitre-comics" target="_blank" rel="noopener noreferrer">Delcourt Comics</a>
+              <a href="https://www.casterman.com/A-paraitre" target="_blank" rel="noopener noreferrer">Casterman</a>
+            </div>
+            <p class="rel-note">Un numéro vous intéresse ? Ajoutez-le à la pull list avec sa date (« + Ajouter » dans la pull list), ou importez un planning (CSV / JSON) depuis « Filtres et outils ».</p>
+          </details>
         </div>
         <details class="rel-more" id="relMore"><summary>Filtres et outils</summary>
         <p class="rel-sync-note"><span id="relSyncInfo" class="rel-note"></span></p>
@@ -4834,7 +4880,7 @@
         <button type="button" class="btn secondary" id="scannerSwitchCamBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-refresh /></svg> Changer objectif</button>
         <button type="button" class="btn secondary" id="scannerTorchBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-torch /></svg> Lampe</button>
         <button type="button" class="btn secondary" id="scannerZoomBtn" style="padding:4px 8px;font-size: 12px;display:none"><svg class=ic aria-hidden=true><use href=#ic-search /></svg> Zoom ×2</button>
-        <button type="button" class="btn secondary" id="scannerPhotoBtn" style="padding:4px 8px;font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> Depuis une photo</button>
+        <button type="button" class="btn secondary" id="scannerPhotoBtn" style="padding:4px 8px;font-size: 12px"><svg class=ic aria-hidden=true><use href=#ic-image /></svg> Photo (un ou plusieurs)</button>
         <input type="file" id="barcodePhotoInput" accept="image/*" style="display:none">
       </div>
       <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
@@ -14582,10 +14628,13 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const Z = await loadZxing();
     const res = await Z.readBarcodes(input, {
       formats: ['UPC-A', 'UPC-E', 'EAN-13', 'EAN-8'], tryHarder: true, tryRotate: true, tryInvert: false, tryDownscale: true,
-      maxNumberOfSymbols: 1, eanAddOnSymbol: opts.requireAddOn === false ? 'Read' : 'Require'
+      maxNumberOfSymbols: opts.max || 1, eanAddOnSymbol: opts.requireAddOn === false ? 'Read' : 'Require'
     });
+    if (opts.max > 1) return (res || []).filter(x => x && x.text && x.isValid !== false).map(barcodeParse);
     const r = (res || []).find(x => x && x.text && x.isValid !== false);
-    if (!r) return null;
+    return r ? barcodeParse(r) : null;
+  };
+  const barcodeParse = r => {
     let digits = String(r.text).replace(/\D/g, '');
     const ext = String(r.extension || '').replace(/\D/g, '');
     if (ext && !digits.endsWith(ext)) digits += ext;
@@ -14981,6 +15030,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!file) return;
     setScanStatus('Lecture de la photo…', 'var(--gold)');
     try {
+      // D-121 : photo d'une étagère ou d'une pile : tous les codes lisibles sont ajoutés d'un coup, en mode continu
+      const many = await decodeBarcodeImage(file, { requireAddOn: false, max: 40 }).catch(() => []);
+      const uniq = [...new Map((many || []).map(x => [x.code, x])).values()];
+      if (uniq.length > 1) {
+        const t = $('continuousScanToggle'); if (t && !t.checked) { t.checked = true; t.dispatchEvent(new Event('change')); }
+        uniq.forEach(x => acceptScan(x, { addonMissing: !x.addon, method: 'photo (étagère)' }));
+        setScanStatus(uniq.length + ' codes-barres lus sur la photo', 'var(--lime)');
+        return;
+      }
       const r = (await decodeBarcodeImage(file, { requireAddOn: true })) || (await decodeBarcodeImage(file, { requireAddOn: false }));
       if (!r) { setScanStatus('Aucun code-barres lisible sur cette photo', 'var(--red)'); setScanHint('Photographiez le code de près, bien éclairé et sans reflet, ou saisissez-le ci-dessous.', 'warn'); return; }
       acceptScan(r, { addonMissing: !r.addon, method: 'photo' });
@@ -15806,6 +15864,67 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     mediaFailCache = new Map(Object.entries(d).filter(([u, ts]) => typeof ts === 'number' && now - ts < MEDIA_FAIL_TTL));
     return mediaFailCache;
   };
+  // ---------- D-121 : carte de collectionneur (image story à partager) et visionneuse plein écran
+  (() => {
+    const txt = id => { const e = $(id); return e ? e.textContent.trim() : ''; };
+    const rr = (g, x, y, w, h, r) => { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); };
+    const drawMark = (g, x, y, s) => { const k = s / 512; g.fillStyle = '#FFD400'; rr(g, x, y, s, s, 116 * k); g.fill(); g.fillStyle = '#0B0B0C';
+      [[124, 124, 264, 124], [124, 268, 122, 120], [266, 268, 122, 120]].forEach(([a, b, w, h]) => { rr(g, x + a * k, y + b * k, w * k, h * k, 26 * k); g.fill(); }); };
+    const makeCard = async () => {
+      const c = document.createElement('canvas'); c.width = 1080; c.height = 1920;
+      const g = c.getContext('2d');
+      try { await document.fonts.ready; } catch (_) {}
+      const font = getComputedStyle(document.body).fontFamily || 'system-ui, sans-serif';
+      g.fillStyle = '#0B0B0C'; g.fillRect(0, 0, 1080, 1920);
+      const glow = g.createRadialGradient(1000, 120, 40, 1000, 120, 900); glow.addColorStop(0, 'rgba(255,212,0,.28)'); glow.addColorStop(1, 'rgba(255,212,0,0)');
+      g.fillStyle = glow; g.fillRect(0, 0, 1080, 1920);
+      drawMark(g, 96, 120, 120);
+      g.fillStyle = '#F4F4F2'; g.font = '800 64px ' + font; g.fillText('panel', 244, 202);
+      g.fillStyle = 'rgba(244,244,242,.6)'; g.font = '600 38px ' + font; g.fillText('Ma collection de comics', 96, 400);
+      g.fillStyle = '#FFD400'; g.font = '900 260px ' + font; g.fillText(txt('statSinglesCount') || '0', 84, 640);
+      g.fillStyle = '#F4F4F2'; g.font = '700 46px ' + font; g.fillText('numéros', 96, 712);
+      const tiles = [['Séries', txt('statSinglesSeries')], ['Valeur estimée', txt('statSinglesValue')], ['Wishlist', txt('statSinglesWishlist')]];
+      tiles.forEach(([k, v], i) => { const y = 800 + i * 170; g.fillStyle = 'rgba(255,255,255,.06)'; rr(g, 96, y, 888, 140, 32); g.fill();
+        g.fillStyle = 'rgba(244,244,242,.6)'; g.font = '600 34px ' + font; g.fillText(k, 140, y + 84); g.fillStyle = '#F4F4F2'; g.font = '800 54px ' + font; g.textAlign = 'right'; g.fillText(v || '—', 940, y + 90); g.textAlign = 'left'; });
+      const series = (window.Panel && window.Panel.collectionSeries ? window.Panel.collectionSeries() : []).slice(0, 5);
+      if (series.length) { g.fillStyle = 'rgba(244,244,242,.6)'; g.font = '600 34px ' + font; g.fillText('Dans ma collection', 96, 1380);
+        g.fillStyle = '#F4F4F2'; g.font = '700 44px ' + font; series.forEach((t, i) => { let s2 = t; while (g.measureText(s2).width > 880 && s2.length > 4) s2 = s2.slice(0, -2); g.fillText(s2 === t ? t : s2 + '…', 96, 1450 + i * 64); }); }
+      g.fillStyle = 'rgba(244,244,242,.5)'; g.font = '600 32px ' + font; g.fillText('Collectionnez, scannez, partagez sur Panel', 96, 1830);
+      return new Promise(res => c.toBlob(res, 'image/png'));
+    };
+    const openCard = async () => {
+      const blob = await makeCard(); if (!blob) { showToast('Image impossible à créer sur cet appareil.'); return; }
+      const url = URL.createObjectURL(blob), file = new File([blob], 'panel-collection.png', { type: 'image/png' });
+      const dlg = document.createElement('div'); dlg.className = 'pv pv-card'; dlg.setAttribute('role', 'dialog'); dlg.setAttribute('aria-modal', 'true'); dlg.setAttribute('aria-label', 'Ma carte de collectionneur');
+      const canShare = !!(navigator.canShare && navigator.canShare({ files: [file] }));
+      dlg.innerHTML = '<button type="button" class="pv-x" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button><img class="pv-card-img" alt="Aperçu de votre carte de collectionneur" src="' + url + '">' +
+        '<div class="pv-card-act">' + (canShare ? '<button type="button" class="btn" data-pv-share>Partager</button>' : '') + '<a class="btn' + (canShare ? ' secondary' : '') + '" download="panel-collection.png" href="' + url + '">Enregistrer l’image</a></div>';
+      const close = () => { dlg.remove(); URL.revokeObjectURL(url); document.removeEventListener('keydown', onKey); };
+      const onKey = e => { if (e.key === 'Escape') close(); };
+      dlg.querySelector('.pv-x').onclick = close; document.addEventListener('keydown', onKey);
+      const sh = dlg.querySelector('[data-pv-share]'); if (sh) sh.onclick = () => navigator.share({ files: [file], title: 'Ma collection sur Panel' }).catch(() => {});
+      document.body.appendChild(dlg); dlg.querySelector('.pv-x').focus();
+    };
+    const btn = $('collCardBtn'); if (btn) btn.onclick = () => openCard().catch(() => showToast('Image impossible à créer sur cet appareil.'));
+    // Visionneuse : images de la publication côte à côte, glisser pour passer, Échap ou ✕ pour fermer
+    document.addEventListener('click', e => {
+      const b = e.target.closest && e.target.closest('[data-igp-full]'); if (!b) return;
+      e.preventDefault(); e.stopPropagation();
+      const media = b.closest('[data-igp-media]'); const imgs = media ? [...media.querySelectorAll('.igp-track img')].map(i => i.currentSrc || i.src).filter(Boolean) : [];
+      if (!imgs.length) return;
+      const v = document.createElement('div'); v.className = 'pv'; v.setAttribute('role', 'dialog'); v.setAttribute('aria-modal', 'true'); v.setAttribute('aria-label', 'Lecture en plein écran');
+      v.innerHTML = '<button type="button" class="pv-x" aria-label="Fermer"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button><div class="pv-track">' +
+        imgs.map((u, i) => '<figure class="pv-page"><img src="' + escapeHtml(u) + '" alt="Image ' + (i + 1) + ' sur ' + imgs.length + '" referrerpolicy="no-referrer" decoding="async"></figure>').join('') + '</div>' +
+        (imgs.length > 1 ? '<span class="pv-count" aria-live="polite">1 / ' + imgs.length + '</span>' : '');
+      const track = v.querySelector('.pv-track'), cnt = v.querySelector('.pv-count');
+      track.addEventListener('scroll', () => { if (cnt) cnt.textContent = (Math.round(track.scrollLeft / Math.max(1, track.clientWidth)) + 1) + ' / ' + imgs.length; }, { passive: true });
+      const close = () => { document.removeEventListener('keydown', onKey); if (document.fullscreenElement === v) document.exitFullscreen().catch(() => {}); v.remove(); b.focus(); };
+      const onKey = ev => { if (ev.key === 'Escape') close(); else if (ev.key === 'ArrowRight') track.scrollBy({ left: track.clientWidth }); else if (ev.key === 'ArrowLeft') track.scrollBy({ left: -track.clientWidth }); };
+      v.querySelector('.pv-x').onclick = close; document.addEventListener('keydown', onKey);
+      document.body.appendChild(v); v.querySelector('.pv-x').focus();
+      if (v.requestFullscreen && matchMedia('(max-width: 900px)').matches) v.requestFullscreen().catch(() => {});
+    }, true);
+  })();
   // D-120 : glisser depuis le bord gauche de l'écran = retour (même chemin que le bouton retour du téléphone)
   (() => {
     if (!('ontouchstart' in window)) return;
@@ -16251,6 +16370,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       showToast('Stockage local plein : la collection reste enregistrée dans IndexedDB. Exportez une sauvegarde JSON.');
     }
     mirrorSinglesToIdb(singlesRev);
+    if (window.Panel && window.Panel.acctScheduleSync) window.Panel.acctScheduleSync();
     scheduleCatalogSync();
     scheduleLocationSync();
     schedulePubRebuild();
@@ -20542,10 +20662,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const REL_SCOPE_INDEX = new Map(REL_SCOPE_RULES.flatMap(rule => rule.publishers.map(n => [n, rule.id])));
   const relOutOfScopeReason = window.PanelDomains.releasesScope.scopeReason;
   const relOutOfScope = p => !!relOutOfScopeReason(p);
+  const relMineSeries = () => { const m = new Set(); (window.Panel && window.Panel.collectionSeries ? window.Panel.collectionSeries() : []).forEach(x => m.add(catNorm(x))); return m; };
   const relQuery = (opts = {}) => {
     const range = opts.range === undefined ? relRange() : opts.range;
     const q = catNorm(opts.q !== undefined ? opts.q : (($('releasesSearch') && $('releasesSearch').value) || ''));
     const pullOnly = opts.pullOnly !== undefined ? opts.pullOnly : !!($('releasesPullOnly') && $('releasesPullOnly').checked);
+    // D-121 : « Mes séries seulement » = séries déjà présentes dans la collection
+    const mineOnly = opts.mineOnly !== undefined ? opts.mineOnly : !!($('releasesMineOnly') && $('releasesMineOnly').checked);
+    const mine = mineOnly ? relMineSeries() : null;
     const market = opts.market !== undefined ? opts.market : relView.market, publisher = opts.publisher !== undefined ? opts.publisher : relView.publisher;
     const format = opts.format !== undefined ? opts.format : relView.format, status = opts.status !== undefined ? opts.status : relView.status;
     const today = relToday();
@@ -20560,6 +20684,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       if (format && p.format !== format) return false;
       if (status && relStatusOf(p, today) !== status) return false;
       if (q && !catNorm(p.series + ' ' + p.title + ' ' + p.publisher).includes(q)) return false;
+      if (mine && !mine.has(catNorm(p.series))) return false;
       return true;
     });
     if ($('releasesOutOfScopeCount') && opts.includeOutOfScope === undefined) {
@@ -20793,7 +20918,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     await loadReleaseData();
     renderReleasesGrid();
     const range = relRange();
-    if (!range || navigator.webdriver || !navigator.onLine || !cvAvailable() || !srcEnabled('comicvine') || !srcAllowed('comicvine') || relView.syncing || relView.period !== 'week') return;
+    if (!range || navigator.webdriver || !navigator.onLine || !cvAvailable() || !srcEnabled('comicvine') || !srcAllowed('comicvine') || relView.syncing || relView.period === 'all' || range[1] < relToday()) return;
     const seen = (relMeta.ranges || {})['comicvine:' + range[0] + ':' + range[1]];
     if (seen && Date.now() - new Date(seen).getTime() < 12 * 3600000) return;
     await relSyncCurrent(true);
@@ -20984,6 +21109,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if ($('releasesNextWeekBtn')) $('releasesNextWeekBtn').onclick = () => shift(1);
     if ($('releasesThisWeekBtn')) $('releasesThisWeekBtn').onclick = () => { relView.anchor = relView.period === 'week' ? startOfWeek(new Date()) : new Date(); releasesWeekStart = relView.anchor; loadReleasesForWeek(); };
     if ($('releasesPullOnly')) $('releasesPullOnly').onchange = rerender;
+    if ($('releasesMineOnly')) $('releasesMineOnly').onchange = rerender;
+    // D-121 : « À venir » = les trois prochains mois, chargés depuis Comic Vine quand le service est disponible
+    if ($('releasesUpcomingBtn')) $('releasesUpcomingBtn').onclick = () => { relView.period = 'quarter'; relView.day = ''; relView.anchor = new Date(); releasesWeekStart = relView.anchor; if ($('relPeriod')) $('relPeriod').value = 'quarter'; loadReleasesForWeek(); };
     if ($('releasesShowOutOfScope')) $('releasesShowOutOfScope').onchange = rerender;
     if ($('releasesSearch')) $('releasesSearch').oninput = rerender;
     [['relMarket', 'market'], ['relPublisher', 'publisher'], ['relFormat', 'format'], ['relStatus', 'status']].forEach(([id, k]) => { if ($(id)) $(id).onchange = e => { relView[k] = e.target.value; if (k === 'market') relView.publisher = ''; rerender(); }; });
@@ -25895,7 +26023,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<span class="igp-who"><b>' + escapeHtml(handle) + '</b><small>' + escapeHtml(kindLabel) + (when ? ' · ' + escapeHtml(when) : '') + ' · ' + escapeHtml(vis) + '</small></span>' +
         (p.pinned ? '<span class="igp-pinned" title="Épinglé en haut du fil">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
         '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
-      '<div class="igp-media' + (p.type === 'story' ? ' is-story' : '') + (duel ? ' is-duel' : '') + (hunt ? ' is-hunt' : '') + '" data-igp-media tabindex="0" aria-label="Double-cliquez pour aimer">' +
+      '<div class="igp-media' + (p.type === 'story' ? ' is-story' : '') + (duel ? ' is-duel' : '') + (hunt ? ' is-hunt' : '') + '" data-igp-media tabindex="0" aria-label="Double-cliquez pour aimer">' + '<button type="button" class="igp-full" data-igp-full aria-label="Voir en plein écran"><svg class=ic aria-hidden=true><use href=#ic-eye /></svg></button>' +
         '<div class="igp-track"' + (car ? ' aria-roledescription="carrousel"' : '') + '>' + (duel ? p.media.slice(0, 2) : p.media).map(slide).join('') + '</div>' +
         (duel ? '<span class="igp-vs" aria-hidden="true">VS</span>' : '') + (hunt ? '<span class="igp-hunt">' + igIcon('ic-search') + ' On cherche</span>' : '') +
         (car ? '<span class="igp-count" aria-hidden="true">1/' + n + '</span><button class="igp-nav is-prev" data-igp-nav="-1" aria-label="Couverture précédente" hidden>' + igIcon('ic-arrow-left') + '</button><button class="igp-nav is-next" data-igp-nav="1" aria-label="Couverture suivante">' + igIcon('ic-arrow-right') + '</button>' : '') +
@@ -28582,6 +28710,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // EXPORT JSON de Collection (lot 3.1b-4, D2 et D3) : panel-bundle v1 avec la seule section collection (exemplaires, séries suivies, emplacements, pull list).
   // Ni guides, ni progression, ni calendrier : ils ont leurs propres sections. L'ancien export panel-singles v2 reste proposé pendant deux versions (D-23).
   const exportCollectionBundle = () => bundleExport({ domains: ['collection'] });
+  // D-121 : pont en lecture seule pour le calendrier (« Mes séries seulement ») et la carte de collectionneur
+  window.Panel = window.Panel || {};
+  window.Panel.collectionSeries = () => [...new Set(physicalSingles.filter(x => !x.wishlist).map(x => String(x.series || '').trim()).filter(Boolean))];
   const exportSinglesToJson = async () => {
     if (!physicalSingles.length) {
       showToast('Votre collection de singles est vide.');
@@ -30032,7 +30163,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const r = await acctRpc(client, 'collection_backup_get');
       if (r.error) { state.textContent = acctBackupErr(r.error); return null; }
       const row = Array.isArray(r.data) ? r.data[0] : null;
-      state.textContent = row ? 'Dernière copie : ' + new Date(row.updated_at).toLocaleString() + ' · ' + row.item_count + ' numéro' + (row.item_count > 1 ? 's' : '') : 'Aucune copie dans votre compte pour l’instant.';
+      let mine = 0; try { mine = Number(localStorage.getItem(ACCT_LAST_KEY) || 0); } catch (_) {}
+      const newer = row && new Date(row.updated_at).getTime() > mine + 60000;
+      state.textContent = row ? 'Dernière copie : ' + new Date(row.updated_at).toLocaleString() + ' · ' + row.item_count + ' numéro' + (row.item_count > 1 ? 's' : '') +
+        (newer ? ' · faite depuis un autre appareil : « Récupérer » la fusionne ici.' : '') : 'Aucune copie dans votre compte pour l’instant.';
       return row;
     };
     show();
@@ -30049,10 +30183,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     box.querySelector('[data-acct-bk-auto]').onchange = ev => { try { localStorage.setItem(ACCT_AUTO_KEY, ev.target.checked ? '1' : '0'); } catch (_) {} };
   };
   // Sauvegarde automatique : au plus une fois par jour, seulement si l'utilisateur l'a cochée et qu'il est connecté
-  const acctAutoBackup = async () => {
+  const acctAutoBackup = async (minGap = 86400000) => {
     if (!acctAutoOn() || navigator.onLine === false || navigator.webdriver) return;
     let last = 0; try { last = Number(localStorage.getItem(ACCT_LAST_KEY) || 0); } catch (_) {}
-    if (Date.now() - last < 86400000 || !physicalSingles.length) return;
+    if (Date.now() - last < minGap || !physicalSingles.length) return;
     const cfg = acctConfig(); if (!cfg) return;
     await acctLoadLib();
     const client = acctGetClient(cfg); if (!client) return;
@@ -30061,6 +30195,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     try { await acctBackupSave(client); } catch (_) {}
   };
   setTimeout(() => { acctAutoBackup().catch(() => {}); }, 20000);
+  // D-121 : synchronisation automatique, la copie suit chaque changement (regroupés, 2 minutes au plus tôt)
+  let acctSyncTimer = 0;
+  window.Panel = window.Panel || {};
+  window.Panel.acctScheduleSync = () => { if (!acctAutoOn()) return; clearTimeout(acctSyncTimer); acctSyncTimer = setTimeout(() => { acctAutoBackup(120000).catch(() => {}); }, 120000); };
   const renderAccountBox = async () => {
     const body = $('acctBody'), stateEl = $('acctState'), A = acctCore();
     if (!body || !stateEl || !A) return;
@@ -30106,7 +30244,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       body.innerHTML = where + '<p>Connecté : <b>' + escapeHtml(st.email) + '</b>. Votre collection vit sur cet appareil ; gardez-en une copie dans votre compte pour la retrouver ailleurs.</p>' +
         '<div class="acct-backup" data-acct-bk><b>Sauvegarde de la collection</b><span class="acct-note" data-acct-bk-state>Lecture…</span>' +
         '<div class="acct-row"><button class="btn" type="button" data-acct-bk-save>Sauvegarder maintenant</button><button class="btn secondary" type="button" data-acct-bk-get>Récupérer sur cet appareil</button></div>' +
-        '<label class="acct-check"><input type="checkbox" data-acct-bk-auto' + (acctAutoOn() ? ' checked' : '') + '> Sauvegarde automatique, une fois par jour</label></div>' +
+        '<label class="acct-check"><input type="checkbox" data-acct-bk-auto' + (acctAutoOn() ? ' checked' : '') + '> Synchronisation automatique : la copie suit chaque changement</label></div>' +
         '<div class="acct-mfa" data-acct-mfa><b>Double authentification</b><span class="acct-note">Lecture…</span></div>' +
         '<div class="acct-row"><button class="btn secondary" type="button" data-acct-out>Se déconnecter</button><button class="btn ghost" type="button" data-acct-out-all>Déconnecter tous les appareils</button>' + forget + '</div>' + msgHtml;
       // D-114 : double authentification par application (code à 6 chiffres), proposée dès la connexion
