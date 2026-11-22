@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-WXAJPooPOBBd/1P6FliHFDo7Fi0ZYMpBl+xiORCZiJ8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-NIlCCUSjruOLrF9NOCU+hWhUp1/fiAFeELJun68RWr4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -13955,17 +13955,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     el.innerHTML = '<svg class=ic aria-hidden=true><use href=#ic-alert /></svg><details><summary><b>Mode limité</b><span class="lb-short">' + escapeHtml(reasons[0].split(/[(:]/)[0].trim()) + '</span></summary><p>' + reasons.map(escapeHtml).join(' ; ') +
       '.</p><span>' + (/^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === 'file:'
       ? 'Pour tout activer, double-cliquez <b>Lancer Panel.cmd</b> dans le dossier de Panel (ou lancez <code>node serve.js</code>), puis ouvrez <b>http://localhost:8080</b>.'
+      : limitedHostedUp ? 'Le service de Panel répond : fiches GCD, Wikidata, BnF, boutiques et actualités fonctionnent. La recherche par titre (Comic Vine) s’activera dès que sa clé sera ajoutée au service. Votre collection reste dans ce navigateur.'
       : 'Le service de recherche de Panel ne répond pas pour le moment : réessayez dans quelques minutes. Votre collection reste dans ce navigateur.') + '</span></details><button class="btn secondary" type="button" aria-label="Masquer">Masquer</button>';
     el.querySelector('button').onclick = () => { el.remove(); try { sessionStorage.setItem('panel_limited_dismissed', '1'); } catch (_) {} };
     main.prepend(el);
   };
   // D-104 : les noms des sources et la configuration du serveur ne s'affichent qu'en mode développeur
   const limitedDev = () => { try { return localStorage.getItem('panel_dev_mode') === '1'; } catch (_) { return false; } };
+  let limitedHostedUp = false; // D-120 : le relais hébergé répond, seule la clé Comic Vine manque
   if (location.protocol === 'file:') setTimeout(() => showLimitedModeBanner([limitedDev() ? 'ouvert comme fichier, le navigateur bloque la caméra (scanners), le mode hors ligne et les relais Comic Vine, GCD et Metron (recherche, couvertures, identification des variantes)' : 'ouvert comme fichier : caméra, mode hors ligne et recherche en ligne indisponibles']), 0);
   probeRelays().then(st => {
     if (!st) return;
     const missing = [];
-    if (!st.cv && !getCvKey()) missing.push(limitedDev() ? 'Comic Vine non configuré (recherche, couvertures, sorties et cotes indisponibles) : ajoutez la clé dans .secrets/comicvine.json ou dans Paramètres' : 'recherche en ligne indisponible pour le moment (couvertures, sorties et cotes aussi)');
+    limitedHostedUp = !!st.hosted;
+    if (!st.cv && !getCvKey() && st.hosted && !limitedDev()) missing.push('recherche par titre bientôt activée (Comic Vine)');
+    else if (!st.cv && !getCvKey()) missing.push(limitedDev() ? 'Comic Vine non configuré (recherche, couvertures, sorties et cotes indisponibles) : ajoutez la clé dans .secrets/comicvine.json ou dans Paramètres' : 'recherche en ligne indisponible pour le moment (couvertures, sorties et cotes aussi)');
     if (!st.metron && limitedDev()) missing.push('Metron non configuré (identification exacte des variantes au scan) : node serve.js --metron');
     showLimitedModeBanner(missing.length && !st.cv && !getCvKey() ? missing : []);
     if (!st.cv && !getCvKey()) { try { renderSinglesCollection(); } catch (_) {} }
