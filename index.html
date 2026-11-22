@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-NIlCCUSjruOLrF9NOCU+hWhUp1/fiAFeELJun68RWr4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbbyPgEXwbkn5nv/dbRQr+A0QncTyOZMtfOMciHsvyY=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ABqdDGIHz69i+bNLr+5a0okhOfqLRouFA0wzmwAnN0s=' 'sha256-312cIcMTUhnWcaXalu1IIOsRU5IAo+ot80HGUEhPhWI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -13932,7 +13932,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try {
       const r = await fetch(apiBase() + '/status', { cache: 'no-store', credentials: 'omit', signal: AbortSignal.timeout(8000) });
       const j = r.ok && /json/.test(r.headers.get('content-type') || '') ? await r.json() : null;
-      relayStatus = j && j.ok ? { cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd, wd: !!j.wd, bnf: !!j.bnf, shops: !!j.shops, news: !!j.news } : { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false };
+      relayStatus = j && j.ok ? { hosted: !!j.hosted, cv: !!j.cv, metron: !!j.metron, gcd: !!j.gcd, wd: !!j.wd, bnf: !!j.bnf, shops: !!j.shops, news: !!j.news } : { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false };
     } catch (_) { relayStatus = { cv: false, metron: false, gcd: false, wd: false, bnf: false, shops: false, news: false }; }
     return relayStatus;
   };
