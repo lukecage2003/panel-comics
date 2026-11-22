@@ -30,7 +30,7 @@ Ce document met à jour l'[audit du 14/11](../panel-2/PANEL_2_REPOSITORY_AUDIT.m
   - fonctionne hors ligne.
 
 ### Serveur préparé
-- Supabase (Postgres) avec 22 migrations dans `backend/supabase/migrations` ; les 21 premières sont appliquées en préproduction (Paris) le 22/11/2026 (D-116), la 22 (index des clés étrangères, D-117) est testée en local.
+- Supabase (Postgres) avec 22 migrations dans `backend/supabase/migrations` , toutes appliquées en préproduction (Paris) le 22/11/2026 (D-116, D-117).
 - Elles sont testées en local avec PGlite.
 - Le projet de préproduction existe, mais **l'ouverture des comptes (S8) reste fermée**.
 - Les migrations 13 à 18 ne sont pas branchées sur l'application.

@@ -96,8 +96,9 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
 
 ## Décisions de D-117
 
-- **Migration 22 `foreign_key_indexes`** (additive, testée en local, non appliquée), sur accord de l'utilisateur (« Oui, ajoute-la ») : un index pour chacune des 32 clés étrangères signalées par le conseiller de performances Supabase.
+- **Migration 22 `foreign_key_indexes`** (additive, testée en local), écrite sur accord de l'utilisateur (« Oui, ajoute-la »), puis appliquée en préproduction (« Oui, applique-la ») : un index pour chacune des 32 clés étrangères signalées par le conseiller de performances Supabase.
   - But : garder rapides les suppressions en cascade (compte supprimé) et les jointures quand la base se remplira.
   - Elle ne touche à aucune donnée.
 - **Test** `fk-indexes` : il échoue si une future migration ajoute une clé étrangère sans index.
+- **Vérifié après application** : plus aucune clé étrangère sans index. Le conseiller signale les nouveaux index comme inutilisés, ce qui est normal sur une base vide.
 - **Pas traité** : `community.rate_events` reste sans clé primaire. C'est un journal à durée courte, lu par son index existant.

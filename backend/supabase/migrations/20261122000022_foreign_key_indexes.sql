@@ -1,7 +1,7 @@
 -- Migration 22 — Index des clés étrangères (D-117). Additive : crée seulement des index, ne touche à aucune donnée.
 -- Les 32 clés étrangères signalées par le conseiller de performances Supabase le 22/11/2026 reçoivent un index,
 -- pour que les suppressions en cascade (compte supprimé) et les jointures restent rapides quand la base se remplira.
--- Testée localement (PGlite).
+-- Testée localement (PGlite) ; appliquée en préproduction le 22/11/2026 (D-117).
 
 create index if not exists subscriptions_plan_fk on billing.subscriptions (plan);
 create index if not exists banned_terms_created_by_fk on community.banned_terms (created_by);
