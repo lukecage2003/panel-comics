@@ -9,7 +9,7 @@ const KINDS = Object.freeze({ thought: 'Pensée', theory: 'Théorie', question: 
 const KIND_TAGS = Object.freeze({ thought: '', theory: 'Théorie', question: 'Question' });
 const VERDICTS = Object.freeze({ open: 'En attente du verdict', confirmed: 'Confirmée', busted: 'Ratée' });
 const VISIBILITY = Object.freeze(['private', 'followers', 'public']);
-const LIMITS = Object.freeze({ text: 500, notes: 1000, tag: 30, tags: 10, series: 120, issue: 20 });
+const LIMITS = Object.freeze({ text: 2000, notes: 1000, tag: 30, tags: 10, series: 120, issue: 20 });
 const ID = /^[A-Za-z0-9_-]{1,60}$/;
 const TAG = /#([\p{L}\p{N}_]{2,30})/gu;
 
@@ -52,7 +52,7 @@ const sanitizeState = s => {
 const validate = n => {
   const errors = [];
   if (!n) { errors.push('Écrivez quelque chose ou ajoutez une image.'); return errors; }
-  if (n.text.length > LIMITS.text) errors.push('Cinq cents caractères au plus.');
+  if (n.text.length > LIMITS.text) errors.push('Deux mille caractères au plus.');
   if (/<[a-z!/]/i.test(n.text)) errors.push('Les balises ne sont pas acceptées.');
   return errors;
 };
@@ -62,7 +62,7 @@ const save = (state, input, now, newId) => {
   const st = sanitizeState(state);
   const prev = input && input.id ? st.notes.find(x => x.id === input.id) : null;
   const raw = Object.assign({}, prev || {}, input || {}, { id: prev ? prev.id : newId, createdAt: prev ? prev.createdAt : now, editedAt: prev ? now : '' });
-  if (raw.text && String(raw.text).length > LIMITS.text) return { state: st, note: null, errors: ['Cinq cents caractères au plus.'] };
+  if (raw.text && String(raw.text).length > LIMITS.text) return { state: st, note: null, errors: ['Deux mille caractères au plus.'] };
   const note = sanitizeNote(raw);
   const errors = validate(note);
   if (errors.length) return { state: st, note: null, errors };

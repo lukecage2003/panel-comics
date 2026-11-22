@@ -5718,7 +5718,7 @@ const waitForCdp = async () => {
           const sug = [...document.querySelectorAll('[data-nt-tag]')].map(b => b.dataset.ntTag);
           q('[data-nt-kind="theory"]').click();
           const tb = q('[data-nt-tag="Théorie"]'); if (tb) tb.click();
-          r.composer = !!q('.ntc.is-open') && sug.includes('Théorie') && /#Théorie $/.test(q('#ntText').value) && q('[data-nt-kind="theory"]').getAttribute('aria-checked') === 'true' && q('[data-nt-count]').textContent === String(500 - q('#ntText').value.length);
+          r.composer = !!q('.ntc.is-open') && sug.includes('Théorie') && /#Théorie $/.test(q('#ntText').value) && q('[data-nt-kind="theory"]').getAttribute('aria-checked') === 'true' && q('[data-nt-count]').textContent === String(2000 - q('#ntText').value.length);
           q('[data-nt-send]').click(); await wait(300);
           const st = JSON.parse(localStorage.getItem('panel_notes_v1') || 'null');
           const card = q('.ntp');
@@ -5997,7 +5997,7 @@ const waitForCdp = async () => {
           r.rankAreas = /pt/.test(areas) && /badge/.test(areas) && /main/.test(areas) && /tiers/.test(areas);
           // Le Fil garde la barre de stories et les règles de partage
           const feedTab = $('communityHead').querySelector('[data-cm-tab="feed"]');
-          if (feedTab) { feedTab.click(); await wait(300); r.feedKeeps = !!$('communityHead').querySelector('.st-bar') && !rules.closest('.section-head').hidden; } else r.feedKeeps = true;
+          if (feedTab) { feedTab.click(); await wait(300); r.feedKeeps = !!$('communityHead').querySelector('.st-bar') && !!rules.closest('.section-head').hidden; /* D-123 : plus de ligne d'explication au-dessus du fil */ } else r.feedKeeps = true;
         } catch (e) { r.error = String(e && e.message || e); }
         finally {
           if (prof0 === null) localStorage.removeItem('panel_profile'); else localStorage.setItem('panel_profile', prof0);

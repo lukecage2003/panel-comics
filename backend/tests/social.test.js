@@ -36,7 +36,8 @@ test('pensée : type, texte nettoyé, mots-dièse réellement écrits, numéro l
   const tags = (await db.query('select tag::text t from community.post_tags where post_id = $1 order by 1', [id])).rows.map(r => r.t);
   assert.deepEqual(tags, ['AbsoluteBatman', 'Théorie']);
   await assert.rejects(db.query("select api.note_create('thought', '   ', null, null, 'public')"), /empty/);
-  await assert.rejects(db.query("select api.note_create('thought', $1, null, null, 'public')", ['x'.repeat(501)]), /too_long/);
+  await assert.rejects(db.query("select api.note_create('thought', $1, null, null, 'public')", ['x'.repeat(2001)]), /too_long/);
+  assert.ok(await db.query("select api.note_create('thought', $1, null, null, 'public') as id", ['Une longue pensée. '.repeat(90)]), 'une pensée de 1 700 caractères passe');
   await assert.rejects(db.query("select api.note_create('thought', '<script>x</script>', null, null, 'public')"), /markup_refused/);
   await assert.rejects(db.query("select api.note_create('poeme', 'ok', null, null, 'public')"), /invalid_post/);
 });

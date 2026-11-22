@@ -46,7 +46,7 @@ const noteCall = note => {
   const issue = note.issue && note.issue.series ? { series: str(note.issue.series, 120), issue: str(note.issue.issue, 20), publisher: str(note.issue.publisher, 100) } : null;
   return {
     fn: 'note_create',
-    args: { p_note_kind: NOTE_KINDS.includes(note.kind) ? note.kind : 'thought', p_body: str(body, 500), p_tags: tagsOf(body), p_issue: issue,
+    args: { p_note_kind: NOTE_KINDS.includes(note.kind) ? note.kind : 'thought', p_body: str(body, 2000), p_tags: tagsOf(body), p_issue: issue,
       p_visibility: note.visibility === 'followers' ? 'followers' : 'public', p_spoiler: note.spoiler === true },
     imageLocalOnly: !!note.imageRef
   };
@@ -72,7 +72,7 @@ const postFromRow = (row, author, me) => {
   const a = author || {};
   return {
     id: 'o:' + row.id, ref: row.id, type: 'note', online: true, mine: !!me && row.author_id === me,
-    kind: NOTE_KINDS.includes(pay.note) ? pay.note : 'thought', at: row.created_at || '', text: str(row.body, 500), spoiler: !!row.spoiler,
+    kind: NOTE_KINDS.includes(pay.note) ? pay.note : 'thought', at: row.created_at || '', text: str(row.body, 2000), spoiler: !!row.spoiler,
     verdict: pay.note === 'theory' ? (VERDICTS.includes(pay.verdict) ? pay.verdict : 'open') : '', imageRef: '', imageAlt: '',
     visibility: row.visibility === 'followers' ? 'followers' : 'public',
     author: { id: row.author_id, handle: str(a.handle, 24), name: str(a.display_name, 40), likeIcon: str(a.like_icon || 'heart', 32) },

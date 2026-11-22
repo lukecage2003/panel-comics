@@ -21,7 +21,8 @@ test('pensée : texte, mots-dièse, type par défaut, visibilité publique par d
 
 test('pensée vide, trop longue ou avec balises refusée ; image seule acceptée', () => {
   assert.ok(N.save(null, { text: '   ' }, NOW, 'n1').errors.length);
-  assert.ok(N.save(null, { text: 'x'.repeat(501) }, NOW, 'n1').errors.length);
+  assert.ok(N.save(null, { text: 'x'.repeat(2001) }, NOW, 'n1').errors.length);
+  assert.equal(N.save(null, { text: 'x'.repeat(1500) }, NOW, 'n1b').errors.length, 0, 'une pensée longue (1 500 caractères) est acceptée');
   assert.ok(N.save(null, { text: '<script>x</script>' }, NOW, 'n1').errors.length);
   assert.deepEqual(N.save(null, { text: '', imageRef: 'img_1' }, NOW, 'n1').errors, []);
   assert.equal(N.save(null, { text: 'ok', imageRef: '../etc' }, NOW, 'n1').note.imageRef, '');
