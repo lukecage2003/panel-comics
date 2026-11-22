@@ -20,7 +20,7 @@ const out = `// @ts-nocheck
 // FICHIER GÉNÉRÉ par scripts/build-relay.js depuis serve.js : ne pas modifier à la main (D-120).
 // Relais hébergé de Panel (Supabase Edge Function). La clé Comic Vine est lue dans les secrets du projet
 // (CV_API_KEY), jamais envoyée au navigateur. Aucune donnée personnelle n'est conservée : caches en mémoire seulement.
-const process = { env: { CV_API_KEY: Deno.env.get('CV_API_KEY') || '' } };
+const process = { env: { CV_API_KEY: ['CV_API_KEY', 'API_COMIC_VINE', 'API COMIC VINE', 'COMIC_VINE_API_KEY', 'COMICVINE_API_KEY'].map(k => Deno.env.get(k) || '').find(Boolean) || '' } };
 const fs = { readFileSync() { throw new Error('pas de disque'); }, writeFileSync() {}, mkdirSync() {} };
 const path = { join: (...a) => a.join('/'), dirname: p => p };
 const root = '';
