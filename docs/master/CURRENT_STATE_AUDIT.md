@@ -38,7 +38,7 @@ Ce document met à jour l'[audit du 14/11](../panel-2/PANEL_2_REPOSITORY_AUDIT.m
 ### Tests
 | Suite | Nombre de tests | Outil |
 |---|---|---|
-| Domaines | 215 | Node |
+| Domaines | 219 | Node |
 | Base | 172 | PGlite |
 | Parcours | 84 | Edge, sans interface |
 
@@ -48,7 +48,7 @@ Scripts de contrôle : `check:motion`, `check:secrets`, `check-dead-code`, `chec
 
 | Module | Statut | Preuve | Écart principal |
 |---|---|---|---|
-| Collection (exemplaires, séries, boîtes, statistiques) | OPERATIONAL | `domains/collection/*`, tests Edge | Finances : voir [directeur/02](../directeur/02-audit-financier.md) (F-01 à F-12, NEEDS_AUDIT pour les points non corrigés) |
+| Collection (exemplaires, séries, boîtes, statistiques) | OPERATIONAL | `domains/collection/*`, tests Edge (test 30) | Finances : F-01 à F-05, F-10 et F-11 corrigés par le lot F0 (D-19), F-06 à F-09 par le lot F1 (D-27 à D-29) ; vérifié le 22/11 dans [HISTORIQUE-LOTS](../HISTORIQUE-LOTS.md). Reste F-12 (Wishlist, P2) |
 | Wishlist, Pull list, Key Issues | OPERATIONAL | `release-views`, `scope-core` | — |
 | Cote suivie (Atelier, D-110) | OPERATIONAL | `wsValueHtml` | Aucune cote de marché externe (voulu) |
 | Imports (fichier LoCG en lecture seule, CSV) | OPERATIONAL | — | Provenance par champ : `source/claims-core` |
@@ -67,7 +67,7 @@ Scripts de contrôle : `check:motion`, `check:secrets`, `check-dead-code`, `chec
 | Modération (signalements, masquage, appels, journal) | PARTIALLY_IMPLEMENTED | Migrations 13, 16 et 17, `moderation-core` | Équipe humaine à constituer |
 | Rôles d'équipe et double authentification | PARTIALLY_IMPLEMENTED | Migration 17 | Non appliquée en ligne |
 | Âge et mineurs | PARTIALLY_IMPLEMENTED | Migration 13 (tranches, refus sous 13 ans, profils mineurs privés) + **migration 18 Guardian** | Non appliquée ; preuve d'âge externe : RESEARCH |
-| Espace parental | PARTIALLY_IMPLEMENTED | Migration 18 (lien par code, réglages, révocation) | Écrans parentaux à construire au moment de S8 |
+| Espace parental | PARTIALLY_IMPLEMENTED | Migration 18 (lien par code, réglages, révocation) ; module client `domains/community/guardian-core.js` (D-112) ; encadré dans Compte & profil (code contrôlé sur l'appareil, rien n'est envoyé) | Écrans branchés sur le serveur au moment de S8 |
 | Synchronisation, export, effacement de compte | PARTIALLY_IMPLEMENTED | Migrations 8, 9 et 12 | Non branché |
 | Langues (fr, en, es…) | OPERATIONAL | `domains/i18n` | Le français reste la langue source |
 | Monétisation | PLANNED | [directeur/13](../directeur/13-monetisation-musique-suite.md) | Aucun paiement branché (voulu) |

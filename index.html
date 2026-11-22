@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-yBIVNr4O9HHGWxAwHGh7opuCYPlScpU7/GBvvCr4trY=' 'sha256-x21k+XvrZNUZXipM2IpLa0AwSAvkraq+gfOmHoNpjb4=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-ZFF0axEE299hMoqJmqWoF0YxRSyyQXm8n9KOmLR0eho=' 'sha256-dZoJlKr9EKcHM7Iym8/mIom5r7uy4/F7QrHRNrgsEd8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -2305,7 +2305,10 @@
     .set-seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 999px; background: var(--bg-soft, rgba(127,127,127,.14)); }
     .set-seg-b { border: 0; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 600; padding: 7px 14px; border-radius: 999px; cursor: pointer; min-height: 34px; }
     .set-seg-b[aria-pressed="true"] { background: var(--bg-card, #fff); color: var(--ink, var(--text)); box-shadow: 0 1px 3px rgba(0,0,0,.18); }
-    .set-legal-note { color: var(--muted); font-size: .86rem; margin: 0 0 10px; }
+    .guard-list { margin: 0 0 10px; padding-left: 18px; display: grid; gap: 4px; }
+  .guard-code { display: inline-flex; flex-direction: column; gap: 4px; max-width: 220px; }
+  .guard-code span { font-size: .82rem; opacity: .8; }
+  .set-legal-note { color: var(--muted); font-size: .86rem; margin: 0 0 10px; }
     .set-legal { border-bottom: 1px solid var(--line, #333); }
     .set-legal > summary { cursor: pointer; padding: 13px 0; font-weight: 700; list-style-position: inside; }
     .set-legal-b { padding: 0 0 12px; color: var(--muted); font-size: .9rem; line-height: 1.5; }
@@ -8573,6 +8576,114 @@ const errorText = err => {
 
 module.exports = { NOTE_KINDS, FORMATS, MESSAGES, tagsOf, noteCall, verdictCall, likeCall, likeIconCall, roomCall, sayCall, voteCall, postFromRow, chatFromRow, tallyText, errorText };
   return Object.freeze(module.exports); })();
+  /* domains/community/guardian-core.js */
+  out.guardian = (() => { const module = { exports: {} };
+'use strict';
+// Panel Guardian, côté application (D-112) — module pur : prépare les appels aux fonctions api.guardian_* de la migration 18
+// et traduit leurs réponses en français. Ni réseau, ni stockage : l'appelant possède le client Supabase.
+// La décision reste celle du serveur (déclencheurs) ; ce module ne fait qu'afficher et préparer.
+// Règles :
+//  - le code parental n'est jamais conservé par l'application (affiché une fois, puis oublié) ;
+//  - aucune date de naissance ne part : le serveur ne reçoit qu'une année au moment de l'adhésion (déjà en place) ;
+//  - l'âge déclaré n'est jamais présenté comme vérifié.
+
+const STATUSES = ['unverified', 'verified_13_15', 'verified_16_17', 'verified_adult', 'under_13_blocked', 'review_required'];
+const BANDS = ['13-14', '15-17', '18+'];
+const ACTIONS = ['post', 'follow', 'live_join', 'live_host', 'live_chat'];
+const RESTRICTIONS = ['no_post', 'no_live', 'no_follow', 'read_only'];
+
+const STATUS_LABEL = Object.freeze({
+  unverified: 'Âge déclaré, non vérifié',
+  verified_13_15: 'Âge vérifié : 13 à 15 ans',
+  verified_16_17: 'Âge vérifié : 16 ou 17 ans',
+  verified_adult: 'Âge vérifié : adulte',
+  under_13_blocked: 'Compte refusé : moins de 13 ans',
+  review_required: 'Tranche d\'âge en cours d\'examen'
+});
+const BAND_LABEL = Object.freeze({ '13-14': '13-14 ans', '15-17': '15-17 ans', '18+': 'Adulte' });
+const RESTRICTION_LABEL = Object.freeze({ no_post: 'Publication suspendue', no_live: 'Directs suspendus', no_follow: 'Abonnements suspendus', read_only: 'Lecture seule' });
+
+const MESSAGES = Object.freeze({
+  under_13: 'Panel n\'ouvre pas de compte en ligne avant 13 ans.',
+  too_young: 'Panel n\'ouvre pas de compte en ligne avant 13 ans.',
+  quiet_hours: 'Heures calmes : un parent a mis Panel en pause à cette heure-ci.',
+  minor_live_host: 'Animer un direct n\'est pas ouvert à ce compte.',
+  guardian_live_off: 'Les directs sont coupés par un parent relié.',
+  guardian_follows_off: 'Les nouveaux abonnements sont coupés par un parent relié.',
+  age_review_pending: 'Les directs reprendront après l\'examen de votre tranche d\'âge.',
+  restricted: 'Cette action est suspendue sur votre compte pour le moment.',
+  adult_account: 'Un compte adulte n\'a pas besoin de parent relié.',
+  adult_required: 'Seul un compte adulte peut devenir parent relié.',
+  mfa_required: 'Activez la double authentification pour continuer.',
+  max_guardians: 'Deux parents au plus peuvent être reliés.',
+  invalid_code: 'Code invalide ou expiré. Demandez un nouveau code.',
+  invalid_band: 'Choisissez une autre tranche d\'âge que l\'actuelle.',
+  reason_required: 'Expliquez votre demande en une phrase au moins.',
+  invalid_hours: 'Heures calmes invalides.',
+  own_review: 'Vous ne pouvez pas examiner votre propre demande.',
+  own_account: 'Action impossible sur votre propre compte.',
+  rate_limited: 'Trop d\'essais d\'un coup. Réessayez dans un moment.',
+  not_member: 'Rejoignez d\'abord la communauté.',
+  not_found: 'Introuvable ou déjà traité.',
+  forbidden: 'Action réservée.',
+  network: 'Pas de connexion. Réessayez plus tard.',
+  unknown: 'Action impossible pour le moment. Réessayez plus tard.'
+});
+
+const hour = v => (v === null || v === undefined || v === '') ? null : (Number.isInteger(Number(v)) && Number(v) >= 0 && Number(v) <= 23 ? Number(v) : NaN);
+
+// Code parental saisi : 10 caractères hexadécimaux, espaces et tirets tolérés
+const normalizeCode = raw => { const c = String(raw || '').replace(/[\s-]/g, '').toUpperCase(); return /^[0-9A-F]{10}$/.test(c) ? c : ''; };
+const formatCode = code => { const c = normalizeCode(code); return c ? c.slice(0, 5) + '-' + c.slice(5) : ''; };
+
+const linkCreateCall = () => ({ fn: 'guardian_link_create', args: {} });
+const linkAcceptCall = raw => { const c = normalizeCode(raw); return c ? { fn: 'guardian_link_accept', args: { p_code: c } } : { skip: 'invalid_code' }; };
+const linkRevokeCall = (linkId, reason) => linkId ? { fn: 'guardian_link_revoke', args: { p_link: String(linkId), p_reason: String(reason || '').slice(0, 200) } } : { skip: 'invalid' };
+const settingsCall = (childId, s) => {
+  const o = s || {}, qs = hour(o.quietStart), qe = hour(o.quietEnd);
+  if (!childId || Number.isNaN(qs) || Number.isNaN(qe) || (qs === null) !== (qe === null)) return { skip: 'invalid_hours' };
+  return { fn: 'guardian_settings_set', args: { p_child: String(childId), p_quiet_start: qs, p_quiet_end: qe,
+    p_live_join: o.liveJoin !== false, p_live_host: o.liveHost !== false, p_follows_open: o.followsOpen !== false } };
+};
+const reviewCall = (band, reason) => {
+  if (!BANDS.includes(band)) return { skip: 'invalid_band' };
+  const r = String(reason || '').trim();
+  return r.length < 10 ? { skip: 'reason_required' } : { fn: 'age_review_request', args: { p_band: band, p_reason: r.slice(0, 500) } };
+};
+const canCall = action => ACTIONS.includes(action) ? { fn: 'guardian_can', args: { p_action: action } } : { skip: 'invalid' };
+
+// Réponse de api.guardian_status -> vue affichable
+const statusView = st => {
+  if (!st || typeof st !== 'object' || !BANDS.includes(st.band)) return null;
+  const status = STATUSES.includes(st.status) ? st.status : 'unverified';
+  const minor = st.band !== '18+';
+  const s = st.settings && typeof st.settings === 'object' ? st.settings : null;
+  return {
+    band: st.band, bandLabel: BAND_LABEL[st.band], status, statusLabel: STATUS_LABEL[status], verified: /^verified_/.test(status),
+    minor, guardians: Math.max(0, Number(st.guardians) || 0), children: Math.max(0, Number(st.children) || 0), reviewOpen: !!st.review_open,
+    canInviteParent: minor && (Number(st.guardians) || 0) < 2,
+    quiet: s && s.quiet_start !== null && s.quiet_start !== undefined ? quietLabel(s.quiet_start, s.quiet_end) : '',
+    liveHost: minor ? (st.band === '15-17' && (!s || s.live_host !== false)) : true,
+    liveJoin: !s || s.live_join !== false, followsOpen: !s || s.follows_open !== false
+  };
+};
+const quietLabel = (a, b) => { const qs = hour(a), qe = hour(b); return qs === null || qe === null || Number.isNaN(qs) || Number.isNaN(qe) || qs === qe ? '' : 'De ' + qs + ' h à ' + qe + ' h'; };
+// Réponse de api.guardian_can -> { allowed, text }
+const decision = r => (r && r.allowed === true) ? { allowed: true, text: '' } : { allowed: false, text: MESSAGES[(r && r.reason) || ''] || MESSAGES.unknown };
+// Erreur du serveur (« guardian_quiet_hours », « invalid_code »…) -> message français
+const errorText = err => {
+  if (!err) return '';
+  const m = String(err.message || err.code || err || '');
+  if (/fetch|network|Failed to|ECONN/i.test(m)) return MESSAGES.network;
+  const g = /guardian_([a-z_]+)/.exec(m);
+  if (g && MESSAGES[g[1]]) return MESSAGES[g[1]];
+  const k = Object.keys(MESSAGES).find(x => new RegExp('\\b' + x + '\\b').test(m));
+  return MESSAGES[k || 'unknown'];
+};
+
+module.exports = { STATUSES, BANDS, ACTIONS, RESTRICTIONS, STATUS_LABEL, BAND_LABEL, RESTRICTION_LABEL, MESSAGES, normalizeCode, formatCode,
+  linkCreateCall, linkAcceptCall, linkRevokeCall, settingsCall, reviewCall, canCall, statusView, quietLabel, decision, errorText };
+  return Object.freeze(module.exports); })();
   /* domains/community/affinity-core.js */
   out.affinity = (() => { const module = { exports: {} };
 'use strict';
@@ -11351,6 +11462,20 @@ const phrases = {
   'Série : {n}': 'Streak: {n}',
   'Record : {n}': 'Best: {n}',
   'Question suivante': 'Next question',
+  // D-112 : Panel Guardian dans Compte & profil
+  'Protection des mineurs · Panel Guardian': 'Minor protection · Panel Guardian',
+  'Protection des mineurs': 'Minor protection',
+  'Aucun compte avant {n} ans ; parent relié par un code donné par le jeune ; le parent ne lit rien.': 'No account before {n}; parent linked by a code given by the teen; the parent reads nothing.',
+  'Prête pour l\'ouverture des comptes': 'Ready for account opening',
+  'Tranches d\'âge : {n}-{n} ans, {n}-{n} ans, adulte. L\'âge déclaré n\'est jamais présenté comme vérifié.': 'Age bands: {n}-{n}, {n}-{n}, adult. The declared age is never presented as verified.',
+  'De {n} à {n} ans : profil privé, aucun contact avec les adultes, jamais de publicité. Les {n}-{n} ans n\'animent pas de direct.': 'From {n} to {n}: private profile, no contact with adults, never any advertising. {n}-{n}-year-olds do not host lives.',
+  'Le jeune crée un code et le donne à son parent ; le parent, adulte en double authentification, le saisit. Deux parents au plus.': 'The teen creates a code and gives it to their parent; the parent, an adult with two-factor authentication, enters it. Two parents at most.',
+  'Le parent règle les heures calmes, les directs et les abonnements. Il ne voit ni les publications privées, ni les messages, ni les directs.': 'The parent sets quiet hours, lives and follows. They see neither private posts, nor messages, nor lives.',
+  'Code reçu d\'un jeune': 'Code received from a teen',
+  'Vérifier le code': 'Check the code',
+  'Les comptes en ligne ne sont pas encore ouverts : le code est seulement contrôlé sur cet appareil, rien n\'est envoyé ni conservé.': 'Online accounts are not open yet: the code is only checked on this device, nothing is sent or kept.',
+  'Code bien formé. Les comptes ne sont pas ouverts : rien n\'est envoyé.': 'Well-formed code. Accounts are not open: nothing is sent.',
+  'Code invalide ou expiré. Demandez un nouveau code.': 'Invalid or expired code. Ask for a new code.',
 };
 
 const same = [
@@ -22817,6 +22942,21 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ta = dyn.querySelector('#modTerms'), sv = dyn.querySelector('[data-mod-terms-save]');
     if (ta && sv) sv.onclick = () => { const list = MC.normalizeTerms(ta.value); modTermsSave(list); rerender(); showToast(list.length + ' mot' + (list.length > 1 ? 's' : '') + ' interdit' + (list.length > 1 ? 's' : '') + ' enregistré' + (list.length > 1 ? 's' : '') + ' sur cet appareil.'); };
   };
+  // D-112 : Panel Guardian côté application (migration 18). Comptes fermés : explication et contrôle du code, rien n'est envoyé.
+  const guardPaneHtml = () => {
+    const li = t => '<li>' + t + '</li>';
+    return '<details class="set-legal" id="guardBox"><summary>Protection des mineurs · Panel Guardian</summary><div class="set-legal-b">' +
+      '<ul class="guard-list">' + li('Aucun compte en ligne avant 13 ans, même avec l\'accord d\'un parent.') +
+      li('Tranches d\'âge : 13-14 ans, 15-17 ans, adulte. L\'âge déclaré n\'est jamais présenté comme vérifié.') +
+      li('De 13 à 17 ans : profil privé, aucun contact avec les adultes, jamais de publicité. Les 13-14 ans n\'animent pas de direct.') +
+      li('Le jeune crée un code et le donne à son parent ; le parent, adulte en double authentification, le saisit. Deux parents au plus.') +
+      li('Le parent règle les heures calmes, les directs et les abonnements. Il ne voit ni les publications privées, ni les messages, ni les directs.') +
+      li('Une erreur de tranche d\'âge se conteste auprès de l\'équipe, qui examine chaque demande.') + '</ul>' +
+      '<label class="guard-code"><span>Code reçu d\'un jeune</span><input class="field-input" data-guard-code maxlength="14" autocomplete="off" spellcheck="false" placeholder="ABCDE-12345" aria-label="Code parental"></label> ' +
+      '<button type="button" class="btn secondary rel-mini" data-guard-check>Vérifier le code</button>' +
+      '<p class="set-legal-note">Les comptes en ligne ne sont pas encore ouverts : le code est seulement contrôlé sur cet appareil, rien n\'est envoyé ni conservé.</p>' +
+      '</div></details>';
+  };
   let settingsTab = 'account';
   const settingsPaneHtml = tab => {
     const prof = profileLoad();
@@ -22825,7 +22965,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (tab === 'account') return '<h3>Compte & profil</h3>' +
       row('Profil', prof ? '@' + escapeHtml(prof.handle) + (prof.favorite ? ' · fan de ' + escapeHtml(prof.favorite) : '') : 'Aucun profil sur cet appareil', btn(prof ? 'Modifier mon profil' : 'Créer mon profil', 'data-set-go="profile"', true)) +
       row('Compte en ligne', 'Pseudo réservé, abonnés, publication des planches et stories, directs. Ouverture avec la synchronisation (Supabase).', '<span class="set-pill">' + (acctConfig() ? 'Préproduction' : 'Pas encore ouvert') + '</span>') + '<div data-acct-slot></div>' +
-      row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>');
+      row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>') +
+      row('Protection des mineurs', 'Aucun compte avant 13 ans ; parent relié par un code donné par le jeune ; le parent ne lit rien.', '<span class="set-pill">Prête pour l\'ouverture des comptes</span>') + guardPaneHtml();
     if (tab === 'display') return '<h3>Affichage</h3>' +
       row('Apparence', 'Clair, sombre ou selon le réglage de l’appareil', '<span class="set-seg" role="group" aria-label="Apparence">' + [['light', 'Clair'], ['dark', 'Sombre'], ['system', 'Système']].map(([k, l]) => '<button type="button" class="set-seg-b" data-set-mode="' + k + '" aria-pressed="' + ((document.documentElement.dataset.modePref || 'system') === k) + '">' + l + '</button>').join('') + '</span>') +
       row('Couleur d’accent', 'Appliquée à toute l’interface', [['lime', '#FFD400', 'Jaune'], ['cyan', '#FF52AE', 'Magenta'], ['gold', '#00A3DA', 'Cyan'], ['red', '#FF6B6F', 'Rouge'], ['purple', '#B9A3FF', 'Violet']].map(([k, c, l]) => '<button type="button" class="set-accent" data-set-accent="' + k + '" title="' + l + '" style="--c:' + c + '"></button>').join('')) +
@@ -22957,6 +23098,12 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       dyn.querySelectorAll('[data-set-accent]').forEach(b => { b.onclick = () => { const t = boxEl.querySelector('[data-set-pane="sources"] [data-theme="' + b.dataset.setAccent + '"]'); if (t) t.click(); }; });
       const ls = dyn.querySelector('[data-set-lang]'); if (ls) ls.onchange = e => { try { localStorage.setItem(I18N_KEY, e.target.value); } catch (_) {} location.reload(); };
       const cs = dyn.querySelector('[data-set-cur]'); if (cs) cs.onchange = e => { finSetDefaultCurrency(e.target.value); showToast('Devise par défaut : ' + e.target.value + ' (fiches existantes inchangées).'); };
+      const gc = dyn.querySelector('[data-guard-check]'); if (gc) gc.onclick = () => {
+        const G = window.PanelDomains.guardian, inp = dyn.querySelector('[data-guard-code]'), call = G.linkAcceptCall(inp ? inp.value : '');
+        if (call.skip) { showToast(G.MESSAGES.invalid_code); return; }
+        if (inp) inp.value = G.formatCode(call.args.p_code);
+        showToast('Code bien formé. Les comptes ne sont pas ouverts : rien n\'est envoyé.');
+      };
       const mg = dyn.querySelector('[data-set-rdmig]'); if (mg) mg.onclick = () => { const r = rdMigrate(); renderSinglesCollection(); render(); showToastAction(r.created + ' lecture(s) intégrée(s) à votre journal.', 'Annuler', () => { READING_API.undo(r.undoToken); renderSinglesCollection(); }); };
     };
     render();

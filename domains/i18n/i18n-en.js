@@ -727,6 +727,20 @@ const phrases = {
   'Série : {n}': 'Streak: {n}',
   'Record : {n}': 'Best: {n}',
   'Question suivante': 'Next question',
+  // D-112 : Panel Guardian dans Compte & profil
+  'Protection des mineurs · Panel Guardian': 'Minor protection · Panel Guardian',
+  'Protection des mineurs': 'Minor protection',
+  'Aucun compte avant {n} ans ; parent relié par un code donné par le jeune ; le parent ne lit rien.': 'No account before {n}; parent linked by a code given by the teen; the parent reads nothing.',
+  'Prête pour l\'ouverture des comptes': 'Ready for account opening',
+  'Tranches d\'âge : {n}-{n} ans, {n}-{n} ans, adulte. L\'âge déclaré n\'est jamais présenté comme vérifié.': 'Age bands: {n}-{n}, {n}-{n}, adult. The declared age is never presented as verified.',
+  'De {n} à {n} ans : profil privé, aucun contact avec les adultes, jamais de publicité. Les {n}-{n} ans n\'animent pas de direct.': 'From {n} to {n}: private profile, no contact with adults, never any advertising. {n}-{n}-year-olds do not host lives.',
+  'Le jeune crée un code et le donne à son parent ; le parent, adulte en double authentification, le saisit. Deux parents au plus.': 'The teen creates a code and gives it to their parent; the parent, an adult with two-factor authentication, enters it. Two parents at most.',
+  'Le parent règle les heures calmes, les directs et les abonnements. Il ne voit ni les publications privées, ni les messages, ni les directs.': 'The parent sets quiet hours, lives and follows. They see neither private posts, nor messages, nor lives.',
+  'Code reçu d\'un jeune': 'Code received from a teen',
+  'Vérifier le code': 'Check the code',
+  'Les comptes en ligne ne sont pas encore ouverts : le code est seulement contrôlé sur cet appareil, rien n\'est envoyé ni conservé.': 'Online accounts are not open yet: the code is only checked on this device, nothing is sent or kept.',
+  'Code bien formé. Les comptes ne sont pas ouverts : rien n\'est envoyé.': 'Well-formed code. Accounts are not open: nothing is sent.',
+  'Code invalide ou expiré. Demandez un nouveau code.': 'Invalid or expired code. Ask for a new code.',
 };
 
 const same = [

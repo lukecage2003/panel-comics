@@ -6169,6 +6169,10 @@ const waitForCdp = async () => {
           r.legal = !!lt && sums.join('|') === 'Mentions légales|Confidentialité et données personnelles|Règles de la communauté|Âge|Droits d\\'auteur et marques|Sécurité' &&
             /RGPD/.test(dyn.textContent) && /avant 13 ans/.test(dyn.textContent) && /ni les messages/.test(dyn.textContent) && /APD/.test(dyn.textContent) && /juriste/.test(dyn.textContent) && /à compléter/.test(dyn.textContent);
           document.querySelector('#settingsModal [data-set-tab="account"]').click(); await wait(100);
+          // D-112 : Panel Guardian dans Compte & profil ; code contrôlé sur l'appareil, rien n'est envoyé
+          const gb = document.querySelector('#settingsModal #guardBox'), gi = gb && gb.querySelector('[data-guard-code]');
+          if (gi) { gi.value = '3fa9c 01b2e'; gb.querySelector('[data-guard-check]').click(); await wait(50); }
+          r.guardian = !!gb && /avant 13 ans/.test(gb.textContent) && /ni les messages/.test(gb.textContent) && !!gi && gi.value === '3FA9C-01B2E' && !window.PanelDomains.guardian.linkAcceptCall('12').fn;
           $('settingsModal').classList.remove('open');
           if (devPrev !== null) { localStorage.setItem('panel_dev_mode', devPrev); document.documentElement.classList.add('is-dev'); }
           return r;
@@ -6191,7 +6195,7 @@ const waitForCdp = async () => {
       delete t83.fp0;
       console.log('Résultat Test 83:', JSON.stringify(t83));
       testResults.push({ test: 'Test 83 : Découvrir par thèmes, sans calendrier ni fournisseur, téléphone épuré, Légal & sécurité (D-104)',
-        ok: !t83.error && ['tabs', 'onePane', 'noCalendar', 'separated', 'switch', 'noProvider', 'legal', 'mobileTop', 'mobileNoScroll', 'dataUntouched'].every(k => t83[k] === true) });
+        ok: !t83.error && ['tabs', 'onePane', 'noCalendar', 'separated', 'switch', 'noProvider', 'legal', 'guardian', 'mobileTop', 'mobileNoScroll', 'dataUntouched'].every(k => t83[k] === true) });
       // ==========================================
       // TEST 84 : Univers des comics, apparence dans Affichage, raccourci « / », guide au hasard (D-105)
       // ==========================================

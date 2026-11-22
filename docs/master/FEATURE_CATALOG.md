@@ -10,11 +10,11 @@ Décisions possibles : Conservée · Améliorée · Étendue · Créée · Repor
 - **Description** : exemplaires, séries, boîtes, état, prix payé, cote, statistiques ; Wishlist, Pull list, Key Issues ; Atelier du collectionneur.
 - **Objectif** : être le meilleur carnet de collection comics, hors ligne. **Cœur du projet.**
 - **Utilisateurs** : tous les membres.
-- **Actuel → cible** : OPERATIONAL → corriger les points financiers restants de [directeur/02](../directeur/02-audit-financier.md) (valeur inconnue ≠ 0, frais, sorties de collection).
+- **Actuel → cible** : OPERATIONAL. Les anomalies F-01 à F-11 de [directeur/02](../directeur/02-audit-financier.md) sont corrigées (lots F0 et F1) ; reste F-12 (estimation de la Wishlist).
 - **Dépendances** : aucune externe. **Complexité** : moyenne. **Coût** : faible (local). **Revenu** : indirect (Panel+ : exports, statistiques avancées).
 - **Risques** : perte de données locales → exports et sauvegardes existants ; jamais de réinitialisation.
-- **Priorité** : P1 (finances). **Décision** : Conservée, Améliorée.
-- **Acceptation** : aucune valeur inconnue affichée comme 0 ; tests de domaines verts. **Sortie** : F-01 à F-05 fermés.
+- **Priorité** : P2 (F-12). **Décision** : Conservée.
+- **Acceptation** : aucune valeur inconnue affichée comme 0 (test Edge 30). **Sortie** : F-12 fermé.
 
 ## 2. Découvrir (encyclopédie, univers, événements, cartes, quiz)
 - **Description** : univers datés et sourcés, guides de lecture, atlas des cartes, personnage du jour, défis, quiz.
@@ -42,7 +42,7 @@ Décisions possibles : Conservée · Améliorée · Étendue · Créée · Repor
 
 ## 5. Panel Guardian (protection des mineurs)
 - **Description** : aucun compte sous 13 ans ; 13-14 et 15-17 supervisés ; statut d'âge contestable (`unverified`, `verified_13_15`, `verified_16_17`, `verified_adult`, `under_13_blocked`, `review_required`) ; lien parental par code ; réglages du parent (heures calmes, directs, abonnements) ; restrictions de compte ; politique centrale côté serveur.
-- **Actuel → cible** : PARTIALLY_IMPLEMENTED (migration 18 testée, non appliquée) → appliquée avec S8, écrans parentaux.
+- **Actuel → cible** : PARTIALLY_IMPLEMENTED (migration 18 testée, non appliquée ; module client `guardian-core` et encadré dans Compte & profil, D-112) → appliquée avec S8, écrans branchés.
 - **Dépendances** : migrations 13, 15, 17 ; AIPD ; avocat. **Complexité** : élevée. **Coût** : faible technique, élevé humain (revue des contestations). **Revenu** : aucun (jamais de publicité aux mineurs).
 - **Risques** : faux âge déclaré → statut jamais présenté comme vérifié ; preuve d'âge externe en RESEARCH, sans biométrie imposée.
 - **Priorité** : **P0**. **Décision** : Créée (sur l'existant).

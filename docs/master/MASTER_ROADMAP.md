@@ -35,7 +35,7 @@ Date : 22 novembre 2026 (D-111). **Document central.** Il ordonne tout le reste 
 La collection, la Wishlist, la Pull list, les Key Issues, les sorties, la lecture, Découvrir et le fil local fonctionnent sur l'appareil.
 
 Couverture actuelle :
-- tests de domaines : 215 ;
+- tests de domaines : 219 ;
 - base de données : 172 (PGlite) ;
 - parcours d'écran : 84 (Edge).
 
@@ -52,6 +52,7 @@ Décision : **Conservée**.
 2. **Documents de référence** `docs/master/` — faits.
 3. **Squelettes juridiques** — faits. Ils portent des `[À COMPLÉTER]` et doivent être validés par un avocat belge (voir [SECURITY_AND_COMPLIANCE](SECURITY_AND_COMPLIANCE.md)).
 4. **Mentions** : l'avis d'âge et la note de non-affiliation sont affichés dans l'application (Légal & sécurité).
+5. **Module client Guardian** (D-112) : `domains/community/guardian-core.js` et encadré dans Compte & profil, prêts pour l'ouverture des comptes.
 
 ### Étape C — Avant l'ouverture des comptes (P0, sur accord de l'utilisateur)
 
