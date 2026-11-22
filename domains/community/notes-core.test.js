@@ -64,3 +64,12 @@ test('J\'aime personnalisé : formes originales, suggestion depuis le personnage
   assert.equal(K.ICONS.length, 12);
   assert.ok(K.ICONS.every(i => !/marvel|dc comics|batman|superman/i.test(i.label)));
 });
+
+test('D-125 : pensée vocale — enregistrement local gardé, onde bornée, référence comptée pour le ménage', () => {
+  const r = N.save(N.emptyState(), { text: '', voiceRef: 'nv_1', voiceDur: 12.34, voicePeaks: [0, 140, -3, 55.4] }, NOW, 'nt_v');
+  assert.deepEqual(r.errors, []);
+  assert.equal(r.note.voiceRef, 'nv_1'); assert.equal(r.note.voiceDur, 12.3); assert.deepEqual(r.note.voicePeaks, [0, 100, 0, 55]);
+  assert.deepEqual(N.imageRefs(r.state), ['nv_1'], 'le vocal n\'est pas effacé par le ménage des images');
+  assert.equal(N.save(N.emptyState(), { text: '', voiceRef: '../x' }, NOW, 'nt_w').note, null);
+  assert.equal(N.sanitizeNote({ id: 'a', text: 'Salut', createdAt: NOW, voicePeaks: [1, 2] }).voicePeaks.length, 0, 'pas d\'onde sans vocal');
+});

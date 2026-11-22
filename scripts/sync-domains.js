@@ -32,6 +32,8 @@ const MODULES = [
   ['dm', 'domains/community/dm-core.js'],
   ['plans', 'domains/community/plans-core.js'],
   ['dmRatchet', 'domains/community/dm-ratchet.js'],
+  ['dmGroup', 'domains/community/dm-group.js'],
+  ['dmInbox', 'domains/community/dm-inbox.js'],
   ['verify', 'domains/community/verify-core.js'],
   ['statsPlus', 'domains/collection/stats-plus-core.js'],
   ['orders', 'domains/community/order-core.js'],

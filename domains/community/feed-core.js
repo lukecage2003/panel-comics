@@ -68,7 +68,7 @@ const buildFeed = ({ drafts = [], stories = [], notes = [], state, tag = '', onl
   for (const n of notes || []) {
     if (!n || !n.id) continue;
     posts.push({ id: 'n:' + n.id, ref: n.id, type: 'note', kind: n.kind || 'thought', at: n.createdAt || '', text: String(n.text || ''), spoiler: !!n.spoiler, verdict: n.verdict || '',
-      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', visibility: n.visibility || 'public',
+      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', voiceRef: n.voiceRef || '', voiceDur: n.voiceDur || 0, voicePeaks: n.voicePeaks || [], visibility: n.visibility || 'public',
       media: n.issue && n.issue.series ? [{ series: n.issue.series, issue: n.issue.issue || '', publisher: n.issue.publisher || '', coverUrl: '', variant: '' }] : [] });
   }
   posts.forEach(p => { p.tags = tagsOf(p); p.likedByMe = !!st.likes[p.id]; p.saved = !!st.saves[p.id]; p.pinned = st.pins.includes(p.id); });

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-cXrU8CXdhIVKi1tYi4Wz8OMZb80JUVggWlZIMpwVRrc=' 'sha256-RSKfcffXF9l11NMis3LswM/kmYoZRFqOg5OZjtv6iho=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-m7A+L+ncfgYDx+FxyRQ9r5jkkETBCPEoiPst/7WoAog=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4388,6 +4388,75 @@
     .dm-tabs button.is-on { border-bottom-color: var(--lime); }
     .dm-inbox .hb-empty, .lv-empty { border: 0; background: radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--lime) 12%, transparent), transparent 70%), color-mix(in srgb, var(--ink) 4%, var(--bg-card)); border-radius: 22px; padding: 34px 22px; }
     .dm-inbox .hb-empty .ic { width: 30px; height: 30px; padding: 16px; box-sizing: content-box; border-radius: 50%; border: 2px solid currentColor; }
+    /* D-125 : messagerie en ligne — liste, conversation, vocaux à onde */
+    .dmo-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .dmo-top .dm-search { flex: 1 1 220px; }
+    .dmo-top .btn { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; }
+    .dmo-top .btn .ic, .dmo-icon .ic, .dmo-row .ic, .dmo-bad .ic, .dmo-first .ic { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .dmo-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px; background: var(--lime); color: var(--lime-dark, #111); font-size: .75rem; font-weight: 800; margin-left: 4px; }
+    .dmo-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+    .dmo-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 10px 8px; border: 0; background: none; color: var(--ink); text-align: left; border-radius: 14px; cursor: pointer; font: inherit; }
+    .dmo-row:focus-visible { background: color-mix(in srgb, var(--ink) 6%, transparent); }
+    @media (hover: hover) { .dmo-row:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); } }
+    .dmo-row-main { flex: 1; min-width: 0; display: grid; gap: 2px; }
+    .dmo-row-main b, .dmo-row-main small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dmo-row-main small { opacity: .72; }
+    .dmo-row.is-unread .dmo-row-main b, .dmo-row.is-unread .dmo-row-main small { font-weight: 800; opacity: 1; }
+    .dmo-row-side { display: grid; justify-items: end; gap: 4px; font-size: .78rem; opacity: .9; }
+    .dmo-badge { display: inline-grid; place-items: center; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 999px; background: var(--lime); color: var(--lime-dark, #111); font-weight: 800; font-size: .78rem; }
+    .dmo-badge.is-muted { background: color-mix(in srgb, var(--ink) 25%, transparent); color: var(--ink); }
+    .dmo-av { flex: none; width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; background: color-mix(in srgb, var(--lime) 28%, var(--bg-card)); color: var(--ink); }
+    .dmo-av.is-group { border-radius: 14px; }
+    .dmo-av .ic { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .dmo-new, .dmo-join { margin: 0; }
+    .dmo-link { border: 0; background: none; color: var(--lime); font: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; padding: 4px 2px; min-height: 32px; }
+    .dmo-link.is-danger, .btn.is-danger { color: #e5484d; }
+    .dmo-thread { display: flex; flex-direction: column; gap: 10px; min-height: min(70vh, 640px); }
+    .dmo-head { display: flex; align-items: center; gap: 10px; position: sticky; top: 0; z-index: 2; padding: 6px 0; background: var(--bg, var(--bg-card)); }
+    .dmo-head > div { min-width: 0; display: grid; }
+    .dmo-head small { opacity: .7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dmo-head-sp, .dmo-rec-sp { flex: 1; }
+    .dmo-icon { flex: none; width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 0; background: color-mix(in srgb, var(--ink) 7%, transparent); color: var(--ink); cursor: pointer; }
+    .dmo-icon[aria-expanded="true"], .dmo-icon[aria-pressed="true"] { background: var(--lime); color: var(--lime-dark, #111); }
+    .dmo-icon.is-send { background: var(--lime); color: var(--lime-dark, #111); }
+    .dmo-req { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 12px; border-radius: 16px; background: color-mix(in srgb, var(--lime) 12%, var(--bg-card)); }
+    .dmo-req p { flex: 1 1 100%; margin: 0; }
+    .hb-local.is-warn { border-color: #e5484d; }
+    .dmo-members ul { list-style: none; margin: 0 0 10px; padding: 0; display: grid; gap: 6px; }
+    .dmo-members li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; }
+    .dmo-members li small { opacity: .7; flex: 1; }
+    .dmo-msgs { list-style: none; margin: 0; padding: 4px 2px; display: flex; flex-direction: column; gap: 6px; flex: 1; overflow-y: auto; max-height: 60vh; overscroll-behavior: contain; }
+    .dmo-msg { max-width: min(82%, 520px); padding: 8px 12px 6px; border-radius: 18px; background: color-mix(in srgb, var(--ink) 8%, var(--bg-card)); align-self: flex-start; overflow-wrap: anywhere; }
+    .dmo-msg.is-me { align-self: flex-end; background: var(--lime); color: var(--lime-dark, #111); border-bottom-right-radius: 6px; }
+    .dmo-msg.is-them { border-bottom-left-radius: 6px; }
+    .dmo-msg p { margin: 0; }
+    .dmo-msg time { display: flex; justify-content: flex-end; align-items: center; gap: 3px; font-size: .7rem; opacity: .7; margin-top: 2px; }
+    .dmo-msg time .ic { width: 11px; height: 11px; fill: none; stroke: currentColor; stroke-width: 2; }
+    .dmo-from { display: block; font-weight: 700; font-size: .75rem; opacity: .8; }
+    .dmo-bad { display: flex; gap: 6px; align-items: center; font-style: italic; opacity: .75; }
+    .dmo-first { align-self: center; display: flex; gap: 8px; align-items: center; text-align: center; font-size: .85rem; opacity: .72; max-width: 420px; padding: 16px 8px; }
+    .dmo-compose { display: flex; align-items: flex-end; gap: 8px; position: sticky; bottom: 0; padding: 6px 0 calc(6px + env(safe-area-inset-bottom, 0px)); background: var(--bg, var(--bg-card)); }
+    .dmo-compose textarea { flex: 1; resize: none; min-height: 44px; max-height: 160px; padding: 11px 14px; border-radius: 22px; border: 1px solid var(--line, #333); background: var(--bg-card); color: var(--ink); font: inherit; }
+    .dmo-compose textarea:focus { outline: none; border-color: var(--lime); }
+    .dmo-rec { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 22px; background: color-mix(in srgb, #e5484d 14%, var(--bg-card)); }
+    .dmo-rec .btn { display: inline-flex; gap: 6px; align-items: center; }
+    .dmo-dot { width: 12px; height: 12px; border-radius: 50%; background: #e5484d; animation: dmoPulse 1s ease-in-out infinite; }
+    @keyframes dmoPulse { 50% { opacity: .35; } }
+    @media (prefers-reduced-motion: reduce) { .dmo-dot { animation: none; } }
+    .dmo-trtoggle { display: flex; gap: 8px; align-items: center; font-size: .78rem; opacity: .8; margin: 0; }
+    .dmo-voice { display: flex; align-items: center; gap: 10px; min-width: 210px; }
+    .dmo-play { flex: none; width: 38px; height: 38px; border-radius: 50%; border: 0; display: grid; place-items: center; cursor: pointer; background: color-mix(in srgb, currentColor 16%, transparent); color: inherit; }
+    .dmo-play .ic { width: 16px; height: 16px; fill: currentColor; stroke: currentColor; stroke-width: 2; }
+    .dmo-wave { flex: 1; height: 34px; display: flex; align-items: center; gap: 2px; cursor: pointer; }
+    .dmo-wave i { flex: 1; min-width: 2px; height: var(--h); border-radius: 2px; background: currentColor; opacity: .32; }
+    .dmo-wave i.is-on { opacity: 1; }
+    .dmo-voice small { font-variant-numeric: tabular-nums; font-size: .75rem; min-width: 34px; }
+    .dmo-trtext { font-size: .82rem; opacity: .85; margin: 4px 0 0 !important; }
+    .dmo-trtext b { font-size: .7rem; text-transform: uppercase; letter-spacing: .04em; opacity: .7; margin-right: 4px; }
+    .ntc-voice { display: flex; align-items: center; gap: 8px; margin: 6px 0; padding: 6px 10px; border-radius: 16px; background: color-mix(in srgb, var(--ink) 6%, var(--bg-card)); }
+    .ntc-voice .dmo-voice { flex: 1; }
+    .ntc-tool.is-rec { background: #e5484d; color: #fff; }
+    .ntp-voice { margin: 6px 0; }
     .dm-start { justify-self: center; margin-top: 8px; }
     /* Marché : cartes d'annonce nettes, prix à la couleur de Panel, onglet actif plein */
     .mk-tabs button.is-on { background: var(--lime); color: #0b0b0c; border-color: var(--lime); }
@@ -4449,7 +4518,7 @@
 <body>
 <div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p pm-p1" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p pm-p2" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p pm-p3" x="266" y="268" width="122" height="120" rx="26"/></svg><b class="splash-word">panel</b></div><svg class="sp-page" viewBox="0 0 300 450" aria-hidden="true"><defs><pattern id="spDots" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#fff"/><circle cx="3.5" cy="3.5" r="1.7" fill="#0b0b0c"/></pattern><pattern id="spLines" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-14)"><rect width="9" height="9" fill="#fff"/><rect width="9" height="3" fill="#0b0b0c"/></pattern><pattern id="spRed" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fff"/><circle cx="3" cy="3" r="1.6" fill="#e63b2e"/></pattern></defs><rect class="sp-paper" width="300" height="450" rx="3"/><rect class="sp-fill sp-f1" x="12" y="12" width="178" height="120" fill="#ffd400"/><rect class="sp-fill sp-f2" x="198" y="12" width="90" height="120" fill="url(#spDots)"/><rect class="sp-fill sp-f3" x="12" y="140" width="90" height="170" fill="#0b0b0c"/><rect class="sp-fill sp-f4" x="110" y="140" width="178" height="170" fill="url(#spLines)"/><rect class="sp-fill sp-f5" x="12" y="318" width="178" height="120" fill="url(#spRed)"/><rect class="sp-fill sp-f6" x="198" y="318" width="90" height="120" fill="#ffd400"/><rect class="sp-ink sp-i1" x="12" y="12" width="178" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i2" x="198" y="12" width="90" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i3" x="12" y="140" width="90" height="170" rx="2" pathLength="1"/><rect class="sp-ink sp-i4" x="110" y="140" width="178" height="170" rx="2" pathLength="1"/><rect class="sp-ink sp-i5" x="12" y="318" width="178" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i6" x="198" y="318" width="90" height="120" rx="2" pathLength="1"/></svg></div>
 <script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}s.addEventListener('animationend',function(e){if(e.animationName==='splashOut'&&s.parentNode)s.remove()});setTimeout(function(){if(s.parentNode)s.remove()},4500)})();</script>
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-send" viewBox="0 0 24 24"><path d="M21 3L3 10.4l7.2 3.1L13.6 21z"/><path d="M21 3L10.2 13.5"/></symbol><symbol id="ic-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.5H6.2z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol><symbol id="ic-verified" viewBox="0 0 24 24"><path d="M12 2.5l2.5 1.9 3.1-.3.9 3 2.6 1.7-1 3 1 2.9-2.6 1.8-.9 3-3.1-.3L12 21.1l-2.5-1.9-3.1.3-.9-3-2.6-1.8 1-2.9-1-3 2.6-1.7.9-3 3.1.3z"/><path d="M8.6 12l2.3 2.3 4.6-4.7"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-send" viewBox="0 0 24 24"><path d="M21 3L3 10.4l7.2 3.1L13.6 21z"/><path d="M21 3L10.2 13.5"/></symbol><symbol id="ic-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.5H6.2z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol><symbol id="ic-verified" viewBox="0 0 24 24"><path d="M12 2.5l2.5 1.9 3.1-.3.9 3 2.6 1.7-1 3 1 2.9-2.6 1.8-.9 3-3.1-.3L12 21.1l-2.5-1.9-3.1.3-.9-3-2.6-1.8 1-2.9-1-3 2.6-1.7.9-3 3.1.3z"/><path d="M8.6 12l2.3 2.3 4.6-4.7"/></symbol><symbol id="ic-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
   <!-- SIDEBAR DESKTOP -->
@@ -7873,7 +7942,7 @@ const buildFeed = ({ drafts = [], stories = [], notes = [], state, tag = '', onl
   for (const n of notes || []) {
     if (!n || !n.id) continue;
     posts.push({ id: 'n:' + n.id, ref: n.id, type: 'note', kind: n.kind || 'thought', at: n.createdAt || '', text: String(n.text || ''), spoiler: !!n.spoiler, verdict: n.verdict || '',
-      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', visibility: n.visibility || 'public',
+      imageRef: n.imageRef || '', imageAlt: n.imageAlt || '', voiceRef: n.voiceRef || '', voiceDur: n.voiceDur || 0, voicePeaks: n.voicePeaks || [], visibility: n.visibility || 'public',
       media: n.issue && n.issue.series ? [{ series: n.issue.series, issue: n.issue.issue || '', publisher: n.issue.publisher || '', coverUrl: '', variant: '' }] : [] });
   }
   posts.forEach(p => { p.tags = tagsOf(p); p.likedByMe = !!st.likes[p.id]; p.saved = !!st.saves[p.id]; p.pinned = st.pins.includes(p.id); });
@@ -8279,11 +8348,15 @@ const sanitizeNote = n => {
   if (!n || typeof n !== 'object' || !ID.test(String(n.id || ''))) return null;
   const text = str(n.text, LIMITS.text).replace(/\r\n?/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   const imageRef = ID.test(String(n.imageRef || '')) ? n.imageRef : '';
-  if (!text && !imageRef) return null;
+  // D-125 : pensée vocale — l'enregistrement reste sur l'appareil (base « panel-notes »), seule sa retranscription est du texte
+  const voiceRef = ID.test(String(n.voiceRef || '')) ? n.voiceRef : '';
+  if (!text && !imageRef && !voiceRef) return null;
   const kind = KINDS[n.kind] ? n.kind : 'thought';
   const issue = n.issue && typeof n.issue === 'object' && n.issue.series ? { series: str(n.issue.series, LIMITS.series).trim(), issue: str(n.issue.issue, LIMITS.issue).trim(), publisher: str(n.issue.publisher, 100).trim() } : null;
   return {
     id: n.id, kind, text, imageRef, imageAlt: str(n.imageAlt, 140).trim(), issue,
+    voiceRef, voiceDur: voiceRef && Number(n.voiceDur) > 0 ? Math.min(180, Math.round(Number(n.voiceDur) * 10) / 10) : 0,
+    voicePeaks: voiceRef && Array.isArray(n.voicePeaks) ? n.voicePeaks.slice(0, 64).map(v => Math.max(0, Math.min(100, Math.round(Number(v) || 0)))) : [],
     spoiler: n.spoiler === true,
     verdict: kind === 'theory' && VERDICTS[n.verdict] ? n.verdict : (kind === 'theory' ? 'open' : ''),
     visibility: VISIBILITY.includes(n.visibility) ? n.visibility : 'public',
@@ -8300,7 +8373,7 @@ const sanitizeState = s => {
 
 const validate = n => {
   const errors = [];
-  if (!n) { errors.push('Écrivez quelque chose ou ajoutez une image.'); return errors; }
+  if (!n) { errors.push('Écrivez quelque chose, ajoutez une image ou un vocal.'); return errors; }
   if (n.text.length > LIMITS.text) errors.push('Deux mille caractères au plus.');
   if (/<[a-z!/]/i.test(n.text)) errors.push('Les balises ne sont pas acceptées.');
   return errors;
@@ -8329,7 +8402,7 @@ const setVerdict = (state, id, verdict, now) => {
   return { state: st, ok: true };
 };
 // Images encore utiles (pour libérer les autres)
-const imageRefs = state => sanitizeState(state).notes.map(n => n.imageRef).filter(Boolean);
+const imageRefs = state => sanitizeState(state).notes.flatMap(n => [n.imageRef, n.voiceRef]).filter(Boolean);
 
 // Tendances : mots-dièse des sept derniers jours, pondérés par la fraîcheur (demi-vie 48 h), puis les plus anciens
 const trending = (tagLists, now, limit = 8) => {
@@ -9849,6 +9922,283 @@ const TRUST_LABEL = Object.freeze({
   changed: 'Le numéro de sécurité a changé (nouvel appareil ou réinstallation). Vérifiez-le avant d’envoyer quoi que ce soit de sensible.'
 });
 Object.assign(module.exports, { MAX_ATTACHMENT, sealAttachment, openAttachment, trust, TRUST_LABEL });
+  return Object.freeze(module.exports); })();
+  /* domains/community/dm-group.js */
+  out.dmGroup = (() => { const module = { exports: {} };
+'use strict';
+// Groupes chiffrés de bout en bout (D-125) — module pur, sans réseau ni stockage : WebCrypto standard uniquement.
+// Principe des « clés d'expéditeur » (Sender Keys, d'après la conception publique de Signal pour les groupes) :
+//  - chaque membre a, pour chaque époque du groupe, sa propre clé de chaîne (32 octets aléatoires) ; chaque message avance la
+//    chaîne (HMAC-SHA-256) et reçoit une clé à usage unique ; une clé passée ne permet pas de remonter aux messages d'avant ;
+//  - chaque message est signé (ECDSA P-256) avec la clé de signature d'identité de l'expéditeur (celle du paquet X3DH) :
+//    un autre membre, qui connaît pourtant la clé de chaîne, ne peut pas se faire passer pour lui ;
+//  - la clé de chaîne est confiée à chaque membre scellée pour sa clé d'identité (ECDH avec une clé éphémère, HKDF, AES-GCM)
+//    et signée par l'expéditeur ; le serveur ne voit que du chiffré ;
+//  - un départ ou un retrait fait changer l'époque (côté serveur) : chacun crée une nouvelle clé et ne la confie qu'aux membres
+//    restants. Messages hors d'ordre gardés au plus MAX_SKIP ; un rejeu est refusé (la clé n'existe plus).
+// Format des clés publiques : brut non compressé (65 octets) en base64, comme dm-ratchet.
+
+const subtle = () => { const s = globalThis.crypto && globalThis.crypto.subtle; if (!s) throw new Error('crypto_unavailable'); return s; };
+const enc = new TextEncoder(), dec = new TextDecoder();
+const b64 = u8 => { const u = new Uint8Array(u8); let s = ''; for (let i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); };
+const unb64 = s => { const bin = atob(String(s || '')); const u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; };
+
+const ALG = 'SenderKey-P256/HMAC-SHA256/AES-GCM-256/ECDSA-P256';
+const MAX_SKIP = 1000;
+const MAX_MEMBERS = 32;
+const MAX_TEXT = 4000;
+const PAD = 64;
+const EC = { name: 'ECDH', namedCurve: 'P-256' }, SIG = { name: 'ECDSA', namedCurve: 'P-256' }, SHA = { name: 'ECDSA', hash: 'SHA-256' };
+
+const hmac = async (key, data) => { const k = await subtle().importKey('raw', key, { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return new Uint8Array(await subtle().sign('HMAC', k, data)); };
+const hkdf = async (ikm, info, len) => {
+  const k = await subtle().importKey('raw', ikm, 'HKDF', false, ['deriveBits']);
+  return new Uint8Array(await subtle().deriveBits({ name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info: enc.encode(info) }, k, len * 8));
+};
+const step = async ck => [await hmac(ck, new Uint8Array([2])), await hmac(ck, new Uint8Array([1]))]; // [chaîne suivante, clé de message]
+const aes = async (raw, use) => subtle().importKey('raw', raw, { name: 'AES-GCM' }, false, use);
+const pad = u8 => { const n = Math.ceil((u8.length + 1) / PAD) * PAD, out = new Uint8Array(n); out.set(u8); out[u8.length] = 0x80; return out; };
+const unpad = u8 => { let i = u8.length - 1; while (i >= 0 && u8[i] === 0) i--; if (i < 0 || u8[i] !== 0x80) throw new Error('tampered'); return u8.slice(0, i); };
+const cat = (a, b) => { const o = new Uint8Array(a.length + b.length); o.set(a); o.set(b, a.length); return o; };
+const signed = (groupId, e, n, iv, ct) => enc.encode(JSON.stringify(['panel-group-v1', String(groupId), e, n, iv, ct]));
+const importSik = sik => subtle().importKey('raw', unb64(sik), SIG, false, ['verify']);
+
+// Nouvelle clé d'expéditeur pour une époque : { ck, n } — ck reste sur l'appareil et chez les membres, jamais en clair au serveur
+const createSenderKey = () => ({ ck: globalThis.crypto.getRandomValues(new Uint8Array(32)), n: 0 });
+
+// Chiffre un message de groupe : renvoie [nouvel état d'envoi, enveloppe] ; l'état d'entrée n'est pas modifié
+const encryptGroup = async (state, text, meta) => {
+  const t = String(text || ''), m = meta || {};
+  if (!t.trim()) throw new Error('empty');
+  if (t.length > MAX_TEXT) throw new Error('too_long');
+  if (!state || !state.ck || !m.groupId || !m.signKey || !Number.isInteger(m.epoch)) throw new Error('not_ready');
+  const [ck, mk] = await step(state.ck);
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12)), n = state.n;
+  const ivb = b64(iv), ad = enc.encode(JSON.stringify([String(m.groupId), m.epoch, n]));
+  const ct = b64(new Uint8Array(await subtle().encrypt({ name: 'AES-GCM', iv, additionalData: ad }, await aes(await hkdf(mk, 'Panel-Group-MK', 32), ['encrypt']), pad(enc.encode(t)))));
+  const sig = b64(new Uint8Array(await subtle().sign(SHA, m.signKey, signed(m.groupId, m.epoch, n, ivb, ct))));
+  return [{ ck, n: n + 1 }, { v: 'g1', alg: ALG, e: m.epoch, n, iv: ivb, ct, sig }];
+};
+
+// Déchiffre avec la chaîne reçue d'un expéditeur : renvoie [nouvel état de réception, texte] ; en cas d'échec rien n'est consommé
+const decryptGroup = async (state, box, meta) => {
+  const m = meta || {};
+  if (!box || box.v !== 'g1' || box.alg !== ALG) throw new Error('unsupported');
+  if (!state || !state.ck) throw new Error('no_sender_key');
+  if (!Number.isInteger(box.n) || box.n < 0 || box.e !== m.epoch) throw new Error('tampered');
+  let okSig = false;
+  try { okSig = await subtle().verify(SHA, await importSik(m.sik), unb64(box.sig), signed(m.groupId, box.e, box.n, box.iv, box.ct)); } catch (_) { okSig = false; }
+  if (!okSig) throw new Error('bad_signature');
+  const st = { ck: state.ck, n: state.n, skipped: new Map(state.skipped || []) };
+  let mk;
+  if (box.n < st.n) {
+    mk = st.skipped.get(box.n);
+    if (!mk) throw new Error('replay');
+    st.skipped.delete(box.n);
+  } else {
+    if (box.n - st.n > MAX_SKIP) throw new Error('too_many_skipped');
+    while (st.n < box.n) { const [ck, k] = await step(st.ck); st.skipped.set(st.n, k); st.ck = ck; st.n += 1; }
+    const [ck, k] = await step(st.ck); st.ck = ck; st.n += 1; mk = k;
+    while (st.skipped.size > MAX_SKIP) st.skipped.delete(st.skipped.keys().next().value);
+  }
+  try {
+    const ad = enc.encode(JSON.stringify([String(m.groupId), box.e, box.n]));
+    const pt = await subtle().decrypt({ name: 'AES-GCM', iv: unb64(box.iv), additionalData: ad }, await aes(await hkdf(mk, 'Panel-Group-MK', 32), ['decrypt']), unb64(box.ct));
+    return [st, dec.decode(unpad(new Uint8Array(pt)))];
+  } catch (_) { throw new Error('tampered'); }
+};
+
+// Confier sa clé de chaîne à un membre : scellée pour sa clé d'identité (ik) et signée par l'expéditeur
+const distMeta = (m, eph) => enc.encode(JSON.stringify(['panel-group-dist-v1', String(m.groupId), m.epoch, String(m.from || ''), String(m.to || ''), eph]));
+const sealSenderKey = async (identity, recipientIk, sk, meta) => {
+  const m = meta || {};
+  if (!identity || !identity.sign || !sk || !sk.ck) throw new Error('not_ready');
+  const eph = await subtle().generateKey(EC, false, ['deriveBits']), ephPub = b64(new Uint8Array(await subtle().exportKey('raw', eph.publicKey)));
+  const their = await subtle().importKey('raw', unb64(recipientIk), EC, false, []);
+  const shared = new Uint8Array(await subtle().deriveBits({ name: 'ECDH', public: their }, eph.privateKey, 256));
+  const iv = globalThis.crypto.getRandomValues(new Uint8Array(12)), ivb = b64(iv), ad = distMeta(m, ephPub);
+  const ct = b64(new Uint8Array(await subtle().encrypt({ name: 'AES-GCM', iv, additionalData: ad }, await aes(await hkdf(shared, 'Panel-Group-Dist', 32), ['encrypt']),
+    enc.encode(JSON.stringify({ ck: b64(sk.ck), n: sk.n })))));
+  const sig = b64(new Uint8Array(await subtle().sign(SHA, identity.sign.privateKey, cat(ad, enc.encode(ivb + '|' + ct)))));
+  return { eph: ephPub, iv: ivb, ct, sig };
+};
+// Ouvrir une clé confiée : signature de l'expéditeur vérifiée, puis déchiffrement avec sa propre clé d'identité
+const openSenderKey = async (identity, box, meta) => {
+  const m = meta || {};
+  if (!box || !box.eph || !box.ct || !box.sig) throw new Error('tampered');
+  const ad = distMeta(m, box.eph);
+  let ok = false;
+  try { ok = await subtle().verify(SHA, await importSik(m.senderSik), unb64(box.sig), cat(ad, enc.encode(box.iv + '|' + box.ct))); } catch (_) { ok = false; }
+  if (!ok) throw new Error('bad_signature');
+  try {
+    const eph = await subtle().importKey('raw', unb64(box.eph), EC, false, []);
+    const shared = new Uint8Array(await subtle().deriveBits({ name: 'ECDH', public: eph }, identity.dh.privateKey, 256));
+    const pt = await subtle().decrypt({ name: 'AES-GCM', iv: unb64(box.iv), additionalData: ad }, await aes(await hkdf(shared, 'Panel-Group-Dist', 32), ['decrypt']), unb64(box.ct));
+    const o = JSON.parse(dec.decode(pt));
+    const ck = unb64(o.ck);
+    if (ck.length !== 32 || !Number.isInteger(o.n) || o.n < 0) throw new Error('x');
+    return { ck, n: o.n, skipped: new Map() };
+  } catch (_) { throw new Error('tampered'); }
+};
+
+// À qui faut-il (encore) confier sa clé pour l'époque courante ? Membres actifs ou invités, munis d'une clé, sauf soi
+const needDistribution = (members, sentTo) => {
+  const done = new Set(sentTo || []);
+  return (members || []).filter(x => x && !x.me && x.ik && x.sik && (x.status === 'active' || x.status === 'invited') && !done.has(x.handle));
+};
+const cleanName = name => String(name || '').replace(/[\u0000-\u001f<>]/g, '').trim().slice(0, 60);
+const ROLE_LABEL = Object.freeze({ owner: 'Créateur du groupe', admin: 'Administrateur', member: 'Membre' });
+// Ce que chacun peut faire (même règle que le serveur)
+const canManage = (myRole, theirRole, action) => {
+  if (action === 'invite' || action === 'rename' || action === 'timer') return myRole === 'owner' || myRole === 'admin';
+  if (action === 'remove') return myRole === 'owner' ? theirRole !== 'owner' : myRole === 'admin' && theirRole === 'member';
+  if (action === 'role') return myRole === 'owner' && theirRole !== 'owner';
+  return false;
+};
+
+module.exports = { ALG, MAX_SKIP, MAX_MEMBERS, MAX_TEXT, createSenderKey, encryptGroup, decryptGroup, sealSenderKey, openSenderKey, needDistribution, cleanName, ROLE_LABEL, canManage };
+  return Object.freeze(module.exports); })();
+  /* domains/community/dm-inbox.js */
+  out.dmInbox = (() => { const module = { exports: {} };
+'use strict';
+// Boîte de réception en ligne (D-125) — module pur : non-lus et pastilles, tri des fils, contenu des messages (texte ou vocal),
+// onde des vocaux, retranscription, fils de pensées. Ni réseau, ni stockage, ni horloge cachée.
+// Règles :
+//  - l'icône Messages compte les PERSONNES ou GROUPES qui attendent une réponse (fils non lus, demandes et invitations reçues) ;
+//    chaque fil affiche son nombre de MESSAGES non lus ; un groupe en sourdine garde son compteur mais ne compte pas sur l'icône ;
+//  - un vocal voyage DANS le message chiffré : chemin du fichier chiffré, clé, empreinte, durée, onde et retranscription ;
+//    tout est vérifié à l'ouverture, un contenu mal formé est montré comme texte, jamais interprété.
+
+const BADGE_MAX = 99;
+const badgeText = n => { const v = Math.max(0, Math.floor(Number(n) || 0)); return v === 0 ? '' : v > BADGE_MAX ? BADGE_MAX + '+' : String(v); };
+
+// Fils unifiés (conversations et groupes) à partir de api.inbox()
+const threads = inbox => {
+  const i = inbox && typeof inbox === 'object' ? inbox : {};
+  const dms = (Array.isArray(i.dms) ? i.dms : []).filter(d => d && d.id && d.status !== 'closed').map(d => ({
+    kind: 'dm', id: String(d.id), title: '@' + String(d.with || ''), handle: String(d.with || ''), status: d.status, mine: !!d.mine, seal: d.seal || null,
+    unread: Math.max(0, Number(d.unread) || 0), lastId: Number(d.last_id) || 0, lastAt: d.last_at || '', muted: false, timer: Number(d.timer) || 0,
+    request: d.status === 'request' && !d.mine, declined: d.status === 'declined'
+  }));
+  const groups = (Array.isArray(i.groups) ? i.groups : []).filter(g => g && g.id).map(g => ({
+    kind: 'group', id: String(g.id), title: String(g.name || 'Groupe'), status: g.status, role: g.role, members: Number(g.members) || 0, epoch: Number(g.epoch) || 1,
+    unread: Math.max(0, Number(g.unread) || 0), lastId: Number(g.last_id) || 0, lastAt: g.last_at || '', muted: !!g.muted, invitedBy: g.invited_by || '',
+    request: g.status === 'invited', declined: false
+  }));
+  return dms.concat(groups).sort((a, b) => String(b.lastAt).localeCompare(String(a.lastAt)) || b.lastId - a.lastId);
+};
+// Résumé pour les pastilles
+const summary = list => {
+  const l = Array.isArray(list) ? list : [];
+  const unreadThreads = l.filter(t => !t.request && t.unread > 0);
+  const requests = l.filter(t => t.request).length;
+  const people = unreadThreads.filter(t => !t.muted).length;
+  return { people, requests, messages: unreadThreads.reduce((s, t) => s + t.unread, 0), icon: people + requests, muted: unreadThreads.filter(t => t.muted).length };
+};
+// Onglets « Principal » / « Demandes » et recherche
+const filterThreads = (list, tab, query) => {
+  const q = String(query || '').trim().toLowerCase();
+  return (Array.isArray(list) ? list : []).filter(t => (tab === 'requests' ? t.request : !t.request) && !t.declined && (!q || t.title.toLowerCase().includes(q)));
+};
+const rowBadge = t => t && !t.request && t.unread > 0 ? badgeText(t.unread) : '';
+const rowHint = t => !t ? '' : t.request ? (t.kind === 'group' ? 'Invitation' + (t.invitedBy ? ' de @' + t.invitedBy : '') : 'Demande de message')
+  : t.kind === 'group' ? t.members + ' membre' + (t.members > 1 ? 's' : '') + (t.muted ? ' · en sourdine' : '')
+  : t.status === 'request' ? 'En attente de réponse' : t.unread ? t.unread + ' nouveau' + (t.unread > 1 ? 'x' : '') + ' message' + (t.unread > 1 ? 's' : '') : 'Chiffré de bout en bout';
+// Nouveaux messages depuis le dernier passage (pour une alerte) : fils non muets dont le dernier message a avancé
+const freshThreads = (before, after) => {
+  const prev = new Map((before || []).map(t => [t.kind + ':' + t.id, t.lastId]));
+  return (after || []).filter(t => !t.muted && t.unread > 0 && t.lastId > (prev.get(t.kind + ':' + t.id) || 0));
+};
+
+// ── Contenu d'un message ──────────────────────────────────────────────────────────────────────
+const PREFIX = 'PANEL:1:';
+const MAX_VOICE_SEC = 180;
+const MAX_VOICE_BYTES = 4 * 1048576;
+const MAX_TRANSCRIPT = 1500;
+const BARS = 48;
+const MIMES = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/mp4', 'audio/webm'];
+const PATH = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/[0-9a-f]{32}\.bin$/;
+const B64 = /^[A-Za-z0-9+/]+=*$/;
+const cleanText = (s, n) => String(s || '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').trim().slice(0, n);
+const voiceOk = v => !!v && PATH.test(String(v.path || '')) && v.ref && B64.test(String(v.ref.key || '')) && B64.test(String(v.ref.iv || '')) && /^[0-9a-f]{64}$/.test(String(v.ref.digest || ''))
+  && Number.isInteger(v.ref.size) && v.ref.size > 0 && v.ref.size <= MAX_VOICE_BYTES && Number(v.dur) > 0 && Number(v.dur) <= MAX_VOICE_SEC + 1
+  && MIMES.includes(v.mime) && Array.isArray(v.peaks) && v.peaks.length <= 64 && v.peaks.every(p => Number.isInteger(p) && p >= 0 && p <= 100);
+// Texte simple : envoyé tel quel ; vocal : préfixe + JSON
+const encodeContent = c => {
+  if (!c || c.kind !== 'voice') return String(c && c.text !== undefined ? c.text : c || '');
+  const v = { kind: 'voice', path: c.path, ref: c.ref, dur: Math.round(Number(c.dur) * 10) / 10, mime: c.mime, peaks: c.peaks || [], tr: cleanText(c.tr, MAX_TRANSCRIPT) };
+  if (!voiceOk(v)) throw new Error('invalid_voice');
+  return PREFIX + JSON.stringify(v);
+};
+const decodeContent = s => {
+  const t = String(s || '');
+  if (!t.startsWith(PREFIX)) return { kind: 'text', text: t };
+  try {
+    const v = JSON.parse(t.slice(PREFIX.length));
+    if (v && v.kind === 'voice' && voiceOk(v)) return { kind: 'voice', path: v.path, ref: v.ref, dur: Number(v.dur), mime: v.mime, peaks: v.peaks, tr: cleanText(v.tr, MAX_TRANSCRIPT) };
+  } catch (_) { /* contenu illisible : montré comme texte */ }
+  return { kind: 'text', text: t };
+};
+const preview = s => { const c = decodeContent(s); return c.kind === 'voice' ? 'Message vocal · ' + formatDuration(c.dur) : c.text.slice(0, 80); };
+
+// Chemin d'un vocal dans le compartiment privé : <fil>/<expéditeur>/<identifiant>.bin
+const voicePath = (threadId, userId, fileHex) => { const p = String(threadId) + '/' + String(userId) + '/' + String(fileHex) + '.bin'; if (!PATH.test(p)) throw new Error('invalid_path'); return p; };
+// Format d'enregistrement : le premier que le navigateur sait produire
+const pickMime = isSupported => { for (const m of MIMES) { try { if (isSupported(m)) return m; } catch (_) { /* format suivant */ } } return ''; };
+// Onde : BARS barres de 0 à 100, à partir des échantillons (crête par tranche, normalisée sur la plus forte)
+const peaks = (samples, bars) => {
+  const n = Math.max(1, Math.min(64, bars || BARS)), s = samples && samples.length ? samples : [];
+  if (!s.length) return new Array(n).fill(0);
+  const size = s.length / n, raw = [];
+  for (let i = 0; i < n; i++) { let m = 0; const a = Math.floor(i * size), b = Math.max(a + 1, Math.floor((i + 1) * size)); for (let j = a; j < b && j < s.length; j++) { const v = Math.abs(s[j]); if (v > m) m = v; } raw.push(m); }
+  const top = Math.max(...raw);
+  return raw.map(v => top > 0 ? Math.round(v / top * 100) : 0);
+};
+const formatDuration = sec => { const v = Math.max(0, Math.round(Number(sec) || 0)); return Math.floor(v / 60) + ':' + String(v % 60).padStart(2, '0'); };
+// Avancement de lecture -> nombre de barres colorées
+const playedBars = (current, duration, bars) => { const d = Number(duration) || 0, n = bars || BARS; return d > 0 ? Math.max(0, Math.min(n, Math.round(Number(current) / d * n))) : 0; };
+
+// ── Retranscription ───────────────────────────────────────────────────────────────────────────
+// 'web' : API Web Speech du navigateur ; 'none' : rien (l'application Android n'a pas cette API dans sa WebView)
+const speechSupport = g => !g ? 'none' : (typeof g.SpeechRecognition === 'function' || typeof g.webkitSpeechRecognition === 'function') ? 'web' : 'none';
+// Résultats successifs (finaux seulement) -> texte propre, première lettre en capitale
+const joinTranscript = parts => {
+  const t = (Array.isArray(parts) ? parts : []).map(p => String(p || '').trim()).filter(Boolean).join(' ').replace(/\s+/g, ' ').trim();
+  return t ? cleanText(t.charAt(0).toUpperCase() + t.slice(1), MAX_TRANSCRIPT) : '';
+};
+
+// ── Fil de pensées : un long texte découpé en parties numérotées (1/3, 2/3…) ─────────────────────
+const splitThread = (text, max) => {
+  const lim = Math.max(40, Math.floor(max || 2000)), body = String(text || '').trim();
+  if (!body) return [];
+  if (body.length <= lim) return [body];
+  const room = lim - 8, parts = [];
+  let rest = body;
+  while (rest.length > room) {
+    const win = rest.slice(0, room);
+    let cut = Math.max(win.lastIndexOf('\n'), win.lastIndexOf('. '), win.lastIndexOf('! '), win.lastIndexOf('? '));
+    if (cut < room * 0.5) cut = win.lastIndexOf(' ');
+    if (cut < room * 0.3) cut = room - 1;
+    parts.push(rest.slice(0, cut + 1).trim()); rest = rest.slice(cut + 1).trim();
+  }
+  if (rest) parts.push(rest);
+  return parts.map((p, i) => p + ' (' + (i + 1) + '/' + parts.length + ')');
+};
+
+const REASON = Object.freeze({
+  not_member: 'Choisissez d’abord votre pseudo Panel.', adult_only: 'Les messages sont réservés aux adultes.', no_key: 'Cette personne n’a pas encore activé ses messages.',
+  closed: 'Cette personne ne reçoit pas de messages.', verified_only: 'Cette personne ne reçoit des messages que des profils vérifiés.', blocked: 'Un blocage existe entre vous.',
+  minor_protected: 'Les messages privés ne sont pas ouverts aux comptes mineurs.', request_pending: 'Demande envoyée : attendez sa réponse avant d’écrire encore.',
+  rate_limited: 'Doucement : trop d’envois d’un coup. Réessayez dans un instant.', group_full: 'Un groupe compte 32 personnes au plus.', name_required: 'Donnez un nom au groupe.',
+  forbidden: 'Action réservée au créateur ou aux administrateurs du groupe.', not_found: 'Introuvable ou plus accessible.', epoch_stale: 'Le groupe a changé : nouvelles clés en cours, réessayez.',
+  invalid_handle: 'Pseudo invalide : 3 à 24 lettres, chiffres, points, tirets.', handle_taken: 'Ce pseudo est déjà pris.', too_young: 'Panel est ouvert dès 13 ans.',
+  invalid_voice: 'Vocal illisible.', too_large: 'Vocal trop lourd (4 Mo au plus).', mic_denied: 'Micro refusé : autorisez-le dans les réglages du navigateur.',
+  mic_unavailable: 'Enregistrement indisponible sur cet appareil.', network: 'Pas de connexion : rien n’a été envoyé.', unknown: 'Action impossible pour le moment. Réessayez plus tard.'
+});
+const reason = e => { const m = String((e && (e.message || e.code)) || e || ''); const k = Object.keys(REASON).find(x => m.includes(x)); return REASON[k || (/fetch|network|Failed/i.test(m) ? 'network' : 'unknown')]; };
+
+module.exports = { BADGE_MAX, badgeText, threads, summary, filterThreads, rowBadge, rowHint, freshThreads, PREFIX, MAX_VOICE_SEC, MAX_VOICE_BYTES, MAX_TRANSCRIPT, BARS, MIMES,
+  encodeContent, decodeContent, preview, voicePath, pickMime, peaks, formatDuration, playedBars, speechSupport, joinTranscript, splitThread, REASON, reason };
   return Object.freeze(module.exports); })();
   /* domains/community/verify-core.js */
   out.verify = (() => { const module = { exports: {} };
@@ -25942,7 +26292,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (drop.length) await ntTx('readwrite', st => { drop.forEach(k => st.delete(k)); return null; });
     return drop.length;
   };
-  const ntFresh = () => ({ id: '', kind: 'thought', text: '', imageRef: '', issue: null, spoiler: false, visibility: 'public', open: false });
+  const ntFresh = () => ({ id: '', kind: 'thought', text: '', imageRef: '', voiceRef: '', voiceDur: 0, voicePeaks: [], issue: null, spoiler: false, visibility: 'public', open: false });
+  // D-125 : pensée vocale — le fichier reste dans la base locale « panel-notes » ; lecteur à onde partagé avec les messages
+  const ntVoiceHtml = (ref, peaks, dur) => { dmoVoices.set('nt:' + ref, { url: () => ntImgUrl(ref).then(u => { if (!u) throw new Error('not_found'); return u; }), dur }); return dmoWaveHtml('nt:' + ref, peaks, dur, ''); };
   let ntDraft = ntFresh();
   const NT_VIS = { public: 'Public', followers: 'Mes abonnés', private: 'Moi seul' };
   const ntPlaceholder = k => k === 'theory' ? 'Ta théorie sur la suite ? Ajoute une page en preuve.' : k === 'question' ? 'Ta question aux fans de comics ?' : 'Quoi de neuf dans tes comics ?';
@@ -25954,18 +26306,20 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return tr.concat(['Théorie', 'Question', 'PullDuMercredi', 'Spoiler'], ser);
   };
   const ntComposerHtml = () => {
-    const prof = profileLoad(), d = ntDraft, open = !!(d.open || d.text || d.imageRef || d.id);
+    const prof = profileLoad(), d = ntDraft, open = !!(d.open || d.text || d.imageRef || d.voiceRef || d.id);
     const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
     const owned = physicalSingles.filter(isOwned).slice().sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0)).slice(0, 300);
     return '<section class="ntc' + (open ? ' is-open' : '') + '" aria-label="Écrire une pensée">' +
       '<div class="ntc-row"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span>' +
-      '<textarea id="ntText" class="ntc-text" rows="' + (open ? 3 : 1) + '" maxlength="2000" placeholder="' + escapeHtml(ntPlaceholder(d.kind)) + '" aria-label="Écrire une pensée, une théorie ou une question">' + escapeHtml(d.text || '') + '</textarea></div>' +
+      '<textarea id="ntText" class="ntc-text" rows="' + (open ? 3 : 1) + '" maxlength="' + (d.id ? 2000 : 6000) + '" placeholder="' + escapeHtml(ntPlaceholder(d.kind)) + '" aria-label="Écrire une pensée, une théorie ou une question">' + escapeHtml(d.text || '') + '</textarea></div>' +
       '<div class="ntc-sugg" data-nt-sugg role="group" aria-label="Mots-dièse suggérés" hidden></div>' +
       (d.imageRef ? '<div class="ntc-imgprev"><img data-nt-img="' + escapeHtml(d.imageRef) + '" alt="Image jointe"><button type="button" class="ntc-x" data-nt-imgx aria-label="Retirer l\'image">' + igIcon('ic-x') + '</button></div>' : '') +
+      (d.voiceRef ? '<div class="ntc-voice">' + ntVoiceHtml(d.voiceRef, d.voicePeaks, d.voiceDur) + '<button type="button" class="ntc-x" data-nt-voicex aria-label="Retirer le vocal">' + igIcon('ic-x') + '</button></div>' : '') +
       (d.issue ? '<p class="ntc-issue">' + igIcon('ic-books') + ' <span>' + escapeHtml(plTitle(d.issue)) + '</span><button type="button" class="ntc-x" data-nt-issuex aria-label="Retirer le numéro lié">' + igIcon('ic-x') + '</button></p>' : '') +
       '<div class="ntc-issuepick" data-nt-issuepick hidden><input class="field-input" list="ntIssueList" data-nt-issuein placeholder="Lier un numéro de votre collection…" aria-label="Numéro lié"><datalist id="ntIssueList">' + owned.map(c => '<option value="' + escapeHtml(plTitle(c)) + '">').join('') + '</datalist></div>' +
       '<div class="ntc-bar"><div class="ntc-kinds" role="radiogroup" aria-label="Type de publication">' + Object.entries(NT().KINDS).map(([k, l]) => '<button type="button" role="radio" aria-checked="' + (d.kind === k) + '" tabindex="' + (d.kind === k ? 0 : -1) + '" data-nt-kind="' + k + '">' + escapeHtml(l) + '</button>').join('') + '</div>' +
         '<span class="ntc-tools"><button type="button" class="ntc-tool" data-nt-addimg aria-label="Ajouter une image de la galerie">' + igIcon('ic-image') + '</button><input type="file" accept="image/*" hidden data-nt-file>' +
+        '<button type="button" class="ntc-tool" data-nt-voice aria-pressed="false" aria-label="Pensée vocale (retranscrite si le navigateur le permet)">' + igIcon('ic-mic') + '</button>' +
         '<button type="button" class="ntc-tool" data-nt-issue aria-expanded="false" aria-label="Lier un numéro de la collection">' + igIcon('ic-books') + '</button>' +
         '<button type="button" class="ntc-tool' + (d.spoiler ? ' is-on' : '') + '" data-nt-spoiler aria-pressed="' + d.spoiler + '" aria-label="Voile anti-spoiler">' + igIcon('ic-eye') + '</button>' +
         '<select class="ntc-vis" data-nt-vis aria-label="Visibilité">' + Object.entries(NT_VIS).map(([k, l]) => '<option value="' + k + '"' + (d.visibility === k ? ' selected' : '') + '>' + l + '</option>').join('') + '</select></span>' +
@@ -25985,7 +26339,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const open = () => { if (ntDraft.open) return; ntDraft.open = true; box.classList.add('is-open'); ta.rows = 3; };
     const upd = () => {
       ntDraft.text = ta.value;
-      const left = 2000 - ta.value.length; cnt.textContent = left; cnt.classList.toggle('is-low', left < 40);
+      const left = 2000 - ta.value.length; cnt.textContent = left >= 0 ? left : DMI().splitThread(ta.value, 2000).length + ' parties'; cnt.classList.toggle('is-low', left < 40);
       const s = NT().suggest(ta.value, ta.selectionStart, pool || (pool = ntTagPool()));
       sg.hidden = !s.items.length;
       sg.innerHTML = s.items.map(x => '<button type="button" data-nt-tag="' + escapeHtml(x) + '">#' + escapeHtml(x) + '</button>').join('');
@@ -26014,6 +26368,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ntDraft.imageRef = ref; ntDraft.open = true; ntRepaint(host, true);
     };
     const ix = box.querySelector('[data-nt-imgx]'); if (ix) ix.onclick = () => { ntDraft.imageRef = ''; ntRepaint(host, true); };
+    const vx = box.querySelector('[data-nt-voicex]'); if (vx) vx.onclick = () => { ntDraft.voiceRef = ''; ntDraft.voiceDur = 0; ntDraft.voicePeaks = []; ntRepaint(host, true); };
+    const vb = box.querySelector('[data-nt-voice]');
+    const vDone = async r => {
+      vb.classList.remove('is-rec'); vb.setAttribute('aria-pressed', 'false');
+      if (!r || !r.blob.size) { msg.textContent = 'Vocal annulé.'; return; }
+      if (r.blob.size > DMI().MAX_VOICE_BYTES) { msg.textContent = DMI().REASON.too_large; return; }
+      const an = await dmoAnalyse(r.blob, r.dur), id = lvId('nv');
+      const ok = await ntTx('readwrite', st => st.put({ id, blob: r.blob, w: 0, h: 0, kind: 'voice', createdAt: lvNow() }));
+      if (ok === null) { msg.textContent = 'Stockage plein : vocal non gardé.'; return; }
+      ntImgUrls.set(id, Promise.resolve(URL.createObjectURL(r.blob)));
+      Object.assign(ntDraft, { voiceRef: id, voiceDur: Math.min(DMI().MAX_VOICE_SEC, an.dur), voicePeaks: an.peaks, open: true });
+      if (r.tr) ntDraft.text = (ta.value.trim() ? ta.value.trim() + '\n' : '') + r.tr;
+      ntRepaint(host, true);
+    };
+    vb.onclick = async () => {
+      if (dmoRec) { vb.disabled = true; const r = await dmoRecStop(true); vb.disabled = false; return vDone(r); }
+      try {
+        const st = await dmoRecStart(sec => { msg.textContent = 'Enregistrement ' + DMI().formatDuration(sec) + ' : touchez le micro pour arrêter (3 min au plus).'; });
+        st.done = vDone; vb.classList.add('is-rec'); vb.setAttribute('aria-pressed', 'true'); open();
+        if (DMI().speechSupport(window) === 'web' && !dmoTrOn()) msg.textContent = 'Enregistrement… La retranscription s’active dans Messages.';
+      } catch (err) { msg.textContent = DMI().reason(err); }
+    };
     const pick = box.querySelector('[data-nt-issuepick]'), ib = box.querySelector('[data-nt-issue]');
     ib.onclick = () => { pick.hidden = !pick.hidden; ib.setAttribute('aria-expanded', String(!pick.hidden)); if (!pick.hidden) pick.querySelector('input').focus(); };
     pick.querySelector('input').onchange = e => {
@@ -26030,8 +26406,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       const text = ta.value.trim();
       if (text) { const v = commValidate(text, ntDraft.visibility, []); if (!v.ok) { msg.textContent = v.errors.map(x => x.charAt(0).toUpperCase() + x.slice(1)).join('. ') + '.'; return; } if (v.warnings && v.warnings.length) showToast('Attention : ' + v.warnings.join(' ')); }
       const editing = !!ntDraft.id;
-      const r = NT().save(ntLoad(), { id: ntDraft.id || undefined, text, kind: ntDraft.kind, imageRef: ntDraft.imageRef, issue: ntDraft.issue, spoiler: ntDraft.spoiler, visibility: ntDraft.visibility }, lvNow(), lvId('nt'));
-      if (r.errors.length) { msg.textContent = r.errors.join(' '); return; }
+      if (dmoRec) { msg.textContent = 'Arrêtez d’abord l’enregistrement.'; return; }
+      const parts = !editing && text.length > 2000 ? DMI().splitThread(text, 2000) : [text], t0 = Date.now();
+      if (parts.length > 3) { msg.textContent = 'Un fil compte trois parties au plus.'; return; }
+      let r = { state: ntLoad(), errors: [] };
+      for (let i = parts.length - 1; i >= 0; i--) {
+        const first = i === 0;
+        r = NT().save(r.state, { id: ntDraft.id || undefined, text: parts[i], kind: ntDraft.kind, imageRef: first ? ntDraft.imageRef : '', voiceRef: first ? ntDraft.voiceRef : '', voiceDur: ntDraft.voiceDur, voicePeaks: ntDraft.voicePeaks, issue: ntDraft.issue, spoiler: ntDraft.spoiler, visibility: ntDraft.visibility }, new Date(t0 + (parts.length - 1 - i)).toISOString(), lvId('nt'));
+        if (r.errors.length) { msg.textContent = r.errors.join(' '); return; }
+      }
       if (!ntStore(r.state)) return;
       ntDraft = ntFresh(); igTag = '';
       renderCommunityView();
@@ -26060,6 +26443,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
       '<div class="ntp-body' + (p.spoiler ? ' is-sp' : '') + '">' + (p.text ? '<p class="ntp-text">' + ntText(p.text) + '</p>' : '') +
         (p.imageRef ? '<figure class="ntp-img"><img data-nt-img="' + escapeHtml(p.imageRef) + '" alt="' + escapeHtml(p.imageAlt || 'Image jointe à la publication') + '" decoding="async"></figure>' : '') +
+        (p.voiceRef ? '<div class="ntp-voice">' + ntVoiceHtml(p.voiceRef, p.voicePeaks, p.voiceDur) + '</div>' : '') +
         (p.spoiler ? '<button type="button" class="ntp-reveal" data-nt-reveal>' + igIcon('ic-eye') + ' Spoiler : afficher</button>' : '') + '</div>' +
       (m ? '<button type="button" class="ntp-issue" data-nt-issue-open>' + igIcon('ic-books') + ' ' + escapeHtml(plTitle(m)) + '</button>' : '') +
       (p.kind === 'theory' ? '<p class="ntp-verdict is-' + escapeHtml(p.verdict || 'open') + '">' + igIcon(vIc[p.verdict] || 'ic-hourglass') + ' ' + escapeHtml(V[p.verdict] || V.open) + '</p>' : '') +
@@ -26935,7 +27319,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   });
 
   // ---------- Messages chiffrés ----------
-  const hbDmDb = () => new Promise((res, rej) => { const r = indexedDB.open('panel-dm', 1); r.onupgradeneeded = () => r.result.createObjectStore('identity'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const hbDmDb = () => new Promise((res, rej) => { const r = indexedDB.open('panel-dm', 2); r.onupgradeneeded = () => { const d = r.result; if (!d.objectStoreNames.contains('identity')) d.createObjectStore('identity'); if (!d.objectStoreNames.contains('kv')) d.createObjectStore('kv'); }; r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
   const hbDmGet = async () => { if (indexedDB.databases && !(await indexedDB.databases()).some(d => d.name === 'panel-dm')) return null; const db = await hbDmDb(); return new Promise(res => { const q = db.transaction('identity').objectStore('identity').get('device'); q.onsuccess = () => { db.close(); res(q.result || null); }; q.onerror = () => { db.close(); res(null); }; }); };
   const hbDmPut = async v => { const db = await hbDmDb(); return new Promise((res, rej) => { const tx = db.transaction('identity', 'readwrite'); tx.objectStore('identity').put(v, 'device'); tx.oncomplete = () => { db.close(); res(true); }; tx.onerror = () => { db.close(); rej(tx.error); }; }); };
   const hbDmHtml = () => {
@@ -26949,19 +27333,19 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ['ic-hourglass', 'Messages éphémères', 'De 5 minutes à 1 semaine, au choix pour chaque conversation.'],
       ['ic-image', 'Photos protégées', 'Les photos envoyées sont protégées de la même façon que le texte.']
     ];
-    return '<div class="dm-inbox"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dm-search></label>' +
-      '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" class="is-on" aria-current="page">Principal</button><button type="button" disabled title="Les demandes des personnes que vous ne suivez pas arrivent ici">Demandes</button></nav>' +
-      hbEmpty('ic-send', 'Vos messages', 'Écrivez à un vendeur depuis le Marché, à un créateur depuis son profil ou à un membre que vous suivez.').replace('</div>', '<button type="button" class="btn dm-start" data-dm-market>Explorer le Marché</button></div>') + '</div>' +
+    // D-125 : la boîte de réception est remplie par dmoMount (conversations et groupes en ligne, non-lus)
+    return '<div class="dm-inbox dmo" data-dmo><p class="hb-muted">Chargement des messages…</p></div>' +
       // D-119 : comme les grands réseaux, la vue Messages montre la boîte de réception ; réglages et explications sont rangés derrière « Réglages des messages »
       '<details class="dm-settings"><summary>' + igIcon('ic-settings') + 'Réglages des messages</summary>' +
       '<section class="hb-panel"><h4>' + igIcon('ic-user') + 'Qui peut m’écrire</h4><div class="hb-radios">' + HB().dm.DM_POLICIES.map(p => '<label class="hb-radio' + (st.dmPolicy === p ? ' is-on' : '') + '"><input type="radio" name="hbDmPolicy" value="' + p + '"' + (st.dmPolicy === p ? ' checked' : '') + ' data-hb-policy><b>' + pol[p][0] + '</b><small>' + pol[p][1] + '</small></label>').join('') + '</div></section>' +
-      '<section class="hb-panel"><h4>' + igIcon('ic-hourglass') + 'Messages éphémères par défaut</h4><label class="dm-timer">Pour les nouvelles conversations<select data-hb-timer>' + R.TIMERS.map(t => hbOpt(String(t), R.TIMER_LABEL[t], st.dmTimer === t)).join('') + '</select></label></section>' +
+      dmoAlertsHtml() + '<section class="hb-panel"><h4>' + igIcon('ic-hourglass') + 'Messages éphémères par défaut</h4><label class="dm-timer">Pour les nouvelles conversations<select data-hb-timer>' + R.TIMERS.map(t => hbOpt(String(t), R.TIMER_LABEL[t], st.dmTimer === t)).join('') + '</select></label></section>' +
       '<details class="hb-panel dm-sec"><summary><h4>' + igIcon('ic-shield') + 'Confidentialité des messages</h4></summary>' +
       '<ol class="dm-proto">' + steps.map(([i, t, d]) => '<li>' + igIcon(i) + '<div><b>' + t + '</b><p>' + d + '</p></div></li>').join('') + '</ol>' +
       '<p class="hb-muted dm-alg">Panel sait qui écrit à qui et quand, jamais ce qui est écrit. Pas de messages entre un mineur et un adulte. Un signalement ne transmet que les messages que vous choisissez.</p>' +
       '<div data-hb-dm-key><p class="hb-muted">Lecture de la clé…</p></div></details></details>';
   };
   const hbDmMount = async root => {
+    dmoMount(root);
     const box = root.querySelector('[data-hb-dm-key]');
     if (!box) return;
     const D = HB().dm;
@@ -26996,6 +27380,465 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       ok(t1 && t2 && t3, 'Trois messages déchiffrés, même arrivés dans le désordre') + ok(distinct, 'Une clé différente pour chaque message (double cliquet)') +
       ok(replay, 'Message rejoué : refusé') + ok(tamper, 'En-tête modifié : refusé') + ok(attOk, 'Pièce jointe chiffrée puis rouverte ; modifiée d’un seul octet : refusée') + '</ul><small class="hb-muted">Deux appareils simulés en mémoire, effacés en quittant la page.</small>';
   };
+
+  // ---------- D-125 : messagerie en ligne (conversations, groupes, vocaux, non-lus) ----------
+  // Les clés privées restent dans IndexedDB (« panel-dm », non exportables). Les messages déchiffrés y sont rangés aussi :
+  // une clé de message est effacée après usage, comme chez Signal. Le serveur ne reçoit que du chiffré (migrations 20 et 25).
+  const DMI = () => HB().dmInbox, DMG = () => HB().dmGroup, DMR = () => HB().dmRatchet;
+  let dmoOpen = '', dmoTab = 'main', dmoQuery = '', dmoList = [], dmoMe = null, dmoUid = '', dmoPanel = '', dmoRec = null, dmoLastInbox = 0, dmoOther = false, dmoStarted = false;
+  const dmoGroups = new Map(), dmoUrls = new Map(), dmoVoices = new Map();
+  const DMO_TR_KEY = 'panel.dm.transcribe';
+  const dmoKv = async (mode, fn) => { const db = await hbDmDb(); return new Promise((res, rej) => { const tx = db.transaction('kv', mode), rq = fn(tx.objectStore('kv')); tx.oncomplete = () => { db.close(); res(rq && 'result' in rq ? rq.result : undefined); }; tx.onerror = tx.onabort = () => { db.close(); rej(tx.error); }; }); };
+  const kvGet = k => dmoKv('readonly', s => s.get(dmoUid + '|' + k));
+  const kvSet = (k, v) => dmoKv('readwrite', s => s.put(v, dmoUid + '|' + k));
+  const dmoHasAuth = () => { try { return !!localStorage.getItem('panel_cloud_auth') && !!acctConfig(); } catch (_) { return false; } };
+  const dmoSession = async () => {
+    const cfg = acctConfig(); if (!cfg) return null;
+    if (!acctLib()) await acctLoadLib();
+    const c = acctGetClient(cfg); if (!c) return null;
+    const s = await c.auth.getSession(), u = s && s.data && s.data.session && s.data.session.user;
+    if (!u) return null;
+    dmoUid = u.id; return c;
+  };
+  const dmoRpc = async (fn, args) => { const c = await dmoSession(); if (!c) throw new Error('not_authenticated'); const r = await acctRpc(c, fn, args); if (r.error) throw new Error(r.error.message || r.error.code || 'unknown'); return r.data; };
+  const dmoTime = at => { try { const d = new Date(at), today = new Date().toDateString() === d.toDateString(); return today ? d.toLocaleTimeString('fr-BE', { hour: '2-digit', minute: '2-digit' }) : d.toLocaleDateString('fr-BE', { day: 'numeric', month: 'short' }); } catch (_) { return ''; } };
+  const dmoHex = n => [...crypto.getRandomValues(new Uint8Array(n))].map(b => b.toString(16).padStart(2, '0')).join('');
+
+  // ── Clés de cet appareil : identité, préclé signée, préclés à usage unique (republiées sous 5) ──
+  const dmoEnsureKeys = async force => {
+    const R = DMR();
+    let self = await kvGet('self'), fresh = false;
+    if (!self) {
+      const identity = await R.createIdentity(), pre = await R.createPrekeys(identity, 0, 1);
+      self = { identity, spk: pre.secret.spk, spkPub: pre.bundle.spk, spkSig: pre.bundle.spkSig, opk: [], nextOpk: 1, createdAt: new Date().toISOString() };
+      await kvSet('self', self); fresh = true;
+    }
+    const mine = dmoMe && dmoMe.ik === self.identity.pub.ik;
+    dmoOther = !!(dmoMe && dmoMe.bundle && !mine && !force);
+    if (force || fresh && !(dmoMe && dmoMe.bundle) || (dmoMe && !dmoMe.bundle) || (mine && dmoMe.prekeys < 5)) {
+      const add = await R.createPrekeys(self.identity, 20, self.nextOpk);
+      await dmoRpc('dm_bundle_publish', { p_ik: self.identity.pub.ik, p_sik: self.identity.pub.sik, p_spk_id: 1, p_spk: self.spkPub, p_spk_sig: self.spkSig, p_opk: add.bundle.opk });
+      self.opk = (self.opk || []).concat(add.secret.opk).slice(-200); self.nextOpk += 20;
+      await kvSet('self', self);
+      dmoOther = false;
+      if (dmoMe) { dmoMe.bundle = true; dmoMe.ik = self.identity.pub.ik; }
+    }
+    return self;
+  };
+  // Messages rangés sur l'appareil (déchiffrés), fusionnés par identifiant ; les messages éphémères échus disparaissent
+  const dmoMsgs = async id => { const all = (await kvGet('msgs:' + id)) || [], now = Date.now(), keep = all.filter(m => !m.expires || new Date(m.expires).getTime() > now); if (keep.length !== all.length) await kvSet('msgs:' + id, keep); return keep; };
+  const dmoStore = async (id, add) => {
+    if (!add.length) return;
+    const m = new Map(((await kvGet('msgs:' + id)) || []).map(x => [x.id, x]));
+    add.forEach(x => { if (!m.has(x.id) || !m.get(x.id).text) m.set(x.id, x); });
+    await kvSet('msgs:' + id, [...m.values()].sort((a, b) => a.id - b.id).slice(-2000));
+  };
+
+  // ── Conversations à deux : X3DH à la première prise de contact, puis double cliquet ──
+  const dmoSendDm = async (t, content) => {
+    const R = DMR(), self = await dmoEnsureKeys(), key = 'sess:' + t.id, sessions = (await kvGet(key)) || [];
+    let s = sessions.find(x => x.active && x.st.CKs) || sessions.find(x => x.st.CKs);
+    if (!s) {
+      const b = await dmoRpc('dm_bundle_get', { p_handle: t.handle });
+      const pin = await kvGet('pin:' + t.handle);
+      await kvSet('seen:' + t.handle, b.ik);
+      if (R.trust(pin, b.ik) === 'changed') throw new Error('key_changed');
+      if (!pin) await kvSet('pin:' + t.handle, b.ik);
+      const x = await R.x3dhInitiate(self.identity, b, b.opk);
+      s = { id: x.init.ek, st: await R.initSender(x.sk, b.spk, x.ad), init: x.init, confirmed: false, active: true };
+      sessions.forEach(o => { o.active = false; }); sessions.unshift(s);
+    }
+    const [st, box0] = await R.encrypt(s.st, content);
+    const box = !s.confirmed && s.init ? { ...box0, init: s.init } : box0;
+    const r = await dmoRpc('dm_send2', { p_conversation: t.id, p_box: box });
+    s.st = st; await kvSet(key, sessions.slice(0, 6));
+    await dmoStore(t.id, [{ id: Number(r.id), me: true, text: content, at: new Date().toISOString(), expires: r.timer ? new Date(Date.now() + r.timer * 1000).toISOString() : null }]);
+  };
+  const dmoFetchDm = async t => {
+    const R = DMR(), self = await kvGet('self'); if (!self) return 0;
+    const after = (await kvGet('cur:' + t.id)) || 0, rows = await dmoRpc('dm_messages', { p_conversation: t.id, p_after: after });
+    if (!rows.length) return 0;
+    const key = 'sess:' + t.id, sessions = (await kvGet(key)) || [], known = new Set((await dmoMsgs(t.id)).map(m => m.id)), out = [];
+    let selfDirty = false;
+    for (const row of rows) {
+      const id = Number(row.id), box = row.box || {};
+      if (known.has(id)) continue;
+      if (row.sender === 'me') { out.push({ id, me: true, text: null, at: row.at, expires: row.expires, elsewhere: true }); continue; }
+      let text = null;
+      if (box.v === 2) {
+        for (const s of sessions) { try { const [st, tx] = await R.decrypt(s.st, box); s.st = st; s.confirmed = true; sessions.forEach(o => { o.active = o === s; }); text = tx; break; } catch (_) { /* session suivante */ } }
+        if (text === null && box.init && !sessions.some(s => s.id === box.init.ek)) {
+          try {
+            const resp = await R.x3dhRespond(self.identity, { spk: self.spk, opk: self.opk || [] }, box.init);
+            const [st, tx] = await R.decrypt(await R.initReceiver(resp.sk, self.spk, resp.ad), box);
+            text = tx; sessions.forEach(o => { o.active = false; }); sessions.unshift({ id: box.init.ek, st, confirmed: true, active: true });
+            if (resp.usedOpk !== null && resp.usedOpk !== undefined) { self.opk = (self.opk || []).filter(o => o.id !== resp.usedOpk); selfDirty = true; }
+            await kvSet('seen:' + t.handle, box.init.ik);
+            if (!(await kvGet('pin:' + t.handle))) await kvSet('pin:' + t.handle, box.init.ik);
+          } catch (_) { text = null; }
+        }
+      }
+      out.push({ id, me: false, text, at: row.at, expires: row.expires, bad: text === null });
+    }
+    await kvSet(key, sessions.slice(0, 6)); if (selfDirty) await kvSet('self', self);
+    await dmoStore(t.id, out); await kvSet('cur:' + t.id, Math.max(after, ...rows.map(x => Number(x.id))));
+    return out.length;
+  };
+
+  // ── Groupes : clés d'expéditeur, confiées à chaque membre, renouvelées à chaque départ ──
+  const dmoGroupInfo = async gid => { const g = await dmoRpc('group_members', { p_group: gid }); dmoGroups.set(gid, g); return g; };
+  const dmoSendGroup = async (t, content, retry) => {
+    const G = DMG(), self = await dmoEnsureKeys(), info = await dmoGroupInfo(t.id), me = info.members.find(m => m.me);
+    const k = 'gs:' + t.id + ':' + info.epoch;
+    const sk = (await kvGet(k)) || { ...G.createSenderKey(), sentTo: [] };
+    const stale = e => !retry && /epoch_stale/.test(String(e && e.message));
+    const need = G.needDistribution(info.members, sk.sentTo);
+    if (need.length) {
+      const keys = [];
+      for (const m of need) keys.push({ to: m.handle, box: await G.sealSenderKey(self.identity, m.ik, sk, { groupId: t.id, epoch: info.epoch, from: me.handle, to: m.handle }) });
+      try { await dmoRpc('group_key_put', { p_group: t.id, p_epoch: info.epoch, p_keys: keys }); } catch (e) { if (stale(e)) return dmoSendGroup(t, content, true); throw e; }
+      sk.sentTo = sk.sentTo.concat(need.map(m => m.handle)); await kvSet(k, sk);
+    }
+    const [next, box] = await G.encryptGroup(sk, content, { groupId: t.id, epoch: info.epoch, signKey: self.identity.sign.privateKey });
+    let r;
+    try { r = await dmoRpc('group_send', { p_group: t.id, p_box: box }); } catch (e) { if (stale(e)) return dmoSendGroup(t, content, true); throw e; }
+    await kvSet(k, { ...next, sentTo: sk.sentTo });
+    await dmoStore(t.id, [{ id: Number(r.id), me: true, from: me.handle, text: content, at: new Date().toISOString(), expires: r.timer ? new Date(Date.now() + r.timer * 1000).toISOString() : null }]);
+  };
+  const dmoFetchGroup = async t => {
+    const G = DMG(), self = await kvGet('self'); if (!self) return 0;
+    const after = (await kvGet('cur:' + t.id)) || 0, rows = await dmoRpc('group_messages', { p_group: t.id, p_after: after });
+    if (!rows.length) return 0;
+    let info = dmoGroups.get(t.id) || await dmoGroupInfo(t.id), dists = null;
+    if (rows.some(r => !r.me && !info.members.some(m => m.handle === r.sender))) info = await dmoGroupInfo(t.id);
+    const me = info.members.find(m => m.me), known = new Set((await dmoMsgs(t.id)).map(m => m.id)), out = [];
+    for (const row of rows) {
+      const id = Number(row.id); if (known.has(id)) continue;
+      if (row.me) { out.push({ id, me: true, from: row.sender, text: null, at: row.at, expires: row.expires, elsewhere: true }); continue; }
+      const e = row.box && row.box.e, mem = info.members.find(m => m.handle === row.sender), rk = 'gr:' + t.id + ':' + row.sender + ':' + e;
+      let st = await kvGet(rk), text = null;
+      if (!st && mem && me) {
+        dists = dists || await dmoRpc('group_keys', { p_group: t.id });
+        const d = dists.filter(x => x.sender === row.sender && x.epoch === e).pop();
+        if (d) { try { st = await G.openSenderKey(self.identity, d.box, { groupId: t.id, epoch: e, from: row.sender, to: me.handle, senderSik: mem.sik }); } catch (_) { st = null; } }
+      }
+      if (st && mem) { try { const [s2, tx] = await G.decryptGroup(st, row.box, { groupId: t.id, epoch: e, sik: mem.sik }); text = tx; await kvSet(rk, s2); } catch (_) { text = null; } }
+      out.push({ id, me: false, from: row.sender, text, at: row.at, expires: row.expires, bad: text === null });
+    }
+    await dmoStore(t.id, out); await kvSet('cur:' + t.id, Math.max(after, ...rows.map(x => Number(x.id))));
+    return out.length;
+  };
+
+  // ── Non-lus et pastilles ──
+  const dmoBadge = () => {
+    const s = DMI().summary(dmoList), b = $('badgeMessages'), txt = DMI().badgeText(s.icon);
+    if (b) { b.textContent = txt; b.hidden = !txt; b.setAttribute('aria-label', txt ? s.icon + (s.icon > 1 ? ' conversations' : ' conversation') + ' en attente' : ''); }
+    const m = $('navMessages'); if (m) m.title = txt ? 'Messages · ' + s.people + ' non lu' + (s.people > 1 ? 's' : '') + (s.requests ? ' · ' + s.requests + ' demande' + (s.requests > 1 ? 's' : '') : '') : 'Messages';
+    return s;
+  };
+  const dmoLoadInbox = async () => { dmoList = DMI().threads(await dmoRpc('inbox')); dmoLastInbox = Date.now(); dmoBadge(); return dmoList; };
+  const dmoMarkRead = async t => {
+    const msgs = await dmoMsgs(t.id), top = msgs.length ? msgs[msgs.length - 1].id : 0;
+    if (!t.unread || !top) return;
+    try { await dmoRpc('inbox_mark_read', { p_thread: t.id, p_upto: top }); t.unread = 0; dmoBadge(); } catch (_) { /* réessayé au prochain passage */ }
+  };
+  // Alertes : sans le contenu (chiffré), seulement « nouveau message » ; un groupe en sourdine ne sonne pas
+  const dmoNotify = (prev, next) => {
+    if (!prev.length) return;
+    const open = document.querySelector('[data-dmo]') && !document.hidden ? dmoOpen : '';
+    DMI().freshThreads(prev, next).filter(t => t.kind + ':' + t.id !== open).slice(0, 3).forEach(t => {
+      const body = t.kind === 'group' ? 'Nouveaux messages dans « ' + t.title + ' »' : 'Nouveau message de ' + t.title;
+      if (document.hidden && window.Notification && Notification.permission === 'granted') { try { new Notification('Panel', { body, tag: 'panel-dm-' + t.id, icon: 'icons/icon-192.png' }); } catch (_) { /* non pris en charge */ } }
+      else if (!document.querySelector('[data-dmo]')) showToast(body + '.');
+    });
+  };
+  const dmoTick = async () => {
+    if (!dmoHasAuth() || navigator.onLine === false || navigator.webdriver) return;
+    const el = document.querySelector('[data-dmo]');
+    try {
+      if (el && dmoOpen && !document.hidden) { const t = dmoThread(); if (t && t.status !== 'invited' && await (t.kind === 'group' ? dmoFetchGroup(t) : dmoFetchDm(t))) { await dmoPaintMsgs(el, t); await dmoMarkRead(t); } }
+      if (Date.now() - dmoLastInbox >= (document.hidden ? 60000 : 30000)) {
+        const prev = dmoList; await dmoLoadInbox(); dmoNotify(prev, dmoList);
+        if (el && !dmoOpen) dmoRenderList(el);
+      }
+    } catch (_) { /* hors ligne ou service fermé : on réessaie plus tard */ }
+  };
+  const dmoStart = () => { if (dmoStarted || !dmoHasAuth()) return; dmoStarted = true; dmoTick(); setInterval(dmoTick, 5000); };
+  setTimeout(dmoStart, 8000);
+
+  // ── Vocaux : enregistrement, onde, retranscription, chiffrement, envoi, lecture ──
+  const dmoTrOn = () => { try { return localStorage.getItem(DMO_TR_KEY) === '1'; } catch (_) { return false; } };
+  const dmoMime = m => DMI().MIMES.includes(m) ? m : /^audio\/mp4/.test(m) ? 'audio/mp4' : /^audio\/ogg/.test(m) ? 'audio/ogg;codecs=opus' : 'audio/webm';
+  const dmoRecStart = async onTick => {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) throw new Error('mic_unavailable');
+    const mime = DMI().pickMime(m => MediaRecorder.isTypeSupported(m));
+    let stream; try { stream = await navigator.mediaDevices.getUserMedia({ audio: true }); } catch (_) { throw new Error('mic_denied'); }
+    const rec = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined), st = { rec, stream, chunks: [], parts: [], sr: null, t0: Date.now() };
+    rec.ondataavailable = e => { if (e.data && e.data.size) st.chunks.push(e.data); };
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (dmoTrOn() && DMI().speechSupport(window) === 'web') {
+      try { const sr = new SR(); sr.lang = /^en/.test(document.documentElement.lang || '') ? 'en-US' : 'fr-FR'; sr.continuous = true; sr.interimResults = false;
+        sr.onresult = e => { for (let i = e.resultIndex; i < e.results.length; i++) if (e.results[i].isFinal) st.parts.push(e.results[i][0].transcript); };
+        sr.onerror = () => {}; sr.start(); st.sr = sr; } catch (_) { st.sr = null; }
+    }
+    rec.start(250);
+    st.tick = setInterval(() => { const s = (Date.now() - st.t0) / 1000; if (onTick) onTick(s); if (s >= DMI().MAX_VOICE_SEC) dmoRecStop(true).then(r => st.done && st.done(r)); }, 250);
+    dmoRec = st; return st;
+  };
+  const dmoRecStop = keep => new Promise(res => {
+    const st = dmoRec; if (!st) return res(null);
+    dmoRec = null; clearInterval(st.tick);
+    st.rec.onstop = () => {
+      st.stream.getTracks().forEach(x => x.stop());
+      try { if (st.sr) st.sr.stop(); } catch (_) { /* déjà arrêtée */ }
+      if (!keep) return res(null);
+      setTimeout(() => res({ blob: new Blob(st.chunks, { type: st.rec.mimeType || 'audio/webm' }), mime: dmoMime(st.rec.mimeType || ''), dur: (Date.now() - st.t0) / 1000, tr: DMI().joinTranscript(st.parts) }), st.sr ? 700 : 0);
+    };
+    try { st.rec.stop(); } catch (_) { res(null); }
+  });
+  const dmoAnalyse = async (blob, fallback) => {
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext, ac = new AC(), buf = await ac.decodeAudioData(await blob.arrayBuffer());
+      const out = { peaks: DMI().peaks(buf.getChannelData(0)), dur: Math.max(0.1, buf.duration || fallback) };
+      ac.close && ac.close(); return out;
+    } catch (_) { return { peaks: new Array(DMI().BARS).fill(30), dur: Math.max(0.1, fallback || 0.1) }; }
+  };
+  const dmoSendVoice = async (t, r) => {
+    const I = DMI(), bytes = new Uint8Array(await r.blob.arrayBuffer());
+    if (!bytes.length) throw new Error('invalid_voice');
+    if (bytes.length > I.MAX_VOICE_BYTES) throw new Error('too_large');
+    const an = await dmoAnalyse(r.blob, r.dur), att = await DMR().sealAttachment(bytes), c = await dmoSession();
+    const path = I.voicePath(t.id, dmoUid, dmoHex(16));
+    const up = await c.storage.from('voice').upload(path, new Blob([att.blob], { type: 'application/octet-stream' }), { contentType: 'application/octet-stream', upsert: false });
+    if (up.error) throw new Error(up.error.message || 'unknown');
+    dmoUrls.set(path, Promise.resolve(URL.createObjectURL(r.blob)));
+    const content = I.encodeContent({ kind: 'voice', path, ref: att.ref, dur: Math.min(I.MAX_VOICE_SEC, an.dur), mime: r.mime, peaks: an.peaks, tr: r.tr });
+    await (t.kind === 'group' ? dmoSendGroup(t, content) : dmoSendDm(t, content));
+  };
+  const dmoVoiceUrl = v => {
+    if (!dmoUrls.has(v.path)) dmoUrls.set(v.path, (async () => {
+      const c = await dmoSession(), d = await c.storage.from('voice').download(v.path);
+      if (d.error || !d.data) throw new Error('not_found');
+      const plain = await DMR().openAttachment(new Uint8Array(await d.data.arrayBuffer()), v.ref);
+      return URL.createObjectURL(new Blob([plain], { type: v.mime }));
+    })().catch(e => { dmoUrls.delete(v.path); throw e; }));
+    return dmoUrls.get(v.path);
+  };
+  // Lecteur à onde partagé (messages et pensées) : une seule lecture à la fois
+  let dmoAudio = null, dmoAudioBtn = null;
+  const dmoWaveHtml = (key, peaks, dur, tr) => '<div class="dmo-voice" data-voice="' + escapeHtml(key) + '"><button type="button" class="dmo-play" data-voice-play aria-label="Écouter le message vocal">' + igIcon('ic-play') + '</button>' +
+    '<span class="dmo-wave" data-voice-wave role="slider" aria-label="Position de lecture" aria-valuemin="0" aria-valuemax="' + Math.round(dur) + '" aria-valuenow="0" tabindex="0">' +
+    (peaks && peaks.length ? peaks : new Array(DMI().BARS).fill(20)).map(p => '<i style="--h:' + Math.max(8, p) + '%"></i>').join('') + '</span><small data-voice-time>' + DMI().formatDuration(dur) + '</small></div>' +
+    (tr ? '<p class="dmo-trtext"><b>Retranscription</b> ' + escapeHtml(tr) + '</p>' : '');
+  const dmoPaintWave = (box, cur, dur) => {
+    const bars = box.querySelectorAll('[data-voice-wave] i'), n = DMI().playedBars(cur, dur, bars.length);
+    bars.forEach((b, i) => b.classList.toggle('is-on', i < n));
+    const w = box.querySelector('[data-voice-wave]'); if (w) w.setAttribute('aria-valuenow', String(Math.round(cur)));
+    const tm = box.querySelector('[data-voice-time]'); if (tm) tm.textContent = DMI().formatDuration(cur > 0 ? cur : dur);
+  };
+  const dmoPlay = async (box, urlP, dur, seekFrac) => {
+    const btn = box.querySelector('[data-voice-play]');
+    if (dmoAudio && dmoAudioBtn === btn && seekFrac === undefined) { if (dmoAudio.paused) dmoAudio.play().catch(() => {}); else dmoAudio.pause(); return; }
+    if (dmoAudio) { dmoAudio.pause(); if (dmoAudioBtn) dmoAudioBtn.innerHTML = igIcon('ic-play'); }
+    let url; btn.disabled = true;
+    try { url = await urlP(); } catch (_) { btn.disabled = false; return showToast('Vocal illisible ou plus disponible.'); }
+    btn.disabled = false;
+    if (dmoAudioBtn !== btn || !dmoAudio) { dmoAudio = new Audio(url); dmoAudioBtn = btn; }
+    const a = dmoAudio;
+    a.onplay = () => { btn.innerHTML = igIcon('ic-pause'); btn.setAttribute('aria-label', 'Mettre en pause'); };
+    a.onpause = a.onended = () => { btn.innerHTML = igIcon('ic-play'); btn.setAttribute('aria-label', 'Écouter le message vocal'); if (a.ended) dmoPaintWave(box, 0, dur); };
+    a.ontimeupdate = () => dmoPaintWave(box, a.currentTime, dur);
+    if (seekFrac !== undefined) { try { a.currentTime = Math.max(0, Math.min(1, seekFrac)) * (isFinite(a.duration) ? a.duration : dur); } catch (_) { /* pas encore prêt */ } }
+    a.play().catch(() => showToast('Lecture impossible sur cet appareil.'));
+  };
+  // Délégation : un clic sur ▶ ou sur l'onde, partout dans l'application
+  document.addEventListener('click', e => {
+    const box = e.target.closest('.dmo-voice'); if (!box) return;
+    const key = box.dataset.voice, src = dmoVoices.get(key);
+    if (!src) return;
+    const wave = e.target.closest('[data-voice-wave]');
+    if (!wave && !e.target.closest('[data-voice-play]')) return;
+    const frac = wave ? (e.clientX - wave.getBoundingClientRect().left) / Math.max(1, wave.getBoundingClientRect().width) : undefined;
+    dmoPlay(box, src.url, src.dur, frac);
+  });
+
+  // ── Affichage ──
+  const dmoThread = () => dmoList.find(t => t.kind + ':' + t.id === dmoOpen) || null;
+  const dmoAvatar = t => '<span class="dmo-av' + (t.kind === 'group' ? ' is-group' : '') + '">' + (t.kind === 'group' ? igIcon('ic-users') : escapeHtml((t.handle || '?').slice(0, 2).toUpperCase())) + '</span>';
+  const dmoNotice = (icon, title, text, extra) => '<div class="hb-empty">' + igIcon(icon) + '<b>' + title + '</b><span>' + text + '</span>' + (extra || '') + '</div>';
+  const dmoSignedOutHtml = () => dmoNotice('ic-send', 'Vos messages', 'Connectez-vous à votre compte Panel pour écrire à d’autres collectionneurs. Les messages sont chiffrés de bout en bout.',
+    '<button type="button" class="btn dm-start" data-hb-auth="email">' + igIcon('ic-user') + 'Se connecter</button>');
+  const dmoJoinHtml = () => '<form class="hb-form hb-panel dmo-join" data-dmo-form="join"><h4>' + igIcon('ic-user') + 'Votre pseudo Panel</h4><p class="hb-muted">Il vous identifie dans les messages et les groupes. L’année de naissance sert seulement à protéger les mineurs : elle n’est jamais affichée.</p>' +
+    '<div class="hb-row"><label>Pseudo<input name="handle" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_.\\-]{3,24}" autocomplete="nickname" spellcheck="false"></label><label>Année de naissance<input name="year" type="number" inputmode="numeric" required min="1900" max="' + new Date().getFullYear() + '"></label></div>' +
+    '<label class="hb-check"><input type="checkbox" name="consent"> J’ai moins de 15 ans et un parent a donné son accord</label><button class="btn" type="submit">Rejoindre la communauté</button></form>';
+  const dmoNewHtml = () => dmoPanel === 'dm' ? '<form class="hb-form hb-panel dmo-new" data-dmo-form="dm"><label>Écrire à<input name="handle" required placeholder="pseudo" maxlength="25" autocomplete="off" spellcheck="false"></label><button class="btn" type="submit">' + igIcon('ic-send') + 'Ouvrir la conversation</button></form>'
+    : dmoPanel === 'group' ? '<form class="hb-form hb-panel dmo-new" data-dmo-form="group"><label>Nom du groupe<input name="name" required maxlength="60" placeholder="Club de lecture Watchmen"></label><label>Membres (pseudos séparés par des virgules, 31 au plus)<input name="handles" placeholder="alex, bob" autocomplete="off" spellcheck="false"></label><p class="hb-muted">Chacun reçoit une invitation et choisit de rejoindre. Les mineurs ne peuvent pas être ajoutés.</p><button class="btn" type="submit">' + igIcon('ic-users') + 'Créer le groupe</button></form>' : '';
+  const dmoRenderList = async el => {
+    const I = DMI(), list = I.filterThreads(dmoList, dmoTab, dmoQuery), s = I.summary(dmoList);
+    const previews = await Promise.all(list.map(async t => { const m = (await dmoMsgs(t.id)).slice(-1)[0]; return m ? (m.me ? 'Vous : ' : t.kind === 'group' && m.from ? '@' + m.from + ' : ' : '') + (m.text ? I.preview(m.text) : m.elsewhere ? 'Envoyé depuis un autre appareil' : 'Message illisible') : ''; }));
+    if (!el.isConnected || dmoOpen) return;
+    el.innerHTML = '<div class="dmo-top"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dmo-search value="' + escapeHtml(dmoQuery) + '"></label>' +
+      '<button type="button" class="btn" data-dmo-new="dm" aria-expanded="' + (dmoPanel === 'dm') + '">' + igIcon('ic-pen') + '<span>Message</span></button><button type="button" class="btn secondary" data-dmo-new="group" aria-expanded="' + (dmoPanel === 'group') + '">' + igIcon('ic-users') + '<span>Groupe</span></button></div>' +
+      '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" data-dmo-tab="main" class="' + (dmoTab === 'main' ? 'is-on' : '') + '"' + (dmoTab === 'main' ? ' aria-current="page"' : '') + '>Principal' + (s.people ? ' <span class="dmo-count">' + I.badgeText(s.people) + '</span>' : '') + '</button>' +
+      '<button type="button" data-dmo-tab="requests" class="' + (dmoTab === 'requests' ? 'is-on' : '') + '"' + (dmoTab === 'requests' ? ' aria-current="page"' : '') + '>Demandes' + (s.requests ? ' <span class="dmo-count">' + I.badgeText(s.requests) + '</span>' : '') + '</button></nav>' +
+      (dmoOther ? '<p class="hb-local">' + igIcon('ic-phone') + '<span>Vos messages sont liés à un autre appareil. <button type="button" class="dmo-link" data-dmo-takeover>Les recevoir sur celui-ci</button> (l’autre appareil ne pourra plus ouvrir les nouvelles conversations).</span></p>' : '') +
+      dmoNewHtml() +
+      (list.length ? '<ul class="dmo-list">' + list.map((t, i) => '<li><button type="button" class="dmo-row' + (t.unread && !t.request ? ' is-unread' : '') + '" data-dmo-open="' + t.kind + ':' + escapeHtml(t.id) + '">' + dmoAvatar(t) +
+        '<span class="dmo-row-main"><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small>' + escapeHtml(previews[i] && !t.request ? previews[i] : I.rowHint(t)) + '</small></span>' +
+        '<span class="dmo-row-side"><time>' + escapeHtml(dmoTime(t.lastAt)) + '</time>' + (I.rowBadge(t) ? '<span class="dmo-badge' + (t.muted ? ' is-muted' : '') + '" aria-label="' + t.unread + ' non lu' + (t.unread > 1 ? 's' : '') + '">' + I.rowBadge(t) + '</span>' : '') + '</span></button></li>').join('') + '</ul>'
+        : dmoTab === 'requests' ? dmoNotice('ic-users', 'Aucune demande', 'Les messages des personnes que vous ne suivez pas et les invitations de groupe arrivent ici.')
+        : dmoNotice('ic-send', 'Vos messages', 'Écrivez à un membre avec « Message », ou réunissez plusieurs collectionneurs dans un groupe.', '<button type="button" class="btn dm-start" data-dm-market>Explorer le Marché</button>'));
+  };
+  const dmoMsgHtml = (t, m) => {
+    const I = DMI(), c = m.text ? I.decodeContent(m.text) : null, key = t.id + ':' + m.id;
+    let body;
+    if (!c) body = '<p class="dmo-bad">' + igIcon(m.elsewhere ? 'ic-phone' : 'ic-alert') + (m.elsewhere ? 'Envoyé depuis un autre appareil' : 'Message illisible sur cet appareil') + '</p>';
+    else if (c.kind === 'voice') { dmoVoices.set(key, { url: () => dmoVoiceUrl(c), dur: c.dur }); body = dmoWaveHtml(key, c.peaks, c.dur, c.tr); }
+    else body = '<p>' + escapeHtml(c.text).replace(/\n/g, '<br>') + '</p>';
+    return '<li class="dmo-msg ' + (m.me ? 'is-me' : 'is-them') + '">' + (t.kind === 'group' && !m.me && m.from ? '<small class="dmo-from">@' + escapeHtml(m.from) + '</small>' : '') + body +
+      '<time datetime="' + escapeHtml(m.at || '') + '">' + escapeHtml(dmoTime(m.at)) + (m.expires ? ' · ' + igIcon('ic-hourglass') : '') + '</time></li>';
+  };
+  const dmoPaintMsgs = async (el, t) => {
+    const ol = el.querySelector('[data-dmo-msgs]'); if (!ol) return;
+    const msgs = await dmoMsgs(t.id), near = ol.scrollHeight - ol.scrollTop - ol.clientHeight < 80;
+    ol.innerHTML = msgs.length ? msgs.map(m => dmoMsgHtml(t, m)).join('') : '<li class="dmo-first">' + igIcon('ic-shield') + 'Chiffré de bout en bout : seuls les membres de cette conversation lisent ces messages.</li>';
+    if (near || !ol.dataset.scrolled) { ol.scrollTop = ol.scrollHeight; ol.dataset.scrolled = '1'; }
+  };
+  const dmoPanelHtml = async t => {
+    const G = DMG(), R = DMR();
+    if (dmoPanel === 'members' && t.kind === 'group') {
+      const info = await dmoGroupInfo(t.id), me = info.members.find(m => m.me) || {}, role = me.role;
+      return '<section class="hb-panel dmo-members"><h4>' + igIcon('ic-users') + info.members.length + ' / ' + G.MAX_MEMBERS + ' personnes</h4><ul>' + info.members.map(m => '<li><span>@' + escapeHtml(m.handle) + (m.me ? ' (vous)' : '') + '</span><small>' + escapeHtml(G.ROLE_LABEL[m.role]) + (m.status === 'invited' ? ' · invité' : '') + (m.ik ? '' : ' · messages pas encore activés') + '</small>' +
+        (!m.me && G.canManage(role, m.role, 'role') && m.status === 'active' ? '<button type="button" class="dmo-link" data-dmo-role="' + escapeHtml(m.handle) + '" data-role="' + (m.role === 'admin' ? 'member' : 'admin') + '">' + (m.role === 'admin' ? 'Retirer l’administration' : 'Nommer administrateur') + '</button>' : '') +
+        (!m.me && G.canManage(role, m.role, 'remove') ? '<button type="button" class="dmo-link is-danger" data-dmo-kick="' + escapeHtml(m.handle) + '">Retirer</button>' : '') + '</li>').join('') + '</ul>' +
+        (G.canManage(role, '', 'invite') ? '<form class="hb-row" data-dmo-form="invite"><label>Inviter<input name="handle" placeholder="pseudo" maxlength="25" autocomplete="off" spellcheck="false"></label><button class="btn secondary" type="submit">Inviter</button></form>' +
+          '<form class="hb-row" data-dmo-form="rename"><label>Nom<input name="name" maxlength="60" value="' + escapeHtml(info.name) + '"></label><button class="btn secondary" type="submit">Renommer</button></form>' +
+          '<label class="dm-timer">Messages éphémères<select data-dmo-gtimer>' + R.TIMERS.map(x => hbOpt(String(x), R.TIMER_LABEL[x], info.timer === x)).join('') + '</select></label>' : '') +
+        '<p class="hb-muted">Un départ ou un retrait change les clés du groupe : la personne partie ne lit pas la suite.</p><button type="button" class="btn secondary is-danger" data-dmo-leave>Quitter le groupe</button></section>';
+    }
+    if (dmoPanel === 'info' && t.kind === 'dm') {
+      const self = await kvGet('self'), seen = await kvGet('seen:' + t.handle);
+      const num = self && seen ? await HB().dm.safetyNumber({ crv: 'P-256', x: self.identity.pub.ik, y: '' }, { crv: 'P-256', x: seen, y: '' }) : '';
+      return '<section class="hb-panel dmo-info"><h4>' + igIcon('ic-eye') + 'Numéro de sécurité</h4>' + (num ? '<code class="hb-fp">' + escapeHtml(num) + '</code><p class="hb-muted">Comparez-le de vive voix avec @' + escapeHtml(t.handle) + ' : s’il est identique des deux côtés, personne ne s’est glissé entre vous.</p>' : '<p class="hb-muted">Il apparaît après le premier échange.</p>') +
+        '<label class="dm-timer">Messages éphémères<select data-dmo-timer>' + R.TIMERS.map(x => hbOpt(String(x), R.TIMER_LABEL[x], t.timer === x)).join('') + '</select></label></section>';
+    }
+    return '';
+  };
+  const dmoRenderThread = async (el, quiet) => {
+    const t = dmoThread();
+    if (!t) { dmoOpen = ''; return dmoRenderList(el); }
+    const R = DMR(), pin = t.kind === 'dm' ? await kvGet('pin:' + t.handle) : null, seen = t.kind === 'dm' ? await kvGet('seen:' + t.handle) : null;
+    if (t.status !== 'invited' && !(t.kind === 'dm' && t.status === 'declined')) { try { await (t.kind === 'group' ? dmoFetchGroup(t) : dmoFetchDm(t)); } catch (e) { if (!quiet) showToast(DMI().reason(e)); } }
+    const can = t.kind === 'group' ? t.status === 'active' : (t.status === 'active' || (t.status === 'request' && t.mine));
+    const sub = t.kind === 'group' ? DMI().rowHint(t) : t.status === 'request' ? (t.mine ? 'Demande envoyée' : 'Demande de message') : 'Chiffré de bout en bout' + (t.timer ? ' · éphémères ' + R.TIMER_LABEL[t.timer].toLowerCase() : '');
+    const banner = t.request ? '<div class="dmo-req"><p>' + (t.kind === 'group' ? (t.invitedBy ? '@' + escapeHtml(t.invitedBy) + ' vous invite dans ce groupe.' : 'Invitation dans ce groupe.') + ' Vous lirez les messages envoyés après votre arrivée.' : 'Cette personne ne fait pas partie de vos abonnements mutuels. Acceptez pour lui répondre ; elle ne sait pas si vous avez lu.') + '</p>' +
+        '<button type="button" class="btn" data-dmo-accept>' + (t.kind === 'group' ? 'Rejoindre' : 'Accepter') + '</button><button type="button" class="btn secondary" data-dmo-decline>Refuser</button></div>'
+      : t.kind === 'dm' && t.status === 'declined' ? '<p class="hb-local">' + igIcon('ic-info') + '<span>Demande refusée : la conversation est fermée.</span></p>' : '';
+    const warn = t.kind === 'dm' && R.trust(pin, seen) === 'changed' ? '<p class="hb-local is-warn">' + igIcon('ic-alert') + '<span>' + escapeHtml(R.TRUST_LABEL.changed) + ' <button type="button" class="dmo-link" data-dmo-trust>Je l’ai vérifié</button></span></p>' : '';
+    const panel = await dmoPanelHtml(t).catch(() => '');
+    if (!el.isConnected || dmoThread() !== t) return;
+    const sr = DMI().speechSupport(window) === 'web';
+    el.innerHTML = '<div class="dmo-thread"><header class="dmo-head"><button type="button" class="dmo-icon" data-dmo-back aria-label="Retour aux conversations">' + igIcon('ic-arrow-left') + '</button>' + dmoAvatar(t) +
+      '<div><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small>' + escapeHtml(sub) + '</small></div><span class="dmo-head-sp"></span>' +
+      (t.kind === 'group' && t.status === 'active' ? '<button type="button" class="dmo-icon' + (t.muted ? ' is-off' : '') + '" data-dmo-mute aria-pressed="' + t.muted + '" aria-label="' + (t.muted ? 'Réactiver les alertes du groupe' : 'Mettre le groupe en sourdine') + '">' + igIcon('ic-bell') + '</button>' : '') +
+      (t.kind === 'group' ? '<button type="button" class="dmo-icon" data-dmo-panel="members" aria-expanded="' + (dmoPanel === 'members') + '" aria-label="Membres et réglages du groupe">' + igIcon('ic-users') + '</button>' : '<button type="button" class="dmo-icon" data-dmo-panel="info" aria-expanded="' + (dmoPanel === 'info') + '" aria-label="Sécurité et messages éphémères">' + igIcon('ic-shield') + '</button>') + '</header>' +
+      banner + warn + panel + '<ol class="dmo-msgs" data-dmo-msgs aria-live="polite"></ol>' +
+      (can ? '<form class="dmo-compose" data-dmo-form="send"><button type="button" class="dmo-icon" data-dmo-mic aria-label="Enregistrer un message vocal">' + igIcon('ic-mic') + '</button>' +
+        '<textarea name="text" rows="1" maxlength="2000" placeholder="Message chiffré…" aria-label="Votre message" enterkeyhint="send"></textarea><button type="submit" class="dmo-icon is-send" aria-label="Envoyer">' + igIcon('ic-send') + '</button></form>' +
+        '<div class="dmo-rec" data-dmo-rec hidden><span class="dmo-dot"></span><b data-dmo-rec-time>0:00</b><span class="dmo-rec-sp"></span><button type="button" class="btn secondary" data-dmo-rec-cancel>Annuler</button><button type="button" class="btn" data-dmo-rec-send>' + igIcon('ic-send') + 'Envoyer</button></div>' +
+        (sr ? '<label class="dmo-trtoggle"><input type="checkbox" data-dmo-tr' + (dmoTrOn() ? ' checked' : '') + '> Retranscrire mes vocaux (le service vocal du navigateur entend l’enregistrement)</label>' : '<p class="dmo-trtoggle hb-muted">Retranscription indisponible sur cet appareil.</p>') : '') + '</div>';
+    await dmoPaintMsgs(el, t);
+    if (can) await dmoMarkRead(t);
+  };
+  const dmoRefresh = async (el, quiet) => {
+    if (!el || !el.isConnected) return;
+    if (!dmoHasAuth()) { el.innerHTML = dmoSignedOutHtml(); return; }
+    let c = null; try { c = await dmoSession(); } catch (_) { c = null; }
+    if (!c) { el.innerHTML = dmoSignedOutHtml(); return; }
+    try { dmoMe = await dmoRpc('messaging_me'); } catch (e) { el.innerHTML = dmoNotice('ic-alert', 'Messages indisponibles', DMI().reason(e)); return; }
+    if (!dmoMe.member) { el.innerHTML = dmoJoinHtml(); return; }
+    if (!dmoMe.adult) { el.innerHTML = dmoNotice('ic-shield', 'Messages réservés aux adultes', HB().dm.REASON.minor_protected); return; }
+    try { await dmoEnsureKeys(); } catch (e) { el.innerHTML = dmoNotice('ic-alert', 'Messages indisponibles', /crypto/.test(String(e && e.message)) ? HB().dm.REASON.crypto_unavailable : DMI().reason(e)); return; }
+    try { await dmoLoadInbox(); } catch (e) { if (!quiet) showToast(DMI().reason(e)); }
+    dmoStart();
+    if (dmoOpen) await dmoRenderThread(el, quiet); else await dmoRenderList(el);
+  };
+  const dmoAct = async (el, fn, ok) => { try { await fn(); if (ok) showToast(ok); } catch (e) { showToast(/key_changed/.test(String(e && e.message)) ? DMR().TRUST_LABEL.changed : DMI().reason(e)); } await dmoRefresh(el, true); };
+  const dmoWire = el => {
+    if (el.dataset.wired) return; el.dataset.wired = '1';
+    el.addEventListener('submit', async e => {
+      const f = e.target.closest('[data-dmo-form]'); if (!f) return;
+      e.preventDefault(); e.stopPropagation();
+      const d = Object.fromEntries(new FormData(f)), kind = f.dataset.dmoForm, t = dmoThread(), btn = f.querySelector('[type=submit]');
+      if (btn) btn.disabled = true;
+      if (kind === 'join') await dmoAct(el, () => dmoRpc('community_join', { p_handle: String(d.handle || '').trim(), p_birth_year: Number(d.year), p_parental_consent: !!d.consent }), 'Bienvenue dans la communauté Panel.');
+      else if (kind === 'dm') await dmoAct(el, async () => {
+        const r = await dmoRpc('dm_open', { p_handle: String(d.handle || '').replace(/^@/, '').trim() });
+        const def = hbLoad().dmTimer; if (def && !r.timer) { try { await dmoRpc('dm_timer_set', { p_conversation: r.id, p_seconds: def }); } catch (_) { /* réglable ensuite */ } }
+        dmoPanel = ''; dmoOpen = 'dm:' + r.id;
+      });
+      else if (kind === 'group') await dmoAct(el, async () => {
+        const handles = String(d.handles || '').split(/[\s,;]+/).map(x => x.replace(/^@/, '').trim()).filter(Boolean).slice(0, 31);
+        const r = await dmoRpc('group_create', { p_name: DMG().cleanName(d.name), p_handles: handles });
+        dmoPanel = ''; dmoOpen = 'group:' + r.id;
+        showToast('Groupe créé' + (r.invited ? ', ' + r.invited + ' invitation' + (r.invited > 1 ? 's' : '') + ' envoyée' + (r.invited > 1 ? 's' : '') : '') + (r.skipped.length ? '. Pas invité : ' + r.skipped.map(s => '@' + s.handle + ' (' + (DMI().REASON[s.reason] || s.reason).replace(/\.$/, '').toLowerCase() + ')').join(', ') : '') + '.');
+      });
+      else if (kind === 'invite' && t) await dmoAct(el, () => dmoRpc('group_invite', { p_group: t.id, p_handle: String(d.handle || '').replace(/^@/, '').trim() }), 'Invitation envoyée.');
+      else if (kind === 'rename' && t) await dmoAct(el, () => dmoRpc('group_rename', { p_group: t.id, p_name: DMG().cleanName(d.name) }), 'Groupe renommé.');
+      else if (kind === 'send' && t) {
+        const ta = f.querySelector('textarea'), text = ta.value.trim();
+        if (!text) { if (btn) btn.disabled = false; return; }
+        try { await (t.kind === 'group' ? dmoSendGroup(t, text) : dmoSendDm(t, text)); ta.value = ''; ta.style.height = ''; await dmoPaintMsgs(el, t); }
+        catch (err) { showToast(/key_changed/.test(String(err && err.message)) ? DMR().TRUST_LABEL.changed : DMI().reason(err)); if (/request_pending|closed|not_found/.test(String(err && err.message))) await dmoRefresh(el, true); }
+      }
+      if (btn && btn.isConnected) btn.disabled = false;
+    });
+    el.addEventListener('keydown', e => { const ta = e.target.closest('.dmo-compose textarea'); if (ta && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); ta.form.requestSubmit(); } });
+    el.addEventListener('input', e => {
+      if (e.target.matches('[data-dmo-search]')) { dmoQuery = e.target.value; clearTimeout(el._q); el._q = setTimeout(async () => { await dmoRenderList(el); const q = el.querySelector('[data-dmo-search]'); if (q) { q.focus(); q.selectionStart = q.selectionEnd = q.value.length; } }, 200); }
+      else if (e.target.matches('.dmo-compose textarea')) { e.target.style.height = 'auto'; e.target.style.height = Math.min(160, e.target.scrollHeight) + 'px'; }
+    });
+    el.addEventListener('change', async e => {
+      const t = dmoThread(), x = e.target;
+      if (x.matches('[data-dmo-tr]')) { try { localStorage.setItem(DMO_TR_KEY, x.checked ? '1' : '0'); } catch (_) { /* réglage non gardé */ } }
+      else if (x.matches('[data-dmo-timer]') && t) await dmoAct(el, () => dmoRpc('dm_timer_set', { p_conversation: t.id, p_seconds: Number(x.value) }), 'Messages éphémères : ' + DMR().TIMER_LABEL[x.value] + '.');
+      else if (x.matches('[data-dmo-gtimer]') && t) await dmoAct(el, () => dmoRpc('group_timer_set', { p_group: t.id, p_seconds: Number(x.value) }), 'Messages éphémères : ' + DMR().TIMER_LABEL[x.value] + '.');
+    });
+    el.addEventListener('click', async e => {
+      const b = e.target.closest('button'); if (!b || !el.contains(b)) return;
+      const ds = b.dataset, t = dmoThread();
+      if (ds.dmoOpen) { dmoOpen = ds.dmoOpen; dmoPanel = ''; await dmoRenderThread(el); }
+      else if (ds.dmoBack !== undefined) { if (dmoRec) await dmoRecStop(false); dmoOpen = ''; dmoPanel = ''; await dmoRefresh(el, true); }
+      else if (ds.dmoTab) { dmoTab = ds.dmoTab; await dmoRenderList(el); }
+      else if (ds.dmoNew) { dmoPanel = dmoPanel === ds.dmoNew ? '' : ds.dmoNew; await dmoRenderList(el); const i = el.querySelector('.dmo-new input'); if (i) i.focus(); }
+      else if (ds.dmoPanel) { dmoPanel = dmoPanel === ds.dmoPanel ? '' : ds.dmoPanel; await dmoRenderThread(el, true); }
+      else if (ds.dmoTakeover !== undefined) await dmoAct(el, () => dmoEnsureKeys(true), 'Vos nouveaux messages arriveront sur cet appareil.');
+      else if (!t) return;
+      else if (ds.dmoAccept !== undefined) await dmoAct(el, () => t.kind === 'group' ? dmoRpc('group_respond', { p_group: t.id, p_accept: true }) : dmoRpc('dm_respond', { p_conversation: t.id, p_accept: true }), t.kind === 'group' ? 'Vous avez rejoint le groupe.' : 'Demande acceptée.');
+      else if (ds.dmoDecline !== undefined) { await dmoAct(el, () => t.kind === 'group' ? dmoRpc('group_respond', { p_group: t.id, p_accept: false }) : dmoRpc('dm_respond', { p_conversation: t.id, p_accept: false }), 'Demande refusée.'); dmoOpen = ''; await dmoRefresh(el, true); }
+      else if (ds.dmoMute !== undefined) await dmoAct(el, () => dmoRpc('group_mute', { p_group: t.id, p_muted: !t.muted }), t.muted ? 'Alertes du groupe réactivées.' : 'Groupe en sourdine : le compteur reste, les alertes se taisent.');
+      else if (ds.dmoTrust !== undefined) { await kvSet('pin:' + t.handle, await kvGet('seen:' + t.handle)); await dmoRenderThread(el, true); }
+      else if (ds.dmoRole) await dmoAct(el, () => dmoRpc('group_set_role', { p_group: t.id, p_handle: ds.dmoRole, p_role: ds.role }), 'Rôle modifié.');
+      else if (ds.dmoKick) { if (confirm('Retirer @' + ds.dmoKick + ' du groupe ? Les clés du groupe seront renouvelées.')) await dmoAct(el, () => dmoRpc('group_remove', { p_group: t.id, p_handle: ds.dmoKick }), '@' + ds.dmoKick + ' a été retiré.'); }
+      else if (ds.dmoLeave !== undefined) { if (confirm('Quitter « ' + t.title + ' » ? Vous ne lirez plus ses messages.')) { await dmoAct(el, () => dmoRpc('group_leave', { p_group: t.id }), 'Vous avez quitté le groupe.'); dmoOpen = ''; dmoPanel = ''; await dmoRefresh(el, true); } }
+      else if (ds.dmoMic !== undefined) {
+        const bar = el.querySelector('[data-dmo-rec]'), form = el.querySelector('.dmo-compose'), tm = el.querySelector('[data-dmo-rec-time]');
+        try { const st = await dmoRecStart(s => { if (tm) tm.textContent = DMI().formatDuration(s); }); st.done = r => { if (r) dmoAct(el, () => dmoSendVoice(t, r), 'Vocal envoyé (2 min 59 au plus).'); };
+          bar.hidden = false; form.hidden = true; }
+        catch (err) { showToast(DMI().reason(err)); }
+      } else if (ds.dmoRecCancel !== undefined || ds.dmoRecSend !== undefined) {
+        const send = ds.dmoRecSend !== undefined, bar = el.querySelector('[data-dmo-rec]'), form = el.querySelector('.dmo-compose');
+        b.disabled = true;
+        const r = await dmoRecStop(send);
+        if (bar) bar.hidden = true; if (form) form.hidden = false;
+        if (r) { try { await dmoSendVoice(t, r); await dmoPaintMsgs(el, t); } catch (err) { showToast(DMI().reason(err)); } }
+      }
+    });
+  };
+  const dmoMount = root => { const el = root.querySelector('[data-dmo]'); if (!el) return; dmoWire(el); dmoRefresh(el); };
+  // Bouton des réglages : alertes du navigateur (sans contenu, seulement « nouveau message »)
+  const dmoAlertsHtml = () => !window.Notification ? '' : '<section class="hb-panel"><h4>' + igIcon('ic-bell') + 'Alertes</h4><p class="hb-muted">Quand Panel est ouvert en arrière-plan, une alerte annonce un nouveau message ou une activité de groupe, sans jamais en montrer le contenu. Un groupe en sourdine reste silencieux.</p>' +
+    (Notification.permission === 'granted' ? '<p>' + igIcon('ic-check') + ' Alertes activées sur ce navigateur.</p>' : Notification.permission === 'denied' ? '<p class="hb-muted">Alertes bloquées dans les réglages du navigateur.</p>' : '<button type="button" class="btn secondary" data-dmo-alerts>Activer les alertes</button>') + '</section>';
 
   // ---------- Compte : type, inscription, vérification (D-114) ----------
   const hbVType = st => HB().verify.TYPES.includes(st.verify.type) ? st.verify.type : 'collector';
@@ -27207,6 +28050,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         try { const id = await HB().dm.createIdentity(); await hbDmPut({ privateKey: id.privateKey, publicJwk: id.publicJwk, createdAt: new Date().toISOString() }); showToast('Clé créée sur cet appareil.'); hbDmMount(v); }
         catch (_) { showToast(HB().dm.REASON.crypto_unavailable); }
       } else if (ds.hbDmTest !== undefined) { hbDmSelfTest(v).catch(() => showToast(HB().dm.REASON.crypto_unavailable)); }
+      else if (ds.dmoAlerts !== undefined && window.Notification) { Notification.requestPermission().then(() => rerender(), () => {}); }
     };
     v.oninput = e => {
       if (e.target.matches('[data-hb-price]')) { const f = v.querySelector('[data-hb-fee]'); if (f) f.innerHTML = hbFeeHtml(e.target.value); }
@@ -27230,7 +28074,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         st.ticked = t.checked ? [...new Set(st.ticked.concat(t.dataset.hbTick))] : st.ticked.filter(k => k !== t.dataset.hbTick);
         if (hbSave(st)) rerender();
       } else if (t.matches('[data-hb-kind]')) { st.pro = { ...(st.pro || {}), kind: t.value, status: 'draft' }; st.ticked = []; if (hbSave(st)) rerender(); }
-      else if (t.matches('[data-hb-policy]')) { st.dmPolicy = t.value; if (hbSave(st)) { showToast('Préférence enregistrée.'); rerender(); } }
+      else if (t.matches('[data-hb-policy]')) { st.dmPolicy = t.value; if (dmoHasAuth()) dmoRpc('dm_prefs_set', { p_policy: t.value }).catch(() => {}); if (hbSave(st)) { showToast('Préférence enregistrée.'); rerender(); } }
       else if (t.closest('[data-hb-mk-search]') && t.name && t.name !== 'q') { hbMq[t.name] = t.value; rerender(); }
       else if (t.matches('[data-hb-bundle]')) { st.bundle = { ...st.bundle, [t.dataset.hbBundle]: Number(t.value) }; if (hbSave(st)) { const o = v.querySelector('[data-hb-bundle-out]'); if (o) o.innerHTML = hbBundleOut(st); } }
       else if (t.matches('[data-hb-vdoc]')) {
@@ -30259,7 +31103,10 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     }
     return acctClient;
   };
-  const acctRedirect = () => location.origin + location.pathname;
+  // D-125 : dans l'application Android, l'origine est https://localhost (injoignable depuis un e-mail) ;
+  // le lien de confirmation renvoie donc vers la version en ligne, qui confirme l'adresse.
+  const ACCT_PUBLIC_URL = 'https://lukecage2003.github.io/panel-comics/';
+  const acctRedirect = () => (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) || !/^https?:$/.test(location.protocol) ? ACCT_PUBLIC_URL : location.origin + location.pathname;
   // ---------- D-120 : copie de la collection dans le compte (api.collection_backup_*), restaurée par fusion
   const ACCT_AUTO_KEY = 'panel_cloud_autobackup', ACCT_LAST_KEY = 'panel_cloud_lastbackup';
   const acctAutoOn = () => { try { return localStorage.getItem(ACCT_AUTO_KEY) === '1'; } catch (_) { return false; } };
@@ -30319,6 +31166,31 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     try { await acctBackupSave(client); } catch (_) {}
   };
   setTimeout(() => { acctAutoBackup().catch(() => {}); }, 20000);
+  // D-125 : retour d'un lien reçu par e-mail (confirmation, connexion, nouveau mot de passe).
+  // supabase-js échange le code (PKCE) ; si l'échange échoue (lien ouvert dans un autre navigateur), l'adresse
+  // est tout de même confirmée par le serveur : on invite à se connecter avec le mot de passe.
+  (async () => {
+    let q, h;
+    try { q = new URLSearchParams(location.search); h = new URLSearchParams(location.hash.replace(/^#/, '')); } catch (_) { return; }
+    const err = q.get('error_description') || h.get('error_description');
+    const hasCode = q.has('code') || h.has('access_token');
+    if (!err && !hasCode) return;
+    const recovery = h.get('type') === 'recovery' || q.get('type') === 'recovery';
+    const clean = () => { try { history.replaceState(null, '', location.pathname); } catch (_) {} };
+    if (err) { clean(); showToast(/expired|invalid/i.test(err) ? 'Ce lien a expiré ou a déjà servi. Connectez-vous, ou demandez un nouveau lien.' : 'Lien refusé : ' + err); return; }
+    const cfg = acctConfig(); if (!cfg) { clean(); return; }
+    await acctLoadLib();
+    const client = acctGetClient(cfg); if (!client) { clean(); return; }
+    let ok = false;
+    try {
+      const code = q.get('code');
+      if (code) { const r = await client.auth.exchangeCodeForSession(code); ok = !r.error; }
+      if (!ok) { const r = await client.auth.getSession(); ok = !!(r && r.data && r.data.session); }
+    } catch (_) {}
+    clean();
+    showToast(ok ? (recovery ? 'Connecté : choisissez votre nouveau mot de passe dans Réglages, Compte.' : 'Adresse confirmée, vous êtes connecté à votre compte Panel.') : 'Adresse confirmée. Connectez-vous avec votre e-mail et votre mot de passe (Réglages, Compte).');
+    try { renderAccountBox(); } catch (_) {}
+  })();
   // D-121 : synchronisation automatique, la copie suit chaque changement (regroupés, 2 minutes au plus tôt)
   let acctSyncTimer = 0;
   window.Panel = window.Panel || {};
@@ -30370,6 +31242,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<div class="acct-row"><button class="btn" type="button" data-acct-bk-save>Sauvegarder maintenant</button><button class="btn secondary" type="button" data-acct-bk-get>Récupérer sur cet appareil</button></div>' +
         '<label class="acct-check"><input type="checkbox" data-acct-bk-auto' + (acctAutoOn() ? ' checked' : '') + '> Synchronisation automatique : la copie suit chaque changement</label></div>' +
         '<div class="acct-mfa" data-acct-mfa><b>Double authentification</b><span class="acct-note">Lecture…</span></div>' +
+        '<form class="acct-backup" data-acct-pw><b>Changer le mot de passe</b><label>Nouveau mot de passe<input class="field-input" type="password" data-acct-newpw autocomplete="new-password" maxlength="' + A.LIMITS.passwordMax + '"></label><span class="acct-note">' + A.LIMITS.passwordMin + ' caractères au moins, lettres et chiffres.</span><div class="acct-row"><button class="btn secondary" type="submit">Enregistrer le mot de passe</button></div></form>' +
         '<div class="acct-row"><button class="btn secondary" type="button" data-acct-out>Se déconnecter</button><button class="btn ghost" type="button" data-acct-out-all>Déconnecter tous les appareils</button>' + forget + '</div>' + msgHtml;
       // D-114 : double authentification par application (code à 6 chiffres), proposée dès la connexion
       const mfaBox = body.querySelector('[data-acct-mfa]');
@@ -30387,6 +31260,15 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         };
       };
       mfaShow();
+      // D-125 : nouveau mot de passe (après un lien « mot de passe oublié », ou à tout moment)
+      body.querySelector('[data-acct-pw]').onsubmit = async ev => {
+        ev.preventDefault();
+        const inp = body.querySelector('[data-acct-newpw]'), v = inp.value, bad = A.passwordIssues(v);
+        if (bad.length) { say('Mot de passe trop faible : ' + bad.join(', ') + '.'); return; }
+        say('…');
+        try { const r = await client.auth.updateUser({ password: v }); if (r.error) { say(A.mapAuthError(r.error).message || 'Mot de passe refusé.'); return; } } catch (_) { say('Connexion impossible. Réessayez.'); return; }
+        inp.value = ''; say('Mot de passe enregistré.');
+      };
       acctBackupWire(body, client, say);
       body.querySelector('[data-acct-out]').onclick = async () => { const r = await flow.signOut(false); r.ok ? renderAccountBox() : say(r.error.message); };
       body.querySelector('[data-acct-out-all]').onclick = async () => { const r = await flow.signOut(true); r.ok ? renderAccountBox() : say(r.error.message); };

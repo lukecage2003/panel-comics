@@ -6460,7 +6460,8 @@ const waitForCdp = async () => {
           r.dmNextToBell = top.indexOf('dmBtn') >= 0 && top.indexOf('dmBtn') + 1 === top.indexOf('notifBtn');
           $('dmBtn').click(); await wait(300);
           r.dmNav = document.title === 'Messages · Panel' && $('navMessages').classList.contains('active') && $('dmBtn').getAttribute('aria-current') === 'page' && !q('.mobile-dock [aria-current="page"]');
-          r.inbox = !!q('.dm-inbox [data-dm-search]') && document.querySelectorAll('.dm-proto li').length === 6 && document.querySelectorAll('[data-hb-timer] option').length === 5;
+          r.inbox = !!q('.dm-inbox[data-dmo]') && (!!q('.dm-inbox [data-dmo-search]') || !!q('.dm-inbox .dmo-first, .dm-inbox .hb-empty, .dm-inbox .hb-muted, .dm-inbox form')) && // D-125 : boîte en ligne, recherche après connexion
+           document.querySelectorAll('.dm-proto li').length === 6 && document.querySelectorAll('[data-hb-timer] option').length === 5;
           // Protocole : X3DH + double cliquet, désordre, rejeu refusé, chiffré différent à chaque message
           const R = window.PanelDomains.dmRatchet, al = await R.createIdentity(), bo = await R.createIdentity(), pre = await R.createPrekeys(bo, 1, 1);
           const x = await R.x3dhInitiate(al, pre.bundle, pre.bundle.opk[0]);

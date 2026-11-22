@@ -30,11 +30,15 @@ const sanitizeNote = n => {
   if (!n || typeof n !== 'object' || !ID.test(String(n.id || ''))) return null;
   const text = str(n.text, LIMITS.text).replace(/\r\n?/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   const imageRef = ID.test(String(n.imageRef || '')) ? n.imageRef : '';
-  if (!text && !imageRef) return null;
+  // D-125 : pensée vocale — l'enregistrement reste sur l'appareil (base « panel-notes »), seule sa retranscription est du texte
+  const voiceRef = ID.test(String(n.voiceRef || '')) ? n.voiceRef : '';
+  if (!text && !imageRef && !voiceRef) return null;
   const kind = KINDS[n.kind] ? n.kind : 'thought';
   const issue = n.issue && typeof n.issue === 'object' && n.issue.series ? { series: str(n.issue.series, LIMITS.series).trim(), issue: str(n.issue.issue, LIMITS.issue).trim(), publisher: str(n.issue.publisher, 100).trim() } : null;
   return {
     id: n.id, kind, text, imageRef, imageAlt: str(n.imageAlt, 140).trim(), issue,
+    voiceRef, voiceDur: voiceRef && Number(n.voiceDur) > 0 ? Math.min(180, Math.round(Number(n.voiceDur) * 10) / 10) : 0,
+    voicePeaks: voiceRef && Array.isArray(n.voicePeaks) ? n.voicePeaks.slice(0, 64).map(v => Math.max(0, Math.min(100, Math.round(Number(v) || 0)))) : [],
     spoiler: n.spoiler === true,
     verdict: kind === 'theory' && VERDICTS[n.verdict] ? n.verdict : (kind === 'theory' ? 'open' : ''),
     visibility: VISIBILITY.includes(n.visibility) ? n.visibility : 'public',
@@ -51,7 +55,7 @@ const sanitizeState = s => {
 
 const validate = n => {
   const errors = [];
-  if (!n) { errors.push('Écrivez quelque chose ou ajoutez une image.'); return errors; }
+  if (!n) { errors.push('Écrivez quelque chose, ajoutez une image ou un vocal.'); return errors; }
   if (n.text.length > LIMITS.text) errors.push('Deux mille caractères au plus.');
   if (/<[a-z!/]/i.test(n.text)) errors.push('Les balises ne sont pas acceptées.');
   return errors;
@@ -80,7 +84,7 @@ const setVerdict = (state, id, verdict, now) => {
   return { state: st, ok: true };
 };
 // Images encore utiles (pour libérer les autres)
-const imageRefs = state => sanitizeState(state).notes.map(n => n.imageRef).filter(Boolean);
+const imageRefs = state => sanitizeState(state).notes.flatMap(n => [n.imageRef, n.voiceRef]).filter(Boolean);
 
 // Tendances : mots-dièse des sept derniers jours, pondérés par la fraîcheur (demi-vie 48 h), puis les plus anciens
 const trending = (tagLists, now, limit = 8) => {
