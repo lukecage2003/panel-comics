@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-FaYNo3lGXGnfzH2I5YKUV9YDBcVeSbnxRAqTF7XTnY4=' 'sha256-pH8LALHgEY63CVRlkR3Vl0b1dMF2usNU6BTBZLV/KuA=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-IKmCqKoZJJ/054oqUvvCISSA6LeDlUcGJFCq+FRUZu8=' 'sha256-AZsY5UuVN1OVf2HOEKxiOfv1VhryFIz94yG+AM7fXVU=' 'sha256-XHI2U0maBr3HUwdlYOMmkKdNS3GI0ZplA9YV4SKVgqw=' 'sha256-NlRaqi+Yl8KkhcTdgxo/URyNK93m0mweayJGyYi+EAk=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
   <meta name="theme-color" content="#111111" />
@@ -3246,6 +3246,44 @@
     .mp-start { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
     .mp-fix { margin-top: 18px; } .mp-fixes { padding-left: 18px; display: grid; gap: 6px; font-size: 13.5px; }
     .mp-fix-st { display: inline-block; padding: 1px 8px; border-radius: 999px; background: rgba(255,176,0,.18); color: #FFB000; font-weight: 700; font-size: 11.5px; }
+    /* D-110 : Atelier du collectionneur, quiz cosmique, relecture des corrections */
+    .ws-entry { margin: 0 0 18px; }
+    .ws-entry-g { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+    .ws-entry-b { display: flex; flex-direction: column; gap: 3px; text-align: left; border: 0; border-radius: 14px; padding: 12px 14px; min-height: 76px; color: #fff; font: inherit; cursor: pointer; background: linear-gradient(135deg, #334155, #0f172a); }
+    .ws-entry-b b { font: 800 16px/1.1 var(--font-display); text-transform: uppercase; } .ws-entry-b small { font-size: 12px; opacity: .85; }
+    .ws-entry-b.is-value { background: linear-gradient(135deg, #059669, #064E3B); } .ws-entry-b.is-trade { background: linear-gradient(135deg, #2563EB, #1E3A8A); }
+    .ws-entry-b.is-year { background: linear-gradient(135deg, #7C3AED, #2E1065); } .ws-entry-b.is-themes { background: linear-gradient(135deg, #DB2777, #701A75); } .ws-entry-b.is-conv { background: linear-gradient(135deg, #EA580C, #7C2D12); }
+    .ws-entry-b:focus-visible, .ws-tab:focus-visible, .ex-quiz-o:focus-visible { outline: 3px solid #FFD400; outline-offset: 2px; }
+    .modal-box.ws { width: min(680px, calc(100vw - 24px)); max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); overflow: auto; }
+    .ws-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 6px 0; margin-bottom: 8px; scrollbar-width: none; position: sticky; top: -1px; z-index: 2; background: var(--bg-card, #1b1b1f); }
+    .ws-tab { flex: none; border: 1px solid var(--line); background: none; color: inherit; border-radius: 999px; padding: 8px 14px; min-height: 38px; font: 600 13px var(--font-ui); cursor: pointer; }
+    .ws-tab.is-on { background: #FFD400; color: #111; border-color: #FFD400; }
+    .ws-pane h4 { margin: 14px 0 6px; font-size: 14px; }
+    .ws-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin: 4px 0 10px; }
+    .ws-kpis > div { border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; } .ws-kpis small { display: block; color: var(--muted); font-size: 11.5px; } .ws-kpis b { font-size: 20px; }
+    .ws-ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 13.5px; }
+    .ws-ul li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; padding: 6px 8px; border-radius: 8px; background: rgba(127,127,127,.08); }
+    .ws-up { color: #22C55E; } .ws-down { color: #F87171; }
+    .ws-alert { padding: 8px 12px; border-radius: 10px; background: rgba(34,197,94,.14); color: #22C55E; font-weight: 700; font-size: 13.5px; }
+    .ws-note { color: var(--muted); font-size: 12.5px; line-height: 1.45; margin: 10px 0 0; }
+    .ws-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+    .ws-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .ws-form { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-end; margin: 4px 0 10px; } .ws-form label { flex: 1 1 180px; }
+    .ws-themes { display: grid; gap: 8px; } .ws-theme { display: grid; grid-template-columns: 120px 1fr; gap: 10px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: 12px; }
+    .ws-theme b { display: block; } .ws-theme small { color: var(--muted); }
+    .ws-covers { display: flex; height: 64px; } .ws-covers img { width: 44px; height: 64px; object-fit: cover; border-radius: 4px; margin-right: -20px; box-shadow: 0 2px 8px rgba(0,0,0,.5); }
+    .ws-cov0 { width: 48px; height: 64px; border-radius: 6px; display: grid; place-items: center; background: #DB2777; color: #fff; font-weight: 900; font-size: 24px; }
+    .ws-conv li.is-got span { text-decoration: line-through; opacity: .65; } .ws-price { width: 86px; min-height: 34px; padding: 4px 8px; }
+    .ws-canvas { margin-top: 10px; }
+    .pf-chb.is-contrib { background: linear-gradient(135deg, #38BDF8, #2563EB); color: #fff; }
+    .fix-rev { margin-top: 22px; }
+    .ex-quiz-card { border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: radial-gradient(120% 120% at 100% 0%, rgba(124,58,237,.25), transparent 60%); }
+    .ex-quiz-d { margin: 0 0 10px; font-size: 14.5px; line-height: 1.5; }
+    .ex-quiz-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .ex-quiz-o { border: 1px solid var(--line); background: var(--bg-card, #15151b); color: inherit; border-radius: 12px; padding: 10px 12px; min-height: 44px; font: 600 14px var(--font-ui); text-align: left; cursor: pointer; }
+    .ex-quiz-o.is-ok { background: #16A34A; border-color: #16A34A; color: #fff; } .ex-quiz-o.is-bad { background: #DC2626; border-color: #DC2626; color: #fff; }
+    .ex-quiz-s { font-size: 13px; color: var(--muted); margin-right: auto; }
+    @media (max-width: 600px) { .ws-two { grid-template-columns: 1fr; } .ws-entry-g { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ex-quiz-opts { grid-template-columns: 1fr; } .ws-theme { grid-template-columns: 90px 1fr; } }
     .pf-chb-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 2px 18px; }
     .pf-chb { display: inline-flex; gap: 6px; align-items: center; padding: 6px 12px; border-radius: 999px; background: linear-gradient(135deg, #FFD400, #FF8A00); color: #111; font-weight: 800; font-size: 13px; }
     .scan-burst { display: block; margin-top: 2px; opacity: .85; }
@@ -11241,6 +11279,75 @@ const phrases = {
   'Cote estimée': 'Estimated value',
   'Rafale : {n} numéros': 'Burst: {n} issues',
   'Défis de lecture relevés': 'Reading challenges completed',
+  'Atelier du collectionneur': 'Collector\'s workshop',
+  'Cote': 'Value',
+  'Échanges': 'Trades',
+  'Mon année': 'My year',
+  'Collections': 'Collections',
+  'Convention': 'Convention',
+  'Outils': 'Tools',
+  'Hausses et baisses de vos cotes': 'Rises and falls in your values',
+  'Doubles et Wishlist à échanger': 'Duplicates and Wishlist to trade',
+  'Votre récap en image {n}:{n}': 'Your recap as a {n}:{n} image',
+  '« Tous mes Venom »…': '“All my Venom”…',
+  'Hors ligne, budget du jour': 'Offline, today\'s budget',
+  'Cote totale': 'Total value',
+  'Numéros cotés': 'Valued issues',
+  'En hausse': 'Rising',
+  'En baisse': 'Falling',
+  '{n} numéro a pris de la valeur depuis sa cote précédente.': '{n} issue gained value since its previous valuation.',
+  '{n} numéros ont pris de la valeur depuis leur cote précédente.': '{n} issues gained value since their previous valuation.',
+  'Key Issues les mieux cotés': 'Highest-valued Key Issues',
+  'Panel compare chaque nouvelle cote à la précédente, d\'après les cotes que vous saisissez ou relevez sur la fiche d\'un numéro. Aucun prix de marché n\'est récupéré automatiquement.': 'Panel compares each new valuation with the previous one, based on the values you enter or record on an issue\'s page. No market price is fetched automatically.',
+  'Je propose (doubles)': 'I offer (duplicates)',
+  'Je cherche (Wishlist)': 'I\'m looking for (Wishlist)',
+  'Aucun exemplaire en double dans la collection.': 'No duplicate copies in the collection.',
+  'Votre Wishlist est vide.': 'Your Wishlist is empty.',
+  'Publier ma liste d\'échange': 'Post my trade list',
+  'La liste part dans le fil avec #Échange, sans prix ni emplacement. Les propositions entre membres d\'une même ville arriveront avec l\'ouverture des comptes.': 'The list goes to the feed with #Échange, without prices or locations. Offers between members of the same city will come when accounts open.',
+  'Ajoutés en {n}': 'Added in {n}',
+  'Série de l\'année :': 'Series of the year:',
+  'Plus belle trouvaille :': 'Best find:',
+  'Mon année sur Panel': 'My year on Panel',
+  'L\'image ne montre ni prix, ni valeur, ni emplacement.': 'The image shows no price, value or location.',
+  'Nom de la collection': 'Collection name',
+  'Tous mes Venom': 'All my Venom',
+  'Mot à chercher (série, variante, éditeur)': 'Word to search (series, variant, publisher)',
+  'Créer': 'Create',
+  'Partager': 'Share',
+  'Supprimer': 'Delete',
+  '{n} numéro': '{n} issue',
+  '{n} numéros': '{n} issues',
+  'Aucune collection thématique pour l\'instant.': 'No themed collection yet.',
+  'Donnez un nom et un mot à chercher ({n} lettres au moins).': 'Give a name and a word to search ({n} letters at least).',
+  '{n} collections au plus.': '{n} collections at most.',
+  'Budget du jour': 'Today\'s budget',
+  'Dépensé': 'Spent',
+  'Reste': 'Left',
+  'Budget du jour ($)': 'Today\'s budget ($)',
+  'Fixer': 'Set',
+  'À chercher (Wishlist)': 'To find (Wishlist)',
+  'Annuler': 'Cancel',
+  'Trouvé': 'Found',
+  'Ajoutez des numéros à votre Wishlist : ils apparaîtront ici, même sans connexion.': 'Add issues to your Wishlist: they will show up here, even offline.',
+  'Fonctionne hors ligne. Les achats notés ici restent la journée ; ajoutez ensuite le numéro à la collection depuis sa fiche.': 'Works offline. Purchases noted here last for the day; then add the issue to the collection from its page.',
+  'Corrections des fiches': 'Entry corrections',
+  'Propositions faites sur les fiches des cartes, chacune avec sa source. « Vérifié » quand la source confirme ; rien ne change sur la fiche d\'origine.': 'Suggestions made on map entries, each with its source. “Verified” when the source confirms it; nothing changes on the original entry.',
+  'Refuser': 'Reject',
+  'Refusé': 'Rejected',
+  'Aucune proposition à relire.': 'No suggestion to review.',
+  'Correction vérifiée.': 'Correction verified.',
+  'Proposition refusée.': 'Suggestion rejected.',
+  'Contributeur': 'Contributor',
+  '{n} correction vérifiée': '{n} verified correction',
+  '{n} corrections vérifiées': '{n} verified corrections',
+  'Quiz cosmique': 'Cosmic quiz',
+  'Qui est décrit ? Les réponses viennent de l\'encyclopédie cosmique de Panel.': 'Who is described? Answers come from Panel\'s cosmic encyclopedia.',
+  'Bonne réponse !': 'Correct!',
+  'Raté.': 'Missed.',
+  'Série : {n}': 'Streak: {n}',
+  'Record : {n}': 'Best: {n}',
+  'Question suivante': 'Next question',
 };
 
 const same = [
@@ -19997,7 +20104,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         (recos.length ? sec('exSecReco', 'Pour vous', 'D\'après votre collection, votre progression et votre pull list.', '<div class="ex-recos">' + recos.map(r => '<button class="ex-reco" data-ex-guide="' + h(r.guideId) + '"><b>' + h(r.text) + '</b><small>' + h(r.why) + '</small></button>').join('') + '</div>') : '') +
         exTrendsHtml() +
         (featured.length ? sec('exSecFeatured', 'À la une', '', '<div class="ex-featured">' + featured.slice(0, 3).map(g => exGuideCard(g, true)).join('') + '</div>') : '<section class="ex-sec" id="exSecFeatured" hidden></section>') +
-        exChallengesHtml() + exClubHtml() +
+        exChallengesHtml() + '<div id="exQuiz"></div>' + exClubHtml() +
         sec('exSecTiles', 'Explorer', '', '<div class="ex-tiles">' +
           tile('is-guides', 'data-ex-topic-go="guides"', 'Guides de lecture', 'Événements, sagas, parcours') +
           tile('is-chars', 'data-ex-topic-go="characters"', 'Personnages', 'Héros, équipes, ennemis') +
@@ -21147,7 +21254,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<label class="ex-uadd-l"><span>Source (lien https : numéro, éditeur, wiki)</span><input class="field-input" data-fix-s type="url" inputmode="url" maxlength="300" placeholder="https://"></label>' +
       '<p class="ex-uadd-err" data-fix-err role="alert" hidden></p><p class="ex-note">Gardée sur cet appareil avec le statut « à vérifier » : rien n\'est publié ni modifié sur la fiche tant qu\'elle n\'a pas été relue.</p>' +
       '<div><button class="btn rel-mini" data-fix-go>Garder ma proposition</button></div></div></details>' +
-      (mine.length ? '<h3>Vos propositions</h3><ul class="mp-fixes">' + mine.slice(-10).reverse().map(x => '<li><span class="mp-fix-st">' + (x.status === 'ok' ? 'Vérifié' : 'À vérifier') + '</span> ' + h(x.text) +
+      (mine.length ? '<h3>Vos propositions</h3><ul class="mp-fixes">' + mine.slice(-10).reverse().map(x => '<li><span class="mp-fix-st">' + (x.status === 'ok' ? 'Vérifié' : x.status === 'no' ? 'Refusé' : 'À vérifier') + '</span> ' + h(x.text) +
         ' <a href="' + h(x.source) + '" target="_blank" rel="noopener noreferrer">source</a></li>').join('') + '</ul>' : '');
   };
   const exMpWireEntity = (root, ref) => {
@@ -21200,6 +21307,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     if (!slot.isConnected) return;
     slot.innerHTML = exDailyHtml();
     slot.querySelectorAll('[data-mp-open]').forEach(b => { b.onclick = () => exMpOpen(b.dataset.mpOpen, b); });
+    exQuizMount(root);
   };
   // Défis de lecture : terminer un guide (tous ses numéros lus). Progression lue par S1 ; seuls les défis acceptés sont gardés sur l'appareil.
   const EX_CH_KEY = 'panel_ex_challenges';
@@ -21245,6 +21353,39 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<ol class="ex-club-list">' + entries.map((e, i) => { const r = gp && gp.items[i] && gp.items[i].status === 'read';
         return '<li' + (r ? ' class="is-read"' : '') + '><span>' + h([e.series, e.issue ? '#' + String(e.issue).replace(/^#/, '') : ''].filter(Boolean).join(' ')) + '</span><button class="btn-link" data-ex-clubtalk="' + (i + 1) + '">Discuter</button></li>'; }).join('') + '</ol>' +
       '<div class="ex-row"><button class="btn secondary rel-mini" data-ex-tag="' + h(tag) + '">Voir les discussions</button><button class="btn-link" data-ex-clubend>Changer d\'arc</button></div></div></div></section>';
+  };
+  // D-110 : Quiz cosmique — qui est décrit ? Quatre noms, une description de l'encyclopédie (le nom y est masqué) ; meilleure série gardée sur l'appareil
+  const EX_QZ_KEY = 'panel_ex_quiz';
+  const exQz = { q: null, streak: 0, done: false, pick: '' };
+  const exQzNew = () => {
+    if (!cz.data) return null;
+    const ids = Object.keys(cz.data.E).filter(k => { const e = cz.data.E[k]; return e && e.d && e.d.length > 40 && e.n && !/\(\d{4}\)/.test(e.n); });
+    if (ids.length < 4) return null;
+    const pick = () => ids[Math.floor(Math.random() * ids.length)], ans = pick(), opts = new Set([ans]);
+    while (opts.size < 4) opts.add(pick());
+    const e = cz.data.E[ans], names = [e.n, e.en].filter(x => x && x.length > 2).map(x => x.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+    let d = e.d; names.forEach(n => { d = d.replace(new RegExp(n, 'gi'), '…'); });
+    return { ans, opts: [...opts].sort(() => Math.random() - .5), d: d.length > 260 ? d.slice(0, 257).replace(/\s+\S*$/, '') + '…' : d };
+  };
+  const exQuizHtml = () => {
+    if (!exQz.q) exQz.q = exQzNew();
+    const q = exQz.q; if (!q) return '';
+    const best = Number(exLsGet(EX_QZ_KEY, {}).best) || 0;
+    return '<section class="ex-sec ex-quiz" aria-labelledby="exQuizT"><div class="ex-sec-head"><h3 id="exQuizT">Quiz cosmique</h3><p>Qui est décrit ? Les réponses viennent de l\'encyclopédie cosmique de Panel.</p></div>' +
+      '<div class="ex-quiz-card"><p class="ex-quiz-d">' + h(q.d) + '</p><div class="ex-quiz-opts">' + q.opts.map(k => { const ok = exQz.done && k === q.ans, bad = exQz.done && k === exQz.pick && k !== q.ans;
+        return '<button type="button" class="ex-quiz-o' + (ok ? ' is-ok' : '') + (bad ? ' is-bad' : '') + '" data-ex-qz="' + h(k) + '"' + (exQz.done ? ' disabled' : '') + '>' + h(cz.data.E[k].n) + '</button>'; }).join('') + '</div>' +
+      '<div class="ex-row"><span class="ex-quiz-s" role="status">' + (exQz.done ? (exQz.pick === q.ans ? 'Bonne réponse !' : 'Raté.') + ' ' : '') + '<span>Série : ' + exQz.streak + '</span> · <span>Record : ' + best + '</span></span>' +
+      (exQz.done ? '<button type="button" class="btn rel-mini" data-ex-qznext>Question suivante</button><button type="button" class="btn secondary rel-mini" data-ex-go="cosmos-e" data-ex-id="' + h(q.ans) + '">Lire sa fiche</button>' : '') + '</div></div></section>';
+  };
+  const exQuizMount = root => {
+    const slot = root.querySelector('#exQuiz'); if (!slot || !cz.data) return;
+    slot.innerHTML = exQuizHtml();
+    slot.querySelectorAll('[data-ex-qz]').forEach(b => { b.onclick = () => {
+      exQz.done = true; exQz.pick = b.dataset.exQz;
+      if (exQz.pick === exQz.q.ans) { exQz.streak++; const st = exLsGet(EX_QZ_KEY, {}); if (exQz.streak > (Number(st.best) || 0)) exLsSet(EX_QZ_KEY, { best: exQz.streak }); } else exQz.streak = 0;
+      exQuizMount(root); const n = slot.querySelector('[data-ex-qznext]'); if (n) n.focus();
+    }; });
+    const nx = slot.querySelector('[data-ex-qznext]'); if (nx) nx.onclick = () => { exQz.q = exQzNew(); exQz.done = false; exQz.pick = ''; exQuizMount(root); const f = slot.querySelector('[data-ex-qz]'); if (f) f.focus(); };
   };
   const exWireLive = root => {
     root.querySelectorAll('[data-ex-chtake]').forEach(b => { b.onclick = () => { const st = exChLoad(); st.accepted[b.dataset.exChtake] = new Date().toISOString(); if (exLsSet(EX_CH_KEY, st)) { showToast('Défi accepté : bonne lecture !'); renderExplorer(); } }; });
@@ -22116,7 +22257,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<h3 class="pf-section">Vitrine des trophées</h3>' +
       families.map(f => '<div class="tr-family"><h4>' + escapeHtml(f) + '</h4><div class="tr-grid">' + r.trophies.filter(t => t.family === f).map(trophyHtml).join('') + '</div></div>').join('') +
       '<p class="stat-sub" style="margin:8px 2px 18px">Trophées calculés à partir de vos données locales, jamais stockés ni envoyés. Palier Vibranium : le plus rare. Les « Gardiens » apparaissent dès 5 numéros d\'un même personnage.</p></details>' +
-      pfChallengesHtml() + pfPublicHtml() + pfLikeHtml();
+      wsEntryHtml() + pfChallengesHtml() + pfContribHtml() + pfPublicHtml() + pfLikeHtml();
     const f = host.querySelector('#profileForm');
     if (f) f.onsubmit = ev => {
       ev.preventDefault();
@@ -22801,7 +22942,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       }
       // Encadré « Compte en ligne » (D-82) : déplacé dans l'onglet Compte, remis à sa place avant chaque rendu (jamais détruit)
       const acctEl = $('acctBox'); if (acctEl && acctEl.parentNode !== keys) keys.insertBefore(acctEl, srcHead.nextSibling);
-      dyn.innerHTML = settingsTab === 'sources' ? '' : settingsTab === 'moderation' ? modPaneHtml() : settingsPaneHtml(settingsTab);
+      dyn.innerHTML = settingsTab === 'sources' ? '' : settingsTab === 'moderation' ? modPaneHtml() + fixReviewHtml() : settingsPaneHtml(settingsTab);
       if (settingsTab === 'moderation') modWire(dyn, render);
       const acctSlot = dyn.querySelector('[data-acct-slot]'); if (acctSlot && acctEl) { acctSlot.appendChild(acctEl); renderAccountBox(); }
       const close = () => modal.classList.remove('open');
@@ -22971,6 +23112,167 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<div class="pfp-list">' + PP.FIELDS.map(f => '<label class="pfp-row"><span>' + escapeHtml(f.label) + '</span><input type="checkbox" role="switch" class="pfp-switch" data-pfp="' + f.key + '"' + (pr[f.key] ? ' checked' : '') + '></label>').join('') + '</div>' +
       '<p class="pfp-never">' + igIcon('ic-shield') + ' <span><b>Jamais publié :</b> ' + PP.NEVER.map(escapeHtml).join(', ').toLowerCase().replace(/^./, c => c.toUpperCase()) + '. Vos publications restent en « Moi seul » tant que vous ne les rendez pas publiques. Rien n\'est en ligne avant l\'arrivée des comptes.</span></p></section>';
   };
+  // ---------- D-110 : Atelier du collectionneur — cote suivie, échanges, mon année, collections thématiques, mode convention
+  // Tout est calculé sur l'appareil à partir de la collection ; rien n'est envoyé, rien n'est modifié dans la collection.
+  const wsLs = (k, d) => { try { const v = JSON.parse(localStorage.getItem(k) || 'null'); return v && typeof v === 'object' ? v : d; } catch (_) { return d; } };
+  const wsLsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { showToast('Enregistrement impossible sur cet appareil.'); return false; } };
+  const wsOwned = () => physicalSingles.filter(isOwned);
+  const wsNum = v => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : 0; };
+  const wsKey = s => String(s.series || '').toLowerCase().replace(/\s+/g, ' ').trim() + '|' + String(s.issue || '').replace(/^#+\s*/, '').trim().toLowerCase();
+  const wsList = (arr, max) => arr.slice(0, max).map(s => '<li><span>' + escapeHtml(plTitle(s)) + '</span>' + (s.variant && !/^cover a$/i.test(s.variant) ? ' <small>' + escapeHtml(s.variant) + '</small>' : '') + '</li>').join('');
+  // Cote suivie : les cotes que vous avez saisies ou relevées, comparées à la précédente (aucun flux de marché en direct n'est branché)
+  const wsValueHtml = () => {
+    const own = wsOwned(), valued = own.filter(s => wsNum(s.estValue)), total = valued.reduce((a, s) => a + wsNum(s.estValue), 0);
+    const moves = own.map(s => { const h = Array.isArray(s.valueHistory) ? s.valueHistory : []; return h.length >= 2 ? { s, d: h[h.length - 1].value - h[h.length - 2].value } : null; }).filter(x => x && Math.abs(x.d) >= 0.01);
+    const up = moves.filter(x => x.d > 0).sort((a, b) => b.d - a.d), down = moves.filter(x => x.d < 0).sort((a, b) => a.d - b.d);
+    const keys = valued.filter(s => s.keyType && s.keyType !== 'none').sort((a, b) => wsNum(b.estValue) - wsNum(a.estValue));
+    const row = x => '<li><span>' + escapeHtml(plTitle(x.s)) + '</span> <b data-no-i18n class="' + (x.d > 0 ? 'ws-up' : 'ws-down') + '">' + (x.d > 0 ? '+' : '−') + money(Math.abs(x.d)) + '</b></li>';
+    return '<div class="ws-kpis"><div><small>Cote totale</small><b data-no-i18n>' + money(total) + '</b></div><div><small>Numéros cotés</small><b>' + valued.length + ' / ' + own.length + '</b></div><div><small>En hausse</small><b>' + up.length + '</b></div></div>' +
+      (up.length ? '<div class="ws-alert">' + (up.length === 1 ? '1 numéro a pris de la valeur depuis sa cote précédente.' : up.length + ' numéros ont pris de la valeur depuis leur cote précédente.') + '</div>' : '') +
+      (up.length ? '<h4>En hausse</h4><ul class="ws-ul">' + up.slice(0, 8).map(row).join('') + '</ul>' : '') + (down.length ? '<h4>En baisse</h4><ul class="ws-ul">' + down.slice(0, 5).map(row).join('') + '</ul>' : '') +
+      (keys.length ? '<h4>Key Issues les mieux cotés</h4><ul class="ws-ul">' + keys.slice(0, 6).map(s => '<li><span>' + escapeHtml(plTitle(s)) + '</span> <b data-no-i18n>' + money(wsNum(s.estValue)) + '</b></li>').join('') + '</ul>' : '') +
+      '<p class="ws-note">Panel compare chaque nouvelle cote à la précédente, d\'après les cotes que vous saisissez ou relevez sur la fiche d\'un numéro. Aucun prix de marché n\'est récupéré automatiquement.</p>';
+  };
+  // Échanges : vos exemplaires en double et votre Wishlist, à publier dans le fil avec le mot-dièse #Échange
+  const wsTrade = () => {
+    const g = new Map(); wsOwned().forEach(s => { const k = wsKey(s); if (!k.startsWith('|')) g.set(k, (g.get(k) || []).concat(s)); });
+    const dup = [...g.values()].filter(l => l.length > 1).map(l => l[l.length - 1]);
+    const wish = physicalSingles.filter(s => s.isWishlist && !disposedOf(s));
+    return { dup, wish };
+  };
+  const wsTradeHtml = () => {
+    const { dup, wish } = wsTrade();
+    return '<div class="ws-two"><div><h4>Je propose (doubles)</h4>' + (dup.length ? '<ul class="ws-ul">' + wsList(dup, 30) + '</ul>' : '<p class="ws-note">Aucun exemplaire en double dans la collection.</p>') + '</div>' +
+      '<div><h4>Je cherche (Wishlist)</h4>' + (wish.length ? '<ul class="ws-ul">' + wsList(wish, 30) + '</ul>' : '<p class="ws-note">Votre Wishlist est vide.</p>') + '</div></div>' +
+      (dup.length || wish.length ? '<div class="ws-row"><button type="button" class="btn rel-mini" data-ws-trade>Publier ma liste d\'échange</button></div>' : '') +
+      '<p class="ws-note">La liste part dans le fil avec #Échange, sans prix ni emplacement. Les propositions entre membres d\'une même ville arriveront avec l\'ouverture des comptes.</p>';
+  };
+  // Mon année : récapitulatif de l'année en cours, en image 9:16 à partager
+  const wsYear = () => {
+    const y = String(new Date().getFullYear()), own = wsOwned(), added = own.filter(s => String(s.addedAt || s.purchaseDate || '').startsWith(y));
+    const by = new Map(); added.forEach(s => { const k = String(s.series || '').trim(); if (k) by.set(k, (by.get(k) || 0) + 1); });
+    const top = [...by.entries()].sort((a, b) => b[1] - a[1])[0] || null, best = added.slice().sort((a, b) => wsNum(b.estValue) - wsNum(a.estValue))[0];
+    let read = 0; try { read = added.filter(s => rdStatusOf(s) === 'read').length; } catch (_) {}
+    return { y, added: added.length, series: by.size, keys: added.filter(s => s.keyType && s.keyType !== 'none').length, read, top, best: best && wsNum(best.estValue) ? best : null };
+  };
+  const wsYearHtml = () => {
+    const r = wsYear();
+    return '<div class="ws-kpis"><div><small>Ajoutés en ' + r.y + '</small><b>' + r.added + '</b></div><div><small>Séries</small><b>' + r.series + '</b></div><div><small>Lus</small><b>' + r.read + '</b></div><div><small>Key Issues</small><b>' + r.keys + '</b></div></div>' +
+      (r.top ? '<p><span>Série de l\'année :</span> <b>' + escapeHtml(r.top[0]) + '</b></p>' : '') + (r.best ? '<p><span>Plus belle trouvaille :</span> <b>' + escapeHtml(plTitle(r.best)) + '</b></p>' : '') +
+      '<canvas class="cc-canvas is-story ws-canvas" width="1080" height="1920" role="img" aria-label="Mon année sur Panel"></canvas>' +
+      '<div class="ws-row"><button type="button" class="btn rel-mini" data-ws-ysave>' + igIcon('ic-download') + ' Enregistrer l\'image</button>' + (navigator.share ? '<button type="button" class="btn secondary rel-mini" data-ws-yshare>' + igIcon('ic-external') + ' Partager</button>' : '') + '</div>' +
+      '<p class="ws-note">L\'image ne montre ni prix, ni valeur, ni emplacement.</p>';
+  };
+  const wsYearDraw = cv => {
+    const r = wsYear(), W = 1080, H = 1920, g = cv.getContext('2d'), F = 'system-ui, "Segoe UI", Roboto, sans-serif';
+    let handle = ''; try { const p = JSON.parse(localStorage.getItem('panel_profile') || 'null'); handle = p && p.handle ? '@' + String(p.handle).replace(/[^\w.-]/g, '').slice(0, 24) : ''; } catch (_) {}
+    cv.width = W; cv.height = H;
+    const bg = g.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#7C3AED'); bg.addColorStop(.55, '#121218'); bg.addColorStop(1, '#050507'); g.fillStyle = bg; g.fillRect(0, 0, W, H);
+    g.textAlign = 'center'; g.fillStyle = '#FFD400'; g.font = '900 72px ' + F; g.fillText('PANEL', W / 2, 170);
+    g.fillStyle = '#fff'; g.font = '900 150px ' + F; g.fillText(r.y, W / 2, 380); g.font = '700 46px ' + F; g.fillText('Mon année comics', W / 2, 460);
+    [[r.added, 'numéros ajoutés'], [r.series, 'séries'], [r.read, 'numéros lus'], [r.keys, 'Key Issues']].forEach(([n, l], i) => {
+      const x = i % 2 ? 780 : 300, y = 700 + Math.floor(i / 2) * 330;
+      g.fillStyle = 'rgba(255,255,255,.08)'; g.fillRect(x - 220, y - 170, 440, 280); g.fillStyle = '#FFD400'; g.font = '900 120px ' + F; g.fillText(String(n), x, y); g.fillStyle = '#fff'; g.font = '600 38px ' + F; g.fillText(l, x, y + 70);
+    });
+    g.font = '600 40px ' + F; g.fillStyle = 'rgba(255,255,255,.75)';
+    if (r.top) { g.fillText('Série de l\'année', W / 2, 1440); g.fillStyle = '#fff'; g.font = '800 54px ' + F; g.fillText(ccFit(g, r.top[0], W - 160), W / 2, 1510); }
+    g.fillStyle = '#fff'; g.font = '800 60px ' + F; g.fillText(ccFit(g, handle || 'Collectionneur Panel', W - 160), W / 2, 1720);
+    g.fillStyle = 'rgba(255,255,255,.7)'; g.font = '600 34px ' + F; g.fillText('Collect. Discover. Connect.', W / 2, 1790); g.textAlign = 'start';
+    cv.dataset.drawn = String(Date.now());
+  };
+  // Collections thématiques : un nom et un mot à chercher (« Tous mes Venom » → venom), gardées sur l'appareil
+  const WS_TH_KEY = 'panel_themes';
+  const wsThemes = () => (wsLs(WS_TH_KEY, { list: [] }).list || []).filter(t => t && t.name && t.q);
+  const wsThemeItems = t => { const q = String(t.q).toLowerCase(); return wsOwned().filter(s => [s.series, s.variant, s.publisher, s.issue].some(v => String(v || '').toLowerCase().includes(q))); };
+  const wsThemesHtml = () => {
+    const l = wsThemes();
+    return '<div class="ws-form"><label class="ex-uadd-l"><span>Nom de la collection</span><input class="field-input" data-ws-thn maxlength="60" placeholder="Tous mes Venom"></label>' +
+      '<label class="ex-uadd-l"><span>Mot à chercher (série, variante, éditeur)</span><input class="field-input" data-ws-thq maxlength="40" placeholder="venom"></label><button type="button" class="btn rel-mini" data-ws-thadd>Créer</button></div>' +
+      (l.length ? '<div class="ws-themes">' + l.map((t, i) => { const it = wsThemeItems(t), cov = it.filter(s => /^(https:|data:image\/|blob:|covers\/)/.test(String(s.coverUrl || ''))).slice(0, 5);
+        return '<div class="ws-theme"><div class="ws-covers">' + (cov.length ? cov.map(s => '<img src="' + escapeHtml(s.coverUrl) + '" alt="" loading="lazy" referrerpolicy="no-referrer" data-onerr="remove">').join('') : '<span class="ws-cov0">' + escapeHtml(t.name.slice(0, 1)) + '</span>') + '</div>' +
+          '<div><b>' + escapeHtml(t.name) + '</b><small>' + (it.length === 1 ? '1 numéro' : it.length + ' numéros') + '</small><div class="ws-row"><button type="button" class="btn secondary rel-mini" data-ws-thshare="' + i + '">Partager</button><button type="button" class="btn-link" data-ws-thdel="' + i + '">Supprimer</button></div></div></div>'; }).join('') + '</div>'
+        : '<p class="ws-note">Aucune collection thématique pour l\'instant.</p>');
+  };
+  // Mode convention : Wishlist hors ligne, budget du jour et achats notés (la collection n'est pas modifiée)
+  const WS_CONV_KEY = 'panel_convention';
+  const wsConv = () => { const v = wsLs(WS_CONV_KEY, {}); return { day: v.day === todayLocal() ? v.day : todayLocal(), budget: v.day === todayLocal() ? wsNum(v.budget) : 0, got: v.day === todayLocal() && v.got && typeof v.got === 'object' ? v.got : {} }; };
+  const wsConvHtml = () => {
+    const c = wsConv(), wish = physicalSingles.filter(s => s.isWishlist && !disposedOf(s)), spent = Object.values(c.got).reduce((a, v) => a + wsNum(v), 0);
+    return '<div class="ws-kpis"><div><small>Budget du jour</small><b data-no-i18n>' + money(c.budget) + '</b></div><div><small>Dépensé</small><b data-no-i18n>' + money(spent) + '</b></div><div><small>Reste</small><b data-no-i18n class="' + (c.budget && spent > c.budget ? 'ws-down' : '') + '">' + money(Math.max(0, c.budget - spent)) + '</b></div></div>' +
+      '<div class="ws-form"><label class="ex-uadd-l"><span>Budget du jour ($)</span><input class="field-input" data-ws-budget type="number" inputmode="decimal" min="0" step="1" value="' + (c.budget || '') + '"></label><button type="button" class="btn rel-mini" data-ws-budgetgo>Fixer</button></div>' +
+      (wish.length ? '<h4>À chercher (Wishlist)</h4><ul class="ws-ul ws-conv">' + wish.slice(0, 120).map(s => { const got = c.got[s.id] !== undefined;
+        return '<li class="' + (got ? 'is-got' : '') + '"><span>' + escapeHtml(plTitle(s)) + '</span>' + (got ? ' <b data-no-i18n>' + money(wsNum(c.got[s.id])) + '</b> <button type="button" class="btn-link" data-ws-ungot="' + escapeHtml(s.id) + '">Annuler</button>'
+          : ' <input class="field-input ws-price" type="number" inputmode="decimal" min="0" step="0.5" aria-label="Prix payé" data-ws-price="' + escapeHtml(s.id) + '"><button type="button" class="btn secondary rel-mini" data-ws-got="' + escapeHtml(s.id) + '">Trouvé</button>') + '</li>'; }).join('') + '</ul>'
+        : '<p class="ws-note">Ajoutez des numéros à votre Wishlist : ils apparaîtront ici, même sans connexion.</p>') +
+      '<p class="ws-note">Fonctionne hors ligne. Les achats notés ici restent la journée ; ajoutez ensuite le numéro à la collection depuis sa fiche.</p>';
+  };
+  const WS_TABS = [['value', 'Cote'], ['trade', 'Échanges'], ['year', 'Mon année'], ['themes', 'Collections'], ['conv', 'Convention']];
+  let wsTab = 'value';
+  const openWorkshop = tab => {
+    if (tab) wsTab = tab;
+    const box = bunModal('workshopDialog');
+    const paint = () => {
+      const pane = { value: wsValueHtml, trade: wsTradeHtml, year: wsYearHtml, themes: wsThemesHtml, conv: wsConvHtml }[wsTab] || wsValueHtml;
+      box.innerHTML = '<div class="modal-box ws" role="dialog" aria-modal="true" aria-labelledby="wsTitle"><div class="pub-head"><h3 id="wsTitle">Atelier du collectionneur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
+        '<div class="ws-tabs" role="tablist" aria-label="Outils">' + WS_TABS.map(([k, l]) => '<button type="button" role="tab" aria-selected="' + (k === wsTab) + '" class="ws-tab' + (k === wsTab ? ' is-on' : '') + '" data-ws-tab="' + k + '">' + l + '</button>').join('') + '</div>' +
+        '<div class="ws-pane" role="tabpanel">' + pane() + '</div></div>';
+      const close = () => box.classList.remove('open');
+      box.onclick = e => { if (e.target === box) close(); };
+      box.onkeydown = e => { if (e.key === 'Escape') { e.stopPropagation(); close(); } };
+      box.querySelector('[data-close]').onclick = close;
+      box.querySelectorAll('[data-ws-tab]').forEach(b => { b.onclick = () => { wsTab = b.dataset.wsTab; paint(); const t = box.querySelector('.ws-tab.is-on'); if (t) t.focus(); }; });
+      const post = text => { close(); ntDraft = Object.assign(ntFresh(), { text: text.slice(0, 480) }); ntFocus(); };
+      const tr = box.querySelector('[data-ws-trade]');
+      if (tr) tr.onclick = () => { const { dup, wish } = wsTrade(); post('#Échange ' + (dup.length ? 'Je propose : ' + dup.slice(0, 12).map(plTitle).join(', ') + '. ' : '') + (wish.length ? 'Je cherche : ' + wish.slice(0, 12).map(plTitle).join(', ') + '.' : '')); };
+      const cv = box.querySelector('.ws-canvas');
+      if (cv) {
+        wsYearDraw(cv);
+        const blob = () => new Promise(res => { try { cv.toBlob(b => res(b), 'image/png'); } catch (_) { res(null); } });
+        box.querySelector('[data-ws-ysave]').onclick = async () => { const b = await blob(); if (!b) return; const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'panel-mon-annee.png'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 5000); };
+        const sh = box.querySelector('[data-ws-yshare]'); if (sh) sh.onclick = async () => { const b = await blob(); if (!b) return; try { await navigator.share({ files: [new File([b], 'panel-mon-annee.png', { type: 'image/png' })], text: 'Mon année comics sur Panel' }); } catch (_) {} };
+      }
+      const add = box.querySelector('[data-ws-thadd]');
+      if (add) add.onclick = () => {
+        const n = box.querySelector('[data-ws-thn]').value.trim().slice(0, 60), q = box.querySelector('[data-ws-thq]').value.trim().slice(0, 40);
+        if (!n || q.length < 2) { showToast('Donnez un nom et un mot à chercher (2 lettres au moins).'); return; }
+        const l = wsThemes(); if (l.length >= 30) { showToast('30 collections au plus.'); return; }
+        if (wsLsSet(WS_TH_KEY, { list: l.concat({ name: n, q }) })) paint();
+      };
+      box.querySelectorAll('[data-ws-thdel]').forEach(b => { b.onclick = () => { const l = wsThemes(); l.splice(Number(b.dataset.wsThdel), 1); if (wsLsSet(WS_TH_KEY, { list: l })) paint(); }; });
+      box.querySelectorAll('[data-ws-thshare]').forEach(b => { b.onclick = () => { const t = wsThemes()[Number(b.dataset.wsThshare)]; if (!t) return; const it = wsThemeItems(t);
+        post('#Collection ' + t.name + ' : ' + it.length + (it.length === 1 ? ' numéro. ' : ' numéros. ') + it.slice(0, 10).map(plTitle).join(', ')); }; });
+      const save = c => wsLsSet(WS_CONV_KEY, c) && paint();
+      const bg = box.querySelector('[data-ws-budgetgo]');
+      if (bg) bg.onclick = () => { const c = wsConv(); c.budget = wsNum(box.querySelector('[data-ws-budget]').value); save(c); };
+      box.querySelectorAll('[data-ws-got]').forEach(b => { b.onclick = () => { const c = wsConv(), inp = box.querySelector('[data-ws-price="' + CSS.escape(b.dataset.wsGot) + '"]'); c.got[b.dataset.wsGot] = wsNum(inp && inp.value); save(c); }; });
+      box.querySelectorAll('[data-ws-ungot]').forEach(b => { b.onclick = () => { const c = wsConv(); delete c.got[b.dataset.wsUngot]; save(c); }; });
+    };
+    paint(); box.classList.add('open');
+    setTimeout(() => { const t = box.querySelector('.ws-tab.is-on'); if (t) t.focus(); }, 0);
+    return box;
+  };
+  const wsEntryHtml = () => '<section class="ws-entry" aria-labelledby="wsEntryT"><h3 class="pf-section" id="wsEntryT">Atelier du collectionneur</h3><div class="ws-entry-g">' +
+    WS_TABS.map(([k, l]) => '<button type="button" class="ws-entry-b is-' + k + '" data-ws-open="' + k + '"><b>' + l + '</b><small>' + { value: 'Hausses et baisses de vos cotes', trade: 'Doubles et Wishlist à échanger', year: 'Votre récap en image 9:16', themes: '« Tous mes Venom »…', conv: 'Hors ligne, budget du jour' }[k] + '</small></button>').join('') + '</div></section>';
+  // Relecture des propositions de correction des fiches (modération) et badge « Contributeur »
+  const fixAll = () => { const v = wsLs('panel_ex_fixes', { list: [] }); return Array.isArray(v.list) ? v.list : []; };
+  const fixReviewHtml = () => {
+    const l = fixAll(), open = l.map((x, i) => ({ x, i })).filter(o => o.x && o.x.status === 'pending');
+    return '<section class="fix-rev"><h3>Corrections des fiches</h3><p class="stat-sub">Propositions faites sur les fiches des cartes, chacune avec sa source. « Vérifié » quand la source confirme ; rien ne change sur la fiche d\'origine.</p>' +
+      (open.length ? '<ul class="ws-ul">' + open.map(({ x, i }) => '<li><span><b>' + escapeHtml(String(x.ref || '')) + '</b> · ' + escapeHtml(x.text) + ' <a href="' + escapeHtml(x.source) + '" target="_blank" rel="noopener noreferrer">source</a></span>' +
+        '<span class="ws-row"><button type="button" class="btn rel-mini" data-fixrev="ok" data-fix-i="' + i + '">Vérifié</button><button type="button" class="btn secondary rel-mini" data-fixrev="no" data-fix-i="' + i + '">Refuser</button></span></li>').join('') + '</ul>'
+        : '<p class="stat-sub">Aucune proposition à relire.</p>') + '</section>';
+  };
+  const pfContribHtml = () => { const n = fixAll().filter(x => x && x.status === 'ok').length; return n ? '<div class="pf-chb-list"><span class="pf-chb is-contrib"><span aria-hidden="true">✎</span> <span>Contributeur</span> · ' + (n === 1 ? '1 correction vérifiée' : n + ' corrections vérifiées') + '</span></div>' : ''; };
+  document.addEventListener('click', e => {
+    const o = e.target.closest && e.target.closest('[data-ws-open]');
+    if (o) { openWorkshop(o.dataset.wsOpen); return; }
+    const f = e.target.closest && e.target.closest('[data-fixrev]');
+    if (f) {
+      const v = wsLs('panel_ex_fixes', { list: [] }), x = Array.isArray(v.list) && v.list[Number(f.dataset.fixI)];
+      if (!x) return; x.status = f.dataset.fixrev === 'ok' ? 'ok' : 'no'; x.reviewedAt = new Date().toISOString();
+      if (wsLsSet('panel_ex_fixes', v)) { const s = f.closest('.fix-rev'); if (s) s.outerHTML = fixReviewHtml(); showToast(x.status === 'ok' ? 'Correction vérifiée.' : 'Proposition refusée.'); }
+    }
+  });
   // D-109 : badges des défis de lecture relevés dans Découvrir (gardés sur l'appareil)
   const pfChallengesHtml = () => {
     let done = {}; try { const v = JSON.parse(localStorage.getItem('panel_ex_challenges') || 'null'); done = v && v.done && typeof v.done === 'object' ? v.done : {}; } catch (_) {}
@@ -27000,6 +27302,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     else if (['collection', 'series', 'releases', 'stats'].includes(view)) showSinglesView(view);
     if (action === 'scan') setTimeout(() => startBarcodeScanner(), 400);
     if (action === 'note') setTimeout(() => ntFocus(), 300);
+    // D-110 : raccourcis de l'icône vers Découvrir (personnage du jour) et le mode convention
+    if (view === 'discover' && $('navExplorer')) $('navExplorer').click();
+    if (action === 'convention') setTimeout(() => openWorkshop('conv'), 300);
     if (action === 'publish') setTimeout(() => openPublishSheet(), 300);
     if (view === 'live' && $('navLive')) $('navLive').click();
     if (view === 'profile' && $('navProfile')) $('navProfile').click();

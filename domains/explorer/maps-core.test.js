@@ -42,7 +42,7 @@ test('cartes interactives : seules les cartes de l\'atlas sont reprises, sans le
   for (const f of ['explorer.html', 'data.js', 'data-dc.js', 'images.js', 'panel-cartes.css', 'panel-cartes.js']) assert.ok(!I.LEFT.test(fs.readFileSync(path.join(C, f), 'utf8')), f);
   const ex = fs.readFileSync(path.join(C, 'explorer.html'), 'utf8');
   assert.ok(ex.includes("q.get('map')"));
-  assert.ok(ex.includes('<link rel="stylesheet" href="panel-cartes.css">\n<script src="panel-cartes.js"></script>'));
+  assert.ok(/<link rel="stylesheet" href="panel-cartes\.css\?v=[0-9a-f]{10}">\n<script src="panel-cartes\.js\?v=[0-9a-f]{10}"><\/script>/.test(ex));
   // Une carte, seule : barres du haut et du bas, titre d'introduction, légendes et panneau de fiche de l'atlas masqués
   const css = fs.readFileSync(path.join(C, 'panel-cartes.css'), 'utf8');
   assert.match(css, /^header, footer, #card, #cap, #bars, #wm,.*#panel, #safe \{ display: none !important; \}$/m);

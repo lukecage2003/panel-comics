@@ -1054,7 +1054,7 @@ const waitForCdp = async () => {
       testResults.push({
         test: 'PWA (manifest, icônes, service worker, hors ligne, raccourcis)',
         ok: !!t17 && !t17.error && t17.first.manifestLink && t17.first.name === 'Panel' && t17.first.display === 'standalone' && t17.first.iconsOk && t17.first.maskable &&
-          t17.first.shortcuts === 6 && t17.first.swActive && t17.first.backupBlocked && t17.second.controlled && t17.second.shellCached && t17.second.libsCached &&
+          t17.first.shortcuts === 8 && t17.first.swActive && t17.first.backupBlocked && t17.second.controlled && t17.second.shellCached && t17.second.libsCached &&
           t17.offlineLoaded && t17.offline.loaded && t17.offline.pill && t17.offline.noPdfjs && t17.offline.jszip && t17.shortcut.seriesVisible && t17.shortcut.cleanUrl
       });
 
@@ -6347,6 +6347,19 @@ const waitForCdp = async () => {
           document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); await wait(150);
           r.escape = !document.querySelector('.mp-view') && !document.body.classList.contains('mp-open');
           window.Panel.explorer.open('home'); await wait(200);
+          // D-110 : quiz cosmique sur l'accueil de Découvrir ; Atelier du collectionneur (5 onglets, récap 9:16 dessiné, rien d'enregistré)
+          for (let i = 0; i < 40 && !document.querySelector('#exQuiz .ex-quiz-o'); i++) await wait(100);
+          r.quiz = document.querySelectorAll('#exQuiz .ex-quiz-o').length === 4;
+          const lsKeys = Object.keys(localStorage).sort().join('|');
+          const ws =(() => { try { $('navProfile').click(); const b = document.querySelector('[data-ws-open="trade"]'); if (!b) return false; b.click(); return true; } catch (_) { return false; } })();
+          await wait(200);
+          const panes = [];
+          if (ws) for (const k of ['value', 'trade', 'year', 'themes', 'conv']) { const t = document.querySelector('[data-ws-tab="' + k + '"]'); if (t) { t.click(); await wait(120); panes.push(document.querySelector('.ws-pane').textContent.length > 40); } }
+          r.workshop = ws && panes.length === 5 && panes.every(Boolean) && !!document.querySelector('#workshopDialog.open') && Object.keys(localStorage).sort().join('|') === lsKeys;
+          document.querySelector('#workshopDialog [data-ws-tab="year"]').click(); await wait(150);
+          r.workshop = r.workshop && !!(document.querySelector('.ws-canvas') || {}).dataset && !!document.querySelector('.ws-canvas').dataset.drawn;
+          document.querySelector('#workshopDialog [data-close]').click();
+          window.Panel.explorer.open('home'); await wait(200);
         } catch (e) { r.error = String(e && e.message || e); }
         finally {
           window.confirm = confirm0;
@@ -6358,7 +6371,7 @@ const waitForCdp = async () => {
       })()`);
       console.log('Résultat Test 85:', JSON.stringify(t85));
       testResults.push({ test: 'Test 85 : Univers datés et sourcés, univers ajoutés, atlas interactif (D-106, D-107, D-108)',
-        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'live', 'next', 'escape', 'dataUntouched'].every(k => t85[k] === true) });
+        ok: !!t85 && !t85.error && ['ultimates', 'milestone', 'sources', 'creatorModule', 'sourceRequired', 'added', 'removed', 'tile', 'page', 'noImport', 'filters', 'search', 'viewer', 'single', 'info', 'live', 'next', 'escape', 'quiz', 'workshop', 'dataUntouched'].every(k => t85[k] === true) });
       console.log('\n==========================================');
       console.log('RÉCAPITULATIF DES TESTS EXÉCUTÉS DANS EDGE :');
       testResults.forEach(r => console.log((r.ok ? '✓ PASS' : '✗ FAIL') + ' - ' + r.test));
