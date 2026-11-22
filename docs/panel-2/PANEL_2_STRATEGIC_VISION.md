@@ -18,7 +18,7 @@ PANEL 2.0 ne reconstruit rien de cela. Il ajoute une **couche de connaissance v�
 
 | | |
 |---|---|
-| Identité | PANEL (by Primestone) |
+| Identité | PANEL |
 | Marché de lancement | Francophonie (France, Belgique, Suisse, Québec, Luxembourg), déjà reflétée dans le calendrier (D-75) |
 | Ambition | Mondiale, avec une architecture prête pour plusieurs langues |
 | Équilibre | Collection, lecture et communauté au même rang ; la connaissance documentaire les relie |

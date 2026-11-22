@@ -1,13 +1,13 @@
 # PANEL — Spécification UX/UI et design system
 
-Date : 13 novembre 2026. Statut : proposé (D-58). Le système visuel existant est décrit dans [`DESIGN.md`](../../DESIGN.md) (« Quadrichromie de kiosque », DA Primestone jaune et noir) et a été complété par le mode sombre et l'affinage inspiré d'Apple (D-53). Ce document décrit l'existant puis la cible, sans repartir de zéro.
+Date : 13 novembre 2026. Statut : proposé (D-58). Le système visuel existant est décrit dans [`DESIGN.md`](../../DESIGN.md) (« Quadrichromie de kiosque », DA jaune et noir) et a été complété par le mode sombre et l'affinage inspiré d'Apple (D-53). Ce document décrit l'existant puis la cible, sans repartir de zéro.
 
 ## 1. Identité visuelle
 
-**Existant.** Noir `#111111` et jaune `#FFD400` (DA Primestone), papier chaud `#F3F2EE`, titres en **Barlow Condensed** (600-800, auto-hébergée, licence OFL), icônes SVG au trait (`<symbol id="ic-…">`). Mode **clair / sombre / système** (`html[data-mode]`, clé locale `panel_color_mode`), accents au choix (Primestone, magenta, cyan, rouge, violet). Surfaces arrondies, ombres douces, pastilles, verre dépoli sur la barre mobile (D-53).
+**Existant.** Noir `#111111` et jaune `#FFD400` (DA de Panel), papier chaud `#F3F2EE`, titres en **Barlow Condensed** (600-800, auto-hébergée, licence OFL), icônes SVG au trait (`<symbol id="ic-…">`). Mode **clair / sombre / système** (`html[data-mode]`, clé locale `panel_color_mode`), accents au choix (jaune, magenta, cyan, rouge, violet). Surfaces arrondies, ombres douces, pastilles, verre dépoli sur la barre mobile (D-53).
 
 **Cible.** Conserver cette identité : elle est propre à PANEL, reconnaissable (bande dessinée imprimée, kiosque) et premium. Évolutions :
-- Remplacer « Panel by Primestone » par **PANEL** dans les titres et le manifeste quand la marque sera arrêtée (décision du porteur).
+- Marque : **Panel** dans les titres et le manifeste (fait, D-108 et D-111).
 - Ajouter une famille de texte lisible pour les publications longues (critique) : police système (`-apple-system`, `Segoe UI`, `Roboto`) déjà utilisée, pas de nouvelle police payante.
 - Bulles et cases de BD comme **motif graphique discret** (états vides, badges de challenge), jamais comme décor envahissant.
 

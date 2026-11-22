@@ -9,7 +9,7 @@
 > **Révision 5 (7 novembre 2026, fait autorité) : finalisation architecturale** : sauvegardes par domaine (B1, principe approuvé), règles de personnalisation S1, périmètre comics étendu à tout Explorer, contrats de référence, architecture des images, plan d'exécution. Documents de référence : [`02`](02-frontieres-collection-explorer.md) (frontières), [`05`](05-contrats-s1-s6.md) (contrats), [`06`](06-sauvegardes-par-domaine.md) (sauvegardes), [`07`](07-architecture-images-r2.md) (images), [`08`](08-plan-execution.md) (plan), [`../DECISIONS.md`](../DECISIONS.md) (journal).
 > Analyse des impacts : [`01-analyse-et-impacts.md`](01-analyse-et-impacts.md). Changement de navigation : [`03-changement-navigation.md`](03-changement-navigation.md).
 
-**Produit :** Panel by Primestone  
+**Produit :** Panel  
 **Module :** Explorer 2.0  
 **Slogan :** Collect. Discover. Connect.  
 **Plateformes :** Web et Android  

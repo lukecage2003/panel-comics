@@ -6167,7 +6167,7 @@ const waitForCdp = async () => {
           const dyn = document.querySelector('#settingsModal [data-set-pane="dyn"]');
           const sums = dyn ? [...dyn.querySelectorAll('details.set-legal > summary')].map(s => s.textContent) : [];
           r.legal = !!lt && sums.join('|') === 'Mentions légales|Confidentialité et données personnelles|Règles de la communauté|Âge|Droits d\\'auteur et marques|Sécurité' &&
-            /RGPD/.test(dyn.textContent) && /15 ans/.test(dyn.textContent) && /juriste/.test(dyn.textContent) && /à compléter/.test(dyn.textContent);
+            /RGPD/.test(dyn.textContent) && /avant 13 ans/.test(dyn.textContent) && /ni les messages/.test(dyn.textContent) && /APD/.test(dyn.textContent) && /juriste/.test(dyn.textContent) && /à compléter/.test(dyn.textContent);
           document.querySelector('#settingsModal [data-set-tab="account"]').click(); await wait(100);
           $('settingsModal').classList.remove('open');
           if (devPrev !== null) { localStorage.setItem('panel_dev_mode', devPrev); document.documentElement.classList.add('is-dev'); }

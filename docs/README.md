@@ -1,9 +1,10 @@
 # Documentation de Panel : index central
 
-Mise à jour : 7 novembre 2026. Les documents qui font autorité, et leur ordre de priorité en cas de contradiction, sont listés dans [`DECISIONS.md`](DECISIONS.md).
+Mise à jour : 22 novembre 2026. Les documents qui font autorité, et leur ordre de priorité en cas de contradiction, sont listés dans [`DECISIONS.md`](DECISIONS.md).
 
 | Sujet | Document |
 |---|---|
+| **Référence centrale (22 novembre 2026, D-111)** : MASTER ROADMAP, état des lieux, catalogue, modèle économique et financier, conformité, Panel Guardian | [`master/MASTER_ROADMAP.md`](master/MASTER_ROADMAP.md) |
 | Feuille de route | [`ROADMAP.md`](ROADMAP.md) |
 | Journal des décisions, décisions en attente | [`DECISIONS.md`](DECISIONS.md) |
 | Historique des lots | [`HISTORIQUE-LOTS.md`](HISTORIQUE-LOTS.md) |

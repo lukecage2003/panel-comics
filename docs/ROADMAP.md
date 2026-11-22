@@ -1,4 +1,4 @@
-# Feuille de route — Panel by Primestone
+# Feuille de route — Panel
 
 Mise à jour : 7 novembre 2026. Historique détaillé : [`HISTORIQUE-LOTS.md`](HISTORIQUE-LOTS.md).
 

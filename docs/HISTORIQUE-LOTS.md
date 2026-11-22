@@ -1,4 +1,4 @@
-# Historique des lots — Panel by Primestone
+# Historique des lots — Panel
 
 Relevé du 7 novembre 2026. Chaque référence a été vérifiée avec `git log` : la branche `main` est locale et n'a pas de remote, donc rien n'est poussé.
 
@@ -22,11 +22,11 @@ Audit initial réalisé avant le suivi par Git. Aucun commit ne lui correspond.
 | 2.2 | Exemplaires et variantes (normalisation, regroupement, saisie structurée, restauration fidèle) | `0aca044` | Validé |
 | 2.3 | Organisation physique : emplacements Pièce → Meuble → Boîte → Séparateur | `1de33e8` | Validé |
 | 2.4 | Calendrier international, sorties, Pull List par numéro, Wishlist structurée | `7eae929` | Validé |
-| 2.5 | Sources de données, provenance par champ, conflits, import contrôlé (« Data Acquisition & Intelligence Engine ») | `29b9b2a` (DA Primestone livrée juste avant, dans `d36df45`) | Validé |
+| 2.5 | Sources de données, provenance par champ, conflits, import contrôlé (« Data Acquisition & Intelligence Engine ») | `29b9b2a` (direction artistique jaune et noir livrée juste avant, dans `d36df45`) | Validé |
 | 2.6 | Explorer & Reading Guides | `fe19e3c` | Validé le 7 novembre 2026 |
 
 Remarques :
-- Le commit `d36df45` est la direction artistique « Primestone » (jaune et noir). Elle a été livrée et validée avec le lot 2.5 ; ce n'est pas un commit fonctionnel du lot 2.5.
+- Le commit `d36df45` est la direction artistique jaune et noir. Elle a été livrée et validée avec le lot 2.5 ; ce n'est pas un commit fonctionnel du lot 2.5.
 - Le lot 2.1 compte deux commits : la livraison, puis la sécurisation.
 - Un lot 2.7 avait été envisagé au départ. Il n'a pas été réalisé : la Phase 2 se clôt au lot 2.6, et les sujets restants passent au backlog (voir [`ROADMAP.md`](ROADMAP.md)).
 
