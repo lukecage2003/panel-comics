@@ -102,3 +102,12 @@ Le détail est dans [DECISIONS.md](../DECISIONS.md).
 - **Test** `fk-indexes` : il échoue si une future migration ajoute une clé étrangère sans index.
 - **Vérifié après application** : plus aucune clé étrangère sans index. Le conseiller signale les nouveaux index comme inutilisés, ce qui est normal sur une base vide.
 - **Pas traité** : `community.rate_events` reste sans clé primaire. C'est un journal à durée courte, lu par son index existant.
+
+## Décisions de D-118
+
+- **Version de test en ligne** sur GitHub Pages, demandée par l'utilisateur (« je veux le mettre en ligne avec github pour tester ») : https://lukecage2003.github.io/panel-comics/ (branche `main`, racine, activée par l'utilisateur le 22/11/2026).
+- Fichier `.nojekyll` : GitHub sert les fichiers tels quels.
+- Sur une adresse non locale, l'app sait d'emblée que les relais de `serve.js` sont absents (aucun appel à `/api`). Le bandeau « Mode limité » l'explique sans renvoyer vers `Lancer Panel.cmd`.
+- **Indisponible en ligne** : recherche Comic Vine, couvertures GCD, Metron, Wikidata, BnF, boutiques, actualités, car ils passent tous par le relais local.
+- **Vérifié en ligne** : page servie, aucune erreur dans la console, Accueil, Marché et Profil ouverts, service worker enregistré.
+- **Données** : chaque visiteur a sa collection dans son propre navigateur. La collection locale de l'utilisateur (origine localhost) n'est ni copiée ni touchée. Rien n'est envoyé à Supabase, les comptes (S8) restant fermés.
