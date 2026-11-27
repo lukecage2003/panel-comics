@@ -102,3 +102,26 @@ test('D-114 : Google et Apple par OAuth, lien magique neutre, double authentific
   assert.ok(A.signupProfile({ handle: 'pro.ado', birthYear: 2010, type: 'creator', terms: true }, 2026, T).errors.some(e => /adultes/.test(e)));
   assert.ok(!A.signupProfile({ handle: 'sans.accord', birthYear: 1990 }, 2026, T).ok);
 });
+
+test('mots de passe divulgués (D-130) : seul le préfixe de 5 caractères part, comparaison locale, échec réseau non bloquant', async () => {
+  const crypto = require('node:crypto');
+  const pw = 'Motdepasse1234';
+  const hex = crypto.createHash('sha1').update(pw).digest('hex').toUpperCase();
+  const seen = [];
+  const fakeFetch = body => async (url, init) => { seen.push({ url, init }); return { ok: true, text: async () => body }; };
+  assert.equal(await A.pwnedCount(pw, { fetch: fakeFetch('0000000000000000000000000000000000A:0\r\n' + hex.slice(5) + ':42\r\n') }), 42);
+  assert.equal(seen[0].url, 'https://api.pwnedpasswords.com/range/' + hex.slice(0, 5));
+  assert.ok(!seen[0].url.includes(hex.slice(5)) && !seen[0].url.includes(pw));
+  assert.equal(await A.pwnedCount(pw, { fetch: fakeFetch('ABCDEF:3\r\n') }), 0);
+  assert.equal(await A.pwnedCount(pw, { fetch: async () => { throw new Error('hors ligne'); } }), null);
+  assert.equal(await A.pwnedCount(pw, { fetch: async () => ({ ok: false }) }), null);
+  assert.equal(await A.pwnedCount(pw, {}), null); // jamais d'appel réseau implicite
+  // Inscription : refusée si divulgué, envoyée sinon (et sans fetch injecté, aucune vérification)
+  let signed = 0;
+  const client = { auth: { signUp: async () => { signed++; return { data: {}, error: null }; } } };
+  const bad = await A.createAuthFlow(client, { pwnedFetch: fakeFetch(hex.slice(5) + ':9') }).signUp('a@exemple.fr', pw);
+  assert.equal(bad.ok, false); assert.equal(bad.error.code, 'pwned_password'); assert.equal(signed, 0);
+  assert.equal((await A.createAuthFlow(client, { pwnedFetch: async () => { throw new Error('x'); } }).signUp('a@exemple.fr', pw)).ok, true);
+  assert.equal((await A.createAuthFlow(client, {}).signUp('a@exemple.fr', pw)).ok, true);
+  assert.equal(signed, 2);
+});

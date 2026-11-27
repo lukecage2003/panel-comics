@@ -6426,7 +6426,8 @@ const waitForCdp = async () => {
           r.sealPreview = document.querySelectorAll('.vt-card .hb-vbadge').length === 4 && !q('.hb-badge');
           const pf = q('[data-hb-form="pro"]'); pf.elements.name.value = 'Alex Encre'; pf.querySelector('input[value="writer"]').checked = true; pf.requestSubmit(); await wait(250);
           r.proDraft = !q('.hb-badge') && /Brouillon/.test(q('.hb-proof').textContent) && JSON.parse(localStorage.getItem(HKEY)).pro.status === 'draft';
-          q('.hb-chip[data-cm-tab="plans"]').click(); await wait(300);
+          // D-131 : Panel+ n'est plus un onglet du Profil ; on l'ouvre par son entrée (Réglages › Compte)
+          document.getElementById('navPlus').click(); await wait(300);
           const plans = [...document.querySelectorAll('.hb-plan')];
           r.plans = plans.length === 5 && plans.every(x => /Gratuit|Tarif à venir/.test(x.querySelector('.hb-tarif').textContent)) && [...document.querySelectorAll('.hb-plan .btn')].every(b => b.disabled);
           r.never = document.querySelectorAll('.hb-never li').length === 5;

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-A4HlQHOJLLSd6NV4t3N6qIZIyepxDQpmf2vlM4n1nF8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-/GIVqayZrkZvGMDjrfSsoRrJ9POTXEum8tuySKvj0oA=' 'sha256-Mfr2gWi/3tlGHWZFGBMgOtloAfMOenycHo7zb0kk55k=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4254,28 +4254,14 @@
     .pfc-go b { font-size: 12px; color: var(--ink-dim, inherit); }
     .pfc-go .ic { width: 18px; height: 18px; flex: 0 0 18px; }
       /* Animation d'ouverture (D-98) : 1,2 s, une fois par session ; le contenu reste utilisable dessous */
-    /* D-124 : ouverture « encrage ». Les cases d'une planche se tracent à l'encre, se colorent, puis la caméra plonge
-       dans la case jaune qui devient le logo (1,8 s). Pas d'effet gadget : trait, aplat, trame, mouvement de caméra. */
-    .splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; overflow: hidden; background: #0b0b0c; pointer-events: none; animation: splashOut .3s cubic-bezier(.4,0,.2,1) 1.55s forwards; }
-    .sp-page { position: absolute; width: min(70vw, 320px); height: auto; overflow: visible; transform-origin: 33.7% 16.9%; animation: spPage .5s cubic-bezier(.2,.8,.2,1) both, spDive .5s cubic-bezier(.7,0,.3,1) 1.02s forwards; }
-    .sp-paper { fill: #f4efe2; }
-    .sp-ink { fill: none; stroke: #0b0b0c; stroke-width: 4.5; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: spInk .36s cubic-bezier(.6,.1,.3,1) forwards; }
-    .sp-fill { transform-box: fill-box; transform-origin: 0 50%; transform: scaleX(0); animation: spWipe .3s cubic-bezier(.6,.1,.2,1) forwards; }
-    .sp-i1 { animation-delay: .08s; } .sp-i2 { animation-delay: .16s; } .sp-i3 { animation-delay: .24s; } .sp-i4 { animation-delay: .32s; } .sp-i5 { animation-delay: .4s; } .sp-i6 { animation-delay: .48s; }
-    .sp-f1 { animation-delay: .42s; } .sp-f2 { animation-delay: .5s; } .sp-f3 { animation-delay: .56s; } .sp-f4 { animation-delay: .62s; } .sp-f5 { animation-delay: .7s; } .sp-f6 { animation-delay: .76s; }
-    .splash-in { position: relative; display: grid; justify-items: center; gap: 14px; }
-    .splash .pm { width: 84px; height: 84px; animation: splashMark .5s cubic-bezier(.2,.9,.25,1) 1.22s both; }
-    .splash .pm-bg { fill: #ffd400; }
-    .splash .pm-p { fill: #0b0b0c; transform-box: fill-box; transform-origin: center; animation: splashPanel .28s cubic-bezier(.2,1.3,.4,1) both; }
-    .splash .pm-p1 { animation-delay: 1.3s; } .splash .pm-p2 { animation-delay: 1.35s; } .splash .pm-p3 { animation-delay: 1.4s; }
-    .splash-word { color: #f4f4f2; font: 800 28px/1 var(--font-display); letter-spacing: -.02em; animation: splashWord .3s ease-out 1.36s both; }
-    @keyframes spPage { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
-    @keyframes spInk { to { stroke-dashoffset: 0; } }
-    @keyframes spWipe { to { transform: none; } }
-    @keyframes spDive { 55% { opacity: 1; } to { transform: scale(7); opacity: 0; } }
-    @keyframes splashMark { from { opacity: 0; transform: scale(2.2); } to { opacity: 1; transform: none; } }
-    @keyframes splashPanel { from { opacity: 0; transform: scale(.5); } to { opacity: 1; transform: none; } }
-    @keyframes splashWord { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    /* D-131 : ouverture sobre, façon Instagram : le logo seul au centre, la signature en bas, un fondu court.
+       Aucune animation pendant le chargement (le téléphone garde toute sa puissance pour démarrer l'application). */
+    .splash { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center; background: #0b0b0c; pointer-events: none; animation: splashOut .22s ease-out .38s forwards; }
+    .splash-in { display: grid; justify-items: center; }
+    .splash .pm { width: 76px; height: 76px; }
+    .splash .pm-bg { fill: #ffd400; } .splash .pm-p { fill: #0b0b0c; }
+    .splash-sig { position: absolute; left: 0; right: 0; bottom: calc(36px + env(safe-area-inset-bottom)); text-align: center; color: #8a8a85; font: 500 12px/1.3 var(--font-body, system-ui); letter-spacing: .02em; }
+    .splash-sig b { display: block; color: #f4f4f2; font: 800 17px/1.2 var(--font-display); letter-spacing: -.01em; }
     @keyframes splashOut { to { opacity: 0; visibility: hidden; } }
     /* D-127 : accueil « Créer un compte ou se connecter », premier écran tant qu'aucun compte n'est ouvert sur l'appareil */
     .wg { position: fixed; inset: 0; z-index: 9000; overflow-y: auto; overscroll-behavior: contain; display: flex; justify-content: center; background: #0b0b0c; color: #f4f4f2; padding: calc(28px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom)); animation: wgIn .32s cubic-bezier(.2,.8,.2,1) both; }
@@ -4544,11 +4530,26 @@
     .pm-bg { fill: #ffd400; } .pm-p { fill: #0b0b0c; }
     .brandmark, aside .brandmark { background: none !important; box-shadow: none !important; border-radius: 0 !important; padding: 0 !important; overflow: visible; }
     .brandmark .pm { width: 100%; height: 100%; display: block; }
-</style>
+    /* D-131 : fluidité sur téléphone. Le flou d'arrière-plan (backdrop-filter) oblige le téléphone à recalculer chaque image
+       pendant le défilement : il est retiré dans l'application Android et sur les écrans tactiles, au profit d'aplats opaques. */
+    /* D-131 : l'abonnement se fait discret, comme Meta Verified chez Instagram : plus dans le menu, seulement dans Réglages › Compte */
+    #navPlus { display: none !important; }
+    .sp-mini { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px !important; }
+    .sp-mini span { color: var(--muted); font-size: 13px; }
+    .sp-mini button { border: 0; background: none; color: var(--text); font: inherit; font-weight: 700; cursor: pointer; padding: 6px 0; white-space: nowrap; }
+    html.native-app:root { --glass: var(--bg-card) !important; --bg-glass: var(--bg-card) !important; }
+    html.native-app:root body *, html.native-app:root body *::before, html.native-app:root body *::after, html.native-app #settingsModal .set-box > div:first-child { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+    html.native-app .mobile-dock, html.native-app aside { background: var(--bg-card) !important; }
+    @media (pointer: coarse) {
+      :root { --glass: var(--bg-card) !important; --bg-glass: var(--bg-card) !important; }
+      html:root body *, html:root body *::before, html:root body *::after, html #settingsModal .set-box > div:first-child { -webkit-backdrop-filter: none !important; backdrop-filter: none !important; }
+      .mobile-dock, aside { background: var(--bg-card) !important; }
+    }
+  </style>
 </head>
 <body>
-<div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p pm-p1" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p pm-p2" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p pm-p3" x="266" y="268" width="122" height="120" rx="26"/></svg><b class="splash-word">panel</b></div><svg class="sp-page" viewBox="0 0 300 450" aria-hidden="true"><defs><pattern id="spDots" width="7" height="7" patternUnits="userSpaceOnUse"><rect width="7" height="7" fill="#fff"/><circle cx="3.5" cy="3.5" r="1.7" fill="#0b0b0c"/></pattern><pattern id="spLines" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(-14)"><rect width="9" height="9" fill="#fff"/><rect width="9" height="3" fill="#0b0b0c"/></pattern><pattern id="spRed" width="6" height="6" patternUnits="userSpaceOnUse"><rect width="6" height="6" fill="#fff"/><circle cx="3" cy="3" r="1.6" fill="#e63b2e"/></pattern></defs><rect class="sp-paper" width="300" height="450" rx="3"/><rect class="sp-fill sp-f1" x="12" y="12" width="178" height="120" fill="#ffd400"/><rect class="sp-fill sp-f2" x="198" y="12" width="90" height="120" fill="url(#spDots)"/><rect class="sp-fill sp-f3" x="12" y="140" width="90" height="170" fill="#0b0b0c"/><rect class="sp-fill sp-f4" x="110" y="140" width="178" height="170" fill="url(#spLines)"/><rect class="sp-fill sp-f5" x="12" y="318" width="178" height="120" fill="url(#spRed)"/><rect class="sp-fill sp-f6" x="198" y="318" width="90" height="120" fill="#ffd400"/><rect class="sp-ink sp-i1" x="12" y="12" width="178" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i2" x="198" y="12" width="90" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i3" x="12" y="140" width="90" height="170" rx="2" pathLength="1"/><rect class="sp-ink sp-i4" x="110" y="140" width="178" height="170" rx="2" pathLength="1"/><rect class="sp-ink sp-i5" x="12" y="318" width="178" height="120" rx="2" pathLength="1"/><rect class="sp-ink sp-i6" x="198" y="318" width="90" height="120" rx="2" pathLength="1"/></svg></div>
-<script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}s.addEventListener('animationend',function(e){if(e.animationName==='splashOut'&&s.parentNode)s.remove()});setTimeout(function(){if(s.parentNode)s.remove()},4500)})();</script>
+<div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p" x="266" y="268" width="122" height="120" rx="26"/></svg></div><p class="splash-sig">de<b>Primestone Media</b></p></div>
+<script>(function(){var s=document.getElementById('splash');if(!s)return;try{if(sessionStorage.getItem('panel_splash_v1')||matchMedia('(prefers-reduced-motion: reduce)').matches){s.remove();return}sessionStorage.setItem('panel_splash_v1','1')}catch(e){}s.addEventListener('animationend',function(e){if(e.animationName==='splashOut'&&s.parentNode)s.remove()});setTimeout(function(){if(s.parentNode)s.remove()},2500)})();</script>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true"><symbol id="lk-claws" viewBox="0 0 24 24"><path d="M4.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5zM10.5 2.5c4 4.6 5 11 2.5 18.5 3.8-6.8 4-13-2.5-18.5zM16.5 3.5c4 4 5 10 2.5 17.5 3.8-6.2 4-12.2-2.5-17.5z"/></symbol><symbol id="lk-web" viewBox="0 0 24 24"><path d="M12 2.5l6.7 2.8 2.8 6.7-2.8 6.7-6.7 2.8-6.7-2.8L2.5 12l2.8-6.7zM12 2.5v19M2.5 12h19M5.3 5.3l13.4 13.4M18.7 5.3L5.3 18.7M12 7l3.5 1.5L17 12l-1.5 3.5L12 17l-3.5-1.5L7 12l1.5-3.5z"/></symbol><symbol id="lk-hammer" viewBox="0 0 24 24"><path d="M3 4.5h12.5v7H3zM15.5 6.5h4v3h-4zM8 11.5h2.6V21H8z"/></symbol><symbol id="lk-wings" viewBox="0 0 24 24"><path d="M12 10.5C9.4 6.8 5.3 6.2 2 8.2c2 1 3.1 3 3 5.4 2-1.2 4.3-1 5.6 1 .5-.7 1-1 1.4-1s.9.3 1.4 1c1.3-2 3.6-2.2 5.6-1-.1-2.4 1-4.4 3-5.4-3.3-2-7.4-1.4-10 2.3z"/></symbol><symbol id="lk-flame" viewBox="0 0 24 24"><path d="M12.5 2.5c.6 4.2 5.5 5.6 5.5 11a6 6 0 0 1-12 0c0-3.2 2-4.6 2.4-7 1.1 1.1 1.5 2.3 1.8 3.6.9-2.6 2.3-4.7 2.3-7.6z"/></symbol><symbol id="lk-cosmic" viewBox="0 0 24 24"><path d="M12 2l1.9 6.1L19.8 5l-3.1 5.9L22 12l-5.3 1.1 3.1 5.9-5.9-3.1L12 22l-1.9-6.1L4.2 19l3.1-5.9L2 12l5.3-1.1L4.2 5l5.9 3.1z"/></symbol><symbol id="lk-ring" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 8.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12zm0 2.6a3.4 3.4 0 1 0 0 6.8 3.4 3.4 0 0 0 0-6.8zM9.6 5.4L12 2.5l2.4 2.9L12 8.2z"/></symbol><symbol id="lk-mask" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M2 9.5c3.2-2.2 7-2.4 10-.6 3-1.8 6.8-1.6 10 .6 0 4.6-2.6 7-5.8 7-2.2 0-3.2-2-4.2-2s-2 2-4.2 2C4.6 16.5 2 14.1 2 9.5zm4.5 1.8c.6 1.2 2.3 1.6 3.4.8-.7-1.1-2.3-1.5-3.4-.8zm11 0c-1.1-.7-2.7-.3-3.4.8 1.1.8 2.8.4 3.4-.8z"/></symbol><symbol id="lk-skull" viewBox="0 0 24 24"><path fill-rule="evenodd" d="M12 2.5a7.5 7.5 0 0 0-7.5 7.5c0 3 1.4 4.8 3 5.8V20h9v-4.2c1.6-1 3-2.8 3-5.8A7.5 7.5 0 0 0 12 2.5zM8.8 9.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm6.4 0a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zM12 13.5l1.2 2h-2.4z"/></symbol><symbol id="ic-chat" viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></symbol><symbol id="ic-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol><symbol id="ic-home" viewBox="0 0 24 24"><path d="M4 11l8-7 8 7v9h-5v-6H9v6H4z"/></symbol><symbol id="ic-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></symbol><symbol id="ic-live" viewBox="0 0 24 24"><rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/></symbol><symbol id="ic-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol><symbol id="ic-barcode" viewBox="0 0 24 24"><path d="M4 6v12M7 6v12M11 6v12M14 6v12M17 6v12M20 6v12"/></symbol><symbol id="ic-camera" viewBox="0 0 24 24"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></symbol><symbol id="ic-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol><symbol id="ic-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2.5v3M12 18.5v3M4.6 4.6l2.1 2.1M17.3 17.3l2.1 2.1M2.5 12h3M18.5 12h3M4.6 19.4l2.1-2.1M17.3 6.7l2.1-2.1"/></symbol><symbol id="ic-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></symbol><symbol id="ic-book" viewBox="0 0 24 24"><path d="M3 5h6.5A2.5 2.5 0 0 1 12 7.5V20a2 2 0 0 0-2-2H3zM21 5h-6.5A2.5 2.5 0 0 0 12 7.5V20a2 2 0 0 1 2-2h7z"/></symbol><symbol id="ic-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5zM3 13l9 5 9-5"/></symbol><symbol id="ic-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol><symbol id="ic-users" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3.2 2.5-5.5 5.5-5.5s5.5 2.3 5.5 5.5"/><path d="M15.5 4.9a3.2 3.2 0 0 1 0 6.2M17 14.2c2.1.6 3.5 2.6 3.5 5.3"/></symbol><symbol id="ic-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></symbol><symbol id="ic-chart" viewBox="0 0 24 24"><path d="M5 20V11M11 20V5M17 20v-7M3 20h18"/></symbol><symbol id="ic-list" viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12M4 6h.01M4 12h.01M4 18h.01"/></symbol><symbol id="ic-grid" viewBox="0 0 24 24"><path d="M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z"/></symbol><symbol id="ic-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol><symbol id="ic-upload" viewBox="0 0 24 24"><path d="M12 20V9M7 14l5-5 5 5M4 4h16"/></symbol><symbol id="ic-folder" viewBox="0 0 24 24"><path d="M3 6h6l2 2h10v11H3z"/></symbol><symbol id="ic-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6"/></symbol><symbol id="ic-pencil" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16zM14 6l4 4"/></symbol><symbol id="ic-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol><symbol id="ic-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol><symbol id="ic-check-circle" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9.5"/></symbol><symbol id="ic-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M16.5 6.5l3 3M14.5 8.5l2 2"/></symbol><symbol id="ic-bolt" viewBox="0 0 24 24"><path d="M13 2L4.5 14H11l-1 8 8.5-12H12z"/></symbol><symbol id="ic-alert" viewBox="0 0 24 24"><path d="M12 3.5l9.5 17h-19zM12 10v4.5M12 17.5h.01"/></symbol><symbol id="ic-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5h.01"/></symbol><symbol id="ic-tag" viewBox="0 0 24 24"><path d="M3 3h8l10 10-8 8L3 11zM7.5 7.5h.01"/></symbol><symbol id="ic-box" viewBox="0 0 24 24"><path d="M3 7.5l9-4.5 9 4.5v9L12 21l-9-4.5zM3 7.5l9 4.5 9-4.5M12 12v9"/></symbol><symbol id="ic-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3.4 3 14.6 0 18M12 3c-3 3.4-3 14.6 0 18"/></symbol><symbol id="ic-bookmark" viewBox="0 0 24 24"><path d="M6 3h12v18l-6-4.2L6 21z"/></symbol><symbol id="ic-palette" viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 0 18c1.4 0 2-1 2-2 0-1.2-1-1.6-1-2.6 0-.8.6-1.4 1.4-1.4H17a4 4 0 0 0 4-4c0-4.5-4-8-9-8z"/><path d="M7.5 12h.01M10 7.5h.01M15 7.5h.01"/></symbol><symbol id="ic-play" viewBox="0 0 24 24"><path d="M7 4.5l12 7.5-12 7.5z"/></symbol><symbol id="ic-refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.6-4.5M4 4v4h4M4 13a8 8 0 0 0 14.6 4.5M20 20v-4h-4"/></symbol><symbol id="ic-image" viewBox="0 0 24 24"><path d="M3 5h18v14H3z"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-9 8"/></symbol><symbol id="ic-pen" viewBox="0 0 24 24"><path d="M3 21c3-1 4.5-3 6-5M14 4l6 6-9 9-4 1 1-4z"/></symbol><symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></symbol><symbol id="ic-sparkle" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15.5l.8 2 2 .8-2 .8-.8 2-.8-2-2-.8 2-.8z"/></symbol><symbol id="ic-save" viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5zM8 3v5h7M8 21v-7h8v7"/></symbol><symbol id="ic-phone" viewBox="0 0 24 24"><path d="M7 2.5h10v19H7zM11 18.5h2"/></symbol><symbol id="ic-external" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></symbol><symbol id="ic-arrows-h" viewBox="0 0 24 24"><path d="M3 12h18M7 8l-4 4 4 4M17 8l4 4-4 4"/></symbol><symbol id="ic-books" viewBox="0 0 24 24"><path d="M4 4h4v16H4zM10 4h4v16h-4zM15.5 5.2l3.4-.9 3.6 14.6-3.4.9z"/></symbol><symbol id="ic-bulb" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.4c.8.8 1 1.6 1 2.6h6c0-1 .2-1.8 1-2.6A6 6 0 0 0 12 3z"/></symbol><symbol id="ic-clip" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l9-9a3.4 3.4 0 0 1 4.8 4.8l-9 9a1.7 1.7 0 0 1-2.4-2.4l8.2-8.2"/></symbol><symbol id="ic-hourglass" viewBox="0 0 24 24"><path d="M6 3h12M6 21h12M7 3c0 5 10 5 10 9s-10 4-10 9M17 3c0 5-10 5-10 9s10 4 10 9"/></symbol><symbol id="ic-gem" viewBox="0 0 24 24"><path d="M6.5 3.5h11L21 9l-9 11.5L3 9zM3 9h18M10 3.5L8.5 9l3.5 11.5L15.5 9 14 3.5"/></symbol><symbol id="ic-torch" viewBox="0 0 24 24"><path d="M8 2.5h8V7l-2 3v11.5h-4V10L8 7zM12 13.5v3"/></symbol><symbol id="ic-eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></symbol><symbol id="ic-arrow-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol><symbol id="ic-arrow-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol><symbol id="ic-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z"/></symbol><symbol id="ic-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6zM14 3v5h5"/></symbol><symbol id="ic-broom" viewBox="0 0 24 24"><path d="M14 3l-3.5 9M6 13h9l2 8H4z"/></symbol><symbol id="ic-send" viewBox="0 0 24 24"><path d="M21 3L3 10.4l7.2 3.1L13.6 21z"/><path d="M21 3L10.2 13.5"/></symbol><symbol id="ic-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 12.5H6.2z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></symbol><symbol id="ic-verified" viewBox="0 0 24 24"><path d="M12 2.5l2.5 1.9 3.1-.3.9 3 2.6 1.7-1 3 1 2.9-2.6 1.8-.9 3-3.1-.3L12 21.1l-2.5-1.9-3.1.3-.9-3-2.6-1.8 1-2.9-1-3 2.6-1.7.9-3 3.1.3z"/><path d="M8.6 12l2.3 2.3 4.6-4.7"/></symbol><symbol id="ic-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol><symbol id="ic-scan" viewBox="0 0 24 24"><path d="M4 8V4h4M16 4h4v4M20 16v4h-4M8 20H4v-4M7 12h10"/></symbol></svg>
 
 <div class="app-layout">
@@ -4750,7 +4751,7 @@
         </div>
         <div class="single-stat-pill">
           <span>Valeur estimée</span>
-          <strong class="value-glow" id="statSinglesValue">$0.00</strong>
+          <strong class="value-glow" id="statSinglesValue">—</strong>
           <small class="stat-sub" id="statSinglesGradedSub">—</small>
         </div>
         <div class="single-stat-pill">
@@ -4760,7 +4761,7 @@
         </div>
         <div class="single-stat-pill">
           <span>Plus-value</span>
-          <strong id="statSinglesGain">$0.00</strong>
+          <strong id="statSinglesGain">—</strong>
           <small class="stat-sub" id="statSinglesGainPct">0 %</small>
         </div>
         <div class="single-stat-pill">
@@ -11455,7 +11456,8 @@ const MESSAGES = Object.freeze({
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
   unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
   unknown: 'Action impossible pour le moment. Réessayez plus tard.',
-  mfa_code: 'Code à 6 chiffres incorrect ou expiré.'
+  mfa_code: 'Code à 6 chiffres incorrect ou expiré.',
+  pwned_password: 'Ce mot de passe figure dans des fuites de données connues. Choisissez-en un autre.'
 });
 
 const str = v => (v === undefined || v === null ? '' : String(v)).trim();
@@ -11497,6 +11499,28 @@ function passwordIssues(pw) {
   return out;
 }
 
+// D-130 : mots de passe divulgués (Pwned Passwords, k-anonymat). Seuls les 5 premiers caractères de l'empreinte SHA-1
+// quittent l'appareil ; le service renvoie toutes les fins d'empreinte qui commencent ainsi, la comparaison se fait ici.
+// fetch est injecté (jamais d'appel réseau implicite) ; null = vérification impossible, qui ne bloque jamais l'inscription.
+async function pwnedCount(password, deps) {
+  const d = deps || {}, p = String(password || '');
+  const subtle = d.subtle || (typeof crypto !== 'undefined' && crypto.subtle);
+  if (!p || typeof d.fetch !== 'function' || !subtle) return null;
+  try {
+    const buf = await subtle.digest('SHA-1', new TextEncoder().encode(p));
+    const hex = Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    const ask = d.fetch('https://api.pwnedpasswords.com/range/' + hex.slice(0, 5), { headers: { 'Add-Padding': 'true' }, credentials: 'omit', referrerPolicy: 'no-referrer' });
+    const r = await Promise.race([ask, new Promise(res => setTimeout(() => res(null), d.timeoutMs || 4000))]);
+    if (!r || !r.ok) return null;
+    const suffix = hex.slice(5);
+    for (const line of String(await r.text()).split('\n')) {
+      const i = line.indexOf(':');
+      if (i > 0 && line.slice(0, i).trim() === suffix) return parseInt(line.slice(i + 1), 10) || 0;
+    }
+    return 0;
+  } catch (_) { return null; }
+}
+
 // Codes Supabase Auth (error.code / status) → code Panel ; jamais le message d'origine
 function mapAuthError(err) {
   const e = err || {}, code = str(e.code || e.error_code || e.name).toLowerCase(), status = Number(e.status) || 0, msg = str(e.message).toLowerCase();
@@ -11534,6 +11558,7 @@ function createAuthFlow(client, opts) {
       if (!em) return { ok: false, error: { code: 'invalid_email', message: MESSAGES.invalid_email } };
       const issues = passwordIssues(password);
       if (issues.length) return { ok: false, error: { code: 'weak_password', message: 'Mot de passe : ' + issues.join(', ') + '.' } };
+      if (typeof o.pwnedFetch === 'function' && (await pwnedCount(password, { fetch: o.pwnedFetch })) > 0) return { ok: false, error: { code: 'pwned_password', message: MESSAGES.pwned_password } };
       const r = await A.signUp({ email: em, password, options: o.redirectTo ? { emailRedirectTo: o.redirectTo } : undefined });
       // « déjà inscrit » et succès donnent le même message (pas d'énumération) ; seules les limites et le réseau sont signalés
       if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network' || m.code === 'weak_password') return { ok: false, error: m }; }
@@ -11624,7 +11649,7 @@ function signupProfile(input, nowYear, types) {
   return e.length ? { ok: false, errors: e } : { ok: true, errors: [], profile: { handle, birthYear: y, band: age >= 18 ? '18+' : age >= 15 ? '15-17' : '13-14', type, needsVerification: type !== 'collector', marketing: !!i.marketing } };
 }
 
-module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };
+module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, pwnedCount, mapAuthError, accountState, createAuthFlow };
   return Object.freeze(module.exports); })();
   /* domains/releases/release-views.js */
   out.releaseViews = (() => { const module = { exports: {} };
@@ -25467,6 +25492,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       row('Profil', prof ? '@' + escapeHtml(prof.handle) + (prof.favorite ? ' · fan de ' + escapeHtml(prof.favorite) : '') : 'Aucun profil sur cet appareil', btn(prof ? 'Modifier mon profil' : 'Créer mon profil', 'data-set-go="profile"', true)) +
       row('Compte en ligne', 'Pseudo réservé, abonnés, publication des planches et stories, directs. Ouverture avec la synchronisation (Supabase).', '<span class="set-pill">' + (acctConfig() ? 'Préproduction' : 'Pas encore ouvert') + '</span>') + '<div data-acct-slot></div>' +
       row('Confidentialité', 'Prix, valeur, emplacement et notes privées ne sont jamais partagés (liste blanche).', '<span class="set-pill is-ok">Appliquée</span>') +
+      row('Panel+', 'Statistiques avancées, vérification et outils pros. Facultatif : Panel reste gratuit.', btn('Voir', 'data-set-click="navPlus"')) +
       row('Protection des mineurs', 'Aucun compte avant 13 ans ; parent relié par un code donné par le jeune ; le parent ne lit rien.', '<span class="set-pill">Prête pour l\'ouverture des comptes</span>') + guardPaneHtml();
     if (tab === 'display') return '<h3>Affichage</h3>' +
       row('Apparence', 'Clair, sombre ou selon le réglage de l’appareil', '<span class="set-seg" role="group" aria-label="Apparence">' + [['light', 'Clair'], ['dark', 'Sombre'], ['system', 'Système']].map(([k, l]) => '<button type="button" class="set-seg-b" data-set-mode="' + k + '" aria-pressed="' + ((document.documentElement.dataset.modePref || 'system') === k) + '">' + l + '</button>').join('') + '</span>') +
@@ -27162,7 +27188,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const HB_TABS = ['forum', 'market', 'dm', 'pros', 'plans'];
   // D-114 : deux familles d'onglets. Accueil : Fil, Le Comptoir, Directs. Profil : Mon profil, Compte pro, Panel+. Marché et Messages ont leur propre entrée.
   const HB_STRIP_HOME = [['feed', 'Fil', 'ic-home'], ['forum', 'Le Comptoir', 'ic-chat'], ['live', 'Directs', 'ic-live']];
-  const HB_STRIP_ME = [['profile', 'Mon profil', 'ic-user'], ['pros', 'Compte pro', 'ic-verified'], ['plans', 'Panel+', 'ic-star']];
+  const HB_STRIP_ME = [['profile', 'Mon profil', 'ic-user'], ['pros', 'Compte pro', 'ic-verified']];
   const HB_KEY = 'panel.hub.v1';
   const HB = () => window.PanelDomains;
   let hbCircle = '', hbSort = 'hot', hbOpen = '', hbReplyTo = '', hbPhotos = [];
@@ -27886,7 +27912,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return '<section class="hb-panel"><h4>' + igIcon('ic-key') + 'Créer votre compte Panel</h4><div class="au-providers">' +
       A.PROVIDERS.map(p => '<button type="button" class="au-btn au-' + p.key + '" data-hb-auth="' + p.key + '">' + (p.key === 'apple' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.1 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></svg>' : p.key === 'google' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" stroke="none" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" stroke="none" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" stroke="none" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" stroke="none" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg>' : igIcon('ic-send')) + '<span>' + p.label + '</span></button>').join('') + '</div>' +
       '<form data-hb-form="signup" class="hb-form"><div class="hb-row"><label>Pseudo<input name="handle" maxlength="25" placeholder="alex_encre" autocomplete="username" required></label><label>Année de naissance<input name="birthYear" inputmode="numeric" maxlength="4" placeholder="1995" required></label></div>' +
-      '<label class="hb-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label><label class="hb-check"><input type="checkbox" name="marketing"> Recevoir les nouveautés de Panel (facultatif)</label>' +
+      '<label class="hb-check"><input type="checkbox" name="terms"> <span>J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></span></label><label class="hb-check"><input type="checkbox" name="marketing"> Recevoir les nouveautés de Panel (facultatif)</label>' +
       '<button class="btn" type="submit">' + igIcon('ic-check') + 'Préparer mon inscription</button></form>' +
       '<p class="hb-muted">Apple et Google : aucun mot de passe ne passe par Panel. E-mail : un lien de connexion, ou un mot de passe d’au moins 12 caractères. Double authentification par application proposée dès la création. Comptes à partir de 13 ans ; comptes pros réservés aux adultes.</p></section>';
   };
@@ -28335,6 +28361,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const S = window.PanelDomains.statsPlus, a = S.advanced(owned), unlocked = S.gate(false, 'concentration');
     const val = { concentration: a.concentration.top10Pct === null ? '—' : a.concentration.top10Pct + ' %', roi: a.roi[0] ? (a.roi[0].roi === null ? '—' : (a.roi[0].roi > 0 ? '+' : '') + a.roi[0].roi + ' %') : '—', keys: a.keys.n + ' Key Issues',
       grading: a.grading.gradedPct + ' % gradés', pace: a.pace.perMonth + ' / mois', hold: a.hold.avgMonths === null ? '—' : a.hold.avgMonths + ' mois' };
+    if (!unlocked) return '<div class="stats-card sp-card sp-mini"><span>Statistiques avancées avec Panel+</span><button type="button" data-sp-go>Voir ›</button></div>';
     return '<div class="stats-card sp-card"><h3>' + igIcon('ic-verified') + 'Statistiques avancées <span class="sp-tag">Panel+</span></h3>' +
       '<p class="stat-sub">Calculées sur cet appareil à partir de votre collection' + (a.unvalued ? ' ; ' + a.unvalued + ' exemplaire' + (a.unvalued > 1 ? 's' : '') + ' sans cote ne compte' + (a.unvalued > 1 ? 'nt' : '') + ' pas dans les rendements' : '') + '. Aucune prévision de prix.</p>' +
       '<div class="sp-grid">' + S.PLUS.map(p => '<article><b>' + escapeHtml(p.label) + '</b><span class="sp-val' + (unlocked ? '' : ' sp-blur') + '"' + (unlocked ? '' : ' aria-hidden="true"') + '>' + escapeHtml(val[p.key]) + '</span><small>' + escapeHtml(p.about) + '</small></article>').join('') + '</div>' +
@@ -31137,6 +31164,8 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // D-125 : dans l'application Android, l'origine est https://localhost (injoignable depuis un e-mail) ;
   // le lien de confirmation renvoie donc vers la version en ligne, qui confirme l'adresse.
   const ACCT_PUBLIC_URL = 'https://lukecage2003.github.io/panel-comics/';
+  // D-130 : seul usage réseau de la vérification des mots de passe divulgués (jamais pendant les tests automatisés, sans réseau réel)
+  const acctPwnedFetch = (u, i) => (navigator.webdriver || /Headless/.test(navigator.userAgent) ? Promise.reject(new Error('tests')) : fetch(u, i));
   const ACCT_APP_RETURN = 'com.panelcomics.app://auth';
   const acctOauthRedirect = () => (typeof IS_NATIVE_APP !== 'undefined' && IS_NATIVE_APP) ? ACCT_APP_RETURN : acctRedirect();
   // Fournisseurs réellement activés sur le projet (lecture publique de /auth/v1/settings), mémorisés pour la séance
@@ -31292,7 +31321,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const p = wgPending() || {}, full = !p.year;
       body.innerHTML = '<form data-wg-form novalidate>' + (full ? '<div class="wg-row">' : '') + '<label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre" value="' + escapeHtml(p.handle || '') + '"></label>' +
         (full ? '<label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div><label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
-          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label>' : '') +
+          '<label class="wg-check"><input type="checkbox" name="terms"> <span>J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></span></label>' : '') +
         '<button class="wg-go" type="submit">Valider mon profil</button><p class="wg-msg" role="status" data-wg-msg></p></form>';
       say(msg);
       const f = body.querySelector('form'), yr = f.querySelector('[name=year]');
@@ -31333,7 +31362,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<label>Mot de passe<input type="password" name="pw" autocomplete="' + (up ? 'new-password' : 'current-password') + '" maxlength="' + A.LIMITS.passwordMax + '"' + (up ? ' placeholder="10 caractères, lettres et chiffres"' : '') + '></label>' +
         (up ? '<div class="wg-row"><label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre"></label><label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div>' +
           '<label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
-          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label>' : '') +
+          '<label class="wg-check"><input type="checkbox" name="terms"> <span>J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></span></label>' : '') +
         '<button class="wg-go" type="submit">' + (up ? 'Créer mon compte' : 'Se connecter') + '</button>' +
         (up ? '' : '<button type="button" class="wg-link" data-wg-forgot>Mot de passe oublié ?</button>') +
         '<p class="wg-msg" role="status" data-wg-msg></p></form>';
@@ -31360,7 +31389,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
           if (prof.profile.band === '13-14' && !d.consent) { say('Entre 13 et 14 ans, l’accord d’un parent est nécessaire.'); return; }
           btn.disabled = true; say('…');
           const client = await getClient(); if (!client) { btn.disabled = false; say(A.MESSAGES.unavailable); return; }
-          const r = await A.createAuthFlow(client, { redirectTo: acctRedirect() }).signUp(email, d.pw);
+          const r = await A.createAuthFlow(client, { redirectTo: acctRedirect(), pwnedFetch: acctPwnedFetch }).signUp(email, d.pw);
           btn.disabled = false;
           if (!r.ok) { say(r.error.message); return; }
           try { localStorage.setItem(WG_PENDING, JSON.stringify({ email: A.validateEmail(email), handle: prof.profile.handle, year: prof.profile.birthYear, consent: !!d.consent })); } catch (_) {}
@@ -31465,7 +31494,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       wireForget();
       return;
     }
-    const flow = A.createAuthFlow(client, { redirectTo: acctRedirect() });
+    const flow = A.createAuthFlow(client, { redirectTo: acctRedirect(), pwnedFetch: acctPwnedFetch });
     const cur = await flow.session();
     const st = A.accountState(cur.ok ? cur.session : null, Date.now());
     stateEl.textContent = st.label;
@@ -31502,6 +31531,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         const inp = body.querySelector('[data-acct-newpw]'), v = inp.value, bad = A.passwordIssues(v);
         if (bad.length) { say('Mot de passe trop faible : ' + bad.join(', ') + '.'); return; }
         say('…');
+        if ((await A.pwnedCount(v, { fetch: acctPwnedFetch })) > 0) { say(A.MESSAGES.pwned_password); return; }
         try { const r = await client.auth.updateUser({ password: v }); if (r.error) { say(A.mapAuthError(r.error).message || 'Mot de passe refusé.'); return; } } catch (_) { say('Connexion impossible. Réessayez.'); return; }
         inp.value = ''; say('Mot de passe enregistré.');
       };

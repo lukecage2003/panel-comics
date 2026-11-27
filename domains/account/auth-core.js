@@ -27,7 +27,8 @@ const MESSAGES = Object.freeze({
   not_configured: 'Aucun projet en ligne n\'est configuré : Panel fonctionne en local.',
   unavailable: 'La bibliothèque de connexion n\'a pas pu être chargée (connexion au serveur de Panel requise).',
   unknown: 'Action impossible pour le moment. Réessayez plus tard.',
-  mfa_code: 'Code à 6 chiffres incorrect ou expiré.'
+  mfa_code: 'Code à 6 chiffres incorrect ou expiré.',
+  pwned_password: 'Ce mot de passe figure dans des fuites de données connues. Choisissez-en un autre.'
 });
 
 const str = v => (v === undefined || v === null ? '' : String(v)).trim();
@@ -69,6 +70,28 @@ function passwordIssues(pw) {
   return out;
 }
 
+// D-130 : mots de passe divulgués (Pwned Passwords, k-anonymat). Seuls les 5 premiers caractères de l'empreinte SHA-1
+// quittent l'appareil ; le service renvoie toutes les fins d'empreinte qui commencent ainsi, la comparaison se fait ici.
+// fetch est injecté (jamais d'appel réseau implicite) ; null = vérification impossible, qui ne bloque jamais l'inscription.
+async function pwnedCount(password, deps) {
+  const d = deps || {}, p = String(password || '');
+  const subtle = d.subtle || (typeof crypto !== 'undefined' && crypto.subtle);
+  if (!p || typeof d.fetch !== 'function' || !subtle) return null;
+  try {
+    const buf = await subtle.digest('SHA-1', new TextEncoder().encode(p));
+    const hex = Array.from(new Uint8Array(buf), b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+    const ask = d.fetch('https://api.pwnedpasswords.com/range/' + hex.slice(0, 5), { headers: { 'Add-Padding': 'true' }, credentials: 'omit', referrerPolicy: 'no-referrer' });
+    const r = await Promise.race([ask, new Promise(res => setTimeout(() => res(null), d.timeoutMs || 4000))]);
+    if (!r || !r.ok) return null;
+    const suffix = hex.slice(5);
+    for (const line of String(await r.text()).split('\n')) {
+      const i = line.indexOf(':');
+      if (i > 0 && line.slice(0, i).trim() === suffix) return parseInt(line.slice(i + 1), 10) || 0;
+    }
+    return 0;
+  } catch (_) { return null; }
+}
+
 // Codes Supabase Auth (error.code / status) → code Panel ; jamais le message d'origine
 function mapAuthError(err) {
   const e = err || {}, code = str(e.code || e.error_code || e.name).toLowerCase(), status = Number(e.status) || 0, msg = str(e.message).toLowerCase();
@@ -106,6 +129,7 @@ function createAuthFlow(client, opts) {
       if (!em) return { ok: false, error: { code: 'invalid_email', message: MESSAGES.invalid_email } };
       const issues = passwordIssues(password);
       if (issues.length) return { ok: false, error: { code: 'weak_password', message: 'Mot de passe : ' + issues.join(', ') + '.' } };
+      if (typeof o.pwnedFetch === 'function' && (await pwnedCount(password, { fetch: o.pwnedFetch })) > 0) return { ok: false, error: { code: 'pwned_password', message: MESSAGES.pwned_password } };
       const r = await A.signUp({ email: em, password, options: o.redirectTo ? { emailRedirectTo: o.redirectTo } : undefined });
       // « déjà inscrit » et succès donnent le même message (pas d'énumération) ; seules les limites et le réseau sont signalés
       if (r && r.error) { const m = mapAuthError(r.error); if (m.code === 'rate_limited' || m.code === 'network' || m.code === 'weak_password') return { ok: false, error: m }; }
@@ -196,4 +220,4 @@ function signupProfile(input, nowYear, types) {
   return e.length ? { ok: false, errors: e } : { ok: true, errors: [], profile: { handle, birthYear: y, band: age >= 18 ? '18+' : age >= 15 ? '15-17' : '13-14', type, needsVerification: type !== 'collector', marketing: !!i.marketing } };
 }
 
-module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, mapAuthError, accountState, createAuthFlow };
+module.exports = { OAUTH, PROVIDERS, signupProfile, LIMITS, NEUTRAL, MESSAGES, parseConfig, validateEmail, passwordIssues, pwnedCount, mapAuthError, accountState, createAuthFlow };
