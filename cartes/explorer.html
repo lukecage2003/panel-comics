@@ -861,7 +861,7 @@ function setFmt(f){S.fmt=f;document.querySelectorAll('#fmts button').forEach(b=>
 
 /* ---------- interaction ---------- */
 let drag=null;const PT=new Map();let pinch=0;
-svg.addEventListener('pointerdown',e=>{PT.set(e.pointerId,[e.clientX,e.clientY]);if(PT.size==2){const[a,b]=[...PT.values()];pinch=Math.hypot(a[0]-b[0],a[1]-b[1]);drag&&(drag.m=1)}else drag={x:e.clientX,y:e.clientY,m:0};svg.setPointerCapture(e.pointerId)});
+svg.addEventListener('pointerdown',e=>{PT.set(e.pointerId,[e.clientX,e.clientY]);if(PT.size==2){const[a,b]=[...PT.values()];pinch=Math.hypot(a[0]-b[0],a[1]-b[1]);drag&&(drag.m=1)}else drag={x:e.clientX,y:e.clientY,m:0};try{svg.setPointerCapture(e.pointerId)}catch(_){}});
 svg.addEventListener('pointercancel',e=>{PT.delete(e.pointerId);drag=null});
 svg.addEventListener('pointermove',e=>{
  if(PT.has(e.pointerId))PT.set(e.pointerId,[e.clientX,e.clientY]);

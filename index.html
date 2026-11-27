@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-XqhY0PDhseWvpgP5PMKfD7lq2ox3LB+7HeCc5LHZlGE=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-A4HlQHOJLLSd6NV4t3N6qIZIyepxDQpmf2vlM4n1nF8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -27589,7 +27589,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     try {
       if (el && dmoOpen && !document.hidden) { const t = dmoThread(); if (t && t.status !== 'invited' && await (t.kind === 'group' ? dmoFetchGroup(t) : dmoFetchDm(t))) { await dmoPaintMsgs(el, t); await dmoMarkRead(t); } }
       if (Date.now() - dmoLastInbox >= (document.hidden ? 60000 : 30000)) {
-        const prev = dmoList; await dmoLoadInbox(); dmoNotify(prev, dmoList);
+        dmoLastInbox = Date.now(); const prev = dmoList; await dmoLoadInbox(); dmoNotify(prev, dmoList);
         if (el && !dmoOpen) dmoRenderList(el);
       }
     } catch (_) { /* hors ligne ou service fermé : on réessaie plus tard */ }
@@ -31151,7 +31151,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
   // ---------- D-120 : copie de la collection dans le compte (api.collection_backup_*), restaurée par fusion
   const ACCT_AUTO_KEY = 'panel_cloud_autobackup', ACCT_LAST_KEY = 'panel_cloud_lastbackup';
   const acctAutoOn = () => { try { return localStorage.getItem(ACCT_AUTO_KEY) === '1'; } catch (_) { return false; } };
-  const acctRpc = (client, fn, args) => client.schema('api').rpc(fn, args || {});
+  const acctRpc = async (client, fn, args) => { try { return await client.schema('api').rpc(fn, args || {}); } catch (e) { return { data: null, error: { message: (e && e.message) || 'unknown', code: 'client' } }; } };
   const acctBackupErr = e => {
     const m = String((e && (e.message || e.code)) || e || '');
     if (/rate_limited/.test(m)) return 'Une sauvegarde vient d’être faite : réessayez dans quelques secondes.';
