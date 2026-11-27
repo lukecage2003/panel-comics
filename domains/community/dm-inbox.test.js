@@ -100,3 +100,41 @@ test('erreurs du serveur traduites', () => {
   assert.equal(I.reason(new Error('Failed to fetch')), I.REASON.network);
   assert.equal(I.reason('quelque chose'), I.REASON.unknown);
 });
+
+test('fil façon messagerie (D-135) : jours, heure relative, emojis en grand, bulles regroupées', () => {
+  const now = new Date(2026, 10, 28, 15, 0);
+  assert.equal(I.dayLabel(new Date(2026, 10, 28, 9, 0), now), 'Aujourd’hui');
+  assert.equal(I.dayLabel(new Date(2026, 10, 27, 23, 0), now), 'Hier');
+  assert.equal(I.dayLabel(new Date(2026, 10, 25, 12, 0), now), 'Mercredi');
+  assert.equal(I.dayLabel(new Date(2026, 9, 3, 12, 0), now), '3 oct.');
+  assert.equal(I.dayLabel(new Date(2025, 0, 9, 12, 0), now), '9 janv. 2025');
+  assert.equal(I.dayLabel('pas une date', now), '');
+  assert.equal(I.ago(new Date(2026, 10, 28, 14, 59, 30), now), 'à l’instant');
+  assert.equal(I.ago(new Date(2026, 10, 28, 14, 48), now), '12 min');
+  assert.equal(I.ago(new Date(2026, 10, 28, 12, 0), now), '3 h');
+  assert.equal(I.ago(new Date(2026, 10, 26, 15, 0), now), '2 j');
+  assert.equal(I.ago(new Date(2026, 10, 7, 15, 0), now), '3 sem.');
+  assert.equal(I.ago(null, now), '');
+  assert.equal(I.bigEmoji('🔥'), true);
+  assert.equal(I.bigEmoji('🦸‍♂️ 🦸‍♀️'), true);
+  assert.equal(I.bigEmoji('👍🏽'), true);
+  assert.equal(I.bigEmoji('🇫🇷'), true);
+  assert.equal(I.bigEmoji('🔥🔥🔥🔥🔥🔥🔥'), false);
+  assert.equal(I.bigEmoji('ok 👍'), false);
+  assert.equal(I.bigEmoji('12'), false);
+  assert.equal(I.bigEmoji(''), false);
+  const at = (h, m) => new Date(2026, 10, 28, h, m).toISOString();
+  const msgs = [
+    { me: false, from: 'bob', at: new Date(2026, 10, 27, 20, 0).toISOString() },
+    { me: false, from: 'bob', at: at(10, 0) }, { me: false, from: 'bob', at: at(10, 2) },
+    { me: true, at: at(10, 3) }, { me: true, at: at(10, 20) },
+    { me: true, at: at(12, 0) }
+  ];
+  const L = I.layout(msgs, now);
+  assert.deepEqual(L.map(x => x.sep ? 'S:' + x.sep : x.i + (x.first ? 'F' : '') + (x.last ? 'L' : '')), [
+    'S:Hier · 20:00', '0FL', 'S:Aujourd’hui · 10:00', '1F', '2L', '3FL', '4FL', 'S:Aujourd’hui · 12:00', '5FL'
+  ]);
+  assert.deepEqual(I.layout(null, now), []);
+  // Sans date lisible : pas d'intertitre, chaque bulle reste seule
+  assert.deepEqual(I.layout([{ me: true }, { me: true }], now).map(x => x.first + '/' + x.last), ['true/true', 'true/true']);
+});

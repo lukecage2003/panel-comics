@@ -135,5 +135,58 @@ const REASON = Object.freeze({
 });
 const reason = e => { const m = String((e && (e.message || e.code)) || e || ''); const k = Object.keys(REASON).find(x => m.includes(x)); return REASON[k || (/fetch|network|Failed/i.test(m) ? 'network' : 'unknown')]; };
 
+// D-135 : fil de discussion façon messageries modernes, à la manière de Panel
+//  - bulles regroupées par auteur : un groupe se coupe au changement d'auteur ou après 5 min de silence ;
+//  - un intertitre (cartouche de BD) au changement de jour ou après 1 h de silence ;
+//  - heure relative courte pour la liste ; un message fait seulement d'emojis (1 à 6) s'affiche en grand, sans bulle.
+// `now` est toujours passé en argument (pas d'horloge cachée) ; dates lues en heure locale de l'appareil.
+const GROUP_GAP_MS = 5 * 60 * 1000, BREAK_GAP_MS = 60 * 60 * 1000;
+const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+const toDate = at => { if (at === null || at === undefined || at === '') return null; const d = new Date(at); return isNaN(d) ? null : d; };
+const midnight = d => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+const hhmm = d => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+const dayLabel = (at, now) => {
+  const d = toDate(at), n = toDate(now); if (!d || !n) return '';
+  const days = Math.round((midnight(n) - midnight(d)) / 864e5);
+  if (days === 0) return 'Aujourd’hui';
+  if (days === 1) return 'Hier';
+  if (days > 1 && days < 7) return DAYS[d.getDay()];
+  return d.getDate() + ' ' + MONTHS[d.getMonth()] + (d.getFullYear() !== n.getFullYear() ? ' ' + d.getFullYear() : '');
+};
+const ago = (at, now) => {
+  const d = toDate(at), n = toDate(now); if (!d || !n) return '';
+  const s = Math.max(0, (n - d) / 1000);
+  if (s < 60) return 'à l’instant';
+  if (s < 3600) return Math.floor(s / 60) + ' min';
+  if (s < 86400) return Math.floor(s / 3600) + ' h';
+  if (s < 7 * 86400) return Math.floor(s / 86400) + ' j';
+  if (s < 365 * 86400) return Math.floor(s / (7 * 86400)) + ' sem.';
+  return Math.floor(s / (365 * 86400)) + ' an' + (s >= 2 * 365 * 86400 ? 's' : '');
+};
+const EMOJI_RE = /^(?:\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})?)*|\p{Regional_Indicator}{2}|\s)+$/u;
+const bigEmoji = text => {
+  const t = String(text || '').trim(); if (!t || t.length > 40 || !EMOJI_RE.test(t)) return false;
+  const flat = t.replace(/\s+/g, '');
+  const n = typeof Intl !== 'undefined' && Intl.Segmenter ? [...new Intl.Segmenter('fr', { granularity: 'grapheme' }).segment(flat)].length : flat.length;
+  return n >= 1 && n <= 6;
+};
+// Entrée : messages triés ({ me, from, at }) ; sortie : [{ sep: 'Aujourd’hui · 14:32' } | { i, first, last }]
+const layout = (msgs, now) => {
+  const out = [], list = Array.isArray(msgs) ? msgs : [];
+  let prev = null;
+  list.forEach((m, i) => {
+    const d = toDate(m && m.at), p = prev && toDate(prev.at);
+    const brk = !prev || (d && (!p || midnight(d) !== midnight(p) || d - p > BREAK_GAP_MS));
+    if (brk && d) out.push({ sep: dayLabel(d, now) + ' · ' + hhmm(d) });
+    const same = !!prev && !brk && !!prev.me === !!(m && m.me) && (prev.from || '') === ((m && m.from) || '') && !!d && !!p && d - p <= GROUP_GAP_MS;
+    if (same) { for (let k = out.length - 1; k >= 0; k--) if (out[k].i !== undefined) { out[k].last = false; break; } }
+    out.push({ i, first: !same, last: true });
+    prev = m;
+  });
+  return out;
+};
+
 module.exports = { BADGE_MAX, badgeText, threads, summary, filterThreads, rowBadge, rowHint, freshThreads, PREFIX, MAX_VOICE_SEC, MAX_VOICE_BYTES, MAX_TRANSCRIPT, BARS, MIMES,
-  encodeContent, decodeContent, preview, voicePath, pickMime, peaks, formatDuration, playedBars, speechSupport, joinTranscript, splitThread, REASON, reason };
+  encodeContent, decodeContent, preview, voicePath, pickMime, peaks, formatDuration, playedBars, speechSupport, joinTranscript, splitThread, REASON, reason,
+  dayLabel, ago, bigEmoji, layout, GROUP_GAP_MS, BREAK_GAP_MS };

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-/GIVqayZrkZvGMDjrfSsoRrJ9POTXEum8tuySKvj0oA=' 'sha256-myq6Yiu9D8h5bt6qWC3wJc3WjV+XpSNtsmDM4JOzPmM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-zffSYKk///Mc6HF3ApjpETRDzZa9seD2kauCscv8XeU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4625,26 +4625,6 @@
     #notifCount { background: #e5484d; color: #fff; }
     .notif-count.is-pop { animation: d134Pop .5s cubic-bezier(.25,1.7,.45,1) both; }
     @keyframes d134Pop { 0% { transform: scale(0) rotate(-30deg); } 60% { transform: scale(1.3) rotate(4deg); } 100% { transform: scale(1) rotate(-6deg); } }
-    /* Messagerie : de vraies bulles de BD (encre, queue, lettrage), sur une page tramée */
-    .dmo-msgs { background: radial-gradient(circle, color-mix(in srgb, var(--ink, #fff) 7%, transparent) 1px, transparent 1.4px) 0 0 / 9px 9px; border-radius: 14px; padding: 10px 8px 14px; gap: 12px; }
-    .dmo-msg { position: relative; border: 2px solid #0b0b0c; border-radius: 20px !important; background: #fbfaf5; color: #111; box-shadow: 3px 3px 0 #0b0b0c; transform-origin: bottom left; }
-    .dmo-msg.is-new { animation: d134Bubble .26s cubic-bezier(.3,1.5,.5,1) both; }
-    .dmo-msg.is-me { background: #ffd400; color: #0b0b0c; transform-origin: bottom right; }
-    .dmo-msg::after { content: ""; position: absolute; bottom: -10px; left: 16px; width: 14px; height: 12px; background: inherit; border: 2px solid #0b0b0c; border-top: 0; border-left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); transform: skewX(-25deg); }
-    .dmo-msg.is-me::after { left: auto; right: 16px; transform: scaleX(-1) skewX(-25deg); }
-    .dmo-msg::before { content: ""; position: absolute; bottom: -1px; left: 17px; width: 13px; height: 3px; background: inherit; z-index: 1; }
-    .dmo-msg.is-me::before { left: auto; right: 17px; }
-    .dmo-msg a { color: inherit; }
-    .dmo-from { font-family: 'Barlow Condensed', var(--font-ui, sans-serif); text-transform: uppercase; letter-spacing: .04em; font-size: .8rem; }
-    @keyframes d134Bubble { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .dmo-head b, .dmo-head strong { font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: 1.25rem; text-transform: uppercase; letter-spacing: .02em; }
-    /* Liste des discussions : avatars en case de BD, non-lu en bulle jaune encrée */
-    .dmo-av { border-radius: 12px; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; transform: rotate(-2deg); background: color-mix(in srgb, #ffd400 30%, var(--bg-card)); font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: 1.15rem; }
-    .dmo-row:nth-child(even) .dmo-av { transform: rotate(2deg); }
-    .dmo-badge, .dmo-count { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; border-radius: 12px 12px 12px 3px; box-shadow: 2px 2px 0 #0b0b0c; font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: .9rem; }
-    .dmo-row.is-unread { background: color-mix(in srgb, #ffd400 7%, transparent); }
-    .dmo-icon.is-send { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; transition: transform .12s ease, box-shadow .12s ease; }
-    .dmo-icon.is-send:active { transform: translate(2px, 2px); box-shadow: 0 0 0 #0b0b0c; }
     /* Ouverture : la case jaune surgit, les trois cases s'encrent d'un coup de pinceau, une trame de points éclate derrière */
     .splash { animation: splashOut .24s ease-out .66s forwards !important; overflow: hidden; }
     .splash::before { content: ""; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; border-radius: 50%; background: radial-gradient(circle, rgba(255,212,0,.75) 1.8px, transparent 2.3px) 0 0 / 11px 11px; -webkit-mask-image: radial-gradient(circle, #000 18%, transparent 62%); mask-image: radial-gradient(circle, #000 18%, transparent 62%); animation: d134Burst .7s cubic-bezier(.2,.8,.2,1) .12s both; }
@@ -4659,8 +4639,122 @@
     .ex-spin::before { inset: 3px !important; border-radius: 1px; background: linear-gradient(#ffd400, #ffd400) 0 0 / 0 6px no-repeat, linear-gradient(#ffd400, #ffd400) 0 8px / 0 6px no-repeat, linear-gradient(#ffd400, #ffd400) 8px 8px / 0 6px no-repeat !important; clip-path: none !important; animation: d134Ink 1.3s ease-in-out infinite !important; }
     @keyframes d134Ink { 0% { background-size: 0 6px, 0 6px, 0 6px; } 25% { background-size: 14px 6px, 0 6px, 0 6px; } 50% { background-size: 14px 6px, 6px 6px, 0 6px; } 75%, 90% { background-size: 14px 6px, 6px 6px, 6px 6px; } 100% { background-size: 0 6px, 0 6px, 0 6px; } }
     @media (prefers-reduced-motion: reduce) {
-      .notif-count.is-pop, .dmo-msg.is-new, .splash::before, .splash .pm, .ex-spin::before { animation: none !important; }
+      .notif-count.is-pop, .splash::before, .splash .pm, .ex-spin::before { animation: none !important; }
     }
+  
+    /* ===== D-135 : messagerie refaite (inspirée d'Instagram, à la manière de Panel) ===== */
+    [data-dmo] { --ink-line: color-mix(in srgb, var(--ink, #fff) 10%, transparent); }
+    .dmx-head { display: flex; align-items: center; gap: 6px; margin: 2px 0 10px; }
+    .dmx-head h2 { margin: 0; font: 800 26px/1 'Barlow Condensed', var(--font-display); text-transform: uppercase; letter-spacing: .01em; }
+    .dmo-icon { transition: transform .12s ease, background-color .15s ease; }
+    .dmo-icon:active { transform: scale(.9); }
+    .dmo-icon.is-key { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; }
+    .dmo-top { margin-bottom: 10px; } .dmo-top .dm-search { flex: 1; border-radius: 14px; }
+    .dmo-new { border: 2px solid #ffd400 !important; border-radius: 16px !important; animation: dmxDrop .22s ease-out both; }
+    @keyframes dmxDrop { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+    /* Bande des conversations récentes */
+    .dmx-strip { display: flex; gap: 14px; overflow-x: auto; padding: 4px 2px 12px; margin: 0 -12px; padding-left: 12px; padding-right: 12px; scrollbar-width: none; }
+    .dmx-strip::-webkit-scrollbar { display: none; }
+    .dmx-chip { flex: none; width: 66px; display: grid; justify-items: center; gap: 6px; border: 0; background: none; color: var(--ink); font: 600 11.5px/1.2 var(--font-ui, inherit); cursor: pointer; padding: 0; }
+    .dmx-chip span:last-child { max-width: 66px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .85; }
+    .dmx-chip .dmo-av { width: 58px; height: 58px; font-size: 1.2rem; }
+    .dmx-chip.is-new .dmo-av { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px #ffd400; }
+    .dmx-chip:active .dmo-av { transform: scale(.92) rotate(-2deg); }
+    /* Onglets */
+    .dmx-tabs { display: flex; gap: 22px; border-bottom: 1px solid var(--ink-line); margin: 0 0 6px; }
+    .dmx-tabs button { border: 0; background: none; color: color-mix(in srgb, var(--ink) 55%, transparent); font: 700 14px/1 var(--font-ui, inherit); padding: 10px 0 12px; position: relative; cursor: pointer; display: inline-flex; gap: 6px; align-items: center; }
+    .dmx-tabs button.is-on { color: var(--ink); }
+    .dmx-tabs button.is-on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: 3px 3px 0 0; background: #ffd400; }
+    /* Avatars : cases de BD encrées, couleur propre à chaque personne */
+    .dmo-av { width: 54px; height: 54px; border-radius: 16px; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; background: var(--av, #ffd400); color: #0b0b0c; font: 800 1.15rem/1 'Barlow Condensed', var(--font-ui, sans-serif); letter-spacing: .02em; display: grid; place-items: center; flex: none; transition: transform .15s ease; }
+    .dmo-av .ic { width: 24px; height: 24px; }
+    .dmo-av.is-ring { box-shadow: 0 0 0 2px var(--bg), 0 0 0 4.5px #ffd400; }
+    .dmo-head .dmo-av { width: 40px; height: 40px; border-radius: 12px; font-size: 1rem; }
+    /* Lignes de conversation */
+    .dmo-row { padding: 9px 6px; gap: 14px; border-radius: 16px; transition: background-color .15s ease; }
+    @media (hover: hover) { .dmo-row:hover { background: color-mix(in srgb, var(--ink) 5%, transparent); } }
+    .dmo-row:focus-visible { background: color-mix(in srgb, var(--ink) 5%, transparent); }
+    .dmo-row:active { background: color-mix(in srgb, var(--ink) 9%, transparent); }
+    .dmo-row-main b { font-size: 15px; font-weight: 600; }
+    .dmo-row-main small { display: flex; min-width: 0; font-size: 13.5px; color: color-mix(in srgb, var(--ink) 58%, transparent); }
+    .dmx-prev { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+    .dmx-when { flex: none; white-space: nowrap; margin-left: .3em; }
+    .dmo-row.is-unread { background: none; }
+    .dmo-row.is-unread .dmo-row-main b, .dmo-row.is-unread .dmo-row-main small { color: var(--ink); font-weight: 800; }
+    .dmo-row-side { display: flex; align-items: center; gap: 6px; } .dmo-row-side .ic { width: 16px; height: 16px; opacity: .55; }
+    .dmo-badge, .dmo-count { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; border-radius: 12px 12px 12px 3px; box-shadow: 2px 2px 0 #0b0b0c; font: 800 13px/1 'Barlow Condensed', var(--font-ui, sans-serif); min-width: 24px; height: 22px; padding: 0 6px; display: inline-grid; place-items: center; transform: rotate(-4deg); }
+    .dmo-count { min-width: 20px; height: 19px; font-size: 12px; box-shadow: none; border-width: 1.5px; }
+    /* États vides : deux bulles de BD dessinées */
+    .dmx-empty { display: grid; justify-items: center; text-align: center; gap: 8px; padding: 28px 16px 12px; }
+    .dmx-empty b { font: 800 22px/1.1 'Barlow Condensed', var(--font-display); text-transform: uppercase; }
+    .dmx-empty span { color: color-mix(in srgb, var(--ink) 62%, transparent); max-width: 300px; font-size: 14px; }
+    .dmx-empty .btn { margin-top: 6px; }
+    .dmx-art { width: 120px; height: 96px; margin-bottom: 4px; }
+    .dmx-art .b1 { fill: #ffd400; stroke: #0b0b0c; stroke-width: 3; stroke-linejoin: round; }
+    .dmx-art .b2 { fill: var(--bg-card, #222); stroke: color-mix(in srgb, var(--ink) 70%, transparent); stroke-width: 3; stroke-linejoin: round; animation: dmxFloat 2.6s ease-in-out infinite; transform-origin: 80px 60px; }
+    .dmx-art circle { fill: #0b0b0c; animation: dmxDots 1.2s ease-in-out infinite; }
+    .dmx-art circle:nth-of-type(2) { animation-delay: .15s; } .dmx-art circle:nth-of-type(3) { animation-delay: .3s; }
+    @keyframes dmxFloat { 50% { transform: translateY(-3px) rotate(-2deg); } }
+    @keyframes dmxDots { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-3px); } }
+    /* Conversation */
+    .dmo-thread { min-height: calc(100dvh - 170px); }
+    .dmo-head { gap: 10px; padding: 6px 0 10px; border-bottom: 1px solid var(--ink-line); }
+    .dmx-who { display: grid; min-width: 0; } .dmx-who b { font-size: 15.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .dmx-who small { font-size: 12px; opacity: .6; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .dmo-msgs { max-height: none; gap: 2px; padding: 8px 2px 16px; background: radial-gradient(circle, color-mix(in srgb, var(--ink, #fff) 6%, transparent) 1px, transparent 1.4px) 0 0 / 10px 10px; border-radius: 0; }
+    .dmo-first { font-size: 11.5px; opacity: .55; padding: 6px 8px 10px; gap: 6px; }
+    .dmo-first .ic { width: 14px; height: 14px; }
+    /* Cartouche de narration (comme « Plus tard… » dans une case) entre les moments de la conversation */
+    .dmx-sep { align-self: center; margin: 14px 0 8px; list-style: none; }
+    .dmx-sep span { display: inline-block; background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; padding: 3px 9px 2px; font: 800 12.5px/1.2 'Barlow Condensed', var(--font-ui, sans-serif); text-transform: uppercase; letter-spacing: .05em; transform: rotate(-1.5deg); }
+    /* Bulles */
+    .dmo-msg { position: relative; max-width: min(76%, 480px); padding: 8px 12px; border: 2px solid #0b0b0c; border-radius: 20px; background: #f6f4ec; color: #111; box-shadow: none; font-size: 15px; line-height: 1.38; }
+    .dmo-msg p { margin: 0; }
+    .dmo-msg.is-them { margin-left: 34px; }
+    .dmo-msg.is-me { background: #ffd400; color: #0b0b0c; }
+    .dmo-msg.is-first { margin-top: 8px; }
+    .dmo-msg.is-me:not(.is-last) { border-bottom-right-radius: 6px; } .dmo-msg.is-me:not(.is-first) { border-top-right-radius: 6px; }
+    .dmo-msg.is-them:not(.is-last) { border-bottom-left-radius: 6px; } .dmo-msg.is-them:not(.is-first) { border-top-left-radius: 6px; }
+    .dmo-msg.is-last { box-shadow: 3px 3px 0 #0b0b0c; margin-bottom: 8px; }
+    /* Queue de bulle, seulement sur la dernière d'un groupe */
+    .dmo-msg.is-last:not(.is-emoji)::after { content: ""; position: absolute; bottom: -9px; width: 14px; height: 11px; background: inherit; border: 2px solid #0b0b0c; border-top: 0; clip-path: polygon(0 0, 100% 0, 100% 100%); }
+    .dmo-msg.is-me.is-last::after { right: 14px; border-left: 0; transform: skewX(30deg); }
+    .dmo-msg.is-them.is-last::after { left: 14px; border-right: 0; clip-path: polygon(0 0, 100% 0, 0 100%); transform: skewX(-30deg); }
+    .dmo-msg time { display: none; font-size: 10.5px; opacity: .6; text-align: right; margin-top: 2px; }
+    .dmo-msg.is-last time { display: block; }
+    .dmo-msg.is-emoji { background: none !important; border: 0; box-shadow: none !important; padding: 0 2px; font-size: 44px; line-height: 1.1; }
+    .dmo-msg.is-emoji time { color: var(--ink); }
+    .dmx-av { position: absolute; left: -36px; bottom: -2px; width: 28px; height: 28px; border-radius: 9px; border: 2px solid #0b0b0c; background: var(--av, #ffd400); color: #0b0b0c; display: grid; place-items: center; font: 800 11px/1 'Barlow Condensed', sans-serif; }
+    .dmo-msg.is-emoji .dmx-av { bottom: 4px; }
+    .dmo-from { margin-bottom: 2px; opacity: .7; font: 800 12px/1.2 'Barlow Condensed', sans-serif; text-transform: uppercase; letter-spacing: .04em; }
+    .dmo-msg.is-new { animation: dmxPop .3s cubic-bezier(.3,1.5,.5,1) both; }
+    .dmo-msg.is-me.is-new { transform-origin: bottom right; } .dmo-msg.is-them.is-new { transform-origin: bottom left; }
+    @keyframes dmxPop { from { transform: scale(.6) rotate(-3deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    .dmo-msg .dmo-voice { min-width: 190px; }
+    /* Premier message : carte de présentation */
+    .dmx-hello { list-style: none; display: grid; justify-items: center; gap: 8px; text-align: center; padding: 34px 12px; margin: auto 0; }
+    .dmx-hello .dmo-av { width: 84px; height: 84px; border-radius: 24px; font-size: 1.8rem; transform: rotate(-3deg); box-shadow: 4px 4px 0 #0b0b0c; }
+    .dmx-hello b { font: 800 22px/1.1 'Barlow Condensed', var(--font-display); text-transform: uppercase; }
+    .dmx-hello span { display: inline-flex; gap: 6px; align-items: center; font-size: 13px; opacity: .65; max-width: 300px; } .dmx-hello .ic { width: 14px; height: 14px; flex: none; }
+    .dmx-hello .dmx-hint { opacity: .9; font-weight: 600; }
+    /* Barre d'écriture : une pilule ; le bouton d'envoi n'apparaît qu'avec du texte, sinon 💥 en un geste */
+    .dmo-compose { align-items: flex-end; gap: 8px; padding-top: 8px; }
+    .dmx-pill { flex: 1; min-width: 0; display: flex; align-items: flex-end; gap: 4px; padding: 4px; border-radius: 24px; background: color-mix(in srgb, var(--ink) 8%, var(--bg-card)); border: 1.5px solid var(--ink-line); transition: border-color .15s ease; }
+    .dmx-pill:focus-within { border-color: #ffd400; }
+    .dmx-pill textarea { flex: 1; min-width: 0; border: 0 !important; background: none !important; box-shadow: none !important; outline: none; resize: none; padding: 9px 4px !important; font: inherit; font-size: 15px; color: var(--ink); max-height: 160px; }
+    .dmx-mic { width: 38px; height: 38px; background: #ffd400 !important; color: #0b0b0c !important; }
+    .dmx-boom { flex: none; width: 38px; height: 38px; border: 0; background: none; font-size: 22px; cursor: pointer; border-radius: 50%; transition: transform .15s cubic-bezier(.3,1.6,.5,1); }
+    .dmx-boom:active { transform: scale(1.35) rotate(-12deg); }
+    .dmo-compose .is-send { width: 46px; height: 46px; transition: transform .18s cubic-bezier(.3,1.6,.5,1), opacity .15s ease; }
+    .dmo-compose:has(textarea:placeholder-shown) .is-send { transform: scale(0); opacity: 0; width: 0; margin-left: -8px; pointer-events: none; }
+    .dmo-compose:not(:has(textarea:placeholder-shown)) .dmx-boom { display: none; }
+    .dmo-trtoggle { margin-top: 10px; }
+    @media (prefers-reduced-motion: reduce) { .dmo-msg.is-new, .dmx-art .b2, .dmx-art circle, .dmo-new { animation: none !important; } }
+    /* Chargement au logo : la petite case Panel respire et oscille pendant que ses cases s'encrent */
+    .ex-spin { animation: dmxLogo 1.3s cubic-bezier(.45,0,.55,1) infinite !important; transform-origin: 50% 80%; }
+    @keyframes dmxLogo { 0%, 100% { transform: rotate(0) scale(1); } 20% { transform: rotate(-8deg) scale(1.08); } 45% { transform: rotate(5deg) scale(.96); } 70% { transform: rotate(0) scale(1.04); } }
+    .splash .pm { animation: d134Logo .34s cubic-bezier(.3,1.6,.5,1) both, dmxBoing .3s ease-in-out .56s both; }
+    @keyframes dmxBoing { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.1, .9); } 70% { transform: scale(.96, 1.05); } }
+    @media (prefers-reduced-motion: reduce) { .ex-spin { animation: none !important; } }
   </style>
 </head>
 <body>
@@ -10345,8 +10439,61 @@ const REASON = Object.freeze({
 });
 const reason = e => { const m = String((e && (e.message || e.code)) || e || ''); const k = Object.keys(REASON).find(x => m.includes(x)); return REASON[k || (/fetch|network|Failed/i.test(m) ? 'network' : 'unknown')]; };
 
+// D-135 : fil de discussion façon messageries modernes, à la manière de Panel
+//  - bulles regroupées par auteur : un groupe se coupe au changement d'auteur ou après 5 min de silence ;
+//  - un intertitre (cartouche de BD) au changement de jour ou après 1 h de silence ;
+//  - heure relative courte pour la liste ; un message fait seulement d'emojis (1 à 6) s'affiche en grand, sans bulle.
+// `now` est toujours passé en argument (pas d'horloge cachée) ; dates lues en heure locale de l'appareil.
+const GROUP_GAP_MS = 5 * 60 * 1000, BREAK_GAP_MS = 60 * 60 * 1000;
+const MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+const DAYS = ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+const toDate = at => { if (at === null || at === undefined || at === '') return null; const d = new Date(at); return isNaN(d) ? null : d; };
+const midnight = d => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+const hhmm = d => String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+const dayLabel = (at, now) => {
+  const d = toDate(at), n = toDate(now); if (!d || !n) return '';
+  const days = Math.round((midnight(n) - midnight(d)) / 864e5);
+  if (days === 0) return 'Aujourd’hui';
+  if (days === 1) return 'Hier';
+  if (days > 1 && days < 7) return DAYS[d.getDay()];
+  return d.getDate() + ' ' + MONTHS[d.getMonth()] + (d.getFullYear() !== n.getFullYear() ? ' ' + d.getFullYear() : '');
+};
+const ago = (at, now) => {
+  const d = toDate(at), n = toDate(now); if (!d || !n) return '';
+  const s = Math.max(0, (n - d) / 1000);
+  if (s < 60) return 'à l’instant';
+  if (s < 3600) return Math.floor(s / 60) + ' min';
+  if (s < 86400) return Math.floor(s / 3600) + ' h';
+  if (s < 7 * 86400) return Math.floor(s / 86400) + ' j';
+  if (s < 365 * 86400) return Math.floor(s / (7 * 86400)) + ' sem.';
+  return Math.floor(s / (365 * 86400)) + ' an' + (s >= 2 * 365 * 86400 ? 's' : '');
+};
+const EMOJI_RE = /^(?:\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})?(?:\u200D\p{Extended_Pictographic}(?:\uFE0F|\p{Emoji_Modifier})?)*|\p{Regional_Indicator}{2}|\s)+$/u;
+const bigEmoji = text => {
+  const t = String(text || '').trim(); if (!t || t.length > 40 || !EMOJI_RE.test(t)) return false;
+  const flat = t.replace(/\s+/g, '');
+  const n = typeof Intl !== 'undefined' && Intl.Segmenter ? [...new Intl.Segmenter('fr', { granularity: 'grapheme' }).segment(flat)].length : flat.length;
+  return n >= 1 && n <= 6;
+};
+// Entrée : messages triés ({ me, from, at }) ; sortie : [{ sep: 'Aujourd’hui · 14:32' } | { i, first, last }]
+const layout = (msgs, now) => {
+  const out = [], list = Array.isArray(msgs) ? msgs : [];
+  let prev = null;
+  list.forEach((m, i) => {
+    const d = toDate(m && m.at), p = prev && toDate(prev.at);
+    const brk = !prev || (d && (!p || midnight(d) !== midnight(p) || d - p > BREAK_GAP_MS));
+    if (brk && d) out.push({ sep: dayLabel(d, now) + ' · ' + hhmm(d) });
+    const same = !!prev && !brk && !!prev.me === !!(m && m.me) && (prev.from || '') === ((m && m.from) || '') && !!d && !!p && d - p <= GROUP_GAP_MS;
+    if (same) { for (let k = out.length - 1; k >= 0; k--) if (out[k].i !== undefined) { out[k].last = false; break; } }
+    out.push({ i, first: !same, last: true });
+    prev = m;
+  });
+  return out;
+};
+
 module.exports = { BADGE_MAX, badgeText, threads, summary, filterThreads, rowBadge, rowHint, freshThreads, PREFIX, MAX_VOICE_SEC, MAX_VOICE_BYTES, MAX_TRANSCRIPT, BARS, MIMES,
-  encodeContent, decodeContent, preview, voicePath, pickMime, peaks, formatDuration, playedBars, speechSupport, joinTranscript, splitThread, REASON, reason };
+  encodeContent, decodeContent, preview, voicePath, pickMime, peaks, formatDuration, playedBars, speechSupport, joinTranscript, splitThread, REASON, reason,
+  dayLabel, ago, bigEmoji, layout, GROUP_GAP_MS, BREAK_GAP_MS };
   return Object.freeze(module.exports); })();
   /* domains/community/verify-core.js */
   out.verify = (() => { const module = { exports: {} };
@@ -27842,7 +27989,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
 
   // ── Affichage ──
   const dmoThread = () => dmoList.find(t => t.kind + ':' + t.id === dmoOpen) || null;
-  const dmoAvatar = t => '<span class="dmo-av' + (t.kind === 'group' ? ' is-group' : '') + '">' + (t.kind === 'group' ? igIcon('ic-users') : escapeHtml((t.handle || '?').slice(0, 2).toUpperCase())) + '</span>';
+  // D-135 : avatar en case de BD, couleur stable tirée du pseudo (palette Panel), anneau jaune s'il y a du nouveau
+  const DMO_HUES = ['#ffd400', '#7c5cff', '#ff5a5f', '#22c3a6', '#4aa3ff', '#ff8a00'];
+  const dmoHue = k => { let n = 0; for (const ch of String(k || '')) n = (n * 31 + ch.codePointAt(0)) >>> 0; return DMO_HUES[n % DMO_HUES.length]; };
+  const dmoAvatar = (t, cls) => '<span class="dmo-av' + (t.kind === 'group' ? ' is-group' : '') + (cls ? ' ' + cls : '') + '" style="--av:' + dmoHue(t.handle || t.title || t.id) + '">' + (t.kind === 'group' ? igIcon('ic-users') : escapeHtml((t.handle || '?').slice(0, 2).toUpperCase())) + '</span>';
   const dmoNotice = (icon, title, text, extra) => '<div class="hb-empty">' + igIcon(icon) + '<b>' + title + '</b><span>' + text + '</span>' + (extra || '') + '</div>';
   const dmoSignedOutHtml = () => dmoNotice('ic-send', 'Vos messages', 'Connectez-vous à votre compte Panel pour écrire à d’autres collectionneurs. Les messages sont chiffrés de bout en bout.',
     '<button type="button" class="btn dm-start" data-hb-auth="email">' + igIcon('ic-user') + 'Se connecter</button>');
@@ -27851,38 +28001,55 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     '<label class="hb-check"><input type="checkbox" name="consent"> J’ai moins de 15 ans et un parent a donné son accord</label><button class="btn" type="submit">Rejoindre la communauté</button></form>';
   const dmoNewHtml = () => dmoPanel === 'dm' ? '<form class="hb-form hb-panel dmo-new" data-dmo-form="dm"><label>Écrire à<input name="handle" required placeholder="pseudo" maxlength="25" autocomplete="off" spellcheck="false"></label><button class="btn" type="submit">' + igIcon('ic-send') + 'Ouvrir la conversation</button></form>'
     : dmoPanel === 'group' ? '<form class="hb-form hb-panel dmo-new" data-dmo-form="group"><label>Nom du groupe<input name="name" required maxlength="60" placeholder="Club de lecture Watchmen"></label><label>Membres (pseudos séparés par des virgules, 31 au plus)<input name="handles" placeholder="alex, bob" autocomplete="off" spellcheck="false"></label><p class="hb-muted">Chacun reçoit une invitation et choisit de rejoindre. Les mineurs ne peuvent pas être ajoutés.</p><button class="btn" type="submit">' + igIcon('ic-users') + 'Créer le groupe</button></form>' : '';
+  const dmoEmptyArt = '<svg class="dmx-art" viewBox="0 0 120 96" aria-hidden="true"><path class="b1" d="M10 10h70a8 8 0 0 1 8 8v34a8 8 0 0 1-8 8H38l-16 14 3-14H18a8 8 0 0 1-8-8V18a8 8 0 0 1 8-8z"/><path class="b2" d="M52 34h52a6 6 0 0 1 6 6v26a6 6 0 0 1-6 6h-6l2 12-13-12H52a6 6 0 0 1-6-6V40a6 6 0 0 1 6-6z"/><circle cx="34" cy="35" r="4"/><circle cx="49" cy="35" r="4"/><circle cx="64" cy="35" r="4"/></svg>';
   const dmoRenderList = async el => {
-    const I = DMI(), list = I.filterThreads(dmoList, dmoTab, dmoQuery), s = I.summary(dmoList);
+    const I = DMI(), list = I.filterThreads(dmoList, dmoTab, dmoQuery), s = I.summary(dmoList), now = Date.now();
     const previews = await Promise.all(list.map(async t => { const m = (await dmoMsgs(t.id)).slice(-1)[0]; return m ? (m.me ? 'Vous : ' : t.kind === 'group' && m.from ? '@' + m.from + ' : ' : '') + (m.text ? I.preview(m.text) : m.elsewhere ? 'Envoyé depuis un autre appareil' : 'Message illisible') : ''; }));
     if (!el.isConnected || dmoOpen) return;
-    el.innerHTML = '<div class="dmo-top"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher une conversation" aria-label="Rechercher une conversation" data-dmo-search value="' + escapeHtml(dmoQuery) + '"></label>' +
-      '<button type="button" class="btn" data-dmo-new="dm" aria-expanded="' + (dmoPanel === 'dm') + '">' + igIcon('ic-pen') + '<span>Message</span></button><button type="button" class="btn secondary" data-dmo-new="group" aria-expanded="' + (dmoPanel === 'group') + '">' + igIcon('ic-users') + '<span>Groupe</span></button></div>' +
-      '<nav class="dm-tabs" aria-label="Boîte de réception"><button type="button" data-dmo-tab="main" class="' + (dmoTab === 'main' ? 'is-on' : '') + '"' + (dmoTab === 'main' ? ' aria-current="page"' : '') + '>Principal' + (s.people ? ' <span class="dmo-count">' + I.badgeText(s.people) + '</span>' : '') + '</button>' +
+    // Bande des contacts récents (vraies conversations seulement), comme la rangée du haut d'Instagram
+    const recent = dmoList.filter(t => !t.request && !t.declined).slice(0, 12);
+    const strip = recent.length > 1 && !dmoQuery ? '<div class="dmx-strip" role="list" aria-label="Conversations récentes">' + recent.map(t => '<button type="button" role="listitem" class="dmx-chip' + (t.unread ? ' is-new' : '') + '" data-dmo-open="' + t.kind + ':' + escapeHtml(t.id) + '">' + dmoAvatar(t) + '<span>' + escapeHtml(t.kind === 'group' ? t.title : (t.handle || t.title)) + '</span></button>').join('') + '</div>' : '';
+    el.innerHTML = '<header class="dmx-head"><h2>Messages</h2><span class="dmo-head-sp"></span>' +
+      '<button type="button" class="dmo-icon" data-dmo-new="group" aria-expanded="' + (dmoPanel === 'group') + '" aria-label="Nouveau groupe" title="Nouveau groupe">' + igIcon('ic-users') + '</button>' +
+      '<button type="button" class="dmo-icon is-key" data-dmo-new="dm" aria-expanded="' + (dmoPanel === 'dm') + '" aria-label="Nouveau message" title="Nouveau message">' + igIcon('ic-pen') + '</button></header>' +
+      '<div class="dmo-top"><label class="dm-search">' + igIcon('ic-search') + '<input type="search" placeholder="Rechercher" aria-label="Rechercher une conversation" data-dmo-search value="' + escapeHtml(dmoQuery) + '"></label></div>' +
+      dmoNewHtml() + strip +
+      '<nav class="dm-tabs dmx-tabs" aria-label="Boîte de réception"><button type="button" data-dmo-tab="main" class="' + (dmoTab === 'main' ? 'is-on' : '') + '"' + (dmoTab === 'main' ? ' aria-current="page"' : '') + '>Principal' + (s.people ? ' <span class="dmo-count">' + I.badgeText(s.people) + '</span>' : '') + '</button>' +
       '<button type="button" data-dmo-tab="requests" class="' + (dmoTab === 'requests' ? 'is-on' : '') + '"' + (dmoTab === 'requests' ? ' aria-current="page"' : '') + '>Demandes' + (s.requests ? ' <span class="dmo-count">' + I.badgeText(s.requests) + '</span>' : '') + '</button></nav>' +
       (dmoOther ? '<p class="hb-local">' + igIcon('ic-phone') + '<span>Vos messages sont liés à un autre appareil. <button type="button" class="dmo-link" data-dmo-takeover>Les recevoir sur celui-ci</button> (l’autre appareil ne pourra plus ouvrir les nouvelles conversations).</span></p>' : '') +
-      dmoNewHtml() +
-      (list.length ? '<ul class="dmo-list">' + list.map((t, i) => '<li><button type="button" class="dmo-row' + (t.unread && !t.request ? ' is-unread' : '') + '" data-dmo-open="' + t.kind + ':' + escapeHtml(t.id) + '">' + dmoAvatar(t) +
-        '<span class="dmo-row-main"><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small>' + escapeHtml(previews[i] && !t.request ? previews[i] : I.rowHint(t)) + '</small></span>' +
-        '<span class="dmo-row-side"><time>' + escapeHtml(dmoTime(t.lastAt)) + '</time>' + (I.rowBadge(t) ? '<span class="dmo-badge' + (t.muted ? ' is-muted' : '') + '" aria-label="' + t.unread + ' non lu' + (t.unread > 1 ? 's' : '') + '">' + I.rowBadge(t) + '</span>' : '') + '</span></button></li>').join('') + '</ul>'
-        : dmoTab === 'requests' ? dmoNotice('ic-users', 'Aucune demande', 'Les messages des personnes que vous ne suivez pas et les invitations de groupe arrivent ici.')
-        : dmoNotice('ic-send', 'Vos messages', 'Écrivez à un membre avec « Message », ou réunissez plusieurs collectionneurs dans un groupe.', '<button type="button" class="btn dm-start" data-dm-market>Explorer le Marché</button>'));
+      (list.length ? '<ul class="dmo-list">' + list.map((t, i) => {
+        const unread = t.unread && !t.request, when = I.ago(t.lastAt, now), line = previews[i] && !t.request ? previews[i] : I.rowHint(t);
+        return '<li><button type="button" class="dmo-row' + (unread ? ' is-unread' : '') + '" data-dmo-open="' + t.kind + ':' + escapeHtml(t.id) + '">' + dmoAvatar(t, unread ? 'is-ring' : '') +
+          '<span class="dmo-row-main"><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small><span class="dmx-prev">' + escapeHtml(line) + '</span>' + (when ? '<span class="dmx-when"> · ' + escapeHtml(when) + '</span>' : '') + '</small></span>' +
+          '<span class="dmo-row-side">' + (t.muted ? igIcon('ic-bell') : '') + (I.rowBadge(t) ? '<span class="dmo-badge' + (t.muted ? ' is-muted' : '') + '" aria-label="' + t.unread + ' non lu' + (t.unread > 1 ? 's' : '') + '">' + I.rowBadge(t) + '</span>' : '') + '</span></button></li>';
+      }).join('') + '</ul>'
+        : dmoTab === 'requests' ? '<div class="dmx-empty">' + dmoEmptyArt + '<b>Aucune demande</b><span>Les messages des personnes que vous ne suivez pas et les invitations de groupe arrivent ici.</span></div>'
+        : dmoQuery ? '<div class="dmx-empty"><b>Aucun résultat</b><span>Aucune conversation ne correspond à « ' + escapeHtml(dmoQuery) + ' ».</span></div>'
+        : '<div class="dmx-empty">' + dmoEmptyArt + '<b>Vos messages</b><span>Écrivez à un collectionneur, négociez un numéro, montez un club de lecture. Tout est chiffré de bout en bout.</span><button type="button" class="btn" data-dmo-new="dm">' + igIcon('ic-pen') + 'Nouveau message</button><button type="button" class="dmo-link" data-dm-market>Trouver des membres au Marché</button></div>');
   };
-  const dmoMsgHtml = (t, m) => {
+  const dmoMsgHtml = (t, m, pos, av) => {
     const I = DMI(), c = m.text ? I.decodeContent(m.text) : null, key = t.id + ':' + m.id;
-    let body;
+    let body, emoji = false;
     if (!c) body = '<p class="dmo-bad">' + igIcon(m.elsewhere ? 'ic-phone' : 'ic-alert') + (m.elsewhere ? 'Envoyé depuis un autre appareil' : 'Message illisible sur cet appareil') + '</p>';
     else if (c.kind === 'voice') { dmoVoices.set(key, { url: () => dmoVoiceUrl(c), dur: c.dur }); body = dmoWaveHtml(key, c.peaks, c.dur, c.tr); }
-    else body = '<p>' + escapeHtml(c.text).replace(/\n/g, '<br>') + '</p>';
-    return '<li class="dmo-msg ' + (m.me ? 'is-me' : 'is-them') + '">' + (t.kind === 'group' && !m.me && m.from ? '<small class="dmo-from">@' + escapeHtml(m.from) + '</small>' : '') + body +
+    else { emoji = I.bigEmoji(c.text); body = '<p>' + escapeHtml(c.text).replace(/\n/g, '<br>') + '</p>'; }
+    const p = pos || { first: true, last: true };
+    return '<li class="dmo-msg ' + (m.me ? 'is-me' : 'is-them') + (p.first ? ' is-first' : '') + (p.last ? ' is-last' : '') + (emoji ? ' is-emoji' : '') + '">' +
+      (av && !m.me && p.last ? '<span class="dmx-av" style="--av:' + dmoHue(m.from || t.handle) + '" aria-hidden="true">' + escapeHtml(String(m.from || t.handle || '?').slice(0, 2).toUpperCase()) + '</span>' : '') +
+      (t.kind === 'group' && !m.me && m.from && p.first ? '<small class="dmo-from">@' + escapeHtml(m.from) + '</small>' : '') + body +
       '<time datetime="' + escapeHtml(m.at || '') + '">' + escapeHtml(dmoTime(m.at)) + (m.expires ? ' · ' + igIcon('ic-hourglass') : '') + '</time></li>';
   };
   const dmoPaintMsgs = async (el, t) => {
     const ol = el.querySelector('[data-dmo-msgs]'); if (!ol) return;
     const msgs = await dmoMsgs(t.id), near = ol.scrollHeight - ol.scrollTop - ol.clientHeight < 80;
-    ol.innerHTML = msgs.length ? msgs.map(m => dmoMsgHtml(t, m)).join('') : '<li class="dmo-first">' + igIcon('ic-shield') + 'Chiffré de bout en bout : seuls les membres de cette conversation lisent ces messages.</li>';
+    // D-135 : bulles regroupées par auteur, cartouches de date façon BD entre les moments de la conversation
+    const L = DMI().layout(msgs, Date.now()), av = t.kind === 'group' || t.kind === 'dm';
+    ol.innerHTML = msgs.length ? '<li class="dmo-first">' + igIcon('ic-shield') + 'Chiffré de bout en bout</li>' + L.map(x => x.sep ? '<li class="dmx-sep"><span>' + escapeHtml(x.sep) + '</span></li>' : dmoMsgHtml(t, msgs[x.i], x, av)).join('')
+      : '<li class="dmx-hello">' + dmoAvatar(t) + '<b>' + escapeHtml(t.title) + '</b><span>' + igIcon('ic-shield') + 'Chiffré de bout en bout : seuls les membres de cette conversation lisent ces messages.</span><span class="dmx-hint">Dites bonjour, ou envoyez 💥</span></li>';
     // D-134 : seules les bulles arrivées depuis le dernier affichage surgissent (pas de clignotement à chaque actualisation)
+    const bubbles = Array.from(ol.querySelectorAll('.dmo-msg'));
     const before = ol.dataset.n === undefined ? msgs.length : +ol.dataset.n; ol.dataset.n = msgs.length;
-    if (msgs.length > before) Array.from(ol.children).slice(before).forEach(li => li.classList.add('is-new'));
+    if (msgs.length > before) bubbles.slice(before).forEach(li => li.classList.add('is-new'));
     if (near || !ol.dataset.scrolled) { ol.scrollTop = ol.scrollHeight; ol.dataset.scrolled = '1'; }
   };
   const dmoPanelHtml = async t => {
@@ -27905,6 +28072,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     }
     return '';
   };
+  const dmoTrHtml = () => DMI().speechSupport(window) === 'web' ? '<label class="dmo-trtoggle"><input type="checkbox" data-dmo-tr' + (dmoTrOn() ? ' checked' : '') + '> Retranscrire mes vocaux (le service vocal du navigateur entend l’enregistrement)</label>' : '<p class="dmo-trtoggle hb-muted">Retranscription des vocaux indisponible sur cet appareil.</p>';
   const dmoRenderThread = async (el, quiet) => {
     const t = dmoThread();
     if (!t) { dmoOpen = ''; return dmoRenderList(el); }
@@ -27918,16 +28086,15 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const warn = t.kind === 'dm' && R.trust(pin, seen) === 'changed' ? '<p class="hb-local is-warn">' + igIcon('ic-alert') + '<span>' + escapeHtml(R.TRUST_LABEL.changed) + ' <button type="button" class="dmo-link" data-dmo-trust>Je l’ai vérifié</button></span></p>' : '';
     const panel = await dmoPanelHtml(t).catch(() => '');
     if (!el.isConnected || dmoThread() !== t) return;
-    const sr = DMI().speechSupport(window) === 'web';
     el.innerHTML = '<div class="dmo-thread"><header class="dmo-head"><button type="button" class="dmo-icon" data-dmo-back aria-label="Retour aux conversations">' + igIcon('ic-arrow-left') + '</button>' + dmoAvatar(t) +
-      '<div><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small>' + escapeHtml(sub) + '</small></div><span class="dmo-head-sp"></span>' +
+      '<div class="dmx-who"><b>' + escapeHtml(t.title) + (t.seal ? ' ' + hbBadgeSvg(t.seal, 14) : '') + '</b><small>' + escapeHtml(sub) + '</small></div><span class="dmo-head-sp"></span>' +
       (t.kind === 'group' && t.status === 'active' ? '<button type="button" class="dmo-icon' + (t.muted ? ' is-off' : '') + '" data-dmo-mute aria-pressed="' + t.muted + '" aria-label="' + (t.muted ? 'Réactiver les alertes du groupe' : 'Mettre le groupe en sourdine') + '">' + igIcon('ic-bell') + '</button>' : '') +
       (t.kind === 'group' ? '<button type="button" class="dmo-icon" data-dmo-panel="members" aria-expanded="' + (dmoPanel === 'members') + '" aria-label="Membres et réglages du groupe">' + igIcon('ic-users') + '</button>' : '<button type="button" class="dmo-icon" data-dmo-panel="info" aria-expanded="' + (dmoPanel === 'info') + '" aria-label="Sécurité et messages éphémères">' + igIcon('ic-shield') + '</button>') + '</header>' +
-      banner + warn + panel + '<ol class="dmo-msgs" data-dmo-msgs aria-live="polite"></ol>' +
-      (can ? '<form class="dmo-compose" data-dmo-form="send"><button type="button" class="dmo-icon" data-dmo-mic aria-label="Enregistrer un message vocal">' + igIcon('ic-mic') + '</button>' +
-        '<textarea name="text" rows="1" maxlength="2000" placeholder="Message chiffré…" aria-label="Votre message" enterkeyhint="send"></textarea><button type="submit" class="dmo-icon is-send" aria-label="Envoyer">' + igIcon('ic-send') + '</button></form>' +
-        '<div class="dmo-rec" data-dmo-rec hidden><span class="dmo-dot"></span><b data-dmo-rec-time>0:00</b><span class="dmo-rec-sp"></span><button type="button" class="btn secondary" data-dmo-rec-cancel>Annuler</button><button type="button" class="btn" data-dmo-rec-send>' + igIcon('ic-send') + 'Envoyer</button></div>' +
-        (sr ? '<label class="dmo-trtoggle"><input type="checkbox" data-dmo-tr' + (dmoTrOn() ? ' checked' : '') + '> Retranscrire mes vocaux (le service vocal du navigateur entend l’enregistrement)</label>' : '<p class="dmo-trtoggle hb-muted">Retranscription indisponible sur cet appareil.</p>') : '') + '</div>';
+      banner + warn + (panel ? panel.replace(/<\/section>$/, (can ? dmoTrHtml() : '') + '</section>') : '') + '<ol class="dmo-msgs" data-dmo-msgs aria-live="polite"></ol>' +
+      (can ? '<form class="dmo-compose" data-dmo-form="send"><div class="dmx-pill"><button type="button" class="dmo-icon dmx-mic" data-dmo-mic aria-label="Enregistrer un message vocal">' + igIcon('ic-mic') + '</button>' +
+        '<textarea name="text" rows="1" maxlength="2000" placeholder="Écrire un message…" aria-label="Votre message" enterkeyhint="send"></textarea>' +
+        '<button type="button" class="dmx-boom" data-dmo-quick="💥" aria-label="Envoyer 💥">💥</button></div><button type="submit" class="dmo-icon is-send" aria-label="Envoyer">' + igIcon('ic-send') + '</button></form>' +
+        '<div class="dmo-rec" data-dmo-rec hidden><span class="dmo-dot"></span><b data-dmo-rec-time>0:00</b><span class="dmo-rec-sp"></span><button type="button" class="btn secondary" data-dmo-rec-cancel>Annuler</button><button type="button" class="btn" data-dmo-rec-send>' + igIcon('ic-send') + 'Envoyer</button></div>' : '') + '</div>';
     await dmoPaintMsgs(el, t);
     if (can) await dmoMarkRead(t);
   };
@@ -27994,6 +28161,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       else if (ds.dmoNew) { dmoPanel = dmoPanel === ds.dmoNew ? '' : ds.dmoNew; await dmoRenderList(el); const i = el.querySelector('.dmo-new input'); if (i) i.focus(); }
       else if (ds.dmoPanel) { dmoPanel = dmoPanel === ds.dmoPanel ? '' : ds.dmoPanel; await dmoRenderThread(el, true); }
       else if (ds.dmoTakeover !== undefined) await dmoAct(el, () => dmoEnsureKeys(true), 'Vos nouveaux messages arriveront sur cet appareil.');
+      else if (ds.dmoQuick && t) { b.disabled = true; try { await (t.kind === 'group' ? dmoSendGroup(t, ds.dmoQuick) : dmoSendDm(t, ds.dmoQuick)); await dmoPaintMsgs(el, t); } catch (err) { showToast(DMI().reason(err)); } b.disabled = false; }
       else if (!t) return;
       else if (ds.dmoAccept !== undefined) await dmoAct(el, () => t.kind === 'group' ? dmoRpc('group_respond', { p_group: t.id, p_accept: true }) : dmoRpc('dm_respond', { p_conversation: t.id, p_accept: true }), t.kind === 'group' ? 'Vous avez rejoint le groupe.' : 'Demande acceptée.');
       else if (ds.dmoDecline !== undefined) { await dmoAct(el, () => t.kind === 'group' ? dmoRpc('group_respond', { p_group: t.id, p_accept: false }) : dmoRpc('dm_respond', { p_conversation: t.id, p_accept: false }), 'Demande refusée.'); dmoOpen = ''; await dmoRefresh(el, true); }
