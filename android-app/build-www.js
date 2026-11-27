@@ -46,6 +46,13 @@ const sha = buf => crypto.createHash('sha256').update(buf).digest('hex');
   // Les balises <script> des bibliothèques ne doivent plus demander d'en-têtes CORS au CDN
   html = html.replace(/(<script src="vendor\/[^"]+")\s+integrity="[^"]*"/g, '$1').replace(/(<script src="vendor\/[^"]+")\s+crossorigin="[^"]*"/g, '$1');
   // CSP (D-83) : le script principal vient d'être modifié, ses empreintes sont recalculées sur cette copie
+  // D-132 : gros scripts et feuille de style en fichiers séparés (code compilé gardé en cache, démarrage plus rapide)
+  const parts = require(path.join(ROOT, 'scripts', 'split-html.js')).split(html);
+  html = parts.html;
+  for (const f of parts.files) {
+    fs.mkdirSync(path.dirname(path.join(WWW, f.name)), { recursive: true });
+    fs.writeFileSync(path.join(WWW, f.name), f.text);
+  }
   html = require(path.join(ROOT, 'scripts', 'csp.js')).apply(html);
   fs.writeFileSync(path.join(WWW, 'index.html'), html);
 
