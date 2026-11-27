@@ -61,3 +61,9 @@ test('delete-account : succès — données puis compte supprimés, zéro ligne,
   for (const t of H.APP_TABLES) assert.equal((await db.query(`select count(*)::int n from app.${t} where user_id = $1`, [H.USER_A])).rows[0].n, 0, t);
   assert.equal((await db.query('select count(*)::int n from auth.users where id = $1', [H.USER_B])).rows[0].n, 1);
 });
+
+test('delete-account : handler.mjs (déployé) reprend exactement la logique de handler.js', () => {
+  const fs = require('fs'), path = require('path'), dir = path.join(__dirname, '../supabase/functions/delete-account');
+  const code = f => fs.readFileSync(path.join(dir, f), 'utf8').replace(/\r/g, '').split('\n').filter(l => !/^\s*\/\//.test(l) && l.trim() && l.trim() !== "'use strict';" && !/^(module\.exports|export) /.test(l)).join('\n');
+  assert.equal(code('handler.mjs'), code('handler.js'));
+});

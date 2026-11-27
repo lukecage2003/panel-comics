@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-uDr9qsLQzGxf7rFmoxinYYwFRj6TmHXKjXiIxVJ6SuM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-mlX8hwWHoSKZz2h5ZBLyUlAQ0MnMrdiDSxyJGp5De0U=' 'sha256-XynDb9mXbYrlQ0HFOThy38JAwmRUwgHYMkHR8TW7UUQ=' 'sha256-XqhY0PDhseWvpgP5PMKfD7lq2ox3LB+7HeCc5LHZlGE=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -27886,7 +27886,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     return '<section class="hb-panel"><h4>' + igIcon('ic-key') + 'Créer votre compte Panel</h4><div class="au-providers">' +
       A.PROVIDERS.map(p => '<button type="button" class="au-btn au-' + p.key + '" data-hb-auth="' + p.key + '">' + (p.key === 'apple' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" stroke="none" d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9s-1.8-.8-3-.8c-1.5 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6s-2.5-1-2.5-3.8zM14.1 5.8c.6-.8 1.1-1.9 1-3-.9 0-2.1.6-2.7 1.4-.6.7-1.1 1.8-1 2.9 1 .1 2.1-.5 2.7-1.3z"/></svg>' : p.key === 'google' ? '<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" stroke="none" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" stroke="none" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" stroke="none" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" stroke="none" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg>' : igIcon('ic-send')) + '<span>' + p.label + '</span></button>').join('') + '</div>' +
       '<form data-hb-form="signup" class="hb-form"><div class="hb-row"><label>Pseudo<input name="handle" maxlength="25" placeholder="alex_encre" autocomplete="username" required></label><label>Année de naissance<input name="birthYear" inputmode="numeric" maxlength="4" placeholder="1995" required></label></div>' +
-      '<label class="hb-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label><label class="hb-check"><input type="checkbox" name="marketing"> Recevoir les nouveautés de Panel (facultatif)</label>' +
+      '<label class="hb-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label><label class="hb-check"><input type="checkbox" name="marketing"> Recevoir les nouveautés de Panel (facultatif)</label>' +
       '<button class="btn" type="submit">' + igIcon('ic-check') + 'Préparer mon inscription</button></form>' +
       '<p class="hb-muted">Apple et Google : aucun mot de passe ne passe par Panel. E-mail : un lien de connexion, ou un mot de passe d’au moins 12 caractères. Double authentification par application proposée dès la création. Comptes à partir de 13 ans ; comptes pros réservés aux adultes.</p></section>';
   };
@@ -31292,7 +31292,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       const p = wgPending() || {}, full = !p.year;
       body.innerHTML = '<form data-wg-form novalidate>' + (full ? '<div class="wg-row">' : '') + '<label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre" value="' + escapeHtml(p.handle || '') + '"></label>' +
         (full ? '<label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div><label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
-          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label>' : '') +
+          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label>' : '') +
         '<button class="wg-go" type="submit">Valider mon profil</button><p class="wg-msg" role="status" data-wg-msg></p></form>';
       say(msg);
       const f = body.querySelector('form'), yr = f.querySelector('[name=year]');
@@ -31333,7 +31333,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<label>Mot de passe<input type="password" name="pw" autocomplete="' + (up ? 'new-password' : 'current-password') + '" maxlength="' + A.LIMITS.passwordMax + '"' + (up ? ' placeholder="10 caractères, lettres et chiffres"' : '') + '></label>' +
         (up ? '<div class="wg-row"><label>Pseudo<input name="handle" maxlength="24" autocapitalize="none" autocomplete="username" spellcheck="false" placeholder="alex_encre"></label><label>Année de naissance<input name="year" inputmode="numeric" maxlength="4" placeholder="1995"></label></div>' +
           '<label class="wg-check" data-wg-consent hidden><input type="checkbox" name="consent"> Un parent ou tuteur a donné son accord</label>' +
-          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les conditions d’utilisation et la politique de confidentialité</label>' : '') +
+          '<label class="wg-check"><input type="checkbox" name="terms"> J’accepte les <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">conditions d’utilisation</a> et la <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">politique de confidentialité</a></label>' : '') +
         '<button class="wg-go" type="submit">' + (up ? 'Créer mon compte' : 'Se connecter') + '</button>' +
         (up ? '' : '<button type="button" class="wg-link" data-wg-forgot>Mot de passe oublié ?</button>') +
         '<p class="wg-msg" role="status" data-wg-msg></p></form>';
@@ -31476,6 +31476,9 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         '<label class="acct-check"><input type="checkbox" data-acct-bk-auto' + (acctAutoOn() ? ' checked' : '') + '> Synchronisation automatique : la copie suit chaque changement</label></div>' +
         '<div class="acct-mfa" data-acct-mfa><b>Double authentification</b><span class="acct-note">Lecture…</span></div>' +
         '<form class="acct-backup" data-acct-pw><b>Changer le mot de passe</b><label>Nouveau mot de passe<input class="field-input" type="password" data-acct-newpw autocomplete="new-password" maxlength="' + A.LIMITS.passwordMax + '"></label><span class="acct-note">' + A.LIMITS.passwordMin + ' caractères au moins, lettres et chiffres.</span><div class="acct-row"><button class="btn secondary" type="submit">Enregistrer le mot de passe</button></div></form>' +
+        '<div class="acct-backup" data-acct-rgpd><b>Mes données</b><span class="acct-note">Téléchargez tout ce que votre compte garde en ligne, ou supprimez le compte et ses données. La collection de cet appareil n’est jamais touchée. <a href="https://lukecage2003.github.io/panel-comics/legal/confidentialite.html" target="_blank" rel="noopener">Politique de confidentialité</a> · <a href="https://lukecage2003.github.io/panel-comics/legal/conditions.html" target="_blank" rel="noopener">Conditions d’utilisation</a></span>' +
+        '<div class="acct-row"><button class="btn secondary" type="button" data-acct-export>Exporter mes données</button><button class="btn ghost" type="button" data-acct-del-open>Supprimer mon compte</button></div>' +
+        '<div data-acct-del hidden><span class="acct-note">Suppression définitive du compte, du profil, de la copie de collection, des publications et des messages. Tapez <b>SUPPRIMER MON COMPTE</b> pour confirmer.</span><input class="field-input" data-acct-del-phrase autocomplete="off" autocapitalize="characters" spellcheck="false"><div class="acct-row"><button class="btn" type="button" data-acct-del-go>Supprimer définitivement</button></div></div></div>' +
         '<div class="acct-row"><button class="btn secondary" type="button" data-acct-out>Se déconnecter</button><button class="btn ghost" type="button" data-acct-out-all>Déconnecter tous les appareils</button>' + forget + '</div>' + msgHtml;
       // D-114 : double authentification par application (code à 6 chiffres), proposée dès la connexion
       const mfaBox = body.querySelector('[data-acct-mfa]');
@@ -31501,6 +31504,35 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
         say('…');
         try { const r = await client.auth.updateUser({ password: v }); if (r.error) { say(A.mapAuthError(r.error).message || 'Mot de passe refusé.'); return; } } catch (_) { say('Connexion impossible. Réessayez.'); return; }
         inp.value = ''; say('Mot de passe enregistré.');
+      };
+      // D-128 : droit d'accès (export JSON) et droit à l'effacement (fonction delete-account, clé de service côté serveur seulement)
+      body.querySelector('[data-acct-export]').onclick = async () => {
+        say('…');
+        const r = await acctRpc(client, 'export_my_data');
+        if (!r || r.error) { say('Export impossible pour le moment. Réessayez plus tard.'); return; }
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([JSON.stringify(r.data, null, 2)], { type: 'application/json' }));
+        const nd = new Date(); a.download = 'panel-mes-donnees-' + nd.getFullYear() + '-' + String(nd.getMonth() + 1).padStart(2, '0') + '-' + String(nd.getDate()).padStart(2, '0') + '.json';
+        document.body.appendChild(a); a.click(); a.remove();
+        say('Export prêt.');
+      };
+      body.querySelector('[data-acct-del-open]').onclick = () => { const d = body.querySelector('[data-acct-del]'); d.hidden = !d.hidden; if (!d.hidden) d.querySelector('input').focus(); };
+      body.querySelector('[data-acct-del-go]').onclick = async () => {
+        const phrase = body.querySelector('[data-acct-del-phrase]').value.trim();
+        if (phrase !== 'SUPPRIMER MON COMPTE') { say('Tapez exactement SUPPRIMER MON COMPTE.'); return; }
+        say('…');
+        let res = null;
+        try {
+          const sess = await client.auth.getSession();
+          const tok = sess && sess.data && sess.data.session && sess.data.session.access_token;
+          if (!tok) { say(A.MESSAGES.session_expired); return; }
+          res = await fetch(cfg.url + '/functions/v1/delete-account', { method: 'POST', headers: { authorization: 'Bearer ' + tok, apikey: cfg.publishableKey, 'content-type': 'application/json' }, body: JSON.stringify({ confirm: phrase }) });
+        } catch (_) { say(A.MESSAGES.network); return; }
+        if (!res.ok) { say('Suppression impossible pour le moment (' + res.status + '). Rien n’a été supprimé de cet appareil.'); return; }
+        try { await client.auth.signOut({ scope: 'local' }); } catch (_) {}
+        try { localStorage.removeItem('panel_pending_join'); localStorage.removeItem(ACCT_AUTO_KEY); } catch (_) {}
+        showToast('Compte supprimé. Votre collection reste sur cet appareil.');
+        renderAccountBox();
       };
       acctBackupWire(body, client, say);
       body.querySelector('[data-acct-out]').onclick = async () => { const r = await flow.signOut(false); r.ok ? renderAccountBox() : say(r.error.message); };

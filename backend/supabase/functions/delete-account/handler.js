@@ -1,6 +1,6 @@
 'use strict';
 // Lot 3.6 (local, D-45) — Logique de l'Edge Function « delete-account », indépendante du runtime (Deno sur Supabase, Node en test).
-// JAMAIS déployée ni exécutée contre Supabase. La clé de service n'est lue que par l'enveloppe Deno (variable d'environnement
+// Déployée sur la préproduction (D-128) via handler.mjs, produit à partir de ce fichier. La clé de service n'est lue que par l'enveloppe Deno (variable d'environnement
 // du projet), jamais par le client, jamais versionnée.
 // Étapes : 1) identité vérifiée par le jeton de l'utilisateur ; 2) phrase de confirmation exacte ; 3) effacement des données
 // (api.delete_my_data, mêmes comptes que l'export) ; 4) suppression du compte d'authentification (API d'administration).
