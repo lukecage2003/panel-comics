@@ -2777,7 +2777,8 @@ const waitForCdp = async () => {
           P.financeSummary(P.getPhysicalSingles()); P.renderStatsDashboard();
           r.noMutation = JSON.stringify(P.getPhysicalSingles()) === fp && P.getPhysicalSingles().find(s => s.id === 'f30a').purchasePrice === null && P.getPhysicalSingles().find(s => s.id === 'f30b').estValue === null;
           // Instantanés : un relevé de l'ancienne méthode n'est jamais réécrit ; les nouveaux portent m: 2
-          const today = new Date().toISOString().slice(0, 10);
+          // Date locale, comme l'application (todayLocal) : une date UTC échoue entre minuit et 1 h à Paris
+          const nd = new Date(), today = nd.getFullYear() + '-' + String(nd.getMonth() + 1).padStart(2, '0') + '-' + String(nd.getDate()).padStart(2, '0');
           localStorage.setItem('panel_value_snapshots', JSON.stringify({ '2026-01-01': { v: 10, i: 5, n: 1 }, [today]: { v: 999, i: 1, n: 7 } }));
           const raw1 = localStorage.getItem('panel_value_snapshots');
           P.setPhysicalSingles(P.getPhysicalSingles());

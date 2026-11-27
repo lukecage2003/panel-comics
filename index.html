@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-/GIVqayZrkZvGMDjrfSsoRrJ9POTXEum8tuySKvj0oA=' 'sha256-umV64b6rlPFE/4DU3fQ6b8vKvUBY++qYTj7As5rHjj8=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-/GIVqayZrkZvGMDjrfSsoRrJ9POTXEum8tuySKvj0oA=' 'sha256-myq6Yiu9D8h5bt6qWC3wJc3WjV+XpSNtsmDM4JOzPmM=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4602,6 +4602,64 @@
     @media (prefers-reduced-motion: reduce) {
       #singlesViewSection > div[id$="View"], .mobile-dock-btn.active .icon, .splash .pm-p, .progress-fill, .progress-line-fill, .hbar > div, .ex-cv-skel, .ex-nw-skel, .ex-spin::before { animation: none !important; }
       .hb-strip .hb-chip::after { transition: none; }
+    }
+  
+    /* ===== D-134 : univers BD (messagerie en bulles, pastilles-bulles, ouverture encrée, chargement au logo, en-tête de la collection) ===== */
+    /* Collection et autres écrans : titre et icônes sur une ligne, recherche + « Plus » + Importer sur la suivante */
+    @media (max-width: 720px) {
+      body:not(.view-social):not(.view-discover) .topbar { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; align-items: center !important; gap: 8px 4px !important; }
+      body:not(.view-social):not(.view-discover) .topbar-title { flex: 1 1 auto; min-width: 0; }
+      body:not(.view-social):not(.view-discover) #mainTitleSub { display: none !important; }
+      body:not(.view-social):not(.view-discover) .top-actions { display: contents !important; }
+      body:not(.view-social):not(.view-discover) .top-actions > .notif-btn, body:not(.view-social):not(.view-discover) #openSettingsBtnTop { order: 1; background: none !important; border-color: transparent !important; box-shadow: none !important; padding: 9px !important; }
+      body:not(.view-social):not(.view-discover) .top-actions > .btn .ic { width: 24px; height: 24px; }
+      body:not(.view-social):not(.view-discover) .top-actions > .search-box { order: 2; flex: 1 1 190px; min-width: 0; }
+      body:not(.view-social):not(.view-discover) #topMoreMenu { order: 3; }
+      body:not(.view-social):not(.view-discover) #importModalOpenBtn { order: 4; font-size: 0 !important; width: 44px; height: 44px; padding: 0 !important; border-radius: 50% !important; display: inline-grid !important; place-items: center; flex: none; }
+      body:not(.view-social):not(.view-discover) #importModalOpenBtn .ic { width: 22px; height: 22px; margin: 0 !important; }
+      body:not(.view-social):not(.view-discover) #topMoreMenu > summary { padding: 10px 12px !important; }
+    }
+    /* Pastilles : une bulle de BD encrée qui surgit quand le nombre change */
+    .topbar .notif-count { min-width: 21px; height: 20px; padding: 0 5px; top: -4px; right: -7px; border-radius: 12px 12px 12px 3px; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; font: 800 12.5px/16px 'Barlow Condensed', var(--font-ui, sans-serif); letter-spacing: .02em; transform: rotate(-6deg); }
+    #dmCount { background: #ffd400; color: #0b0b0c; }
+    #notifCount { background: #e5484d; color: #fff; }
+    .notif-count.is-pop { animation: d134Pop .5s cubic-bezier(.25,1.7,.45,1) both; }
+    @keyframes d134Pop { 0% { transform: scale(0) rotate(-30deg); } 60% { transform: scale(1.3) rotate(4deg); } 100% { transform: scale(1) rotate(-6deg); } }
+    /* Messagerie : de vraies bulles de BD (encre, queue, lettrage), sur une page tramée */
+    .dmo-msgs { background: radial-gradient(circle, color-mix(in srgb, var(--ink, #fff) 7%, transparent) 1px, transparent 1.4px) 0 0 / 9px 9px; border-radius: 14px; padding: 10px 8px 14px; gap: 12px; }
+    .dmo-msg { position: relative; border: 2px solid #0b0b0c; border-radius: 20px !important; background: #fbfaf5; color: #111; box-shadow: 3px 3px 0 #0b0b0c; transform-origin: bottom left; }
+    .dmo-msg.is-new { animation: d134Bubble .26s cubic-bezier(.3,1.5,.5,1) both; }
+    .dmo-msg.is-me { background: #ffd400; color: #0b0b0c; transform-origin: bottom right; }
+    .dmo-msg::after { content: ""; position: absolute; bottom: -10px; left: 16px; width: 14px; height: 12px; background: inherit; border: 2px solid #0b0b0c; border-top: 0; border-left: 0; clip-path: polygon(0 0, 100% 0, 0 100%); transform: skewX(-25deg); }
+    .dmo-msg.is-me::after { left: auto; right: 16px; transform: scaleX(-1) skewX(-25deg); }
+    .dmo-msg::before { content: ""; position: absolute; bottom: -1px; left: 17px; width: 13px; height: 3px; background: inherit; z-index: 1; }
+    .dmo-msg.is-me::before { left: auto; right: 17px; }
+    .dmo-msg a { color: inherit; }
+    .dmo-from { font-family: 'Barlow Condensed', var(--font-ui, sans-serif); text-transform: uppercase; letter-spacing: .04em; font-size: .8rem; }
+    @keyframes d134Bubble { from { transform: scale(.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .dmo-head b, .dmo-head strong { font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: 1.25rem; text-transform: uppercase; letter-spacing: .02em; }
+    /* Liste des discussions : avatars en case de BD, non-lu en bulle jaune encrée */
+    .dmo-av { border-radius: 12px; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; transform: rotate(-2deg); background: color-mix(in srgb, #ffd400 30%, var(--bg-card)); font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: 1.15rem; }
+    .dmo-row:nth-child(even) .dmo-av { transform: rotate(2deg); }
+    .dmo-badge, .dmo-count { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; border-radius: 12px 12px 12px 3px; box-shadow: 2px 2px 0 #0b0b0c; font-family: 'Barlow Condensed', var(--font-ui, sans-serif); font-size: .9rem; }
+    .dmo-row.is-unread { background: color-mix(in srgb, #ffd400 7%, transparent); }
+    .dmo-icon.is-send { background: #ffd400; color: #0b0b0c; border: 2px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; transition: transform .12s ease, box-shadow .12s ease; }
+    .dmo-icon.is-send:active { transform: translate(2px, 2px); box-shadow: 0 0 0 #0b0b0c; }
+    /* Ouverture : la case jaune surgit, les trois cases s'encrent d'un coup de pinceau, une trame de points éclate derrière */
+    .splash { animation: splashOut .24s ease-out .66s forwards !important; overflow: hidden; }
+    .splash::before { content: ""; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; margin: -260px 0 0 -260px; border-radius: 50%; background: radial-gradient(circle, rgba(255,212,0,.75) 1.8px, transparent 2.3px) 0 0 / 11px 11px; -webkit-mask-image: radial-gradient(circle, #000 18%, transparent 62%); mask-image: radial-gradient(circle, #000 18%, transparent 62%); animation: d134Burst .7s cubic-bezier(.2,.8,.2,1) .12s both; }
+    @keyframes d134Burst { from { transform: scale(.15); opacity: 1; } to { transform: scale(1.15); opacity: 0; } }
+    .splash .pm { position: relative; animation: d134Logo .34s cubic-bezier(.3,1.6,.5,1) both; }
+    @keyframes d134Logo { from { transform: scale(.55) rotate(-8deg); } to { transform: scale(1) rotate(0); } }
+    .splash .pm-p { transform-box: fill-box; transform-origin: left center; animation: d134Wipe .2s cubic-bezier(.2,.8,.2,1) .16s both !important; }
+    .splash .pm-p:nth-of-type(3) { animation-delay: .26s !important; } .splash .pm-p:nth-of-type(4) { animation-delay: .36s !important; }
+    @keyframes d134Wipe { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    /* Chargement : le logo Panel lui-même, dont les trois cases s'encrent tour à tour */
+    .ex-spin { display: inline-block; vertical-align: middle; flex: none; width: 20px !important; height: 20px !important; border-radius: 5px !important; background: color-mix(in srgb, #ffd400 26%, transparent) !important; }
+    .ex-spin::before { inset: 3px !important; border-radius: 1px; background: linear-gradient(#ffd400, #ffd400) 0 0 / 0 6px no-repeat, linear-gradient(#ffd400, #ffd400) 0 8px / 0 6px no-repeat, linear-gradient(#ffd400, #ffd400) 8px 8px / 0 6px no-repeat !important; clip-path: none !important; animation: d134Ink 1.3s ease-in-out infinite !important; }
+    @keyframes d134Ink { 0% { background-size: 0 6px, 0 6px, 0 6px; } 25% { background-size: 14px 6px, 0 6px, 0 6px; } 50% { background-size: 14px 6px, 6px 6px, 0 6px; } 75%, 90% { background-size: 14px 6px, 6px 6px, 6px 6px; } 100% { background-size: 0 6px, 0 6px, 0 6px; } }
+    @media (prefers-reduced-motion: reduce) {
+      .notif-count.is-pop, .dmo-msg.is-new, .splash::before, .splash .pm, .ex-spin::before { animation: none !important; }
     }
   </style>
 </head>
@@ -27649,6 +27707,10 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const dmoBadge = () => {
     const s = DMI().summary(dmoList), b = $('badgeMessages'), txt = DMI().badgeText(s.icon);
     if (b) { b.textContent = txt; b.hidden = !txt; b.setAttribute('aria-label', txt ? s.icon + (s.icon > 1 ? ' conversations' : ' conversation') + ' en attente' : ''); }
+    // D-134 : même nombre sur l'icône Messages de l'en-tête (téléphone), en bulle de BD qui surgit quand il change
+    const c = $('dmCount'), db = $('dmBtn');
+    if (c) { const was = c.hidden ? '' : c.textContent; c.textContent = txt || '0'; c.hidden = !txt; if (txt && txt !== was) { c.classList.remove('is-pop'); void c.offsetWidth; c.classList.add('is-pop'); } }
+    if (db) db.setAttribute('aria-label', txt ? 'Messages privés, ' + s.icon + (s.icon > 1 ? ' conversations' : ' conversation') + ' en attente' : 'Messages privés');
     const m = $('navMessages'); if (m) m.title = txt ? 'Messages · ' + s.people + ' non lu' + (s.people > 1 ? 's' : '') + (s.requests ? ' · ' + s.requests + ' demande' + (s.requests > 1 ? 's' : '') : '') : 'Messages';
     return s;
   };
@@ -27818,6 +27880,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ol = el.querySelector('[data-dmo-msgs]'); if (!ol) return;
     const msgs = await dmoMsgs(t.id), near = ol.scrollHeight - ol.scrollTop - ol.clientHeight < 80;
     ol.innerHTML = msgs.length ? msgs.map(m => dmoMsgHtml(t, m)).join('') : '<li class="dmo-first">' + igIcon('ic-shield') + 'Chiffré de bout en bout : seuls les membres de cette conversation lisent ces messages.</li>';
+    // D-134 : seules les bulles arrivées depuis le dernier affichage surgissent (pas de clignotement à chaque actualisation)
+    const before = ol.dataset.n === undefined ? msgs.length : +ol.dataset.n; ol.dataset.n = msgs.length;
+    if (msgs.length > before) Array.from(ol.children).slice(before).forEach(li => li.classList.add('is-new'));
     if (near || !ol.dataset.scrolled) { ol.scrollTop = ol.scrollHeight; ol.dataset.scrolled = '1'; }
   };
   const dmoPanelHtml = async t => {
