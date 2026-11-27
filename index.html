@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-zffSYKk///Mc6HF3ApjpETRDzZa9seD2kauCscv8XeU=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-tUgf/rWmFcYvAfWyQfsSPWgN2GfGX76OXh6lRO8WOJQ=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4755,7 +4755,87 @@
     .splash .pm { animation: d134Logo .34s cubic-bezier(.3,1.6,.5,1) both, dmxBoing .3s ease-in-out .56s both; }
     @keyframes dmxBoing { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.1, .9); } 70% { transform: scale(.96, 1.05); } }
     @media (prefers-reduced-motion: reduce) { .ex-spin { animation: none !important; } }
-  </style>
+  
+    /* D-136 : feuille Publier et profil, façon réseau social avec la DA de Panel */
+    .modal-box.pub-sheet { padding-top: 10px; }
+    .pub-grab { display: none; }
+    .pub-head h3#publishSheetTitle { font: 800 30px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .01em !important; }
+    .pub-sub { margin: 4px 0 0; font-size: 13px; color: var(--muted); }
+    .pub-bigs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 14px 0 4px; }
+    .pub-big { position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; min-height: 112px; padding: 12px 12px 12px; text-align: left; font: inherit; cursor: pointer;
+      color: #0b0b0c; background: var(--t); border: 2px solid #0b0b0c; border-radius: 14px; box-shadow: 4px 4px 0 #0b0b0c; transition: transform .18s var(--ease-spring, ease), box-shadow .18s; }
+    .pub-big::before { content: ""; position: absolute; inset: 0; background: radial-gradient(circle, rgba(11,11,12,.22) 1.2px, transparent 1.6px) 0 0 / 9px 9px; -webkit-mask: linear-gradient(135deg, transparent 45%, #000); mask: linear-gradient(135deg, transparent 45%, #000); pointer-events: none; }
+    .pub-big.is-y { --t: #ffd400; } .pub-big.is-v { --t: #9b85ff; } .pub-big.is-r { --t: #ff7a7e; } .pub-big.is-t { --t: #3fd6b9; }
+    .pub-big-ic { display: grid; place-items: center; width: 38px; height: 38px; margin-bottom: auto; border-radius: 50%; background: #0b0b0c; color: var(--t); }
+    .pub-big-ic .ic { width: 20px; height: 20px; }
+    .pub-big b { position: relative; margin-top: 10px; font: 800 21px/1 'Barlow Condensed', var(--font-title); text-transform: uppercase; letter-spacing: .01em; }
+    .pub-big small { position: relative; font-size: 12px; font-weight: 600; opacity: .78; }
+    .pub-big:active { transform: translate(3px, 3px); box-shadow: 1px 1px 0 #0b0b0c; }
+    @media (hover: hover) { .pub-big:hover { transform: translate(-1px, -2px) rotate(-.6deg); box-shadow: 6px 6px 0 #0b0b0c; } }
+    .pub-h small { margin-left: 6px; font-size: 11px; font-weight: 500; text-transform: none; letter-spacing: 0; opacity: .7; }
+    .pub-sheet .pl-templates { display: flex; gap: 10px; overflow-x: auto; scroll-snap-type: x proximity; margin: 0 -4px; padding: 2px 4px 8px; scrollbar-width: none; }
+    .pub-sheet .pl-templates::-webkit-scrollbar { display: none; }
+    .pub-sheet .pl-tpl { flex: 0 0 150px; scroll-snap-align: start; border-radius: 14px; background: var(--bg-card, rgba(255,255,255,.05)); border: 1px solid var(--line, rgba(255,255,255,.14)); padding: 10px; }
+    .pub-sheet .pl-tpl b { font: 800 16px/1.05 'Barlow Condensed', var(--font-title); text-transform: uppercase; letter-spacing: .01em; }
+    .pub-sheet .pl-tpl small { font-size: 11.5px; color: var(--muted); opacity: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .pub-sheet .pl-tpl:disabled { opacity: 1; cursor: default; }
+    .pub-sheet .pl-tpl:disabled b { color: var(--muted); }
+    .pl-tpl-covers.is-ghost > i { display: block; width: 36px; height: 54px; border-radius: 4px; margin-right: -10px; border: 1.5px dashed rgba(255,255,255,.28); background: radial-gradient(circle, rgba(255,255,255,.12) 1px, transparent 1.4px) 0 0 / 6px 6px; box-shadow: none; }
+    .pl-tpl-covers.is-ghost > i:nth-child(2) { transform: translateY(-3px) rotate(4deg); } .pl-tpl-covers.is-ghost > i:nth-child(3) { transform: rotate(-3deg); }
+    .pub-row { width: 100%; margin-top: 6px; align-items: center; }
+    .pub-quick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+    .pub-quick-btn { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 4px 0; border: 0; background: none; color: inherit; font: inherit; cursor: pointer; min-height: 44px; }
+    .pub-quick-btn span { display: grid; place-items: center; width: 54px; height: 54px; border-radius: 50%; background: var(--bg-card, rgba(255,255,255,.06)); border: 1.5px solid var(--line, rgba(255,255,255,.18)); transition: transform .18s, border-color .18s; }
+    .pub-quick-btn .ic { width: 22px; height: 22px; }
+    .pub-quick-btn small { font-size: 11.5px; line-height: 1.2; text-align: center; color: var(--ink-dim, inherit); }
+    .pub-quick-btn:active span { transform: scale(.92); }
+    @media (hover: hover) { .pub-quick-btn:hover span { border-color: #ffd400; } }
+    @media (max-width: 720px) {
+      #publishSheet.open { align-items: end; justify-items: stretch; padding: 0; }
+      .modal-box.pub-sheet { width: 100vw; max-width: none; border-radius: 22px 22px 0 0; margin: 0; max-height: 88dvh; padding-bottom: calc(18px + env(safe-area-inset-bottom)); animation: d136Up .26s cubic-bezier(.2,.9,.3,1.1); }
+      .pub-grab { display: block; width: 40px; height: 4px; margin: 0 auto 10px; border-radius: 4px; background: rgba(255,255,255,.25); }
+    }
+    @keyframes d136Up { from { transform: translateY(40px); opacity: 0; } to { transform: none; opacity: 1; } }
+    .pub-bigs .pub-big { animation: d136Pop .32s cubic-bezier(.2,.9,.3,1.25) backwards; }
+    .pub-bigs .pub-big:nth-child(2) { animation-delay: .04s; } .pub-bigs .pub-big:nth-child(3) { animation-delay: .08s; } .pub-bigs .pub-big:nth-child(4) { animation-delay: .12s; }
+    @keyframes d136Pop { from { transform: scale(.9) rotate(-2deg); opacity: 0; } to { transform: none; opacity: 1; } }
+
+    .pfx-id { flex-wrap: nowrap; gap: 16px; }
+    .pfx-id > .pfx-who { min-width: 0; flex: 1; }
+    .pfx-id h2 { font: 800 30px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; overflow-wrap: anywhere; }
+    .pfx-id .pf-handle { margin-top: 4px; font-size: 14px; }
+    .pfx-fav { display: inline-flex; align-items: center; gap: 5px; margin: 8px 0 0; padding: 3px 10px 3px 7px; border-radius: 99px; font-size: 12px; font-weight: 700; color: #0b0b0c; background: #ffd400; border: 1.5px solid #0b0b0c; }
+    .pfx-fav .ic { width: 13px; height: 13px; }
+    .pfx-id .pf-avatar { flex: 0 0 auto; width: 84px; height: 84px; font: 800 32px 'Barlow Condensed', var(--font-title); border: 3px solid #0b0b0c; text-shadow: 2px 2px 0 rgba(11,11,12,.45);
+      background: radial-gradient(circle, rgba(11,11,12,.25) 1.2px, transparent 1.6px) 0 0 / 7px 7px, linear-gradient(135deg, var(--pf), color-mix(in srgb, var(--pf) 45%, #000)); }
+    .pfx-bio { margin: 12px 0 0; font-size: 14.5px; line-height: 1.45; color: var(--ink, inherit); white-space: pre-line; }
+    .pf-hero .pf-stats { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 0; margin: 16px 0 0; padding: 0; border: 2px solid #0b0b0c; border-radius: 14px; overflow: hidden; background: rgba(11,11,12,.35); box-shadow: 3px 3px 0 #0b0b0c; }
+    .pf-hero .pf-stats > * { border-radius: 0; padding: 9px 2px 8px; text-align: center; }
+    .pf-hero .pf-stats > * + * { border-left: 2px solid #0b0b0c; }
+    .pf-hero .pf-stats .ig-stat b { display: block; font: 800 24px/1 'Barlow Condensed', var(--font-title); }
+    .pf-hero .pf-stats .ig-stat small { display: block; margin-top: 2px; font-size: 11px; color: var(--muted); }
+    .pf-hero .pf-stats .ig-stat.is-soon b { opacity: .45; }
+    .pfx-btns { display: grid; grid-template-columns: 1fr 1fr auto; gap: 8px; margin-top: 12px; }
+    .pfx-btns .pf-edit { min-height: 40px; padding: 0 12px; border-radius: 10px; font-weight: 700; justify-content: center; }
+    .pfx-btns .pfx-plus { width: 44px; padding: 0; display: grid; place-items: center; }
+    .pfx-btns .pfx-plus .ic { width: 20px; height: 20px; }
+    .pfx-colors { display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 600; color: var(--muted); }
+    .pfx-swatches { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pfx-sw { position: relative; width: 34px; height: 34px; padding: 0; border-radius: 50%; border: 2px solid #0b0b0c; background: var(--c); cursor: pointer; box-shadow: 2px 2px 0 #0b0b0c; transition: transform .15s; }
+    .pfx-sw[aria-pressed="true"] { transform: scale(1.12); outline: 2px solid var(--ink, #fff); outline-offset: 2px; }
+    .pfx-sw-own { overflow: hidden; background: conic-gradient(#ff5a5f, #ffd400, #22c3a6, #4aa3ff, #7c5cff, #ff5a5f); }
+    .pfx-sw-own input[type=color] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; padding: 0; border: 0; }
+    .pfx-more { border: 1px dashed var(--line, rgba(255,255,255,.2)); border-radius: 14px; padding: 0 12px; }
+    .pfx-more > summary { cursor: pointer; list-style: none; padding: 12px 0; font-weight: 700; font-size: 14px; }
+    .pfx-more > summary::-webkit-details-marker { display: none; }
+    .pfx-more > summary::after { content: "+"; float: right; font: 800 20px/1 'Barlow Condensed', sans-serif; color: #ffd400; }
+    .pfx-more[open] > summary::after { content: "−"; }
+    .pfx-more > summary small { font-weight: 500; color: var(--muted); margin-left: 6px; }
+    .pfx-more-body { display: grid; gap: 12px; padding-bottom: 12px; }
+    .pf-form .pf-actions .btn:not(.secondary) { min-height: 46px; padding: 0 22px; border: 2px solid #0b0b0c; box-shadow: 3px 3px 0 #0b0b0c; font-weight: 800; }
+    @media (max-width: 600px) { .pf-form { grid-template-columns: 1fr; } .pfx-id h2 { font-size: 26px !important; } .pfx-id .pf-avatar { width: 76px; height: 76px; font-size: 28px; } }
+    @media (prefers-reduced-motion: reduce) { .pub-bigs .pub-big, .modal-box.pub-sheet { animation: none !important; } .pub-big, .pfx-sw { transition: none; } }
+</style>
 </head>
 <body>
 <div id="splash" class="splash" aria-hidden="true"><div class="splash-in"><svg class="pm" viewBox="0 0 512 512" aria-hidden="true"><rect class="pm-bg" width="512" height="512" rx="116"/><rect class="pm-p" x="124" y="124" width="264" height="124" rx="26"/><rect class="pm-p" x="124" y="268" width="122" height="120" rx="26"/><rect class="pm-p" x="266" y="268" width="122" height="120" rx="26"/></svg></div></div>
@@ -25132,6 +25212,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-pf-stories]').forEach(b => { b.onclick = () => { const st = storyLoad().stories, seen = storySeen(); const first = st.find(x => !seen.has(x.id)) || st[0]; if (first) openStoryViewer(first.id); }; });
     host.querySelectorAll('[data-pf-feed], [data-pf-planche]').forEach(b => { b.onclick = () => { commTab = 'feed'; renderCommunityView(); }; });
   };
+  const PFX_COLORS = ['#7C5CFF', '#FFD400', '#FF5A5F', '#22C3A6', '#4AA3FF', '#FF8A00'];
   const renderCommunityProfileBase = () => {
     const host = $('communityProfile');
     if (!host) return;
@@ -25146,11 +25227,14 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const form = (pp) => '<form class="pf-form" id="profileForm">' +
       '<label>Pseudo<input class="field-input" name="handle" required minlength="3" maxlength="24" value="' + escapeHtml(pp ? pp.handle : '') + '" placeholder="ex. wakanda_reader"></label>' +
       '<label>Nom affiché<input class="field-input" name="displayName" maxlength="40" value="' + escapeHtml(pp ? pp.displayName : '') + '"></label>' +
+      '<div class="pf-wide pfx-colors"><span>Couleur</span><div class="pfx-swatches" role="group" aria-label="Couleur du profil">' + PFX_COLORS.map(c => '<button type="button" class="pfx-sw" data-pf-color="' + c + '" style="--c:' + c + '" aria-label="Couleur ' + c + '" aria-pressed="' + (String(pp ? pp.color : '#7C5CFF').toLowerCase() === c.toLowerCase()) + '"></button>').join('') +
+        '<label class="pfx-sw pfx-sw-own" title="Autre couleur"><input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#7C5CFF') + '" aria-label="Autre couleur"></label></div></div>' +
+      '<details class="pf-wide pfx-more"' + (pp ? ' open' : '') + '><summary>Personnaliser davantage <small>facultatif</small></summary><div class="pfx-more-body">' +
       '<label>Personnage favori<input class="field-input" name="favorite" maxlength="60" value="' + escapeHtml(pp ? pp.favorite : '') + '" placeholder="ex. Black Panther"></label>' +
-      '<label>Couleur<input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#7C5CFF') + '"></label>' +
       '<label class="pf-wide">Bio<textarea class="field-input" name="bio" maxlength="160" rows="2">' + escapeHtml(pp ? pp.bio : '') + '</textarea></label>' +
       '<fieldset class="pf-wide pf-top3"><legend>Mon top 3 personnages</legend>' + [0, 1, 2].map(i => '<input class="field-input" name="topCharacters" list="pfCharList" maxlength="60" placeholder="' + (i + 1) + '." value="' + escapeHtml(pp && pp.topCharacters[i] || '') + '">').join('') + '</fieldset>' +
       '<fieldset class="pf-wide pf-top3"><legend>Mon top 3 runs</legend>' + [0, 1, 2].map(i => '<input class="field-input" name="topRuns" list="pfRunList" maxlength="60" placeholder="' + (i + 1) + '. ex. Immortal Hulk (Ewing)" value="' + escapeHtml(pp && pp.topRuns[i] || '') + '">').join('') + '</fieldset>' +
+      '</div></details>' +
       '<datalist id="pfCharList">' + pfSuggest().chars.map(c => '<option value="' + escapeHtml(c) + '">').join('') + '</datalist><datalist id="pfRunList">' + pfSuggest().runs.map(c => '<option value="' + escapeHtml(c) + '">').join('') + '</datalist>' +
       '<div class="pf-wide pf-actions"><button class="btn" type="submit">' + (pp ? 'Enregistrer' : 'Créer mon profil') + '</button>' + (pp ? '<button class="btn secondary" type="button" data-pf-cancel>Annuler</button>' : '') +
       '<span class="stat-sub">Profil enregistré sur cet appareil uniquement. Le compte en ligne (pseudo réservé, abonnés, vitrine publique) arrivera avec la synchronisation.</span></div></form>';
@@ -25167,8 +25251,9 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.innerHTML =
       '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
         (p && !profileEditing
-          ? '<div class="pf-id">' + pfAvatarHtml(initials) + '<div><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + (p.favorite ? ' · fan de ' + escapeHtml(p.favorite) : '') + '</p>' + (p.bio ? '<p class="pf-bio">' + escapeHtml(p.bio) + '</p>' : '') + '</div><span class="pf-id-btns"><button class="btn secondary pf-edit" data-pf-edit>Modifier</button><button class="btn secondary pf-edit" data-pf-newstory aria-label="Nouvelle story">' + igIcon('ic-plus') + ' Story</button></span></div>' + pfStatsHtml(owned)
-          : '<div class="pf-id"><span class="pf-avatar">' + escapeHtml(initials) + '</span><div><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil Panel') + '</h2><p class="pf-handle">Un pseudo, une couleur, votre personnage favori : vos trophées et votre niveau s\'affichent ici.</p></div></div>' + form(p)) +
+          ? '<div class="pf-id pfx-id">' + pfAvatarHtml(initials) + '<div class="pfx-who"><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + '</p>' + (p.favorite ? '<p class="pfx-fav">' + igIcon('ic-star') + ' Fan de ' + escapeHtml(p.favorite) + '</p>' : '') + '</div></div>' + (p.bio ? '<p class="pf-bio pfx-bio">' + escapeHtml(p.bio) + '</p>' : '') + pfStatsHtml(owned) +
+            '<div class="pf-id-btns pfx-btns"><button class="btn secondary pf-edit" data-pf-edit>Modifier le profil</button><button class="btn secondary pf-edit" data-pf-card>Ma carte</button><button class="btn secondary pf-edit pfx-plus" data-pf-newstory aria-label="Nouvelle story" title="Nouvelle story">' + igIcon('ic-plus') + '</button></div>'
+          : '<div class="pf-id pfx-id"><span class="pf-avatar" data-pf-preview>' + escapeHtml(initials) + '</span><div class="pfx-who"><h2>' + (p ? 'Modifier mon profil' : 'Créez votre profil') + '</h2><p class="pf-handle">' + (p ? 'Vos changements restent sur cet appareil.' : 'Un pseudo et une couleur suffisent. Le reste peut attendre.') + '</p></div></div>' + form(p)) +
         pfRankHtml(rk, r) +
       '</section>' + pfGramHtml(p, owned) + pfTop3Html(p) + pfRunsHtml(r.runs || []) + '<details class="pf-more"><summary><span>Rangs, artefacts et trophées</span><small>' + r.trophies.filter(t => t.tier).length + ' trophée' + (r.trophies.filter(t => t.tier).length > 1 ? 's' : '') + ' · ' + ar.unlocked + ' artefact' + (ar.unlocked > 1 ? 's' : '') + '</small></summary>' +
       pfLadderHtml(rk) + artefactsHtml(ar) +
@@ -25187,6 +25272,16 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     pfGramWire(host);
     const ed = host.querySelector('[data-pf-edit]'); if (ed) ed.onclick = () => { profileEditing = true; renderCommunityProfile(); };
+    const cardBtn = host.querySelector('[data-pf-card]'); if (cardBtn) cardBtn.onclick = () => openCollectorCard();
+    // D-136 : aperçu en direct de l'avatar pendant la saisie (initiales et couleur)
+    if (f) {
+      const hero = host.querySelector('.pf-hero'), av = host.querySelector('[data-pf-preview]'), col = f.querySelector('input[name="color"]');
+      const ini = () => { const n = String(f.elements.displayName.value || f.elements.handle.value || '').trim(); if (av) av.textContent = n ? n.split(/[\s_]+/).filter(Boolean).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?'; };
+      const paint = c => { if (hero) hero.style.setProperty('--pf', c); f.querySelectorAll('[data-pf-color]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pfColor.toLowerCase() === String(c).toLowerCase()))); };
+      f.elements.handle.addEventListener('input', ini); f.elements.displayName.addEventListener('input', ini);
+      f.querySelectorAll('[data-pf-color]').forEach(b => { b.onclick = () => { col.value = b.dataset.pfColor; paint(b.dataset.pfColor); }; });
+      if (col) col.addEventListener('input', () => paint(col.value));
+    }
     const ca = host.querySelector('[data-pf-cancel]'); if (ca) ca.onclick = () => { profileEditing = false; renderCommunityProfile(); };
   };
   // Idées de planches calculées à partir de la collection (rien n'est enregistré tant que l'utilisateur ne valide pas)
@@ -25965,25 +26060,28 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-fy-mem]').forEach(b => { b.onclick = () => openStoryViewer(b.dataset.fyMem); });
   };
   // ── Lot S1 (D-92) : modèles de planche (accueil vide et feuille Publier)
-  const plTemplatesHtml = sugg => '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : k === 'duel' ? 'Deux variantes d\'un même numéro, avec leur couverture.' : k === 'hunt' ? 'Ajoutez un numéro à votre Wishlist.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div>';
+  const plTemplatesHtml = sugg => '<div class="pl-templates">' + Object.keys(PLANCHE_KINDS).filter(k => k !== 'free').map(k => { const sg = sugg.find(x => x.kind === k); return '<button class="pl-tpl" data-tpl="' + k + '"' + (sg ? '' : ' disabled') + '><span class="pl-tpl-covers' + (sg ? '' : ' is-ghost') + '" aria-hidden="true">' + (sg ? sg.items.slice(0, 3).map(plancheFace).join('') : '<i></i><i></i><i></i>') + '</span><b>' + escapeHtml(PLANCHE_KINDS[k]) + '</b><small>' + (sg ? escapeHtml(sg.text.slice(0, 70)) + (sg.text.length > 70 ? '…' : '') : k === 'read' ? 'Marquez un numéro « lu » pour l\'utiliser.' : k === 'gem' ? 'Ajoutez une valeur ou un key issue.' : k === 'duel' ? 'Deux variantes d\'un même numéro, avec leur couverture.' : k === 'hunt' ? 'Ajoutez un numéro à votre Wishlist.' : 'Ajoutez des numéros à votre collection.') + '</small></button>'; }).join('') + '</div>';
   // Feuille « Publier » : un seul bouton pour tout créer ; les ajouts à la collection y sont rangés
   const ntFocus = () => { igMode = 'forYou'; ntDraft.open = true; if ($('navSinglesCommunity')) $('navSinglesCommunity').click(); setTimeout(() => { const ta = $('ntText'); if (ta) { ta.scrollIntoView({ block: 'center', behavior: smoothScroll() }); ta.focus(); } }, 150); };
   const openPublishSheet = () => {
     const box = bunModal('publishSheet');
     const sugg = plancheSuggestions();
     const pb = (k, icon, label, sub) => '<button type="button" class="pub-btn" data-pub="' + k + '">' + igIcon(icon) + '<span><b>' + label + '</b>' + (sub ? '<small>' + sub + '</small>' : '') + '</span></button>';
+    const big = (k, icon, label, sub, tone) => '<button type="button" class="pub-big is-' + tone + '" data-pub="' + k + '"><span class="pub-big-ic">' + igIcon(icon) + '</span><b>' + label + '</b><small>' + sub + '</small></button>';
+    const quick = (k, icon, label) => '<button type="button" class="pub-quick-btn" data-pub="' + k + '"><span>' + igIcon(icon) + '</span><small>' + label + '</small></button>';
     box.innerHTML = '<div class="modal-box pub-sheet" role="dialog" aria-modal="true" aria-labelledby="publishSheetTitle">' +
-      '<div class="pub-head"><h3 id="publishSheetTitle">Publier</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
-      '<h4 class="pub-h">Une planche avec vos numéros</h4>' + plTemplatesHtml(sugg) +
-      '<h4 class="pub-h">Autre publication</h4><div class="pub-grid">' +
-        pb('note', 'ic-pen', 'Pensée, théorie ou question', 'Du texte, une image de la galerie, des mots-dièse') +
-        pb('story', 'ic-book', 'Story de lecture', 'Depuis un numéro lu, avec ou sans avis') +
-        pb('v3d', 'ic-box', 'Numéro en 3D', 'Ouvrez un numéro puis « Voir en 3D »') +
-        pb('live', 'ic-live', 'Préparer un direct', 'Montrez vos numéros en direct') +
-        pb('card', 'ic-star', 'Carte de collectionneur', 'Une image à partager hors de Panel') + '</div>' +
-      '<h4 class="pub-h">Ajouter à ma collection</h4><div class="pub-grid">' +
-        pb('scan', 'ic-barcode', 'Scanner un code-barres') + pb('cover', 'ic-camera', 'Scanner une couverture') +
-        pb('manual', 'ic-plus', 'Ajouter un numéro') + pb('import', 'ic-file', 'Importer CLZ / LoCG') + '</div></div>';
+      '<span class="pub-grab" aria-hidden="true"></span>' +
+      '<div class="pub-head"><div><h3 id="publishSheetTitle">Publier</h3><p class="pub-sub">Qu’est-ce qu’on partage aujourd’hui ?</p></div><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
+      '<div class="pub-bigs">' +
+        big('note', 'ic-pen', 'Pensée', 'Théorie, question…', 'y') +
+        big('story', 'ic-book', 'Story', 'Depuis un numéro lu', 'v') +
+        big('live', 'ic-live', 'Direct', 'Montrez vos numéros', 'r') +
+        big('card', 'ic-star', 'Ma carte', 'Image à partager', 't') + '</div>' +
+      '<h4 class="pub-h">Planches prêtes <small>composées avec vos numéros</small></h4>' + plTemplatesHtml(sugg) +
+      '<button type="button" class="pub-btn pub-row" data-pub="v3d">' + igIcon('ic-box') + '<span><b>Numéro en 3D</b><small>Ouvrez un numéro puis « Voir en 3D »</small></span></button>' +
+      '<h4 class="pub-h">Ajouter à ma collection</h4><div class="pub-quick">' +
+        quick('scan', 'ic-barcode', 'Code-barres') + quick('cover', 'ic-camera', 'Couverture') +
+        quick('manual', 'ic-plus', 'À la main') + quick('import', 'ic-file', 'Import CLZ / LoCG') + '</div></div>';
     const close = () => box.classList.remove('open');
     box.onclick = e => { if (e.target === box) close(); };
     box.querySelectorAll('[data-close]').forEach(b => { b.onclick = close; });
