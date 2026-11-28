@@ -5300,6 +5300,38 @@
     .plc-foot { margin: 12px 0 0; font-size: 12.5px; font-weight: 600; opacity: .7; text-align: center; }
     @media (max-width: 520px) { .plc-wrap { padding: 0; place-items: end stretch; } .plc-sheet { max-height: 96dvh; border-radius: 18px 18px 0 0; } .plc-page { grid-auto-rows: 96px; gap: 6px; } .plc-head h2 { font-size: 34px; } }
     @media (prefers-reduced-motion: reduce) { .plc-sheet { animation: none; } }
+
+    /* D-146 : la collection, à la manière de Panel (noir et couleur d'accent, plus d'arc-en-ciel pastel) */
+    body:not(.is-home) #mainTitleHeading { font-family: 'Barlow Condensed', var(--font-title) !important; font-weight: 800 !important; text-transform: uppercase !important; letter-spacing: .004em !important; }
+    #singlesViewSection .singles-stats-bar { border: 2px solid #0b0b0c !important; border-radius: 16px !important; box-shadow: 4px 4px 0 #0b0b0c !important; overflow: hidden; }
+    #singlesViewSection .single-stat-pill:first-child { background: var(--acc) !important; }
+    #singlesViewSection .single-stat-pill:first-child span, #singlesViewSection .single-stat-pill:first-child strong, #singlesViewSection .single-stat-pill:first-child .stat-sub { color: #0b0b0c !important; }
+    #singlesViewSection .single-stat-pill strong { font-family: 'Barlow Condensed', var(--font-title) !important; font-weight: 800 !important; letter-spacing: 0 !important; }
+    #singlesViewSection .single-stat-pill span { font-size: 11px !important; font-weight: 800 !important; letter-spacing: .08em !important; text-transform: uppercase !important; }
+    .cover-job-bar { border: 2px solid #0b0b0c !important; border-radius: 14px !important; box-shadow: 3px 3px 0 #0b0b0c !important; padding: 9px 12px !important; gap: 6px 12px !important; }
+    .cover-job-bar .cover-job-text { line-height: 1.35; }
+    .cover-job-bar .cover-job-text .ic { color: var(--acc); }
+    .cover-job-bar .btn { min-height: 34px; padding: 6px 12px !important; font-size: 12.5px !important; }
+    .cover-job-bar .progress-track { height: 5px !important; border-radius: 99px; background: color-mix(in srgb, var(--ink) 12%, transparent) !important; }
+    .cover-job-bar .progress-fill { background: var(--acc) !important; border-radius: 99px; }
+    .pl-studio { background: radial-gradient(circle, rgba(255,255,255,.07) 1px, transparent 1.5px) 0 0 / 8px 8px, #0b0b0c !important; border: 2px solid #0b0b0c; box-shadow: 5px 5px 0 var(--acc) !important; }
+    .pl-studio .pl-tpl { border: 2px solid rgba(255,255,255,.16); background: #161617; }
+    @media (max-width: 720px) {
+      body:not(.view-social):not(.view-discover) .singles-stats-bar { gap: 8px !important; }
+      #singlesViewSection .singles-stats-bar .single-stat-pill { background: var(--bg-card) !important; border-radius: 12px !important; }
+      #singlesViewSection .singles-stats-bar .single-stat-pill:first-child { background: var(--acc) !important; }
+      #singlesViewSection .singles-stats-bar .single-stat-pill:not(:first-child) span, #singlesViewSection .singles-stats-bar .single-stat-pill:not(:first-child) strong, #singlesViewSection .singles-stats-bar .single-stat-pill:not(:first-child) .stat-sub { color: var(--ink) !important; }
+      #singlesViewSection .singles-stats-bar { border: 0 !important; border-radius: 0 !important; box-shadow: none !important; overflow-x: auto; }
+      .coll-row .coll-search { flex: 1 1 100% !important; order: 0; }
+      .coll-row .coll-view { order: 1; }
+      .coll-row #collFiltersBtn { order: 2; }
+      .coll-row #addSingleModalOpenBtn { order: 3; margin-left: auto; }
+      .coll-row .coll-more { order: 4; }
+      .coll-add-t { display: inline !important; }
+      body:not(.view-social):not(.view-discover) .top-actions > .search-box { flex: 1 1 calc(100% - 150px) !important; }
+      .cover-job-bar { grid-template-columns: 1fr !important; }
+      .cover-job-bar .cover-job-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; }
+    }
 </style>
 </head>
 <body>
