@@ -8,7 +8,7 @@
  *   d'où ignoreVary sur chaque recherche (le mode hors ligne ne dépend pas de l'en-tête Accept-Encoding).
  * - Nouvelle version : l'app propose « Recharger » ; aucune mise à jour silencieuse en pleine lecture.
  */
-const VERSION = 'panel-2026-11-28-v119';
+const VERSION = 'panel-2026-11-28-v120';
 const SHELL_CACHE = 'panel-shell-' + VERSION;
 const LIB_CACHE = 'panel-libs-v1';
 // D-108 : cartes interactives de l'atlas (cartes/), gardées une fois ouvertes pour être relues hors ligne
