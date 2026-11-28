@@ -46,7 +46,8 @@ test('quatorze migrations horodatées, dans l\'ordre attendu', () => {
     '20261122000022_foreign_key_indexes.sql',
     '20261122000023_collection_backups.sql',
     '20261122000024_long_notes.sql',
-    '20261122000025_messaging_groups_voice.sql'
+    '20261122000025_messaging_groups_voice.sql',
+    '20261128000026_messaging_seen_unsend.sql'
   ]);
 });
 
