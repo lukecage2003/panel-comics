@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-l1NUJZQCZhw9/YnSqbHJc8IB4yAqZzTCSS4lJCeS+uQ=' 'sha256-2H+OI5ux8NTrYk+1x6WsCTZWMekZWQNZQcDOU5+vb7w=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-l1NUJZQCZhw9/YnSqbHJc8IB4yAqZzTCSS4lJCeS+uQ=' 'sha256-hC0YkrPlJu0at6nZ2FHdQoDnyy08fE+D6JnSs3Yo3nI=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -5020,6 +5020,41 @@
       .add-foot #saveSingleToCollectionBtn { font-size: 15px; }
     }
     @media (prefers-reduced-motion: reduce) { .modal-box.add-box { animation: none !important; } }
+
+    /* D-141 : Marché et messagerie, à la manière de Panel */
+    .mk-tabs button { border: 2px solid #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; font-family: 'Barlow Condensed', var(--font-title) !important; font-weight: 800 !important; text-transform: uppercase; letter-spacing: .02em; transition: transform .12s, box-shadow .12s; }
+    .mk-tabs button.is-on { background: #ffd400 !important; color: #0b0b0c !important; border-color: #0b0b0c !important; transform: translate(-1px, -1px); box-shadow: 3px 3px 0 #0b0b0c; }
+    .mk-tabs button:active { transform: translate(2px, 2px); box-shadow: none; }
+    .mk-search .dm-search { min-height: 46px; border: 2px solid #0b0b0c !important; border-radius: 99px !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .mk-filters select, .mk-filters input { border: 2px solid #0b0b0c !important; border-radius: 99px !important; font-weight: 700; }
+    .mk-empty { border: 2px solid #0b0b0c !important; border-radius: 18px !important; box-shadow: 4px 4px 0 #0b0b0c; color: var(--muted); background: radial-gradient(circle, rgba(255,212,0,.16) 1.2px, transparent 1.7px) 0 0 / 10px 10px, var(--bg-card) !important; }
+    .mk-empty > .ic { width: 30px !important; height: 30px !important; padding: 14px; box-sizing: content-box; color: #0b0b0c !important; background: #ffd400; clip-path: polygon(50% 0, 61% 22%, 85% 12%, 78% 37%, 100% 50%, 78% 63%, 85% 88%, 61% 78%, 50% 100%, 39% 78%, 15% 88%, 22% 63%, 0 50%, 22% 37%, 15% 12%, 39% 22%); animation: d141Pop .5s cubic-bezier(.2,.9,.3,1.3) both; }
+    .mk-empty b { font: 800 22px/1.05 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; }
+    .mk-go { margin-top: 8px; background: #ffd400 !important; color: #0b0b0c !important; border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; font-weight: 800; }
+    @keyframes d141Pop { from { transform: scale(.4) rotate(-20deg); opacity: 0; } to { transform: none; opacity: 1; } }
+    .hb-steps li { border: 2px solid #0b0b0c !important; border-radius: 14px !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .hb-steps li b { font: 800 19px/1 'Barlow Condensed', var(--font-title); text-transform: uppercase; }
+    .hb-step-n { background: #ffd400 !important; color: #0b0b0c; border-color: #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; }
+    #singlesCommunityView .hb-panel, #singlesCommunityView details.hb-safety { border: 2px solid #0b0b0c !important; border-radius: 16px !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    #singlesCommunityView .hb-panel h4, #singlesCommunityView .hb-safety h4, .hb-sub { font-family: 'Barlow Condensed', var(--font-title) !important; font-weight: 800 !important; font-size: 18px !important; text-transform: uppercase; letter-spacing: .01em; }
+    .hb-compose > summary { display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border: 2px solid #0b0b0c; border-radius: 99px; background: #ffd400; color: #0b0b0c; font-weight: 800; box-shadow: 3px 3px 0 #0b0b0c; cursor: pointer; list-style: none; }
+    .hb-compose > summary::-webkit-details-marker { display: none; }
+    .mk-card { border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .mk-card img, .mk-card .hb-ph { border: 1.5px solid #0b0b0c; }
+    .mk-card .mk-price { justify-self: start; margin-top: 4px; padding: 2px 8px; border: 1.5px solid #0b0b0c; border-radius: 4px; background: #ffd400; color: #0b0b0c; font: 800 16px/1.2 'Barlow Condensed', var(--font-title); box-shadow: 2px 2px 0 #0b0b0c; transform: rotate(-2deg); }
+    .hb-listing { border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; border-radius: 14px !important; }
+    .dm-inbox .hb-empty .btn .ic, .dm-inbox .hb-empty .dm-auth .ic { width: 18px !important; height: 18px !important; padding: 0 !important; border: 0 !important; border-radius: 0 !important; }
+    .dm-auth { display: grid; gap: 10px; width: 100%; max-width: 300px; margin-top: 10px; }
+    .dm-auth .btn { min-height: 48px; justify-content: center; border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; font-weight: 800; }
+    .dm-auth .dm-start { background: #fff !important; color: #1f1f1f !important; }
+    .dm-inbox .hb-empty > .ic { color: #0b0b0c; background: #ffd400; border-color: #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .dm-inbox .hb-empty > b { font: 800 24px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; }
+    .dm-inbox > .hb-empty { border: 2px solid #0b0b0c !important; box-shadow: 4px 4px 0 #0b0b0c; }
+    @media (max-width: 520px) { .mk-tabs { -webkit-mask-image: none !important; mask-image: none !important; padding: 0 3px 3px 0 !important; } .mk-tabs button { font-size: 12px !important; } }
+    .mk-go .ic { width: 18px !important; height: 18px !important; color: currentColor !important; }
+    .dm-auth .btn { width: 100%; }
+    .dm-settings > summary { border: 2px solid #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; font-weight: 800; }
+    @media (prefers-reduced-motion: reduce) { .mk-empty > .ic { animation: none !important; } .mk-tabs button { transition: none; } }
 </style>
 </head>
 <body>
@@ -27896,7 +27931,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
         '<select name="delivery" aria-label="Remise"><option value="">Toutes les remises</option>' + M.DELIVERY.map(d => hbOpt(d, M.DELIVERY_LABEL[d], hbMq.delivery === d)).join('') + '</select>' +
         '<input name="max" inputmode="decimal" placeholder="Prix max (€)" aria-label="Prix maximum" value="' + escapeHtml(hbMq.max) + '">' +
         '<select name="sort" aria-label="Trier">' + M.SORTS.map(k => hbOpt(k, M.SORT_LABEL[k], hbMq.sort === k)).join('') + '</select></div></form>' +
-        hbEmpty('ic-bag', 'Aucune annonce de membre pour l’instant', 'Les annonces apparaîtront ici à l’ouverture des comptes. Rien n’est inventé en attendant.') +
+        '<div class="hb-empty mk-empty">' + igIcon('ic-bag') + '<b>Aucune annonce de membre pour l’instant</b><span>Les annonces apparaîtront ici à l’ouverture des comptes. Rien n’est inventé en attendant.</span>' +
+        '<button type="button" class="btn mk-go" data-hb-mk="sell">' + igIcon('ic-tag') + 'Préparer une annonce' + (dupes.length ? ' · ' + dupes.length + ' doublon' + (dupes.length > 1 ? 's' : '') : '') + '</button></div>' +
         (st.listings.length ? '<h4 class="hb-sub">Aperçu avec vos brouillons (' + found.length + ' sur ' + st.listings.length + ')</h4>' + (found.length ? '<div class="mk-grid">' + found.map(l => hbMkCard(l, M)).join('') + '</div>' : '<p class="hb-muted">Aucun brouillon ne correspond à ces filtres.</p>') : '');
     } else if (hbMk === 'sell') {
       body = '<ol class="hb-steps">' + steps.map(([i, t, d], k) => '<li><span class="hb-step-n">' + (k + 1) + '</span>' + igIcon(i) + '<b>' + t + '</b><small>' + d + '</small></li>').join('') + '</ol>' +
@@ -28298,7 +28334,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const dmoAvatar = (t, cls) => '<span class="dmo-av' + (t.kind === 'group' ? ' is-group' : '') + (cls ? ' ' + cls : '') + '" style="--av:' + dmoHue(t.handle || t.title || t.id) + '">' + (t.kind === 'group' ? igIcon('ic-users') : escapeHtml((t.handle || '?').slice(0, 2).toUpperCase())) + '</span>';
   const dmoNotice = (icon, title, text, extra) => '<div class="hb-empty">' + igIcon(icon) + '<b>' + title + '</b><span>' + text + '</span>' + (extra || '') + '</div>';
   const dmoSignedOutHtml = () => dmoNotice('ic-send', 'Vos messages', 'Connectez-vous à votre compte Panel pour écrire à d’autres collectionneurs. Les messages sont chiffrés de bout en bout.',
-    '<button type="button" class="btn dm-start" data-hb-auth="email">' + igIcon('ic-user') + 'Se connecter</button>');
+    '<div class="dm-auth"><button type="button" class="btn dm-start" data-hb-auth="google"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" stroke="none" d="M21.6 12.2c0-.7-.1-1.4-.2-2H12v3.8h5.4a4.6 4.6 0 0 1-2 3v2.5h3.2c1.9-1.7 3-4.3 3-7.3z"/><path fill="#34A853" stroke="none" d="M12 22c2.7 0 5-.9 6.6-2.4l-3.2-2.5c-.9.6-2 1-3.4 1-2.6 0-4.8-1.8-5.6-4.1H3.1v2.6A10 10 0 0 0 12 22z"/><path fill="#FBBC05" stroke="none" d="M6.4 14c-.2-.6-.3-1.3-.3-2s.1-1.4.3-2V7.4H3.1a10 10 0 0 0 0 9.2z"/><path fill="#EA4335" stroke="none" d="M12 5.9c1.5 0 2.8.5 3.8 1.5l2.9-2.9A10 10 0 0 0 3.1 7.4L6.4 10c.8-2.3 3-4.1 5.6-4.1z"/></svg>Continuer avec Google</button>' +
+    '<button type="button" class="btn secondary dm-start-mail" data-hb-auth="email">' + igIcon('ic-user') + 'Avec mon e-mail</button></div>');
   const dmoJoinHtml = () => '<form class="hb-form hb-panel dmo-join" data-dmo-form="join"><h4>' + igIcon('ic-user') + 'Votre pseudo Panel</h4><p class="hb-muted">Il vous identifie dans les messages et les groupes. L’année de naissance sert seulement à protéger les mineurs : elle n’est jamais affichée.</p>' +
     '<div class="hb-row"><label>Pseudo<input name="handle" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_.\\-]{3,24}" autocomplete="nickname" spellcheck="false"></label><label>Année de naissance<input name="year" type="number" inputmode="numeric" required min="1900" max="' + new Date().getFullYear() + '"></label></div>' +
     '<label class="hb-check"><input type="checkbox" name="consent"> J’ai moins de 15 ans et un parent a donné son accord</label><button class="btn" type="submit">Rejoindre la communauté</button></form>';

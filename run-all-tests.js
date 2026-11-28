@@ -6477,7 +6477,7 @@ const waitForCdp = async () => {
           // Marché : dans le dock (téléphone) et la barre latérale ; quatre onglets ; calculateur d'offre
           $('navMarket').click(); await wait(300);
           q('[data-hb-mk="buy"]').click(); await wait(250);
-          r.marketNav = document.title === 'Marché · Panel' && [...document.querySelectorAll('[data-hb-mk]')].map(b => b.dataset.hbMk).join() === 'buy,sell,offers,orders,favs' && !!q('[data-hb-mk-search]');
+          r.marketNav = document.title === 'Marché · Panel' && [...document.querySelectorAll('.mk-tabs [data-hb-mk]')].map(b => b.dataset.hbMk).join() === 'buy,sell,offers,orders,favs' && !!q('[data-hb-mk-search]');
           q('[data-hb-mk="offers"]').click(); await wait(250);
           const op = q('[data-hb-offer-price]'), oa = q('[data-hb-offer-amount]');
           op.value = '40'; oa.value = '20'; oa.dispatchEvent(new Event('input', { bubbles: true }));
