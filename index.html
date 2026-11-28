@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-Hmjc5uFjNnoKLAw5zncxVbiYZ4im8o/o+SlqotNtJ7Q=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-5HyTY7HgrTMgiifp+VqP2cdP/OxvZjTORFu/H+LOz9s=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4941,6 +4941,46 @@
       #singlesGrid .comic-card:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 #0b0b0c !important; }
     }
     @media (prefers-reduced-motion: reduce) { .hs-start, .hs-stack i { animation: none !important; } }
+
+    /* D-139 : fiche d'un numéro, à la manière de Panel */
+    .ins-grab { display: none; }
+    .ins-head h2#inspectTitle { font: 800 24px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; }
+    .ins-head #inspectPublisherBadge { background: #ffd400 !important; color: #0b0b0c !important; border: 1.5px solid #0b0b0c !important; font-weight: 800; box-shadow: 2px 2px 0 #0b0b0c; }
+    .ins-cover { border: 2px solid #0b0b0c !important; border-radius: 8px !important; box-shadow: 5px 5px 0 #0b0b0c; }
+    .ins-cover #inspectKeyBadge { border: 1.5px solid #0b0b0c; box-shadow: 2px 2px 0 #0b0b0c; font-weight: 800; }
+    .ins-card { border: 2px solid #0b0b0c !important; border-radius: 14px !important; box-shadow: 3px 3px 0 #0b0b0c; padding: 12px !important; }
+    .ins-card > div:not(.market-actions):not(.market-entry):not(.value-source-row):not(.value-history) { min-height: 32px; }
+    .ins-details > .ins-card:first-child > div { flex-wrap: wrap; gap: 4px 10px; }
+    .ins-details > .ins-card:first-child > div > :nth-child(2) { margin-left: auto; text-align: right; }
+    .ins-details > .ins-card:first-child > div > :nth-child(n+3) { flex-basis: 100%; font-size: 11.5px; color: var(--muted); }
+    .ins-details > .ins-card:first-child > div + div { border-top: 1px dashed var(--line, rgba(255,255,255,.14)); padding-top: 6px; }
+    .ins-fin { background: linear-gradient(135deg, rgba(255,212,0,.10), transparent 60%), var(--bg-card) !important; }
+    .ins-fin #inspectEstValue { font: 800 30px/1 'Barlow Condensed', var(--font-title) !important; color: #ffd400 !important; }
+    .ins-fin #inspectCoverPrice { font: 800 22px/1.1 'Barlow Condensed', var(--font-title) !important; }
+    .ins-fin > div:first-child { flex-direction: column-reverse; align-items: stretch !important; gap: 10px; }
+    .ins-fin > div:first-child > div:last-child { display: flex; align-items: center; justify-content: space-between; gap: 10px; text-align: left !important; padding: 10px 12px; border: 1.5px solid #0b0b0c; border-radius: 10px; background: rgba(255,212,0,.12); box-shadow: 2px 2px 0 #0b0b0c; }
+    .ins-fin > div:first-child > div:last-child > span { font-weight: 800; letter-spacing: .1em; }
+    .ins-fin > div:first-child > div:first-child > span:first-child { font-size: 10.5px !important; font-weight: 800; letter-spacing: .1em; }
+    .ins-fin #inspectProfitBadge { text-align: left !important; }
+    .ins-field > span:first-child { font-size: 10.5px !important; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
+    .ins-field > strong, .ins-field > p { border: 1.5px dashed var(--line, rgba(255,255,255,.18)) !important; border-radius: 10px !important; padding: 8px 10px !important; }
+    #inspectEditBtn { background: #ffd400 !important; color: #0b0b0c !important; border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; font-weight: 800; }
+    @media (max-width: 720px) {
+      #singleIssueInspectorModal.open { align-items: end; justify-items: stretch; padding: 0; }
+      .modal-box.ins-box { width: 100vw; max-width: none !important; margin: 0; border-radius: 22px 22px 0 0; max-height: 94dvh; padding: 10px 16px 0 !important; overflow-y: auto; overscroll-behavior: contain; animation: d136Up .26s cubic-bezier(.2,.9,.3,1.1); }
+      .ins-grab { display: block; width: 40px; height: 4px; margin: 0 auto 10px; border-radius: 4px; background: rgba(255,255,255,.25); }
+      .ins-box .inspector-grid { display: flex !important; flex-direction: column; gap: 16px; }
+      .ins-cover-col { align-items: center; padding: 6px 0 4px; background: radial-gradient(circle, rgba(255,212,0,.16) 1.2px, transparent 1.7px) 0 0 / 10px 10px; border-radius: 16px; }
+      .ins-cover { width: 58%; max-width: 230px; transform: rotate(-1.5deg); }
+      .ins-cover-col > a, .ins-cover-col > button { width: 58%; max-width: 230px; border-radius: 99px !important; }
+      .ins-actions { position: sticky; bottom: 0; z-index: 2; margin: 0 -16px; padding: 10px 16px calc(12px + env(safe-area-inset-bottom)) !important; background: var(--bg-elev, var(--bg-card, #1b1b1b)); border-top: 2px solid #0b0b0c !important; }
+      .ins-actions > div { width: 100%; }
+      .ins-actions > div:first-child { justify-content: space-between; }
+      .ins-actions > div:first-child .btn { flex: 1 1 0; min-width: 0; min-height: 44px; padding: 4px 6px !important; font-size: 12px; line-height: 1.15; white-space: normal; justify-content: center; text-align: center; }
+      .ins-actions > div:last-child #inspectCloseBtn { display: none; }
+      .ins-actions > div:last-child #inspectEditBtn { flex: 1; min-height: 46px; justify-content: center; font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .modal-box.ins-box { animation: none !important; } .ins-cover { transform: none; } }
 </style>
 </head>
 <body>
@@ -5867,8 +5907,9 @@
      MODALE INSPECTION & ÉDITION COMPLÈTE DU SINGLE (COLLECTOR VIEW)
      ========================================================================== -->
 <div class="modal-backdrop" id="singleIssueInspectorModal">
-  <div class="modal-box" style="max-width:580px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div class="modal-box ins-box" style="max-width:580px">
+    <span class="ins-grab" aria-hidden="true"></span>
+    <div class="ins-head" style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <div style="display:flex;align-items:center;gap:8px">
         <span class="format-pill" id="inspectPublisherBadge" style="background:var(--bg-card);border-color:var(--cyan-line);color:var(--lime)">Marvel</span>
         <h2 id="inspectTitle" style="font-size:18px;margin:0">Batman #1</h2>
@@ -5878,8 +5919,8 @@
 
     <div class="inspector-grid" style="margin-bottom:16px">
       <!-- Aperçu Cover -->
-      <div style="display:flex;flex-direction:column;gap:8px">
-        <div style="aspect-ratio:2/3;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);position:relative;background:var(--bg-card)">
+      <div class="ins-cover-col" style="display:flex;flex-direction:column;gap:8px">
+        <div class="ins-cover" style="aspect-ratio:2/3;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--border);position:relative;background:var(--bg-card)">
           <img id="inspectCoverImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="Cover" style="width:100%;height:100%;object-fit:contain;background:#0d0d12">
           <div id="inspectKeyBadge" style="position:absolute;top:6px;left:6px" class="status-pill key"><svg class=ic aria-hidden=true><use href=#ic-key /></svg> KEY</div>
         </div>
@@ -5888,8 +5929,8 @@
       </div>
 
       <!-- Détails Métadonnées -->
-      <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
-        <div style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
+      <div class="ins-details" style="display:flex;flex-direction:column;gap:10px;font-size:12px">
+        <div class="ins-card" style="background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
             <span style="color:var(--muted);font-size: 12px">Variante</span>
             <strong id="inspectVariantText" style="color:var(--ink)">Cover A</strong>
@@ -5913,7 +5954,7 @@
         </div>
 
         <!-- Carte Financière -->
-        <div style="background:var(--bg-card);border:1px solid var(--cyan-line);border-radius:var(--radius-sm);padding:10px">
+        <div class="ins-card ins-fin" style="background:var(--bg-card);border:1px solid var(--cyan-line);border-radius:var(--radius-sm);padding:10px">
           <div style="display:flex;justify-content:space-between;align-items:center">
             <div>
               <span style="color:var(--muted);font-size: 12px;text-transform:uppercase">Prix payé</span>
@@ -5943,13 +5984,13 @@
           <div class="value-history" id="inspectValueHistory"></div>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <span style="color:var(--muted);font-size: 12px">Rangement Physique :</span>
+        <div class="ins-field" style="display:flex;flex-direction:column;gap:3px">
+          <span style="color:var(--muted);font-size: 12px">Rangement physique</span>
           <strong id="inspectLocationText" style="color:var(--ink);background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:5px 8px"><svg class=ic aria-hidden=true><use href=#ic-box /></svg> Short Box 1</strong>
         </div>
 
-        <div style="display:flex;flex-direction:column;gap:3px">
-          <span style="color:var(--muted);font-size: 12px">Notes personnelles :</span>
+        <div class="ins-field" style="display:flex;flex-direction:column;gap:3px">
+          <span style="color:var(--muted);font-size: 12px">Notes personnelles</span>
           <p id="inspectNotesText" style="color:var(--ink-dim);font-size: 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:6px;padding:6px 8px;min-height:36px;white-space:pre-wrap">Aucune note</p>
         </div>
       </div>
@@ -5957,7 +5998,7 @@
 
     <div id="inspectWishBox" class="wish-box" hidden></div>
     <!-- Actions -->
-    <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:12px">
+    <div class="ins-actions" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:12px">
       <div style="display:flex;gap:6px">
         <button class="btn secondary" id="inspectDeleteBtn" style="color:var(--red);border-color:var(--magenta-fill)"><svg class=ic aria-hidden=true><use href=#ic-trash /></svg> Retirer</button>
         <button class="btn secondary" id="inspectWishlistToggleBtn"><svg class=ic aria-hidden=true><use href=#ic-heart /></svg> Wishlist</button>
@@ -19333,7 +19374,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const keyBadge = $('inspectKeyBadge');
     if (item.keyType && item.keyType !== 'none') {
       keyBadge.style.display = 'inline-block';
-      keyBadge.textContent = item.keyType === 'major' ? 'KEY MAJEURE' : item.keyType === 'minor' ? 'KEY MINEURE' : item.keyType === 'ratio' ? 'RATIO' : 'DÉDICACÉ';
+      keyBadge.textContent = item.keyType === 'major' ? 'KEY MAJEURE' : item.keyType === 'minor' ? 'KEY MINEURE' : item.keyType === 'ratio' ? 'RATIO' : item.keyType === 'signed' ? 'DÉDICACÉ' : 'KEY';
     } else {
       keyBadge.style.display = 'none';
     }
