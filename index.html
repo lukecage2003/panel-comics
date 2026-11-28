@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-7OSZW4iAHLYeBWn9cJ679mNi0RjoTevpdCaz6HqxhO0=' 'sha256-5HyTY7HgrTMgiifp+VqP2cdP/OxvZjTORFu/H+LOz9s=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-l1NUJZQCZhw9/YnSqbHJc8IB4yAqZzTCSS4lJCeS+uQ=' 'sha256-2H+OI5ux8NTrYk+1x6WsCTZWMekZWQNZQcDOU5+vb7w=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -4981,6 +4981,45 @@
       .ins-actions > div:last-child #inspectEditBtn { flex: 1; min-height: 46px; justify-content: center; font-size: 15px; }
     }
     @media (prefers-reduced-motion: reduce) { .modal-box.ins-box { animation: none !important; } .ins-cover { transform: none; } }
+
+    /* D-140 : Découvrir et formulaire d'ajout, à la manière de Panel */
+    .ex-search { min-height: 46px; padding: 0 14px !important; border: 2px solid #0b0b0c !important; border-radius: 99px !important; box-shadow: 3px 3px 0 #0b0b0c; background: var(--bg-card, #1b1b1b) !important; display: flex !important; align-items: center; gap: 10px; }
+    .ex-search input { min-height: 42px; font-size: 15px !important; }
+    .ex-sec-head h3 { display: flex; align-items: center; gap: 8px; font: 800 26px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; }
+    .ex-sec-head h3::before { content: ""; flex: 0 0 auto; width: 10px; height: 10px; border-radius: 2px; background: #ffd400; transform: rotate(45deg); }
+    .ex-daily-card { border: 2px solid #0b0b0c !important; box-shadow: 4px 4px 0 #0b0b0c !important; }
+    .ex-daily-card .ex-kicker { display: inline-block; align-self: flex-start; padding: 3px 8px 2px; border: 1.5px solid #0b0b0c; border-radius: 3px; background: #ffd400; color: #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; transform: rotate(-1.5deg); }
+    .ex-daily-b h3 { font: 800 26px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; margin-top: 8px !important; }
+    .ex-daily-img { border: 2px solid #0b0b0c; box-shadow: 3px 3px 0 #0b0b0c; }
+    .ex-ch-card { border: 2px solid #0b0b0c !important; border-style: solid !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .ex-ch-img { border: 1.5px solid #0b0b0c; }
+    .ex-quiz-card { border: 2px solid #0b0b0c !important; box-shadow: 4px 4px 0 #0b0b0c; }
+    .ex-quiz-o { border: 2px solid #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; transition: transform .12s, box-shadow .12s; }
+    .ex-quiz-o:active { transform: translate(2px, 2px); box-shadow: none; }
+    .ex-unitile { border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c !important; }
+    .ex-club-pick select, .ex-club select { border: 2px solid #0b0b0c !important; }
+
+    .add-h { display: flex; align-items: center; gap: 8px; margin: 18px 0 8px; font: 800 20px/1 'Barlow Condensed', var(--font-title); text-transform: uppercase; letter-spacing: .01em; }
+    .add-h i { display: grid; place-items: center; width: 24px; height: 24px; flex: 0 0 24px; font-style: normal; font-size: 15px; color: #0b0b0c; background: #ffd400; border: 1.5px solid #0b0b0c; border-radius: 50%; box-shadow: 2px 2px 0 #0b0b0c; }
+    .add-head h2#singleModalTitle { font: 800 28px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; }
+    .add-box .form-row label { font-size: 12px; font-weight: 700; }
+    .add-box .form-row input:not([type=checkbox]):not([type=radio]), .add-box .form-row select, .add-box .form-row textarea { border-radius: 12px !important; min-height: 44px; }
+    .add-box .form-row input:not([type=checkbox]):not([type=radio]):focus, .add-box .form-row select:focus, .add-box .form-row textarea:focus { border-color: #ffd400 !important; box-shadow: 0 0 0 3px rgba(255,212,0,.22) !important; outline: none; }
+    .add-find { border: 2px solid #0b0b0c !important; border-radius: 14px !important; box-shadow: 3px 3px 0 #0b0b0c; }
+    .add-find #quickCoverSearchInput { min-height: 44px; border-radius: 99px !important; }
+    .add-find #quickCoverSearchBtn { border-radius: 99px !important; border: 2px solid #0b0b0c !important; box-shadow: 2px 2px 0 #0b0b0c; font-weight: 800; }
+    .add-mine { border: 2px solid #0b0b0c !important; border-radius: 14px !important; box-shadow: 3px 3px 0 #0b0b0c; padding: 12px !important; }
+    .add-mine > div { flex-wrap: wrap; }
+    .add-foot #saveSingleToCollectionBtn { border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; font-weight: 800; }
+    @media (max-width: 720px) {
+      #singleIssueDetailModal.open { align-items: end; justify-items: stretch; padding: 0; }
+      .modal-box.add-box { width: 100vw; max-width: none !important; margin: 0; border-radius: 22px 22px 0 0; max-height: 96dvh; padding: 10px 16px 0 !important; overflow-y: auto; overscroll-behavior: contain; animation: d136Up .26s cubic-bezier(.2,.9,.3,1.1); }
+      .add-box .ins-grab { display: block; width: 40px; height: 4px; margin: 0 auto 10px; border-radius: 4px; background: rgba(255,255,255,.25); }
+      .add-foot { position: sticky; bottom: 0; z-index: 2; display: grid !important; grid-template-columns: auto 1fr; gap: 10px; margin: 14px -16px 0 !important; padding: 10px 16px calc(12px + env(safe-area-inset-bottom)) !important; background: var(--bg-elev, var(--bg-card, #1b1b1b)); border-top: 2px solid #0b0b0c; }
+      .add-foot .btn { min-height: 48px; justify-content: center; }
+      .add-foot #saveSingleToCollectionBtn { font-size: 15px; }
+    }
+    @media (prefers-reduced-motion: reduce) { .modal-box.add-box { animation: none !important; } }
 </style>
 </head>
 <body>
@@ -5634,9 +5673,10 @@
      MODALE AJOUT & CHOIX DE VARIANTES (LEAGUE OF COMIC GEEKS STYLE)
      ========================================================================== -->
 <div class="modal-backdrop" id="singleIssueDetailModal">
-  <div class="modal-box">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <h2 id="singleModalTitle">Fiche du single</h2>
+  <div class="modal-box add-box">
+    <span class="ins-grab" aria-hidden="true"></span>
+    <div class="add-head" style="display:flex;justify-content:space-between;align-items:center">
+      <h2 id="singleModalTitle">Fiche du numéro</h2>
       <button class="btn-icon" id="closeSingleDetailModalBtn"><svg class=ic aria-hidden=true><use href=#ic-x /></svg></button>
     </div>
 
@@ -5647,7 +5687,8 @@
     </div>
 
     <!-- RECHERCHE DIRECTE COMIC VINE DE COUVERTURES -->
-    <div class="form-row" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px">
+    <h4 class="add-h"><i>1</i> Trouver la couverture</h4>
+    <div class="form-row add-find" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:10px">
       <div style="display:flex;gap:6px">
         <input id="quickCoverSearchInput" placeholder="Rechercher en ligne (ex: Spawn 300, Batman 135, House of X 1...)" style="flex:1;background:var(--bg-card);border:1px solid var(--line);border-radius:6px;padding:8px 12px;font-size:12.5px;color:var(--ink)">
         <button class="btn accent-scan" id="quickCoverSearchBtn" style="padding:8px 14px;font-size:12px">Rechercher</button>
@@ -5677,6 +5718,7 @@
     </div>
 
     <!-- SÉRIE ET NUMÉRO -->
+    <h4 class="add-h"><i>2</i> Le numéro</h4>
     <div style="display:grid;grid-template-columns:1.4fr 1fr;gap:8px">
       <div class="form-row">
         <label for="singleSeriesInput">Série (Title)</label>
@@ -5767,6 +5809,7 @@
     </details>
 
     <!-- ÉTAT FINANCIER -->
+    <h4 class="add-h"><i>3</i> Prix et valeur</h4>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
       <div class="form-row">
         <label for="singleCoverPriceInput">Prix de couverture ($)</label>
@@ -5870,7 +5913,8 @@
     <input type="hidden" id="singleLocationInput">
 
     <!-- PROTECTION & WISHLIST -->
-    <div class="form-row" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 12px;margin:6px 0">
+    <h4 class="add-h"><i>4</i> Mon exemplaire</h4>
+    <div class="form-row add-mine" style="background:var(--bg-card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 12px;margin:6px 0">
       <div style="display:flex;gap:18px;align-items:center">
         <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
           <input type="checkbox" id="singleProtectedCheckbox" checked style="accent-color:var(--lime);width:15px;height:15px">
@@ -5896,7 +5940,7 @@
       <input id="singleNotesInput" placeholder="Signé par l'auteur, certificat n°...">
     </div>
 
-    <div class="modal-btns">
+    <div class="modal-btns add-foot">
       <button class="btn secondary" id="cancelSingleDetailBtn">Annuler</button>
       <button class="btn" id="saveSingleToCollectionBtn">Enregistrer dans la collection</button>
     </div>
@@ -13200,7 +13244,7 @@ const phrases = {
   'Sorties & calendrier': 'Releases & calendar', 'Calendrier': 'Calendar', 'Pull list': 'Pull list', 'Wishlist': 'Wishlist', 'Key Issues': 'Key Issues',
   'Rechercher dans Panel': 'Search Panel', 'Rechercher une série, numéro...': 'Search a series, issue...', 'Rechercher dans Explorer': 'Search Explore',
   'Collection, Lecture, Explorer, Communauté': 'Collection, Reading, Explore, Community', 'Fermer': 'Close', 'Ouvrir': 'Open', 'Masquer': 'Hide',
-  'Ajouter': 'Add', '+ Ajouter': '+ Add', 'Ajouter manuellement': 'Add manually', 'Ajouter un single': 'Add a single', 'Exporter': 'Export',
+  'Ajouter': 'Add', '+ Ajouter': '+ Add', 'Ajouter manuellement': 'Add manually', 'Ajouter un single': 'Add a single', 'Ajouter un numéro': 'Add an issue', 'Fiche du numéro': 'Issue details', 'Exporter': 'Export',
   'Importer': 'Import', 'Import': 'Import', 'Restaurer': 'Restore', 'Restaurer…': 'Restore…', 'Vérifier': 'Check', 'Suivre': 'Follow', 'Publier': 'Post',
   'Tout voir': 'See all', 'Tout': 'All', 'Tous': 'All', 'Tout afficher ({n})': 'Show all ({n})', 'Parcourir': 'Browse', 'Filtres': 'Filters',
   'Filtres et outils': 'Filters and tools', 'Filtres et tri': 'Filters and sorting', 'Tri': 'Sort', 'Liste': 'List', 'Cartes / liste': 'Cards / list',
@@ -14378,6 +14422,8 @@ const phrases = {
   "+ Ajouter": "+ Añadir",
   "Ajouter manuellement": "Añadir manualmente",
   "Ajouter un single": "Añadir un número",
+  "Ajouter un numéro": "Añadir un número",
+  "Fiche du numéro": "Ficha del número",
   "Exporter": "Exportar",
   "Importer": "Importar",
   "Restaurer": "Restaurar",
@@ -14552,6 +14598,8 @@ const phrases = {
   "+ Ajouter": "+ Adicionar",
   "Ajouter manuellement": "Adicionar manualmente",
   "Ajouter un single": "Adicionar uma edição",
+  "Ajouter un numéro": "Adicionar uma edição",
+  "Fiche du numéro": "Ficha da edição",
   "Exporter": "Exportar",
   "Importer": "Importar",
   "Restaurer": "Restaurar",
@@ -16352,7 +16400,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const applyVisualCandidateMatch = cand => {
     closeCoverVisualScanner();
     editingSingleId = null;
-    $('singleModalTitle').textContent = 'Fiche du single (reconnaissance visuelle)';
+    $('singleModalTitle').textContent = 'Fiche du numéro (reconnaissance visuelle)';
     $('decodedBarcodeBadge').hidden = false;
     $('decodedBarcodeBadge').querySelector('strong').textContent = cand.volume + ' #' + cand.issue + ' (' + cand.score + '% match)';
     if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = 'Reconnaissance Visuelle';
@@ -16680,7 +16728,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
   const identifyScannedInput = async barcodeOrQuery => {
     $('barcodeScannerModal').classList.remove('open');
     editingSingleId = null;
-    $('singleModalTitle').textContent = 'Fiche du single';
+    $('singleModalTitle').textContent = 'Fiche du numéro';
     const input = String(barcodeOrQuery || '').trim();
     const byTitle = /[a-zA-Z]/.test(input);
     const parsed = byTitle ? null : parseComicBarcode(input);
@@ -30654,7 +30702,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
       abandonScanTrial();
       editingSingleId = null;
       currentScannedRawBarcode = null;
-      $('singleModalTitle').textContent = 'Ajouter un single';
+      $('singleModalTitle').textContent = 'Ajouter un numéro';
       $('decodedBarcodeBadge').hidden = true;
 
       $('singleSeriesInput').value = '';
@@ -30929,7 +30977,7 @@ const histMeta = s => { const m = coverMetaOf(s); return m ? Object.assign({}, m
     const openSingleIssueFromComicVineResult = async item => {
       $('comicVineSearchModal').classList.remove('open');
       editingSingleId = null;
-      $('singleModalTitle').textContent = 'Fiche du single';
+      $('singleModalTitle').textContent = 'Fiche du numéro';
       $('decodedBarcodeBadge').hidden = false;
       $('decodedBarcodeBadge').querySelector('strong').textContent = item.volume + ' #' + item.issue;
       if ($('barcodeSourceTag')) $('barcodeSourceTag').textContent = item.source || 'Comic Vine';
