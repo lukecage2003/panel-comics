@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <!-- CSP:début (générée par scripts/csp.js, ne pas modifier à la main) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-l1NUJZQCZhw9/YnSqbHJc8IB4yAqZzTCSS4lJCeS+uQ=' 'sha256-vL19kjNjEeEtiA/xk6JRJwW9QKsr2T1IIAUXPBYTULc=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9tTIFFB33SSDd+p2dgxEwAw2T4qnzr60ek72C5NkAxk=' 'sha256-R9eS9VbLmFEpkAzBteb6rs4rNtbYHNv+mm1XaEuhANI=' 'sha256-l1NUJZQCZhw9/YnSqbHJc8IB4yAqZzTCSS4lJCeS+uQ=' 'sha256-mmGcPXPMirNDG0ZoqP6IW7AgJf0IeqzB/F7uXIXm1Mg=' https://comicvine.gamespot.com/api/ 'wasm-unsafe-eval'; script-src-attr 'none'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; media-src 'self' data: blob: https:; font-src 'self' data:; connect-src 'self' https: http://localhost:* http://127.0.0.1:*; frame-src 'self' https://www.openstreetmap.org; worker-src 'self' blob:; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" />
   <!-- CSP:fin -->
   <meta name="referrer" content="no-referrer">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover" />
@@ -5332,6 +5332,19 @@
       .cover-job-bar { grid-template-columns: 1fr !important; }
       .cover-job-bar .cover-job-text { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; font-size: 12px; }
     }
+
+    /* D-147 : profil et fil à la manière de Panel (plus de halos violets ni d'anneaux arc-en-ciel) */
+    .pf-hero { border: 2px solid #0b0b0c !important; border-radius: 18px !important; box-shadow: 4px 4px 0 #0b0b0c !important; background: linear-gradient(var(--pf, var(--acc)), var(--pf, var(--acc))) 0 0 / 100% 6px no-repeat, var(--bg-card) !important; }
+    .pf-hero::after { opacity: .35; }
+    .pf-avatar, .cm-me-av, .igp-av, .sx-av, .pfv-av { text-shadow: 1.5px 1.5px 0 rgba(11,11,12,.55); }
+    .pf-rank.is-sommet { background: radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1.5px) 0 0 / 8px 8px, linear-gradient(135deg, #0b0b0c, #26262a) !important; box-shadow: 5px 5px 0 var(--acc) !important; }
+    .pf-rank-badge { box-shadow: inset 0 0 0 2px rgba(255,255,255,.35) !important; }
+    .ig-hl-ring { background: var(--acc) !important; box-shadow: 2px 2px 0 #0b0b0c; }
+    .pf-avatar.pf-av-story.is-new { box-shadow: 0 0 0 3px var(--bg, #111), 0 0 0 6px var(--acc) !important; }
+    .fy-card { border: 2px solid #0b0b0c !important; box-shadow: 3px 3px 0 #0b0b0c; background: linear-gradient(var(--c, var(--acc)), var(--c, var(--acc))) 0 0 / 5px 100% no-repeat, var(--bg-card) !important; }
+    .pf-section { font: 800 26px/1 'Barlow Condensed', var(--font-title) !important; text-transform: uppercase; letter-spacing: .005em !important; display: flex; align-items: baseline; gap: 10px; }
+    .igp-av { background: var(--acc) !important; }
+    .pf-section .stat-sub { font: 600 12.5px/1 var(--font-ui, system-ui); text-transform: none; color: var(--muted); }
 </style>
 </head>
 <body>
@@ -25721,7 +25734,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     host.querySelectorAll('[data-pf-stories]').forEach(b => { b.onclick = () => { const st = storyLoad().stories, seen = storySeen(); const first = st.find(x => !seen.has(x.id)) || st[0]; if (first) openStoryViewer(first.id); }; });
     host.querySelectorAll('[data-pf-feed], [data-pf-planche]').forEach(b => { b.onclick = () => { commTab = 'feed'; renderCommunityView(); }; });
   };
-  const PFX_COLORS = ['#7C5CFF', '#FFD400', '#FF5A5F', '#22C3A6', '#4AA3FF', '#FF8A00'];
+  const PFX_COLORS = ['#FFD400', '#FF5A5F', '#22C3A6', '#4AA3FF', '#FF8A00', '#7C5CFF'];
   const renderCommunityProfileBase = () => {
     const host = $('communityProfile');
     if (!host) return;
@@ -25736,8 +25749,8 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const form = (pp) => '<form class="pf-form" id="profileForm">' +
       '<label>Pseudo<input class="field-input" name="handle" required minlength="3" maxlength="24" value="' + escapeHtml(pp ? pp.handle : '') + '" placeholder="ex. wakanda_reader"></label>' +
       '<label>Nom affiché<input class="field-input" name="displayName" maxlength="40" value="' + escapeHtml(pp ? pp.displayName : '') + '"></label>' +
-      '<div class="pf-wide pfx-colors"><span>Couleur</span><div class="pfx-swatches" role="group" aria-label="Couleur du profil">' + PFX_COLORS.map(c => '<button type="button" class="pfx-sw" data-pf-color="' + c + '" style="--c:' + c + '" aria-label="Couleur ' + c + '" aria-pressed="' + (String(pp ? pp.color : '#7C5CFF').toLowerCase() === c.toLowerCase()) + '"></button>').join('') +
-        '<label class="pfx-sw pfx-sw-own" title="Autre couleur"><input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#7C5CFF') + '" aria-label="Autre couleur"></label></div></div>' +
+      '<div class="pf-wide pfx-colors"><span>Couleur</span><div class="pfx-swatches" role="group" aria-label="Couleur du profil">' + PFX_COLORS.map(c => '<button type="button" class="pfx-sw" data-pf-color="' + c + '" style="--c:' + c + '" aria-label="Couleur ' + c + '" aria-pressed="' + (String(pp ? pp.color : '#FFD400').toLowerCase() === c.toLowerCase()) + '"></button>').join('') +
+        '<label class="pfx-sw pfx-sw-own" title="Autre couleur"><input class="field-input" type="color" name="color" value="' + escapeHtml(pp ? pp.color : '#FFD400') + '" aria-label="Autre couleur"></label></div></div>' +
       '<details class="pf-wide pfx-more"' + (pp ? ' open' : '') + '><summary>Personnaliser davantage <small>facultatif</small></summary><div class="pfx-more-body">' +
       '<label>Personnage favori<input class="field-input" name="favorite" maxlength="60" value="' + escapeHtml(pp ? pp.favorite : '') + '" placeholder="ex. Black Panther"></label>' +
       '<label class="pf-wide">Bio<textarea class="field-input" name="bio" maxlength="160" rows="2">' + escapeHtml(pp ? pp.bio : '') + '</textarea></label>' +
@@ -25758,7 +25771,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     };
     const families = [...new Set(r.trophies.map(t => t.family))];
     host.innerHTML =
-      '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#7C5CFF') + '">' +
+      '<section class="pf-hero" style="--pf:' + escapeHtml(p ? p.color : '#2a2a2c') + '">' +
         (p && !profileEditing
           ? '<div class="pf-id pfx-id">' + pfAvatarHtml(initials) + '<div class="pfx-who"><h2>' + escapeHtml(p.displayName || p.handle) + '</h2><p class="pf-handle">@' + escapeHtml(p.handle) + '</p>' + (p.favorite ? '<p class="pfx-fav">' + igIcon('ic-star') + ' Fan de ' + escapeHtml(p.favorite) + '</p>' : '') + '</div></div>' + (p.bio ? '<p class="pf-bio pfx-bio">' + escapeHtml(p.bio) + '</p>' : '') + pfStatsHtml(owned) +
             '<div class="pf-id-btns pfx-btns"><button class="btn secondary pf-edit" data-pf-edit>Modifier le profil</button><button class="btn secondary pf-edit" data-pf-card>Ma carte</button><button class="btn secondary pf-edit pfx-plus" data-pf-newstory aria-label="Nouvelle story" title="Nouvelle story">' + igIcon('ic-plus') + '</button></div>'
@@ -25851,7 +25864,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const face = s.coverUrl ? coverImgTag(s) : '<span class="sx-face" style="--c:' + cboxHue(s) + '"><b>' + escapeHtml(cboxInitials(s.series || '?')) + '</b>' + (n ? '<em>#' + escapeHtml(n) + '</em>' : '') + '</span>';
     return '<article class="sx sx-' + key + (opts.big ? ' is-big' : '') + (s.review ? ' has-review' : '') + '" style="--sx-bg:' + st.bg + ';--sx-bg2:' + st.bg2 + ';--sx-ink:' + st.ink + ';--sx-acc:' + st.acc + '">' +
       '<span class="sx-blur" aria-hidden="true">' + (s.coverUrl ? coverImgTag(s) : '') + '</span><span class="sx-grain" aria-hidden="true"></span>' +
-      '<header class="sx-head"><span class="sx-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '">' + escapeHtml(prof ? (prof.displayName || prof.handle).slice(0, 1).toUpperCase() : 'P') + '</span>' +
+      '<header class="sx-head"><span class="sx-av" style="--pf:' + escapeHtml(prof ? prof.color : '#2a2a2c') + '">' + escapeHtml(prof ? (prof.displayName || prof.handle).slice(0, 1).toUpperCase() : 'P') + '</span>' +
         '<span class="sx-who"><b>' + escapeHtml(who) + '</b>' + (ago ? '<small>' + escapeHtml(ago) + '</small>' : '') + '</span><span class="sx-pub">' + escapeHtml(st.label) + '</span></header>' +
       '<figure class="sx-cover"><span class="sx-cover-in">' + face + '</span>' + (r ? '<span class="sx-sticker">' + escapeHtml(STORY_ONO(r)) + '</span>' : '') + '</figure>' +
       '<div class="sx-meta"><span class="sx-kicker">J\'ai lu' + (when ? ' · ' + escapeHtml(when) : '') + '</span>' +
@@ -26270,7 +26283,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     let rk = null;
     try { const tr = window.PanelDomains.trophiesCore.computeTrophies({ copies: owned, log: rdLoad().log, picked: 0, characterOf: window.PanelDomains.collectionBoxes.characterOf, isRead: rdReadOfCopy }); rk = pfRank(owned, tr); } catch (_) {}
     const tabs = [['feed', 'Fil'], ['profile', 'Mon profil'], ['live', 'Directs']];
-    return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
+    return '<div class="cm-head"><button class="cm-me" data-cm-tab="profile" style="--pf:' + escapeHtml(prof ? prof.color : '#2a2a2c') + '"><span class="cm-me-av">' + escapeHtml(prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : '?') + '</span><span class="cm-me-txt"><b>' + escapeHtml(prof ? (prof.displayName || '@' + prof.handle) : 'Créer mon profil') + '</b>' + (rk ? '<small>Rang ' + rk.rank.rank + ' · ' + escapeHtml(rk.rank.name) + '</small><span class="tr-bar"><i style="width:' + Math.round(rk.progress * 100) + '%"></i></span>' : '') + '</span></button>' +
       '<nav class="cm-tabs" role="tablist">' + tabs.map(([k, l]) => '<button role="tab" aria-selected="' + (commTab === k) + '" class="' + (commTab === k ? 'is-on' : '') + '" data-cm-tab="' + k + '">' + l + '</button>').join('') + '</nav></div>' + hbStripHtml() + (commTab === 'profile' || HB_TABS.includes(commTab) ? '' : storiesBarHtml());
   };
 
@@ -26885,7 +26898,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     box.innerHTML = '<div class="modal-box pfv" role="dialog" aria-modal="true" aria-labelledby="pfvTitle">' +
       '<div class="pub-head"><h3 id="pfvTitle">Aperçu visiteur</h3><button type="button" class="pub-close" data-close aria-label="Fermer">' + igIcon('ic-x') + '</button></div>' +
       '<p class="pfv-banner">' + igIcon('ic-info') + ' Ce profil n\'est pas en ligne : voici ce qu\'un visiteur verrait avec vos réglages actuels.</p>' +
-      '<div class="pfv-id" style="--pf:' + escapeHtml(pr ? pr.color : '#7C5CFF') + '"><span class="pfv-av">' + escapeHtml(ini) + '</span><div><b>' + escapeHtml(pr ? (pr.displayName || pr.handle) : 'Profil sans pseudo') + '</b>' + (pr ? '<small>@' + escapeHtml(pr.handle) + (pr.favorite ? ' · fan de ' + escapeHtml(pr.favorite) : '') + '</small>' : '<small>Créez votre profil pour choisir un pseudo.</small>') + (pr && pr.bio ? '<p>' + escapeHtml(pr.bio) + '</p>' : '') + '</div></div>' +
+      '<div class="pfv-id" style="--pf:' + escapeHtml(pr ? pr.color : '#2a2a2c') + '"><span class="pfv-av">' + escapeHtml(ini) + '</span><div><b>' + escapeHtml(pr ? (pr.displayName || pr.handle) : 'Profil sans pseudo') + '</b>' + (pr ? '<small>@' + escapeHtml(pr.handle) + (pr.favorite ? ' · fan de ' + escapeHtml(pr.favorite) : '') + '</small>' : '<small>Créez votre profil pour choisir un pseudo.</small>') + (pr && pr.bio ? '<p>' + escapeHtml(pr.bio) + '</p>' : '') + '</div></div>' +
       '<div class="ig-stats">' + stat(v.posts.length, 'publications') + (v.counts ? stat(v.counts.copies, 'numéros') + stat(v.counts.series, 'séries') : '') + (typeof v.read === 'number' ? stat(v.read, 'lus') : '') + '<div class="ig-stat is-soon"><b>—</b><small>abonnés</small></div></div>' +
       (v.rank ? '<p class="pfv-rank">' + igIcon('ic-star') + ' Rang ' + v.rank.rank + ' · ' + escapeHtml(v.rank.name) + ' · ' + v.rank.trophies + ' trophée' + (v.rank.trophies > 1 ? 's' : '') + '</p>' : '') +
       (v.topCharacters && v.topCharacters.length ? '<p class="pfv-tops"><b>Top personnages :</b> ' + v.topCharacters.map(escapeHtml).join(', ') + '</p>' : '') +
@@ -27280,7 +27293,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const ini = prof ? (prof.displayName || prof.handle).split(/[\s_]+/).map(w => w[0]).join('').slice(0, 2).toUpperCase() : 'V';
     const owned = physicalSingles.filter(isOwned).slice().sort((a, b) => new Date(b.addedAt || 0) - new Date(a.addedAt || 0)).slice(0, 300);
     return '<section class="ntc' + (open ? ' is-open' : '') + '" aria-label="Écrire une pensée">' +
-      '<div class="ntc-row"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span>' +
+      '<div class="ntc-row"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#2a2a2c') + '"><span>' + escapeHtml(ini) + '</span></span>' +
       '<textarea id="ntText" class="ntc-text" rows="' + (open ? 3 : 1) + '" maxlength="' + (d.id ? 2000 : 6000) + '" placeholder="' + escapeHtml(ntPlaceholder(d.kind)) + '" aria-label="Écrire une pensée, une théorie ou une question">' + escapeHtml(d.text || '') + '</textarea></div>' +
       '<div class="ntc-sugg" data-nt-sugg role="group" aria-label="Mots-dièse suggérés" hidden></div>' +
       (d.imageRef ? '<div class="ntc-imgprev"><img data-nt-img="' + escapeHtml(d.imageRef) + '" alt="Image jointe"><button type="button" class="ntc-x" data-nt-imgx aria-label="Retirer l\'image">' + igIcon('ic-x') + '</button></div>' : '') +
@@ -27407,7 +27420,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
       '<button role="menuitem" class="is-danger" data-nt-del>' + igIcon('ic-trash') + ' Supprimer</button>';
     const m = p.media[0];
     return '<article class="ntp' + (p.kind !== 'thought' ? ' is-' + p.kind : '') + '" data-ntp="' + id + '">' +
-      '<span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span><div class="ntp-main">' +
+      '<span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#2a2a2c') + '"><span>' + escapeHtml(ini) + '</span></span><div class="ntp-main">' +
       '<header class="ntp-head"><b>' + escapeHtml(handle) + '</b><small>' + (when ? escapeHtml(when) + ' · ' : '') + escapeHtml(NT_VIS[p.visibility] || 'Public') + '</small>' +
         (p.kind !== 'thought' ? '<span class="ntp-kind">' + escapeHtml(K[p.kind]) + '</span>' : '') + (p.pinned ? '<span class="igp-pinned">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
         '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
@@ -27479,7 +27492,7 @@ window.addEventListener('error', e => window.__panel_init_errors.push({ msg: e.m
     const text = p.spoiler ? '' : p.text;
     const long = text.length > 140;
     return '<article class="igp" data-igp="' + id + '">' +
-      '<header class="igp-head"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#7C5CFF') + '"><span>' + escapeHtml(ini) + '</span></span>' +
+      '<header class="igp-head"><span class="igp-av" style="--pf:' + escapeHtml(prof ? prof.color : '#2a2a2c') + '"><span>' + escapeHtml(ini) + '</span></span>' +
         '<span class="igp-who"><b>' + escapeHtml(handle) + '</b><small>' + escapeHtml(kindLabel) + (when ? ' · ' + escapeHtml(when) : '') + ' · ' + escapeHtml(vis) + '</small></span>' +
         (p.pinned ? '<span class="igp-pinned" title="Épinglé en haut du fil">' + igIcon('ic-bookmark') + ' Épinglé</span>' : '') +
         '<span class="igp-menu-wrap"><button class="igp-more" aria-haspopup="menu" aria-expanded="false" aria-label="Plus d\'options" data-igp-more>•••</button><div class="igp-menu" role="menu" hidden>' + menu + '</div></span></header>' +
